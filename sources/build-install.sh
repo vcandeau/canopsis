@@ -103,6 +103,11 @@ function install_conf {
 
 #### MAIN
 
+echo "Make directories ..."
+$SUDO mkdir -p $PREFIX/etc/init.d $PREFIX/var/log $PREFIX/var/run $PREFIX/var/www $PREFIX/bin
+check_code $?
+
+
 echo "Create Hypervision user ('$HUSER')..."
 $SUDO groupadd $HGROUP &> /dev/null
 $SUDO useradd -M -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
@@ -110,11 +115,6 @@ $SUDO sh -c "echo \"export PATH='$PREFIX/opt/hyp-tools:$PREFIX/bin:$PREFIX/sbin:
 $SUDO sh -c "echo \"export PYTHONPATH=$PREFIX/hyp-libs/\" >> $PREFIX/.bash_profile"
 $SUDO sed "s#'#\"#g" -i $PREFIX/.bash_profile
 check_code $?
-
-echo "Make directories ..."
-$SUDO mkdir -p $PREFIX/etc/init.d $PREFIX/var/log $PREFIX/var/run $PREFIX/var/www $PREFIX/bin
-check_code $?
-
 
 ######################################
 #  Python
