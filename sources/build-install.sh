@@ -113,7 +113,7 @@ check_code $?
 
 echo "Create Hypervision user ('$HUSER')..."
 $SUDO groupadd $HGROUP &> /dev/null
-$SUDO useradd -M -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
+$SUDO useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
 $SUDO cp -R $SRC_PATH/extra/profile/.bash_* $PREFIX/
 export PATH="$PREFIX/bin/:$PATH"
 check_code $?
