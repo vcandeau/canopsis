@@ -33,6 +33,7 @@ function extract_archive {
 	if [ "$EXTCMD" != "" ]; then
 		echo " + Extract '$1' ('$EXTCMD') ..."
 		$EXTCMD $1
+		check_code $?
 	else
 		echo "Error: Impossible to extract '$1', no command ..."
 		exit 1
