@@ -111,9 +111,8 @@ check_code $?
 echo "Create Hypervision user ('$HUSER')..."
 $SUDO groupadd $HGROUP &> /dev/null
 $SUDO useradd -M -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
-$SUDO sh -c "echo \"export PATH='$PREFIX/opt/hyp-tools:$PREFIX/bin:$PREFIX/sbin:\\\$PATH'\" > $PREFIX/.bash_profile"
-$SUDO sh -c "echo \"export PYTHONPATH=$PREFIX/hyp-libs/\" >> $PREFIX/.bash_profile"
-$SUDO sed "s#'#\"#g" -i $PREFIX/.bash_profile
+$SUDO cp -R $SRC_PATH/extra/profil/.bash_* $PREFIX/
+export PATH="$PREFIX/bin/:$PATH"
 check_code $?
 
 ######################################
@@ -195,8 +194,8 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Install ..."
-	#$SUDO make install 1>> $LOG 2>> $LOG
-	#check_code $?
+	$SUDO make install 1>> $LOG 2>> $LOG
+	check_code $?
 
 	cd - > /dev/null
 else
