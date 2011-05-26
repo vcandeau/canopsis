@@ -9,6 +9,8 @@ SRC_PATH=`pwd`
 LOG_PATH="$SRC_PATH/log/"
 HUSER="hypervision"
 HGROUP="hypervision"
+ARCH=`uname -m`
+
 
 ### Archives version
 VERS_PYTHON="2.7.1"
@@ -111,7 +113,7 @@ check_code $?
 echo "Create Hypervision user ('$HUSER')..."
 $SUDO groupadd $HGROUP &> /dev/null
 $SUDO useradd -M -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
-$SUDO cp -R $SRC_PATH/extra/profil/.bash_* $PREFIX/
+$SUDO cp -R $SRC_PATH/extra/profile/.bash_* $PREFIX/
 export PATH="$PREFIX/bin/:$PATH"
 check_code $?
 
@@ -258,7 +260,7 @@ fi
 ######################################
 cd $SRC_PATH/externals
 echo "Install MongoDB $VERS_MONGODB ..."
-BASE="mongodb-linux-`uname -p`-static-$VERS_MONGODB"
+BASE="mongodb-linux-$ARCH-static-$VERS_MONGODB"
 LOG="$LOG_PATH/$BASE.log"
 rm -f $LOG &> /dev/null
 FCHECK="$PREFIX/bin/mongod"
