@@ -59,7 +59,7 @@ function install_pylib {
 		fi
 		cd $BASE
 		echo " + Install $BASE ..."
-		$SUDO $PY_BIN setup.py install --prefix=$PREFIX &>> $LOG
+		$SUDO $PY_BIN setup.py install --prefix=$PREFIX 1>> $LOG 2>> $LOG
 		check_code $?
 		cd ../../
 	else
@@ -136,19 +136,19 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Clean ..."
-	make clean &>> $LOG
+	make clean 1>> $LOG 2>> $LOG
 	#check_code $?
 
 	echo " + Configure ..."
-	./configure --prefix=$PREFIX &>> $LOG
+	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Build ..."
-	make &>> $LOG
+	make 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Install ..."
-	$SUDO make install &>> $LOG
+	$SUDO make install 1>> $LOG 2>> $LOG
 	check_code $?
 
 	cd - > /dev/null
@@ -183,19 +183,19 @@ if [ ! -e $FCHECK ]; then
 	cd  $BASE
 
 	echo " + Clean ..."
-	make clean &>> $LOG
+	make clean 1>> $LOG 2>> $LOG
 	#check_code $?
 
 	echo " + Configure ..."
-	./configure --prefix=$PREFIX &>> $LOG
+	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Build ..."
-	make &>> $LOG
+	make 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Install ..."
-	#$SUDO make install &>> $LOG
+	#$SUDO make install 1>> $LOG 2>> $LOG
 	#check_code $?
 
 	cd - > /dev/null
@@ -219,7 +219,7 @@ if [ ! -e $FCHECK ]; then
 	fi
 	cd  $BASE
 	echo " + Clean ..."
-	make clean &>> $LOG
+	make clean 1>> $LOG 2>> $LOG
 	#check_code $?
 
 	echo " + Fix env vars ..."
@@ -229,15 +229,15 @@ if [ ! -e $FCHECK ]; then
 	export MAN_DIR="$PREFIX/share/man/"
 
 	#echo " + Configure ..."
-	#./configure --prefix=$PREFIX &>> $LOG
+	#./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	#check_code $?
 
 	echo " + Build ..."
-	make all &>> $LOG
+	make all 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Install ..."
-	$SUDO make install &>> $LOG
+	$SUDO make install 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Post install configurations ..."
