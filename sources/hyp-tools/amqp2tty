@@ -1,4 +1,4 @@
-#!/opt/boa/bin/python
+#!/usr/bin/env python
 
 import time
 import signal
