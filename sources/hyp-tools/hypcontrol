@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ "$1" = "start" ]; then
+	service rabbitmq-server start
+	service mongodb start
+fi
+
+if [ "$1" = "stop" ]; then
+	service rabbitmq-server stop
+	service mongodb stop
+fi
