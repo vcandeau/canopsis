@@ -104,7 +104,7 @@ int nebmodule_init(int flags, char *args, nebmodule *handle) {
 	 return 1;
 	 }*/
 
-	if ((msqid = msgget(KEY, IPC_CREAT | 0600)) == -1) {
+	if ((msqid = msgget(KEY, IPC_CREAT | 0666)) == -1) {
 		snprintf(temp_buffer, sizeof(temp_buffer) - 1,
 				"neb2ipc: System was unable to create message queue.");
 		temp_buffer[sizeof(temp_buffer) - 1] = '\x0';
