@@ -341,6 +341,25 @@ else
 	exit 1
 fi
 
+######################################
+#  Event-brokers
+######################################
+cd $SRC_PATH
+$SUDO mkdir -p $PREFIX/opt/event-brokers
+
+echo "Install Event Brokers: Neb2IPC ..."
+LOG="$LOG_PATH/neb2ipc.log"
+echo " + Clean  ..."
+cd event-brokers/neb2ipc
+make clean 1>> $LOG 2>> $LOG
+echo " + Build ..."
+make 1>> $LOG 2>> $LOG
+check_code $?
+echo " + Install ..."
+$SUDO cp neb2ipc.o $PREFIX/opt/event-brokers
+echo " + Configuration ..."
+echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/neb2ipc.o"
+check_code $?
 
 
 
