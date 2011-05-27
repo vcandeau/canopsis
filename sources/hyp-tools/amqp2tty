@@ -1,0 +1,135 @@
+#!/opt/boa/bin/python
+
+import time
+import signal
+import threading
+import json
+import logging
+
+import sysv_ipc
+import socket
+
+from kombu import BrokerConnection
+from kombu import Producer, Consumer, Exchange, Queue
+
+
+########################################################
+#
+#   Configuration
+#
+########################################################
+
+DAEMON_NAME = "amqp2tty"
+DAEMON_TYPE = "logger"
+
+EXCHANGE_NAME = "hypervision"
+
+AMQP_HOST = "localhost"
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
+logger = logging.getLogger(DAEMON_NAME)
+
+########################################################
+#
+#   Threads
+#
+########################################################
+
+
+### AMQP
+class thread_amqp_emitter(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+	logger.debug("AMQP Emitter Initialized")
+
+    def connect(self):
+	self.connected = False
+	self.conn = BrokerConnection(
+		hostname="127.0.0.1",
+		port=5672,
+                userid="guest",
+                password="guest",
+                virtual_host="/",
+		insist=True
+		)
+	self.conn.ensure_connection(errback=self.onConnError, max_retries=3)
+
+	self.conn.connect()
+
+	self.topic_channel = self.conn.channel()
+	self.topic_exchange = Exchange(EXCHANGE_NAME, "topic")
+	
+	self.queue = Queue(name=DAEMON_NAME, exchange=self.topic_exchange, routing_key="#")
+	self.queue = self.queue(self.topic_channel)
+	self.queue.declare()
+	
+	self.connected = True
+	logger.debug("Connected")
+
+    def on_message(self, rawmsg):	
+	body = rawmsg.payload
+	print "Message: %s" % body
+
+    def run(self):
+	logger.debug("AMQP Receiver is running ...")
+
+	self.connect()
+
+        while RUN:
+		if self.connected:
+			rawmsg = self.queue.get(no_ack=True)
+			if rawmsg:
+				#logger.debug("Message received")
+				self.on_message(rawmsg)
+			else:
+				time.sleep(1)	
+		else:
+			time.sleep(3)	
+
+    def onConnError(self, exc, interval):
+	logger.error("Couldn't connect: %r. Retry in %ds" % (exc, interval))
+	self.connected = False
+
+    def onActionError(self, exc, interval):
+	logger.error("Couldn't process action: %r. Retry in %ds" % (exc, interval))
+
+    def stop(self):
+	self.queue.delete()
+	self.conn.release()
+        pass
+
+########################################################
+#
+#   Functions
+#
+########################################################
+
+RUN = 1
+#### Connect signals
+
+def signal_handler(signum, frame):
+    logger.warning("Receive signal to stop daemon...")
+    global RUN
+    RUN = 0
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+
+########################################################
+#
+#   Main
+#
+########################################################
+
+thr_amqp = thread_amqp_emitter()
+
+### Start Main !
+thr_amqp.start()
+
+### Main Loop
+while RUN:
+        time.sleep(2)
+
+thr_amqp.stop()
