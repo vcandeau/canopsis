@@ -23,7 +23,10 @@ def on_event(event):
 	#print repr(event)
 	print "%s: Event: %s -> %s -> %s" % (event['timestamp'], event['type'], event['source_name'], event['source_type'])
 	print "\tHost name:", event['host_name']
-	print "\tService name:", event['service_description']
+	
+	if event['source_type'] == "service":
+		print "\tService name:", event['service_description']
+		
 	if event['type'] == "check":
 		print "\t\tState: %s (%s) (%s/%s)" % (event['state'], event['state_type'], event['current_attempt'], event['max_attempts'])
 		print "\t\tOutput:", event['output']
