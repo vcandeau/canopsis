@@ -60,6 +60,7 @@ int verify_event_broker_options()
 void register_callbacks()
 {
     neb_register_callback(NEBCALLBACK_PROCESS_DATA,		g_nagios_handle, 0, event_process); // used for starting threads
+    neb_register_callback(NEBCALLBACK_PROGRAM_STATUS_DATA,		g_nagios_handle, 0, event_program_status);
 
     neb_register_callback(NEBCALLBACK_SERVICE_CHECK_DATA, 	g_nagios_handle, 0, event_service_check);
     neb_register_callback(NEBCALLBACK_HOST_CHECK_DATA,       	g_nagios_handle, 0, event_host_check);
@@ -72,6 +73,7 @@ void register_callbacks()
 void deregister_callbacks()
 {
     neb_deregister_callback(NEBCALLBACK_PROCESS_DATA,		event_process);
+    neb_deregister_callback(NEBCALLBACK_PROGRAM_STATUS_DATA,event_program_status);
 
     neb_deregister_callback(NEBCALLBACK_SERVICE_CHECK_DATA,	event_service_check);
     neb_deregister_callback(NEBCALLBACK_HOST_CHECK_DATA,	event_host_check);
