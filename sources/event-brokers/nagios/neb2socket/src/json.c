@@ -9,6 +9,22 @@ char * charnull(char * data){
 	return data;
 }
 
+void nebstruct_program_status_data_to_json(char * buffer, nebstruct_program_status_data *c){
+		
+		sprintf (buffer, "{\
+\"type\": \"program_status\", \
+\"source_name\": \"%s\", \
+\"source_type\": \"daemon\", \
+\"timestamp\": \"%i\", \
+\"program_start\": \"%i\", \
+\"pid\": \"%i\"}\n",
+		g_eventsource_name,
+		(int)c->timestamp.tv_sec,
+		(int)c->program_start,
+		c->pid
+		);
+}
+
 void nebstruct_service_check_data_to_json(char * buffer, nebstruct_service_check_data *c){
 	
 	sprintf (buffer, "{\

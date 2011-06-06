@@ -21,6 +21,18 @@ int event_process(int event_type __attribute__ ((__unused__)), void *data)
 	return 0;
 }
 
+int event_program_status(int event_type __attribute__ ((__unused__)), void *data)
+{
+	nebstruct_program_status_data *ps = (nebstruct_program_status_data *)data;
+	//logger(LG_DEBUG, "Event: event_program_status (type: %i)", ps->type);
+	
+    char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
+	nebstruct_program_status_data_to_json(buffer, ps);
+	write_unix_socket(buffer);
+	
+	return 0;
+}
+
 int event_service_check(int event_type __attribute__ ((__unused__)), void *data)
 {
 	//logger(LG_DEBUG, "Event: event_host_check");

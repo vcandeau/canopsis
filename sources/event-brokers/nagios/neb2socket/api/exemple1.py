@@ -22,15 +22,20 @@ signal.signal(signal.SIGTERM, signal_handler)
 def on_event(event):
 	#print repr(event)
 	print "%s: Event: %s -> %s -> %s" % (event['timestamp'], event['source_name'], event['source_type'], event['type'])
-	print "\tHost name:", event['host_name']
-	
-	if event['source_type'] == "service":
-		print "\tService name:", event['service_description']
+	if event['type'] == "check":	
+		print "\tHost name:", event['host_name']
 		
-	if event['type'] == "check":
+		if event['source_type'] == "service":
+			print "\tService name:", event['service_description']
+			
 		print "\t\tState: %s (%s) (%s/%s)" % (event['state'], event['state_type'], event['current_attempt'], event['max_attempts'])
 		print "\t\tOutput:", event['output']
 		print "\t\tPerfdata:", event['perf_data']
+	
+	if event['type'] == "program_status":
+		print "\tprogram_start:", event['program_start']
+		print "\tpid:", event['pid']
+	
 	print
 	pass
 
