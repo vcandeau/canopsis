@@ -345,22 +345,22 @@ fi
 #  Event-brokers
 ######################################
 cd $SRC_PATH
-$SUDO mkdir -p $PREFIX/opt/event-brokers
+$SUDO mkdir -p $PREFIX/opt/event-brokers/nagios/
 
-echo "Install Event Brokers: Neb2IPC ..."
-LOG="$LOG_PATH/neb2ipc.log"
+echo "Install Event Brokers: Neb2socket ..."
+LOG="$LOG_PATH/neb2socket.log"
 echo " + Clean  ..."
-cd event-brokers/neb2ipc
+cd event-brokers/nagios/neb2socket
 make clean 1>> $LOG 2>> $LOG
 echo " + Build ..."
 make 1>> $LOG 2>> $LOG
 check_code $?
 echo " + Install ..."
-$SUDO cp neb2ipc.o $PREFIX/opt/event-brokers
+$SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
 echo " + Configuration ..."
-echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/neb2ipc.o"
+echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
 check_code $?
-
+cd -
 
 
 ######################################
