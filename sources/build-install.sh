@@ -165,6 +165,7 @@ cd $SRC_PATH/externals
 install_pylib "setuptools" "0.6c11"
 install_pylib "simplejson" "2.1.6"
 install_pylib "kombu" "1.1.3"
+install_pylib "amqplib" "0.6.1"
 install_pylib "sysv_ipc" "0.6.3"
 install_pylib "pymongo" "1.11"
 
@@ -357,10 +358,10 @@ make 1>> $LOG 2>> $LOG
 check_code $?
 echo " + Install ..."
 $SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
+$SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
 echo " + Configuration ..."
 echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
 check_code $?
-cd -
 
 
 ######################################
