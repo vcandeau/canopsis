@@ -3,7 +3,7 @@
 import socket, json, asyncore, logging
 
 class neb2socket(asyncore.dispatcher):
-	def __init__(self, socket_path, msg_callback=None, msg_maxsize=128, msg_maxsize_auto=False, msg_maxsize_step=128, logging_level=logging.ERROR):
+	def __init__(self, socket_path, msg_callback=None, msg_maxsize=128, output_format="dict", msg_maxsize_auto=False, msg_maxsize_step=128, logging_level=logging.ERROR):
 		asyncore.dispatcher.__init__(self)
 
 		self.socket_path = socket_path
@@ -12,6 +12,7 @@ class neb2socket(asyncore.dispatcher):
 		self.msg_maxsize_auto = msg_maxsize_auto
 		self.msg_maxsize_step = msg_maxsize_step
 		self.msg_callback = msg_callback
+		self.output_format = output_format
 
 		logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -48,8 +49,18 @@ class neb2socket(asyncore.dispatcher):
 					dictevent = json.loads(event)
 					#self.logger.debug("New Event: " + event)
 					#print repr(dictevent)
-					if self.msg_callback:
-						 self.msg_callback(dictevent)
+					try:
+						if self.msg_callback:
+		
+							if self.output_format == "dict":
+								output = dictevent
+							elif self.output_format == "json":
+								output = event
+								
+							self.msg_callback(doutput)
+					except:
+						self.logger.warn("Error in your callback function ...")
+						
 					self.tmp = None
 				except:
 					#print "Error in json formatting ..."
@@ -74,7 +85,13 @@ class neb2socket(asyncore.dispatcher):
 								
 								try:
 									if self.msg_callback:
-										self.msg_callback(dictevent)
+										
+										if self.output_format == "dict":
+											output = dictevent
+										elif self.output_format == "json":
+											output = event
+											
+										self.msg_callback(output)
 								except:
 									self.logger.warn("Error in your callback function ...")
 									
