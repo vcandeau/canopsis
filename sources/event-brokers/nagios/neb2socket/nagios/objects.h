@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  *
  * OBJECTS.H - Header file for object addition/search functions
@@ -25,10 +26,6 @@
 
 #ifndef _OBJECTS_H
 #define _OBJECTS_H
-
-#ifndef NSCORE
-#define NSCORE
-#endif
 
 #include "config.h"
 #include "common.h"
@@ -181,7 +178,7 @@ typedef struct command_struct{
 
 /* COMMANDSMEMBER structure */
 typedef struct commandsmember_struct{
-	char	*command;
+	char	*command_dummy;
 #ifdef NSCORE
 	command *command_ptr;
 #endif
@@ -756,7 +753,6 @@ int number_of_immediate_parent_hosts(host *);				/* counts the number of immedia
 int number_of_total_parent_hosts(host *);				/* counts the number of total parents hosts for a particular host */
 
 #ifdef NSCORE
-int check_for_circular_host_path(host *,host *);                             /* checks if a circular path exists for a given host */
 int check_for_circular_servicedependency_path(servicedependency *,servicedependency *,int);   /* checks if a circular dependency exists for a given service */
 int check_for_circular_hostdependency_path(hostdependency *,hostdependency *,int);   /* checks if a circular dependency exists for a given host */
 #endif

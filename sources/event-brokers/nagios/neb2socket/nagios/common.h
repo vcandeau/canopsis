@@ -1,3 +1,4 @@
+
 /************************************************************************
  *
  * Nagios Common Header File
@@ -21,8 +22,8 @@
  ************************************************************************/
 
 
-#define PROGRAM_VERSION "3.0.6"
-#define PROGRAM_MODIFICATION_DATE "12-01-2008"
+#define PROGRAM_VERSION "3.2.0"
+#define PROGRAM_MODIFICATION_DATE "08-12-2009"
 
 /*#define DEBUG_CHECK_IPC 1 */
 /*#define DEBUG_CHECK_IPC2 1*/
