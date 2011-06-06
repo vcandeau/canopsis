@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time, signal, threading
+import time, signal
 from neb2socket import *
 
 #### Connect signals
