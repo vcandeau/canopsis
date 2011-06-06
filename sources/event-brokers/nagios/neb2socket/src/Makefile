@@ -20,7 +20,6 @@ all: clean neb2socket.o
 neb2socket.o:
 	$(CC) $(MOD_LDFLAGS) $(MOD_CFLAGS) $(CFLAGS) -o $@ module.c logger.c broker.c events.c json.c socket.c strutil.cc $(LDFLAGS) $(LIBS) $(INCLUDES)
 
-
 clean:
 	rm -f *.o
 	#rm -f *~ *.*~
