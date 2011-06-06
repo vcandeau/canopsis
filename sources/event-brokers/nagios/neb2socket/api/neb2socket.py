@@ -24,7 +24,7 @@ class neb2socket(asyncore.dispatcher):
 		asyncore.socket_map.clear()
 		self.create_socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-		self.tmp = None	
+		self.tmp = None
 
 		self.connect(self.socket_path)
 		
@@ -45,67 +45,37 @@ class neb2socket(asyncore.dispatcher):
 
 		for event in events:
 			if event:
-				try:
-					dictevent = json.loads(event)
-					#self.logger.debug("New Event: " + event)
-					#print repr(dictevent)
+				firstchar = event[0:1]
+				lastchar = event[len(event)-1:]
+				
+				if firstchar != "{":
+					self.tmp = self.tmp + event
+				else:
+					self.tmp = event
+					
+				event = self.tmp
+					
+				firstchar = event[0:1]
+				lastchar = event[len(event)-1:]	
+							
+				if firstchar == "{" and lastchar == "}":
 					try:
-						if self.msg_callback:
-		
-							if self.output_format == "dict":
-								output = dictevent
-							elif self.output_format == "json":
-								output = event
-								
-							self.msg_callback(doutput)
-					except:
-						self.logger.warn("Error in your callback function ...")
+						event = unicode(event, "utf8")
+						dictevent = json.loads(event)
+						#self.logger.debug("New Event: " + event)
+						#print repr(dictevent)
+						if self.output_format == "dict":
+							output = dictevent
+						elif self.output_format == "json":
+							output = event
+							
+						self.msg_callback(output)
+					except Exception, err:
+						self.logger.error(err)
+						self.logger.error("Event: %s" % event)
 						
-					self.tmp = None
-				except:
-					#print "Error in json formatting ..."
-					#print "RAW:", event
-					firstchar = event[0:1]
-					if firstchar != "{" and self.tmp:
-						
-						self.tmp = self.tmp + event
-
-						#self.logger.debug("event: %s" % event)
-						
-						event = self.tmp
-						firstchar = event[0:1]
-						lastchar = event[len(event)-1:]
-								
-						if firstchar == "{" and lastchar == "}":	
-							try:
-								dictevent = json.loads(event)
-								#self.logger.debug("Successfully event's reconstruction")
-								#self.logger.debug("New Event: " + event)
-								self.tmp = None
-								
-								try:
-									if self.msg_callback:
-										
-										if self.output_format == "dict":
-											output = dictevent
-										elif self.output_format == "json":
-											output = event
-											
-										self.msg_callback(output)
-								except:
-									self.logger.warn("Error in your callback function ...")
-									
-								# Increase input buffer
-								if self.msg_maxsize_auto and self.msg_maxsize <= self.msg_maxsize_max:
-									self.msg_maxsize = self.msg_maxsize + self.msg_maxsize_step
-									self.logger.warn("Increase 'msg_maxsize' to %i Bytes" % self.msg_maxsize)
-									
-							except:
-								self.logger.error("Error in event's reconstruction !!")
-								self.logger.error("Reconstructed Event: " + event)
-								self.tmp = None
-					else:
-						self.tmp = event
+				
+	
 
 	def writable(self):
 		pass
