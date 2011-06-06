@@ -21,7 +21,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 
 def on_event(event):
 	#print repr(event)
-	print "%s: Event: %s -> %s -> %s" % (event['timestamp'], event['type'], event['source_name'], event['source_type'])
+	print "%s: Event: %s -> %s -> %s" % (event['timestamp'], event['source_type'], event['source_name'], event['type'])
 	print "\tHost name:", event['host_name']
 	
 	if event['source_type'] == "service":
