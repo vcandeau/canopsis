@@ -12,7 +12,7 @@ from amqplib import client_0_8 as amqp
 #
 ########################################################
 
-DAEMON_NAME = "amqp2tty"
+DAEMON_NAME = "test"
 DAEMON_TYPE = "logger"
 
 EXCHANGE_NAME = "hypervision"
@@ -67,7 +67,11 @@ myamqp.create_queue(DAEMON_NAME)
 myamqp.bind_queue(DAEMON_NAME, "#")
 myamqp.consume_queue(DAEMON_NAME, on_message)
 
+i=0
 while RUN:
+	msg = amqp.Message("Message pour nagios.check.host %i" % i)
+	myamqp.publish(msg, "nagios.check.host")
+	i=i+1
 	time.sleep(1)
 
 myamqp.disconnect()
