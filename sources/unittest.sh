@@ -13,6 +13,8 @@ function check_code {
 }
 
 
+sudo su - hypervision -c 'hypcontrol start'
+
 UNITTESTS=`find ./ | grep Myunittest.py`
 
 for UNITTEST in $UNITTESTS; do
@@ -22,3 +24,5 @@ for UNITTEST in $UNITTESTS; do
 	echo "#### END ####"
 	echo
 done
+
+sudo su - hypervision -c 'hypcontrol stop'
