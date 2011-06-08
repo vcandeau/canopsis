@@ -27,8 +27,9 @@ class KnownValues(unittest.TestCase):
 	def on_message(self, msg):
 		print "Receive message ..."
 		global rcvmsgbody
-		if msg.body != "BYE":
-			rcvmsgbody = msg.body
+		#if msg.body != "BYE":
+		rcvmsgbody = msg.body
+		#print rcvmsgbody
 		
 	def test_2_CreateQueue(self):
 		global myamqp
@@ -49,7 +50,15 @@ class KnownValues(unittest.TestCase):
 		
 	def test_6_CheckReceiveInQueue(self):		
 		#myamqp.queue_wait("unit_test")
-		time.sleep(1)
+		start = time.time()
+		end = start + 5.0
+		while not rcvmsgbody:
+			time.sleep(0.1)
+			if time.time() > (end+5.0):
+				break
+		
+		duration = time.time() - start
+		print "Receive message in", duration,"ms"
 		if rcvmsgbody != msgbody:
 			raise NameError, 'Received Event is not conform'
 
