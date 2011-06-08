@@ -6,6 +6,8 @@
 
 #include "events.h"
 
+int g_last_event_program_status = 0;
+
 int event_void(int event_type __attribute__ ((__unused__)), void *data){
 	return;
 }
@@ -26,9 +28,13 @@ int event_program_status(int event_type __attribute__ ((__unused__)), void *data
 	nebstruct_program_status_data *ps = (nebstruct_program_status_data *)data;
 	//logger(LG_DEBUG, "Event: event_program_status (type: %i)", ps->type);
 	
-    char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
-	nebstruct_program_status_data_to_json(buffer, ps);
-	write_unix_socket(buffer);
+	//Send program_status every 10sec min
+	if ((int)ps->timestamp.tv_sec >= (g_last_event_program_status+10)){
+		char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
+		nebstruct_program_status_data_to_json(buffer, ps);
+		write_unix_socket(buffer);
+		g_last_event_program_status = (int)ps->timestamp.tv_sec;
+	}
 	
 	return 0;
 }
