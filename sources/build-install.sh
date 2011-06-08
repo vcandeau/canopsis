@@ -379,5 +379,7 @@ echo " + Ok"
 ######################################
 # Unit Test
 #####################################
+cd $SRC_PATH
+echo
 echo "Unit tests ..."
 ./unittest.sh
