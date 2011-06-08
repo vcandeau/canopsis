@@ -66,7 +66,7 @@ class thread_ipc_receiver(threading.Thread):
 
         message, char, garbage = message.partition('\0')
 
-        #logger.debug("Type: %i Message: %s" %(type, str(message)))
+	logger.debug("Type: %i Message (%s): \n%s\n" %(type, len(message), str(message)))
 
         evt = None
 
@@ -84,7 +84,7 @@ class thread_ipc_receiver(threading.Thread):
                 'state': message[5]
             }
 
-            if len(message[2]) > 0:
+            if message[2] != "na":
                 evt['source'] = 'SERVICE'
                 evt['service_name'] = message[2]
             else:
@@ -122,8 +122,10 @@ class thread_ipc_receiver(threading.Thread):
             if type == 14:
                 evt['source'] = 'HOST'
 
-            if evt != None:
-                #logger.debug("Event: %s" % evt)
+
+	### Send Event to Queue
+	if evt != None:
+		#logger.debug("Event: %s" % evt)
 
                 if TO_AMQP_QUEUE.full():
                     logger.warning("Queue is FULL, most old event will be deleted ...")
@@ -141,6 +143,7 @@ class thread_amqp_emitter(threading.Thread):
 
 
 	self.amqp = hypamqp(
+		logging_level=logging.ERROR,
 		hostname="127.0.0.1",
 		port=5672,
                 userid="guest",
