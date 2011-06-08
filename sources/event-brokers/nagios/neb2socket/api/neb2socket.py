@@ -31,6 +31,7 @@ class neb2socket(asyncore.dispatcher):
 
 	def handle_connect(self):
 		self.logger.debug("Connected to socket '%s'" % self.socket_path)
+		self.socket.send("HELLO")
 		pass
 
 	def handle_close(self):
