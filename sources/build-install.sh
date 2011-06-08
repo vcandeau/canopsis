@@ -331,11 +331,13 @@ cd $SRC_PATH
 echo "Install Hyp-libs ..."
 echo " + Install ..."
 BASE="hyp-libs"
-DST="/lib/"
+DST="/lib/hyp-libs"
 if [ -e $BASE ]; then
 	$SUDO mkdir -p $PREFIX/$DST
 	$SUDO rm -Rf $PREFIX/$DST/$BASE
-	$SUDO cp -R $BASE $PREFIX/$DST
+	$SUDO mkdir -p $PREFIX/$DST/$BASE
+	$SUDO cp -R $BASE/hypamqp/hypamqp.py $PREFIX/$DST/$BASE
+	$SUDO cp -R $BASE/hypamqp/hypamqp2.py $PREFIX/$DST/$BASE
 	check_code $?
 else
 	echo "Error: Impossible to find '$BASE'"
@@ -382,4 +384,7 @@ echo " + Ok"
 cd $SRC_PATH
 echo
 echo "Unit tests ..."
-./unittest.sh
+LOG=$LOG_PATH/unittest.log
+./unittest.sh 2> $LOG 1> $LOG
+check_code $?
+echo " + Ok"
