@@ -164,10 +164,13 @@ fi
 cd $SRC_PATH/externals
 install_pylib "setuptools" "0.6c11"
 install_pylib "simplejson" "2.1.6"
+install_pylib "pika" "0.9.5"
 install_pylib "amqplib" "0.6.1"
 install_pylib "kombu" "1.1.3"
 install_pylib "sysv_ipc" "0.6.3"
 install_pylib "pymongo" "1.11"
+install_pylib "pycurl" "7.19.0"
+install_pylib "tornado" "1.2.1"
 
 
 ######################################
@@ -330,17 +333,16 @@ fi
 cd $SRC_PATH
 echo "Install Hyp-libs ..."
 echo " + Install ..."
-BASE="hyp-libs"
 DST="/lib/hyp-libs"
 if [ -e $BASE ]; then
 	$SUDO mkdir -p $PREFIX/$DST
-	$SUDO rm -Rf $PREFIX/$DST/$BASE
-	$SUDO mkdir -p $PREFIX/$DST/$BASE
-	$SUDO cp -R $BASE/hypamqp/hypamqp.py $PREFIX/$DST/$BASE
-	$SUDO cp -R $BASE/hypamqp/hypamqp2.py $PREFIX/$DST/$BASE
+	$SUDO rm -Rf $PREFIX/$DST
+	$SUDO mkdir -p $PREFIX/$DST
+	$SUDO cp -R hyp-libs/hypamqp/hypamqp.py $PREFIX/$DST
+	$SUDO cp -R hyp-libs/hypamqp/hypamqp2.py $PREFIX/$DST
 	check_code $?
 else
-	echo "Error: Impossible to find '$BASE'"
+	echo "Error: Impossible to find '$DST'"
 	exit 1
 fi
 
@@ -360,9 +362,22 @@ make 1>> $LOG 2>> $LOG
 check_code $?
 echo " + Install ..."
 $SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
+$SUDO cp nagios2amqp/nagios2amqp $PREFIX/opt/event-brokers/nagios/
 $SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
 echo " + Configuration ..."
 echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
+check_code $?
+
+######################################
+#  Webcore
+######################################
+cd $SRC_PATH
+$SUDO mkdir -p $PREFIX/var/www/
+
+echo "Install Webcore ..."
+LOG="$LOG_PATH/webcore.log"
+echo " + Install ..."
+$SUDO cp -R www/webcore $PREFIX/var/www/ 1>> $LOG 2>> $LOG
 check_code $?
 
 
