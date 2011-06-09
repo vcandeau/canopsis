@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import time, signal, logging, threading
-#from neb2socket import *
 from amqplib import client_0_8 as amqp
 
 class hypamqp(object):
@@ -119,7 +118,6 @@ class hypamqp(object):
 	class thread_waiter(threading.Thread):
 		def __init__(self,logger, queue):
 			threading.Thread.__init__(self)
-			self._stop = threading.Event()
 
 			self.queue = queue
 			self.logger = logger
