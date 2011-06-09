@@ -372,12 +372,12 @@ check_code $?
 #  Webcore
 ######################################
 cd $SRC_PATH
-$SUDO mkdir -p $PREFIX/var/www/
+$SUDO mkdir -p $PREFIX/var/www/ $PREFIX/var/www/html
 
 echo "Install Webcore ..."
 LOG="$LOG_PATH/webcore.log"
 echo " + Install ..."
-$SUDO cp -R www/webcore $PREFIX/var/www/ 1>> $LOG 2>> $LOG
+$SUDO cp -R www/* $PREFIX/var/www/ 1>> $LOG 2>> $LOG
 check_code $?
 
 
