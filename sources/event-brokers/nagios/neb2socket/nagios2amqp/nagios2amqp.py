@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import time, signal, threading, json
+import time, signal, threading, json, os
+import daemon,lockfile
 from neb2socket import *
 from Queue import Queue
 
@@ -32,17 +33,6 @@ BUFFER_QUEUE_MAX_SIZE = 1000
 
 ########################################################
 #
-#   Callback
-#
-########################################################
-
-def on_nagios_event(event):
-	#logger.debug("on_nagios_event: Push event in Queue ...")
-	to_amqp_queue.put(event)
-	pass
-
-########################################################
-#
 #   Functions
 #
 ########################################################
@@ -54,14 +44,10 @@ def signal_handler(signum, frame):
 	print("Receive signal to stop daemon...")
 	global RUN
 	RUN = 0
-	
+
 	## Clean Asyncore
 	if receiver:
 		receiver.stop()
-	
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-
 
 class thread_listen_queue(threading.Thread):
 	def __init__(self):
@@ -69,11 +55,12 @@ class thread_listen_queue(threading.Thread):
 			
 	def run(self):	
 		logger.debug("thread_listen_queue: Wait event in queue ...")
-		self.RUN=1	
+		self.RUN=1
+	
 		while self.RUN:
 			try:
 				event = to_amqp_queue.get(True, timeout=1)
-				
+				#logger.debug("Send event to AMQP ...")
 				key = DAEMON_TYPE+".nagios."+event["source_name"]+"."+event["type"]+"."+event["source_type"]
 				
 				if event["type"] == "check":
@@ -91,6 +78,16 @@ class thread_listen_queue(threading.Thread):
 	def stop(self):
 		self.RUN=0
 
+########################################################
+#
+#   Callback
+#
+########################################################
+
+def on_nagios_event(event):
+	#logger.debug("on_nagios_event: Push event in Queue ...")
+	to_amqp_queue.put(event)
+	pass
 
 ########################################################
 #
@@ -98,32 +95,41 @@ class thread_listen_queue(threading.Thread):
 #
 ########################################################
 
-# Connect to amqp bus
-myamqp = hypamqp()
-myamqp.connect()
+def main():
+	signal.signal(signal.SIGINT, signal_handler)
+	signal.signal(signal.SIGTERM, signal_handler)
+	
+	# global
+	global to_amqp_queue, receiver, myamqp
+	
+	# Connect to amqp bus
+	myamqp = hypamqp()
+	myamqp.connect()
 
-logger.debug("Create buffer queue ...")
-to_amqp_queue = Queue(BUFFER_QUEUE_MAX_SIZE)
+	logger.debug("Create buffer queue ...")
+	to_amqp_queue = Queue(BUFFER_QUEUE_MAX_SIZE)
 
-logger.debug("Start Queue listenner thread ...")
-thr_queue_listenner = thread_listen_queue()
-thr_queue_listenner.start()
+	logger.debug("Start Queue listenner thread ...")
+	thr_queue_listenner = thread_listen_queue()
+	thr_queue_listenner.start()
 
-# Read unix socket
-while RUN:
-	try:
-		receiver = neb2socket(socket_path=UNX_SOCKET, msg_callback=on_nagios_event, output_format="dict", logging_level=logging.DEBUG)
-		
+	# Read unix socket
+	while RUN:
 		try:
-			asyncore.loop()
+			receiver = neb2socket(socket_path=UNX_SOCKET, msg_callback=on_nagios_event, output_format="dict", logging_level=logging.DEBUG)
+			
+			try:
+				asyncore.loop()
+			except:
+				pass
 		except:
-			pass
-	except:
-		logger.error("Conenction error, try to re-connect after 3 seconds ...")
-		receiver = None
-		time.sleep(3)
+			logger.error("Conenction error, try to re-connect after 3 seconds ...")
+			receiver = None
+			time.sleep(3)
 
-logger.debug("Stop Queue listenner thread ...")
-thr_queue_listenner.stop()
-thr_queue_listenner.join()
+	logger.debug("Stop Queue listenner thread ...")
+	thr_queue_listenner.stop()
+	thr_queue_listenner.join()
 
+if __name__ == "__main__":
+	main()
