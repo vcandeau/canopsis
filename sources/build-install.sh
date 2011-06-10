@@ -345,7 +345,7 @@ cd $SRC_PATH
 echo "Install Hyp-libs ..."
 echo " + Install ..."
 DST="/lib/hyp-libs"
-if [ -e $BASE ]; then
+if [ -e "hyp-libs" ]; then
 	$SUDO mkdir -p $PREFIX/$DST
 	$SUDO rm -Rf $PREFIX/$DST
 	$SUDO mkdir -p $PREFIX/$DST
