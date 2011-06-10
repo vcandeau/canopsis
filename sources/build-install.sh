@@ -103,6 +103,15 @@ function install_conf {
 	fi
 }
 
+function install_python_daemon(){
+	DPATH=$1
+	DAEMON_NAME=`basename $DPATH .py`
+	$SUDO rm -f $PREFIX/opt/hyp-daemons/$DAEMON_NAME.py &>/dev/null
+	$SUDO ln -s $DPATH $PREFIX/opt/hyp-daemons/
+
+	$SUDO rm -f $PREFIX/etc/init.d/$DAEMON_NAME &>/dev/null
+	$SUDO ln -s $PREFIX/lib/hyp-libs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
+}
 
 #### MAIN
 
@@ -342,6 +351,7 @@ if [ -e $BASE ]; then
 	$SUDO mkdir -p $PREFIX/$DST
 	$SUDO cp -R hyp-libs/hypamqp/hypamqp.py $PREFIX/$DST
 	$SUDO cp -R hyp-libs/hypamqp/hypamqp2.py $PREFIX/$DST
+	$SUDO cp -R hyp-libs/*.py $PREFIX/$DST
 	check_code $?
 else
 	echo "Error: Impossible to find '$DST'"
@@ -364,9 +374,12 @@ make 1>> $LOG 2>> $LOG
 check_code $?
 echo " + Install ..."
 $SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
-$SUDO cp nagios2amqp/nagios2amqp $PREFIX/opt/event-brokers/nagios/
+$SUDO cp nagios2amqp/nagios2amqp.py $PREFIX/opt/event-brokers/nagios/
 $SUDO cp nagios2amqp/pyamqp.conf $PREFIX/etc/
 $SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
+
+install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
+
 echo " + Configuration ..."
 echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
 check_code $?
