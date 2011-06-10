@@ -31,8 +31,10 @@ logger = logging.getLogger(DAEMON_NAME)
 ########################################################
 
 def on_message(msg):
+	logger.debug("New message ...")
 	source = msg.delivery_info['routing_key'] + "@" + msg.delivery_info['exchange']
-	print "%s:\n\t%s\n" % (source, msg.body)
+	text= "%s:\n\t%s\n" % (source, msg.body)
+	logger.debug("New message:\n%s" % text)
 
 
 ########################################################
