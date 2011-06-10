@@ -19,6 +19,7 @@ VERS_RABBITMQ="2.4.1"
 VERS_MONGODB="1.8.1"
 VERS_NODEJS="v0.4.8"
 
+
 ### functions
 function extract_archive {
 	if [ ! -e $1 ]; then
@@ -114,6 +115,24 @@ function install_python_daemon(){
 }
 
 #### MAIN
+
+#### CLEAN
+if [ "$1" == "clean" ]; then
+	echo "Clean $PREFIX ..."
+	echo " + kill all hypervision process ..."
+	$SUDO su - $HUSER -c "hypcontrol stop"
+	check_code $?
+	PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
+	for PID in $PIDS; do
+		echo "  + Kill $PID"
+		$SUDO kill -9 $PID
+	done	
+	echo " + Del user $HUSER ..."
+	$SUDO userdel $HUSER
+	echo " + Remove $PREFIX ..."
+	$SUDO rm -Rf $PREFIX
+	exit 0
+fi
 
 echo "Make directories ..."
 $SUDO mkdir -p $PREFIX/etc/init.d $PREFIX/var/log $PREFIX/var/run $PREFIX/var/www $PREFIX/bin
