@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PREFIX="/opt/hypervision"
+export HOME=$PREFIX
 
 alias python=$PREFIX/bin/python
 export PYTHONPATH=$PREFIX/lib/hyp-libs/
