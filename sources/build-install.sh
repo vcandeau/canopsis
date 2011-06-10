@@ -172,6 +172,7 @@ install_pylib "pymongo" "1.11"
 # For debian
 install_pylib "pycurl" "7.18.2"
 install_pylib "tornado" "1.2.1"
+install_pylib "python-daemon" "1.5.5"
 
 
 ######################################
