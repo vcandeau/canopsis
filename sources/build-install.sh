@@ -329,9 +329,9 @@ echo " + Install ..."
 BASE="hyp-daemons"
 DST="/opt/"
 if [ -e $BASE ]; then
-	$SUDO mkdir -p $PREFIX/$DST
-	$SUDO rm -Rf $PREFIX/$DST/$BASE
-	$SUDO cp -R $BASE $PREFIX/$DST
+	$SUDO mkdir -p $PREFIX/$DST/$BASE
+	#$SUDO rm -Rf $PREFIX/$DST/$BASE
+	#$SUDO cp -R $BASE $PREFIX/$DST
 	check_code $?
 else
 	echo "Error: Impossible to find '$BASE'"
