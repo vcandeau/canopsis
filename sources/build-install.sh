@@ -364,6 +364,7 @@ check_code $?
 echo " + Install ..."
 $SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
 $SUDO cp nagios2amqp/nagios2amqp $PREFIX/opt/event-brokers/nagios/
+$SUDO cp nagios2amqp/pyamqp.conf $PREFIX/etc/
 $SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
 echo " + Configuration ..."
 echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
