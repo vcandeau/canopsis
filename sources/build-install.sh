@@ -17,7 +17,7 @@ VERS_PYTHON="2.7.1"
 VERS_ERLANG="R14B02"
 VERS_RABBITMQ="2.4.1"
 VERS_MONGODB="1.8.1"
-
+VERS_NODEJS="v0.4.8"
 
 ### functions
 function extract_archive {
@@ -300,6 +300,62 @@ if [ ! -e $FCHECK ]; then
 else
 	echo " + Allready install"
 fi
+
+######################################
+#  NodeJS
+######################################
+cd $SRC_PATH/externals
+echo "Install NodeJS $VERS_NODEJS ..."
+BASE="node-$VERS_NODEJS"
+LOG="$LOG_PATH/$BASE.log"
+rm -f $LOG &> /dev/null
+FCHECK="$PREFIX/bin/node"
+if [ ! -e $FCHECK ]; then
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.gz"
+	fi
+	cd $BASE
+
+	echo " + Configure ..."
+	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Build ..."
+	make 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Install ..."
+	$SUDO make install 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo "Install NPM for NodeJS ..."
+	echo "Install NPM for NodeJS ..." 1>> $LOG 2>> $LOG
+	cd ..
+	echo " + Git clone ..."
+	if [ -e npm ]; then
+		cd npm
+		git pull 1>> $LOG 2>> $LOG
+	else
+		git clone http://github.com/isaacs/npm.git 1>> $LOG 2>> $LOG
+		cd npm
+	fi
+	echo " + Install ..."
+	$SUDO make 1>> $LOG 2>> $LOG
+	$SUDO $PREFIX/bin/node cli.js install -g -f 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo "Install Socket.IO for NodeJS ..."
+	echo "Install Socket.IO for NodeJS ..." 1>> $LOG 2>> $LOG
+	echo " + Install ..."
+	$SUDO $PREFIX/bin/node $PREFIX/bin/npm install socket.io 1>> $LOG 2>> $LOG
+	check_code $?
+	
+	#echo " + Post install configurations ..."
+	#check_code $?
+else
+	echo " + Allready install"
+fi
+
 
 
 ######################################
