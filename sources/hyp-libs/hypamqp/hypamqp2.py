@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-import time, signal, logging, threading
+import time, signal, logging, threading, os
+import ConfigParser
 from amqplib import client_0_8 as amqp
 
 class hypamqp(object):
-	def __init__(self, host="localhost:5672 ", userid="guest", password="guest", virtual_host="/", exchange_name="hypervision", logging_level=logging.DEBUG):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="/", exchange_name="hypervision", logging_level=logging.DEBUG, read_config_file=True):
 	
 
 		logging.basicConfig(level=logging.DEBUG,
@@ -12,16 +13,21 @@ class hypamqp(object):
                     )
 
 		self.logger = logging.getLogger("neb2socket")
-		self.logger.setLevel(logging_level)
 		
 		self.chan = None
 		self.conn = None
 		
 		self.host=host
+		self.port=port
 		self.userid=userid
 		self.password=password
 		self.virtual_host=virtual_host
 		self.exchange_name=exchange_name
+		
+		if read_config_file:
+			self.read_config(['pyamqp.conf', os.path.expanduser('~/etc/pyamqp.conf')])
+		
+		self.logger.setLevel(logging_level)
 		
 		self.queues = {};
 		self.pub_chan = None
@@ -29,7 +35,7 @@ class hypamqp(object):
 		self.connected = False
 
 	def connect(self):
-		self.conn = amqp.Connection(host="localhost:5672 ", userid="guest", password="guest", virtual_host="/", insist=False)
+		self.conn = amqp.Connection(host=self.host, port=self.port, userid=self.userid, password=self.password, virtual_host=self.virtual_host, insist=False)
 		self.pub_chan = self.conn.channel()
 		self.pub_chan.exchange_declare(exchange=self.exchange_name, type="topic", durable=True, auto_delete=False)
 		self.connected = True
@@ -144,6 +150,32 @@ class hypamqp(object):
 			#self.logger.debug("Stop thread")
 			self.RUN=0
 			#self._stop.set()
+			
+			
+	def read_config(self, filename):
+		# Read config file
+		config = ConfigParser.RawConfigParser()
+		#config.read(os.path.expanduser('~/etc/pyamqp.conf'))
+		config.read(filename)
+
+		self.host = config.get("master", "host")
+		self.port = config.getint("master", "port")
+		self.userid = config.get("master", "userid")
+		self.password = config.get("master", "password")
+		self.virtual_host = config.get("master", "virtual_host")
+		self.exchange_name = config.get("master", "exchange_name")
+		self.logging_level = config.get("master", "logging_level")
+
+		if self.logging_level == "DEBUG":
+			self.logging_level = logging.DEBUG
+		elif self.logging_level == "INFO":
+			self.logging_level = logging.INFO
+		elif self.logging_level == "WARNING":
+			self.logging_level = logging.WARNING
+		elif self.logging_level == "ERROR":
+			self.logging_level = logging.ERROR
+		elif self.logging_level == "CRITICAL":
+			self.logging_level = logging.CRITICAL
 			
 			
 
