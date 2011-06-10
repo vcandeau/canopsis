@@ -328,15 +328,15 @@ echo "Install Hyp-daemons ..."
 echo " + Install ..."
 BASE="hyp-daemons"
 DST="/opt/"
-if [ -e $BASE ]; then
+#if [ -e $BASE ]; then
 	$SUDO mkdir -p $PREFIX/$DST/$BASE
 	#$SUDO rm -Rf $PREFIX/$DST/$BASE
 	#$SUDO cp -R $BASE $PREFIX/$DST
 	check_code $?
-else
-	echo "Error: Impossible to find '$BASE'"
-	exit 1
-fi
+#else
+#	echo "Error: Impossible to find '$BASE'"
+#	exit 1
+#fi
 
 ######################################
 #  Hyp-libs
