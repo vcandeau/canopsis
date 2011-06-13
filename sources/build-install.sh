@@ -165,6 +165,7 @@ function make_package(){
 
 	echo "    + Clean ..."
 	rm -f $PPATH/files.tgz
+	rm -f $PPATH/files.lst
 	check_code $?
 
 	echo "    + Re-init initial listing ..."
