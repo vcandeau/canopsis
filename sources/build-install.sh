@@ -163,6 +163,10 @@ function make_package(){
 	mv $PNAME.tgz $BPATH/
 	check_code $?
 
+	echo "    + Clean ..."
+	rm -f $PPATH/files.tgz
+	check_code $?
+
 	echo "    + Re-init initial listing ..."
 	mv $FLIST_TMP $FLIST
 	check_code $?
