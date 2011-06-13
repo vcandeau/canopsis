@@ -166,7 +166,6 @@ function make_package(){
 #### CLEAN
 if [ "$1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
-	exit 0
 	echo " + kill all hypervision process ..."
 	$SUDO su - $HUSER -c "hypcontrol stop"
 	check_code $?
@@ -179,6 +178,8 @@ if [ "$1" = "clean" ]; then
 	$SUDO userdel $HUSER
 	echo " + Remove $PREFIX ..."
 	$SUDO rm -Rf $PREFIX
+	echo " + Remove all packages ..."
+	$SUDO rm -Rf $SRC_PATH/packages/*
 	exit 0
 fi
 
