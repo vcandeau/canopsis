@@ -251,6 +251,7 @@ install_pylib "pycurl" "7.18.2"
 install_pylib "tornado" "1.2.1"
 install_pylib "python-daemon" "1.5.5"
 
+make_package "python"
 
 ######################################
 #  Erlang
@@ -288,6 +289,7 @@ else
 	echo " + Allready install"
 fi
 
+make_package "erlang"
 
 ######################################
 #  RabbitMQ
@@ -339,6 +341,8 @@ else
 	echo " + Allready install"
 fi
 
+make_package "rabbitmq"
+
 ######################################
 #  MongoDB
 ######################################
@@ -368,6 +372,8 @@ if [ ! -e $FCHECK ]; then
 else
 	echo " + Allready install"
 fi
+
+make_package "mongodb"
 
 ######################################
 #  NodeJS
@@ -425,6 +431,7 @@ else
 fi
 
 
+make_package "nodejs"
 
 ######################################
 #  Hyp-tools
@@ -443,6 +450,8 @@ else
 	echo "Error: Impossible to find '$BASE'"
 	exit 1
 fi
+
+make_package "canotools"
 
 ######################################
 #  Hyp-deamons
@@ -482,6 +491,8 @@ else
 	exit 1
 fi
 
+make_package "canolibs"
+
 ######################################
 #  Event-brokers
 ######################################
@@ -507,6 +518,7 @@ install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
 echo " + Configuration ..."
 echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
 check_code $?
+
 make_package "neb2socket"
 
 ######################################
@@ -521,6 +533,7 @@ echo " + Install ..."
 $SUDO cp -R www/* $PREFIX/var/www/ 1>> $LOG 2>> $LOG
 check_code $?
 
+#make_package "webcore"
 
 ######################################
 #  Fix permissions
