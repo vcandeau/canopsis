@@ -128,6 +128,7 @@ function make_package(){
 
 	echo "    + Purge old build ..."
 	rm -Rf $PPATH &> /dev/null
+	rm -f $PPATH.tgz &> /dev/null
 
 	echo "    + Make files listing ..."
 	mkdir -p $PPATH
@@ -156,12 +157,54 @@ function make_package(){
 	tar cfz $PNAME.tgz $PNAME
 	check_code $?
 
+	echo "    + Move to binaries ..."
+	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+	mkdir -p $BPATH
+	mv $PNAME.tgz $BPATH/
+	check_code $?
+
 	echo "    + Re-init initial listing ..."
 	mv $FLIST_TMP $FLIST
 	check_code $?
 }
 
+
+function detect_os(){
+	echo "Detect distribution ..."
+	VERSION=`cat /proc/version`
+	check_code $?
+	DEBIAN=`echo "$VERSION" | grep -i debian | wc -l`
+	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
+	REDHAT=`echo "$VERSION" | grep -i redhat | wc -l`
+	CENTOS=`echo "$VERSION" | grep -i centos | wc -l`
+
+	DIST_VERS=""
+	
+	if [ $DEBIAN -ne 0 ]; then
+		DIST="DEBIAN"
+		DIST_VERS=`cat /etc/debian_version`
+		echo " + $DIST $DIST_VERS"
+	elif [ $UBUNTU -ne 0 ]; then
+		DIST="UBUNTU"
+		DIST_VERS=`lsb_release -r | cut -f2`
+		echo " + $DIST $DIST_VERS"
+	elif [ $REDHAT -ne 0 ]; then
+		DIST="REDHAT"
+		DIST_VERS=`lsb_release -r | cut -f2`
+		echo " + $DIST $DIST_VERS"
+	elif [ $CENTOS -ne 0 ]; then
+		DIST="CENTOS"
+		DIST_VERS=`lsb_release -r | cut -f2`
+		echo " + $DIST $DIST_VERS"
+	else
+		echo " + Impossible to find distribution ..."
+		exit 1
+	fi
+}
+
 #### MAIN
+
+detect_os
 
 #### CLEAN
 if [ "$1" = "clean" ]; then
@@ -181,8 +224,8 @@ if [ "$1" = "clean" ]; then
 	$SUDO userdel $HUSER
 	echo " + Remove $PREFIX ..."
 	$SUDO rm -Rf $PREFIX
-	echo " + Remove all packages ..."
-	$SUDO rm -Rf $SRC_PATH/packages/*
+	#echo " + Remove all packages ..."
+	#$SUDO rm -Rf $SRC_PATH/packages/*
 	exit 0
 fi
 
@@ -197,6 +240,8 @@ $SUDO useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
 $SUDO cp -R $SRC_PATH/extra/profile/.bash_* $PREFIX/
 export PATH="$PREFIX/bin/:$PATH"
 check_code $?
+
+make_package "canohome"
 
 ######################################
 #  Python
@@ -214,8 +259,11 @@ if [ ! -e $FCHECK ]; then
 	cd  $BASE
 
 	echo " + Fix env vars"
-	export LDFLAGS="$LDFLAGS -L/usr/lib/`dpkg-architecture -qDEB_HOST_MULTIARCH`"
-	check_code $?
+	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH`
+	if [ $? -eq 0 ]; then
+		export LDFLAGS="$LDFLAGS -L/usr/lib/$DEB_HOST_MULTIARCH"
+		check_code $?
+	fi
 
 	echo " + Clean ..."
 	make clean 1>> $LOG 2>> $LOG
