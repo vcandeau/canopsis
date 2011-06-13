@@ -55,7 +55,12 @@ function install_pylib {
 	LOG="$LOG_PATH/$BASE.log"
 
 	rm -f $LOG &> /dev/null
-	FCHECK=`ls $PREFIX/lib/python2.7/site-packages/ | grep "$BASE-py2.7" | wc -l`
+
+	#remplace '-' by '.'
+	FBASE=`echo "$BASE" | sed s#-#\.#g`
+
+	FCHECK=`ls $PREFIX/lib/python2.7/site-packages/ | grep "$FBASE-py2.7" | wc -l`
+	#echo " + Check $FCHEK ..."
 	if [ $FCHECK -eq 0 ]; then
 		cd pylibs
 		if [ ! -e $BASE ]; then
@@ -114,11 +119,54 @@ function install_python_daemon(){
 	$SUDO ln -s $PREFIX/lib/hyp-libs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
 }
 
+function make_package(){
+	PNAME=$1
+	echo " + Make package $PNAME ..."
+	PPATH=$SRC_PATH/packages/$PNAME
+	FLIST=$SRC_PATH/packages/files.lst
+	FLIST_TMP=$SRC_PATH/packages/files.tmp
+
+	echo "    + Purge old build ..."
+	rm -Rf $PPATH &> /dev/null
+
+	echo "    + Make files listing ..."
+	mkdir -p $PPATH
+	touch $FLIST
+	check_code $?
+
+	cd $PREFIX &> /dev/null
+	find ./ -type f > $FLIST_TMP
+	check_code $?
+
+	diff $FLIST $FLIST_TMP  | grep ">" | sed 's#> ##g' > $PPATH/files.lst
+	check_code $?
+
+	echo "    + Make files archive ..."
+	cd $PREFIX &> /dev/null
+	tar cfz $PPATH/files.tgz -T $PPATH/files.lst
+	check_code $?
+	cd - &> /dev/null
+	
+	echo "    + Check control script ..."
+	touch $PPATH/control
+	chmod +x $PPATH/control
+
+	echo "    + Make final archive ..."
+	cd $SRC_PATH/packages/
+	tar cfz $PNAME.tgz $PNAME
+	check_code $?
+
+	echo "    + Re-init initial listing ..."
+	mv $FLIST_TMP $FLIST
+	check_code $?
+}
+
 #### MAIN
 
 #### CLEAN
-if [ "$1" == "clean" ]; then
+if [ "$1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
+	exit 0
 	echo " + kill all hypervision process ..."
 	$SUDO su - $HUSER -c "hypcontrol stop"
 	check_code $?
@@ -458,6 +506,7 @@ install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
 echo " + Configuration ..."
 echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
 check_code $?
+make_package "neb2socket"
 
 ######################################
 #  Webcore
