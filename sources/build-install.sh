@@ -167,12 +167,15 @@ function make_package(){
 if [ "$1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all hypervision process ..."
-	$SUDO su - $HUSER -c "hypcontrol stop"
-	check_code $?
+	if [ -e $PREFIX/opt/hyp-tools/hypcontrol ]; then
+		$SUDO su - $HUSER -c "hypcontrol stop"
+		check_code $?
+	fi
 	PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
 	for PID in $PIDS; do
 		echo "  + Kill $PID"
 		$SUDO kill -9 $PID
+		check_code $?
 	done	
 	echo " + Del user $HUSER ..."
 	$SUDO userdel $HUSER
