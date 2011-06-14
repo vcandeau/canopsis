@@ -1,0 +1,150 @@
+#!/bin/bash
+
+VARLIB_PATH="$HOME/var/lib/pkgmgr"
+. $HOME/lib/common.sh
+
+detect_os > /dev/null
+
+DB_PATH=$VARLIB_PATH/db
+touch $DB_PATH
+
+function db_get(){
+	PNAME=$1
+	touch $DB_PATH
+	echo `cat $DB_PATH | grep $PNAME | tail -n1`
+}
+
+function db_set(){
+	PNAME=$1
+	VERS=$2
+	STATUS=$3
+	sed "/$PNAME/d" -i $DB_PATH
+	echo "$PNAME~$VERS~$STATUS" >> $DB_PATH
+	check_code $?
+}
+
+function db_del(){
+	PNAME=$1
+	sed "/$PNAME/d" -i $DB_PATH
+	check_code $?
+}
+
+function db_parse(){
+	INFO=$1
+	DATA=$2
+	if [ "x$INFO" = "xname" ]; then
+		FIELD=1	
+	elif [ "x$INFO" = "xversion" ]; then
+		FIELD=2
+	elif [ "x$INFO" = "xstatus" ]; then
+		FIELD=2
+	fi
+	echo "$DATA" | cut -d '~' -f$FIELD
+}
+
+function get_ppath(){
+        PNAME=$1
+        PPATH=""
+        #echo "Get path of '$PNAME' ..."
+
+        PPATH="$VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/$PNAME"
+        if [ ! -e $PPATH ]; then
+		if [ ! -e $PPATH.tgz ]; then
+		        echo "Package $PNAME not found"
+	                exit 1
+		else
+			cd $VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/
+			tar xfz $PNAME.tgz
+			check_code $?
+			rm -f $PNAME.tgz		
+		fi
+        fi
+
+	echo $PPATH
+}
+
+function install_package(){
+        PNAME=$1
+        PPATH=$(get_ppath "$PNAME")
+	check_code $?
+
+	DBINFO=$(db_get "$PNAME")
+	PSTATUS=$(db_parse "status" "$DBINFO")
+	PVERS=$(db_parse "version" "$DBINFO")
+
+	#echo "DBINFO: $DBINFO"
+	#echo "PSTATUS: $PSTATUS, PVERS: $PVERS"
+
+	if [ "x$PSTATUS" = "x" ]; then
+	        #echo "Install package $PNAME ..."
+
+	        cd $PREFIX
+	        tar xfz $PPATH/files.tgz
+	        check_code $?
+	
+	        . $PPATH/control
+	        check_code $?
+	        install
+		check_code $?
+
+		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+	else
+		echo "$PNAME is allready install."
+		exit 1
+	fi
+	echo " + Ok"
+}
+
+function remove_package(){
+        PNAME=$1
+        PPATH=$(get_ppath "$PNAME")
+	check_code $?
+
+	DBINFO=$(db_get "$PNAME")
+	PSTATUS=$(db_parse "status" "$DBINFO")
+	PVERS=$(db_parse "version" "$DBINFO")
+
+	if [ ! "x$PSTATUS" = "x" ]; then
+	        #echo "Remove package $PNAME ..."
+	        . $PPATH/control
+	        check_code $?
+	        remove
+		check_code $?
+
+		db_del "$PNAME"
+	else
+		echo "$PNAME is not installed."
+		exit 1
+	fi
+	
+	echo " + Ok"
+}
+
+######### MAIN ##########
+ACTION=$1
+
+if [ "x$ACTION" = "xinstall" ]; then
+	install_package $2
+	exit $?
+fi
+
+if [ "x$ACTION" = "xremove" ]; then
+	remove_package $2
+	exit $?
+fi
+
+if [ "x$ACTION" = "xlist" ]; then
+	echo "Build info: `cat $VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/build.info`"
+	echo
+	echo -e "Package        Version        Status"
+ 	echo "-------------------------------------------------"
+	awk '{ printf "%-15s%-15s%s\n",$1,$2,$3}' FS=\~ $DB_PATH
+	exit $?
+fi
+
+if [ "x$ACTION" = "xupdate" ]; then
+	echo "Update DB ..."
+	exit $?
+fi
+
+

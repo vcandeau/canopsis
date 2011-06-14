@@ -1,15 +1,12 @@
 #!/bin/bash
 
 ### Configurations
-PREFIX="/opt/hypervision"
-PY_BIN=$PREFIX"/bin/python"
-SUDO="sudo -E"
-INC_DIRS="/usr/include"
 SRC_PATH=`pwd`
+. $SRC_PATH/extra/profile/lib/common.sh
+
+PY_BIN=$PREFIX"/bin/python"
+INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
-HUSER="hypervision"
-HGROUP="hypervision"
-ARCH=`uname -m`
 
 
 ### Archives version
@@ -41,12 +38,6 @@ function extract_archive {
 	fi
 }
 
-function check_code {
-	if [ $1 -ne 0 ]; then
-		echo "Error: Code: $1"
-		exit $1
-	fi
-}
 
 function install_pylib {
 	BASE=$1-$2
@@ -121,89 +112,58 @@ function install_python_daemon(){
 
 function make_package(){
 	PNAME=$1
-	echo " + Make package $PNAME ..."
-	PPATH=$SRC_PATH/packages/$PNAME
-	FLIST=$SRC_PATH/packages/files.lst
-	FLIST_TMP=$SRC_PATH/packages/files.tmp
-
-	echo "    + Purge old build ..."
-	rm -Rf $PPATH &> /dev/null
-	rm -f $PPATH.tgz &> /dev/null
-
-	echo "    + Make files listing ..."
-	mkdir -p $PPATH
-	touch $FLIST
-	check_code $?
-
-	cd $PREFIX &> /dev/null
-	find ./ -type f > $FLIST_TMP
-	check_code $?
-
-	diff $FLIST $FLIST_TMP  | grep ">" | sed 's#> ##g' > $PPATH/files.lst
-	check_code $?
-
-	echo "    + Make files archive ..."
-	cd $PREFIX &> /dev/null
-	tar cfz $PPATH/files.tgz -T $PPATH/files.lst
-	check_code $?
-	cd - &> /dev/null
+	if [ "$ARG1" = "pkg" ]; then
+		echo " + Make package $PNAME ..."
+		PPATH=$SRC_PATH/packages/$PNAME
+		FLIST=$SRC_PATH/packages/files.lst
+		FLIST_TMP=$SRC_PATH/packages/files.tmp
 	
-	echo "    + Check control script ..."
-	touch $PPATH/control
-	chmod +x $PPATH/control
-
-	echo "    + Make final archive ..."
-	cd $SRC_PATH/packages/
-	tar cfz $PNAME.tgz $PNAME
-	check_code $?
-
-	echo "    + Move to binaries ..."
-	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
-	mkdir -p $BPATH
-	mv $PNAME.tgz $BPATH/
-	check_code $?
-
-	echo "    + Clean ..."
-	rm -f $PPATH/files.tgz
-	rm -f $PPATH/files.lst
-	check_code $?
-
-	echo "    + Re-init initial listing ..."
-	mv $FLIST_TMP $FLIST
-	check_code $?
-}
-
-
-function detect_os(){
-	echo "Detect distribution ..."
-	VERSION=`cat /proc/version`
-	check_code $?
-	DEBIAN=`echo "$VERSION" | grep -i debian | wc -l`
-	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
-	REDHAT=`echo "$VERSION" | grep -i redhat | wc -l`
-	CENTOS=`echo "$VERSION" | grep -i centos | wc -l`
-
-	DIST_VERS=""
+		echo "    + Purge old build ..."
+		#rm -Rf $PPATH &> /dev/null
+		rm -f $PPATH.tgz &> /dev/null
 	
-	if [ $DEBIAN -ne 0 ]; then
-		DIST="DEBIAN"
-		DIST_VERS=`cat /etc/debian_version`
-		echo " + $DIST $DIST_VERS"
-	elif [ $UBUNTU -ne 0 ]; then
-		DIST="UBUNTU"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
-	elif [ $REDHAT -ne 0 ]; then
-		DIST="REDHAT"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
-	elif [ $CENTOS -ne 0 ]; then
-		DIST="CENTOS"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
-	else
-		echo " + Impossible to find distribution ..."
-		exit 1
+		echo "    + Make files listing ..."
+		mkdir -p $PPATH
+		touch $FLIST
+		check_code $?
+	
+		cd $PREFIX &> /dev/null
+		find ./ -type f > $FLIST_TMP
+		check_code $?
+	
+		diff $FLIST $FLIST_TMP  | grep ">" | sed 's#> ##g' > $PPATH/files.lst
+		check_code $?
+	
+		echo "    + Make files archive ..."
+		cd $PREFIX &> /dev/null
+		$SUDO tar cfz $PPATH/files.tgz -T $PPATH/files.lst
+		check_code $?
+		cd - &> /dev/null
+		
+		echo "    + Check control script ..."
+		touch $PPATH/control
+		chmod +x $PPATH/control
+	
+		echo "    + Make final archive ..."
+		cd $SRC_PATH/packages/
+		tar cfz $PNAME.tgz $PNAME
+		check_code $?
+	
+		echo "    + Move to binaries ..."
+		BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+		cat /proc/version > $BPATH/build.info
+		mkdir -p $BPATH
+		mv $PNAME.tgz $BPATH/
+		check_code $?
+	
+		echo "    + Clean ..."
+		$SUDO rm -f $PPATH/files.tgz
+		rm -f $PPATH/files.lst
+		check_code $?
+	
+		echo "    + Re-init initial listing ..."
+		mv $FLIST_TMP $FLIST
+		check_code $?
 	fi
 }
 
@@ -212,7 +172,9 @@ function detect_os(){
 detect_os
 
 #### CLEAN
-if [ "$1" = "clean" ]; then
+ARG1=$1
+ARG2=$2
+if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all hypervision process ..."
 	if [ -e $PREFIX/opt/hyp-tools/hypcontrol ]; then
@@ -224,29 +186,37 @@ if [ "$1" = "clean" ]; then
 		echo "  + Kill $PID"
 		$SUDO kill -9 $PID
 		check_code $?
-	done	
-	echo " + Del user $HUSER ..."
-	$SUDO userdel $HUSER
-	echo " + Remove $PREFIX ..."
-	$SUDO rm -Rf $PREFIX
-	#echo " + Remove all packages ..."
-	#$SUDO rm -Rf $SRC_PATH/packages/*
+	done
+	
+	. $SRC_PATH/packages/canohome/control
+	remove
+	purge
+
+	rm -f $SRC_PATH/packages/files.lst &> /dev/null
 	exit 0
 fi
 
-echo "Make directories ..."
-$SUDO mkdir -p $PREFIX/etc/init.d $PREFIX/var/log $PREFIX/var/run $PREFIX/var/www $PREFIX/bin
-check_code $?
-
-
-echo "Create Hypervision user ('$HUSER')..."
-$SUDO groupadd $HGROUP &> /dev/null
-$SUDO useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
-$SUDO cp -R $SRC_PATH/extra/profile/.bash_* $PREFIX/
-export PATH="$PREFIX/bin/:$PATH"
-check_code $?
-
+######################################
+#  CanoHome
+######################################
+cd $SRC_PATH
+. $SRC_PATH/packages/canohome/control
+install
+$SUDO cp -aR extra/profile/* $PREFIX/
+$SUDO cp -aR extra/profile/.bash_completion $PREFIX/
+$SUDO cp -aR extra/profile/.bash_profile $PREFIX/
 make_package "canohome"
+
+######################################
+#  pkgmgr
+######################################
+echo "Install pkgmgr ..."
+cd $SRC_PATH
+$SUDO cp -R pkgmgr/* $PREFIX/
+check_code $?
+echo " + Ok"
+make_package "pkgmgr"
+
 
 ######################################
 #  Python
