@@ -1,43 +1,58 @@
 #!/bin/bash
 
-function check_code {
-	if [ $1 -ne 0 ]; then
-		echo "Error: Code: $1"
-		exit $1
-	fi
-}
+SRC_PATH=`pwd`
+. $SRC_PATH/common.sh
 
-function detect_os(){
-	echo "Detect distribution ..."
-	VERSION=`cat /proc/version`
-	check_code $?
-	DEBIAN=`echo "$VERSION" | grep -i debian | wc -l`
-	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
-	REDHAT=`echo "$VERSION" | grep -i redhat | wc -l`
-	CENTOS=`echo "$VERSION" | grep -i centos | wc -l`
+VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
+$SUDO mkdir -p $VARLIB_PATH
+check_code $?
 
-	DIST_VERS=""
+DB_PATH=$VARLIB_PATH/db
+
+detect_os
+
+function get_ppath(){
+	PNAME=$1
+	PPATH=""
+	#echo "Get path of '$PNAME' ..."
 	
-	if [ $DEBIAN -ne 0 ]; then
-		DIST="DEBIAN"
-		DIST_VERS=`cat /etc/debian_version`
-		echo " + $DIST $DIST_VERS"
-	elif [ $UBUNTU -ne 0 ]; then
-		DIST="UBUNTU"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
-	elif [ $REDHAT -ne 0 ]; then
-		DIST="REDHAT"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
-	elif [ $CENTOS -ne 0 ]; then
-		DIST="CENTOS"
-		DIST_VERS=`lsb_release -r | cut -f2`
-		echo " + $DIST $DIST_VERS"
+	PPATH="$SRC_PATH/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz"
+	if [ -e $CPPATH ]; then
+		echo $PPATH
 	else
-		echo " + Impossible to find distribution ..."
+		echo "Package $PNAME not found"
 		exit 1
 	fi
 }
 
-detect_os
+function install_package(){
+	PNAME=$1
+	PPATH=$(get_ppath "$PNAME")
+
+	echo "Install package $PNAME ($PPATH) ..."
+	cd $SRC_PATH && mkdir -p tmp && cd tmp
+	tar xfz $PPATH
+	check_code $?
+	
+	cd $PREFIX
+	$SUDO tar xfz $SRC_PATH/tmp/$PNAME/files.tgz
+	check_code $?
+	
+	. $SRC_PATH/tmp/$PNAME/control
+	check_code $?
+	install
+	check_code $?
+	$SUDO sh -c "echo '$PNAME~$VERSION~installed' >> $DB_PATH"
+
+	cd $SRC_PATH
+}
+
+
+echo "Install Bootstrap in $PREFIX ..."
+#echo " + canohome"
+install_package "canohome"
+
+#echo " + pkgmgr"
+install_package "pkgmgr"
+
+rm -Rf tmp
