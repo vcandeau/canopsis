@@ -151,6 +151,7 @@ function make_package(){
 	
 		echo "    + Move to binaries ..."
 		BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+		$SUDO mkdir -p $BPATH
 		cat /proc/version > $BPATH/build.info
 		mkdir -p $BPATH
 		mv $PNAME.tgz $BPATH/
