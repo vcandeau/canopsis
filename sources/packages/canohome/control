@@ -1,0 +1,43 @@
+#!/bin/bash
+
+NAME="canohome"
+VERSION=1
+RELEASE=0
+DESCRIPTION=""
+REQUIRES=""
+
+function install(){
+	echo "Install $NAME $VERSION-$RELEASE ..."
+	echo " + Make home directories ..."
+	$SUDO mkdir -p $PREFIX/etc/init.d $PREFIX/var/log $PREFIX/var/run $PREFIX/var/www $PREFIX/bin
+	check_code $?
+
+	echo " + Create Hypervision user ('$HUSER')..."
+	$SUDO groupadd $HGROUP &> /dev/null
+	$SUDO useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
+	#$SUDO cp -R $SRC_PATH/extra/profile/.bash_* $PREFIX/
+	export PATH="$PREFIX/bin/:$PATH"
+	check_code $?
+
+	echo " + Fix permissions..."
+	$SUDO chown $HUSER:$HGROUP -R $PREFIX
+	check_code $?
+}
+
+function remove(){
+	echo "Remove $NAME $VERSION-$RELEASE ..."
+	echo " + Del user $HUSER ..."
+	$SUDO userdel $HUSER
+	check_code $?
+}
+
+function purge(){
+	echo "Purge $NAME $VERSION-$RELEASE ..."
+	echo " + Remove $PREFIX ..."
+	$SUDO rm -Rf $PREFIX
+	check_code $?
+}
+
+function update(){
+	echo "Update $NAME $VERSION-$RELEASE ..."
+}
