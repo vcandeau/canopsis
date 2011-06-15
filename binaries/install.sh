@@ -37,22 +37,26 @@ function install_package(){
 	cd $PREFIX
 	$SUDO tar xfz $SRC_PATH/tmp/$PNAME/files.tgz
 	check_code $?
-	
-	. $SRC_PATH/tmp/$PNAME/control
+
+	. $SRC_PATH/tmp/$PNAME/control	
+	$SUDO bash -c ". $SRC_PATH/common.sh && . $SRC_PATH/tmp/$PNAME/control && install && echo '$PNAME~$VERSION~installed' >> $DB_PATH"
 	check_code $?
-	install
-	check_code $?
-	$SUDO sh -c "echo '$PNAME~$VERSION~installed' >> $DB_PATH"
 
 	cd $SRC_PATH
 }
 
 
 echo "Install Bootstrap in $PREFIX ..."
-#echo " + canohome"
 install_package "canohome"
-
-#echo " + pkgmgr"
+install_package "canotools"
+install_package "canolibs"
 install_package "pkgmgr"
 
 rm -Rf tmp
+
+
+echo "Copy packages ..."
+$SUDO cp -R $SRC_PATH/$ARCH $PREFIX/var/lib/pkgmgr/packages/
+
+echo "Fix permissions ..."
+$SUDO chown $HUSER:$HGROUP -R $PREFIX

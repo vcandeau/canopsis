@@ -110,6 +110,34 @@ function install_python_daemon(){
 	$SUDO ln -s $PREFIX/lib/hyp-libs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
 }
 
+function make_package_archive(){
+	PNAME=$1
+	PPATH=$SRC_PATH/packages/$PNAME
+
+	echo "    + Make Package archive ..."
+	cd $PREFIX &> /dev/null
+	$SUDO tar cfz $PPATH/files.tgz -T $PPATH/files.lst
+	check_code $?
+	cd - &> /dev/null
+	
+	echo "    + Check control script ..."
+	touch $PPATH/control
+	chmod +x $PPATH/control
+
+	echo "    + Make final archive ..."
+	cd $SRC_PATH/packages/
+	tar cfz $PNAME.tgz $PNAME
+	check_code $?
+
+	echo "    + Move to binaries directory ..."
+	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+	$SUDO mkdir -p $BPATH
+	cat /proc/version > $BPATH/build.info
+	mkdir -p $BPATH
+	mv $PNAME.tgz $BPATH/
+	check_code $?
+}
+
 function make_package(){
 	PNAME=$1
 	if [ "$ARG1" = "pkg" ]; then
@@ -129,37 +157,17 @@ function make_package(){
 	
 		cd $PREFIX &> /dev/null
 		find ./ -type f > $FLIST_TMP
+		find ./ -type l >> $FLIST_TMP
 		check_code $?
 	
 		diff $FLIST $FLIST_TMP  | grep ">" | sed 's#> ##g' > $PPATH/files.lst
 		check_code $?
-	
-		echo "    + Make files archive ..."
-		cd $PREFIX &> /dev/null
-		$SUDO tar cfz $PPATH/files.tgz -T $PPATH/files.lst
-		check_code $?
-		cd - &> /dev/null
 		
-		echo "    + Check control script ..."
-		touch $PPATH/control
-		chmod +x $PPATH/control
-	
-		echo "    + Make final archive ..."
-		cd $SRC_PATH/packages/
-		tar cfz $PNAME.tgz $PNAME
-		check_code $?
-	
-		echo "    + Move to binaries ..."
-		BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
-		$SUDO mkdir -p $BPATH
-		cat /proc/version > $BPATH/build.info
-		mkdir -p $BPATH
-		mv $PNAME.tgz $BPATH/
-		check_code $?
+		make_package_archive "$PNAME"	
 	
 		echo "    + Clean ..."
 		$SUDO rm -f $PPATH/files.tgz
-		rm -f $PPATH/files.lst
+		#rm -f $PPATH/files.lst
 		check_code $?
 	
 		echo "    + Re-init initial listing ..."
@@ -194,6 +202,18 @@ if [ "$ARG1" = "clean" ]; then
 	purge
 
 	rm -f $SRC_PATH/packages/files.lst &> /dev/null
+	exit 0
+fi
+
+if [ "$ARG1" = "mkpkg" ]; then
+	PNAME=$ARG2
+	echo "Make package $PNAME ..."
+	if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
+		make_package_archive "$PNAME"	
+	else
+		echo " + Impossible to find file.lst ..."
+		exit 1
+	fi
 	exit 0
 fi
 
@@ -368,7 +388,7 @@ else
 	echo " + Allready install"
 fi
 
-make_package "rabbitmq"
+make_package "rabbitmq-server"
 
 ######################################
 #  MongoDB
@@ -512,6 +532,7 @@ if [ -e "hyp-libs" ]; then
 	$SUDO cp -R hyp-libs/hypamqp/hypamqp.py $PREFIX/$DST
 	$SUDO cp -R hyp-libs/hypamqp/hypamqp2.py $PREFIX/$DST
 	$SUDO cp -R hyp-libs/*.py $PREFIX/$DST
+	$SUDO cp hyp-libs/pyamqp.conf $PREFIX/etc/
 	check_code $?
 else
 	echo "Error: Impossible to find '$DST'"
@@ -537,7 +558,6 @@ check_code $?
 echo " + Install ..."
 $SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
 $SUDO cp nagios2amqp/nagios2amqp.py $PREFIX/opt/event-brokers/nagios/
-$SUDO cp nagios2amqp/pyamqp.conf $PREFIX/etc/
 $SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
 
 install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"

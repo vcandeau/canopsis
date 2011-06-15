@@ -8,17 +8,22 @@ REQUIRES="canohome pkgmgr"
 
 function install(){
 	echo "Install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/log/mongodb
+	mkdir -p $PREFIX/var/lib/mongodb
 	check_code $?
 }
 
 function remove(){
 	echo "Remove $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	service mongodb stop
+	#check_code $?
 }
 
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	rm -Rf $PREFIX/var/lib/mongodb
+	rm -Rf $PREFIX/var/log/mongodb
+	#check_code $?
 }
 
 function update(){

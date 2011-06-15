@@ -8,17 +8,21 @@ REQUIRES="canohome pkgmgr erlang canotools"
 
 function install(){
 	echo "Install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq
 	check_code $?
 }
 
 function remove(){
 	echo "Remove $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	service rabbitmq-server stop 
+	#check_code $?
 }
 
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	rm -Rf $PREFIX/var/lib/rabbitmq
+	rm -Rf $PREFIX/var/log/rabbitmq
+	#check_code $?
 }
 
 function update(){

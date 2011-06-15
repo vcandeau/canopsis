@@ -1,4 +1,0 @@
-./opt/event-brokers/nagios/neb2socket.o
-./opt/event-brokers/nagios/nagios2amqp.py
-./etc/pyamqp.conf
-./lib/hyp-libs/neb2socket.py
