@@ -601,7 +601,7 @@ if [ ! -e $FCHECK ]; then
  --lock-path=$PREFIX/var/run/nginx.pid \
  --pid-path=$PREFIX/var/run/nginx.lock \
  --conf-path=$PREFIX/etc/nginx/nginx.conf \
- --error-log-path=$PREFIX/var/log/nginx.log \
+ --error-log-path=$PREFIX/var/log/nginx/error.log \
  --http-log-path=$PREFIX/var/log/nginx/access.log \
  --user=$HUSER \
  --group=$HGROUP 1>> $LOG 2>> $LOG
@@ -616,8 +616,19 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Configuration ..."
-	sed 's#listen       80;#listen       8080;#' -i $PREFIX/etc/nginx/nginx.conf
+	$SUDO mkdir -p $PREFIX/etc/nginx/conf.d $PREFIX/etc/nginx/sites-enabled
 	check_code $?
+	$SUDO mv $PREFIX/etc/nginx/nginx.conf $PREFIX/etc/nginx/nginx.ori
+	check_code $?
+
+	install_conf "nginx.conf"
+
+	$SUDO ln -s $PREFIX/etc/nginx.conf $PREFIX/etc/nginx/nginx.conf
+	check_code $?
+
+
+	install_conf "adm-external.conf"
+	$SUDO mv $PREFIX/etc/adm-external.conf $PREFIX/etc/nginx/sites-enabled/
 
 	cd - > /dev/null
 else
