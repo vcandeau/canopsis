@@ -15,7 +15,7 @@ VERS_ERLANG="R14B02"
 VERS_RABBITMQ="2.4.1"
 VERS_MONGODB="1.8.1"
 VERS_NODEJS="v0.4.8"
-
+VERS_NGINX="1.0.4"
 
 ### functions
 function extract_archive {
@@ -547,28 +547,86 @@ make_package "canolibs"
 #  Event-brokers
 ######################################
 cd $SRC_PATH
-$SUDO mkdir -p $PREFIX/opt/event-brokers/nagios/
-
 echo "Install Event Brokers: Neb2socket ..."
+$SUDO mkdir -p $PREFIX/opt/event-brokers/nagios/
 LOG="$LOG_PATH/neb2socket.log"
-echo " + Clean  ..."
+
 cd event-brokers/nagios/neb2socket
-make clean 1>> $LOG 2>> $LOG
-echo " + Build ..."
-make 1>> $LOG 2>> $LOG
-check_code $?
-echo " + Install ..."
-$SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
-$SUDO cp nagios2amqp/nagios2amqp.py $PREFIX/opt/event-brokers/nagios/
 $SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
 
-install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
-
-echo " + Configuration ..."
-echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
-check_code $?
+FCHECK="$PREFIX/opt/event-brokers/nagios/neb2socket.o"
+if [ ! -e $FCHECK ]; then
+	echo " + Clean  ..."
+	make clean 1>> $LOG 2>> $LOG
+	echo " + Build ..."
+	make 1>> $LOG 2>> $LOG
+	check_code $?
+	echo " + Install ..."
+	$SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
+	$SUDO cp nagios2amqp/nagios2amqp.py $PREFIX/opt/event-brokers/nagios/
+	
+	install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
+	
+	echo " + Configuration ..."
+	echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
+	check_code $?
+else
+	echo " + Allready install"
+fi
 
 make_package "neb2socket"
+
+######################################
+#  NGinx
+######################################
+cd $SRC_PATH/externals
+echo "Install Nginx $VERS_NGINX ..."
+BASE="nginx-$VERS_NGINX"
+LOG="$LOG_PATH/$BASE.log"
+rm -f $LOG &> /dev/null
+FCHECK="$PREFIX/sbin/nginxx"
+if [ ! -e $FCHECK ]; then
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.gz"
+	fi
+	cd  $BASE
+
+	echo " + Clean ..."
+	make clean 1>> $LOG 2>> $LOG
+	#check_code $?
+
+	echo " + Configure ..."
+	./configure --prefix=$PREFIX  \
+ --sbin-path=$PREFIX/bin/ \
+ --lock-path=$PREFIX/var/run/nginx.pid \
+ --pid-path=$PREFIX/var/run/nginx.lock \
+ --conf-path=$PREFIX/etc/nginx/nginx.conf \
+ --error-log-path=$PREFIX/var/log/nginx.log \
+ --http-log-path=$PREFIX/var/log/nginx/access.log \
+ --user=$HUSER \
+ --group=$HGROUP 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Build ..."
+	make 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Install ..."
+	$SUDO make install 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Configuration ..."
+	sed 's#listen       80;#listen       8080;#' -i $PREFIX/etc/nginx/nginx.conf
+	check_code $?
+
+	cd - > /dev/null
+else
+	echo " + Allready install"
+fi
+
+make_package "nginx"
+
+
 
 ######################################
 #  Webcore
