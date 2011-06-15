@@ -1,0 +1,10 @@
+log/
+externals/pylibs/*/
+packages/*/files.lst
+packages/*/files.tgz
+*/draft
+*/drafts
+externals/*/
+*.pyc
+*neb2socket.o
+!externals/rabbitmq-plugins
