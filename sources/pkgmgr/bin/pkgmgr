@@ -50,7 +50,7 @@ function get_ppath(){
         PPATH="$VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/$PNAME"
         if [ ! -e $PPATH ]; then
 		if [ ! -e $PPATH.tgz ]; then
-		        echo "Package $PNAME not found"
+		        echo "Package $PNAME not found ($PPATH.tgz)" >&2
 	                exit 1
 		else
 			cd $VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/

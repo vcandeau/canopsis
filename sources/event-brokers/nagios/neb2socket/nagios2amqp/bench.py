@@ -26,7 +26,7 @@ while True:
   data = conn.recv(1)
   if data:
 	print "Bench it !"
-	for num in range(0, 50000, 1):
+	for num in range(0, 10, 1):
 		event = testevent + '"}\n'
 		conn.send(event)
 	break

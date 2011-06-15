@@ -8,6 +8,7 @@ REQUIRES="canohome"
 
 function install(){
 	echo "Install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/lib/pkgmgr/packages
 	check_code $?
 }
 
@@ -18,7 +19,8 @@ function remove(){
 
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	rm -Rf $PREFIX/var/lib/pkgmgr/packages
+	#check_code $?
 }
 
 function update(){

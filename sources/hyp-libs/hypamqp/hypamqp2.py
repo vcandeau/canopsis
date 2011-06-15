@@ -25,7 +25,7 @@ class hypamqp(object):
 		self.exchange_name=exchange_name
 		
 		if read_config_file:
-			self.read_config(['pyamqp.conf', os.path.expanduser('~/etc/pyamqp.conf')])
+			self.read_config(os.path.expanduser('~/etc/pyamqp.conf'))
 		
 		self.logger.setLevel(logging_level)
 		
@@ -35,6 +35,7 @@ class hypamqp(object):
 		self.connected = False
 
 	def connect(self):
+		self.logger.debug("Connect to %s:%i ..." % (self.host, self.port))
 		self.conn = amqp.Connection(host=self.host, port=self.port, userid=self.userid, password=self.password, virtual_host=self.virtual_host, insist=False)
 		self.pub_chan = self.conn.channel()
 		self.pub_chan.exchange_declare(exchange=self.exchange_name, type="topic", durable=True, auto_delete=False)
@@ -142,7 +143,7 @@ class hypamqp(object):
 				#self.logger.debug("%s: Get message" % queue_name)
 				msg = chan.basic_get(queue_name, no_ack=True)
 				if not msg:
-					time.sleep(0.1)
+					time.sleep(0.2)
 				else:
 					callback(msg)
 			
