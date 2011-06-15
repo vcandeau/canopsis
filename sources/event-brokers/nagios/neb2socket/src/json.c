@@ -15,9 +15,9 @@ void nebstruct_program_status_data_to_json(char * buffer, nebstruct_program_stat
 \"type\": \"program_status\", \
 \"source_name\": \"%s\", \
 \"source_type\": \"daemon\", \
-\"timestamp\": \"%i\", \
-\"program_start\": \"%i\", \
-\"pid\": \"%i\"}\n",
+\"timestamp\": %i, \
+\"program_start\": %i, \
+\"pid\": %i}\n",
 		g_eventsource_name,
 		(int)c->timestamp.tv_sec,
 		(int)c->program_start,
@@ -31,16 +31,16 @@ void nebstruct_service_check_data_to_json(char * buffer, nebstruct_service_check
 \"type\": \"check\", \
 \"source_name\": \"%s\", \
 \"source_type\": \"service\", \
-\"timestamp\": \"%i\", \
+\"timestamp\": %i, \
 \"host_name\": \"%s\", \
 \"service_description\": \"%s\", \
-\"check_type\": \"%i\", \
-\"current_attempt\": \"%i\", \
-\"max_attempts\": \"%i\", \
-\"state_type\": \"%i\", \
-\"state\": \"%i\", \
-\"execution_time\": \"%.3lf\", \
-\"latency\": \"%.3lf\", \
+\"check_type\": %i, \
+\"current_attempt\": %i, \
+\"max_attempts\": %i, \
+\"state_type\": %i, \
+\"state\": %i, \
+\"execution_time\": %.3lf, \
+\"latency\": %.3lf, \
 \"command_name\": \"%s\", \
 \"output\": \"%s\", \
 \"long_output\": \"%s\", \
@@ -67,15 +67,15 @@ void nebstruct_host_check_data_to_json(char * buffer, nebstruct_host_check_data 
 \"type\": \"check\", \
 \"source_name\": \"%s\", \
 \"source_type\": \"host\", \
-\"timestamp\": \"%i\", \
+\"timestamp\": %i, \
 \"host_name\": \"%s\", \
-\"check_type\": \"%i\", \
-\"current_attempt\": \"%i\", \
-\"max_attempts\": \"%i\", \
-\"state_type\": \"%i\", \
-\"state\": \"%i\", \
-\"execution_time\": \"%.3lf\", \
-\"latency\": \"%.3lf\", \
+\"check_type\": %i, \
+\"current_attempt\": %i, \
+\"max_attempts\": %i, \
+\"state_type\": %i, \
+\"state\": %i, \
+\"execution_time\": %.3lf, \
+\"latency\": %.3lf, \
 \"command_name\": \"%s\", \
 \"output\": \"%s\", \
 \"long_output\": \"%s\", \
@@ -109,15 +109,15 @@ void nebstruct_acknowledgement_data_to_json(char * buffer, nebstruct_acknowledge
 \"type\": \"ack\", \
 \"source_name\": \"%s\", \
 \"source_type\": \"%s\", \
-\"timestamp\": \"%i\", \
+\"timestamp\": %i, \
 \"host_name\": \"%s\", \
 \"service_description\": \"%s\", \
 \"author_name\": \"%s\", \
 \"comment_data\": \"%s\", \
-\"state\": \"%i\", \
-\"is_sticky\": \"%i\", \
-\"persistent_comment\": \"%i\", \
-\"notify_contacts\": \"%i\"}\n",
+\"state\": %i, \
+\"is_sticky\": %i, \
+\"persistent_comment\": %i, \
+\"notify_contacts\": %i}\n",
 		g_eventsource_name,
 		source_type,
 		(int)c->timestamp.tv_sec,
@@ -152,20 +152,20 @@ void nebstruct_downtime_data_to_json(char * buffer, nebstruct_downtime_data *c){
 \"type\": \"downtime\", \
 \"source_name\": \"%s\", \
 \"source_type\": \"%s\", \
-\"timestamp\": \"%i\", \
+\"timestamp\": %i, \
 \"host_name\": \"%s\", \
 \"service_description\": \"%s\", \
 \"author_name\": \"%s\", \
 \"comment_data\": \"%s\", \
 \"state\": \"%s\", \
-\"downtime_type\": \"%i\", \
-\"entry_time\": \"%i\", \
-\"start_time\": \"%i\", \
-\"end_time\": \"%i\", \
-\"fixed\": \"%i\", \
-\"duration\": \"%ld\", \
-\"triggered_by\": \"%ld\", \
-\"downtime_id\": \"%ld\" \
+\"downtime_type\": %i, \
+\"entry_time\": %i, \
+\"start_time\": %i, \
+\"end_time\": %i, \
+\"fixed\": %i, \
+\"duration\": %ld, \
+\"triggered_by\": %ld, \
+\"downtime_id\": %ld \
 }\n",
 		g_eventsource_name,
 		source_type,
@@ -206,20 +206,20 @@ void nebstruct_comment_data_to_json(char * buffer, nebstruct_comment_data *c){
 \"type\": \"comment\", \
 \"source_name\": \"%s\", \
 \"source_type\": \"%s\", \
-\"timestamp\": \"%i\", \
+\"timestamp\": %i, \
 \"host_name\": \"%s\", \
 \"service_description\": \"%s\", \
 \"author_name\": \"%s\", \
 \"comment_data\": \"%s\", \
 \"state\": \"%s\", \
-\"comment_type\": \"%i\", \
-\"persistent\": \"%i\", \
-\"entry_time\": \"%i\", \
-\"entry_type\": \"%i\", \
-\"expires\": \"%i\", \
-\"expire_time\": \"%i\", \
-\"source\": \"%i\", \
-\"comment_id\": \"%ld\" \
+\"comment_type\": %i, \
+\"persistent\": %i, \
+\"entry_time\": %i, \
+\"entry_type\": %i, \
+\"expires\": %i, \
+\"expire_time\": %i, \
+\"source\": %i, \
+\"comment_id\": %ld \
 }\n",
 		g_eventsource_name,
 		source_type,
