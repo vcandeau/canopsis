@@ -15,7 +15,7 @@ UNITTESTS=`find ./ | grep Myunittest.py`
 for UNITTEST in $UNITTESTS; do 
         echo "##### Proceed to $UNITTEST" 
         sudo mkdir -p $PREFIX/tmp 
-        cp $SRC_PATH/$UNITTEST $PREFIX/tmp/ 
+        sudo cp $SRC_PATH/$UNITTEST $PREFIX/tmp/ 
         sudo su - hypervision -c "python $PREFIX/tmp/Myunittest.py" 
         check_code $? 
         echo "#### END ####" 
