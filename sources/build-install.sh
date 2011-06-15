@@ -136,6 +136,11 @@ function make_package_archive(){
 	mkdir -p $BPATH
 	mv $PNAME.tgz $BPATH/
 	check_code $?
+
+	echo "    + Clean ..."
+	$SUDO rm -f $PPATH/files.tgz
+	#rm -f $PPATH/files.lst
+	check_code $?
 }
 
 function make_package(){
@@ -165,10 +170,6 @@ function make_package(){
 		
 		make_package_archive "$PNAME"	
 	
-		echo "    + Clean ..."
-		$SUDO rm -f $PPATH/files.tgz
-		#rm -f $PPATH/files.lst
-		check_code $?
 	
 		echo "    + Re-init initial listing ..."
 		mv $FLIST_TMP $FLIST
