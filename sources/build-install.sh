@@ -584,7 +584,7 @@ echo "Install Nginx $VERS_NGINX ..."
 BASE="nginx-$VERS_NGINX"
 LOG="$LOG_PATH/$BASE.log"
 rm -f $LOG &> /dev/null
-FCHECK="$PREFIX/sbin/nginxx"
+FCHECK="$PREFIX/sbin/nginx"
 if [ ! -e $FCHECK ]; then
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tar.gz"
