@@ -376,6 +376,7 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Post install configurations ..."
+	$SUDO cp $SRC_PATH/externals/rabbitmq-plugins/* $PREFIX/opt/rabbitmq-server/plugins
 	$SUDO mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq
 	$SUDO sed -i s#/etc/rabbitmq#$PREFIX/etc#g $PREFIX/bin/rabbitmq-env
 	check_code $?
