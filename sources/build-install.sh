@@ -603,6 +603,11 @@ if [ ! -e $FCHECK ]; then
  --conf-path=$PREFIX/etc/nginx/nginx.conf \
  --error-log-path=$PREFIX/var/log/nginx/error.log \
  --http-log-path=$PREFIX/var/log/nginx/access.log \
+ --http-client-body-temp-path=$PREFIX/var/lib/nginx/client_body_temp \
+ --http-proxy-temp-path=$PREFIX/var/lib/nginx/proxy_temp \
+ --http-fastcgi-temp-path=$PREFIX/var/lib/nginx/fastcgi_temp \
+ --http-uwsgi-temp-path=$PREFIX/var/lib/nginx/uwsgi_temp \
+ --http-scgi-temp-path=$PREFIX/var/lib/nginx/scgi_temp \
  --user=$HUSER \
  --group=$HGROUP 1>> $LOG 2>> $LOG
 	check_code $?
@@ -616,7 +621,7 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Configuration ..."
-	$SUDO mkdir -p $PREFIX/etc/nginx/conf.d $PREFIX/etc/nginx/sites-enabled
+	$SUDO mkdir -p $PREFIX/etc/nginx/conf.d $PREFIX/etc/nginx/sites-enabled $PREFIX/var/lib/nginx
 	check_code $?
 	$SUDO mv $PREFIX/etc/nginx/nginx.conf $PREFIX/etc/nginx/nginx.ori
 	check_code $?
