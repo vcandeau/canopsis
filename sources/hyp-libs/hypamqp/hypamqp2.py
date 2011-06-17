@@ -79,7 +79,7 @@ class hypamqp(object):
 			self.pub_chan = self.conn.channel()
 			self.pub_chan.exchange_declare(exchange=exchange_name, type="topic", durable=True, auto_delete=False)
 			
-		self.pub_chan.basic_publish(msg,exchange=self.exchange_name,routing_key=routing_key)
+		self.pub_chan.basic_publish(msg,exchange=exchange_name,routing_key=routing_key)
 		
 	def disconnect(self):
 		if self.connected:
