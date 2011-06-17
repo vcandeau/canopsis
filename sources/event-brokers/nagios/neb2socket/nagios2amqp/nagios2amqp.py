@@ -65,8 +65,8 @@ class thread_listen_queue(threading.Thread):
 				
 				if event["type"] == "check":
 					key = key +"."+ event["host_name"]
-					#if event["source_type"] == "service":
-					#	key = key +"."+ event["service_description"]
+					if event["source_type"] == "service":
+						key = key +"."+ event["service_description"]
 						
 				
 				msg = amqp.Message(json.dumps(event))
