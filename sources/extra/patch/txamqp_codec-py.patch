@@ -1,0 +1,11 @@
+--- ./lib/python2.7/site-packages/txAMQP-0.3-py2.7.egg/txamqp/codec.py.ori	2011-06-17 16:02:12.878963821 +0200
++++ ./lib/python2.7/site-packages/txAMQP-0.3-py2.7.egg/txamqp/codec.py	2011-06-17 16:02:52.083158230 +0200
+@@ -180,6 +180,8 @@
+         value = self.decode_longstr()
+       elif type == "I":
+         value = self.decode_long()
++      elif type == "F":
++        value = self.decode_table()
+       else:
+         raise ValueError(repr(type))
+       result[key] = value
