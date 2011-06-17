@@ -71,10 +71,13 @@ class hypamqp(object):
 	def queue_wait(self, queue_name):
 		self.queues[queue_name]['chan'].wait()
 	
-	def publish(self, msg, routing_key):
+	def publish(self, msg, routing_key, exchange_name=None):
+		if not exchange_name:
+			exchange_name = self.exchange_name
+
 		if not self.pub_chan:
 			self.pub_chan = self.conn.channel()
-			self.pub_chan.exchange_declare(exchange=self.exchange_name, type="topic", durable=True, auto_delete=False)
+			self.pub_chan.exchange_declare(exchange=exchange_name, type="topic", durable=True, auto_delete=False)
 			
 		self.pub_chan.basic_publish(msg,exchange=self.exchange_name,routing_key=routing_key)
 		
