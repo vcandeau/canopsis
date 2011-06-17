@@ -740,6 +740,10 @@ if [ ! -e $FCHECK ]; then
 	$SUDO cp $SRC_PATH/extra/conf/graphite.db $PREFIX/opt/graphite/storage
 	check_code $?
 
+	install_conf "dashboard.conf"
+	$SUDO mv $PREFIX/etc/dashboard.conf $PREFIX/etc/graphite/
+	check_code $?
+
 	install_bin "graphite_webserver"
 	
 else
