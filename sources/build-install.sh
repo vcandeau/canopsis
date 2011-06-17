@@ -737,6 +737,8 @@ if [ ! -e $FCHECK ]; then
 	$SUDO sed -i "/^WEBAPP_DIR/a\\WEBAPP_DIR = GRAPHITE_ROOT + '/webapp/'" $PREFIX/opt/graphite/webapp/graphite/settings.py
 
 	$SUDO ln -fs $PREFIX/var/lib/graphite $PREFIX/opt/graphite/storage
+	$SUDO ln -fs $PREFIX/etc/graphite $PREFIX/opt/graphite/conf
+
 	$SUDO cp $SRC_PATH/extra/conf/graphite.db $PREFIX/opt/graphite/storage
 	check_code $?
 
