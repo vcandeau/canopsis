@@ -736,6 +736,8 @@ if [ ! -e $FCHECK ]; then
 	$SUDO sed -i "/^WEB_DIR/a\\WEB_DIR = GRAPHITE_ROOT + '/webapp/graphite/'" $PREFIX/opt/graphite/webapp/graphite/settings.py
 	$SUDO sed -i "/^WEBAPP_DIR/a\\WEBAPP_DIR = GRAPHITE_ROOT + '/webapp/'" $PREFIX/opt/graphite/webapp/graphite/settings.py
 
+	$SUDO sed -i "/^#TIME_ZONE =/a\\TIME_ZONE = 'Europe/Paris'" $PREFIX/opt/graphite/webapp/graphite/settings.py
+
 	$SUDO ln -fs $PREFIX/var/lib/graphite $PREFIX/opt/graphite/storage
 	$SUDO ln -fs $PREFIX/etc/graphite $PREFIX/opt/graphite/conf
 
