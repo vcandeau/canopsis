@@ -55,7 +55,16 @@ function install_pylib {
 	if [ $FCHECK -eq 0 ]; then
 		cd pylibs
 		if [ ! -e $BASE ]; then
-			extract_archive "$BASE.tar.gz"
+			if [ -e "$BASE.tar.gz" ]; then
+				extract_archive "$BASE.tar.gz"
+			elif [ -e "$BASE.tgz" ]; then
+				extract_archive "$BASE.tgz"
+			elif [ -e "$BASE.tar.bz2" ]; then
+				extract_archive "$BASE.tar.bz2"
+			else
+				print "Impossible to find archive ..."
+				exit 1
+			fi
 		fi
 		cd $BASE
 		echo " + Install $BASE ..."
@@ -99,6 +108,23 @@ function install_conf {
 		exit 1
 	fi
 }
+
+function install_bin {
+	IFILE="$SRC_PATH/extra/bin/$1"
+	if [ -e $IFILE ]; then
+		echo " + Install bin file '$1' ..."
+		$SUDO cp $IFILE $PREFIX/bin/$1
+		check_code $?
+		$SUDO sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/bin/$1
+		$SUDO sed "s#@HUSER@#$HUSER#g" -i $PREFIX/bin/$1
+		$SUDO sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/bin/$1
+		check_code $?
+	else
+		echo "Error: Impossible to find '$IFILE'"
+		exit 1
+	fi
+}
+
 
 function install_python_daemon(){
 	DPATH=$1
@@ -576,6 +602,173 @@ fi
 
 make_package "neb2socket"
 
+
+######################################
+#  Graphite
+######################################
+cd $SRC_PATH
+echo "Install Graphite ..."
+LOG="$LOG_PATH/graphite.log"
+
+
+FCHECK="$PREFIX/opt/graphite"
+if [ ! -e $FCHECK ]; then
+
+	cd $SRC_PATH/externals
+	
+	install_pylib "Twisted" "11.0.0"
+	install_pylib "python-txamqp" "0.3"
+	echo " + Patch python-txamqp ..."
+	# https://bugs.launchpad.net/txamqp/+bug/741147
+	cd $PREFIX
+	$SUDO rm lib/python2.7/site-packages/txAMQP-0.3-py2.7.egg/txamqp/codec.pyc &> /dev/null
+	$SUDO patch -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
+	check_code $?
+	cd - &> /dev/null
+
+	install_pylib "Django" "1.3"
+	install_pylib "pysqlite" "2.6.3"
+	if [ -e $PREFIX/pysqlite2-doc ]; then
+		$SUDO mkdir -p $PREFIX/share/doc/
+		$SUDO mv $PREFIX/pysqlite2-doc $PREFIX/share/doc/
+		check_code $?
+	fi
+
+	echo " + Install py2cairo ..."
+	echo " + Install py2cairo ..." 1>> $LOG 2>> $LOG
+	cd pylibs
+	tar xfz py2cairo-1.10.tar.gz
+	cd py2cairo-1.10
+	echo "   + Configure ..."
+	#./autogen.sh --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	check_code $?
+	echo "   + Make ..."
+	#make 1>> $LOG 2>> $LOG
+	check_code $?
+	echo "   + Make Install ..."
+	#$SUDO make install 1>> $LOG 2>> $LOG
+	check_code $?
+	cd - &> /dev/null
+
+	cd $SRC_PATH/externals
+	install_pylib "whisper" "0.9.8"
+	cd - &> /dev/null
+
+	CARBON_VERS="0.9.8"
+	echo "Install carbon $CARBON_VERS ..."
+	if [ ! -e "$PREFIX/lib/python2.7/site-packages/carbon-$CARBON_VERS-py2.7.egg-info" ]; then
+		cd $SRC_PATH/externals
+		$SUDO mkdir -p $PREFIX/var/log/graphite/carbon-cache
+	
+		echo " + Patch setup.cfg of carbon-$CARBON_VERS"
+		rm -Rf pylibs/carbon-$CARBON_VERS
+		cd pylibs && tar xfz carbon-$CARBON_VERS.tar.gz 
+		check_code $?
+		sed -i "s#/opt/graphite#$PREFIX#" carbon-$CARBON_VERS/setup.cfg
+		check_code $?
+		cd ..
+	
+		install_pylib "carbon" "$CARBON_VERS"
+		$SUDO rm -Rf $PREFIX/etc/graphite $PREFIX/var/lib/graphite
+	
+		$SUDO mv $PREFIX/storage $PREFIX/var/lib/graphite
+		check_code $?
+		$SUDO mv $PREFIX/conf $PREFIX/etc/graphite
+		check_code $?
+	
+		install_conf "carbon.conf"
+		$SUDO mv $PREFIX/etc/carbon.conf $PREFIX/etc/graphite/
+		check_code $?
+	
+		install_conf "storage-schemas.conf"
+		$SUDO mv $PREFIX/etc/storage-schemas.conf $PREFIX/etc/graphite/
+		check_code $?
+	
+		echo " + Post install of carbon ..."
+		$SUDO rm -Rf $PREFIX/lib/python2.7/site-packages/carbon*
+		$SUDO mv $PREFIX/lib/carbon* $PREFIX/lib/python2.7/site-packages/
+	
+		$SUDO ln -fs $PREFIX/bin/carbon-cache.py $PREFIX/etc/init.d/carbon-cache
+	
+		check_code $?
+		echo " + Patch path of carbon ..."
+		$SUDO sed -i "/# Figure out where/a\\ROOT_DIR = '$PREFIX'" $PREFIX/bin/carbon-cache.py
+		$SUDO sed -i "/BIN_DIR/a\\BIN_DIR = join(ROOT_DIR, 'bin')" $PREFIX/bin/carbon-cache.py
+		$SUDO sed -i "/STORAGE_DIR/a\\STORAGE_DIR = join(ROOT_DIR, 'var','lib','graphite')" $PREFIX/bin/carbon-cache.py
+		$SUDO sed -i "/LOG_DIR/a\\LOG_DIR = join(STORAGE_DIR, 'var','log', 'graphite', 'carbon-cache')" $PREFIX/bin/carbon-cache.py
+		$SUDO sed -i "/LIB_DIR/a\\LIB_DIR = join(ROOT_DIR, 'lib')" $PREFIX/bin/carbon-cache.py
+		$SUDO sed -i "/CONF_DIR/a\\CONF_DIR = join(ROOT_DIR, 'etc', 'graphite')" $PREFIX/bin/carbon-cache.py
+	
+		cd - &> /dev/null
+			
+		echo " + Configuration ..."
+		check_code $?
+	else
+		echo " + Allready install"
+	fi
+
+	cd $SRC_PATH/externals
+	GRAPHITE_VERS="0.9.8"
+	echo "Install graphite-web $GRAPHITE_VERS"
+	rm -Rf pylibs/graphite-web-$GRAPHITE_VERS &> /dev/null
+	cd pylibs && tar xfz graphite-web-$GRAPHITE_VERS.tar.gz 
+	check_code $?
+	sed -i "s#/opt/graphite#$PREFIX/opt/graphite#" graphite-web-$GRAPHITE_VERS/setup.cfg
+	check_code $?
+	cd ..
+	install_pylib "graphite-web" "$GRAPHITE_VERS"
+	$SUDO cp -R $PREFIX/conf/* $PREFIX/etc/graphite/
+	$SUDO rm -Rf $PREFIX/conf
+	check_code $?
+
+	$SUDO cp -R $PREFIX/storage/* $PREFIX/var/lib/graphite/
+	$SUDO rm -Rf $PREFIX/storage
+	check_code $?
+
+	$SUDO cp -R $PREFIX/webapp/* $PREFIX/opt/graphite/webapp/
+	$SUDO rm -Rf $PREFIX/webapp
+	check_code $?
+
+	
+	echo " + Patch path of graphite-web  ..."
+	$SUDO sed -i "/^GRAPHITE_ROOT =/d" $PREFIX/opt/graphite/webapp/graphite/settings.py
+	$SUDO sed -i "/# Filesystem layout/a\\GRAPHITE_ROOT = '$PREFIX/opt/graphite/'" $PREFIX/opt/graphite/webapp/graphite/settings.py
+	$SUDO sed -i "/^WEB_DIR/a\\WEB_DIR = GRAPHITE_ROOT + '/webapp/graphite/'" $PREFIX/opt/graphite/webapp/graphite/settings.py
+	$SUDO sed -i "/^WEBAPP_DIR/a\\WEBAPP_DIR = GRAPHITE_ROOT + '/webapp/'" $PREFIX/opt/graphite/webapp/graphite/settings.py
+
+	$SUDO ln -fs $PREFIX/var/lib/graphite $PREFIX/opt/graphite/storage
+	$SUDO cp $SRC_PATH/extra/conf/graphite.db $PREFIX/opt/graphite/storage
+	check_code $?
+
+	install_bin "graphite_webserver"
+	
+else
+	echo " + Allready install"
+fi
+
+make_package "graphite"
+
+######################################
+#  amqp2graphite
+######################################
+cd $SRC_PATH
+
+echo "Install amqp2graphite ..."
+LOG="$LOG_PATH/amqp2graphite.log"
+
+FCHECK="$PREFIX/bin/amqp2graphite"
+#if [ ! -e $FCHECK ]; then
+	echo " + Install ..."
+	$SUDO cp -R amqp2graphite/* $PREFIX/ 1>> $LOG 2>> $LOG
+	check_code $?
+#else
+#	echo " + Allready install"
+#fi
+
+
+make_package "amqp2graphite"
+
+
 ######################################
 #  NGinx
 ######################################
@@ -617,6 +810,7 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Install ..."
+	$SUDO killall nginx &> /dev/null
 	$SUDO make install 1>> $LOG 2>> $LOG
 	check_code $?
 
@@ -631,6 +825,11 @@ if [ ! -e $FCHECK ]; then
 	$SUDO ln -s $PREFIX/etc/nginx.conf $PREFIX/etc/nginx/nginx.conf
 	check_code $?
 
+	$SUDO mkdir -p $PREFIX/var/www/html
+	$SUDO mv $PREFIX/html/* $PREFIX/var/www/html
+	check_code $?
+	$SUDO rmdir $PREFIX/html
+	check_code $?
 
 	install_conf "adm-external.conf"
 	$SUDO mv $PREFIX/etc/adm-external.conf $PREFIX/etc/nginx/sites-enabled/
@@ -641,7 +840,6 @@ else
 fi
 
 make_package "nginx"
-
 
 
 ######################################
