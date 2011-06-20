@@ -42,6 +42,7 @@ function install_package(){
 	$SUDO bash -c ". $SRC_PATH/common.sh && . $SRC_PATH/tmp/$PNAME/control && install && echo '$PNAME~$VERSION~installed' >> $DB_PATH"
 	check_code $?
 
+	rm -Rf $SRC_PATH/tmp
 	cd $SRC_PATH
 }
 
@@ -52,8 +53,7 @@ install_package "canotools"
 install_package "canolibs"
 install_package "pkgmgr"
 
-rm -Rf tmp
-
+cd $SRC_PATH
 
 echo "Copy packages ..."
 $SUDO cp -R $SRC_PATH/$ARCH $PREFIX/var/lib/pkgmgr/packages/
