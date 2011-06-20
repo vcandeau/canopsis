@@ -137,11 +137,12 @@ function install_bin {
 function install_python_daemon(){
 	DPATH=$1
 	DAEMON_NAME=`basename $DPATH .py`
-	$SUDO rm -f $PREFIX/opt/hyp-daemons/$DAEMON_NAME.py &>/dev/null
-	$SUDO ln -s $DPATH $PREFIX/opt/hyp-daemons/
+	#$SUDO rm -f $PREFIX/opt/hyp-daemons/$DAEMON_NAME.py &>/dev/null
+	#$SUDO ln -s $DPATH $PREFIX/opt/hyp-daemons/
 
 	$SUDO rm -f $PREFIX/etc/init.d/$DAEMON_NAME &>/dev/null
 	$SUDO ln -s $PREFIX/lib/canolibs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
+	check_code $?
 }
 
 function make_package_archive(){
@@ -577,7 +578,7 @@ make_package "neb2socket"
 #  nagios2amqp
 ######################################
 install_basic_source "nagios2amqp"
-#install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
+install_python_daemon "$PREFIX/opt/nagios2amqp/nagios2amqp.py"
 make_package "nagios2amqp"
 
 ######################################
