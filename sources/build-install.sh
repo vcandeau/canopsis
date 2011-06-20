@@ -241,7 +241,7 @@ ARG1=$1
 ARG2=$2
 if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
-	echo " + kill all hypervision process ..."
+	echo " + kill all canopsis process ..."
 	if [ -e $PREFIX/opt/hyp-tools/hypcontrol ]; then
 		$SUDO su - $HUSER -c "hypcontrol stop"
 		check_code $?
@@ -299,19 +299,21 @@ if [ ! -e $FCHECK ]; then
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tar.bz2"
 	fi
-	cd  $BASE
+	cd $BASE
 
 	echo " + Fix env vars"
-	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH`
+	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH` 2>> /dev/null
 	if [ $? -eq 0 ]; then
 		export LDFLAGS="$LDFLAGS -L/usr/lib/$DEB_HOST_MULTIARCH"
 		check_code $?
 	fi
 
-	echo " + Clean ..."
-	make clean 1>> $LOG 2>> $LOG
-	#check_code $?
-
+	if [ -e Makefile ]; then
+		echo " + Clean ..."
+		make clean 1>> $LOG 2>> $LOG
+		#check_code $?
+	fi
+	
 	echo " + Configure ..."
 	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $?

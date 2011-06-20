@@ -13,19 +13,19 @@ export HOME=$PREFIX
 alias python=$PREFIX/bin/python
 export PYTHONPATH=$PREFIX/lib/hyp-libs/
 
-sudo su - hypervision -c 'hypcontrol start'
+$SUDO su - $HUSER -c 'hypcontrol start'
 
 UNITTESTS=`find ./ | grep Myunittest.py`
 
 for UNITTEST in $UNITTESTS; do 
         echo "##### Proceed to $UNITTEST" 
-        sudo mkdir -p $PREFIX/tmp 
-        sudo cp $SRC_PATH/$UNITTEST $PREFIX/tmp/ 
-        sudo su - hypervision -c "python $PREFIX/tmp/Myunittest.py" 
+        $SUDO mkdir -p $PREFIX/tmp 
+        $SUDO cp $SRC_PATH/$UNITTEST $PREFIX/tmp/ 
+        $SUDO su - $HUSER -c "python $PREFIX/tmp/Myunittest.py" 
         check_code $? 
         echo "#### END ####" 
         echo 
 done 
-sudo rm -Rf $PREFIX/tmp &> /dev/null
+$SUDO rm -Rf $PREFIX/tmp &> /dev/null
 
-sudo su - hypervision -c 'hypcontrol stop'
+sudo su - $HUSER -c 'hypcontrol stop'
