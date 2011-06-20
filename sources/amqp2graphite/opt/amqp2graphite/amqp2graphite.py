@@ -26,6 +26,7 @@ logging.basicConfig(level=logging.DEBUG,
 		    format='%(asctime)s %(name)s %(levelname)s %(message)s',
 		    )
 logger = logging.getLogger(DAEMON_NAME)
+myamqp = None
 
 ########################################################
 #
@@ -105,6 +106,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 ########################################################
 
 def main():
+	global myamqp
 	myamqp = hypamqp()
 	myamqp.connect()
 	
