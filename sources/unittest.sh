@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SRC_PATH=`pwd`
-. $SRC_PATH/extra/profile/lib/common.sh
+. $SRC_PATH/canohome/lib/common.sh
 
 export HOME=$PREFIX
 
