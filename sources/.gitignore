@@ -8,3 +8,4 @@ externals/*/
 *.pyc
 *neb2socket.o
 !externals/rabbitmq-plugins
+packages/files.lst
