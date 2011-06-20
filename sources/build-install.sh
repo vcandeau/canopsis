@@ -274,10 +274,20 @@ if [ "$ARG1" = "mkpkg" ]; then
 	exit 0
 fi
 
+
+######################################
+#  Init file listing
+######################################
+echo "Init files listing ..."
+$SUDO mkdir -p $PREFIX
+cd $PREFIX &> /dev/null
+find ./ -type f > $SRC_PATH/packages/files.lst
+find ./ -type l >> $SRC_PATH/packages/files.lst
+cd - &> /dev/null
+
 ######################################
 #  CanoHome
 ######################################
-$SUDO mkdir -p $PREFIX
 install_basic_source "canohome"
 make_package "canohome"
 
