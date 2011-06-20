@@ -619,13 +619,13 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 	cd py2cairo-1.10
 	echo "   + Configure ..."
-	#./autogen.sh --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	./autogen.sh --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $?
 	echo "   + Make ..."
-	#make 1>> $LOG 2>> $LOG
+	make 1>> $LOG 2>> $LOG
 	check_code $?
 	echo "   + Make Install ..."
-	#$SUDO make install 1>> $LOG 2>> $LOG
+	$SUDO make install 1>> $LOG 2>> $LOG
 	check_code $?
 	$SUDO rm -Rf $SRC_PATH/externals/pylibs/py2cairo-1.10 &> /dev/null
 	cd - &> /dev/null
