@@ -1,5 +1,0 @@
-./opt/canotools/service
-./opt/canotools/test_amqp
-./opt/canotools/resetrabbitmq
-./opt/canotools/amqp2tty
-./opt/canotools/hypcontrol
