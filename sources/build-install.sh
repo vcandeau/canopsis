@@ -738,7 +738,8 @@ if [ ! -e $FCHECK ]; then
 	$SUDO mv $PREFIX/etc/dashboard.conf $PREFIX/etc/graphite/
 	check_code $?
 
-	install_bin "graphite_webserver"
+	install_basic_source "graphite_webserver"
+	install_python_daemon "$PREFIX/opt/graphite/webserver.py"
 	
 else
 	echo " + Allready install"
@@ -749,23 +750,9 @@ make_package "graphite"
 ######################################
 #  amqp2graphite
 ######################################
-cd $SRC_PATH
-
-echo "Install amqp2graphite ..."
-LOG="$LOG_PATH/amqp2graphite.log"
-
-FCHECK="$PREFIX/bin/amqp2graphite"
-#if [ ! -e $FCHECK ]; then
-	echo " + Install ..."
-	$SUDO cp -R amqp2graphite/* $PREFIX/ 1>> $LOG 2>> $LOG
-	check_code $?
-#else
-#	echo " + Allready install"
-#fi
-
-
+install_basic_source "amqp2graphite"
+install_python_daemon "$PREFIX/opt/amqp2graphite/amqp2graphite.py"
 make_package "amqp2graphite"
-
 
 ######################################
 #  NGinx
