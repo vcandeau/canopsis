@@ -15,8 +15,6 @@ from amqplib import client_0_8 as amqp
 DAEMON_NAME = "test"
 DAEMON_TYPE = "logger"
 
-EXCHANGE_NAME = "hypervision"
-
 AMQP_HOST = "localhost"
 
 logging.basicConfig(level=logging.DEBUG,

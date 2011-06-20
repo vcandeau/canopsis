@@ -18,8 +18,6 @@ from amqplib import client_0_8 as amqp
 DAEMON_NAME = "nagios2amqp"
 DAEMON_TYPE = "eventsource"
 
-EXCHANGE_NAME = "hypervision"
-
 AMQP_HOST = "localhost"
 
 logging.basicConfig(level=logging.DEBUG,
