@@ -72,6 +72,12 @@ def set_pid():
 		pidfile.close()
 
 def start():
+	# Check nb daemon
+	max_nb_process = config.getint("daemon", "nb_process")
+	if len(get_pids()) >= max_nb_process:
+		print "Maximum number of processes reached (%s) ..." % max_nb_process
+		sys.exit(1)
+	
 	print "Start Daemon %s" % daemon_name
 	# capture stdout/err in logfile
 	log_file = os.path.expanduser("~/var/log/"+ daemon_name + ".log")
