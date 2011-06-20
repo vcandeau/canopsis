@@ -313,7 +313,7 @@ if [ ! -e $FCHECK ]; then
 	cd $BASE
 
 	echo " + Fix env vars"
-	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH` 2>> /dev/null 1>> /dev/null
+	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH 2>> /dev/null`
 	if [ $? -eq 0 ]; then
 		export LDFLAGS="$LDFLAGS -L/usr/lib/$DEB_HOST_MULTIARCH"
 		check_code $?
