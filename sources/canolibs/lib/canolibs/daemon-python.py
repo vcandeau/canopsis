@@ -77,14 +77,21 @@ def start():
 	log_file = os.path.expanduser("~/var/log/"+ daemon_name + ".log")
 	pid_file = os.path.expanduser("~/var/run/"+ daemon_name)
 	log = open(log_file, 'a+')
-	 
+	
+	if config.getboolean("daemon", "detach_process"):
+		stdout=log
+		stderr=log
+	else:
+		stdout=sys.stdout
+		stderr=sys.stderr
+	
 	# daemonize
 	context = daemon.DaemonContext(
 		working_directory=os.path.expanduser("~"),
 		umask=0o002,
 		detach_process=config.getboolean("daemon", "detach_process"),
-		stdout=log,
-		stderr=log
+		stdout=stdout,
+		stderr=stderr
 		)
 		
 	with context:
