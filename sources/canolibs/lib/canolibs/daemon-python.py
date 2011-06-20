@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 import os, daemon, lockfile, logging, signal, sys, time
 sys.path.append(os.path.expanduser("~/opt/hyp-daemons/"))
+
 daemon_name = os.path.basename(sys.argv[0])
+
+if daemon_name == "daemon-python.py":
+	print "You must use with symbolic link ..."
+	sys.exit(1)
+
+pidfile_path = os.path.expanduser("~/var/run/"+daemon_name+".pid")
 
 ########################################################
 #
@@ -18,11 +25,34 @@ except:
 	usage()
 	sys.exit(1)
 
-exec "from %s import main" % daemon_name
+try:
+	exec "from %s import main" % daemon_name
+except:
+	print "Impossible to find deamon code ..."
+	sys.exit(1)
 
 def get_pids():
-	mypid = os.getpid()
-	return [(int(p), c) for p, c in [x.rstrip('\n').split(' ', 1)  for x in os.popen("ps h -eo pid:1,command | grep -v grep | grep '%s' | grep start | grep -v '%i'" % (daemon_name, mypid))]]
+	pids = []
+	if os.path.exists(pidfile_path):
+		pidfile = open(pidfile_path, 'r')
+		try:
+			pids = pidfile.read().split('\n')
+		except:
+			print 'Could not read pidfile %s' % pidfile_path
+			raise SystemExit(1)
+
+	return pids
+
+def set_pid():
+	pid = str(os.getpid())
+	if os.path.exists(pidfile_path):
+		pidfile = open(pidfile_path, 'a')
+		pidfile.write("\n"+pid)
+		pidfile.close()
+	else:
+		pidfile = open(pidfile_path, 'w')
+		pidfile.write(pid)
+		pidfile.close()
 
 def start():
 	print "Start Daemon %s" % daemon_name
@@ -42,33 +72,48 @@ def start():
 		)
 		
 	with context:
+		set_pid()
 		main()
 		
 def stop():
 	print "Stop Daemon %s" % daemon_name
 	pids = get_pids()
-	for pid in pids:
-		try:
-			print "\t kill process %i ..." % pid[0]
-			os.kill(pid[0], signal.SIGTERM)
-		except Exception, err:
-			print err
+	
 	if len(pids) == 0:
 		print "\tNo process to kill..."
+		sys.exit(0)
+		
+	for pid in pids:
+		try:
+			print "\tkill process %s ..." % pid
+			os.kill(int(pid), signal.SIGTERM)
+		except Exception, err:
+			print err
+
+	if os.path.exists(pidfile_path):
+		os.unlink(pidfile_path)
 		
 def status():
 	pids = get_pids()
-	print "Status of %s" % daemon_name
-	print "\t %i process run" % len(pids)
+	if len(pids) > 0:
+		print "Status of %s:" % daemon_name
+		for pid in pids:
+			print "\t %s is running ..." % pid
+	else:
+		print daemon_name, "is not running"
 	
 def restart():
 	stop()
-	while True:
-		if len(get_pids()) == 0:
-			break
-		time.sleep(1)
+	time.sleep(1)
 	start()
-		
+	
+	
+########################################################
+#
+#   Parse action
+#
+########################################################
+
 if action == "start":
 	start()		
 elif action == "stop":
