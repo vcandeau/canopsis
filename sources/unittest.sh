@@ -1,7 +1,12 @@
 #!/bin/bash
 
 SRC_PATH=`pwd`
-. $SRC_PATH/canohome/lib/common.sh
+if [ -e $SRC_PATH/canohome/lib/common.sh ]; then
+	. $SRC_PATH/canohome/lib/common.sh
+else
+	echo "Impossible to find common's lib ..."
+	exit 1
+fi
 
 export HOME=$PREFIX
 
