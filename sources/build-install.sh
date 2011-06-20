@@ -865,14 +865,15 @@ $SUDO chown $HUSER:$HGROUP -R $PREFIX
 check_code $?
 echo " + Ok"
 
-
-######################################
-# Unit Test
-#####################################
-cd $SRC_PATH
-echo
-echo "Unit tests ..."
-LOG=$LOG_PATH/unittest.log
-./unittest.sh 2> $LOG 1> $LOG
-check_code $?
-echo " + Ok"
+if [ ! "$ARG1" = "nout" ]; then
+	######################################
+	# Unit Test
+	#####################################
+	cd $SRC_PATH
+	echo
+	echo "Unit tests ..."
+	LOG=$LOG_PATH/unittest.log
+	./unittest.sh 2> $LOG 1> $LOG
+	check_code $?
+	echo " + Ok"
+fi
