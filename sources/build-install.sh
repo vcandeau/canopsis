@@ -2,7 +2,7 @@
 
 ### Configurations
 SRC_PATH=`pwd`
-. $SRC_PATH/extra/profile/lib/common.sh
+. $SRC_PATH/canohome/lib/common.sh
 
 PY_BIN=$PREFIX"/bin/python"
 INC_DIRS="/usr/include"
@@ -40,6 +40,7 @@ function extract_archive {
 
 
 function install_pylib {
+	cd $SRC_PATH/externals/
 	BASE=$1-$2
 	VERS=$2
 	echo "Install Python Library: $BASE ..."
@@ -70,7 +71,9 @@ function install_pylib {
 		echo " + Install $BASE ..."
 		$SUDO $PY_BIN setup.py install --prefix=$PREFIX 1>> $LOG 2>> $LOG
 		check_code $?
-		cd ../../
+		cd ../
+		$SUDO rm -Rf $BASE  &> /dev/null
+		cd $SRC_PATH
 	else
 		echo " + Allready install"
 	fi
@@ -133,7 +136,7 @@ function install_python_daemon(){
 	$SUDO ln -s $DPATH $PREFIX/opt/hyp-daemons/
 
 	$SUDO rm -f $PREFIX/etc/init.d/$DAEMON_NAME &>/dev/null
-	$SUDO ln -s $PREFIX/lib/hyp-libs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
+	$SUDO ln -s $PREFIX/lib/canolibs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
 }
 
 function make_package_archive(){
@@ -203,6 +206,27 @@ function make_package(){
 	fi
 }
 
+function install_basic_source(){
+	cd $SRC_PATH
+	NAME=$1
+	echo "Install $NAME ..."
+	echo " + Install ..."
+	if [ -e "$NAME" ]; then
+		$SUDO cp -Rf $NAME/* $PREFIX/
+		check_code $?
+		$SUDO cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null
+		if [ -e $SRC_PATH/packages/$NAME/control ]; then
+			. $SRC_PATH/packages/$NAME/control
+			echo " + launch install from package control script ..."
+			install
+		fi
+	else
+		echo "Error: Impossible to find '$NAME'"
+		exit 1
+	fi
+	
+}
+
 #### MAIN
 
 detect_os
@@ -247,24 +271,15 @@ fi
 ######################################
 #  CanoHome
 ######################################
-cd $SRC_PATH
-. $SRC_PATH/packages/canohome/control
-install
-$SUDO cp -aR extra/profile/* $PREFIX/
-$SUDO cp -aR extra/profile/.bash_completion $PREFIX/
-$SUDO cp -aR extra/profile/.bash_profile $PREFIX/
+$SUDO mkdir -p $PREFIX
+install_basic_source "canohome"
 make_package "canohome"
 
 ######################################
 #  pkgmgr
 ######################################
-echo "Install pkgmgr ..."
-cd $SRC_PATH
-$SUDO cp -R pkgmgr/* $PREFIX/
-check_code $?
-echo " + Ok"
+install_basic_source "pkgmgr"
 make_package "pkgmgr"
-
 
 ######################################
 #  Python
@@ -509,64 +524,15 @@ fi
 make_package "nodejs"
 
 ######################################
-#  Hyp-tools
+#  canotools
 ######################################
-cd $SRC_PATH
-echo "Install Hyp-tools ..."
-echo " + Install ..."
-BASE="hyp-tools"
-DST="/opt/"
-if [ -e $BASE ]; then
-	$SUDO mkdir -p $PREFIX/$DST
-	$SUDO rm -Rf $PREFIX/$DST/$BASE
-	$SUDO cp -R $BASE $PREFIX/$DST
-	check_code $?
-else
-	echo "Error: Impossible to find '$BASE'"
-	exit 1
-fi
-
+install_basic_source "canotools"
 make_package "canotools"
 
 ######################################
-#  Hyp-deamons
+#  canolibs
 ######################################
-cd $SRC_PATH
-echo "Install Hyp-daemons ..."
-echo " + Install ..."
-BASE="hyp-daemons"
-DST="/opt/"
-#if [ -e $BASE ]; then
-	$SUDO mkdir -p $PREFIX/$DST/$BASE
-	#$SUDO rm -Rf $PREFIX/$DST/$BASE
-	#$SUDO cp -R $BASE $PREFIX/$DST
-	check_code $?
-#else
-#	echo "Error: Impossible to find '$BASE'"
-#	exit 1
-#fi
-
-######################################
-#  Hyp-libs
-######################################
-cd $SRC_PATH
-echo "Install Hyp-libs ..."
-echo " + Install ..."
-DST="/lib/hyp-libs"
-if [ -e "hyp-libs" ]; then
-	$SUDO mkdir -p $PREFIX/$DST
-	$SUDO rm -Rf $PREFIX/$DST
-	$SUDO mkdir -p $PREFIX/$DST
-	$SUDO cp -R hyp-libs/hypamqp/hypamqp.py $PREFIX/$DST
-	$SUDO cp -R hyp-libs/hypamqp/hypamqp2.py $PREFIX/$DST
-	$SUDO cp -R hyp-libs/*.py $PREFIX/$DST
-	$SUDO cp hyp-libs/pyamqp.conf $PREFIX/etc/
-	check_code $?
-else
-	echo "Error: Impossible to find '$DST'"
-	exit 1
-fi
-
+install_basic_source "canolibs"
 make_package "canolibs"
 
 ######################################
@@ -578,7 +544,8 @@ $SUDO mkdir -p $PREFIX/opt/event-brokers/nagios/
 LOG="$LOG_PATH/neb2socket.log"
 
 cd event-brokers/nagios/neb2socket
-$SUDO cp api/neb2socket.py $PREFIX/lib/hyp-libs/
+$SUDO cp api/neb2socket.py $PREFIX/lib/canolibs/
+check_code $?
 
 FCHECK="$PREFIX/opt/event-brokers/nagios/neb2socket.o"
 if [ ! -e $FCHECK ]; then
@@ -589,9 +556,6 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 	echo " + Install ..."
 	$SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
-	$SUDO cp nagios2amqp/nagios2amqp.py $PREFIX/opt/event-brokers/nagios/
-	
-	install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
 	
 	echo " + Configuration ..."
 	echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
@@ -602,6 +566,12 @@ fi
 
 make_package "neb2socket"
 
+######################################
+#  nagios2amqp
+######################################
+install_basic_source "nagios2amqp"
+#install_python_daemon "$PREFIX/opt/event-brokers/nagios/nagios2amqp.py"
+make_package "nagios2amqp"
 
 ######################################
 #  Graphite
@@ -636,8 +606,9 @@ if [ ! -e $FCHECK ]; then
 
 	echo " + Install py2cairo ..."
 	echo " + Install py2cairo ..." 1>> $LOG 2>> $LOG
-	cd pylibs
+	cd $SRC_PATH/externals/pylibs
 	tar xfz py2cairo-1.10.tar.gz
+	check_code $?
 	cd py2cairo-1.10
 	echo "   + Configure ..."
 	#./autogen.sh --prefix=$PREFIX 1>> $LOG 2>> $LOG
@@ -648,11 +619,10 @@ if [ ! -e $FCHECK ]; then
 	echo "   + Make Install ..."
 	#$SUDO make install 1>> $LOG 2>> $LOG
 	check_code $?
+	$SUDO rm -Rf $SRC_PATH/externals/pylibs/py2cairo-1.10 &> /dev/null
 	cd - &> /dev/null
 
-	cd $SRC_PATH/externals
 	install_pylib "whisper" "0.9.8"
-	cd - &> /dev/null
 
 	CARBON_VERS="0.9.8"
 	echo "Install carbon $CARBON_VERS ..."
@@ -661,7 +631,7 @@ if [ ! -e $FCHECK ]; then
 		$SUDO mkdir -p $PREFIX/var/log/graphite/carbon-cache
 	
 		echo " + Patch setup.cfg of carbon-$CARBON_VERS"
-		rm -Rf pylibs/carbon-$CARBON_VERS
+		$SUDO rm -Rf pylibs/carbon-$CARBON_VERS &> /dev/null
 		cd pylibs && tar xfz carbon-$CARBON_VERS.tar.gz 
 		check_code $?
 		sed -i "s#/opt/graphite#$PREFIX#" carbon-$CARBON_VERS/setup.cfg
