@@ -104,19 +104,22 @@ signal.signal(signal.SIGTERM, signal_handler)
 #
 ########################################################
 
-myamqp = hypamqp()
-myamqp.connect()
+def main():
+	myamqp = hypamqp()
+	myamqp.connect()
+	
+	myamqp.create_queue(DAEMON_NAME)
+	
+	myamqp.bind_queue(DAEMON_NAME, "eventsource.*.*.check.#")
+	myamqp.consume_queue(DAEMON_NAME, on_message)
+	
+	while RUN:
+		time.sleep(1)
+	
+	myamqp.disconnect()
 
-myamqp.create_queue(DAEMON_NAME)
-
-myamqp.bind_queue(DAEMON_NAME, "eventsource.*.*.check.#")
-myamqp.consume_queue(DAEMON_NAME, on_message)
-
-while RUN:
-	time.sleep(1)
-
-myamqp.disconnect()
-
+if __name__ == "__main__":
+	main()
 
 
 
