@@ -82,7 +82,7 @@ def start():
 	context = daemon.DaemonContext(
 		working_directory=os.path.expanduser("~"),
 		umask=0o002,
-		detach_process=config.getboolean("daemon", "foreground"),
+		detach_process=config.getboolean("daemon", "detach_process"),
 		stdout=log,
 		stderr=log
 		)
