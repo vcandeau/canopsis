@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os, daemon, lockfile, logging, signal, sys, time
-sys.path.append(os.path.expanduser("~/opt/hyp-daemons/"))
+import ConfigParser
 
 daemon_name = os.path.basename(sys.argv[0])
 
@@ -9,6 +9,18 @@ if daemon_name == "daemon-python.py":
 	sys.exit(1)
 
 pidfile_path = os.path.expanduser("~/var/run/"+daemon_name+".pid")
+conf_file = os.path.expanduser("~/etc/daemon.d/"+daemon_name+".conf")
+
+if not os.path.exists(conf_file):
+	print "Impossible to find daemon configuration file ..."
+	sys.exit(1)
+
+config = ConfigParser.RawConfigParser()
+config.read(conf_file)
+
+if not config.getboolean("daemon", "start"):
+	print "Set 'start' to true in %s ..." % conf_file
+	sys.exit(1)
 
 ########################################################
 #
@@ -24,6 +36,11 @@ try:
 except:
 	usage()
 	sys.exit(1)
+
+base_path = config.get("daemon", "path")
+base_path = os.path.expanduser(base_path)
+base_path = os.path.dirname(base_path)
+sys.path.append(base_path)
 
 try:
 	exec "from %s import main" % daemon_name
@@ -65,8 +82,7 @@ def start():
 	context = daemon.DaemonContext(
 		working_directory=os.path.expanduser("~"),
 		umask=0o002,
-		#pidfile=lockfile.FileLock(pid_file),
-		detach_process=True,
+		detach_process=config.getboolean("daemon", "foreground"),
 		stdout=log,
 		stderr=log
 		)
