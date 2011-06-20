@@ -612,14 +612,16 @@ if [ ! -e $FCHECK ]; then
 		check_code $?
 	fi
 
-	echo " + Install py2cairo ..."
-	echo " + Install py2cairo ..." 1>> $LOG 2>> $LOG
+	echo " + Install pycairo ..."
+	echo " + Install pycairo ..." 1>> $LOG 2>> $LOG
 	cd $SRC_PATH/externals/pylibs
-	tar xfz py2cairo-1.10.tar.gz
+	tar xfz pycairo-1.6.4.tar.gz
 	check_code $?
-	cd py2cairo-1.10
+	cd pycairo-1.6.4
 	echo "   + Configure ..."
-	./autogen.sh --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	export PATH=$PREFIX/bin:$PATH
+	#./autogen.sh --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $?
 	echo "   + Make ..."
 	make 1>> $LOG 2>> $LOG
@@ -627,7 +629,7 @@ if [ ! -e $FCHECK ]; then
 	echo "   + Make Install ..."
 	$SUDO make install 1>> $LOG 2>> $LOG
 	check_code $?
-	$SUDO rm -Rf $SRC_PATH/externals/pylibs/py2cairo-1.10 &> /dev/null
+	$SUDO rm -Rf $SRC_PATH/externals/pylibs/pycairo-1.6.4 &> /dev/null
 	cd - &> /dev/null
 
 	install_pylib "whisper" "0.9.8"
