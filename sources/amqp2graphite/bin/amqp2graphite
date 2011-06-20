@@ -18,7 +18,6 @@ import re
 DAEMON_NAME = "amqp2graphite"
 DAEMON_TYPE = "storage"
 
-EXCHANGE_NAME = "hypervision"
 GRAP_EXCHANGE_NAME = "graphite"
 
 AMQP_HOST = "localhost"

@@ -1,7 +1,7 @@
 
-PREFIX="/opt/hypervision"
-HUSER="hypervision"
-HGROUP="hypervision"
+PREFIX="/opt/canopsis"
+HUSER="canopsis"
+HGROUP="canopsis"
 ARCH=`uname -m`
 SUDO="sudo -E"
 

@@ -5,7 +5,7 @@ import ConfigParser
 from amqplib import client_0_8 as amqp
 
 class hypamqp(object):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="/", exchange_name="hypervision", logging_level=logging.DEBUG, read_config_file=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="/", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
 	
 
 		logging.basicConfig(level=logging.DEBUG,
