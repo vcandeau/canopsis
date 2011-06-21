@@ -358,6 +358,18 @@ install_pylib "pycurl" "7.18.2"
 install_pylib "tornado" "1.2.1"
 install_pylib "python-daemon" "1.5.5"
 
+install_pylib "Twisted" "11.0.0"
+install_pylib "txAMQP" "0.4"
+install_pylib "txamqp-helpers" "0.5"
+
+echo " + Patch python-txamqp ..."
+# https://bugs.launchpad.net/txamqp/+bug/741147
+cd $PREFIX
+$SUDO rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
+$SUDO patch -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
+check_code $?
+cd - &> /dev/null
+
 make_package "python"
 
 ######################################
@@ -598,21 +610,10 @@ cd $SRC_PATH
 echo "Install Graphite ..."
 LOG="$LOG_PATH/graphite.log"
 
-
 FCHECK="$PREFIX/opt/graphite"
 if [ ! -e $FCHECK ]; then
 
 	cd $SRC_PATH/externals
-	
-	install_pylib "Twisted" "11.0.0"
-	install_pylib "python-txamqp" "0.3"
-	echo " + Patch python-txamqp ..."
-	# https://bugs.launchpad.net/txamqp/+bug/741147
-	cd $PREFIX
-	$SUDO rm lib/python2.7/site-packages/txAMQP-0.3-py2.7.egg/txamqp/codec.pyc &> /dev/null
-	$SUDO patch -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
-	check_code $?
-	cd - &> /dev/null
 
 	install_pylib "Django" "1.3"
 	install_pylib "pysqlite" "2.6.3"
