@@ -362,13 +362,15 @@ install_pylib "Twisted" "11.0.0"
 install_pylib "txAMQP" "0.4"
 install_pylib "txamqp-helpers" "0.5"
 
-echo " + Patch python-txamqp ..."
-# https://bugs.launchpad.net/txamqp/+bug/741147
-cd $PREFIX
-$SUDO rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
-$SUDO patch -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
-check_code $?
-cd - &> /dev/null
+if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
+	echo " + Patch python-txamqp ..."
+	# https://bugs.launchpad.net/txamqp/+bug/741147
+	cd $PREFIX
+	$SUDO rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
+	$SUDO patch -b -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
+	check_code $?
+	cd - &> /dev/null
+fi
 
 make_package "python"
 
