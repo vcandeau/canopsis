@@ -121,7 +121,7 @@ def main():
 			except:
 				pass
 		except:
-			logger.error("Conenction error, try to re-connect after 3 seconds ...")
+			logger.error("Connection error, try to re-connect after 3 seconds ...")
 			receiver = None
 			time.sleep(3)
 
