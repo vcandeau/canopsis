@@ -4,6 +4,36 @@ import time, signal, logging, threading, os
 import ConfigParser
 from amqplib import client_0_8 as amqp
 
+RUN = 1
+
+def retry(ExceptionToCheck, tries=4, delay=5, backoff=1):
+	"""Retry decorator
+	original from http://wiki.python.org/moin/PythonDecoratorLibrary#Retry
+	"""
+	def deco_retry(f):
+		def f_retry(*args, **kwargs):
+			mtries, mdelay = tries, delay
+			inf = 0
+			if mtries == 0:
+				inf =1
+	
+			while (mtries > 0 or inf) and RUN:
+		
+				try:
+					return f(*args, **kwargs)
+				except ExceptionToCheck, e:
+					print "%s, Retrying in %d seconds..." % (str(e), mdelay)
+					time.sleep(mdelay)
+					if not inf:
+						mtries -= 1
+					mdelay *= backoff
+					lastException = e
+					
+			raise lastException
+		return f_retry # true decorator
+	return deco_retry
+
+
 class hypamqp(object):
 	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="/", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
 	
@@ -33,12 +63,21 @@ class hypamqp(object):
 		self.pub_chan = None
 		
 		self.connected = False
+		self.thr_watchdog = None
 
+	@retry(Exception, tries=0)
 	def connect(self):
+		global RUN
+		RUN = 1
+		
 		self.logger.debug("Connect to %s:%i ..." % (self.host, self.port))
 		self.conn = amqp.Connection(host=self.host, port=self.port, userid=self.userid, password=self.password, virtual_host=self.virtual_host, insist=False)
 		self.pub_chan = self.conn.channel()
 		self.pub_chan.exchange_declare(exchange=self.exchange_name, type="topic", durable=True, auto_delete=False)
+		
+		#self.thr_watchdog = self.thread_watchdog(self)
+		#self.thr_watchdog.start()
+		
 		self.connected = True
 		
 		
@@ -78,13 +117,29 @@ class hypamqp(object):
 		if not self.pub_chan:
 			self.pub_chan = self.conn.channel()
 			self.pub_chan.exchange_declare(exchange=exchange_name, type="topic", durable=True, auto_delete=False)
-			
-		self.pub_chan.basic_publish(msg,exchange=exchange_name,routing_key=routing_key)
+		try:
+			self.pub_chan.basic_publish(msg,exchange=exchange_name,routing_key=routing_key)
+		except:
+			self.reinit_connection()
+
+	def reinit_connection(self):
+		self.disconnect()
+		self.connect()
+		if RUN:
+			self.logger.debug("Re-open all Queues")
+			time.sleep(0.5)
 		
 	def disconnect(self):
+		global RUN
+		RUN = 0
+			
 		if self.connected:
 			self.connected = False
 			self.logger.debug("Disconnect")
+			
+			if self.thr_watchdog:
+				self.logger.debug("Stop Watchdog thread ...")
+				self.thr_watchdog.join()
 			
 			for queue_name in self.queues.keys():
 				self.logger.debug("Close Queue '%s'" % queue_name)
@@ -125,6 +180,18 @@ class hypamqp(object):
 		self.logger.debug("Delete Object")
 		self.disconnect()
 		
+	class thread_watchdog(threading.Thread):
+		def __init__(self, hypamqp):
+			threading.Thread.__init__(self)
+			self.hypamqp = hypamqp
+			
+		def run(self):
+			while RUN:
+				time.sleep(1)
+				
+		def stop(self):
+			pass			
+
 	class thread_waiter(threading.Thread):
 		def __init__(self,logger, queue):
 			threading.Thread.__init__(self)
@@ -144,7 +211,13 @@ class hypamqp(object):
 			while self.RUN:
 				#chan.wait()
 				#self.logger.debug("%s: Get message" % queue_name)
-				msg = chan.basic_get(queue_name, no_ack=True)
+				msg = None
+				try:
+					msg = chan.basic_get(queue_name, no_ack=True)
+				except Exception, err:
+					self.logger.error("Fatal error on AMQP bus connection (%s) !" % err)
+					self.stop()
+					
 				if not msg:
 					time.sleep(0.2)
 				else:
@@ -153,7 +226,6 @@ class hypamqp(object):
 		def stop(self):
 			#self.logger.debug("Stop thread")
 			self.RUN=0
-			#self._stop.set()
 			
 			
 	def read_config(self, filename):
