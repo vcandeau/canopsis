@@ -5,8 +5,9 @@ import daemon,lockfile
 from neb2socket import *
 from Queue import Queue
 
-from camqp import camqp
+from camqp import camqp, files_preserve
 from txamqp.content import Content
+
 
 ########################################################
 #
