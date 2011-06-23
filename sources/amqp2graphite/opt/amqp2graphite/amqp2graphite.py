@@ -92,9 +92,12 @@ def on_message(msg):
 RUN = 1
 import signal
 def signal_handler(signum, frame):
-    logger.warning("Receive signal to stop daemon...")
-    global RUN
-    RUN = 0
+	logger.warning("Receive signal to stop daemon...")
+	global RUN
+	RUN = 0
+	if myamqp:
+		myamqp.disconnect()
+		
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
