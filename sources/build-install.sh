@@ -855,7 +855,7 @@ $SUDO chown $HUSER:$HGROUP -R $PREFIX
 check_code $?
 echo " + Ok"
 
-if [ ! "$ARG1" = "nout" ]; then
+if [ "$ARG1" = "wut" ]; then
 	######################################
 	# Unit Test
 	#####################################
