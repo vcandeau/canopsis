@@ -3,8 +3,7 @@
 import time
 import logging
 
-from hypamqp2 import hypamqp
-from amqplib import client_0_8 as amqp
+from camqp import camqp
 
 ########################################################
 #
@@ -21,16 +20,17 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 logger = logging.getLogger(DAEMON_NAME)
+myamqp = None
 
 ########################################################
 #
 #   Callback
 #
 ########################################################
-
+	
 def on_message(msg):
-	source = msg.delivery_info['routing_key'] + "@" + msg.delivery_info['exchange']
-	text= "%s:\n\t%s\n" % (source, msg.body)
+	source = msg.routing_key + "@" + msg.exchange
+	text= "%s:\n\t%s\n" % (source, msg.content.body)
 	logger.debug("New message:\n%s" % text)
 
 
@@ -45,9 +45,13 @@ def on_message(msg):
 RUN = 1
 import signal
 def signal_handler(signum, frame):
-    logger.warning("Receive signal to stop daemon...")
-    global RUN
-    RUN = 0
+	logger.warning("Receive signal to stop daemon...")
+	global RUN
+	RUN = 0
+	## Stop amqp
+	if myamqp:
+		myamqp.disconnect()
+ 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
@@ -58,15 +62,14 @@ signal.signal(signal.SIGTERM, signal_handler)
 #
 ########################################################
 
-myamqp = hypamqp()
-myamqp.connect()
 
-myamqp.create_queue(DAEMON_NAME)
+amqp = camqp()
 
-myamqp.bind_queue(DAEMON_NAME, "#")
-myamqp.consume_queue(DAEMON_NAME, on_message)
+amqp.add_queue(DAEMON_NAME, '#', on_message)
+amqp.start()
 
 while RUN:
 	time.sleep(1)
 
-myamqp.disconnect()
+amqp.stop()
+amqp.join()
