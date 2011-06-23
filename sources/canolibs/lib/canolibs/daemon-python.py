@@ -47,6 +47,11 @@ try:
 except:
 	print "Impossible to find deamon code ..."
 	sys.exit(1)
+	
+try:
+	exec "from %s import files_preserve" % daemon_name
+except:
+	files_preserve = []
 
 def get_pids():
 	pids = []
@@ -108,6 +113,7 @@ def start():
 	context = daemon.DaemonContext(
 		working_directory=os.path.expanduser("~"),
 		umask=0o002,
+		files_preserve=files_preserve,
 		detach_process=config.getboolean("daemon", "detach_process"),
 		stdout=stdout,
 		stderr=stderr
