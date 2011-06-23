@@ -202,6 +202,9 @@ class camqp(threading.Thread):
 				self.logger.debug("Close Queue '%s' ..." % qsettings['queue_name'])
 				qsettings['queue'].close()
 			
+			self.logger.debug("Close channel 2 ...")
+			yield self.chan_pub.channel_close()
+			
 			self.logger.debug("Close channel 1 ...")
 			yield self.chan.channel_close()
 			
