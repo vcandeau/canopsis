@@ -5,9 +5,8 @@ import daemon,lockfile
 from neb2socket import *
 from Queue import Queue
 
-from hypamqp2 import hypamqp
-from amqplib import client_0_8 as amqp
-
+from camqp import camqp
+from txamqp.content import Content
 
 ########################################################
 #
@@ -26,8 +25,10 @@ logging.basicConfig(level=logging.DEBUG,
 logger = logging.getLogger(DAEMON_NAME)
 
 UNX_SOCKET = "/tmp/neb2socket"
-
 BUFFER_QUEUE_MAX_SIZE = 1000
+
+receiver = None
+myamqp = None
 
 ########################################################
 #
@@ -42,7 +43,11 @@ def signal_handler(signum, frame):
 	print("Receive signal to stop daemon...")
 	global RUN
 	RUN = 0
-
+	
+	## Stop amqp
+	if myamqp:
+		myamqp.stop()
+	
 	## Clean Asyncore
 	if receiver:
 		receiver.stop()
@@ -67,7 +72,7 @@ class thread_listen_queue(threading.Thread):
 						key = key +"."+ event["service_description"]
 						
 				
-				msg = amqp.Message(json.dumps(event))
+				msg = Content(json.dumps(event))
 				myamqp.publish(msg, key)
 			except Exception, err:
 				#logger.error(err)
@@ -101,8 +106,8 @@ def main():
 	global to_amqp_queue, receiver, myamqp
 	
 	# Connect to amqp bus
-	myamqp = hypamqp()
-	myamqp.connect()
+	myamqp = camqp()
+	myamqp.start()
 
 	logger.debug("Create buffer queue ...")
 	to_amqp_queue = Queue(BUFFER_QUEUE_MAX_SIZE)
@@ -128,6 +133,10 @@ def main():
 	logger.debug("Stop Queue listenner thread ...")
 	thr_queue_listenner.stop()
 	thr_queue_listenner.join()
+	
+	logger.debug("Stop AMQP ...")
+	myamqp.stop()
+	myamqp.join()
 
 if __name__ == "__main__":
 	main()
