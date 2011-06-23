@@ -81,9 +81,14 @@ class camqp(threading.Thread):
 	def reconnect(self):
 		if self.RUN:
 			self.logger.debug("Try to re-connect after 5 seconds ...")
-			time.sleep(5)
-			self.set_client()
-			yield self.client
+			for i in range(10):
+				if not self.RUN:
+					break
+				time.sleep(0.5)
+				
+			if self.RUN:	
+				self.set_client()
+				yield self.client
 		else:
 			yield None
 		
@@ -229,10 +234,9 @@ class camqp(threading.Thread):
 		
 	@inlineCallbacks
 	def disconnect(self):
-		self.task_heartbeat.stop()
-		
  		if self.connected:
-	
+			self.task_heartbeat.stop()
+			
 			for key in self.queues.keys():
 				qsettings = self.queues[key]
 				self.logger.debug("Close Queue '%s' ..." % qsettings['queue_name'])
