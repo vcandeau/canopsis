@@ -179,6 +179,7 @@ class camqp(threading.Thread):
 	
 
 	def publish(self, msg, routing_key, exchange_name=None):
+		self.wait_connection()
 		if self.connected:
 			if not exchange_name:
 				exchange_name = self.exchange_name
@@ -216,6 +217,10 @@ class camqp(threading.Thread):
 		if reactor.running:
 			self.logger.debug("Stop Reactor ...")
 			reactor.stop()
+
+	def wait_connection(self):
+		while self.RUN and not self.connected:
+			time.sleep(0.5)
 
 	def read_config(self, filename):
 		# Read config file
