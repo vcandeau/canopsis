@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from twisted.internet import reactor, task
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.internet.protocol import ClientCreator
@@ -10,6 +9,8 @@ import txamqp.spec
 
 import time, signal, logging, threading, os, sys
 import ConfigParser
+
+files_preserve = [reactor.waker.o, reactor.waker.i]
 
 class camqp(threading.Thread):
 	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="/", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
@@ -45,12 +46,16 @@ class camqp(threading.Thread):
 		self.queues = {};
 		
 		self.task_heartbeat = task.LoopingCall(self.heartbeat)
-		self.heartbeat_interval = 5
+		self.heartbeat_interval = 30
+		
+		self.delegate = TwistedDelegate()
 		
 		try:
 			self.spec = txamqp.spec.load(os.path.expanduser("~/lib/canolibs/amqp0-8.xml"))
 		except:
 			self.spec = txamqp.spec.load("amqp0-8.xml")
+			
+		self.set_client()
 		
 		self.logger.debug("Object canamqp initialized")
 		
@@ -86,7 +91,7 @@ class camqp(threading.Thread):
 		self.logger.debug("Heartbeat ...")
 		if self.connected:
 			msg = Content("{'heartbeat': 1}")
-			self.publish(msg, "heartbeat")
+			self.publish(msg, "heartbeat", "amq.topic")
 
 	def set_client(self):
 		self.logger.debug("Set AMQP client ...")
@@ -97,10 +102,6 @@ class camqp(threading.Thread):
 	@inlineCallbacks
 	def run(self):
 		self.logger.debug("Start thread ...")
-		
-		self.delegate = TwistedDelegate()
-		
-		self.set_client()
 		
 		if reactor.running:
 			yield self.client
@@ -228,6 +229,8 @@ class camqp(threading.Thread):
 		
 	@inlineCallbacks
 	def disconnect(self):
+		self.task_heartbeat.stop()
+		
  		if self.connected:
 	
 			for key in self.queues.keys():
@@ -252,7 +255,6 @@ class camqp(threading.Thread):
 			yield d
 			self.logger.debug("Disconnected.")
 		
-		self.task_heartbeat.stop()
 		self.connected = False
 		if reactor.running and not self.RUN:
 			self.logger.debug("Stop Reactor ...")
