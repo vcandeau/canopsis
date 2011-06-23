@@ -58,10 +58,9 @@ def get_pids():
 			print 'Could not read pidfile %s' % pidfile_path
 			raise SystemExit(1)
 
-	return pids
+	return check_pids(pids)
 
-def set_pid():
-	pid = str(os.getpid())
+def set_pid(pid):
 	if os.path.exists(pidfile_path):
 		pidfile = open(pidfile_path, 'a')
 		pidfile.write("\n"+pid)
@@ -70,6 +69,20 @@ def set_pid():
 		pidfile = open(pidfile_path, 'w')
 		pidfile.write(pid)
 		pidfile.close()
+
+def check_pids(pids):
+	if os.path.exists(pidfile_path):
+		os.unlink(pidfile_path)
+		
+	new_pids = []
+	for pid in pids:
+		if not os.path.exists("/proc/"+pid):
+			print "Process %s seems to be dead, remove it from pidfile." % pid
+		else:
+			set_pid(pid)
+			new_pids.append(pid)
+			
+	return new_pids
 
 def start():
 	# Check nb daemon
@@ -101,7 +114,8 @@ def start():
 		)
 		
 	with context:
-		set_pid()
+		pid = str(os.getpid())
+		set_pid(pid)
 		main()
 		
 def stop():
