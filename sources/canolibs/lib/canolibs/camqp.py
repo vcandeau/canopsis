@@ -150,9 +150,11 @@ class camqp(threading.Thread):
 			exchange_name = qsettings['exchange_name']
 			no_ack = qsettings['no_ack']
 			routing_keys = qsettings['routing_keys']
+			exclusive = qsettings['exclusive']
+			auto_delete = qsettings['auto_delete']
 			
 			self.logger.debug("+ Create Queue '%s'" % queue_name)
-			yield self.chan.queue_declare(queue=queue_name)
+			yield self.chan.queue_declare(queue=queue_name, exclusive=exclusive, auto_delete=auto_delete)
 			
 			self.logger.debug("  - Declare consumer ...")
 			reply = yield self.chan.basic_consume(queue=queue_name, no_ack=no_ack)
@@ -173,7 +175,7 @@ class camqp(threading.Thread):
 		self.task_heartbeat.start(self.heartbeat_interval)
 		returnValue((self.conn, self.chan))
 	
-	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True):
+	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
 		routing_keys = list(routing_keys)
 		
 		if not exchange_name:
@@ -183,7 +185,9 @@ class camqp(threading.Thread):
 									'routing_keys': routing_keys,
 									'callback': callback,
 									'exchange_name': exchange_name,
-									'no_ack': no_ack
+									'no_ack': no_ack,
+									'exclusive': exclusive,
+									'auto_delete': auto_delete
 							}
 	
 	@inlineCallbacks
