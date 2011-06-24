@@ -844,8 +844,8 @@ if [ ! -e $FCHECK ]; then
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tar.bz2"
 	fi
-	$SUDO cp -Rf $BASE $PREFIX/www/html/
-	$SUDO ln -sf $PREFIX/www/html/$BASE $PREFIX/www/html/extjs
+	$SUDO cp -Rf $BASE $PREFIX/var/www/html/
+	$SUDO ln -sf $PREFIX/var/www/html/$BASE $PREFIX/var/www/html/extjs
 fi
 
 make_package "webcore"
