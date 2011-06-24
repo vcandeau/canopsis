@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import sys
-BASE_PATH="/home/wpain/Bureau/hypervision/sources"
+import sys, os
+
+BASE_PATH=os.path.expanduser("~/var/www/")
 PORT=8080
-sys.path.append(BASE_PATH+"/var/www/webserver/webcore")
-sys.path.append(BASE_PATH+"/www/webserver/webcore")
+sys.path.append(os.path.expanduser("~/opt/webcore/services/"))
 
 import tornado.ioloop
 import tornado.web
@@ -13,7 +13,7 @@ import auth
 
 settings = {
 	"debug": True,
-    "static_path": BASE_PATH+"/www/html/",
+    "static_path": BASE_PATH+"/html/",
     "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
     "login_url": "/static/index.html",
     "xsrf_cookies": True,
@@ -27,7 +27,7 @@ class MainHandler(tornado.web.RequestHandler):
 application = tornado.web.Application([
     (r"/", MainHandler),
     
-    (r"/webcore/auth/([a-zA-Z]*)", auth.authHandler),
+#    (r"/webcore/auth/([a-zA-Z]*)", auth.authHandler),
     
 ], **settings)
 

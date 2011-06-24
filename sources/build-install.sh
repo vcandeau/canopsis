@@ -21,6 +21,7 @@ VERS_RABBITMQ="2.4.1"
 VERS_MONGODB="1.8.1"
 VERS_NODEJS="v0.4.8"
 VERS_NGINX="1.0.4"
+VERS_EXTJS="4.0.2a"
 
 ### functions
 function extract_archive {
@@ -834,15 +835,20 @@ make_package "nginx"
 #  Webcore
 ######################################
 cd $SRC_PATH
-$SUDO mkdir -p $PREFIX/var/www/ $PREFIX/var/www/html
+install_basic_source "webcore"
 
-echo "Install Webcore ..."
-LOG="$LOG_PATH/webcore.log"
-echo " + Install ..."
-$SUDO cp -R www/* $PREFIX/var/www/ 1>> $LOG 2>> $LOG
-check_code $?
+cd $SRC_PATH/externals
+BASE="ext-$VERS_EXTJS"
+FCHECK="$PREFIX/www/html/extjs"
+if [ ! -e $FCHECK ]; then
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.bz2"
+	fi
+	$SUDO cp -Rf $BASE $PREFIX/www/html/
+	$SUDO ln -sf $PREFIX/www/html/$BASE $PREFIX/www/html/extjs
+fi
 
-#make_package "webcore"
+make_package "webcore"
 
 ######################################
 #  Fix permissions
