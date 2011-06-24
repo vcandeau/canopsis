@@ -149,7 +149,7 @@ class camqp(threading.Thread):
 			queue_name = qsettings['queue_name']
 			exchange_name = qsettings['exchange_name']
 			no_ack = qsettings['no_ack']
-			routing_key = qsettings['routing_key']
+			routing_keys = qsettings['routing_keys']
 			
 			self.logger.debug("+ Create Queue '%s'" % queue_name)
 			yield self.chan.queue_declare(queue=queue_name)
@@ -159,8 +159,9 @@ class camqp(threading.Thread):
 			consumer_tag = reply.consumer_tag
 			self.queues[key]['consumer_tag'] = consumer_tag
 			
-			self.logger.debug("  - Bind on '%s'" % routing_key)
-			yield self.chan.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
+			for routing_key in routing_keys:
+				self.logger.debug("  - Bind on '%s'" % routing_key)
+				yield self.chan.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
 			
 			self.logger.debug("  - Declare callback with consumer_tag: %s ..." % consumer_tag)
 			queue = yield self.conn.queue(consumer_tag)
@@ -172,12 +173,14 @@ class camqp(threading.Thread):
 		self.task_heartbeat.start(self.heartbeat_interval)
 		returnValue((self.conn, self.chan))
 	
-	def add_queue(self, queue_name, routing_key, callback, exchange_name=None, no_ack = True):
+	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True):
+		routing_keys = list(routing_keys)
+		
 		if not exchange_name:
 			exchange_name = self.exchange_name
 		
 		self.queues[queue_name]={	'queue_name': queue_name,
-									'routing_key': routing_key,
+									'routing_keys': routing_keys,
 									'callback': callback,
 									'exchange_name': exchange_name,
 									'no_ack': no_ack
