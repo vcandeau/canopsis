@@ -830,6 +830,12 @@ fi
 
 make_package "nginx"
 
+######################################
+#  amqp2mongodb
+######################################
+install_basic_source "amqp2mongodb"
+install_python_daemon "$PREFIX/opt/amqp2mongodb/amqp2mongodb.py"
+make_package "amqp2mongodb"
 
 ######################################
 #  Webcore
