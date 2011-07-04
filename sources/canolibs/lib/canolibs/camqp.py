@@ -195,7 +195,10 @@ class camqp(threading.Thread):
 		if self.connected:
 			
 			#self.logger.debug(" + [%d - %s] Received %r" % (self.i, msg.delivery_tag, msg.content.body))
-			qsettings['callback'](msg)
+			try:
+				qsettings['callback'](msg)
+			except Exception, err:
+				self.logger.error("Error in callback function: %s" % err)
 			
 			if not qsettings['no_ack']:
 				self.chan.basic_ack(delivery_tag=msg.delivery_tag)
@@ -209,7 +212,10 @@ class camqp(threading.Thread):
 					i += 1
 					
 					#print " + + [%d - %s] Received %r" % (self.i, msg.delivery_tag, msg.content.body)
-					qsettings['callback'](msg)
+					try:
+						qsettings['callback'](msg)
+					except Exception, err:
+						self.logger.error("Error in callback function: %s" % err)
 					
 					if not qsettings['no_ack']:
 						self.chan.basic_ack(delivery_tag=msg.delivery_tag)
