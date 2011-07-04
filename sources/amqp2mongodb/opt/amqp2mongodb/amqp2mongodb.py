@@ -30,12 +30,12 @@ myamqp = None
 ########################################################
 	
 def on_message(msg):
-	id = msg.delivery_info['routing_key']
+	rk = msg.routing_key
+	
+	body = json.loads(msg.content.body)
+	#body['_id'] = rk
 
-	body = json.loads(msg.body)
-	#body['_id'] = id
-
-	minventory.update({'_id': id}, {"$set": body}, upsert=True)
+	output = minventory.update({'_id': rk}, {"$set": body}, upsert=True, safe=True)
 
 ########################################################
 #
