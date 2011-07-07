@@ -842,11 +842,13 @@ make_package "amqp2mongodb"
 ######################################
 cd $SRC_PATH
 install_basic_source "webcore"
+install_basic_source "highcharts"
 
 cd $SRC_PATH/externals
 BASE="ext-$VERS_EXTJS"
-FCHECK="$PREFIX/www/html/extjs"
+FCHECK="$PREFIX/var/www/html/$BASE"
 if [ ! -e $FCHECK ]; then
+	echo "Install ExtJS ..."
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tar.bz2"
 	fi
