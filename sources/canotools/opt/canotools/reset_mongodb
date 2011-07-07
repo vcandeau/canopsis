@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+
+from pymongo import Connection
+
+mconn = Connection('localhost', 27017)
+mdb = mconn['canopsis']
+
+collections = ['selectors', 'inventory', 'views']
+
+## remove all records
+for collection in collections:
+	mdb.drop_collection(collection)
+	
+	
+## Selectors
+record = {
+	'_id':			'all-hosts',
+	'category':		'internal',
+	'name':			'All hosts',
+	'description':	'Select all hosts',
+	'collection':	'inventory',
+	'filter':		{ 'source_type': 'host'}
+}
+mdb['selectors'].insert(record)
+
+
+record = {
+	'_id':			'all-services',
+	'category':		'internal',
+	'name':			'All services',
+	'description':	'Select all services',
+	'collection':	'inventory',
+	'filter':		{ 'source_type': 'service'}
+}
+mdb['selectors'].insert(record)
+
+record = {
+	'_id':			'all-selectors',
+	'category':		'internal',
+	'name':			'All selectors',
+	'description':	'Select all selectors',
+	'collection':	'selectors',
+	'filter':		'all'
+}
+mdb['selectors'].insert(record)
+
+## Views
+record = {
+	'_id':			'anonymous-default-dashboard',
+	'owner':		'anonymous',
+	'type':			'dashboard',
+	'title':		'Dashboard',
+	'description':	'Welcome view',
+	'selector':		None,
+	'items': [	{ 'items': [
+					{'title': 'Highcharts: Pie', 'widget': 'Widgets.HCPieAvailServices'},
+				]},
+				{ 'items': [
+					{'title': 'Highcharts: Line', 'widget': 'Widgets.HCLine'},
+				]},
+		]
+}
+mdb['views'].insert(record)
+
+record = {
+	'_id':			'id-view-all-hosts',
+	'owner':		'authed',
+	'type':			'leaf',
+	'title':		'Hosts',
+	'description':	'All hosts',
+	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-hosts', 'collection': 'inventory', 'columsClass': 'inventory-hosts', 'searchField': ['host_name'] }]}]
+}
+mdb['views'].insert(record)
+
+record = {
+	'_id':			'id-view-all-services',
+	'owner':		'authed',
+	'type':			'leaf',
+	'title':		'Services',
+	'description':	'All services',
+	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-services', 'collection': 'inventory', 'columsClass': 'inventory-services', 'groupField': 'host_name', 'searchField': ['host_name', 'service_description'] }]}]
+}
+mdb['views'].insert(record)
+
+record = {
+	'_id':			'id-config-selectors',
+	'owner':		'authed',
+	'type':			'leaf',
+	'title':		'Selectors',
+	'description':	'All Selectors',
+	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-selectors', 'collection': 'selectors', 'groupField': 'category'}]}]
+}
+mdb['views'].insert(record)
