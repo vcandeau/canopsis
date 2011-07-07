@@ -1,0 +1,61 @@
+<html>
+<head>
+    	<title>Canopsis</title>
+	<!-- Theme -->
+	<link rel="stylesheet" type="text/css" href= "../extjs/resources/css/ext-all.css">
+	<!-- <link rel="stylesheet" type="text/css" href="resources/css/ext-all.css"> -->
+	<link rel="stylesheet" type="text/css" href="themes/default/theme.css">
+	<link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
+
+</head>
+<body>
+	<div id="loading-mask" style=""></div>
+		<div id="loading">
+			<div class="loading-indicator">
+				<img src="themes/default/images/loading32.gif" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>Canopsis - <a href="http://www.canopsis.org">www.canopsis.org</a>
+				<br /><span id="loading-msg">Loading styles and images...</span>
+        		</div>
+        	</div>
+
+		<!-- Ext-JS -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
+		<script type="text/javascript" src="../extjs/ext-debug.js"></script>
+		<!-- <script type="text/javascript" src="../extjs/bootstrap.js"></script> -->
+
+		<!-- Highcharts -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+                <script type="text/javascript" src="../Highcharts/js/highcharts.js"></script>
+
+		<!-- Application -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
+		<script type="text/javascript" src="app/lib/tools.js"></script>
+		<script type="text/javascript" src="app/lib/renderers.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+
+		<!-- <script type="text/javascript" src="classes.js"></script> -->
+		<script type="text/javascript" src="classes.js"></script>
+		<script type="text/javascript">
+		//	Ext.Loader.setPath('Ext.app', 'classes');
+
+		/*	Ext.require([
+				'Ext.layout.container.*',
+				'Ext.resizer.Splitter',
+				'Ext.fx.target.Element',
+				'Ext.fx.target.Component',
+				'Ext.window.Window',
+				'Ext.app.Portlet',
+				'Ext.app.PortalColumn',
+				'Ext.app.PortalPanel',
+				'Ext.app.Portlet',
+				'Ext.app.PortalDropZone',
+				'Ext.app.GridPortlet',
+				'Ext.app.ChartPortlet'
+			]);*/
+		</script>
+
+
+
+	</div>
+</body>
+</html>
