@@ -8,17 +8,16 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
 		Ext.apply(this, {
 			html: "<div id='HC'>Loading ...</div>",
 		});
-
-	
+		
 		this.callParent(arguments);
 	},
 	
 	afterLayout: function() {
-		//alert('tit')
+	var me = this
 	this.nb_layout++
 	if (this.nb_layout == 2) {
 
-	this.chart = new Highcharts.Chart({
+		this.chart_options = {
                                         chart: {
                                                 renderTo: 'HC',
                                                 height: '290',
@@ -26,8 +25,8 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
                                                 plotBorderWidth: null,
                                                 plotShadow: false
                                         },
-                                        title: {
-                                                text: 'Browser market shares at a specific website, 2010'
+										title: {
+                                                text: null
                                         },
                                         tooltip: {
                                                 formatter: function() {
@@ -51,7 +50,7 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
                                     series: [{
                                                 type: 'pie',
                                                 name: 'Browser share',
-                                                data: [
+                                                /*data: [
                                                         ['Firefox',   45.0],
                                                         ['IE',       26.8],
                                                         {
@@ -63,11 +62,27 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
                                                         ['Safari',    8.5],
                                                         ['Opera',     6.2],
                                                         ['Others',   0.7]
-                                                ]
+                                                ]*/
                                         }]
-                                });
+                                };
 		}
-
+		
+		if (this.nb_layout == 2){
+			Ext.Ajax.request({
+				url: '/webservices/availability/'+me.selector,
+				/*params: {
+					id: 1
+				},*/
+				success: function(response){
+					//console.log(response.responseText);
+				
+					me.data = Ext.JSON.decode(response.responseText)
+					me.chart_options.series[0].data = me.data[1]
+					me.chart = new Highcharts.Chart(me.chart_options)
+				}
+			});
+		}
+		
 		return this.callParent(arguments);
 	}
 });
