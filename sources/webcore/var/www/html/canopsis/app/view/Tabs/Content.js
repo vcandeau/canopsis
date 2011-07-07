@@ -49,7 +49,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					console.log("     + Add: " + widget)
 					
 					var config = Ext.clone(items[i]['items'][j])
-					console.log(config)
+					
+					//TODO !!!, find best height or store in view...
+					config['height'] = 300
+					
+					//console.log(config)
 					config['title'] = undefined
 					
 					items[i]['items'][j]['items'] = Ext.create(widget, config)
