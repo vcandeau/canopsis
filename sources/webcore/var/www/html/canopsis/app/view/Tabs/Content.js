@@ -51,7 +51,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					var config = Ext.clone(items[i]['items'][j])
 					
 					//TODO !!!, find best height or store in view...
-					config['height'] = 300
+					//config['height'] = 300
 					
 					//console.log(config)
 					config['title'] = undefined
