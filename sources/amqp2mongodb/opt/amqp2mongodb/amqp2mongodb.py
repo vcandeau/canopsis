@@ -41,10 +41,14 @@ def on_message(msg):
 
 
 def publish_changed_event(_id, event):
-	(last_state, last_state_type) = get_last_state(_id)
-	state = event['state']
-	state_type = event['state_type']
-	if state != last_state or state_type != last_state_type:
+	try:
+		(last_state, last_state_type) = get_last_state(_id)
+		state = event['state']
+		state_type = event['state_type']
+		if state != last_state or state_type != last_state_type:
+			msg = Content(json.dumps(event))
+			amqp.publish(msg, _id, amqp.exchange_name_changed)
+	except:
 		msg = Content(json.dumps(event))
 		amqp.publish(msg, _id, amqp.exchange_name_changed)
 			
