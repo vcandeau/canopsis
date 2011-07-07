@@ -146,10 +146,10 @@ class camqp(threading.Thread):
 		yield self.chan.exchange_declare(exchange=self.exchange_name_changed, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_changed)
 
-		yield self.chan.exchange_declare(exchange=self.exchange_name_changed, type='topic', durable=True, auto_delete=False)
+		yield self.chan.exchange_declare(exchange=self.exchange_name_rpc, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_rpc)
 
-		yield self.chan.exchange_declare(exchange=self.exchange_name_changed, type='topic', durable=True, auto_delete=False)
+		yield self.chan.exchange_declare(exchange=self.exchange_name_events, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_events)
 
 
