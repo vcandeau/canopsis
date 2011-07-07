@@ -4,6 +4,7 @@ import time
 import logging
 
 from camqp import camqp, files_preserve
+from txamqp.content import Content
 
 from pymongo import Connection
 import json
@@ -15,7 +16,7 @@ import json
 ########################################################
 
 DAEMON_NAME = "amqp2mongodb"
-DAEMON_TYPE = "logger"
+DAEMON_TYPE = "storage"
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -32,10 +33,28 @@ myamqp = None
 def on_message(msg):
 	rk = msg.routing_key
 	
-	body = json.loads(msg.content.body)
-	#body['_id'] = rk
+ 	event = json.loads(msg.content.body)
 
-	output = minventory.update({'_id': rk}, {"$set": body}, upsert=True, safe=True)
+	publish_changed_event(rk, event)
+
+	store_event(rk, event)
+
+
+def publish_changed_event(_id, event):
+	(last_state, last_state_type) = get_last_state(_id)
+	state = event['state']
+	state_type = event['state_type']
+	if state != last_state or state_type != last_state_type:
+		msg = Content(json.dumps(event))
+		amqp.publish(msg, _id, amqp.exchange_name_changed)
+			
+
+def store_event(_id, event):
+	minventory.update({'_id': _id}, {"$set": event}, upsert=True, safe=True)
+
+def get_last_state(_id):
+        state = minventory.find_one({'_id': _id}, {'state':1, 'state_type': 1})
+        return ( state['state'], state['state_type'])
 
 ########################################################
 #
@@ -51,12 +70,7 @@ def signal_handler(signum, frame):
 	logger.warning("Receive signal to stop daemon...")
 	global RUN
 	RUN = 0
-	## Stop amqp
-	if myamqp:
-		myamqp.disconnect()
  
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
 
 
 ########################################################
@@ -69,8 +83,10 @@ minventory=None
 amqp=None
 
 def main():
+	signal.signal(signal.SIGINT, signal_handler)
+	signal.signal(signal.SIGTERM, signal_handler)
 	global amqp, minventory
-	
+
 	# MongoDB
 	mconn = Connection('localhost', 27017)
 	mdb = mconn['canopsis']
@@ -79,7 +95,7 @@ def main():
 	# AMQP
 	amqp = camqp()
 
-	amqp.add_queue(DAEMON_NAME, '#', on_message)
+	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message)
 	amqp.start()
 
 	while RUN:
