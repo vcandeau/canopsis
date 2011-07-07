@@ -53,7 +53,7 @@ record = {
 	'description':	'Welcome view',
 	'selector':		None,
 	'items': [	{ 'items': [
-					{'title': 'Highcharts: Pie', 'widget': 'Widgets.HCPieAvailServices'},
+					{'title': 'Highcharts: Pie', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services'},
 				]},
 				{ 'items': [
 					{'title': 'Highcharts: Line', 'widget': 'Widgets.HCLine'},
