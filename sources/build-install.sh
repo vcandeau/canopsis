@@ -743,7 +743,7 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	install_basic_source "graphite_webserver"
-	install_python_daemon "$PREFIX/opt/graphite/webserver.py"
+	install_python_daemon "$PREFIX/opt/graphite/graphite_webserver.py"
 	
 else
 	echo " + Allready install"
