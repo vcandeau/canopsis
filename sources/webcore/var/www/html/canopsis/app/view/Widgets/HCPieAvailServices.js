@@ -20,7 +20,7 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
 		this.chart_options = {
                                         chart: {
                                                 renderTo: 'HC',
-                                                height: '290',
+                                                height: this.height - 30,
                                                 plotBackgroundColor: null,
                                                 plotBorderWidth: null,
                                                 plotShadow: false
@@ -37,14 +37,10 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
                                                 pie: {
                                                         allowPointSelect: true,
                                                         cursor: 'pointer',
-                                                        dataLabels: {
-                                                                enabled: true,
-                                                                color: '#000000',
-                                                                connectorColor: '#000000',
-                                                                formatter: function() {
-                                                                        return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
-                                                                }
-                                                        }
+														dataLabels: {
+																enabled: false
+														},
+														showInLegend: true
                                                 }
                                         },
                                     series: [{
