@@ -53,7 +53,7 @@ record = {
 	'description':	'Welcome view',
 	'selector':		None,
 	'items': [	{ 'items': [
-					{'title': 'Highcharts: Pie', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300},
+					{'title': 'Highcharts: Pie', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300, 'refreshInterval': 60},
 				]},
 				{ 'items': [
 					{'title': 'Highcharts: Line', 'widget': 'Widgets.HCLine'},
@@ -68,7 +68,7 @@ record = {
 	'type':			'leaf',
 	'title':		'Hosts',
 	'description':	'All hosts',
-	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-hosts', 'collection': 'inventory', 'columsClass': 'inventory-hosts', 'searchField': ['host_name'] }]}]
+	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-hosts', 'collection': 'inventory', 'columsClass': 'inventory-hosts', 'searchField': ['host_name'], 'refreshInterval': 60 }]}]
 }
 mdb['views'].insert(record)
 
@@ -78,7 +78,7 @@ record = {
 	'type':			'leaf',
 	'title':		'Services',
 	'description':	'All services',
-	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-services', 'collection': 'inventory', 'columsClass': 'inventory-services', 'groupField': 'host_name', 'searchField': ['host_name', 'service_description'] }]}]
+	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-services', 'collection': 'inventory', 'columsClass': 'inventory-services', 'groupField': 'host_name', 'searchField': ['host_name', 'service_description'], 'refreshInterval': 60 }]}]
 }
 mdb['views'].insert(record)
 

@@ -4,6 +4,8 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 	selector: undefined,
 	collection: undefined,
 	store: undefined,
+	task: undefined,
+	refreshInterval: 0,
 	//form: 'selector',
 	
 	with_pagingdock: true,
@@ -77,7 +79,9 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 				
 				store.proxy.url = rest_url
 			
+				store.baseParams = store.baseParams || {};
 				this.store = store
+				
 				//this.store = init_REST_Store(this.collection, this.selector, this.groupField)
 		}
 		
@@ -215,6 +219,16 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 			this.plugins = plugins
 		}
 		
+		if (this.refreshInterval !=0) {
+			this.task = {
+				run: me.refreshStore,
+				scope: me,
+				interval: me.refreshInterval * 1000
+			}
+			console.log("Start auto refresh task")
+			Ext.TaskManager.start(this.task);
+		}	
+		
 		this.callParent(arguments);
 	},
 	
@@ -222,8 +236,17 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 		console.log(this.store)
 	},*/
 	
+	refreshStore: function() {
+		console.log("Refresh store")
+		this.store.load(this.store.baseParams);
+	},
+	
     beforeDestroy : function() {
 		console.log("Destroy 'canopsis.view.classes.Grid'")
-		canopsis.view.classes.Grid.superclass.beforeDestroy.call(this);
+		if (this.task) {
+			console.log("Stop auto refresh task")
+			Ext.TaskManager.stop(this.task);
+		}
+		canopsis.view.Widgets.Grid.superclass.beforeDestroy.call(this);
     }
 });
