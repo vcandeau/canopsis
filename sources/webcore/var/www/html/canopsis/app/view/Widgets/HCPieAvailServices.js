@@ -70,7 +70,7 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
 					id: 1
 				},*/
 				success: function(response){
-					//console.log(response.responseText);
+					//log.debug(response.responseText);
 				
 					me.data = Ext.JSON.decode(response.responseText)
 					me.chart_options.series[0].data = me.data[1]

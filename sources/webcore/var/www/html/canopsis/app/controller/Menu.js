@@ -9,7 +9,7 @@ Ext.define('canopsis.controller.Menu', {
 		// Add tab in main-tab if not exist, else show it.
 		if (record.data.leaf){
 			var id=record.getId();
-			console.log('itemdblclick: '+id);
+			log.debug('itemdblclick: '+id);
 			add_view_tab(id, record.data.text)
 				
 				/*maintabs.add(Ext.create('canopsis.view.Tabs.Content'),{title: record.data.text,
@@ -32,12 +32,12 @@ Ext.define('canopsis.controller.Menu', {
     },
 
    /* addMenuBinding: function(menuid, fn) {
-	console.log('Add binding: '+menuid);
+	log.debug('Add binding: '+menuid);
 	//var MenuView[menuid]=fn;
 	//var toto={ MenuView };
 
 	this.control(menuid, fn);
-	console.log(this.control);
+	log.debug(this.control);
     }, */
 
 });
