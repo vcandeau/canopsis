@@ -19,6 +19,11 @@ var log = {
 			this.writeMsg(msg)
 		}
 	},
+	dump: function (msg) {
+		if (this.level >= 3){
+			this.writeMsg(msg)
+		}		
+	},
 	writeMsg: function (msg) {
 		if (Ext.isDefined(console.log)){
 				console.log(msg)
