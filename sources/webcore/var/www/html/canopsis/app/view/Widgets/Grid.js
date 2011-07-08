@@ -33,22 +33,22 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 		var groupField = this.groupField
 		var rest_url = '/webservices/rest/'+selector
 		
-		console.log("Create widget 'Grid' ...")
-		console.log(" - selector: "+selector)
-		console.log(" - collection: "+collection)
-		console.log(" - groupField: "+groupField)
-		console.log(" - REST URL: "+rest_url)
+		log.debug("Create widget 'Grid' ...")
+		log.debug(" - selector: "+selector)
+		log.debug(" - collection: "+collection)
+		log.debug(" - groupField: "+groupField)
+		log.debug(" - REST URL: "+rest_url)
 		
 		if (this.columsClass){
-			console.log("Use columns classe '"+this.columsClass+"'")
+			log.debug("Use columns classe '"+this.columsClass+"'")
 			this.columns = Ext.create('canopsis.view.column.'+this.columsClass)['columns']
 		}else{
-			console.log("Use default colums classe ('"+collection+"')")
+			log.debug("Use default colums classe ('"+collection+"')")
 			this.columns = Ext.create('canopsis.view.column.'+collection)['columns']
 		}
 		
 		if (!this.store){
-				//console.log("Init REST Store, selector: '"+selector+"', groupField: '"+groupField+"'")
+				//log.debug("Init REST Store, selector: '"+selector+"', groupField: '"+groupField+"'")
 				
 				var options = {
 					//autoSync: true,
@@ -86,11 +86,11 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 		}
 		
 		if (this.groupField) {
-			console.log("Group field with '"+this.groupField+"'")
+			log.debug("Group field with '"+this.groupField+"'")
 			this.features = [{ftype:'grouping'}]
 		}
 		
-		console.log("Load store ...")
+		log.debug("Load store ...")
 		this.store.load({params: this.store.baseParams})
 		
 		if (this.with_pagingdock) {
@@ -100,14 +100,14 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 						dock: 'bottom',
 						displayInfo: true
 					}
-			console.log("Push PagingToolbar in dockedItems")
+			log.debug("Push PagingToolbar in dockedItems")
 			dockedItems.push(dockedItem)	
 		}
 	
 		
 		if (this.with_rowEditing){
 			Ext.require(['Ext.grid.plugin.RowEditing']);
-			console.log("Configure rowEditing plugin")
+			log.debug("Configure rowEditing plugin")
 			this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing')
 			plugins.push(this.rowEditing)
 			
@@ -121,12 +121,12 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 					iconCls: 'icon-add',
 					icon   : 'themes/default/images/16x16/add.png',
 					handler: function(){
-						console.log("Add item")
+						log.debug("Add item")
 						// empty record
 						//me.store.insert(0, Ext.create('canopsis.model.DBObjects'));
 						//me.store.add(new selectorRecord());
 						//me.rowEditing.startEdit(0, 0);
-						console.log(" - Create form 'canopsis.view.form."+me.form+"'")
+						log.debug(" - Create form 'canopsis.view.form."+me.form+"'")
 						var maintabs = Ext.getCmp('main-tabs')
 						var form = Ext.create('canopsis.view.form.'+me.form)
 						//form['items'] = me.model,
@@ -145,18 +145,18 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 					handler: function(){
 						var selection = me.getView().getSelectionModel().getSelection()[0];
 						if (selection) {
-							console.log("Delete item")
-							//console.log(selection)
+							log.debug("Delete item")
+							//log.debug(selection)
 							//me.store.remove(selection);
 							//selection.destroy();
 						}
 					}
 				}
 			
-			console.log(" - Add 'add' button")
+			log.debug(" - Add 'add' button")
 			toolsbar_items.push(TBItem_add)
 			toolsbar_items.push('-')
-			console.log(" - Add 'del' button")
+			log.debug(" - Add 'del' button")
 			toolsbar_items.push(TBItem_del)
 				
 			
@@ -164,8 +164,8 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 		
 		
 		if (this.searchField) {
-			console.log("Add search field")
-			console.log(this.searchField)
+			log.debug("Add search field")
+			log.debug(this.searchField)
 			var item = {
                  xtype: 'textfield',
                  name: 'search',
@@ -194,28 +194,28 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 	
 		
 		if (this.with_toolsbar || this.searchField) {
-			//console.log("toolsbar_items: "+toolsbar_items)
+			//log.debug("toolsbar_items: "+toolsbar_items)
 			if (toolsbar_items != ''){
 				var dockedItem = {
 						xtype: 'toolbar',
 						items: toolsbar_items,
 					}
-				console.log("Push Toolbar in dockedItems")
+				log.debug("Push Toolbar in dockedItems")
 				dockedItems.push(dockedItem)
 			}else{
-				console.log("No item in Toolbar, dont display.")
+				log.debug("No item in Toolbar, dont display.")
 			}
 		}
 		
 		
 		if (this.with_toolsbar || this.with_pagingdock) {
-			console.log("Attach dockedItems")
+			log.debug("Attach dockedItems")
 			this.dockedItems = dockedItems
 		}
 		
 		
 		if (plugins != ''){
-			console.log("Attach plugins")
+			log.debug("Attach plugins")
 			this.plugins = plugins
 		}
 		
@@ -225,7 +225,7 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 				scope: me,
 				interval: me.refreshInterval * 1000
 			}
-			console.log("Start auto refresh task")
+			log.debug("Start auto refresh task")
 			Ext.TaskManager.start(this.task);
 		}	
 		
@@ -233,18 +233,18 @@ Ext.define('canopsis.view.Widgets.Grid' ,{
 	},
 	
 	/*beforeLayout: function() {
-		console.log(this.store)
+		log.debug(this.store)
 	},*/
 	
 	refreshStore: function() {
-		console.log("Refresh store")
+		log.debug("Refresh store")
 		this.store.load(this.store.baseParams);
 	},
 	
     beforeDestroy : function() {
-		console.log("Destroy 'canopsis.view.classes.Grid'")
+		log.debug("Destroy 'canopsis.view.classes.Grid'")
 		if (this.task) {
-			console.log("Stop auto refresh task")
+			log.debug("Stop auto refresh task")
 			Ext.TaskManager.stop(this.task);
 		}
 		canopsis.view.Widgets.Grid.superclass.beforeDestroy.call(this);

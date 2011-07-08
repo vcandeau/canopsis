@@ -16,7 +16,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	layout: 'fit',
     
     initComponent: function() {
-		console.log("Create container '"+this.id+"'")
+		log.debug("Create container '"+this.id+"'")
 		var me = this;
 		
 		Ext.direct.Manager.addProvider({
@@ -30,30 +30,30 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 		});
 
-		console.log("Get view '"+this.view+"' from remote RPC ...")
+		log.debug("Get view '"+this.view+"' from remote RPC ...")
 		view.get_view({view: this.view},function(view_options){
-			console.log("View received, parse it ...")
+			log.debug("View received, parse it ...")
 			// Create Widgets
 			//Parse Column
-			console.log(items)
+			log.debug(items)
 			//items = new Array(items['items']);
 			var items = view_options['items'];
-			console.log(items)
+			log.debug(items)
 			nb_item = 0;
 			for(var i= 0; i < items.length; i++) {
-				console.log("- Column "+i)
+				log.debug("- Column "+i)
 				//Parse Row
 				for(var j= 0; j < items[i]['items'].length; j++) {
-					console.log("  - Row "+j)
+					log.debug("  - Row "+j)
 					widget = 'canopsis.view.'+items[i]['items'][j]['widget']
-					console.log("     + Add: " + widget)
+					log.debug("     + Add: " + widget)
 					
 					var config = Ext.clone(items[i]['items'][j])
 					
 					//TODO !!!, find best height or store in view...
 					//config['height'] = 300
 					
-					//console.log(config)
+					//log.debug(config)
 					config['title'] = undefined
 					
 					items[i]['items'][j]['items'] = Ext.create(widget, config)
@@ -63,11 +63,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					nb_item++;
 				}
 			}
-			console.log(nb_item + " items added, now show it")
+			log.debug(nb_item + " items added, now show it")
 			if (nb_item > 1){
 				me.add({  items: Ext.create('canopsis.view.Dashboard.PortalPanel', {items: items}) });
 			}else if(nb_item == 1){
-				console.log("Only one item, show it in full mode")
+				log.debug("Only one item, show it in full mode")
 				me.add({  items: items[0]['items'][0]['items'] });
 				this.fullmode == true
 				//me.add({  items: Ext.create('Ext.panel.Panel', {items: items[0]['items'][0]['items'], style: {borderWidth:'0px'}}) });
@@ -78,25 +78,25 @@ Ext.define('canopsis.view.Tabs.Content' ,{
     },
     
     beforeDestroy : function() {
-		//console.log("Destroy tab '"+this.id+"' ...")
+		//log.debug("Destroy tab '"+this.id+"' ...")
 		//Ext.getCmp(id+'-tab').destroy();
 		
-		console.log("Destroy items ...")
+		log.debug("Destroy items ...")
 		this.removeAll(true)
-		//console.log(this.items)
+		//log.debug(this.items)
 		/*if (this.fullmode == true){
-			console.log("  Destroy ...")
+			log.debug("  Destroy ...")
 			delete this.items[0]['items'][0]['items'];
 		}else{
 			for(var i= 0; i < this.items.length; i++) {
-				console.log("- Column "+i)
+				log.debug("- Column "+i)
 				
 				for(var j= 0; j < this.items[i]['items'].length; j++) {
-						console.log("  - Row "+j)				
+						log.debug("  - Row "+j)				
 				}
 			}
 		}*/
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
-        console.log("Destroy container")
+        log.debug("Destroy container")
     }
 });
