@@ -3,12 +3,26 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
     chart: false,
     layout: "fit",
     nb_layout: 0,
+    task: undefined,
+    colors: {
+		up: '#50b432',
+		down: '#ed241b',
+		unreachable: '#f0f0ff',
+		ok : '#50b432',
+		warning: '#ed941b',
+		critical: '#ed241b',
+		unknown: '#f0f0ff' 
+	},
         
 	initComponent: function() {
 		Ext.apply(this, {
-			html: "<div id='HC'>Loading ...</div>",
+			html: "<center><div id='html-"+this.id+"'>Loading ...</div></center>",
 		});
 		
+		if (! Ext.isDefined(this.showInLegend)){
+			this.showInLegend = true
+		}
+
 		this.callParent(arguments);
 	},
 	
@@ -19,11 +33,12 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
 
 		this.chart_options = {
                                         chart: {
-                                                renderTo: 'HC',
+                                                renderTo: "html-"+this.id,
                                                 height: this.height - 30,
+                                                width: this.width,
                                                 plotBackgroundColor: null,
                                                 plotBorderWidth: null,
-                                                plotShadow: false
+                                                plotShadow: false,
                                         },
 										title: {
                                                 text: null
@@ -40,12 +55,14 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
 														dataLabels: {
 																enabled: false
 														},
-														showInLegend: true
-                                                }
+														showInLegend: this.showInLegend
+                                                },
+                                                color: '#FF0000',
                                         },
                                     series: [{
                                                 type: 'pie',
                                                 name: 'Browser share',
+                                                data: [],
                                                 /*data: [
                                                         ['Firefox',   45.0],
                                                         ['IE',       26.8],
@@ -64,21 +81,51 @@ Ext.define('canopsis.view.Widgets.HCPieAvailServices' ,{
 		}
 		
 		if (this.nb_layout == 2){
-			Ext.Ajax.request({
+			this.chart = new Highcharts.Chart(this.chart_options)
+			//this.refreshStore()
+			if (this.refreshInterval !=0) {
+				this.task = {
+					run: me.refreshStore,
+					scope: me,
+					interval: me.refreshInterval * 1000
+				}
+				log.debug("Start auto refresh task")
+				Ext.TaskManager.start(this.task);
+			}
+		}
+		
+		return this.callParent(arguments);
+	},
+	
+	refreshStore: function() {
+		log.debug("Refresh store")
+		var me = this
+		Ext.Ajax.request({
 				url: '/webservices/availability/'+me.selector,
 				/*params: {
 					id: 1
 				},*/
 				success: function(response){
 					//log.debug(response.responseText);
-				
-					me.data = Ext.JSON.decode(response.responseText)
-					me.chart_options.series[0].data = me.data[1]
-					me.chart = new Highcharts.Chart(me.chart_options)
+					data = Ext.JSON.decode(response.responseText)
+					var hcdata = []
+					for(var i= 0; i < data[1].length; i++) {
+						var part = data[1][i]
+
+						hcdata.push({name: part[0], y: part[1], color: me.colors[part[0]]})
+					};
+					me.chart.series[0].setData(hcdata)
 				}
 			});
+	},
+	
+	beforeDestroy : function() {
+		log.debug("Destroy 'canopsis.view.Widgets.HCPieAvailServices'")
+		if (this.task) {
+			log.debug("Stop auto refresh task")
+			Ext.TaskManager.stop(this.task);
 		}
-		
-		return this.callParent(arguments);
-	}
+		canopsis.view.Widgets.HCPieAvailServices.superclass.beforeDestroy.call(this);
+    }
+	
 });
