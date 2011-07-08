@@ -31,7 +31,7 @@ Ext.define('canopsis.view.Dashboard.View' ,{
 				//Parse Row
 				for(var j= 0; j < items[i]['items'].length; j++) {
 					widget = 'canopsis.view.Widgets.'+items[i]['items'][j]['widget']
-					//console.log(widget)
+					//log.debug(widget)
 					items[i]['items'][j]['items'] = Ext.create(widget)
 				}
 			}

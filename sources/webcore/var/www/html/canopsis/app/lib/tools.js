@@ -1,6 +1,6 @@
 function init_REST_Store(collection, selector, groupField){
 	var options = {}
-	console.log("Init REST Store, Collection: '"+collection+"', selector: '"+selector+"', groupField: '"+groupField+"'")
+	log.debug("Init REST Store, Collection: '"+collection+"', selector: '"+selector+"', groupField: '"+groupField+"'")
 	
 	options['storeId'] = collection+selector
 	options['id'] = collection+selector
@@ -18,16 +18,16 @@ function init_REST_Store(collection, selector, groupField){
 }
 
 function add_view_tab(id, title){
-	console.log("Add view tab '"+id+"'")
+	log.debug("Add view tab '"+id+"'")
 	var maintabs = Ext.getCmp('main-tabs');
 	var tab = Ext.getCmp(id+'-tab');
 	
-	//console.log(record.data)
+	//log.debug(record.data)
 	if (tab) {
-		console.log(" - Tab allerady open, just show it")
+		log.debug(" - Tab allerady open, just show it")
 		maintabs.setActiveTab(tab);
 	}else{
-		console.log(" - Create tab ...")
+		log.debug(" - Create tab ...")
 		maintabs.add({
 			title: title,
 			id: id+"-tab",
