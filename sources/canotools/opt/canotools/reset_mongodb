@@ -5,7 +5,7 @@ from pymongo import Connection
 mconn = Connection('localhost', 27017)
 mdb = mconn['canopsis']
 
-collections = ['selectors', 'inventory', 'views']
+collections = ['selectors', 'inventory', 'views', 'cache']
 
 ## remove all records
 for collection in collections:
@@ -48,23 +48,32 @@ mdb['selectors'].insert(record)
 record = {
 	'_id':			'anonymous-default-dashboard',
 	'owner':		'anonymous',
+	'acl':			'owner',
 	'type':			'dashboard',
 	'title':		'Dashboard',
 	'description':	'Welcome view',
 	'selector':		None,
 	'items': [	{ 'items': [
-					{'title': 'Highcharts: Pie', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300, 'refreshInterval': 60},
-				]},
-				{ 'items': [
-					{'title': 'Highcharts: Line', 'widget': 'Widgets.HCLine'},
-				]},
+				{'title': 'All services', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300, 'width': 300, 'refreshInterval': 60},
+			]},
+			{ 'items': [
+				{'title': 'All Hosts', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-hosts', 'height': 300, 'width': 300, 'refreshInterval': 60},
+			]},
+			{ 'items': [
+				{'title': 'All services', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300, 'width': 300, 'refreshInterval': 60, 'showInLegend': False},
+			]},
+			{ 'items': [
+				{'title': 'All Hosts', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-hosts', 'height': 300, 'width': 300, 'refreshInterval': 60, 'showInLegend': False},
+			]},
+
 		]
 }
 mdb['views'].insert(record)
 
 record = {
 	'_id':			'id-view-all-hosts',
-	'owner':		'authed',
+	'owner':		'anonymous',
+	'acl':			'authed',
 	'type':			'leaf',
 	'title':		'Hosts',
 	'description':	'All hosts',
@@ -74,7 +83,8 @@ mdb['views'].insert(record)
 
 record = {
 	'_id':			'id-view-all-services',
-	'owner':		'authed',
+	'owner':		'anonymous',
+	'acl':			'authed',
 	'type':			'leaf',
 	'title':		'Services',
 	'description':	'All services',
@@ -84,10 +94,26 @@ mdb['views'].insert(record)
 
 record = {
 	'_id':			'id-config-selectors',
-	'owner':		'authed',
+	'owner':		'anonymous',
+	'acl':			'authed',
 	'type':			'leaf',
 	'title':		'Selectors',
 	'description':	'All Selectors',
 	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-selectors', 'collection': 'selectors', 'groupField': 'category'}]}]
 }
 mdb['views'].insert(record)
+
+
+
+### SLA
+record = {
+	'_id':			'id-sla-all-services',
+	'owner':		'anonymous',
+	'acl':			'authed',
+	'title':		'SLA: All service',
+	'description':		'description',
+	'selector':		'all-services',
+}
+mdb['sla'].insert(record)
+
+
