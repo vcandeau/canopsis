@@ -501,60 +501,59 @@ make_package "mongodb"
 ######################################
 #  NodeJS
 ######################################
-cd $SRC_PATH/externals
-echo "Install NodeJS $VERS_NODEJS ..."
-BASE="node-$VERS_NODEJS"
-LOG="$LOG_PATH/$BASE.log"
-rm -f $LOG &> /dev/null
-FCHECK="$PREFIX/bin/node"
-if [ ! -e $FCHECK ]; then
-	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tar.gz"
-	fi
-	cd $BASE
+#cd $SRC_PATH/externals
+#echo "Install NodeJS $VERS_NODEJS ..."
+#BASE="node-$VERS_NODEJS"
+#LOG="$LOG_PATH/$BASE.log"
+#rm -f $LOG &> /dev/null
+#FCHECK="$PREFIX/bin/node"
+#if [ ! -e $FCHECK ]; then
+#	if [ ! -e $BASE ]; then
+#		extract_archive "$BASE.tar.gz"
+#	fi
+#	cd $BASE
+#
+#	echo " + Configure ..."
+#	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
+#	check_code $?
+#
+#	echo " + Build ..."
+#	make 1>> $LOG 2>> $LOG
+#	check_code $?
 
-	echo " + Configure ..."
-	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
-	check_code $?
+#	echo " + Install ..."
+#	$SUDO make install 1>> $LOG 2>> $LOG
+#	check_code $?
 
-	echo " + Build ..."
-	make 1>> $LOG 2>> $LOG
-	check_code $?
+#	echo "Install NPM for NodeJS ..."
+#	echo "Install NPM for NodeJS ..." 1>> $LOG 2>> $LOG
+#	cd ..
+#	echo " + Git clone ..."
+#	if [ -e npm ]; then
+#		cd npm
+#		git pull 1>> $LOG 2>> $LOG
+#	else
+#		git clone http://github.com/isaacs/npm.git 1>> $LOG 2>> $LOG
+#		cd npm
+#	fi
+#	echo " + Install ..."
+#	$SUDO make 1>> $LOG 2>> $LOG
+#	$SUDO $PREFIX/bin/node cli.js install -g -f 1>> $LOG 2>> $LOG
+#	check_code $?
+#
+#	echo "Install Socket.IO for NodeJS ..."
+#	echo "Install Socket.IO for NodeJS ..." 1>> $LOG 2>> $LOG
+#	echo " + Install ..."
+#	$SUDO $PREFIX/bin/node $PREFIX/bin/npm install socket.io 1>> $LOG 2>> $LOG
+#	check_code $?
+#	
+#	#echo " + Post install configurations ..."
+#	#check_code $?
+#else
+#	echo " + Allready install"
+#fi
 
-	echo " + Install ..."
-	$SUDO make install 1>> $LOG 2>> $LOG
-	check_code $?
-
-	echo "Install NPM for NodeJS ..."
-	echo "Install NPM for NodeJS ..." 1>> $LOG 2>> $LOG
-	cd ..
-	echo " + Git clone ..."
-	if [ -e npm ]; then
-		cd npm
-		git pull 1>> $LOG 2>> $LOG
-	else
-		git clone http://github.com/isaacs/npm.git 1>> $LOG 2>> $LOG
-		cd npm
-	fi
-	echo " + Install ..."
-	$SUDO make 1>> $LOG 2>> $LOG
-	$SUDO $PREFIX/bin/node cli.js install -g -f 1>> $LOG 2>> $LOG
-	check_code $?
-
-	echo "Install Socket.IO for NodeJS ..."
-	echo "Install Socket.IO for NodeJS ..." 1>> $LOG 2>> $LOG
-	echo " + Install ..."
-	$SUDO $PREFIX/bin/node $PREFIX/bin/npm install socket.io 1>> $LOG 2>> $LOG
-	check_code $?
-	
-	#echo " + Post install configurations ..."
-	#check_code $?
-else
-	echo " + Allready install"
-fi
-
-
-make_package "nodejs"
+#make_package "nodejs"
 
 ######################################
 #  canotools
@@ -761,74 +760,74 @@ make_package "amqp2graphite"
 ######################################
 #  NGinx
 ######################################
-cd $SRC_PATH/externals
-echo "Install Nginx $VERS_NGINX ..."
-BASE="nginx-$VERS_NGINX"
-LOG="$LOG_PATH/$BASE.log"
-rm -f $LOG &> /dev/null
-FCHECK="$PREFIX/bin/nginx"
-if [ ! -e $FCHECK ]; then
-	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tar.gz"
-	fi
-	cd  $BASE
-
-	echo " + Clean ..."
-	make clean 1>> $LOG 2>> $LOG
-	#check_code $?
-
-	echo " + Configure ..."
-	./configure --prefix=$PREFIX  \
- --sbin-path=$PREFIX/bin/ \
- --lock-path=$PREFIX/var/run/nginx.pid \
- --pid-path=$PREFIX/var/run/nginx.lock \
- --conf-path=$PREFIX/etc/nginx/nginx.conf \
- --error-log-path=$PREFIX/var/log/nginx/error.log \
- --http-log-path=$PREFIX/var/log/nginx/access.log \
- --http-client-body-temp-path=$PREFIX/var/lib/nginx/client_body_temp \
- --http-proxy-temp-path=$PREFIX/var/lib/nginx/proxy_temp \
- --http-fastcgi-temp-path=$PREFIX/var/lib/nginx/fastcgi_temp \
- --http-uwsgi-temp-path=$PREFIX/var/lib/nginx/uwsgi_temp \
- --http-scgi-temp-path=$PREFIX/var/lib/nginx/scgi_temp \
- --user=$HUSER \
- --group=$HGROUP 1>> $LOG 2>> $LOG
-	check_code $?
-
-	echo " + Build ..."
-	make 1>> $LOG 2>> $LOG
-	check_code $?
-
-	echo " + Install ..."
-	$SUDO killall nginx &> /dev/null
-	$SUDO make install 1>> $LOG 2>> $LOG
-	check_code $?
-
-	echo " + Configuration ..."
-	$SUDO mkdir -p $PREFIX/etc/nginx/conf.d $PREFIX/etc/nginx/sites-enabled $PREFIX/var/lib/nginx
-	check_code $?
-	$SUDO mv $PREFIX/etc/nginx/nginx.conf $PREFIX/etc/nginx/nginx.ori
-	check_code $?
-
-	install_conf "nginx.conf"
-
-	$SUDO ln -s $PREFIX/etc/nginx.conf $PREFIX/etc/nginx/nginx.conf
-	check_code $?
-
-	$SUDO mkdir -p $PREFIX/var/www/html
-	$SUDO mv $PREFIX/html/* $PREFIX/var/www/html
-	check_code $?
-	$SUDO rmdir $PREFIX/html
-	check_code $?
-
-	install_conf "adm-external.conf"
-	$SUDO mv $PREFIX/etc/adm-external.conf $PREFIX/etc/nginx/sites-enabled/
-
-	cd - > /dev/null
-else
-	echo " + Allready install"
-fi
-
-make_package "nginx"
+#cd $SRC_PATH/externals
+#echo "Install Nginx $VERS_NGINX ..."
+#BASE="nginx-$VERS_NGINX"
+#LOG="$LOG_PATH/$BASE.log"
+#rm -f $LOG &> /dev/null
+#FCHECK="$PREFIX/bin/nginx"
+#if [ ! -e $FCHECK ]; then
+#	if [ ! -e $BASE ]; then
+#		extract_archive "$BASE.tar.gz"
+#	fi
+#	cd  $BASE
+#
+#	echo " + Clean ..."
+#	make clean 1>> $LOG 2>> $LOG
+#	#check_code $?
+#
+#	echo " + Configure ..."
+#	./configure --prefix=$PREFIX  \
+# --sbin-path=$PREFIX/bin/ \
+# --lock-path=$PREFIX/var/run/nginx.pid \
+# --pid-path=$PREFIX/var/run/nginx.lock \
+# --conf-path=$PREFIX/etc/nginx/nginx.conf \
+# --error-log-path=$PREFIX/var/log/nginx/error.log \
+# --http-log-path=$PREFIX/var/log/nginx/access.log \
+# --http-client-body-temp-path=$PREFIX/var/lib/nginx/client_body_temp \
+# --http-proxy-temp-path=$PREFIX/var/lib/nginx/proxy_temp \
+# --http-fastcgi-temp-path=$PREFIX/var/lib/nginx/fastcgi_temp \
+# --http-uwsgi-temp-path=$PREFIX/var/lib/nginx/uwsgi_temp \
+# --http-scgi-temp-path=$PREFIX/var/lib/nginx/scgi_temp \
+# --user=$HUSER \
+# --group=$HGROUP 1>> $LOG 2>> $LOG
+#	check_code $?
+#
+#	echo " + Build ..."
+#	make 1>> $LOG 2>> $LOG
+#	check_code $?
+#
+#	echo " + Install ..."
+#	$SUDO killall nginx &> /dev/null
+#	$SUDO make install 1>> $LOG 2>> $LOG
+#	check_code $?
+#
+#	echo " + Configuration ..."
+#	$SUDO mkdir -p $PREFIX/etc/nginx/conf.d $PREFIX/etc/nginx/sites-enabled $PREFIX/var/lib/nginx
+#	check_code $?
+#	$SUDO mv $PREFIX/etc/nginx/nginx.conf $PREFIX/etc/nginx/nginx.ori
+#	check_code $?
+#
+#	install_conf "nginx.conf"
+#
+#	$SUDO ln -s $PREFIX/etc/nginx.conf $PREFIX/etc/nginx/nginx.conf
+#	check_code $?
+#
+#	$SUDO mkdir -p $PREFIX/var/www/html
+#	$SUDO mv $PREFIX/html/* $PREFIX/var/www/html
+#	check_code $?
+#	$SUDO rmdir $PREFIX/html
+#	check_code $?
+#
+#	install_conf "adm-external.conf"
+#	$SUDO mv $PREFIX/etc/adm-external.conf $PREFIX/etc/nginx/sites-enabled/
+#
+#	cd - > /dev/null
+#else
+#	echo " + Allready install"
+#fi
+#
+#make_package "nginx"
 
 ######################################
 #  amqp2mongodb
@@ -842,7 +841,7 @@ make_package "amqp2mongodb"
 ######################################
 cd $SRC_PATH
 install_basic_source "webcore"
-install_basic_source "highcharts"
+#install_basic_source "highcharts"
 
 cd $SRC_PATH/externals
 BASE="ext-$VERS_EXTJS"
