@@ -20,7 +20,7 @@ UNITTESTS=`find ./ | grep Myunittest.py`
 for UNITTEST in $UNITTESTS; do 
         echo "##### Proceed to $UNITTEST" 
         $SUDO mkdir -p $PREFIX/tmp 
-        $SUDO cp $SRC_PATH/$UNITTEST $PREFIX/tmp/ 
+        $SUDO cp $SRC_PATH/$UNITTEST $PREFIX/tmp/Myunittest.py 
         $SUDO su - $HUSER -c "python $PREFIX/tmp/Myunittest.py" 
         check_code $? 
         echo "#### END ####" 
