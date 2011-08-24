@@ -175,7 +175,7 @@ class camqp(threading.Thread):
 			self.queues[key]['consumer_tag'] = consumer_tag
 			
 			for routing_key in routing_keys:
-				self.logger.debug("  - Bind on '%s'" % routing_key)
+				self.logger.debug("  - Bind '%s' on exchange '%s'" % (routing_key, exchange_name))
 				yield self.chan.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
 			
 			self.logger.debug("  - Declare callback with consumer_tag: %s ..." % consumer_tag)
@@ -189,7 +189,8 @@ class camqp(threading.Thread):
 		returnValue((self.conn, self.chan))
 	
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
-		routing_keys = list(routing_keys)
+		if not isinstance(routing_keys, list):
+			routing_keys = [ routing_keys ]
 		
 		if not exchange_name:
 			exchange_name = self.exchange_name
