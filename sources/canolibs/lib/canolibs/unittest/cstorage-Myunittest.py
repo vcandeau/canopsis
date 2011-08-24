@@ -1,0 +1,134 @@
+#!/usr/bin/env python
+
+import unittest
+
+from cstorage import cstorage
+from crecord import crecord
+from caccount import caccount
+
+#storage = cstorage.
+
+STORAGE = None
+MYRECORD = None
+ID = None
+
+class KnownValues(unittest.TestCase): 
+	def setUp(self):
+		self.anonymous_account = caccount()
+		self.root_account = caccount(user="root", group="root")
+		self.user_account = caccount(user="william", group="capensis")
+
+		self.data = {'mydata1': 'data1', 'mydata2': 'data2', 'mydata3': 'data3'}
+		
+	def test_01_Init(self):
+		global STORAGE
+		STORAGE = cstorage(self.user_account, namespace='unittest')
+
+		records = STORAGE.find(account=self.root_account)
+		STORAGE.remove(records, account=self.root_account)
+
+	def test_02_CreateRecord(self):
+		global MYRECORD
+		MYRECORD = crecord(self.data)
+
+	def test_03_Put(self):
+		global ID
+		ID = STORAGE.put(MYRECORD)
+
+	def test_04_Get(self):
+		global MYRECORD
+		MYRECORD = STORAGE.get(ID)
+		if MYRECORD.data != self.data:
+			raise Exception('Invalid data ...')
+
+	def test_05_UpdateAndPut(self):
+		MYRECORD.data['mydata4'] = 'data4'
+		STORAGE.put(MYRECORD)
+		record = STORAGE.get(ID)
+		if record.data == self.data:
+			raise Exception('Data not updated ...')
+
+	def test_06_Remove(self):
+		record1 = crecord({'check': 'remove1'})
+		id1 = STORAGE.put(record1)
+		record2 = crecord({'check': 'remove2'})
+		id2 = STORAGE.put(record2)
+		record3 = crecord({'check': 'remove3'})
+		id3 = STORAGE.put(record3)
+
+		STORAGE.remove([id1, id2, id3])
+
+
+
+		STORAGE.remove(ID)
+
+	def test_07_CheckRemove(self):
+		self.assertRaises(KeyError, STORAGE.get, ID)
+
+	def test_08_ManyInsert(self):
+		record1 = crecord({'check': 'test1'})
+		record2 = crecord({'check': 'test2'})
+		record3 = crecord({'check': 'test3'})
+
+		STORAGE.put([record1, record2, record3])
+
+	def test_09_Find(self):
+		records = STORAGE.find({'check': 'test1'})
+		#for record in records:
+		#	record.cat()
+
+		if len(records) != 1:
+			raise Exception('Error in filter ...')
+
+	def test_10_CheckReadRights(self):
+		# Inserts
+		STORAGE.put(crecord({'check': 'test4'}), account=self.anonymous_account)
+		STORAGE.put(crecord({'check': 'test5'}), account=self.anonymous_account)
+		STORAGE.put(crecord({'check': 'test6'}), account=self.root_account)
+
+		## 3 records for user
+		## 2 records for anonymous
+		## 6 records for root
+
+		records = STORAGE.find(account=self.user_account)
+		if len(records) != 3:
+			raise Exception('Invalid rigths for user account ...')
+
+		records = STORAGE.find(account=self.anonymous_account)
+		if len(records) != 2:
+			raise Exception('Invalid rigths for anonymous account ...')
+
+		records = STORAGE.find(account=self.root_account)
+		if len(records) != 6:
+			raise Exception('Invalid rigths for root account ...')
+	
+
+	def test_11_CheckWriteRights(self):
+		# Insert with user account
+		record = crecord({'check': 'test7'})
+		STORAGE.put(record)
+	
+		## try to remove with anonymous account
+		self.assertRaises(ValueError, STORAGE.remove, record, self.anonymous_account)
+
+		## Change rights
+		record.chgrp('anonymous')
+		record.chmod('g+w')
+		STORAGE.put(record)
+
+		## try to remove with anonymous account
+		STORAGE.remove(record, account=self.anonymous_account)
+		
+
+	def test_12_RemoveAll(self):
+		records = STORAGE.find(account=self.root_account)
+		STORAGE.remove(records, account=self.root_account)
+
+	def test_13_DropNamespace(self):
+		STORAGE.drop_namespace('unittest')
+		
+if __name__ == "__main__":
+	unittest.main(verbosity=2)
+	
+
+
