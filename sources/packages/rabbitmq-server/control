@@ -9,6 +9,16 @@ REQUIRES="canohome pkgmgr erlang canotools"
 function install(){
 	echo "Install $NAME $VERSION-$RELEASE ..."
 	mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq
+	$PREFIX/etc/init.d/rabbitmq-server start
+
+	echo " + Declare Admin user ..."
+	$PREFIX/bin/rabbitmqadmin declare user name=admin password=admin administrator=true
+	echo " + Declare vhost ..."
+	$PREFIX/bin/rabbitmqadmin declare vhost name=canopsis
+	echo " + Declare permissions for guest user ..."
+	$PREFIX/bin/rabbitmqadmin -V canopsis declare permission vhost=canopsis user=guest configure=".*" write=".*" read=".*"
+
+	$PREFIX/etc/init.d/rabbitmq-server stop
 	check_code $?
 }
 

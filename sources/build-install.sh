@@ -460,6 +460,9 @@ if [ ! -e $FCHECK ]; then
 	install_conf "rabbitmq.conf"
 	install_conf "rabbitmq-env.conf"
 
+	echo " + Exec install script from package's control ..."
+	$SUDO su - canopsis -c ". $SRC_PATH/canohome/lib/common.sh && . $SRC_PATH/packages/rabbitmq-server/control && install"
+
 	cd - > /dev/null
 else
 	echo " + Allready install"
