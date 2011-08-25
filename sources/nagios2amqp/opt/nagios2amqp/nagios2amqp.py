@@ -74,7 +74,7 @@ class thread_listen_queue(threading.Thread):
 						
 				
 				msg = Content(json.dumps(event))
-				myamqp.publish(msg, key)
+				myamqp.publish(msg, key, myamqp.exchange_name_liveevents)
 			except Exception, err:
 				#logger.error(err)
 				pass

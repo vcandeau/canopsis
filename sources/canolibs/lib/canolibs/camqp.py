@@ -31,8 +31,8 @@ class camqp(threading.Thread):
 		self.password=password
 		self.virtual_host=virtual_host
 		self.exchange_name=exchange_name
-		self.exchange_name_changed=exchange_name+".events"
-		self.exchange_name_events=exchange_name+".live_events"
+		self.exchange_name_events=exchange_name+".events"
+		self.exchange_name_liveevents=exchange_name+".live_events"
 		self.exchange_name_rpc=exchange_name+".rpc"
 		
 		self.connected = False
@@ -143,8 +143,8 @@ class camqp(threading.Thread):
 		yield self.chan.exchange_declare(exchange=self.exchange_name, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name)
 
-		yield self.chan.exchange_declare(exchange=self.exchange_name_changed, type='topic', durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_changed)
+		yield self.chan.exchange_declare(exchange=self.exchange_name_liveevents, type='topic', durable=True, auto_delete=False)
+		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_liveevents)
 
 		yield self.chan.exchange_declare(exchange=self.exchange_name_rpc, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_rpc)
