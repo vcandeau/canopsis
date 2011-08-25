@@ -51,28 +51,21 @@ class caccount(crecord):
 		return False
 
 	def dump(self):
-		dump = crecord.dump(self)
-		dump['lastname'] = self.lastname
-		dump['firstname'] = self.firstname
-		dump['mail'] = self.mail
-		dump['groups'] = self.groups
-		dump['shadowpasswd'] = self.shadowpasswd
-		return dump
+		self.data['lastname'] = self.lastname
+		self.data['firstname'] = self.firstname
+		self.data['mail'] = self.mail
+		self.data['groups'] = self.groups
+		self.data['shadowpasswd'] = self.shadowpasswd
+		return crecord.dump(self)
 
 	def load(self, dump):
-		self.lastname = dump['lastname']
-		self.firstname = dump['firstname']
-		self.mail = dump['mail']
-		self.groups = dump['groups']
-		self.shadowpasswd = dump['shadowpasswd']
-
-		del dump['lastname']
-		del dump['firstname']
-		del dump['mail']
-		del dump['groups']
-		del dump['shadowpasswd']
-		
 		crecord.load(self, dump)
+
+		self.lastname = self.data['lastname']
+		self.firstname = self.data['firstname']
+		self.mail = self.data['mail']
+		self.groups = self.data['groups']
+		self.shadowpasswd = self.data['shadowpasswd']
 
 	def cat(self):
 		print "Id:\t", self._id
