@@ -161,10 +161,13 @@ class cstorage(object):
 		if not account:
 			account = self.default_account
 
-		if isinstance(_id_or_ids, dict):
-			_id = [_id_or_ids]
+		if isinstance(_id_or_ids, list):
+			_ids = _id_or_ids
 		else:
-			_id = _id_or_ids
+			_ids = [ _id_or_ids ]
+
+		## TODO
+		_id = _ids[0]
 
 		if self.backend:
 			self.logger.debug(" + Get record '%s'" % _id)
