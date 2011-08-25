@@ -23,7 +23,7 @@ class ccache(object):
 
 	def put(self, _id, data):
 		record = self.make_record(_id)
-		record.data = data
+		record.data = {'cached': data}
 		self.storage.put(record)
 		
 	def get(self, _id, freshness=10):
@@ -34,7 +34,7 @@ class ccache(object):
 				self.remove(_id)
 				return None
 			else:
-				return record.data
+				return record.data['cached']
 		except:
 			return None
 	
