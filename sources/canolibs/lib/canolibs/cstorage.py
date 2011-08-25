@@ -80,6 +80,12 @@ class cstorage(object):
 			self.logger.debug("Put %s record(s) ..." % len(records))
 			for record in records:
 				_id = record._id
+
+				if not record.owner:
+					record.owner = account.user
+				if not record.group:
+					record.group = account.group
+
 				if _id:
 				## Update
 					## Check rights
@@ -93,15 +99,16 @@ class cstorage(object):
 						try:
 							record.write_time = time.time()
 							ret = self.backend.update({'_id': _id}, {"$set": record.dump()}, upsert=True, safe=self.mongo_safe)
+
+							if self.mongo_safe:
+								if ret['updatedExisting']:
+									self.logger.debug("Successfully updated (_id: '%s')" % _id)
+								else:
+									self.logger.debug("Successfully saved (_id: '%s')" % _id)
+
 						except Exception, err:
 							self.logger.error("Impossible to store !\nReason: %s" % err)
 							self.logger.debug("Record dump:\n%s" % record.dump())
-
-						if self.mongo_safe:
-							if ret['updatedExisting']:
-								self.logger.debug("Successfully updated (_id: '%s')" % _id)
-							else:
-								self.logger.debug("Successfully saved (_id: '%s')" % _id)
 	
 						record._id = _id
 						return_ids.append(_id)
@@ -109,11 +116,6 @@ class cstorage(object):
 						self.logger.error("Puts: Access denied ...")
 				else:
 				## Insert
-					if not record.owner:
-						record.owner = account.user
-					if not record.group:
-						record.group = account.group
-			
 					try:
 						record.write_time = time.time()
 						_id = self.backend.insert(record.dump(), safe=self.mongo_safe)
