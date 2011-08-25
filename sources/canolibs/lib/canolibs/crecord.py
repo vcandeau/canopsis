@@ -11,6 +11,8 @@ class crecord(object):
 		#	self.group=None
 		#	self.account=None
 
+		self.write_time = None
+
 		self.owner=owner
 		self.group=group
 		self.type= "raw"
@@ -32,6 +34,11 @@ class crecord(object):
 		self.access_other = dump['aaa_access_other']
 		self.access_unauth = dump['aaa_access_unauth']
 		self.type = dump['crecord_type']
+		try:
+			self.write_time = dump['crecord_write_time']
+			del dump['crecord_write_time']
+		except:
+			self.write_time = None
 
 		try:
 			self._id = dump['_id']
@@ -58,6 +65,7 @@ class crecord(object):
 		dump['aaa_access_other'] = self.access_other
 		dump['aaa_access_unauth'] = self.access_unauth
 		dump['crecord_type'] = self.type
+		dump['crecord_write_time'] = self.write_time
 		return dump
 
 	def cat(self):

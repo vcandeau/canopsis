@@ -7,6 +7,7 @@ from caccount import caccount
 from crecord import crecord
 
 import logging
+import time
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -90,7 +91,9 @@ class cstorage(object):
 
 					if access:
 						try:
+							record.write_time = time.time()
 							ret = self.backend.update({'_id': _id}, {"$set": record.dump()}, upsert=True, safe=self.mongo_safe)
+							print ret
 						except Exception, err:
 							self.logger.error("Impossible to store !\nReason: %s" % err)
 							self.logger.debug("Record dump:\n%s" % record.dump())
@@ -113,6 +116,7 @@ class cstorage(object):
 						record.group = account.group
 			
 					try:
+						record.write_time = time.time()
 						_id = self.backend.insert(record.dump(), safe=self.mongo_safe)
 						self.logger.debug("Successfully inserted (_id: '%s')" % _id)
 					except Exception, err:
