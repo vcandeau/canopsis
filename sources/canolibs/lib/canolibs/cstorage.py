@@ -93,7 +93,6 @@ class cstorage(object):
 						try:
 							record.write_time = time.time()
 							ret = self.backend.update({'_id': _id}, {"$set": record.dump()}, upsert=True, safe=self.mongo_safe)
-							print ret
 						except Exception, err:
 							self.logger.error("Impossible to store !\nReason: %s" % err)
 							self.logger.debug("Record dump:\n%s" % record.dump())
