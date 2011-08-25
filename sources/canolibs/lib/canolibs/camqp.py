@@ -13,7 +13,7 @@ import ConfigParser
 files_preserve = [reactor.waker.o, reactor.waker.i]
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="/", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
 		threading.Thread.__init__(self)
 		
 		logging.basicConfig(level=logging_level,
@@ -31,18 +31,18 @@ class camqp(threading.Thread):
 		self.password=password
 		self.virtual_host=virtual_host
 		self.exchange_name=exchange_name
-		self.exchange_name_changed=exchange_name+".statechanged"
-		self.exchange_name_events=exchange_name+".events"
+		self.exchange_name_changed=exchange_name+".events"
+		self.exchange_name_events=exchange_name+".live_events"
 		self.exchange_name_rpc=exchange_name+".rpc"
 		
 		self.connected = False
 		
 		self.RUN = 1
 		
-		pyamqpconf = os.path.expanduser("~/etc/pyamqp.conf")
-		if os.path.exists(pyamqpconf):
+		camqpconf = os.path.expanduser("~/etc/camqp.conf")
+		if os.path.exists(camqpconf):
 			if read_config_file:
-				self.read_config(pyamqpconf)
+				self.read_config(camqpconf)
 		
 		self.logger.setLevel(logging_level)
 		
