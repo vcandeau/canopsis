@@ -20,7 +20,7 @@ class KnownValues(unittest.TestCase):
 	def test_3_Stop(self):
 		time.sleep(1)
 		mytimer.stop()
-		if not (mytimer.elapsed > 1 and mytimer.elapsed < 1.05):
+		if not (mytimer.elapsed > 0.9 and mytimer.elapsed < 1.1):
 			raise Exception('Invalid elapsed time ...')
 
 		
