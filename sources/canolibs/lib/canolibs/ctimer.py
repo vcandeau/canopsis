@@ -3,6 +3,10 @@
 import time
 import logging
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
+
 class ctimer(object):
 	def __init__(self, logging_level=logging.DEBUG):
 		self.started = False
