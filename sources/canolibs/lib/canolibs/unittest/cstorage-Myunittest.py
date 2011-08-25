@@ -58,8 +58,6 @@ class KnownValues(unittest.TestCase):
 
 		STORAGE.remove([id1, id2, id3])
 
-
-
 		STORAGE.remove(ID)
 
 	def test_07_CheckRemove(self):
@@ -106,7 +104,7 @@ class KnownValues(unittest.TestCase):
 	def test_11_CheckWriteRights(self):
 		# Insert with user account
 		record = crecord({'check': 'test7'})
-		STORAGE.put(record)
+		STORAGE.put(record, account=self.user_account)
 	
 		## try to remove with anonymous account
 		self.assertRaises(ValueError, STORAGE.remove, record, self.anonymous_account)

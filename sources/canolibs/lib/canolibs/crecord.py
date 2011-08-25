@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
-from caccount import caccount
-
 class crecord(object):
-	def __init__(self, data = {}, account=None, raw_record=None):
-		if account:
-			self.account = account
-			self.owner=account.user
-			self.group=account.group
-		else:
-			self.owner=None
-			self.group=None
-			self.account=None
+	def __init__(self, data = {}, owner=None, group=None, raw_record=None):
+		#if account:
+		#	self.account = account
+		#	self.owner=account.user
+		#	self.group=account.group
+		#else:
+		#	self.owner=None
+		#	self.group=None
+		#	self.account=None
 
+		self.owner=owner
+		self.group=group
+		self.type= "raw"
 		self.access_owner=['r','w']
 		self.access_group=['r']
 		self.access_other=[]
@@ -30,6 +31,7 @@ class crecord(object):
 		self.access_group = dump['aaa_access_group']
 		self.access_other = dump['aaa_access_other']
 		self.access_unauth = dump['aaa_access_unauth']
+		self.type = dump['crecord_type']
 
 		try:
 			self._id = dump['_id']
@@ -43,6 +45,7 @@ class crecord(object):
 		del dump['aaa_access_group']
 		del dump['aaa_access_other']
 		del dump['aaa_access_unauth']
+		del dump['crecord_type']
 
 		self.data = dump
 
@@ -54,12 +57,14 @@ class crecord(object):
 		dump['aaa_access_group'] = self.access_group
 		dump['aaa_access_other'] = self.access_other
 		dump['aaa_access_unauth'] = self.access_unauth
+		dump['crecord_type'] = self.type
 		return dump
 
 	def cat(self):
 		print "Id:\t", self._id
 		print "Owner:\t", self.owner
 		print "Group:\t", self.group
+		print "Type:\t", self.type
 		print "Access:"
 		print "  Owner:\t", self.access_owner
 		print "  Group:\t", self.access_group
@@ -80,11 +85,13 @@ class crecord(object):
 		return False
 	
 	def chown(self, owner):
-		if isinstance(owner, caccount):
-			self.owner = owner.user
-			self.group = owner.group
-		else:
-			self.owner=owner
+		#if isinstance(owner, caccount):
+		#	self.owner = owner.user
+		#	self.group = owner.group
+		#else:
+		#	self.owner=owner
+
+		self.owner=owner
 
 	def chgrp(self, group):
 		self.group = group
