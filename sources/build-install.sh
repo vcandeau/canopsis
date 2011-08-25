@@ -456,6 +456,7 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	install_init "rabbitmq-server"
+	install_bin "rabbitmqadmin"
 	install_conf "rabbitmq.conf"
 	install_conf "rabbitmq-env.conf"
 
