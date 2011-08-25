@@ -7,7 +7,6 @@ from caccount import caccount_get, caccount_getall
 
 from cstorage import cstorage
 
-
 import hashlib
 
 STORAGE = None
@@ -59,6 +58,9 @@ class KnownValues(unittest.TestCase):
 
 		## But root can ;)
 		STORAGE.remove(ACCOUNT)
+
+	def test_99_DropNamespace(self):
+		STORAGE.drop_namespace('unittest')
 
 if __name__ == "__main__":
 	STORAGE = cstorage(caccount(user="root", group="root"), namespace='unittest')
