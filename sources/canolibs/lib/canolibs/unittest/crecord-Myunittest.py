@@ -22,7 +22,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Data corruption ...')
 
 	def test_02_InitFromRaw(self):
-		raw = {'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw'}
+		raw = {'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None}
 
 		record = crecord(raw_record=raw)
 		if record.data != self.data:

@@ -34,11 +34,7 @@ class crecord(object):
 		self.access_other = dump['aaa_access_other']
 		self.access_unauth = dump['aaa_access_unauth']
 		self.type = dump['crecord_type']
-		try:
-			self.write_time = dump['crecord_write_time']
-			del dump['crecord_write_time']
-		except:
-			self.write_time = None
+		self.write_time = dump['crecord_write_time']
 
 		try:
 			self._id = dump['_id']
@@ -53,6 +49,7 @@ class crecord(object):
 		del dump['aaa_access_other']
 		del dump['aaa_access_unauth']
 		del dump['crecord_type']
+		del dump['crecord_write_time']
 
 		self.data = dump
 
