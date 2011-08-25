@@ -70,6 +70,7 @@ class crecord(object):
 		print "Owner:\t", self.owner
 		print "Group:\t", self.group
 		print "Type:\t", self.type
+		print "Writed:\t", self.write_time
 		print "Access:"
 		print "  Owner:\t", self.access_owner
 		print "  Group:\t", self.access_group
