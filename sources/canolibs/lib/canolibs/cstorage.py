@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import time
 from pymongo import Connection
 from pymongo import objectid
 
