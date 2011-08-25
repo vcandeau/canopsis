@@ -31,7 +31,7 @@ class KnownValues(unittest.TestCase):
 
 		CACHE.put('mycache2', {'data': 'titit'})
 		time.sleep(2)
-		data = CACHE.get('moncache2', 5)
+		data = CACHE.get('mycache2', 5)
 
 		if not data:
 			raise Exception('Data must be Ok ...')
