@@ -9,6 +9,10 @@ from txamqp.content import Content
 from pymongo import Connection
 import json
 
+from cstorage import cstorage
+from crecord import crecord
+from caccount import caccount
+
 ########################################################
 #
 #   Configuration
@@ -24,6 +28,8 @@ logging.basicConfig(level=logging.DEBUG,
 logger = logging.getLogger(DAEMON_NAME)
 myamqp = None
 
+DEFAULT_ACCOUNT = caccount(user="root", group="root")
+
 ########################################################
 #
 #   Callback
@@ -32,33 +38,50 @@ myamqp = None
 	
 def on_message(msg):
 	rk = msg.routing_key
-	
+
  	event = json.loads(msg.content.body)
+	
+	# Create record
+	record = crecord(event)
+	record.type = "event"
+	record.chmod("o+r")
+	record._id = rk
 
-	publish_changed_event(rk, event)
-
-	store_event(rk, event)
-
-
-def publish_changed_event(_id, event):
+	# Check if state is change
 	try:
-		(last_state, last_state_type) = get_last_state(_id)
+		oldrecord = storage_inventory.get(rk)
+		
 		state = event['state']
 		state_type = event['state_type']
-		if state != last_state or state_type != last_state_type:
-			msg = Content(json.dumps(event))
-			amqp.publish(msg, _id, amqp.exchange_name_changed)
-	except:
-		msg = Content(json.dumps(event))
-		amqp.publish(msg, _id, amqp.exchange_name_changed)
-			
 
-def store_event(_id, event):
-	minventory.update({'_id': _id}, {"$set": event}, upsert=True, safe=True)
+		oldstate = oldrecord.data['state']
+		oldstate_type = oldrecord.data['state_type']
 
-def get_last_state(_id):
-        state = minventory.find_one({'_id': _id}, {'state':1, 'state_type': 1})
-        return ( state['state'], state['state_type'])
+		if state != oldstate or state_type != oldstate_type:
+			publish_changed_event(record)
+
+	except KeyError:
+		publish_changed_event(record)
+
+	except Exception, err:
+		logger.error(err)
+	
+
+	# Put record
+	storage_inventory.put(record)
+
+def publish_changed_event(record):
+	_id = record._id
+	hrecord = crecord(raw_record=record.dump())
+
+	hrecord._id = _id+"-"+str(record.data['timestamp'])
+	hrecord.data['inventory_id'] = _id
+
+	logger.debug("State of '%s' change ..." % _id)
+	storage_history.put(hrecord)
+
+	msg = Content(json.dumps(record.data))
+	amqp.publish(msg, _id, amqp.exchange_name_events)
 
 ########################################################
 #
@@ -83,23 +106,22 @@ def signal_handler(signum, frame):
 #
 ########################################################
 
-minventory=None
 amqp=None
+storage_inventory=None
+storage_history=None
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
 	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, minventory
+	global amqp, storage_inventory, storage_history
 
-	# MongoDB
-	mconn = Connection('localhost', 27017)
-	mdb = mconn['canopsis']
-	minventory = mdb['inventory']
+	storage_inventory = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
+	storage_history = cstorage(DEFAULT_ACCOUNT, namespace='history', logging_level=logging.INFO)
 
 	# AMQP
 	amqp = camqp()
 
-	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message)
+	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_liveevents)
 	amqp.start()
 
 	while RUN:
