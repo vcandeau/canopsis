@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+
 import time
 import logging
 
-from hypamqp2 import hypamqp
-from amqplib import client_0_8 as amqp
+from camqp import camqp, files_preserve
+from txamqp.content import Content
 
 from pymongo import Connection
 import json
@@ -35,10 +36,9 @@ myamqp = None
 ########################################################
 
 def on_message(msg):
-	id = msg.delivery_info['routing_key']
+	_id = msg.routing_key
 
-	body = json.loads(msg.body)
-	#body['_id'] = id
+	body = json.loads(msg.content.body)
 
 	timestamp = body['timestamp']
 	perf_data = body['perf_data']
@@ -58,7 +58,7 @@ def on_message(msg):
 			#print "\t\tValue:", value
 			#print "\t\tUnit:", unit
 	
-			metric_id = id+"."+metric
+			metric_id = _id+"."+metric
 			metric_id = metric_id.replace(' ','_')
 			
 			pmsg = "%s %s %i" % (metric_id, value, timestamp)
@@ -76,10 +76,9 @@ def on_message(msg):
 		# For bulk ...
 		if msg != "":
 			#print "msg: %s\n" % msg
-			msg = amqp.Message(msg)
-			myamqp.publish(msg, 'metrics', GRAP_EXCHANGE_NAME)
+			msg = Content(msg)
+			amqp.publish(msg, 'metrics', GRAP_EXCHANGE_NAME)
 
-		
 
 
 ########################################################
@@ -95,12 +94,7 @@ def signal_handler(signum, frame):
 	logger.warning("Receive signal to stop daemon...")
 	global RUN
 	RUN = 0
-	if myamqp:
-		myamqp.disconnect()
-		
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-
+	
 
 ########################################################
 #
@@ -108,20 +102,25 @@ signal.signal(signal.SIGTERM, signal_handler)
 #
 ########################################################
 
+amqp=None
+
 def main():
-	global myamqp
-	myamqp = hypamqp()
-	myamqp.connect()
-	
-	myamqp.create_queue(DAEMON_NAME)
-	
-	myamqp.bind_queue(DAEMON_NAME, "eventsource.*.*.check.#")
-	myamqp.consume_queue(DAEMON_NAME, on_message)
+	signal.signal(signal.SIGINT, signal_handler)
+	signal.signal(signal.SIGTERM, signal_handler)
+
+	global amqp
+
+	# AMQP
+	amqp = camqp()
+
+	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_liveevents)
+	amqp.start()
 	
 	while RUN:
 		time.sleep(1)
 	
-	myamqp.disconnect()
+	amqp.stop()
+	amqp.join()
 
 if __name__ == "__main__":
 	main()
