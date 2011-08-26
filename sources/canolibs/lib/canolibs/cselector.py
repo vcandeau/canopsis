@@ -5,6 +5,9 @@ from crecord import crecord
 from ccache import ccache
 from ctimer import ctimer
 
+from pymongo import objectid
+
+import time
 import json
 
 class cselector(crecord):
@@ -21,15 +24,16 @@ class cselector(crecord):
 		
 		if storage:
 			self.storage = storage
-			self.cache = ccache(storage)
+			#self.cache = ccache(storage)
 		else:
 			raise Exception('You must specify storage !')
 
 		self.timer = ctimer()
-
+		self.cache_time = 60 # 1 minute
 		self.data['mfilter'] = {}
 		self.data['last_resolv_time'] = 0
 		self.data['last_nb_records'] = 0
+		self._ids = []
 
 		self._id = "selector-"+self.storage.default_account.user+"-"+name
 		
@@ -53,12 +57,12 @@ class cselector(crecord):
 		#	return _ids
 
 		# resolv filter ...
-		_ids = []
+		self._ids = []
 		mfilter = json.loads(self.data['mfilter'])
 		records = self.storage.find(mfilter)	
-		#for record in records:
-		#	_ids.append(record._id)
-	
+		for record in records:
+			self._ids.append(record._id)
+
 		# Put in cache
 		#self.cache.put(self._id, _ids)
 		self.timer.stop()
@@ -68,6 +72,21 @@ class cselector(crecord):
 		self.save()
 
 		return records
+
+	def match(self, _id):
+		# check cache freshness
+		if (self.data['last_resolv_time'] + self.cache_time) <= time.time():
+			self.resolv()
+
+		try:
+			oid = objectid.ObjectId(_id)
+		except:
+			oid = _id
+
+		if oid in self._ids:
+			return True
+
+		return False
 
 	def cat(self):
 		print "Id:\t\t\t", self._id
