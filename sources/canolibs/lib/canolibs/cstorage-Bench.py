@@ -8,7 +8,7 @@ from ctimer import ctimer
 import logging, random
 
 def go(account, nb):
-	storage.default_account=account
+	storage.account=account
 	## Insert 1000 records
 	insert_nb = nb
 	timer.start()
@@ -53,7 +53,7 @@ def go(account, nb):
 
 namespace = "bench-"+str(random.randint(0,1000))
 account = caccount()
-storage = cstorage(default_account=account, namespace=namespace, logging_level=logging.INFO)
+storage = cstorage(account=account, namespace=namespace, logging_level=logging.INFO)
 timer = ctimer(logging_level=logging.INFO)
 
 print "Bench with 'anonymous' account ..."

@@ -37,7 +37,7 @@ class cselector(crecord):
 		else:
 			if not name:
 				raise Exception('You must specify name or _id !')
-			self._id = self.type+"-"+self.storage.default_account.user+"-"+name
+			self._id = self.type+"-"+self.storage.account.user+"-"+name
 		
 		try:
 			record = self.storage.get(self._id)
