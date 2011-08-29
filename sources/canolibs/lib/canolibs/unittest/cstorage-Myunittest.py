@@ -29,26 +29,30 @@ class KnownValues(unittest.TestCase):
 
 	def test_02_CreateRecord(self):
 		global MYRECORD
-		MYRECORD = crecord(self.data)
+		MYRECORD = crecord(self.data, storage=STORAGE)
 
 	def test_03_Put(self):
 		global ID
 		ID = STORAGE.put(MYRECORD)
 
-	def test_04_Get(self):
+	def test_04_RecordSave(self):
+		MYRECORD.save(STORAGE)
+		MYRECORD.save()
+
+	def test_05_Get(self):
 		global MYRECORD
 		MYRECORD = STORAGE.get(ID)
 		if MYRECORD.data != self.data:
 			raise Exception('Invalid data ...')
 
-	def test_05_UpdateAndPut(self):
+	def test_06_UpdateAndPut(self):
 		MYRECORD.data['mydata4'] = 'data4'
 		STORAGE.put(MYRECORD)
 		record = STORAGE.get(ID)
 		if record.data == self.data:
 			raise Exception('Data not updated ...')
 
-	def test_06_Remove(self):
+	def test_07_Remove(self):
 		record1 = crecord({'check': 'remove1'})
 		id1 = STORAGE.put(record1)
 		record2 = crecord({'check': 'remove2'})
@@ -60,17 +64,17 @@ class KnownValues(unittest.TestCase):
 
 		STORAGE.remove(ID)
 
-	def test_07_CheckRemove(self):
+	def test_08_CheckRemove(self):
 		self.assertRaises(KeyError, STORAGE.get, ID)
 
-	def test_08_ManyInsert(self):
+	def test_09_ManyInsert(self):
 		record1 = crecord({'check': 'test1'})
 		record2 = crecord({'check': 'test2'})
 		record3 = crecord({'check': 'test3'})
 
 		STORAGE.put([record1, record2, record3])
 
-	def test_09_Find(self):
+	def test_10_Find(self):
 		records = STORAGE.find({'check': 'test1'})
 		#for record in records:
 		#	record.cat()
@@ -78,7 +82,7 @@ class KnownValues(unittest.TestCase):
 		if len(records) != 1:
 			raise Exception('Error in filter ...')
 
-	def test_10_CheckReadRights(self):
+	def test_11_CheckReadRights(self):
 		# Inserts
 		STORAGE.put(crecord({'check': 'test4'}), account=self.anonymous_account)
 		STORAGE.put(crecord({'check': 'test5'}), account=self.anonymous_account)
@@ -101,7 +105,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid rigths for root account ...')
 	
 
-	def test_11_CheckWriteRights(self):
+	def test_12_CheckWriteRights(self):
 		# Insert with user account
 		record = crecord({'check': 'test7'})
 		STORAGE.put(record, account=self.user_account)
@@ -118,11 +122,11 @@ class KnownValues(unittest.TestCase):
 		STORAGE.remove(record, account=self.anonymous_account)
 		
 
-	def test_12_RemoveAll(self):
+	def test_13_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 
-	def test_13_DropNamespace(self):
+	def test_14_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 		
 if __name__ == "__main__":
