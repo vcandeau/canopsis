@@ -20,7 +20,13 @@ class crecord(object):
 		self.access_group=['r']
 		self.access_other=[]
 		self.access_unauth=[]
-		self._id = None
+
+		try:
+			self._id = data['_id']
+			del data['_id']
+		except:
+			self._id = None
+
 		self.data = data
 		self.storage = storage
 
