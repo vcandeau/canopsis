@@ -364,6 +364,8 @@ install_pylib "Twisted" "11.0.0"
 install_pylib "txAMQP" "0.4"
 install_pylib "txamqp-helpers" "0.5"
 
+install_pylib "pycha" "0.6.0"
+
 if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
 	echo " + Patch python-txamqp ..."
 	# https://bugs.launchpad.net/txamqp/+bug/741147
