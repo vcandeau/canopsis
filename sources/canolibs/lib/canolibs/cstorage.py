@@ -112,7 +112,10 @@ class cstorage(object):
 				if access:
 					try:
 						record.write_time = time.time()
-						ret = backend.update({'_id': _id}, {"$set": record.dump()}, upsert=True, safe=self.mongo_safe)
+						data = record.dump()
+
+						del data['_id']
+						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
 
 						if self.mongo_safe:
 							if ret['updatedExisting']:
@@ -132,7 +135,11 @@ class cstorage(object):
 			## Insert
 				try:
 					record.write_time = time.time()
-					_id = backend.insert(record.dump(), safe=self.mongo_safe)
+					data = record.dump()
+					if not data['_id']:
+						del data['_id']
+
+					_id = backend.insert(data, safe=self.mongo_safe)
 					self.logger.debug("Successfully inserted (_id: '%s')" % _id)
 				except Exception, err:
 					self.logger.error("Impossible to store !\nReason: %s" % err)
