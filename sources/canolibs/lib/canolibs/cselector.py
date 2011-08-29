@@ -13,7 +13,7 @@ import json
 class cselector(crecord):
 	def __init__(self, name, storage=None, *args):
 
-		crecord.__init__(self, *args)
+		crecord.__init__(self, storage=storage, *args)
 
 		#if isinstance(record, crecord):
 		#	crecord.__init__(self, raw_record=record.dump())
@@ -22,10 +22,7 @@ class cselector(crecord):
 
 		self.type = "selector"
 		
-		if storage:
-			self.storage = storage
-			#self.cache = ccache(storage)
-		else:
+		if not self.storage:
 			raise Exception('You must specify storage !')
 
 		self.timer = ctimer()
