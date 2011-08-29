@@ -461,7 +461,7 @@ if [ ! -e $FCHECK ]; then
 	install_conf "rabbitmq-env.conf"
 
 	echo " + Exec install script from package's control ..."
-	. $PREFIX/packages/rabbitmq-server/control
+	. $SRC_PATH/packages/rabbitmq-server/control
 	install
 
 	cd - > /dev/null
