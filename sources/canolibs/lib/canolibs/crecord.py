@@ -68,6 +68,7 @@ class crecord(object):
 
 	def dump(self):
 		dump = self.data.copy()
+		dump['_id'] = self._id
 		dump['aaa_owner'] = self.owner
 		dump['aaa_group'] = self.group
 		dump['aaa_access_owner'] = self.access_owner
