@@ -136,6 +136,7 @@ class cstorage(object):
 				try:
 					record.write_time = time.time()
 					data = record.dump()
+					## Del it if 'None'
 					if not data['_id']:
 						del data['_id']
 
@@ -254,6 +255,23 @@ class cstorage(object):
 			else:				
 				self.logger.error("Remove: Access denied ...")
 				raise ValueError("Access denied ...")
+
+	def map_reduce(self, mfilter, mmap, mreduce, account=None, namespace=None):
+		if not account:
+			account = self.account
+
+		backend = self.get_backend(namespace)
+		
+		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
+		mfilter = dict(mfilter.items() + Read_mfilter.items())
+
+		output = {}
+		if backend.find(mfilter).count() > 0:	
+			result = backend.map_reduce(mmap, mreduce, "myresults", query=mfilter)
+			for doc in result.find():
+				output[doc['_id']] = doc['value']
+
+		return output
 						
 
 	def drop_namespace(self, namespace):

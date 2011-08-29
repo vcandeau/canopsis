@@ -68,9 +68,9 @@ class KnownValues(unittest.TestCase):
 		self.assertRaises(KeyError, STORAGE.get, ID)
 
 	def test_09_ManyInsert(self):
-		record1 = crecord({'check': 'test1'})
-		record2 = crecord({'check': 'test2'})
-		record3 = crecord({'check': 'test3'})
+		record1 = crecord({'check': 'test1', 'state': 1})
+		record2 = crecord({'check': 'test2', 'state': 0})
+		record3 = crecord({'check': 'test3', 'state': 0})
 
 		STORAGE.put([record1, record2, record3])
 
@@ -122,11 +122,34 @@ class KnownValues(unittest.TestCase):
 		STORAGE.remove(record, account=self.anonymous_account)
 		
 
-	def test_13_RemoveAll(self):
+	def test_13_MapReduce(self):
+		from bson.code import Code
+	
+		mmap = Code("function () {"
+		"		if (this.state == 0){ emit('ok', 1) }"
+		"		else if (this.state == 1){ emit('warning', 1) }"
+		"		else if (this.state == 2){ emit('critical', 1) }"
+		"		else if (this.state == 3){ emit('unknown', 1) }"
+		"}")
+
+		mreduce = Code("function (key, values) {"
+		"  var total = 0;"
+		"  for (var i = 0; i < values.length; i++) {"
+		"    total += values[i];"
+		"  }"
+		"  return total;"
+		"}")
+
+		result = STORAGE.map_reduce({}, mmap, mreduce)
+
+		if result['ok'] != 2 and result['warning'] != 1:
+			raise Exception('Invalid map/reduce result ...')
+
+	def test_14_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 
-	def test_14_DropNamespace(self):
+	def test_15_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 		
 if __name__ == "__main__":
