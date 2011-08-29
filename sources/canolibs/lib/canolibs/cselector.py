@@ -46,9 +46,6 @@ class cselector(crecord):
 	def set_filter(self, mfilter):
 		self.data['mfilter']=json.dumps(mfilter)
 
-	def save(self):
-		self.storage.put(self)
-
 	def resolv(self):
 		self.timer.start()	
 		## get from cache	
