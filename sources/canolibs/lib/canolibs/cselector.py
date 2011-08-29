@@ -32,6 +32,8 @@ class cselector(crecord):
 		self.data['last_nb_records'] = 0
 		self._ids = []
 
+		self.mfilter = {}
+
 		if _id:
 			self._id = _id
 		else:
@@ -45,8 +47,13 @@ class cselector(crecord):
 		except:
 			pass
 
-	def set_filter(self, mfilter):
-		self.data['mfilter']=json.dumps(mfilter)
+	def dump(self):
+		self.data['mfilter'] = json.dumps(self.mfilter)
+		return crecord.dump(self)
+
+	def load(self, dump):
+		crecord.load(self, dump)
+		self.mfilter = json.loads(self.data['mfilter'])
 
 	def resolv(self):
 		self.timer.start()	
@@ -57,8 +64,8 @@ class cselector(crecord):
 
 		# resolv filter ...
 		self._ids = []
-		mfilter = json.loads(self.data['mfilter'])
-		records = self.storage.find(mfilter)	
+		
+		records = self.storage.find(self.mfilter)	
 		for record in records:
 			self._ids.append(record._id)
 
