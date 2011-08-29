@@ -251,10 +251,11 @@ if [ "$ARG1" = "clean" ]; then
 	PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
 	for PID in $PIDS; do
 		echo "  + Kill $PID"
-		$SUDO kill -9 $PID
-		check_code $?
+		$SUDO kill -9 $PID || true
+		#check_code $?
 	done
-	
+	sleep 1
+
 	. $SRC_PATH/packages/canohome/control
 	remove
 	purge
@@ -460,9 +461,8 @@ if [ ! -e $FCHECK ]; then
 	install_conf "rabbitmq-env.conf"
 
 	echo " + Exec install script from package's control ..."
-	cp $SRC_PATH/packages/rabbitmq-server/control /tmp/
-	$SUDO su - canopsis -c ". $PREFIX/lib/common.sh && . /tmp/control && install"
-	rm /tmp/control
+	. $PREFIX/lib/common.sh
+	install
 
 	cd - > /dev/null
 else
