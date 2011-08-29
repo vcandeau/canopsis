@@ -14,14 +14,14 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 class cstorage(object):
-	def __init__(self, default_account, namespace='object', logging_level=logging.DEBUG, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
+	def __init__(self, account, namespace='object', logging_level=logging.DEBUG, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
 
 		self.mongo_host=mongo_host
 		self.mongo_port=mongo_port
 		self.mongo_db=mongo_db
 		self.mongo_safe=True
 
-		self.default_account = default_account
+		self.account = account
 
 		self.namespace=namespace
 		self.backend = None
@@ -30,6 +30,8 @@ class cstorage(object):
 		self.logger.setLevel(logging_level)
 
 		self.logger.debug("Object initialised.")
+
+		self.backend = {}
 		
 		if mongo_autoconnect:
 			self.backend_connect()
@@ -60,13 +62,24 @@ class cstorage(object):
 	def backend_connect(self):
 		self.conn=Connection(self.mongo_host, self.mongo_port)
 		self.db=self.conn[self.mongo_db]
-		self.backend=self.db[self.namespace]
 
 		self.logger.debug("Connected.")
 
-	def put(self, _record_or_records, account=None):
+	def get_backend(self, namespace=None):
+		if not namespace:
+			namespace = self.namespace
+
+		try:
+			return self.backend[namespace]
+		except:
+			self.backend[namespace] = self.db[namespace]
+			self.logger.debug("Connected to %s collection." % namespace)
+			return self.backend[namespace]
+			
+
+	def put(self, _record_or_records, account=None, namespace=None):
 		if not account:
-			account = self.default_account
+			account = self.account
 
 		records = []
 		return_ids = []
@@ -76,69 +89,68 @@ class cstorage(object):
 		elif isinstance(_record_or_records, list):
 			records = _record_or_records
 			
-		if self.backend:
-			self.logger.debug("Put %s record(s) ..." % len(records))
-			for record in records:
-				_id = record._id
+		backend = self.get_backend(namespace)
 
-				if not record.owner:
-					record.owner = account.user
-				if not record.group:
-					record.group = account.group
+		self.logger.debug("Put %s record(s) ..." % len(records))
+		for record in records:
+			_id = record._id
 
-				if _id:
-				## Update
-					## Check rights
-					if account.user == 'root':
-						access = True
-					else:
-						oldrecord = self.get(_id)
-						access = oldrecord.check_write(account)
+			if not record.owner:
+				record.owner = account.user
+			if not record.group:
+				record.group = account.group
 
-					if access:
-						try:
-							record.write_time = time.time()
-							ret = self.backend.update({'_id': _id}, {"$set": record.dump()}, upsert=True, safe=self.mongo_safe)
-
-							if self.mongo_safe:
-								if ret['updatedExisting']:
-									self.logger.debug("Successfully updated (_id: '%s')" % _id)
-								else:
-									self.logger.debug("Successfully saved (_id: '%s')" % _id)
-
-						except Exception, err:
-							self.logger.error("Impossible to store !\nReason: %s" % err)
-							self.logger.debug("Record dump:\n%s" % record.dump())
-	
-						record._id = _id
-						return_ids.append(_id)
-					else:
-						self.logger.error("Puts: Access denied ...")
+			if _id:
+			## Update
+				## Check rights
+				if account.user == 'root':
+					access = True
 				else:
-				## Insert
+					oldrecord = self.get(_id)
+					access = oldrecord.check_write(account)
+
+				if access:
 					try:
 						record.write_time = time.time()
-						_id = self.backend.insert(record.dump(), safe=self.mongo_safe)
-						self.logger.debug("Successfully inserted (_id: '%s')" % _id)
+						ret = backend.update({'_id': _id}, {"$set": record.dump()}, upsert=True, safe=self.mongo_safe)
+
+						if self.mongo_safe:
+							if ret['updatedExisting']:
+								self.logger.debug("Successfully updated (_id: '%s')" % _id)
+							else:
+								self.logger.debug("Successfully saved (_id: '%s')" % _id)
+
 					except Exception, err:
 						self.logger.error("Impossible to store !\nReason: %s" % err)
 						self.logger.debug("Record dump:\n%s" % record.dump())
-						self.logger.debug("Successfully inserted, _id: '%s'" % _id)
-
+	
 					record._id = _id
 					return_ids.append(_id)
-
-			if len(return_ids) == 1:
-				return return_ids[0]
+				else:
+					self.logger.error("Puts: Access denied ...")
 			else:
-				return return_ids
+			## Insert
+				try:
+					record.write_time = time.time()
+					_id = backend.insert(record.dump(), safe=self.mongo_safe)
+					self.logger.debug("Successfully inserted (_id: '%s')" % _id)
+				except Exception, err:
+					self.logger.error("Impossible to store !\nReason: %s" % err)
+					self.logger.debug("Record dump:\n%s" % record.dump())
+					self.logger.debug("Successfully inserted, _id: '%s'" % _id)
+
+				record._id = _id
+				return_ids.append(_id)
+
+		if len(return_ids) == 1:
+			return return_ids[0]
 		else:
-			self.logger.error("No backend found ...")
+			return return_ids
 
 
-	def find(self, mfilter={}, mfields=None, account=None):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None):
 		if not account:
-			account = self.default_account
+			account = self.account
 
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 
@@ -146,7 +158,9 @@ class cstorage(object):
 
 		mfilter = dict(mfilter.items() + Read_mfilter.items())
 
-		raw_records = self.backend.find(mfilter, safe=self.mongo_safe)
+		backend = self.get_backend(namespace)
+
+		raw_records = backend.find(mfilter, safe=self.mongo_safe)
 		
 		records=[]
 		for raw_record in raw_records:
@@ -159,9 +173,9 @@ class cstorage(object):
 		self.logger.debug("Found %s record(s)" % len(records))
 		return records
 
-	def get(self, _id_or_ids, account=None):
+	def get(self, _id_or_ids, account=None, namespace=None):
 		if not account:
-			account = self.default_account
+			account = self.account
 
 		if isinstance(_id_or_ids, list):
 			_ids = _id_or_ids
@@ -171,29 +185,28 @@ class cstorage(object):
 		## TODO
 		_id = _ids[0]
 
-		if self.backend:
-			self.logger.debug(" + Get record '%s'" % _id)
+		backend = self.get_backend(namespace)
+		
+		self.logger.debug(" + Get record '%s'" % _id)
+		try:
+			#record = backend.find_one({'_id': str(_id)}, safe=self.mongo_safe)
 			try:
-				#record = self.backend.find_one({'_id': str(_id)}, safe=self.mongo_safe)
-				try:
-					oid = objectid.ObjectId(_id)
-				except:
-					oid = _id
-				raw_record = self.backend.find_one({'_id': oid}, safe=self.mongo_safe)
-			except Exception, err:
-				self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
+				oid = objectid.ObjectId(_id)
+			except:
+				oid = _id
+			raw_record = backend.find_one({'_id': oid}, safe=self.mongo_safe)
+		except Exception, err:
+			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
 
-			if not raw_record:
-				raise KeyError("'%s' not found ..." % _id)
+		if not raw_record:
+			raise KeyError("'%s' not found ..." % _id)
 
-			return crecord(raw_record=raw_record)
-			
-		else:
-			self.logger.error("No backend found ...")
+		return crecord(raw_record=raw_record)
 
-	def remove(self, _id_or_ids, account=None):
+
+	def remove(self, _id_or_ids, account=None, namespace=None):
 		if not account:
-			account = self.default_account
+			account = self.account
 
 		_ids = []
 
@@ -209,33 +222,32 @@ class cstorage(object):
 		else:
 			_ids = [ _id_or_ids ]
 
-		if self.backend:
-			self.logger.debug("Remove %s record(s) ..." % len(_ids))
-			for _id in _ids:
-				self.logger.debug(" + Remove record '%s'" % _id)
-			
-				try:
-					oid = objectid.ObjectId(_id)
-				except:
-					oid = _id
-
-				if account.user == 'root':
-					access = True
-				else:
-					oldrecord = self.get(_id)
-					access = oldrecord.check_write(account)			
+		backend = self.get_backend(namespace)
 	
-				if access:
-					try:
-						self.backend.remove({'_id': oid}, safe=self.mongo_safe)
-					except Exception, err:
+		self.logger.debug("Remove %s record(s) ..." % len(_ids))
+		for _id in _ids:
+			self.logger.debug(" + Remove record '%s'" % _id)
+			
+			try:
+				oid = objectid.ObjectId(_id)
+			except:
+				oid = _id
+
+			if account.user == 'root':
+				access = True
+			else:
+				oldrecord = self.get(_id)
+				access = oldrecord.check_write(account)			
+	
+			if access:
+				try:
+					backend.remove({'_id': oid}, safe=self.mongo_safe)
+				except Exception, err:
 						self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
-				else:				
-					self.logger.error("Remove: Access denied ...")
-					raise ValueError("Access denied ...")
-				
-		else:
-			self.logger.error("No backend found ...")		
+			else:				
+				self.logger.error("Remove: Access denied ...")
+				raise ValueError("Access denied ...")
+						
 
 	def drop_namespace(self, namespace):
 		self.db.drop_collection(namespace)		
