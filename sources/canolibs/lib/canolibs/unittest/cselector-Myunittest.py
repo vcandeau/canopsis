@@ -32,7 +32,7 @@ class KnownValues(unittest.TestCase):
 		ID = record2._id
 
 	def test_03_Resolv(self):
-		SELECTOR.set_filter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
+		SELECTOR.mfilter = {'$or': [ {'check': 'test1'},  {'check': 'test2'}] }
 		records = SELECTOR.resolv()
 		if len(records) != 2:
 			raise Exception('Error in selector resolving ...')
