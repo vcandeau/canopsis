@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 class crecord(object):
-	def __init__(self, data = {}, owner=None, group=None, raw_record=None):
+	def __init__(self, data = {}, owner=None, group=None, raw_record=None, storage=None):
 		#if account:
 		#	self.account = account
 		#	self.owner=account.user
@@ -22,6 +22,7 @@ class crecord(object):
 		self.access_unauth=[]
 		self._id = None
 		self.data = data
+		self.storage = storage
 
 		if raw_record:
 			self.load(raw_record)
@@ -52,6 +53,18 @@ class crecord(object):
 		del dump['crecord_write_time']
 
 		self.data = dump
+
+	def save(self, storage=None):
+		mystorage = None
+		if storage:
+			mystorage=storage
+		elif self.storage:
+			mystorage=self.storage
+
+		if mystorage:
+			mystorage.put(self)
+		else:
+			pass
 
 	def dump(self):
 		dump = self.data.copy()
