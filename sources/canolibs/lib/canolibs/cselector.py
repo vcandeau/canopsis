@@ -11,7 +11,7 @@ import time
 import json
 
 class cselector(crecord):
-	def __init__(self, name, storage=None, *args):
+	def __init__(self, name=None, _id=None, storage=None, *args):
 
 		crecord.__init__(self, storage=storage, *args)
 
@@ -32,7 +32,12 @@ class cselector(crecord):
 		self.data['last_nb_records'] = 0
 		self._ids = []
 
-		self._id = "selector-"+self.storage.default_account.user+"-"+name
+		if _id:
+			self._id = _id
+		else:
+			if not name:
+				raise Exception('You must specify name or _id !')
+			self._id = "selector-"+self.storage.default_account.user+"-"+name
 		
 		try:
 			record = self.storage.get(self._id)
