@@ -44,7 +44,7 @@ class KnownValues(unittest.TestCase):
 		SLA = csla(name="mysla", storage=STORAGE, cb_on_ok=cb_on_ok, cb_on_warn=cb_on_warn, cb_on_crit=cb_on_crit)
 
 	def test_03_calcul_current(self):
-		(current, current_pct) = SLA.calcul_current()
+		(current, current_pct) = SLA.get_current_availability()
 		## current_pct: {u'warning': 30.0, u'ok': 20.0, u'critical': 50.0}
 
 		if current_pct['ok'] != 20:
@@ -99,7 +99,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid CB Ok check ...')
 
 	def test_06_calcul_timeperiod_for_id(self):
-		(sla, sla_pct) = SLA.calcul_timeperiod_for_id("check1", 0, 100)
+		(sla, sla_pct) = SLA.calcul_by_timeperiod_for_id("check1", 0, 100)
 
 		if sla_pct['warning'] == 20 and sla_pct['critical'] == 20 and sla_pct['critical'] == 60:
 			raise Exception('Invalid pct calculation for timeperiod ...')
@@ -107,10 +107,16 @@ class KnownValues(unittest.TestCase):
 	def test_07_calcul_timeperiod(self):
 		SLA.selector.mfilter = { '$or': [{'_id': 'check1'}, {'_id': 'check2'},] }
 
-		(sla, sla_pct) = SLA.calcul_timeperiod(0, 100)
+		(sla, sla_pct) = SLA.calcul_by_timeperiod(0, 100)
 
 		if sla_pct['warning'] == 12.5 and sla_pct['critical'] == 17.5 and sla_pct['critical'] == 70:
 			raise Exception('Invalid pct calculation for timeperiod ...')
+
+	def test_08_process_hourly(self):
+		SLA.process_hourly(time.time())
+
+	def test_09_process_daily(self):
+		SLA.process_daily(time.time())
 
 	def test_99_DropNamespace(self):
 		for HID in HIDS:
