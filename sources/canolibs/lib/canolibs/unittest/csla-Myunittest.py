@@ -35,7 +35,7 @@ class KnownValues(unittest.TestCase):
 	def test_01_Creation(self):
 		global SLA
 		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR, namespace='unittest')
-		#SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR, namespace='unittest')
+
 		SELECTOR.save()
 		SLA.save()
 
@@ -98,10 +98,18 @@ class KnownValues(unittest.TestCase):
 		if STATE != 0:
 			raise Exception('Invalid CB Ok check ...')
 
-	def test_06_calcul_timeperiod(self):
+	def test_06_calcul_timeperiod_for_id(self):
 		(sla, sla_pct) = SLA.calcul_timeperiod_for_id("check1", 0, 100)
 
 		if sla_pct['warning'] == 20 and sla_pct['critical'] == 20 and sla_pct['critical'] == 60:
+			raise Exception('Invalid pct calculation for timeperiod ...')
+
+	def test_07_calcul_timeperiod(self):
+		SLA.selector.mfilter = { '$or': [{'_id': 'check1'}, {'_id': 'check2'},] }
+
+		(sla, sla_pct) = SLA.calcul_timeperiod(0, 100)
+
+		if sla_pct['warning'] == 12.5 and sla_pct['critical'] == 17.5 and sla_pct['critical'] == 70:
 			raise Exception('Invalid pct calculation for timeperiod ...')
 
 	def test_99_DropNamespace(self):
@@ -130,14 +138,22 @@ if __name__ == "__main__":
 
 	HIDS = []
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 0}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 1, 'state_type': 1, 'timestamp': 20}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 30}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 35}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 50}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 65}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 1, 'state_type': 1, 'timestamp': 80}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 90}), namespace='history'))
-	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 100}), namespace='history'))
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 1, 'state_type': 1, 'timestamp': 20}), namespace='history')) # 20s -> 0
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 30}), namespace='history')) # 10s -> 1
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 35}), namespace='history')) # 5s  -> 2
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 50}), namespace='history')) # 15s -> 0
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 65}), namespace='history')) # 15s -> 2
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 1, 'state_type': 1, 'timestamp': 80}), namespace='history')) # 15s -> 0
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 90}), namespace='history')) # 10s -> 1
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 100}), namespace='history'))# 10s -> 0
+
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check2', 'state': 0, 'state_type': 1, 'timestamp': 0}), namespace='history'))
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check2', 'state': 1, 'state_type': 1, 'timestamp': 5}), namespace='history'))  # 5s  -> 0
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check2', 'state': 2, 'state_type': 1, 'timestamp': 10}), namespace='history')) # 5s  -> 1
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check2', 'state': 0, 'state_type': 1, 'timestamp': 20}), namespace='history')) # 10s -> 2
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check2', 'state': 2, 'state_type': 1, 'timestamp': 60}), namespace='history')) # 40s -> 0
+	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check2', 'state': 0, 'state_type': 1, 'timestamp': 65}), namespace='history')) # 5s  -> 2
+																	 # 35s -> 0
 
 	unittest.main(verbosity=2)
 	
