@@ -34,7 +34,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Creation(self):
 		global SLA
-		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR, namespace='unittest')
+		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR)
 
 		SELECTOR.save()
 		SLA.save()
@@ -128,8 +128,10 @@ class KnownValues(unittest.TestCase):
 if __name__ == "__main__":
 	STORAGE = cstorage(caccount(user="root", group="root"), namespace='unittest')
 
-	SELECTOR = cselector(name="myselector", storage=STORAGE)
+	SELECTOR = cselector(name="myselector", storage=STORAGE, namespace='unittest')
 	SELECTOR.mfilter = {'source_type': 'service'}
+
+	HIDS = []
 
 	STORAGE.put(crecord({'_id': 'check1',  'source_type': 'service', 'state': 0, 'state_type': 1}))
 	STORAGE.put(crecord({'_id': 'check2',  'source_type': 'service', 'state': 0, 'state_type': 1}))
@@ -142,7 +144,7 @@ if __name__ == "__main__":
 	STORAGE.put(crecord({'_id': 'check9',  'source_type': 'service', 'state': 2, 'state_type': 1}))
 	STORAGE.put(crecord({'_id': 'check10',  'source_type': 'service', 'state': 2, 'state_type': 1}))
 
-	HIDS = []
+	
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 0}), namespace='history'))
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 1, 'state_type': 1, 'timestamp': 20}), namespace='history')) # 20s -> 0
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 30}), namespace='history')) # 10s -> 1
