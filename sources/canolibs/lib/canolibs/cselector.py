@@ -11,7 +11,7 @@ import time
 import json
 
 class cselector(crecord):
-	def __init__(self, name=None, _id=None, storage=None, *args):
+	def __init__(self, name=None, _id=None, storage=None, namespace=None, *args):
 
 		crecord.__init__(self, storage=storage, *args)
 
@@ -34,6 +34,11 @@ class cselector(crecord):
 
 		self.mfilter = {}
 
+		if namespace:
+			self.namespace = namespace
+		else:
+			self.namespace = storage.namespace
+
 		if _id:
 			self._id = _id
 		else:
@@ -48,12 +53,14 @@ class cselector(crecord):
 			pass
 
 	def dump(self):
+		self.data['namespace'] = self.namespace
 		self.data['mfilter'] = json.dumps(self.mfilter)
 		return crecord.dump(self)
 
 	def load(self, dump):
 		crecord.load(self, dump)
 		self.mfilter = json.loads(self.data['mfilter'])
+		self.namespace = self.data['namespace']
 
 	def resolv(self):
 		self.timer.start()	
@@ -65,7 +72,7 @@ class cselector(crecord):
 		# resolv filter ...
 		self._ids = []
 		
-		records = self.storage.find(self.mfilter)	
+		records = self.storage.find(self.mfilter, self.namespace)	
 		for record in records:
 			self._ids.append(record._id)
 
