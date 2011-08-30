@@ -1,119 +1,37 @@
 #!/usr/bin/env python
 
-from pymongo import Connection
+from caccount import caccount
+from cstorage import cstorage
+from cselector import cselector
+from crecord import crecord
+from csla import csla
 
-mconn = Connection('localhost', 27017)
-mdb = mconn['canopsis']
+namespaces = ['cache', 'inventory', 'history', 'sla', 'object']
 
-collections = ['selectors', 'inventory', 'views', 'cache']
+## Create root account
+account = caccount(user="root", group="root")
 
-## remove all records
-for collection in collections:
-	mdb.drop_collection(collection)
-	
-	
-## Selectors
-record = {
-	'_id':			'all-hosts',
-	'category':		'internal',
-	'name':			'All hosts',
-	'description':	'Select all hosts',
-	'collection':	'inventory',
-	'filter':		{ 'source_type': 'host'}
-}
-mdb['selectors'].insert(record)
+## Create storage
+storage = cstorage(account, namespace='object')
+for namespace in namespaces:
+	storage.drop_namespace(namespace)
 
+## Save account
+storage.put(account)
 
-record = {
-	'_id':			'all-services',
-	'category':		'internal',
-	'name':			'All services',
-	'description':	'Select all services',
-	'collection':	'inventory',
-	'filter':		{ 'source_type': 'service'}
-}
-mdb['selectors'].insert(record)
+## Save Selectors
+selector = cselector(name="all-services", storage=storage, namespace="inventory")
+selector.mfilter = {'source_type': 'service'}
+selector.save()
 
-record = {
-	'_id':			'all-selectors',
-	'category':		'internal',
-	'name':			'All selectors',
-	'description':	'Select all selectors',
-	'collection':	'selectors',
-	'filter':		'all'
-}
-mdb['selectors'].insert(record)
+selector = cselector(name="all-hosts", storage=storage, namespace="inventory")
+selector.mfilter = {'source_type': 'host'}
+selector.save()
 
-## Views
-record = {
-	'_id':			'anonymous-default-dashboard',
-	'owner':		'anonymous',
-	'acl':			'owner',
-	'type':			'dashboard',
-	'title':		'Dashboard',
-	'description':	'Welcome view',
-	'selector':		None,
-	'items': [	{ 'items': [
-				{'title': 'All services', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300, 'width': 300, 'refreshInterval': 60},
-			]},
-			{ 'items': [
-				{'title': 'All Hosts', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-hosts', 'height': 300, 'width': 300, 'refreshInterval': 60},
-			]},
-			{ 'items': [
-				{'title': 'All services', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-services', 'height': 300, 'width': 300, 'refreshInterval': 60, 'showInLegend': False},
-			]},
-			{ 'items': [
-				{'title': 'All Hosts', 'widget': 'Widgets.HCPieAvailServices', 'selector': 'all-hosts', 'height': 300, 'width': 300, 'refreshInterval': 60, 'showInLegend': False},
-			]},
-
-		]
-}
-mdb['views'].insert(record)
-
-record = {
-	'_id':			'id-view-all-hosts',
-	'owner':		'anonymous',
-	'acl':			'authed',
-	'type':			'leaf',
-	'title':		'Hosts',
-	'description':	'All hosts',
-	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-hosts', 'collection': 'inventory', 'columsClass': 'inventory-hosts', 'searchField': ['host_name'], 'refreshInterval': 60 }]}]
-}
-mdb['views'].insert(record)
-
-record = {
-	'_id':			'id-view-all-services',
-	'owner':		'anonymous',
-	'acl':			'authed',
-	'type':			'leaf',
-	'title':		'Services',
-	'description':	'All services',
-	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-services', 'collection': 'inventory', 'columsClass': 'inventory-services', 'groupField': 'host_name', 'searchField': ['host_name', 'service_description'], 'refreshInterval': 60 }]}]
-}
-mdb['views'].insert(record)
-
-record = {
-	'_id':			'id-config-selectors',
-	'owner':		'anonymous',
-	'acl':			'authed',
-	'type':			'leaf',
-	'title':		'Selectors',
-	'description':	'All Selectors',
-	'items': [{'items': [{'widget': 'Widgets.Grid', 'selector': 'all-selectors', 'collection': 'selectors', 'groupField': 'category'}]}]
-}
-mdb['views'].insert(record)
-
-
-
-### SLA
-record = {
-	'_id':			'id-sla-all-services',
-	'owner':		'anonymous',
-	'acl':			'authed',
-	'title':		'SLA: All service',
-	'description':		'description',
-	'selector':		'all-services',
-}
-mdb['sla'].insert(record)
+## Save SLA
+sla = csla(name="all-services", storage=storage, selector=selector)
+sla.data['threshold_warn'] = 98
+sla.data['threshold_crit'] = 95
+sla.save()
 
 
