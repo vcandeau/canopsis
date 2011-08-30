@@ -5,8 +5,9 @@ from crecord import crecord
 import time
 
 class ccache(object):
-	def __init__(self, storage):
+	def __init__(self, storage, namespace=None):
 		self.storage = storage
+		self.namespace = namespace
 
 	def make_record(self, _id):
 		record = crecord()
@@ -19,18 +20,18 @@ class ccache(object):
 		return record
 
 	def remove(self, _id):
-		self.storage.remove('cache-'+_id)
+		self.storage.remove('cache-'+_id, namespace=self.namespace)
 
 	def put(self, _id, data):
 		record = self.make_record(_id)
 		record.data = {'cached': data}
-		self.storage.put(record)
+		self.storage.put(record, namespace=self.namespace)
 		
 	def get(self, _id, freshness=10):
 		try:
-			record = self.storage.get('cache-'+_id)
+			record = self.storage.get('cache-'+_id, namespace=self.namespace)
 
-			if record.write_time < (time.time() - freshness):
+			if record.write_time < (time.time() - freshness) and freshness != 0:
 				self.remove(_id)
 				return None
 			else:
