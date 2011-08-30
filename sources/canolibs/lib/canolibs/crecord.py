@@ -98,6 +98,9 @@ class crecord(object):
 		print "  Anonymous:\t", self.access_unauth
 		print "Data:\n", self.data, "\n"
 
+	def __str__(self):
+		return str(self.dump())
+
 	def check_write(self, account):
 		if account:
 			if account.user == 'root':
@@ -156,3 +159,5 @@ class crecord(object):
 			#print "After", action ,":", access
 		else:
 			raise ValueError("Invalid argument ...")
+
+
