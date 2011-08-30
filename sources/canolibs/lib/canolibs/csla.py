@@ -47,6 +47,8 @@ class csla(crecord):
 		self.data['selector_id'] = None
 		self.selector = None
 		self.namespace = None
+	
+		self.legend = ['ok','warning','critical','unknown']
 
 		## Set callback function
 		self.cb_on_warn = cb_on_warn
@@ -117,41 +119,66 @@ class csla(crecord):
 		"  return total;"
 		"}")
 
-		current = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
-		
-		## Get total
-		total = 0
-		for key in current.keys():
-			value = current[key]
-			total += value
 
-		## Calc pct
-		current_pct = {}
-		for key in current.keys():
-			value = current[key]
-			current_pct[key] = float((value * 100) / total)
+		## HARD State
+		type_filter = {'state_type': 1}
+		type_mfilter = dict(mfilter.items() + type_filter.items())
+
+		hard_current = self.storage.map_reduce(type_mfilter, mmap, mreduce, namespace=self.namespace)
+		hard_current_pct = self.calcul_pct(hard_current)
+
+		## SOFT State
+		#type_filter = {'state_type': 0}
+		#type_mfilter = dict(mfilter.items() + type_filter.items())
+
+		#soft_current = self.storage.map_reduce(type_mfilter, mmap, mreduce, namespace=self.namespace)
+		#soft_current_pct = self.calcul_pct(current)		
 
 		## Check
-		self.data['current'] = current
-		self.data['current_pct'] = current_pct
+		self.data['hard_current'] = hard_current
+		self.data['hard_current_pct'] = hard_current_pct
 		self.check()
 
-		self.logger.debug(" + Current:\t%s" % current)
-		self.logger.debug(" + Current pct:\t%s" % current_pct)
+		self.logger.debug(" + Hard Current:\t\t%s" % hard_current)
+		self.logger.debug(" + Hard Current pct:\t%s" % hard_current_pct)
 
-		return (current, current_pct)
+		return (hard_current, hard_current_pct)
+
+	def calcul_pct(self, data, total=None):
+		if not total:
+			## Get total
+			total = 0
+			for key in data.keys():
+				value = data[key]
+				total += value
+
+		## Calc pct
+		data_pct = {}
+		for key in data.keys():
+			value = data[key]
+			data_pct[key] = float((value * 100) / total)
+
+		## Fix empty value
+		for key in self.legend:
+			try:
+				value = data_pct[key]
+			except:
+				data_pct[key] = 0
+
+		return data_pct
 
 	def check(self):
 		
-		sla = self.data['current_pct']
+		sla = self.data['hard_current_pct']
 
 		state = 0
+		
 		if sla['ok'] < self.data['threshold_warn']:
 			state = 1
 
 		if sla['ok'] < self.data['threshold_crit']:
 			state = 2
-
+	
 		if   state == 0 and self.data['state'] != state:
 			self._cb_on_ok()
 		elif state == 1:
@@ -165,6 +192,46 @@ class csla(crecord):
 
 		return state
 		
-			
+	def get_initial_state(self, _id, timestamp):
+		#fields = {'state': 1, 'state_type': 1}
 		
+		record = self.storage.find_one(mfilter={'inventory_id': _id, 'timestamp': {'$lte': timestamp}, 'state_type': 1 }, namespace='history')
+		if record:
+			return record.data['state']
+		else:
+			return 0
+
+	def calcul_timeperiod_for_id(self, _id, start, stop):
+		## Calcul time for each events
+		initial_state = self.get_initial_state(_id, start)
+
+		events = self.storage.find(mfilter={'inventory_id': _id, 'timestamp': {'$gte': start, '$lte': stop} }, namespace='history', sort='timestamp')
+		
+		sla = {}
+		cursor = start
+		window = stop - start
+		for event in events:
+			stime = int(event.data['timestamp']) - cursor
+			cursor = event.data['timestamp']
 			
+			try:
+				sla[self.legend[initial_state]] += stime
+			except:
+				sla[self.legend[initial_state]] = stime
+
+			initial_state = event.data['state']
+
+		if cursor < stop:
+			stime = stop - cursor
+			
+			try:
+				sla[self.legend[initial_state]] += stime
+			except:
+				sla[self.legend[initial_state]] = stime
+
+		sla_pct = self.calcul_pct(sla, window)
+
+		self.logger.debug(" + Hard Current:\t\t%s" % sla)
+		self.logger.debug(" + Hard Current pct:\t%s" % sla_pct)
+
+		return (sla, sla_pct)
