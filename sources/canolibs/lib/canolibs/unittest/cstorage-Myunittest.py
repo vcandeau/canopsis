@@ -82,7 +82,13 @@ class KnownValues(unittest.TestCase):
 		if len(records) != 1:
 			raise Exception('Error in filter ...')
 
-	def test_11_CheckReadRights(self):
+	def test_11_FindOne(self):
+		record = STORAGE.find_one({'check': 'test1'})
+
+		if not isinstance(record, crecord):
+			raise Exception('Error in find_one ...')
+
+	def test_12_CheckReadRights(self):
 		# Inserts
 		STORAGE.put(crecord({'check': 'test4'}), account=self.anonymous_account)
 		STORAGE.put(crecord({'check': 'test5'}), account=self.anonymous_account)
@@ -105,7 +111,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid rigths for root account ...')
 	
 
-	def test_12_CheckWriteRights(self):
+	def test_13_CheckWriteRights(self):
 		# Insert with user account
 		record = crecord({'check': 'test7'})
 		STORAGE.put(record, account=self.user_account)
@@ -122,7 +128,7 @@ class KnownValues(unittest.TestCase):
 		STORAGE.remove(record, account=self.anonymous_account)
 		
 
-	def test_13_MapReduce(self):
+	def test_14_MapReduce(self):
 		from bson.code import Code
 	
 		mmap = Code("function () {"
@@ -145,11 +151,11 @@ class KnownValues(unittest.TestCase):
 		if result['ok'] != 2 and result['warning'] != 1:
 			raise Exception('Invalid map/reduce result ...')
 
-	def test_14_RemoveAll(self):
+	def test_15_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 
-	def test_15_DropNamespace(self):
+	def test_16_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 		
 if __name__ == "__main__":

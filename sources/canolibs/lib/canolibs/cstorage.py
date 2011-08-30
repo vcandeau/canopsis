@@ -155,8 +155,10 @@ class cstorage(object):
 		else:
 			return return_ids
 
+	def find_one(self, mfilter={}, mfields=None, account=None, namespace=None):
+		return self.find(mfilter=mfilter, mfields=mfields, account=account, namespace=namespace, one=True)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False):
 		if not account:
 			account = self.account
 
@@ -168,7 +170,10 @@ class cstorage(object):
 
 		backend = self.get_backend(namespace)
 
-		raw_records = backend.find(mfilter, safe=self.mongo_safe)
+		if one:
+			raw_records = backend.find(mfilter, safe=self.mongo_safe)
+		else:
+			raw_records = backend.find(mfilter, safe=self.mongo_safe)
 		
 		records=[]
 		for raw_record in raw_records:
@@ -179,7 +184,14 @@ class cstorage(object):
 				pass
 
 		self.logger.debug("Found %s record(s)" % len(records))
-		return records
+
+		if one:
+			if len(records) > 0:
+				return records[0]
+			else:
+				return None
+		else:
+			return records
 
 	def get(self, _id_or_ids, account=None, namespace=None):
 		if not account:
