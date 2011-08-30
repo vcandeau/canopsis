@@ -156,7 +156,7 @@ class csla(crecord):
 		data_pct = {}
 		for key in data.keys():
 			value = data[key]
-			data_pct[key] = float((value * 100) / total)
+			data_pct[key] = round(((float(value) * 100) / float(total)), 2)
 
 		## Fix empty value
 		for key in self.legend:
@@ -200,6 +200,35 @@ class csla(crecord):
 			return record.data['state']
 		else:
 			return 0
+
+	def calcul_timeperiod(self, start, stop):
+		sla = {}
+		window = stop - start
+
+		records = self.selector.resolv()
+
+		## Get sla for each ID
+		allsla = []
+		for _id in self.selector._ids:
+			(mysla, mysla_pct) = self.calcul_timeperiod_for_id( _id, start, stop)
+			allsla.append(mysla)
+
+		## Agreg SLA
+		for mysla in allsla:
+			for key in mysla.keys():
+				try:
+					sla[key] += mysla[key]
+				except:
+					sla[key] = mysla[key]		
+
+		## Cal pct
+		sla_pct = self.calcul_pct(sla)
+
+		self.logger.debug(" + For timeperiod %s -> %s" % (start, stop))
+		self.logger.debug("     + Current:\t\t%s" % sla)
+		self.logger.debug("     + Current pct:\t%s" % sla_pct)
+
+		return (sla, sla_pct)
 
 	def calcul_timeperiod_for_id(self, _id, start, stop):
 		## Calcul time for each events
