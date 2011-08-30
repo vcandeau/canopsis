@@ -4,6 +4,7 @@ from crecord import crecord
 from ccache import ccache
 from cselector import cselector
 from ctimer import ctimer
+from datetime import datetime
 
 import time
 import json
@@ -19,6 +20,7 @@ class csla(crecord):
 		crecord.__init__(self, storage=storage, *args)
 
 		self.type = "sla"
+		self.cache = ccache(storage, 'sla')
 		
 		## Set storage
 		if not storage:
@@ -88,7 +90,44 @@ class csla(crecord):
 		if self.cb_on_ok:
 			self.cb_on_ok(self)
 
-	def calcul_current(self):
+	def process_hourly(self, timestamp):
+		date = datetime.fromtimestamp(timestamp)
+		date = date.replace(minute = 0, second = 0)
+
+		stop = int(time.mktime(date.timetuple()))
+		start = stop - 3600 # 1 hour
+
+		stop -= 1		
+
+		self.get_sla_by_timeperiod(start, stop)
+
+	def process_daily(self, timestamp):
+		date = datetime.fromtimestamp(timestamp)
+		date = date.replace(hour=0, minute = 0, second = 0)
+
+		stop = int(time.mktime(date.timetuple()))
+		start = stop - 86400 # 1 day
+
+		stop -= 1
+
+		self.get_sla_by_timeperiod(start, stop)
+
+	def get_sla_by_timeperiod(self, start, stop):
+
+		cid = self._id+"."+str(start)+"-"+str(stop)
+
+		# get from cache
+		sla = self.cache.get(cid, 0)
+		if not sla:
+			(sla, sla_pct) = self.calcul_by_timeperiod(start, stop)
+			self.cache.put(cid, sla)
+		else:
+			self.logger.debug("Allready in cache.")
+			sla_pct = self.calcul_pct(sla)
+
+		return (sla, sla_pct)
+
+	def get_current_availability(self):
 		self.selector.resolv()
 		self.logger.debug("Calcul current SLA ...")
 
@@ -201,7 +240,7 @@ class csla(crecord):
 		else:
 			return 0
 
-	def calcul_timeperiod(self, start, stop):
+	def calcul_by_timeperiod(self, start, stop):
 		sla = {}
 		window = stop - start
 
@@ -210,7 +249,7 @@ class csla(crecord):
 		## Get sla for each ID
 		allsla = []
 		for _id in self.selector._ids:
-			(mysla, mysla_pct) = self.calcul_timeperiod_for_id( _id, start, stop)
+			(mysla, mysla_pct) = self.calcul_by_timeperiod_for_id( _id, start, stop)
 			allsla.append(mysla)
 
 		## Agreg SLA
@@ -230,7 +269,7 @@ class csla(crecord):
 
 		return (sla, sla_pct)
 
-	def calcul_timeperiod_for_id(self, _id, start, stop):
+	def calcul_by_timeperiod_for_id(self, _id, start, stop):
 		## Calcul time for each events
 		initial_state = self.get_initial_state(_id, start)
 
