@@ -286,7 +286,7 @@ class cstorage(object):
 
 		output = {}
 		if backend.find(mfilter).count() > 0:	
-			result = backend.map_reduce(mmap, mreduce, "myresults", query=mfilter)
+			result = backend.map_reduce(mmap, mreduce, "mapreduce", query=mfilter)
 			for doc in result.find():
 				output[doc['_id']] = doc['value']
 
