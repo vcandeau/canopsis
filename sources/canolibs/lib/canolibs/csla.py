@@ -71,6 +71,11 @@ class csla(crecord):
 			self.data['selector_id'] = selector._id
 			pass
 
+		if namespace:
+			self.namespace = namespace
+		else:
+			self.namespace = self.selector.namespace
+
 	#def save(self):
 	#	self.selector.save()
 	#	crecord.save(self)
