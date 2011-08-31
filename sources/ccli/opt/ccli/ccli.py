@@ -11,8 +11,7 @@ user = "root"
 welcome = "Welcome to Canopsis CLI, have fun !"
 prompt = user+'@'+hostname+":"
 
-#ws_dir=os.path.expanduser("~/opt/ccli/libexec")
-libexec_dir=os.path.expanduser("/home/wpain/Bureau/hypervision/sources/ccli/opt/ccli/libexec")
+libexec_dir=os.path.expanduser("~/opt/ccli/libexec")
 sys.path.append(libexec_dir)
 
 ## Import libexec
