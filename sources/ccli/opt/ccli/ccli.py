@@ -42,14 +42,17 @@ class cli(ccmd):
 try:
 	print welcome
 
-	if sys.argv[1]:
-		try:
-			exec "%s.start_cli(prompt)" % sys.argv[1]
-		except KeyboardInterrupt:
-			print
-			sys.exit(1)
-		except Exception, err:
-			print err
+	try:
+		if sys.argv[1]:
+			try:
+				exec "%s.start_cli(prompt)" % sys.argv[1]
+			except KeyboardInterrupt:
+				print
+				sys.exit(1)
+			except Exception, err:
+				print err
+	except:
+		pass
 
 	cli().cmdloop()
 except:
