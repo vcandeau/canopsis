@@ -49,7 +49,7 @@ def on_message(msg):
 
 	# Check if state is change
 	try:
-		oldrecord = storage_inventory.get(rk)
+		oldrecord = storage.get(rk, namespace='inventory')
 		
 		state = event['state']
 		state_type = event['state_type']
@@ -68,7 +68,7 @@ def on_message(msg):
 	
 
 	# Put record
-	storage_inventory.put(record)
+	storage.put(record, namespace='inventory')
 
 def publish_changed_event(record):
 	_id = record._id
@@ -78,7 +78,7 @@ def publish_changed_event(record):
 	hrecord.data['inventory_id'] = _id
 
 	logger.debug("State of '%s' change ..." % _id)
-	storage_history.put(hrecord)
+	storage.put(hrecord, namespace='history')
 
 	msg = Content(json.dumps(record.data))
 	amqp.publish(msg, _id, amqp.exchange_name_events)
@@ -107,16 +107,14 @@ def signal_handler(signum, frame):
 ########################################################
 
 amqp=None
-storage_inventory=None
-storage_history=None
+storage=None
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
 	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, storage_inventory, storage_history
+	global amqp, storage
 
-	storage_inventory = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
-	storage_history = cstorage(DEFAULT_ACCOUNT, namespace='history', logging_level=logging.INFO)
+	storage = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
 
 	# AMQP
 	amqp = camqp()
