@@ -53,7 +53,12 @@ try:
 				print err
 	except:
 		pass
-
-	cli().cmdloop()
+	try:
+		cli().cmdloop()
+	except KeyboardInterrupt:
+		print
+		sys.exit(1)
+	except Exception, err:
+		print err
 except:
 	pass
