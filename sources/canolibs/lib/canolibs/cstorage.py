@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 class cstorage(object):
-	def __init__(self, account, namespace='object', logging_level=logging.DEBUG, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
+	def __init__(self, account, namespace='object', logging_level=logging.INFO, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
 
 		self.mongo_host=mongo_host
 		self.mongo_port=mongo_port
@@ -70,7 +70,9 @@ class cstorage(object):
 			namespace = self.namespace
 
 		try:
-			return self.backend[namespace]
+			backend = self.backend[namespace]
+			self.logger.debug("Use %s collection" % namespace)
+			return backend
 		except:
 			self.backend[namespace] = self.db[namespace]
 			self.logger.debug("Connected to %s collection." % namespace)
@@ -111,9 +113,9 @@ class cstorage(object):
 
 				if access:
 					try:
-						record.write_time = time.time()
+						record.write_time = int(time.time())
 						data = record.dump()
-
+						
 						del data['_id']
 						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
 
@@ -221,7 +223,12 @@ class cstorage(object):
 				oid = objectid.ObjectId(_id)
 			except:
 				oid = _id
+
 			raw_record = backend.find_one({'_id': oid}, safe=self.mongo_safe)
+			if not raw_record:
+				# small hack for wrong oid
+				raw_record = backend.find_one({'_id': _id}, safe=self.mongo_safe)
+
 		except Exception, err:
 			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
 
