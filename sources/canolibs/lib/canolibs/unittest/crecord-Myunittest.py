@@ -28,7 +28,14 @@ class KnownValues(unittest.TestCase):
 		if record.data != self.data:
 			raise Exception('Data corruption ...')
 
-	def test_03_ChOwnGrp(self):
+	def test_03_InitFromRecord(self):
+		record = crecord(self.data)
+
+		record2 = crecord(record=record)
+		if record2.data != self.data:
+			raise Exception('Data corruption ...')
+
+	def test_04_ChOwnGrp(self):
 		record = crecord(self.data)
 
 		record.chown('toto')
@@ -43,7 +50,7 @@ class KnownValues(unittest.TestCase):
 		#if record.owner != 'william' and record.group != 'capensis':
 		#	raise Exception('chown with caccount dont work ...')
 		
-	def test_04_Chmod(self):
+	def test_05_Chmod(self):
 		record = crecord({'check': 'bidon'})
 
 		record.chmod('u-w')
