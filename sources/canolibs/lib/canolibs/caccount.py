@@ -20,7 +20,7 @@ class caccount(crecord):
 		if isinstance(record, crecord):
 			crecord.__init__(self, raw_record=record.dump())
 		else:
-			crecord.__init__(self, owner=user, group=group, *args)
+			crecord.__init__(self, owner=user, group=group, data = {}, *args)
 
 		self.type = "account"
 

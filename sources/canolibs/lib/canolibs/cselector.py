@@ -13,7 +13,7 @@ import json
 class cselector(crecord):
 	def __init__(self, name=None, _id=None, storage=None, namespace=None, *args):
 
-		crecord.__init__(self, storage=storage, *args)
+		crecord.__init__(self, storage=storage, data = {}, *args)
 
 		#if isinstance(record, crecord):
 		#	crecord.__init__(self, raw_record=record.dump())
