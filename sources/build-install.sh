@@ -575,6 +575,12 @@ install_basic_source "canolibs"
 make_package "canolibs"
 
 ######################################
+#  ccli
+######################################
+install_basic_source "ccli"
+make_package "ccli"
+
+######################################
 #  Event-brokers
 ######################################
 cd $SRC_PATH
