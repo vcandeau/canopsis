@@ -17,10 +17,10 @@ logging.basicConfig(level=logging.DEBUG,
 class csla(crecord):
 	def __init__(self, name=None, _id=None, storage=None, cb_on_ok=None, cb_on_warn=None, cb_on_crit=None, selector=None, namespace=None, logging_level=logging.DEBUG, *args):
 
-		crecord.__init__(self, storage=storage, *args)
+		crecord.__init__(self, storage=storage, data = {}, *args)
 
-		self.type = "sla"
-		self.cache = ccache(storage, 'sla')
+		self.type = 'sla'
+		self.cache = ccache(storage, self.type)
 		
 		## Set storage
 		if not storage:

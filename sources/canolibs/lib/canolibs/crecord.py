@@ -34,13 +34,13 @@ class crecord(object):
 			self.load(raw_record)
 
 	def load(self, dump):
-		self.owner = dump['aaa_owner']
-		self.group = dump['aaa_group']
+		self.owner = str(dump['aaa_owner'])
+		self.group = str(dump['aaa_group'])
 		self.access_owner = dump['aaa_access_owner']
 		self.access_group = dump['aaa_access_group']
 		self.access_other = dump['aaa_access_other']
 		self.access_unauth = dump['aaa_access_unauth']
-		self.type = dump['crecord_type']
+		self.type = str(dump['crecord_type'])
 		self.write_time = dump['crecord_write_time']
 
 		try:
@@ -83,20 +83,33 @@ class crecord(object):
 		dump['aaa_access_unauth'] = self.access_unauth
 		dump['crecord_type'] = self.type
 		dump['crecord_write_time'] = self.write_time
+
 		return dump
 
 	def cat(self):
-		print "Id:\t", self._id
-		print "Owner:\t", self.owner
-		print "Group:\t", self.group
-		print "Type:\t", self.type
-		print "Writed:\t", self.write_time
-		print "Access:"
-		print "  Owner:\t", self.access_owner
-		print "  Group:\t", self.access_group
-		print "  Other:\t", self.access_other
-		print "  Anonymous:\t", self.access_unauth
-		print "Data:\n", self.data, "\n"
+		for_str=False
+
+		#print "Id:\t", self._id
+		#print "Owner:\t", self.owner
+		#print "Group:\t", self.group
+		#print "Type:\t", self.type
+		#print "Writed:\t", self.write_time
+		#print "Access:"
+		#print "  Owner:\t", self.access_owner
+		#print "  Group:\t", self.access_group
+		#print "  Other:\t", self.access_other
+		#print "  Anonymous:\t", self.access_unauth
+		#print "Data:\n", self.data, "\n"
+	
+		output = ""
+		for key in self.data.keys():
+			output += key + ": " + str(self.data[key]) + "\n"
+
+		if for_str:
+			return output
+		else:
+			print output
+			
 
 	def __str__(self):
 		return str(self.dump())
@@ -160,4 +173,20 @@ class crecord(object):
 		else:
 			raise ValueError("Invalid argument ...")
 
+
+
+def access_to_str(access):
+	output = ''
+
+	if 'r' in access:
+		output += 'r'
+	else:
+		output += '-'
+
+	if 'w' in access:
+		output += 'w'
+	else:
+		output += '-'
+
+	return output
 
