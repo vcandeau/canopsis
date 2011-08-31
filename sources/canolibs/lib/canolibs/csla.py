@@ -15,20 +15,20 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 class csla(crecord):
-	def __init__(self, name=None, _id=None, storage=None, cb_on_ok=None, cb_on_warn=None, cb_on_crit=None, selector=None, namespace=None, logging_level=logging.DEBUG, *args):
+	def __init__(self, name=None, _id=None, storage=None, cb_on_ok=None, cb_on_warn=None, cb_on_crit=None, selector=None, namespace=None, logging_level=logging.DEBUG, record=None, *args):
 
-		crecord.__init__(self, storage=storage, data = {}, *args)
+		self._id = _id
+
+		crecord.__init__(self, storage=storage, data = {}, record=record, *args)
 
 		self.type = 'sla'
 		self.cache = ccache(storage, self.type)
-		
+
 		## Set storage
 		if not storage:
 			raise Exception('You must specify storage !')
 
-		if _id:
-			self._id = _id
-		else:
+		if not self._id:
 			if not name:
 				raise Exception('You must specify name or _id !')
 			self._id = self.type+"-"+self.storage.account.user+"-"+name
