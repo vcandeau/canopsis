@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 class crecord(object):
-	def __init__(self, data = {}, owner=None, group=None, raw_record=None, storage=None):
+	def __init__(self, data = {}, owner=None, group=None, raw_record=None, record=None, storage=None):
 		#if account:
 		#	self.account = account
 		#	self.owner=account.user
@@ -30,7 +30,9 @@ class crecord(object):
 		self.data = data
 		self.storage = storage
 
-		if raw_record:
+		if   isinstance(record, crecord):
+			self.load(record.dump())
+		elif raw_record:
 			self.load(raw_record)
 
 	def load(self, dump):
