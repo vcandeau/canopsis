@@ -31,6 +31,8 @@ class cselector(crecord):
 		self.data['mfilter'] = {}
 		self.data['last_resolv_time'] = 0
 		self.data['last_nb_records'] = 0
+		self.state = 0
+
 		self._ids = []
 
 		self.mfilter = {}
@@ -55,6 +57,7 @@ class cselector(crecord):
 
 	def dump(self):
 		self.data['namespace'] = self.namespace
+		self.data['state'] = self.state
 		self.data['mfilter'] = json.dumps(self.mfilter)
 		return crecord.dump(self)
 
@@ -62,6 +65,7 @@ class cselector(crecord):
 		crecord.load(self, dump)
 		self.mfilter = json.loads(self.data['mfilter'])
 		self.namespace = self.data['namespace']
+		self.state = self.data['state']
 
 	def resolv(self):
 		self.timer.start()	
@@ -73,9 +77,17 @@ class cselector(crecord):
 		# resolv filter ...
 		self._ids = []
 		
-		records = self.storage.find(self.mfilter, namespace=self.namespace)	
+		records = self.storage.find(self.mfilter, namespace=self.namespace)
+		state = 0
 		for record in records:
+			try:
+				if record.data['state'] > state:
+					state = record.data['state']
+			except:
+				pass
 			self._ids.append(record._id)
+
+		self.state = state
 
 		# Put in cache
 		#self.cache.put(self._id, _ids)
@@ -102,11 +114,11 @@ class cselector(crecord):
 
 		return False
 
-	def cat(self):
-		print "Id:\t\t\t", self._id
-		print "Mfilter:\t\t", self.data['mfilter']
-		print "Last Resolv Time:\t%.2f ms" % (self.data['last_resolv_time']*1000)
-		print "Last Nb records:\t", self.data['last_nb_records'], "\n"
+#	def cat(self):
+#		print "Id:\t\t\t", self._id
+#		print "Mfilter:\t\t", self.data['mfilter']
+#		print "Last Resolv Time:\t%.2f ms" % (self.data['last_resolv_time']*1000)
+#		print "Last Nb records:\t", self.data['last_nb_records'], "\n"
 
 
 #################

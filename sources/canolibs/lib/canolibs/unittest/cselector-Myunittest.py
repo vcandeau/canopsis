@@ -24,9 +24,9 @@ class KnownValues(unittest.TestCase):
 
 	def test_02_PutData(self):
 		global ID
-		record1 = crecord({'_id': 'check1', 'check': 'test1'})
-		record2 = crecord({'check': 'test2'})
-		record3 = crecord({'check': 'test3'})
+		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0})
+		record2 = crecord({'check': 'test2', 'state': 0})
+		record3 = crecord({'check': 'test3', 'state': 0})
 
 		STORAGE.put([record1, record2, record3])
 		ID = record2._id
@@ -50,7 +50,26 @@ class KnownValues(unittest.TestCase):
 		if not SELECTOR.match(ID):
 			raise Exception('Error in match, objectid ...')
 
-	def test_06_Remove(self):
+	def test_06_state(self):
+		SELECTOR.mfilter = {}
+		SELECTOR.resolv()
+		if SELECTOR.state != 0:
+			raise Exception('Invalid ok state (%s) ...' % SELECTOR.state)
+
+		STORAGE.put(crecord({'check': 'test4', 'state': 1}))
+
+		SELECTOR.resolv()
+		if SELECTOR.state != 1:
+			raise Exception('Invalid warning state (%s) ...' % SELECTOR.state)
+
+		STORAGE.put(crecord({'check': 'test5', 'state': 2}))
+
+		SELECTOR.resolv()
+		if SELECTOR.state != 2:
+			raise Exception('Invalid critical state (%s) ...' % SELECTOR.state)
+
+
+	def test_07_Remove(self):
 		STORAGE.remove(SELECTOR)
 
 	def test_99_DropNamespace(self):
