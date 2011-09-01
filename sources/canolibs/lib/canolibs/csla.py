@@ -32,12 +32,19 @@ class csla(crecord):
 
 		self.data['availability'] = {'ok': 1.0}
 		self.data['availability_pct'] = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
+		self.data['sla'] = {'ok': 1.0}
+		self.data['sla_pct'] = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
 		self.data['state'] = 0
 		self.data['state_type'] = 1
 
 		self.data['selector_id'] = None
 		self.selector = None
 		self.namespace = None
+		self.slippery = False
+		self.cycle = 86400 # 24 hours
+		self.start = None
+		self.stop = None
+		self.active = True
 	
 		self.legend = ['ok','warning','critical','unknown']
 
@@ -88,6 +95,22 @@ class csla(crecord):
 		self.logger = logging.getLogger(self._id)
 		self.logger.setLevel(logging_level)
 
+	def dump(self):
+		self.data['slippery'] = self.slippery
+		self.data['cycle'] = self.cycle
+		self.data['start'] = self.start
+		self.data['stop'] = self.stop
+		self.data['active'] = self.active
+		return crecord.dump(self)
+
+	def load(self, dump):
+		crecord.load(self, dump)
+		self.slippery = self.data['slippery']
+		self.cycle = self.data['cycle']
+		self.start = self.data['start']
+		self.stop = self.data['stop']
+		self.active = self.data['active']
+
 	#def save(self):
 	#	self.selector.save()
 	#	crecord.save(self)
@@ -128,29 +151,77 @@ class csla(crecord):
 
 		self.get_sla_by_timeperiod(start, stop)
 
-	def get_sla_by_timeperiod(self, start, stop):
+	def set_threshold(self, warn, crit):
+		self.data['threshold_warn'] = warn
+		self.data['threshold_crit'] = crit
 
+	def set_cycle(self, start, cycle, slippery=True):
+		self.start = start
+		self.stop = start + cycle
+		self.cycle = cycle
+		self.slippery = slippery
+
+	def get_sla(self, timestamp=None):
+		#if not timestamp:
+			# current cycle
+		#	if not self.slippery:
+		self.logger.debug("Calcul current SLA ...")
+		
+		if not self.active:
+			self.logger.debug(" + SLA is outdated.")
+			return
+		
+		if self.slippery:
+			stop = int(time.time())
+			start = stop - self.cycle
+		else:
+			start = self.start
+			stop = self.stop
+
+		## outdated by 30 sec
+		now = int(time.time())
+		if stop < (now - 30):
+			self.logger.debug(" + Last one ...")
+			self.active = False
+
+		## Not started
+		if start > now:
+			self.logger.debug(" + Not the moment ...")
+			return
+
+		if start and stop:
+			(sla, sla_pct) = self.get_sla_by_timeperiod(start, stop, cachetime=50)
+			if sla != self.data['sla']:
+				self.data['sla'] = sla
+				self.data['sla_pct'] = sla_pct
+				self.save()
+
+	def get_sla_by_timeperiod(self, start, stop, cachetime=0):
+
+		self.logger.debug("Get SLA between %s and %s" % (start, stop))
 		cid = self._id+"."+str(start)+"-"+str(stop)
 
 		# get from cache
-		sla = self.cache.get(cid, 0)
+		sla = self.cache.get(cid, cachetime)
+
 		if not sla:
 			(sla, sla_pct) = self.calcul_by_timeperiod(start, stop)
 			self.cache.put(cid, sla)
 		else:
-			self.logger.debug("Allready in cache.")
+			self.logger.debug(" + From cache.")
 			sla_pct = self.calcul_pct(sla)
 
 		return (sla, sla_pct)
 
 	def get_current_availability(self):
 		
-		self.logger.debug("Calcul current SLA ...")
+		self.logger.debug("Calcul current availability ...")
 
 		## Use cache
 		cid = self._id+".current_availability"
 		availability = self.cache.get(cid, 10)
 		if availability:
+			self.logger.debug(" + From cache.")
 			return (availability, self.calcul_pct(availability))
 
 		## Caclul
@@ -260,6 +331,13 @@ class csla(crecord):
 
 	def calcul_by_timeperiod(self, start, stop):
 		sla = {}
+		now = int(time.time())
+		if stop > now:
+			stop = now
+
+		if start > now:
+			return (self.data['sla'], self.data['sla_pct'])
+
 		window = stop - start
 
 		records = self.selector.resolv()
@@ -317,7 +395,8 @@ class csla(crecord):
 
 		sla_pct = self.calcul_pct(sla, window)
 
-		self.logger.debug(" + Hard Current:\t\t%s" % sla)
-		self.logger.debug(" + Hard Current pct:\t%s" % sla_pct)
+		#self.logger.debug(" - %s" % _id)
+		#self.logger.debug("  + Hard Current:\t\t%s" % sla)
+		#self.logger.debug("  + Hard Current pct:\t%s" % sla_pct)
 
 		return (sla, sla_pct)
