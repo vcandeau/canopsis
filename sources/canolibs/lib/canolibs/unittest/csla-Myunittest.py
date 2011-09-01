@@ -11,6 +11,8 @@ from crecord import crecord
 
 import time
 
+import logging
+
 STORAGE = None
 SELECTOR = None
 SLA = None
@@ -28,58 +30,53 @@ class KnownValues(unittest.TestCase):
 		global SLA
 		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR)
 		SLA.set_threshold(10,5)
+		SLA.set_cycle(0, 100, False)
 
-		SELECTOR.save()
 		SLA.save()
 
 	def test_02_Load(self):
 		global SLA
-		SLA = csla(name="mysla", storage=STORAGE, cb_on_state_change=cb_on_state_change)
-
-	def test_03_calcul_current(self):
-		(current, current_pct) = SLA.get_current_availability()
-		## current_pct: {u'warning': 30.0, u'ok': 20.0, u'critical': 50.0}
-
-		if current_pct['ok'] != 20:
-			raise Exception('Invalid pct calculation ...')
+		SLA = csla(name="mysla", storage=STORAGE, cb_on_state_change=cb_on_state_change, logging_level=logging.DEBUG)
+		#SLA.selector.cat()
 
 	def test_04_check(self):
-		
-		SLA.set_threshold(10,5)
+		SLA.get_sla(stop=100, cachetime=-1)
+		#SLA.cat()
+
+		SLA.set_threshold(60,50)
 		state = SLA.check()
 
 		if state != 0:
 			raise Exception('Invalid Ok check ...')
 
-		SLA.set_threshold(30,10)
+		SLA.set_threshold(80,60)
 		state = SLA.check()
 
 		if state != 1:
 			raise Exception('Invalid Warning check ...')
 
 
-		SLA.set_threshold(40,30)
+		SLA.set_threshold(90,80)
 		state = SLA.check()
 
 		if state != 2:
 			raise Exception('Invalid Critical check ...')
 
 	def test_05_checkCB(self):
-
-		SLA.set_threshold(30,15)
+		SLA.set_threshold(80,60)
 		SLA.check()
 
 		if STATE != 1:
 			raise Exception('Invalid CB Warning check ...')
 
 
-		SLA.set_threshold(40,30)
+		SLA.set_threshold(90,80)
 		SLA.check()
 
 		if STATE != 2:
 			raise Exception('Invalid CB Critical check ...')
 
-		SLA.set_threshold(10,5)
+		SLA.set_threshold(60,50)
 		SLA.check()
 
 		if STATE != 0:
@@ -109,6 +106,7 @@ class KnownValues(unittest.TestCase):
 		for HID in HIDS:
 			STORAGE.remove(HID, namespace='history')
 		STORAGE.drop_namespace('unittest')
+		pass
 
 
 
@@ -117,21 +115,15 @@ if __name__ == "__main__":
 
 	SELECTOR = cselector(name="myselector", storage=STORAGE, namespace='unittest')
 	SELECTOR.mfilter = {'source_type': 'service'}
+	#SELECTOR.mfilter = {'$or': [ {'inventory_id': 'check1'}, {'inventory_id': 'check1'} ]}
+
+	SELECTOR.save()
 
 	HIDS = []
-
+	
 	STORAGE.put(crecord({'_id': 'check1',  'source_type': 'service', 'state': 0, 'state_type': 1}))
 	STORAGE.put(crecord({'_id': 'check2',  'source_type': 'service', 'state': 0, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check3',  'source_type': 'service', 'state': 1, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check4',  'source_type': 'service', 'state': 1, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check5',  'source_type': 'service', 'state': 1, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check6',  'source_type': 'service', 'state': 2, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check7',  'source_type': 'service', 'state': 2, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check8',  'source_type': 'service', 'state': 2, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check9',  'source_type': 'service', 'state': 2, 'state_type': 1}))
-	STORAGE.put(crecord({'_id': 'check10',  'source_type': 'service', 'state': 2, 'state_type': 1}))
 
-	
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 0, 'state_type': 1, 'timestamp': 0}), namespace='history'))
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 1, 'state_type': 1, 'timestamp': 20}), namespace='history')) # 20s -> 0
 	HIDS.append(STORAGE.put(crecord({'inventory_id': 'check1', 'state': 2, 'state_type': 1, 'timestamp': 30}), namespace='history')) # 10s -> 1
