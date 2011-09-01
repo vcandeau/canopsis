@@ -58,9 +58,11 @@ def on_message(msg):
 		oldstate_type = oldrecord.data['state_type']
 
 		if state != oldstate or state_type != oldstate_type:
+			record.data['previous_state'] = oldstate
 			publish_changed_event(record)
 
 	except KeyError:
+		record.data['previous_state'] = record.data['state']
 		publish_changed_event(record)
 
 	except Exception, err:
