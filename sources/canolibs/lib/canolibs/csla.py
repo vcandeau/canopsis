@@ -99,10 +99,12 @@ class csla(crecord):
 			self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.data['availability_pct']['ok'], self.data['threshold_warn']))
 		elif to_state == 2:
 			self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.data['availability_pct']['ok'], self.data['threshold_crit']))
-		try:
-			self.cb_on_state_change(from_state, to_state)
-		except Exception, err:
-			self.logger.error("Error in  'cb_on_state_change': %s", err)
+
+		if self.cb_on_state_change:
+			try:
+				self.cb_on_state_change(from_state, to_state)
+			except Exception, err:
+				self.logger.error("Error in  'cb_on_state_change': %s", err)
 
 	def process_hourly(self, timestamp):
 		date = datetime.fromtimestamp(timestamp)
