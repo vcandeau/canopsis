@@ -27,8 +27,7 @@ class KnownValues(unittest.TestCase):
 	def test_01_Creation(self):
 		global SLA
 		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR)
-		SLA.data['threshold_warn'] = 10
-		SLA.data['threshold_crit'] = 5
+		SLA.set_threshold(10,5)
 
 		SELECTOR.save()
 		SLA.save()
@@ -46,23 +45,20 @@ class KnownValues(unittest.TestCase):
 
 	def test_04_check(self):
 		
-		SLA.data['threshold_warn'] = 10
-		SLA.data['threshold_crit'] = 5
+		SLA.set_threshold(10,5)
 		state = SLA.check()
 
 		if state != 0:
 			raise Exception('Invalid Ok check ...')
 
-		SLA.data['threshold_warn'] = 30
-		SLA.data['threshold_crit'] = 10
+		SLA.set_threshold(30,10)
 		state = SLA.check()
 
 		if state != 1:
 			raise Exception('Invalid Warning check ...')
 
 
-		SLA.data['threshold_warn'] = 40
-		SLA.data['threshold_crit'] = 30
+		SLA.set_threshold(40,30)
 		state = SLA.check()
 
 		if state != 2:
@@ -70,23 +66,20 @@ class KnownValues(unittest.TestCase):
 
 	def test_05_checkCB(self):
 
-		SLA.data['threshold_warn'] = 30
-		SLA.data['threshold_crit'] = 15
+		SLA.set_threshold(30,15)
 		SLA.check()
 
 		if STATE != 1:
 			raise Exception('Invalid CB Warning check ...')
 
 
-		SLA.data['threshold_warn'] = 40
-		SLA.data['threshold_crit'] = 30
+		SLA.set_threshold(40,30)
 		SLA.check()
 
 		if STATE != 2:
 			raise Exception('Invalid CB Critical check ...')
 
-		SLA.data['threshold_warn'] = 10
-		SLA.data['threshold_crit'] = 5
+		SLA.set_threshold(10,5)
 		SLA.check()
 
 		if STATE != 0:
