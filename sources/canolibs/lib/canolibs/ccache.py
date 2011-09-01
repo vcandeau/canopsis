@@ -28,6 +28,9 @@ class ccache(object):
 		self.storage.put(record, namespace=self.namespace)
 		
 	def get(self, _id, freshness=10):
+		if freshness == -1:
+			return None
+
 		try:
 			record = self.storage.get('cache-'+_id, namespace=self.namespace)
 
