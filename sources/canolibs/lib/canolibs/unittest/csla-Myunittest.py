@@ -16,17 +16,9 @@ SELECTOR = None
 SLA = None
 STATE = 0
 
-def cb_on_ok(mycsla):
+def cb_on_state_change(from_state, to_state):
 	global STATE
-	STATE = 0
-
-def cb_on_warn(mycsla):
-	global STATE
-	STATE = 1
-
-def cb_on_crit(mycsla):
-	global STATE
-	STATE = 2
+	STATE = to_state
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
@@ -35,13 +27,15 @@ class KnownValues(unittest.TestCase):
 	def test_01_Creation(self):
 		global SLA
 		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR)
+		SLA.data['threshold_warn'] = 10
+		SLA.data['threshold_crit'] = 5
 
 		SELECTOR.save()
 		SLA.save()
 
 	def test_02_Load(self):
 		global SLA
-		SLA = csla(name="mysla", storage=STORAGE, cb_on_ok=cb_on_ok, cb_on_warn=cb_on_warn, cb_on_crit=cb_on_crit)
+		SLA = csla(name="mysla", storage=STORAGE, cb_on_state_change=cb_on_state_change)
 
 	def test_03_calcul_current(self):
 		(current, current_pct) = SLA.get_current_availability()
