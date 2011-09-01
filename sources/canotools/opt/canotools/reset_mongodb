@@ -6,13 +6,16 @@ from cselector import cselector
 from crecord import crecord
 from csla import csla
 
+import logging
+import time
+
 namespaces = ['cache', 'inventory', 'history', 'sla', 'object']
 
 ## Create root account
 account = caccount(user="root", group="root")
 
 ## Create storage
-storage = cstorage(account, namespace='object')
+storage = cstorage(account, namespace='object', logging_level=logging.DEBUG)
 for namespace in namespaces:
 	storage.drop_namespace(namespace)
 
@@ -20,18 +23,18 @@ for namespace in namespaces:
 storage.put(account)
 
 ## Save Selectors
-selector = cselector(name="all-services", storage=storage, namespace="inventory")
-selector.mfilter = {'source_type': 'service'}
-selector.save()
-
 selector = cselector(name="all-hosts", storage=storage, namespace="inventory")
 selector.mfilter = {'source_type': 'host'}
 selector.save()
 
+selector = cselector(name="all-services", storage=storage, namespace="inventory")
+selector.mfilter = {'source_type': 'service'}
+selector.save()
+
 ## Save SLA
 sla = csla(name="all-services", storage=storage, selector=selector)
-sla.data['threshold_warn'] = 98
-sla.data['threshold_crit'] = 95
+sla.set_threshold(98,95)
+sla.set_cycle(int(time.time())+60, 120, False)
 sla.save()
 
 
