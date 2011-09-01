@@ -183,6 +183,7 @@ class csla(crecord):
 		if stop < (now - 30):
 			self.logger.debug(" + Last one ...")
 			self.active = False
+			self.save()
 
 		## Not started
 		if start > now:
