@@ -9,9 +9,10 @@ from pymongo import objectid
 
 import time
 import json
+import logging
 
 class cselector(crecord):
-	def __init__(self, name=None, _id=None, storage=None, namespace=None, *args):
+	def __init__(self, name=None, _id=None, storage=None, namespace=None, logging_level=logging.INFO, *args):
 
 		crecord.__init__(self, storage=storage, data = {}, *args)
 
@@ -25,7 +26,7 @@ class cselector(crecord):
 		if not self.storage:
 			raise Exception('You must specify storage !')
 
-		self.timer = ctimer()
+		self.timer = ctimer(logging_level=logging_level)
 		self.cache_time = 60 # 1 minute
 		self.data['mfilter'] = {}
 		self.data['last_resolv_time'] = 0
@@ -47,7 +48,7 @@ class cselector(crecord):
 			self._id = self.type+"-"+self.storage.account.user+"-"+name
 		
 		try:
-			record = self.storage.get(self._id)
+			record = self.storage.get(self._id, namespace='object')
 			self.load(record.dump())
 		except:
 			pass
@@ -72,7 +73,7 @@ class cselector(crecord):
 		# resolv filter ...
 		self._ids = []
 		
-		records = self.storage.find(self.mfilter, self.namespace)	
+		records = self.storage.find(self.mfilter, namespace=self.namespace)	
 		for record in records:
 			self._ids.append(record._id)
 
