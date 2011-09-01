@@ -4,12 +4,13 @@
 from crecord import crecord
 from ccache import ccache
 from ctimer import ctimer
-
+from ctools import calcul_pct
 from pymongo import objectid
 
 import time
 import json
 import logging
+
 
 class cselector(crecord):
 	def __init__(self, name=None, _id=None, storage=None, namespace=None, logging_level=logging.INFO, *args):
@@ -50,7 +51,7 @@ class cselector(crecord):
 			self._id = self.type+"-"+self.storage.account.user+"-"+name
 		
 		try:
-			record = self.storage.get(self._id, namespace='object')
+			record = self.storage.get(self._id, namespace=namespace)
 			self.load(record.dump())
 		except:
 			pass
@@ -76,7 +77,7 @@ class cselector(crecord):
 
 		# resolv filter ...
 		self._ids = []
-		
+
 		records = self.storage.find(self.mfilter, namespace=self.namespace)
 		state = 0
 		for record in records:
@@ -113,6 +114,67 @@ class cselector(crecord):
 			return True
 
 		return False
+
+	def get_current_availability(self):
+
+		## Use cache
+		cid = self._id+".current_availability"
+		#availability = self.cache.get(cid, 10)
+		#if availability:
+		#	self.logger.debug(" + From cache.")
+		#	return (availability, calcul_pct(availability))
+
+		## Caclul
+		self.resolv()
+		
+		mfilter = self.mfilter
+
+		from bson.code import Code
+	
+		mmap = Code("function () {"
+		"	var state = this.state;"
+		"	if (this.state_type == 0) {"
+		"		state = this.previous_state"
+		"	}"
+		"	if (this.source_type == 'host'){"
+		"		if (state == 0){ emit('ok', 1) }"
+		"		else if (state == 1){ emit('critical', 1) }"
+		"		else if (state == 2){ emit('unknown', 1) }"
+		"		else if (state == 3){ emit('unknown', 1) }"
+		"	}"
+		"	else if (this.source_type == 'service'){"
+		"		if (state == 0){ emit('ok', 1) }"
+		"		else if (state == 1){ emit('warning', 1) }"
+		"		else if (state == 2){ emit('critical', 1) }"
+		"		else if (state == 3){ emit('unknown', 1) }"
+		"	}"
+		"}")
+
+		mreduce = Code("function (key, values) {"
+		"  var total = 0;"
+		"  for (var i = 0; i < values.length; i++) {"
+		"    total += values[i];"
+		"  }"
+		"  return total;"
+		"}")
+
+
+
+		availability = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
+		availability_pct = calcul_pct(availability)
+
+		## Put in cache
+		#self.cache.put(cid, availability)
+
+		## Check
+		self.data['availability'] = availability
+		self.data['availability_pct'] = availability_pct
+
+		#self.logger.debug(" + Availabilityt:\t\t%s" % availability)
+		#self.logger.debug(" + Availability pct:\t%s" % availability_pct)
+		self.save()
+
+		return (availability, availability_pct)
 
 #	def cat(self):
 #		print "Id:\t\t\t", self._id

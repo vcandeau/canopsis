@@ -4,6 +4,9 @@ from crecord import crecord
 from ccache import ccache
 from cselector import cselector
 
+from ctools import calcul_pct
+from ctools import legend
+
 from datetime import datetime
 
 import time
@@ -39,14 +42,11 @@ class csla(crecord):
 
 		self.data['selector_id'] = None
 		self.selector = None
-		self.namespace = None
 		self.slippery = False
 		self.cycle = 86400 # 24 hours
 		self.start = None
 		self.stop = None
 		self.active = True
-	
-		self.legend = ['ok','warning','critical','unknown']
 
 		## Set callback function
 		self.cb_on_state_change = cb_on_state_change
@@ -59,41 +59,62 @@ class csla(crecord):
 				self._id = _id		
 			else:
 				raise Exception('You must specify record, name or _id !')
-
-		if not record:
-			try:
-				record = storage.get(self._id)
-				record.cat()
-			except Exception, err:
-				print err
-				record = None
-
-		self.data['_id'] = self._id
-
-		crecord.__init__(self, storage=storage, data = self.data, record=record, *args)
-
-		self.type = 'sla'
-		
-		self.cache = ccache(storage, self.type)
-
-		if not self.data['selector_id']:
-			if not selector:
-				raise Exception('You must specify selector !')
-			else:
-				self.data['selector_id'] = selector._id
-				print selector._id 
-				self.selector = selector
 		else:
-			self.selector = cselector(_id=self.data['selector_id'], storage=storage)
-
-		if namespace:
-			self.namespace = namespace
-		else:
-			self.namespace = self.selector.namespace
+			self._id = record._id
 
 		## Init logger
 		self.logger = logging.getLogger(self._id)
 		self.logger.setLevel(logging_level)
+
+		self.logger.debug("My _id is '%s'" % self._id)
+
+		if not record:
+			try:
+				self.logger.debug("Get my record ...")
+				record = storage.get(self._id)
+				self.logger.debug(" + Ok")
+			except Exception, err:
+				#print err
+				self.logger.debug(" + I'm not saved.")
+				record = None
+
+		self.data['_id'] = self._id
+
+		if record:
+			self.logger.debug("Init from record ...")
+			crecord.__init__(self, storage=storage, data = {}, record=record, *args)
+			self.logger.debug(" + Ok")
+		else:
+			self.logger.debug("Init with default values ...")
+			crecord.__init__(self, storage=storage, data = self.data, *args)
+			self.logger.debug(" + Ok")
+
+		self.type = 'sla'
+		
+		self.logger.debug("Init Cache ...")
+		self.cache = ccache(storage, self.type)
+		self.logger.debug(" + Ok")
+
+		self.logger.debug("Init my selector ...")
+		if not self.data['selector_id']:
+			if not selector:
+				raise Exception('You must specify selector !')
+			else:
+				self.logger.debug(" + get selector from argument")
+				self.data['selector_id'] = selector._id
+				self.selector = selector
+				self.logger.debug("   + Ok")
+		else:
+			self.logger.debug(" + get selector '%s' from DB" % self.data['selector_id'])
+			self.selector = cselector(_id=self.data['selector_id'], storage=storage)
+			self.logger.debug("   + Ok")
+		
+		#if namespace:
+		#	self.namespace = namespace
+		#else:
+		#	self.namespace = self.selector.namespace
+		#
+		#self.logger.debug("Use Namespace: %s" % self.namespace)
 
 	def dump(self):
 		self.data['slippery'] = self.slippery
@@ -161,25 +182,31 @@ class csla(crecord):
 		self.cycle = cycle
 		self.slippery = slippery
 
-	def get_sla(self, timestamp=None):
-		#if not timestamp:
-			# current cycle
-		#	if not self.slippery:
+	def get_sla(self, stop=None, cachetime=50):
 		self.logger.debug("Calcul current SLA ...")
 		
 		if not self.active:
 			self.logger.debug(" + SLA is outdated.")
 			return
 		
-		if self.slippery:
-			stop = int(time.time())
+		if stop:
+			now = stop
+			stop = stop
 			start = stop - self.cycle
 		else:
-			start = self.start
-			stop = self.stop
+			now = int(time.time())
+			if self.slippery:
+				stop = int(time.time())
+				start = stop - self.cycle
+			else:
+				start = self.start
+				stop = self.stop
+
+		self.logger.debug(" + Now: %s" % now)
+		self.logger.debug(" + Start: %s" % start)
+		self.logger.debug(" + Stop: %s" % stop)
 
 		## outdated by 30 sec
-		now = int(time.time())
 		if stop < (now - 30):
 			self.logger.debug(" + Last one ...")
 			self.active = False
@@ -190,8 +217,8 @@ class csla(crecord):
 			self.logger.debug(" + Not the moment ...")
 			return
 
-		if start and stop:
-			(sla, sla_pct) = self.get_sla_by_timeperiod(start, stop, cachetime=50)
+		if (start or start == 0) and stop:
+			(sla, sla_pct) = self.get_sla_by_timeperiod(start, stop, cachetime=cachetime)
 			if sla != self.data['sla']:
 				self.data['sla'] = sla
 				self.data['sla_pct'] = sla_pct
@@ -210,101 +237,14 @@ class csla(crecord):
 			self.cache.put(cid, sla)
 		else:
 			self.logger.debug(" + From cache.")
-			sla_pct = self.calcul_pct(sla)
+			sla_pct = calcul_pct(sla)
 
 		return (sla, sla_pct)
-
-	def get_current_availability(self):
-		
-		self.logger.debug("Calcul current availability ...")
-
-		## Use cache
-		cid = self._id+".current_availability"
-		availability = self.cache.get(cid, 10)
-		if availability:
-			self.logger.debug(" + From cache.")
-			return (availability, self.calcul_pct(availability))
-
-		## Caclul
-		self.selector.resolv()
-		
-		mfilter = self.selector.mfilter
-
-		from bson.code import Code
-	
-		mmap = Code("function () {"
-		"	var state = this.state;"
-		"	if (this.state_type == 0) {"
-		"		state = this.previous_state"
-		"	}"
-		"	if (this.source_type == 'host'){"
-		"		if (state == 0){ emit('ok', 1) }"
-		"		else if (state == 1){ emit('critical', 1) }"
-		"		else if (state == 2){ emit('unknown', 1) }"
-		"		else if (state == 3){ emit('unknown', 1) }"
-		"	}"
-		"	else if (this.source_type == 'service'){"
-		"		if (state == 0){ emit('ok', 1) }"
-		"		else if (state == 1){ emit('warning', 1) }"
-		"		else if (state == 2){ emit('critical', 1) }"
-		"		else if (state == 3){ emit('unknown', 1) }"
-		"	}"
-		"}")
-
-		mreduce = Code("function (key, values) {"
-		"  var total = 0;"
-		"  for (var i = 0; i < values.length; i++) {"
-		"    total += values[i];"
-		"  }"
-		"  return total;"
-		"}")
-
-
-
-		availability = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
-		availability_pct = self.calcul_pct(availability)
-
-		## Put in cache
-		self.cache.put(cid, availability)
-
-		## Check
-		self.data['availability'] = availability
-		self.data['availability_pct'] = availability_pct
-		self.check()
-
-		self.logger.debug(" + Availabilityt:\t\t%s" % availability)
-		self.logger.debug(" + Availability pct:\t%s" % availability_pct)
-		self.save()
-
-		return (availability, availability_pct)
-
-	def calcul_pct(self, data, total=None):
-		if not total:
-			## Get total
-			total = 0
-			for key in data.keys():
-				value = data[key]
-				total += value
-
-		## Calc pct
-		data_pct = {}
-		for key in data.keys():
-			value = data[key]
-			data_pct[key] = round(((float(value) * 100) / float(total)), 2)
-
-		## Fix empty value
-		for key in self.legend:
-			try:
-				value = data_pct[key]
-			except:
-				data_pct[key] = 0
-
-		return data_pct
 
 	def check(self, result=None):
 		
 		if not result:
-			result = self.data['availability_pct']
+			result = self.data['sla_pct']
 
 		state = 0
 		
@@ -323,12 +263,13 @@ class csla(crecord):
 		
 	def get_initial_state(self, _id, timestamp):
 		#fields = {'state': 1, 'state_type': 1}
-		
+		#self.logger.debug("Get initial state of '%s' on %s" % (_id, timestamp))
+
 		record = self.storage.find_one(mfilter={'inventory_id': _id, 'timestamp': {'$lte': timestamp}, 'state_type': 1 }, namespace='history')
 		if record:
 			return record.data['state']
 		else:
-			return 0
+			return 3
 
 	def calcul_by_timeperiod(self, start, stop):
 		sla = {}
@@ -358,7 +299,7 @@ class csla(crecord):
 					sla[key] = mysla[key]		
 
 		## Cal pct
-		sla_pct = self.calcul_pct(sla)
+		sla_pct = calcul_pct(sla)
 
 		self.logger.debug(" + For timeperiod %s -> %s" % (start, stop))
 		self.logger.debug("     + Current:\t\t%s" % sla)
@@ -380,9 +321,9 @@ class csla(crecord):
 			cursor = event.data['timestamp']
 			
 			try:
-				sla[self.legend[initial_state]] += stime
+				sla[legend[initial_state]] += stime
 			except:
-				sla[self.legend[initial_state]] = stime
+				sla[legend[initial_state]] = stime
 
 			initial_state = event.data['state']
 
@@ -390,11 +331,11 @@ class csla(crecord):
 			stime = stop - cursor
 			
 			try:
-				sla[self.legend[initial_state]] += stime
+				sla[legend[initial_state]] += stime
 			except:
-				sla[self.legend[initial_state]] = stime
+				sla[legend[initial_state]] = stime
 
-		sla_pct = self.calcul_pct(sla, window)
+		sla_pct = calcul_pct(sla, window)
 
 		#self.logger.debug(" - %s" % _id)
 		#self.logger.debug("  + Hard Current:\t\t%s" % sla)
