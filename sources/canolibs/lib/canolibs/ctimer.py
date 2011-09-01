@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 class ctimer(object):
-	def __init__(self, logging_level=logging.DEBUG):
+	def __init__(self, logging_level=logging.INFO):
 		self.started = False
 		self.logger = logging.getLogger('timer')
 		self.logger.setLevel(logging_level)
