@@ -3,7 +3,7 @@
 from crecord import crecord
 from ccache import ccache
 from cselector import cselector
-from ctimer import ctimer
+
 from datetime import datetime
 
 import time
@@ -15,34 +15,23 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 
 class csla(crecord):
-	def __init__(self, name=None, _id=None, storage=None, cb_on_ok=None, cb_on_warn=None, cb_on_crit=None, selector=None, namespace=None, logging_level=logging.DEBUG, record=None, *args):
+	def __init__(self, name=None, _id=None, storage=None, cb_on_state_change=None, selector=None, namespace=None, logging_level=logging.INFO, record=None, *args):
 
 		self._id = _id
-
-		crecord.__init__(self, storage=storage, data = {}, record=record, *args)
-
-		self.type = 'sla'
-		self.cache = ccache(storage, self.type)
 
 		## Set storage
 		if not storage:
 			raise Exception('You must specify storage !')
 
-		if not self._id:
-			if not name:
-				raise Exception('You must specify name or _id !')
-			self._id = self.type+"-"+self.storage.account.user+"-"+name
-		
-		## Init logger
-		self.logger = logging.getLogger(self._id)
-		self.logger.setLevel(logging_level)
+		self.storage = storage
 
 		## Init default var
+		self.data = {}
 		self.data['threshold_warn'] = 98
 		self.data['threshold_crit'] = 95
 
-		self.data['current'] = {'ok': 1}
-		self.data['current_pct'] = {'ok': 100}
+		self.data['availability'] = {'ok': 1.0}
+		self.data['availability_pct'] = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
 		self.data['state'] = 0
 		self.data['state_type'] = 1
 
@@ -53,47 +42,67 @@ class csla(crecord):
 		self.legend = ['ok','warning','critical','unknown']
 
 		## Set callback function
-		self.cb_on_warn = cb_on_warn
-		self.cb_on_crit = cb_on_crit
-		self.cb_on_ok = cb_on_ok
+		self.cb_on_state_change = cb_on_state_change
 
 		## Init object
-		try:	
-			record = self.storage.get(self._id)
-			self.load(record.dump())
-			self.selector = cselector(_id=self.data['selector_id'], storage=self.storage)
-		except:
-			## Create
+		if not record:
+			if name:
+				self._id = "sla-"+storage.account.user+"-"+name
+			elif _id:
+				self._id = _id		
+			else:
+				raise Exception('You must specify record, name or _id !')
+
+		if not record:
+			try:
+				record = storage.get(self._id)
+				record.cat()
+			except Exception, err:
+				print err
+				record = None
+
+		self.data['_id'] = self._id
+
+		crecord.__init__(self, storage=storage, data = self.data, record=record, *args)
+
+		self.type = 'sla'
+		
+		self.cache = ccache(storage, self.type)
+
+		if not self.data['selector_id']:
 			if not selector:
 				raise Exception('You must specify selector !')
-
-			self.selector = selector
-			self.data['selector_id'] = selector._id
-			pass
+			else:
+				self.data['selector_id'] = selector._id
+				print selector._id 
+				self.selector = selector
+		else:
+			self.selector = cselector(_id=self.data['selector_id'], storage=storage)
 
 		if namespace:
 			self.namespace = namespace
 		else:
 			self.namespace = self.selector.namespace
 
+		## Init logger
+		self.logger = logging.getLogger(self._id)
+		self.logger.setLevel(logging_level)
+
 	#def save(self):
 	#	self.selector.save()
 	#	crecord.save(self)
 
-	def _cb_on_crit(self):
-		self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.data['current_pct']['ok'], self.data['threshold_crit']))
-		if self.cb_on_crit:
-			self.cb_on_crit(self)
-
-	def _cb_on_warn(self):
-		self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.data['current_pct']['ok'], self.data['threshold_warn']))
-		if self.cb_on_warn:
-			self.cb_on_warn(self)
-
-	def _cb_on_ok(self):
-		self.logger.debug("Back to normal (%s>%s)" % (self.data['current_pct']['ok'], self.data['threshold_warn']))
-		if self.cb_on_ok:
-			self.cb_on_ok(self)
+	def _cb_on_state_change(self, from_state, to_state):
+		if   to_state == 0:
+			self.logger.debug("Back to normal (%s>%s)" % (self.data['availability_pct']['ok'], self.data['threshold_warn']))
+		elif to_state == 1:
+			self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.data['availability_pct']['ok'], self.data['threshold_warn']))
+		elif to_state == 2:
+			self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.data['availability_pct']['ok'], self.data['threshold_crit']))
+		try:
+			self.cb_on_state_change(from_state, to_state)
+		except Exception, err:
+			self.logger.error("Error in  'cb_on_state_change': %s", err)
 
 	def process_hourly(self, timestamp):
 		date = datetime.fromtimestamp(timestamp)
@@ -133,9 +142,18 @@ class csla(crecord):
 		return (sla, sla_pct)
 
 	def get_current_availability(self):
-		self.selector.resolv()
+		
 		self.logger.debug("Calcul current SLA ...")
 
+		## Use cache
+		cid = self._id+".current_availability"
+		availability = self.cache.get(cid, 10)
+		if availability:
+			return (availability, self.calcul_pct(availability))
+
+		## Caclul
+		self.selector.resolv()
+		
 		mfilter = self.selector.mfilter
 
 		from bson.code import Code
@@ -168,8 +186,11 @@ class csla(crecord):
 		type_filter = {'state_type': 1}
 		type_mfilter = dict(mfilter.items() + type_filter.items())
 
-		hard_current = self.storage.map_reduce(type_mfilter, mmap, mreduce, namespace=self.namespace)
-		hard_current_pct = self.calcul_pct(hard_current)
+		availability = self.storage.map_reduce(type_mfilter, mmap, mreduce, namespace=self.namespace)
+		availability_pct = self.calcul_pct(availability)
+
+		## Put in cache
+		self.cache.put(cid, availability)
 
 		## SOFT State
 		#type_filter = {'state_type': 0}
@@ -179,14 +200,15 @@ class csla(crecord):
 		#soft_current_pct = self.calcul_pct(current)		
 
 		## Check
-		self.data['hard_current'] = hard_current
-		self.data['hard_current_pct'] = hard_current_pct
+		self.data['availability'] = availability
+		self.data['availability_pct'] = availability_pct
 		self.check()
 
-		self.logger.debug(" + Hard Current:\t\t%s" % hard_current)
-		self.logger.debug(" + Hard Current pct:\t%s" % hard_current_pct)
+		self.logger.debug(" + Availabilityt:\t\t%s" % availability)
+		self.logger.debug(" + Availability pct:\t%s" % availability_pct)
+		self.save()
 
-		return (hard_current, hard_current_pct)
+		return (availability, availability_pct)
 
 	def calcul_pct(self, data, total=None):
 		if not total:
@@ -211,26 +233,21 @@ class csla(crecord):
 
 		return data_pct
 
-	def check(self):
+	def check(self, result=None):
 		
-		sla = self.data['hard_current_pct']
+		if not result:
+			result = self.data['availability_pct']
 
 		state = 0
 		
-		if sla['ok'] < self.data['threshold_warn']:
+		if result['ok'] < self.data['threshold_warn']:
 			state = 1
 
-		if sla['ok'] < self.data['threshold_crit']:
+		if result['ok'] < self.data['threshold_crit']:
 			state = 2
-	
-		if   state == 0 and self.data['state'] != state:
-			self._cb_on_ok()
-		elif state == 1:
-			self._cb_on_warn()
-		elif state == 2:
-			self._cb_on_crit()
 
 		if self.data['state'] != state:
+			self._cb_on_state_change(self.data['state'], state)
 			self.data['state'] = state
 			self.save()
 
