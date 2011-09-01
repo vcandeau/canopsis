@@ -92,7 +92,7 @@ class KnownValues(unittest.TestCase):
 		# Inserts
 		STORAGE.put(crecord({'check': 'test4'}), account=self.anonymous_account)
 		STORAGE.put(crecord({'check': 'test5'}), account=self.anonymous_account)
-		STORAGE.put(crecord({'check': 'test6'}), account=self.root_account)
+		_id = STORAGE.put(crecord({'check': 'test6'}), account=self.root_account)
 
 		## 3 records for user
 		## 2 records for anonymous
@@ -106,6 +106,10 @@ class KnownValues(unittest.TestCase):
 		if len(records) != 2:
 			raise Exception('Invalid rigths for anonymous account ...')
 
+		self.assertRaises(KeyError, STORAGE.get, _id, self.anonymous_account)
+
+		record = STORAGE.get(_id, account=self.root_account)
+			
 		records = STORAGE.find(account=self.root_account)
 		if len(records) != 6:
 			raise Exception('Invalid rigths for root account ...')

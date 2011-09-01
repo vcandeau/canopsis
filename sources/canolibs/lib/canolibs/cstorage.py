@@ -217,17 +217,24 @@ class cstorage(object):
 		backend = self.get_backend(namespace)
 		
 		self.logger.debug(" + Get record '%s'" % _id)
+
 		try:
-			#record = backend.find_one({'_id': str(_id)}, safe=self.mongo_safe)
 			try:
 				oid = objectid.ObjectId(_id)
 			except:
 				oid = _id
 
-			raw_record = backend.find_one({'_id': oid}, safe=self.mongo_safe)
+			(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
+			oid_mfilter = {'_id': oid}
+			id_mfilter = {'_id': _id}
+
+			mfilter = dict(oid_mfilter.items() + Read_mfilter.items())
+			raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
+
 			if not raw_record:
 				# small hack for wrong oid
-				raw_record = backend.find_one({'_id': _id}, safe=self.mongo_safe)
+				mfilter = dict(id_mfilter.items() + Read_mfilter.items())
+				raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
 
 		except Exception, err:
 			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
