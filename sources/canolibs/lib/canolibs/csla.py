@@ -161,17 +161,21 @@ class csla(crecord):
 		from bson.code import Code
 	
 		mmap = Code("function () {"
+		"	var state = this.state;"
+		"	if (this.state_type == 0) {"
+		"		state = this.previous_state"
+		"	}"
 		"	if (this.source_type == 'host'){"
-		"		if (this.state == 0){ emit('ok', 1) }"
-		"		else if (this.state == 1){ emit('critical', 1) }"
-		"		else if (this.state == 2){ emit('unknown', 1) }"
-		"		else if (this.state == 3){ emit('unknown', 1) }"
+		"		if (state == 0){ emit('ok', 1) }"
+		"		else if (state == 1){ emit('critical', 1) }"
+		"		else if (state == 2){ emit('unknown', 1) }"
+		"		else if (state == 3){ emit('unknown', 1) }"
 		"	}"
 		"	else if (this.source_type == 'service'){"
-		"		if (this.state == 0){ emit('ok', 1) }"
-		"		else if (this.state == 1){ emit('warning', 1) }"
-		"		else if (this.state == 2){ emit('critical', 1) }"
-		"		else if (this.state == 3){ emit('unknown', 1) }"
+		"		if (state == 0){ emit('ok', 1) }"
+		"		else if (state == 1){ emit('warning', 1) }"
+		"		else if (state == 2){ emit('critical', 1) }"
+		"		else if (state == 3){ emit('unknown', 1) }"
 		"	}"
 		"}")
 
@@ -184,22 +188,12 @@ class csla(crecord):
 		"}")
 
 
-		## HARD State
-		type_filter = {'state_type': 1}
-		type_mfilter = dict(mfilter.items() + type_filter.items())
 
-		availability = self.storage.map_reduce(type_mfilter, mmap, mreduce, namespace=self.namespace)
+		availability = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
 		availability_pct = self.calcul_pct(availability)
 
 		## Put in cache
 		self.cache.put(cid, availability)
-
-		## SOFT State
-		#type_filter = {'state_type': 0}
-		#type_mfilter = dict(mfilter.items() + type_filter.items())
-
-		#soft_current = self.storage.map_reduce(type_mfilter, mmap, mreduce, namespace=self.namespace)
-		#soft_current_pct = self.calcul_pct(current)		
 
 		## Check
 		self.data['availability'] = availability
