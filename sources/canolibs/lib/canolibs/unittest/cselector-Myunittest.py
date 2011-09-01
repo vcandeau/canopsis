@@ -69,7 +69,28 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid critical state (%s) ...' % SELECTOR.state)
 
 
-	def test_07_Remove(self):
+	def test_07_calcul_current(self):
+		SELECTOR.mfilter = {}
+		SELECTOR.resolv()
+
+		STORAGE.put(crecord({'_id': 'check1',  'source_type': 'service', 'state': 0, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check2',  'source_type': 'service', 'state': 0, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check3',  'source_type': 'service', 'state': 1, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check4',  'source_type': 'service', 'state': 1, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check5',  'source_type': 'service', 'state': 1, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check6',  'source_type': 'service', 'state': 2, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check7',  'source_type': 'service', 'state': 2, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check8',  'source_type': 'service', 'state': 2, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check9',  'source_type': 'service', 'state': 2, 'state_type': 1}))
+		STORAGE.put(crecord({'_id': 'check10',  'source_type': 'service', 'state': 2, 'state_type': 1}))
+
+		(current, current_pct) = SELECTOR.get_current_availability()
+		## current_pct: {u'warning': 30.0, u'ok': 20.0, u'critical': 50.0}
+
+		if current_pct['ok'] != 20:
+			raise Exception('Invalid pct calculation ...')
+
+	def test_08_Remove(self):
 		STORAGE.remove(SELECTOR)
 
 	def test_99_DropNamespace(self):
