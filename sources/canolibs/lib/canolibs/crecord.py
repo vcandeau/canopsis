@@ -105,7 +105,10 @@ class crecord(object):
 	
 		output = ""
 		for key in self.data.keys():
-			output += key + ": " + str(self.data[key]) + "\n"
+			try:
+				output += key + ": " + str(self.data[key]) + "\n"
+			except:
+				output += key + ": " + self.data[key] + "\n"
 
 		if for_str:
 			return output
