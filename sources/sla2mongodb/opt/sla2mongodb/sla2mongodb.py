@@ -87,7 +87,7 @@ def get_all_sla():
 
 	SLA_CHANGE = {}
 	SLAS = []
-	records = storage.find({'crecord_type': 'sla'})
+	records = storage.find({'crecord_type': 'sla', 'active': True})
 	for record in records:
 		sla = csla(storage=storage, record=record, logging_level=logging.DEBUG)
 		if sla.active:
