@@ -365,6 +365,7 @@ install_pylib "txAMQP" "0.4"
 install_pylib "txamqp-helpers" "0.5"
 
 install_pylib "pycha" "0.6.0"
+install_pylib "bottle" "0.9.6"
 
 if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
 	echo " + Patch python-txamqp ..."
@@ -579,6 +580,13 @@ make_package "canolibs"
 ######################################
 install_basic_source "ccli"
 make_package "ccli"
+
+######################################
+#  sla2mongodb
+######################################
+install_basic_source "sla2mongodb"
+install_python_daemon "$PREFIX/opt/sla2mongodb/sla2mongodb.py"
+make_package "sla2mongodb"
 
 ######################################
 #  Event-brokers
