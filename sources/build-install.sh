@@ -890,6 +890,10 @@ if [ "$ARG1" = "wut" ]; then
 	echo "Unit tests ..."
 	LOG=$LOG_PATH/unittest.log
 	./unittest.sh 2> $LOG 1> $LOG
-	check_code $?
+	UTR=$?
+	if [ $UTR -ne 0 ]; then
+		cat $LOG
+	fi
+	check_code $UTR
 	echo " + Ok"
 fi
