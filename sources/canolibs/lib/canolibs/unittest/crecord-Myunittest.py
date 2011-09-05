@@ -22,7 +22,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Data corruption ...')
 
 	def test_02_InitFromRaw(self):
-		raw = {'crecord_name': 'titi', 'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None}
+		raw = {'children': None, 'crecord_name': 'titi', 'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None}
 
 		record = crecord(raw_record=raw)
 		if record.data != self.data:
@@ -66,7 +66,28 @@ class KnownValues(unittest.TestCase):
 
 		if record.access_group != ['w']:
 			raise Exception('Chmod not work on "group" ...')
-	
+
+	def test_06_children(self):
+		record1 = crecord(self.data)
+		record2 = crecord(self.data)
+		record3 = crecord(self.data)
+
+		record1._id = 1
+		record2._id = 2
+		record3._id = 3
+		
+		record1.add_children(record2)
+		record1.add_children(record3)
+
+		if 2 not in record1.children:
+			raise Exception('Invalid children association ...')
+		if 3 not in record1.children:
+			raise Exception('Invalid children association ...')
+
+		record1.remove_children(record3)
+			
+		if 3 in record1.children:
+			raise Exception('Invalid children supression ...')
 		
 if __name__ == "__main__":
 	unittest.main(verbosity=1)
