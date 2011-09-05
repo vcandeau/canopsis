@@ -14,9 +14,9 @@ from crecord import crecord
 ## Initialisation
 
 account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.DEBUG)
+storage = cstorage(account, namespace="object", logging_level=logging.INFO)
 
-debug = True
+debug = False
 
 ## Logger
 if debug:
