@@ -15,7 +15,7 @@ import logging
 class cselector(crecord):
 	def __init__(self, name=None, _id=None, storage=None, namespace=None, logging_level=logging.INFO, *args):
 
-		crecord.__init__(self, storage=storage, data = {}, *args)
+		crecord.__init__(self, storage=storage, name=name, data = {}, *args)
 
 		#if isinstance(record, crecord):
 		#	crecord.__init__(self, raw_record=record.dump())
@@ -48,8 +48,8 @@ class cselector(crecord):
 		else:
 			if not name:
 				raise Exception('You must specify name or _id !')
-			self._id = self.type+"-"+self.storage.account.user+"-"+name
-		
+			self._id = self.type+"-"+self.storage.account.user+"-"+name	
+			self.name = name
 		try:
 			record = self.storage.get(self._id, namespace=namespace)
 			self.load(record.dump())

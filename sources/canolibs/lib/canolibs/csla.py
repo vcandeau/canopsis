@@ -55,6 +55,7 @@ class csla(crecord):
 		if not record:
 			if name:
 				self._id = "sla-"+storage.account.user+"-"+name
+				self.name = name
 			elif _id:
 				self._id = _id		
 			else:
@@ -86,7 +87,7 @@ class csla(crecord):
 			self.logger.debug(" + Ok")
 		else:
 			self.logger.debug("Init with default values ...")
-			crecord.__init__(self, storage=storage, data = self.data, *args)
+			crecord.__init__(self, storage=storage, name=name, data = self.data, *args)
 			self.logger.debug(" + Ok")
 
 		self.type = 'sla'
