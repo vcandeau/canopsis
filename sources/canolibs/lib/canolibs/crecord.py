@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 class crecord(object):
-	def __init__(self, data = {}, owner=None, group=None, raw_record=None, record=None, storage=None):
+	def __init__(self, data = {}, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None):
 		#if account:
 		#	self.account = account
 		#	self.owner=account.user
@@ -20,6 +20,7 @@ class crecord(object):
 		self.access_group=['r']
 		self.access_other=[]
 		self.access_unauth=[]
+		self.name = name
 
 		try:
 			self._id = data['_id']
@@ -44,6 +45,7 @@ class crecord(object):
 		self.access_unauth = dump['aaa_access_unauth']
 		self.type = str(dump['crecord_type'])
 		self.write_time = dump['crecord_write_time']
+		self.name = str(dump['crecord_name'])
 
 		try:
 			self._id = dump['_id']
@@ -59,6 +61,7 @@ class crecord(object):
 		del dump['aaa_access_unauth']
 		del dump['crecord_type']
 		del dump['crecord_write_time']
+		del dump['crecord_name']
 
 		self.data = dump
 
@@ -85,6 +88,7 @@ class crecord(object):
 		dump['aaa_access_unauth'] = self.access_unauth
 		dump['crecord_type'] = self.type
 		dump['crecord_write_time'] = self.write_time
+		dump['crecord_name'] = self.name
 
 		return dump
 
