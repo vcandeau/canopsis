@@ -164,11 +164,30 @@ class KnownValues(unittest.TestCase):
 		if result['ok'] != 2 and result['warning'] != 1:
 			raise Exception('Invalid map/reduce result ...')
 
-	def test_16_RemoveAll(self):
+	def test_16_tree(self):
+		record1 = crecord(self.data)
+		record2 = crecord(self.data)
+		record3 = crecord(self.data)
+		record4 = crecord(self.data)
+
+		STORAGE.put([record1, record2, record3, record4])
+
+		record1.add_children(record2)
+		record1.add_children(record3)
+
+		record2.add_children(record4)
+
+		STORAGE.put([record1, record2])
+
+		tree = STORAGE.get_tree(record1)
+		print tree
+
+	def test_17_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
+		pass
 
-	def test_17_DropNamespace(self):
+	def test_18_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 		pass
 		
