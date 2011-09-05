@@ -14,7 +14,7 @@ config.read(os.path.expanduser('~/etc/webcore.conf'))
 root_directory=os.path.expanduser(config.get("server", "root_directory"))
 port=config.getint("server", "port")
 debug=config.getboolean("server", "debug")
-debug = True
+#debug = True
 
 bottle.debug(debug)
 
