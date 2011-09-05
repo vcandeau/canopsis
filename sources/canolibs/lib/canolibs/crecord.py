@@ -48,7 +48,7 @@ class crecord(object):
 		self.name = str(dump['crecord_name'])
 
 		try:
-			self._id = dump['_id']
+			self._id = str(dump['_id'])
 			del dump['_id']
 		except:
 			self._id = None
