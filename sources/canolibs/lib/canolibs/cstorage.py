@@ -26,7 +26,7 @@ class cstorage(object):
 		self.namespace=namespace
 		self.backend = None
 
-		self.logger = logging.getLogger('cstorage-'+namespace)
+		self.logger = logging.getLogger('cstorage')
 		self.logger.setLevel(logging_level)
 
 		self.logger.debug("Object initialised.")
