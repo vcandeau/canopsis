@@ -313,7 +313,21 @@ class cstorage(object):
 						
 
 	def drop_namespace(self, namespace):
-		self.db.drop_collection(namespace)		
+		self.db.drop_collection(namespace)
+
+	def get_tree(self, record, depth=0):
+		childs = record.children
+
+		tree = []
+		for child in childs:
+			record = self.get(child)
+			if len(record.children) == 0:
+				tree.append(record)
+			else:
+				tree.append(self.get_tree(record))
+			
+		return tree
+			
 
 	def __del__(self):
 		self.logger.debug("Object deleted.")
