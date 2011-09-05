@@ -21,6 +21,7 @@ class crecord(object):
 		self.access_other=[]
 		self.access_unauth=[]
 		self.name = name
+		self.children = []
 
 		try:
 			self._id = data['_id']
@@ -46,6 +47,7 @@ class crecord(object):
 		self.type = str(dump['crecord_type'])
 		self.write_time = dump['crecord_write_time']
 		self.name = str(dump['crecord_name'])
+		self.children = dump['children']
 
 		try:
 			self._id = dump['_id']
@@ -62,6 +64,7 @@ class crecord(object):
 		del dump['crecord_type']
 		del dump['crecord_write_time']
 		del dump['crecord_name']
+		del dump['children']
 
 		self.data = dump
 
@@ -89,6 +92,7 @@ class crecord(object):
 		dump['crecord_type'] = self.type
 		dump['crecord_write_time'] = self.write_time
 		dump['crecord_name'] = self.name
+		dump['children'] = self.children
 
 		return dump
 
@@ -182,7 +186,27 @@ class crecord(object):
 		else:
 			raise ValueError("Invalid argument ...")
 
+	
+	def add_children(self, record):
+		_id=None
+		try:
+			_id = record._id
+		except:
+			_id = record
 
+		if _id not in self.children and _id:
+			self.children.append(_id)
+
+	def remove_children(self, record):
+		_id=None
+		try:
+			_id = record._id
+		except:
+			_id = record
+
+		if _id in self.children and _id:
+			self.children.remove(_id)
+		
 
 def access_to_str(access):
 	output = ''
