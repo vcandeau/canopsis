@@ -354,7 +354,7 @@ install_pylib "pika" "0.9.5"
 install_pylib "amqplib" "0.6.1"
 install_pylib "kombu" "1.1.3"
 install_pylib "sysv_ipc" "0.6.3"
-install_pylib "pymongo" "1.11"
+install_pylib "pymongo" "2.0.1"
 # For debian
 install_pylib "pycurl" "7.18.2"
 install_pylib "tornado" "1.2.1"
