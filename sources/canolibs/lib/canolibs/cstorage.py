@@ -136,7 +136,7 @@ class cstorage(object):
 			else:
 			## Insert
 				try:
-					record.write_time = time.time()
+					record.write_time = int(time.time())
 					data = record.dump()
 					## Del it if 'None'
 					if not data['_id']:
@@ -160,7 +160,7 @@ class cstorage(object):
 	def find_one(self, mfilter={}, mfields=None, account=None, namespace=None):
 		return self.find(one=True, mfilter=mfilter, mfields=mfields, account=account, namespace=namespace)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, sort=None):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, sort=None, limit=0, offset=0):
 		if not account:
 			account = self.account
 
@@ -180,8 +180,13 @@ class cstorage(object):
 				raw_records = []
 		else:
 			raw_records = backend.find(mfilter, safe=self.mongo_safe)
+			## Limit output
+			if raw_records and limit:
+				raw_records = raw_records.limit(limit)
+			if raw_records and offset:
+				raw_records = raw_records.skip(offset)
 
-		if sort:
+		if raw_records and sort:
 			raw_records.sort(sort)
 
 		records=[]
