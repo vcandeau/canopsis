@@ -15,6 +15,11 @@ import logging
 class cselector(crecord):
 	def __init__(self, name=None, _id=None, storage=None, namespace=None, logging_level=logging.INFO, *args):
 
+		if not storage:
+			raise Exception('You must specify storage !')
+
+		self.storage = storage
+
 		crecord.__init__(self, storage=storage, name=name, data = {}, *args)
 
 		#if isinstance(record, crecord):
@@ -23,9 +28,6 @@ class cselector(crecord):
 		#	crecord.__init__(self, *args)
 
 		self.type = "selector"
-		
-		if not self.storage:
-			raise Exception('You must specify storage !')
 
 		self.timer = ctimer(logging_level=logging_level)
 		self.cache_time = 60 # 1 minute
