@@ -14,7 +14,7 @@ config.read(os.path.expanduser('~/etc/webcore.conf'))
 root_directory=os.path.expanduser(config.get("server", "root_directory"))
 port=config.getint("server", "port")
 debug=config.getboolean("server", "debug")
-#debug = True
+debug = True
 
 bottle.debug(debug)
 
@@ -58,7 +58,7 @@ for ws in os.listdir(ws_dir):
 def main():
 		try:
 			logger.debug("Start listenning on port %i" % port)
-			run(host='localhost', port=port, reloader=debug)
+			run(host='0.0.0.0', port=port, reloader=debug)
 		except:
 			pass
 

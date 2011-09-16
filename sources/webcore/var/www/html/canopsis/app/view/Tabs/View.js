@@ -7,13 +7,21 @@ Ext.define('canopsis.view.Tabs.View' ,{
 	componentCls: 'cps-headertabs',
 	plain: false,
 
-	items:[{
+/*	items:[{
     		title: 'Dashboard',
+    		id: 'dashboard.tab',
     		view: 'anonymous-default-dashboard',
-			xtype: 'TabsContent',
-	}],
+		xtype: 'TabsContent',
+	}],*/
 
 	initComponent: function() {
+		//add_view_tab('dashboard.tab', 'Dashboard')
+
+		store = Ext.data.StoreManager.lookup('store.View')
+		store.on('load', function(store, recs, opt){
+     			add_view_tab('dashboard.tab', 'Dashboard', false)
+		}, this);
+
 		this.callParent(arguments);
 	},
 	
