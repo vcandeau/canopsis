@@ -367,6 +367,7 @@ install_pylib "txamqp-helpers" "0.5"
 install_pylib "pycha" "0.6.0"
 install_pylib "bottle" "0.9.6"
 
+
 if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
 	echo " + Patch python-txamqp ..."
 	# https://bugs.launchpad.net/txamqp/+bug/741147
@@ -628,12 +629,14 @@ make_package "nagios2amqp"
 
 ######################################
 #  Graphite
+#    Dont install Graphite
 ######################################
 cd $SRC_PATH
 echo "Install Graphite ..."
 LOG="$LOG_PATH/graphite.log"
 
 FCHECK="$PREFIX/opt/graphite"
+FCHECK="/dev/null"
 if [ ! -e $FCHECK ]; then
 
 	cd $SRC_PATH/externals
@@ -774,9 +777,9 @@ make_package "graphite"
 ######################################
 #  amqp2graphite
 ######################################
-install_basic_source "amqp2graphite"
-install_python_daemon "$PREFIX/opt/amqp2graphite/amqp2graphite.py"
-make_package "amqp2graphite"
+#install_basic_source "amqp2graphite"
+#install_python_daemon "$PREFIX/opt/amqp2graphite/amqp2graphite.py"
+#make_package "amqp2graphite"
 
 ######################################
 #  NGinx
