@@ -164,6 +164,9 @@ class cstorage(object):
 		if not account:
 			account = self.account
 
+		if one:
+			sort = [('timestamp', -1)]
+
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 
 		self.logger.debug("Find '%s' records ..." % mfilter)
@@ -173,21 +176,21 @@ class cstorage(object):
 		backend = self.get_backend(namespace)
 
 		if one:
-			raw_records = backend.find_one(mfilter, safe=self.mongo_safe)
+			raw_records = backend.find_one(mfilter, safe=self.mongo_safe, sort=sort)
 			if raw_records:
 				raw_records = [ raw_records ]
 			else:
 				raw_records = []
 		else:
-			raw_records = backend.find(mfilter, safe=self.mongo_safe)
+			raw_records = backend.find(mfilter, safe=self.mongo_safe, sort=sort)
 			## Limit output
 			if raw_records and limit:
 				raw_records = raw_records.limit(limit)
 			if raw_records and offset:
 				raw_records = raw_records.skip(offset)
 
-		if raw_records and sort:
-			raw_records.sort(sort)
+		#if raw_records and sort:
+		#	raw_records.sort(sort)
 
 		records=[]
 		for raw_record in raw_records:

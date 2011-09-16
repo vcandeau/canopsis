@@ -266,7 +266,8 @@ class csla(crecord):
 		#fields = {'state': 1, 'state_type': 1}
 		#self.logger.debug("Get initial state of '%s' on %s" % (_id, timestamp))
 
-		record = self.storage.find_one(mfilter={'inventory_id': _id, 'timestamp': {'$lte': timestamp}, 'state_type': 1 }, namespace='history')
+		mfilter={'inventory_id': _id, 'timestamp': {'$lte': timestamp}, 'state_type': 1 }
+		record = self.storage.find_one(mfilter=mfilter, namespace='history')
 		if record:
 			return record.data['state']
 		else:
@@ -312,7 +313,7 @@ class csla(crecord):
 		## Calcul time for each events
 		initial_state = self.get_initial_state(_id, start)
 
-		events = self.storage.find(mfilter={'inventory_id': _id, 'timestamp': {'$gte': start, '$lte': stop} }, namespace='history', sort='timestamp')
+		events = self.storage.find(mfilter={'inventory_id': _id, 'state_type': 1, 'timestamp': {'$gte': start, '$lte': stop} }, namespace='history', sort=[('timestamp',1)] )
 		
 		sla = {}
 		cursor = start
