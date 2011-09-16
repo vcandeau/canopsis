@@ -2,6 +2,7 @@
 
 import time
 import logging
+import re
 
 from camqp import camqp, files_preserve
 from txamqp.content import Content
@@ -68,6 +69,32 @@ def on_message(msg):
 	except Exception, err:
 		logger.error(err)
 	
+	perf_data = event['perf_data']
+	if perf_data != "":
+		logger.debug("Id: " + str(record._id))
+		perfs = perf_data.split(' ')
+		msg = ""
+		perf_data_array = {}
+		for perf in perfs:
+			pref = perf.replace(',','.')
+			logger.debug("\tperf: " + str(perf))
+			resultat = re.search("'?(\w*)'?=([0-9.,]*)(([A-Za-z%%/]*);?).*",perf);
+			metric = resultat.group(1)
+			value = resultat.group(2)
+			unit = resultat.group(4)
+
+			logger.debug("\t\tMetric: " + str(metric))
+			logger.debug("\t\tValue: " + str(value))
+			logger.debug("\t\tUnit: " + str(unit))
+			#logger.debug("\t\tMin: " + str(vmin))
+			#logger.debug("\t\tMax: " + str(vmax))
+			#logger.debug("\t\tWarn: " + str(warn))
+			#logger.debug("\t\tCrit: " + str(crit))
+
+			perf_data_array[metric] =  {'value': value, 'unit': unit}
+
+		record.data['perf_data_array'] = perf_data_array
+
 
 	# Put record
 	storage.put(record, namespace='inventory')
