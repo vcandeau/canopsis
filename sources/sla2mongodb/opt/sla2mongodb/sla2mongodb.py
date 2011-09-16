@@ -12,9 +12,8 @@ import json
 from cstorage import cstorage
 from crecord import crecord
 from caccount import caccount
+from cselector import cselector
 from csla import csla
-
-from threading import Lock
 
 from twisted.internet import reactor, task
 
@@ -35,9 +34,13 @@ myamqp = None
 
 DEFAULT_ACCOUNT = caccount(user="root", group="root")
 
-SLA_CHANGE = {}
 SLAS = []
-LOCK = Lock()
+SLA_LASTUPDATE = 0
+SLA_RTIME = 300
+
+SELS = []
+SEL_LASTUPDATE = 0
+SEL_RTIME = 300
 
 ########################################################
 #
@@ -55,12 +58,19 @@ def on_message(msg):
 	record = crecord(event)
 	record.type = "event"
 	record._id = _id
+	
+	## Calcul availability for each selector
+	selectors = get_selectors(_id)
+	if selectors:
+		#logger.debug(str(len(selectors)) + " selector(s) match for _id '"+_id+"' ...")
+		for selector in selectors:
+			#logger.debug(" + Calcul availability for "+selector.name)
+			selector.get_current_availability()
 
-	LOCK.acquire(True)
-	for sla in SLAS:
-		if sla.selector.match(_id):
-			SLA_CHANGE[sla._id] = True
-	LOCK.release()
+			# Publish selector event
+			event = selector.dump_event()
+			msg = Content(json.dumps(event))
+			amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
 
 
 ########################################################
@@ -79,37 +89,55 @@ def signal_handler(signum, frame):
 	RUN = 0
  
 
-## get sla
-def get_all_sla():
-	global SLA_CHANGE, SLAS
-	LOCK.acquire(True)
-	logger.debug("Get all SLA ...")
-
-	SLA_CHANGE = {}
-	SLAS = []
-	records = storage.find({'crecord_type': 'sla', 'active': True})
-	for record in records:
-		sla = csla(storage=storage, record=record, logging_level=logging.DEBUG)
-		if sla.active:
-			SLA_CHANGE[sla._id] = False
-			SLAS.append(sla)
-
-	logger.debug(" + Load %s SLA" % len(SLAS))
-	LOCK.release()
+def get_selectors(_id):
+	global SEL_LASTUPDATE, SELS
 	
-def calcul_all_sla():
-	global SLA_CHANGE
-	LOCK.acquire(True)
+	now = time.time()
+	
+	if (SEL_LASTUPDATE + SEL_RTIME) <= now:
+		logger.debug("Refresh Selector list ...")
+		SELS = []
+		SEL_LASTUPDATE = now
+		records = storage.find({'crecord_type': 'selector'})
+		for record in records:
+			selector = cselector(storage=storage, record=record, logging_level=logging.DEBUG)
+			SELS.append(selector)
+
+	## Find selector
+	selectors = []
+	for sel in SELS:
+		if sel.match(_id):
+			selectors.append(sel)
+
+	return selectors
+		
+			
+
+def calcul_all_sla():	
+	global SLA_LASTUPDATE, SLAS
+	
+	now = time.time()
+	
+	if (SLA_LASTUPDATE + SLA_RTIME) <= now:
+		logger.debug("Refresh SLA list ...")
+		SLAS = []
+		SLA_LASTUPDATE = now
+		records = storage.find({'crecord_type': 'sla', 'active': True})
+		for record in records:
+			sla = csla(storage=storage, record=record, logging_level=logging.DEBUG)
+			SLAS.append(sla)
+	
 	logger.debug("Launch calculs on all SLA")
 	for sla in SLAS:
 		logger.debug(" + Start on "+sla._id)
 		sla.get_sla()
-		if SLA_CHANGE[sla._id]:
-			SLA_CHANGE[sla._id] = False
-			#sla.get_current_availability()
+		
+		# Publish selector event
+		event = sla.dump_event()
+		msg = Content(json.dumps(event))
+		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
 
 	logger.debug(" + End of calculs")
-	LOCK.release()
 			
 
 ########################################################
@@ -120,18 +148,16 @@ def calcul_all_sla():
 
 amqp=None
 storage=None
-slas = None
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
 	signal.signal(signal.SIGTERM, signal_handler)
-	global slas, amqp, storage
+	global amqp, storage
 
 	storage = cstorage(DEFAULT_ACCOUNT, namespace='object', logging_level=logging.INFO)
 
 	## Tasks
-	gaslaTask = task.LoopingCall(get_all_sla)
-	calTask = task.LoopingCall(calcul_all_sla)
+	slaTask = task.LoopingCall(calcul_all_sla)
 
 	# AMQP
 	amqp = camqp()
@@ -139,18 +165,16 @@ def main():
 	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 	
-	time.sleep(2)
+	time.sleep(1)
 
 	## Refresh SLA list all 5 minutes
-	gaslaTask.start(300)
-	## Calcul SLA all minutes
-	calTask.start(60)
+	slaTask.start(60)
 
 	while RUN:
 		time.sleep(1)
 
 	try:
-		calTask.stop()
+		slaTask.stop()
 	except:
 		pass
 
