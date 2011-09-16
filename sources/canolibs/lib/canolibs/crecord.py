@@ -217,7 +217,7 @@ class crecord(object):
 		if not _id or not self._id:
 			raise ValueError("You must save all records before this operation ...")
 
-		if _id not in self.children:
+		if str(_id) not in self.children:
 			self.children.append(str(_id))
 			record.parent.append(str(self._id))
 			if autosave:
@@ -237,13 +237,19 @@ class crecord(object):
 		if not _id or not self._id:
 			raise ValueError("You must save all records before this operation ...")
 
-		if _id in self.children:
+		if str(_id) in self.children:
 			self.children.remove(str(_id))
 			record.parent.remove(str(self._id))
 			if autosave:
 				self.save()
 				record.save()
 		
+
+	def is_parent(self, record):
+		if str(record._id) in self.children:
+			return True
+		else:
+			return False
 
 def access_to_str(access):
 	output = ''
