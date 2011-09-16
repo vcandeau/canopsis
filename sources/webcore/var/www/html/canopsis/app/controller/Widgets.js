@@ -1,14 +1,9 @@
 Ext.define('canopsis.controller.Widgets', {
     extend: 'Ext.app.Controller',
 
-    //models: ['Article'],
-
-    //views: ['Widgets.GridHosts', 'Widgets.GridServices'],
+    views: ['Widgets.kpi'],
+    //stores: ['View'],
 
     init: function() {
-
     },
-
-
-
 });

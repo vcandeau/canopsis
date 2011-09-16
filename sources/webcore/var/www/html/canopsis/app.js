@@ -5,13 +5,14 @@ Ext.onReady(function() {
 
 		controllers: [
 			'Menu',
+			'View',
 			'Tabs',
 			'Widgets',
-			'models',
 		],
 	
 		autoCreateViewport: true,
 		launch: function() {
+			log.debug('Remove mask ...')
 			Ext.get('loading').remove();
 			Ext.get('loading-mask').remove();
 		}
