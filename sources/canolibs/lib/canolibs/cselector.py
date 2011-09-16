@@ -13,14 +13,18 @@ import logging
 
 
 class cselector(crecord):
-	def __init__(self, name=None, _id=None, storage=None, namespace=None, logging_level=logging.INFO, *args):
+	def __init__(self, name=None, _id=None, storage=None, namespace=None, record=None, logging_level=logging.INFO, *args):
 
 		if not storage:
 			raise Exception('You must specify storage !')
 
 		self.storage = storage
 
-		crecord.__init__(self, storage=storage, name=name, data = {}, *args)
+		if record:
+			if record.name:
+				name = record.name
+
+		crecord.__init__(self, storage=storage, name=name, record=record, *args)
 
 		#if isinstance(record, crecord):
 		#	crecord.__init__(self, raw_record=record.dump())
@@ -29,14 +33,17 @@ class cselector(crecord):
 
 		self.type = "selector"
 
-		self.timer = ctimer(logging_level=logging_level)
+		self.timer = ctimer(logging_level=logging.INFO)
 		self.cache_time = 60 # 1 minute
 		self.data['mfilter'] = {}
 		self.data['last_resolv_time'] = 0
 		self.data['last_nb_records'] = 0
-		self.state = 0
+		self.data['threshold_warn'] = 98
+		self.data['threshold_crit'] = 95
+		self.data['state'] = 0
 
 		self._ids = []
+		self.records = []
 
 		self.mfilter = {}
 
@@ -58,9 +65,12 @@ class cselector(crecord):
 		except:
 			pass
 
+		## Init logger
+		self.logger = logging.getLogger(self._id)
+		self.logger.setLevel(logging_level)
+
 	def dump(self):
 		self.data['namespace'] = self.namespace
-		self.data['state'] = self.state
 		self.data['mfilter'] = json.dumps(self.mfilter)
 		return crecord.dump(self)
 
@@ -68,9 +78,12 @@ class cselector(crecord):
 		crecord.load(self, dump)
 		self.mfilter = json.loads(self.data['mfilter'])
 		self.namespace = self.data['namespace']
-		self.state = self.data['state']
 
 	def resolv(self):
+		# check cache freshness
+		if (self.data['last_resolv_time'] + self.cache_time) > time.time():
+			return self.records
+
 		self.timer.start()	
 		## get from cache	
 		#_ids = self.cache.get(self._id, 10)
@@ -98,14 +111,14 @@ class cselector(crecord):
 		self.data['last_resolv_time'] = self.timer.elapsed
 		self.data['last_nb_records'] = len(records)
 
+		self.records = records
+
 		self.save()
 
 		return records
 
 	def match(self, _id):
-		# check cache freshness
-		if (self.data['last_resolv_time'] + self.cache_time) <= time.time():
-			self.resolv()
+		self.resolv()
 
 		try:
 			oid = objectid.ObjectId(_id)
@@ -174,9 +187,51 @@ class cselector(crecord):
 
 		#self.logger.debug(" + Availabilityt:\t\t%s" % availability)
 		#self.logger.debug(" + Availability pct:\t%s" % availability_pct)
+
+		self.check(autosave=False)
 		self.save()
 
 		return (availability, availability_pct)
+
+	def check(self, autosave=True):
+		
+		result = self.data['availability_pct']
+
+		state = 0
+		
+		if result['ok'] < self.data['threshold_warn']:
+			state = 1
+
+		if result['ok'] < self.data['threshold_crit']:
+			state = 2
+
+		if self.data['state'] != state:
+			self.data['state'] = state
+			if autosave:
+				self.save()
+
+		return state
+
+	def dump_event(self):
+		dump = {}
+
+		dump['source_name'] = 'Worker'
+		dump['source_type'] = self.type
+		dump['service_description'] =  self._id
+		dump['host_name'] = self.type
+		dump['rk'] = 'eventsource.canopsis.' + dump['source_name'] + '.check.'+ dump['source_type'] + "." + dump['service_description']
+		dump['state_type'] = 1
+		dump['state'] = self.data['state']
+		dump['output'] = ''
+		dump['timestamp'] = int(time.time())
+		#'label'=value[UOM];[warn];[crit];[min];[max]
+		ok = "'ok'=%s%%;%s;%s;0;100" % (self.data['availability_pct']['ok'], self.data['threshold_warn'], self.data['threshold_crit'])
+		warn = "'warn'=%s%%;0;0;0;100" % (self.data['availability_pct']['warning'])
+		crit = "'crit'=%s%%;0;0;0;100" % (self.data['availability_pct']['critical'])
+
+		dump['perf_data'] = ok + " " + warn + " " + crit
+
+		return dump
 
 #	def cat(self):
 #		print "Id:\t\t\t", self._id

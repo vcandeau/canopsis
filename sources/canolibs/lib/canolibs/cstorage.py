@@ -315,19 +315,83 @@ class cstorage(object):
 	def drop_namespace(self, namespace):
 		self.db.drop_collection(namespace)
 
-	def get_tree(self, record, depth=0):
+	def set_record_tree(self, record, depth=0):
+		depth += 1
 		childs = record.children
+		if len(childs) == 0:
+			return
 
-		tree = []
+		rchilds = []
 		for child in childs:
-			record = self.get(child)
-			if len(record.children) == 0:
-				tree.append(record)
-			else:
-				tree.append(self.get_tree(record))
-			
-		return tree
-			
+			rec = self.get(child)
+			self.set_record_tree(rec, depth)
+			record.children_record.append(rec)
+
+
+	def get_record_childs(self, record):
+		child_ids = record.children
+		if len(child_ids) == 0:
+			return []
+
+		records = []
+		for _id in child_ids:
+			records.append(self.get(_id))
+
+		return records
+				
+
+	def print_record_tree(self, record, depth=0):
+		depth+=1
+
+		childs = record.children_record
+		if len(childs) == 0:
+			return
+
+		if depth == 1:
+			print "|-> " + str(record.name)
+
+		for child in childs:
+
+			prefix = ""
+			for i in range(depth):
+				prefix += "  "
+			prefix += "|"
+			for i in range(depth):
+				prefix += "--"
+			print prefix + "> " + str(child.name)
+	
+			self.print_record_tree(child, depth)
+
+
+	def get_childs_of_parent(self, record_or_id, rtype=None):
+
+		if isinstance(record_or_id, crecord):
+			_id = record_or_id._id
+		else:
+			_id = record_or_id		
+
+		mfilter = {'parent': _id}
+
+		if rtype:
+			mfilter['crecord_type'] = rtype
+		
+		return self.find(mfilter)		
+
+	def get_parents_of_child(self, record_or_id, rtype=None):
+
+		if isinstance(record_or_id, crecord):
+			_id = record_or_id._id
+		else:
+			_id = record_or_id
+
+		mfilter = {'child': _id}
+
+		if rtype:
+			mfilter['crecord_type'] = rtype
+
+		return self.find(mfilter)
+
+
 
 	def __del__(self):
 		self.logger.debug("Object deleted.")

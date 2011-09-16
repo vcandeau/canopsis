@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 class crecord(object):
-	def __init__(self, data = {}, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None):
+	def __init__(self, data = {}, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, type='raw'):
 		#if account:
 		#	self.account = account
 		#	self.owner=account.user
@@ -15,13 +15,15 @@ class crecord(object):
 
 		self.owner=owner
 		self.group=group
-		self.type= "raw"
+		self.type= type
 		self.access_owner=['r','w']
 		self.access_group=['r']
 		self.access_other=[]
 		self.access_unauth=[]
 		self.name = name
+		self.parent = []
 		self.children = []
+		self.children_record = []
 
 		try:
 			self._id = data['_id']
@@ -48,6 +50,7 @@ class crecord(object):
 		self.write_time = dump['crecord_write_time']
 		self.name = str(dump['crecord_name'])
 		self.children = dump['children']
+		self.parent = dump['parent']
 
 		try:
 			self._id = dump['_id']
@@ -65,6 +68,7 @@ class crecord(object):
 		del dump['crecord_write_time']
 		del dump['crecord_name']
 		del dump['children']
+		del dump['parent']
 
 		self.data = dump
 
@@ -92,11 +96,20 @@ class crecord(object):
 		dump['crecord_type'] = self.type
 		dump['crecord_write_time'] = self.write_time
 		dump['crecord_name'] = self.name
-		dump['children'] = self.children
+	
+		dump['parent'] =  self.parent
+		dump['children'] =  self.children
+
+		#dump['children'] = []
+		#for child in self.children:
+		#	if isinstance(child, crecord):
+		#		dump['children'].append(str(child._id))
+		#	else:
+		#		dump['children'].append(child)
 
 		return dump
 
-	def cat(self):
+	def cat(self, dump=False):
 		for_str=False
 
 		#print "Id:\t", self._id
@@ -111,12 +124,17 @@ class crecord(object):
 		#print "  Anonymous:\t", self.access_unauth
 		#print "Data:\n", self.data, "\n"
 	
+		if dump:
+			data = self.dump()
+		else:
+			data = self.data
+
 		output = ""
-		for key in self.data.keys():
+		for key in data.keys():
 			try:
-				output += key + ": " + str(self.data[key]) + "\n"
+				output += key + ": " + str(data[key]) + "\n"
 			except:
-				output += key + ": " + self.data[key] + "\n"
+				output += key + ": " + data[key] + "\n"
 
 		if for_str:
 			return output
@@ -187,25 +205,44 @@ class crecord(object):
 			raise ValueError("Invalid argument ...")
 
 	
-	def add_children(self, record):
-		_id=None
-		try:
-			_id = record._id
-		except:
-			_id = record
+	def add_children(self, record, autosave=True):
+		_id = record._id
 
-		if _id not in self.children and _id:
-			self.children.append(_id)
+		if autosave:
+			if not _id:
+				record.save()
+			if not self._id:
+				self.save()
 
-	def remove_children(self, record):
-		_id=None
-		try:
-			_id = record._id
-		except:
-			_id = record
+		if not _id or not self._id:
+			raise ValueError("You must save all records before this operation ...")
 
-		if _id in self.children and _id:
-			self.children.remove(_id)
+		if _id not in self.children:
+			self.children.append(str(_id))
+			record.parent.append(str(self._id))
+			if autosave:
+				self.save()
+				record.save()
+			
+
+	def remove_children(self, record, autosave=True):
+		_id = record._id
+
+		if autosave:
+			if not _id:
+				record.save()
+			if not self._id:
+				self.save()
+
+		if not _id or not self._id:
+			raise ValueError("You must save all records before this operation ...")
+
+		if _id in self.children:
+			self.children.remove(str(_id))
+			record.parent.remove(str(self._id))
+			if autosave:
+				self.save()
+				record.save()
 		
 
 def access_to_str(access):

@@ -33,8 +33,6 @@ class csla(crecord):
 		self.data['threshold_warn'] = 98
 		self.data['threshold_crit'] = 95
 
-		self.data['availability'] = {'ok': 1.0}
-		self.data['availability_pct'] = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
 		self.data['sla'] = {'ok': 1.0}
 		self.data['sla_pct'] = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
 		self.data['state'] = 0
@@ -139,11 +137,11 @@ class csla(crecord):
 
 	def _cb_on_state_change(self, from_state, to_state):
 		if   to_state == 0:
-			self.logger.debug("Back to normal (%s>%s)" % (self.data['availability_pct']['ok'], self.data['threshold_warn']))
+			self.logger.debug("Back to normal (%s>%s)" % (self.data['sla_pct']['ok'], self.data['threshold_warn']))
 		elif to_state == 1:
-			self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.data['availability_pct']['ok'], self.data['threshold_warn']))
+			self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.data['sla_pct']['ok'], self.data['threshold_warn']))
 		elif to_state == 2:
-			self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.data['availability_pct']['ok'], self.data['threshold_crit']))
+			self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.data['sla_pct']['ok'], self.data['threshold_crit']))
 
 		if self.cb_on_state_change:
 			try:
@@ -223,6 +221,7 @@ class csla(crecord):
 			if sla != self.data['sla']:
 				self.data['sla'] = sla
 				self.data['sla_pct'] = sla_pct
+				self.check(autosave=False)
 				self.save()
 
 	def get_sla_by_timeperiod(self, start, stop, cachetime=0):
@@ -242,7 +241,7 @@ class csla(crecord):
 
 		return (sla, sla_pct)
 
-	def check(self, result=None):
+	def check(self, result=None, autosave=True):
 		
 		if not result:
 			result = self.data['sla_pct']
@@ -258,7 +257,8 @@ class csla(crecord):
 		if self.data['state'] != state:
 			self._cb_on_state_change(self.data['state'], state)
 			self.data['state'] = state
-			self.save()
+			if autosave:
+				self.save()
 
 		return state
 		
@@ -343,3 +343,24 @@ class csla(crecord):
 		#self.logger.debug("  + Hard Current pct:\t%s" % sla_pct)
 
 		return (sla, sla_pct)
+
+	def dump_event(self):
+		dump = {}
+
+		dump['source_name'] = 'Worker'
+		dump['source_type'] = self.type
+		dump['service_description'] =  self._id
+		dump['host_name'] = self.type
+		dump['rk'] = 'eventsource.canopsis.' + dump['source_name'] + '.check.'+ dump['source_type'] + "." + dump['service_description']
+		dump['state_type'] = 1
+		dump['state'] = self.data['state']
+		dump['output'] = ''
+		dump['timestamp'] = int(time.time())
+		#'label'=value[UOM];[warn];[crit];[min];[max]
+		ok = "'ok'=%s%%;%s;%s;0;100" % (self.data['sla_pct']['ok'], self.data['threshold_warn'], self.data['threshold_crit'])
+		warn = "'warn'=%s%%;0;0;0;100" % (self.data['sla_pct']['warning'])
+		crit = "'crit'=%s%%;0;0;0;100" % (self.data['sla_pct']['critical'])
+
+		dump['perf_data'] = ok + " " + warn + " " + crit
+
+		return dump
