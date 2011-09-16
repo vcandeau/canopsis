@@ -31,10 +31,52 @@ selector = cselector(name="all-services", storage=storage, namespace="inventory"
 selector.mfilter = {'source_type': 'service'}
 selector.save()
 
+selector = cselector(name="all-http-services", storage=storage, namespace="inventory")
+selector.mfilter = {'source_type': 'service', 'service_description': 'HTTP'}
+selector.save()
+
 ## Save SLA
-sla = csla(name="all-services", storage=storage, selector=selector)
+sla = csla(name="all-http-services", storage=storage, selector=selector)
 sla.set_threshold(98,95)
-sla.set_cycle(int(time.time())+60, 120, False)
+sla.set_cycle(int(time.time())+120, 300, True)
 sla.save()
+
+## Menu
+record1 = crecord({'expanded': True, 'leaf': False }, type='menu', name='View')
+record2 = crecord({'leaf': True }, type='menu', name='Host')
+record3 = crecord({'leaf': True }, type='menu', name='Service')
+
+record4 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
+record5 = crecord({'leaf': True }, type='menu', name='Selector')
+record6 = crecord({'leaf': True }, type='menu', name='SLA')
+
+storage.put([record1, record2, record3, record4, record5, record6])
+
+record1.add_children(record2)
+record1.add_children(record3)
+
+record4.add_children(record5)
+record4.add_children(record6)
+
+storage.put([record1, record2, record3, record4, record5, record6])
+
+## View
+record1 = crecord({'_id': 'view.root.dashboard' }, type='view', name='Dashboard')
+
+record1.data['column'] =  5
+record1.data['hunit'] =  200
+record1.data['lines'] = []
+
+record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'eventsource.nagios.Central.check.service.olivier.HTTP', 'title': 'olivier - HTTP (HARD)', 'type': 'state', 'iconset': 'meteo2'})
+record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': False, '_id': 'eventsource.nagios.Central.check.service.olivier.HTTP', 'title': 'olivier - HTTP (SOFT)'})
+record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'eventsource.canopsis.Worker.check.selector.selector-root-all-hosts', 'title': 'All Hosts'})
+record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'eventsource.canopsis.Worker.check.selector.selector-root-all-services', 'title': 'All Services' })
+record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'eventsource.canopsis.Worker.check.sla.sla-root-all-http-services', 'title': 'SLA - HTTP', 'type': 'speedometer', 'label': 'ok' })
+record1.data['lines'].append({ 'title': 'line 1 Item 0', 'html': "hello", 'colspan': 4})
+record1.data['lines'].append({ 'title': 'line 1 Item 1', 'html': "hello" })
+
+storage.put(record1)
+
+
 
 
