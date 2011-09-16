@@ -43,6 +43,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	search = request.params.get('search', default=None)
 
 	logger.debug("GET:")
+	logger.debug(" + namespace: "+str(namespace))
 	logger.debug(" + Ctype: "+str(ctype))
 	logger.debug(" + _id: "+str(_id))
 	logger.debug(" + Limit: "+str(limit))
@@ -56,7 +57,7 @@ def rest_get(namespace, ctype=None, _id=None):
 		mfilter = {'crecord_type': ctype}
 	if _id:	
 		try:
-			records = [ storage.get(_id) ]
+			records = [ storage.get(_id, namespace=namespace) ]
 		except:
 			return HTTPError(404, _id+" Not Found")
 		
@@ -68,7 +69,7 @@ def rest_get(namespace, ctype=None, _id=None):
 		if record:
 			## small hack, json dont like ObjectID of PyMongo
 			data = record.dump()
-			data['_id'] = str(data['_id'])
+			data['id'] = str(data['_id'])
 			output.append(data)
 
 	output={'total': len(output), 'success': True, 'data': output}

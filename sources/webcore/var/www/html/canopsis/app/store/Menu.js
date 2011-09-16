@@ -3,7 +3,7 @@ Ext.define('canopsis.store.Menu', {
 		
 	proxy: {
 		type: 'ajax',
-		url: '/webservices/menu/list',
+		url: '/ui/menu',
 		reader: {
 			type: 'json'
 		}

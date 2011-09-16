@@ -17,10 +17,13 @@ function init_REST_Store(collection, selector, groupField){
 	return store
 }
 
-function add_view_tab(id, title){
+function add_view_tab(id, title, closable){
 	log.debug("Add view tab '"+id+"'")
+	
+	if (closable == undefined) { closable=true } else { closable=false }
+
 	var maintabs = Ext.getCmp('main-tabs');
-	var tab = Ext.getCmp(id+'-tab');
+	var tab = Ext.getCmp(id+'.tab');
 	
 	//log.debug(record.data)
 	if (tab) {
@@ -28,12 +31,17 @@ function add_view_tab(id, title){
 		maintabs.setActiveTab(tab);
 	}else{
 		log.debug(" - Create tab ...")
+		log.debug("    - Get view config ...")
+		var store = Ext.data.StoreManager.lookup('store.View')
+		var view = store.getById('view.root.dashboard')
+		
 		maintabs.add({
 			title: title,
-			id: id+"-tab",
-			view: id,
+			id: id+".tab",
+			view_id: id,
+			view: view,
 			xtype: 'TabsContent',
-			closable: true
+			closable: closable
 		}).show();
 	}
 }
