@@ -165,10 +165,10 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid map/reduce result ...')
 
 	def test_16_tree(self):
-		record1 = crecord(self.data)
-		record2 = crecord(self.data)
-		record3 = crecord(self.data)
-		record4 = crecord(self.data)
+		record1 = crecord({'data': 1}, name="record1")
+		record2 = crecord({'data': 2}, name="record2")
+		record3 = crecord({'data': 3}, name="record3")
+		record4 = crecord({'data': 4}, name="record4")
 
 		STORAGE.put([record1, record2, record3, record4])
 
@@ -179,8 +179,10 @@ class KnownValues(unittest.TestCase):
 
 		STORAGE.put([record1, record2])
 
-		tree = STORAGE.get_tree(record1)
-		print tree
+		STORAGE.get_record_childs(record1)
+		STORAGE.set_record_tree(record1)
+
+		STORAGE.print_record_tree(record1)
 
 	def test_17_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
