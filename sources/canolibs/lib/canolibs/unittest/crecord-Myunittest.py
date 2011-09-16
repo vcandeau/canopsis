@@ -80,14 +80,14 @@ class KnownValues(unittest.TestCase):
 		record1.add_children(record2)
 		record1.add_children(record3)
 
-		if 2 not in record1.children:
+		if not record1.is_parent(record2):
 			raise Exception('Invalid children association ...')
-		if 3 not in record1.children:
+		if not record1.is_parent(record3):
 			raise Exception('Invalid children association ...')
 
 		record1.remove_children(record3)
 			
-		if 3 in record1.children:
+		if record1.is_parent(record3):
 			raise Exception('Invalid children supression ...')
 		
 if __name__ == "__main__":
