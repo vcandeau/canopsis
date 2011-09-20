@@ -27,7 +27,7 @@ function detect_os(){
 	
 	if [ $DEBIAN -ne 0 ]; then
 		DIST="DEBIAN"
-		DIST_VERS=`cat /etc/debian_version`
+		DIST_VERS=`cat /etc/debian_version | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
 	elif [ $UBUNTU -ne 0 ]; then
 		DIST="UBUNTU"
