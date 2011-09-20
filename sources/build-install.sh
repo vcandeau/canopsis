@@ -238,6 +238,14 @@ function install_basic_source(){
 
 detect_os
 
+echo "Install OS dependencies for $DIST $DIST_VERS ..."
+if [ -e "extra/dependencies/"$DIST"_"$DIST_VERS ]; then
+	$SUDO bash "extra/dependencies/"$DIST"_"$DIST_VERS
+else
+	echo " + Impossible to find dependencies file ..." 
+fi
+check_code $?
+
 #### CLEAN
 ARG1=$1
 ARG2=$2
@@ -366,6 +374,8 @@ install_pylib "txamqp-helpers" "0.5"
 
 install_pylib "pycha" "0.6.0"
 install_pylib "bottle" "0.9.6"
+
+install_pylib "gevent" "0.13.6"
 
 
 if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
