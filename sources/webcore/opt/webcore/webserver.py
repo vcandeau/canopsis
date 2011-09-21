@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from gevent import monkey; monkey.patch_all()
 
 import sys, os, logging
 import ConfigParser
@@ -58,7 +59,7 @@ for ws in os.listdir(ws_dir):
 def main():
 		try:
 			logger.debug("Start listenning on port %i" % port)
-			run(host='0.0.0.0', port=port, reloader=debug)
+			run(host='0.0.0.0', port=port, reloader=debug, server='gevent')
 		except:
 			pass
 
