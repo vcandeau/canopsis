@@ -32,7 +32,7 @@
 
 /* Footer */
 
-#div-footer {
+.footer {
     background: url("../images/footer-back.png") repeat-x scroll center top #eeeeee;
     clear: both;
     height: 175px;

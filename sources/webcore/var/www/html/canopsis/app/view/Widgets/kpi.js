@@ -7,7 +7,7 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
   	iconset: 'meteo1',
 	type: 'state',
 
-	items: [{html: 'No data.'}],
+	items: [{html: 'No data. Please wait ...'}],
 
 	layout: {
 		type: 'hbox',
@@ -37,6 +37,14 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
 				interval: this.refreshInterval * 1000
 			}
 			Ext.TaskManager.start(this.task);
+		
+			this.mytab.on('show', function(){
+				Ext.TaskManager.start(this.task);
+			}, this);
+			this.mytab.on('hide', function(){
+				Ext.TaskManager.stop(this.task);
+			}, this);
+
 		}else{
 			this.refresh()
 		}
@@ -126,12 +134,13 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
 				data = Ext.JSON.decode(response.responseText)
 
 				data = data.data[0]
-				//log.dump(data)
-
 				this.data = data
 
 				this.refresh_ui()
-			}
+			},
+			failure: function ( result, request) {
+				log.error("Ajax request failed ... ("+request.url+")")
+			} 
 		})
 
 	}

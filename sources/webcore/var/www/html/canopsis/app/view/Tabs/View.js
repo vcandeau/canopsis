@@ -19,7 +19,7 @@ Ext.define('canopsis.view.Tabs.View' ,{
 
 		store = Ext.data.StoreManager.lookup('store.View')
 		store.on('load', function(store, recs, opt){
-     			add_view_tab('dashboard.tab', 'Dashboard', false)
+     			add_view_tab('view.root.dashboard', 'Dashboard', false)
 		}, this);
 
 		this.callParent(arguments);

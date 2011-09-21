@@ -8,9 +8,13 @@ Ext.define('canopsis.controller.Menu', {
     itemclick: function(View, record, item, index, e)  {
 		// Add tab in main-tab if not exist, else show it.
 		if (record.data.leaf){
-			var id=record.getId();
-			log.debug('itemclick: '+id);
-			add_view_tab(id, record.data.text)
+			if (record.data.view){
+				var id=record.getId();
+				log.debug('itemclick: '+id);
+				add_view_tab(record.data.view, record.data.text)
+			}else{
+				log.debug('No view specified ...');
+			}
 		}
     },
 

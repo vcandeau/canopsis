@@ -31,9 +31,10 @@ function add_view_tab(id, title, closable){
 		maintabs.setActiveTab(tab);
 	}else{
 		log.debug(" - Create tab ...")
-		log.debug("    - Get view config ...")
+		log.debug("    - Get view config ("+id+") ...")
+	
 		var store = Ext.data.StoreManager.lookup('store.View')
-		var view = store.getById('view.root.dashboard')
+		var view = store.getById(id)
 		
 		maintabs.add({
 			title: title,
