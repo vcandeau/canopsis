@@ -1,0 +1,255 @@
+#!/usr/bin/env python
+
+from pymongo import ASCENDING
+from gridfs import GridFS
+
+import pickle
+
+from ctools import parse_perfdata
+from crecord import crecord
+
+import logging, time
+import zlib, json, sys, base64
+
+STEP_MIN = 59
+
+# db.perfdata.dataSize()
+# db.perfdata.totalSize()
+
+class cperfstore(object):
+	def __init__(self, storage, namespace='perfdata', logging_level=logging.INFO):
+		self.storage = storage
+		self.namespace = namespace
+		self.backend = self.storage.get_backend(namespace)
+		self.grid = GridFS(storage.db, namespace+".fs")
+
+		self.logger = logging.getLogger('cperfstore')
+		self.logger.setLevel(logging_level)
+
+		self.logger.debug("Init cperfstore ...")
+
+		self.last_timestamp = {}
+
+	def get_config(self, _id):
+		return self.storage.get(_id, namespace=self.namespace)
+
+	def put(self, _id, perf_data, timestamp=0, checkts=True):
+		timestamp = int(timestamp)
+		now = int(time.time())
+
+		self.logger.debug("Put perfdata of id '"+_id+"' ...")
+		try:
+			perf_data = parse_perfdata(perf_data)
+		except:
+			raise Exception("Imposible to parse: " + str(perf_data))
+
+		## Check config
+		try:
+			last_timestamp = self.last_timestamp[_id]
+			#config = self.storage.get(_id, namespace='perfdata')
+		except:
+			self.logger.debug("Create config record for '"+_id+"' ...")
+			config = crecord({'_id': _id})
+
+			config.data['metrics'] = []
+			for metric in perf_data.keys():
+				config.data['metrics'].append(metric)
+
+			config.data['perf_data'] = perf_data
+
+			self.storage.put(config, namespace=self.namespace)
+		
+
+		if (checkts):
+			try:
+				if ((self.last_timestamp[_id] + STEP_MIN) > now):
+					self.logger.error(" + Not the moment for "+_id+" (Interval:"+str(now-self.last_timestamp[_id])+")...")
+					return
+				else:
+					self.logger.debug(" + Update timestamp in cache ...")
+					self.last_timestamp[_id] = now
+			except:
+				self.logger.debug(" + Set timestamp in cache ...")
+				self.last_timestamp[_id] = now
+		else:
+			self.last_timestamp[_id] = now
+	
+		#records = []
+		for metric in perf_data.keys():
+			## Store perfdata
+
+			now = int(time.time())
+			mid = _id + "." + metric
+			value = perf_data[metric]['value']
+
+			self.logger.debug(" + Put metric '"+metric+"' ("+str(value)+") for ts '"+str(now)+"' ...")
+
+
+			if not self.backend.find_one({'_id': mid}):
+				self.backend.insert({'_id': mid, 'id': mid, 'config': _id, 'metric': metric, 'first': now, 'last': now, 'format': 'plain' ,'values': [[now, value]] }, safe=True)
+			else:
+				self.backend.update({'_id': mid}, {"$set": {'last': now}, "$push": { 'values': [now, value] }}, upsert=True, safe=True)
+
+			#records.append(data)
+
+		#if records:
+		#	backend = self.storage.get_backend('perfdata.'+_id)
+		#	backend.insert(records)
+
+	def get(self, _id, metric, start, stop):
+
+		mid = _id + "." + metric
+
+		start = int(start)
+		stop = int(stop)
+
+		self.backend.ensure_index([('timestamp',ASCENDING)], ttl=300)
+
+		data = []
+
+		# Select records
+		enc1 = { 'first': {'$lte': start}, 'last': {'$gte': stop} }
+		enc2 = { 'first': {'$gte': start}, 'last': {'$lte': stop} }
+		enc3 = { 'first': {'$gte': start}, 'last': {'$gte': stop}, 'first': {'$lte': stop} }
+		enc4 = { 'first': {'$lte': start}, 'last': {'$gte': start}, 'last': {'$lte': stop} }
+		mfilter = { 'id': mid, '$or': [enc1, enc2, enc3, enc4] }
+
+		self.logger.debug(" + Mongo Filter: "+str(mfilter))
+		rows = self.backend.find(mfilter)
+
+		for row in rows:
+			if row['format'] == 'gz':
+				self.logger.debug(" + Decompress values ...")
+				values = self.decompress_values(row['_id'])
+			else:
+				values = row['values']
+
+			for value in values:
+				if (value[0] >= start) and (value[0] <= stop):
+					data.append(value)
+
+		return 	data	
+
+	def rotate(self):
+		rows = self.backend.find({'aaa_owner': {'$exists' : True } })
+		for row in rows:
+			_id = row['_id']
+			self.logger.debug("Rotate "+_id+":")
+			for metric in row['metrics']:
+				self.logger.debug(" + Metric '"+metric+"'")
+				mid = _id + "." + metric
+				self.rotate_mid(mid)
+		pass
+
+	def rotate_mid(self, mid):
+		perfs = self.backend.find_one({'_id': mid}, safe=True)
+		if perfs:
+			self.logger.debug("   + Remove "+mid+" ...")
+			self.backend.remove({'_id': mid})
+
+			perfs['id'] = mid
+			perfs['_id'] = mid + "." + str(int(time.time()))
+			
+			self.logger.debug("   + Compress values ...")
+			#perfs['first'] = perfs['values'][0][0]
+			#perfs['last'] = perfs['values'][len(perfs['values'])-1][0]
+
+			(values, ratio) = self.compress_values(perfs['values'])
+
+			if ratio > 0:
+				self.logger.debug("   + Use Compressed values ("+str(ratio)+"%)...")
+				perfs['format'] = 'gz'
+				self.grid.put(values, _id=perfs['_id'])
+				perfs['values'] = []
+			
+			self.logger.debug("   + Save "+perfs['_id']+" ...")
+			self.backend.insert(perfs, safe=True)
+			
+
+	def compress_values(self, values, level=9):
+		bsize = sys.getsizeof(values)
+
+		# Compress timestamp
+		fts = values[0][0]
+		first = fts
+		i = 0
+		for value in values:
+			pts = value[0]
+			values[i][0] = value[0] - fts
+			fts = pts
+			i += 1
+
+		# Timestamp mean
+		offset = 0
+		for value in values:
+			offset += value[0]
+
+		offset = int(round((offset/(len(values)-1)),0))
+
+		if offset > 0:
+			# Apply offset
+			i = 0
+			for value in values:
+				values[i][0] = value[0] - offset
+				if values[i][0] == 0:
+					values[i] = values[i][1]
+				i += 1
+		
+
+		values = json.dumps([[first, offset], values])
+		values = values.replace(' ', '')
+		print values
+
+		values = zlib.compress(values, level)
+		zsize = sys.getsizeof(values)
+
+		#values = base64.b64encode(values)
+		asize = sys.getsizeof(values)
+
+		ratio = int(((bsize-asize)*100)/bsize)
+		self.logger.debug("     + Original:\t" + str(bsize))
+		self.logger.debug("     + Compressed:\t" + str(zsize))
+		#self.logger.debug("     + Base64:\t\t" + str(asize))
+		self.logger.debug("     + Ratio:\t\t"+str(ratio)+"%")
+		return (values, ratio)
+
+	def decompress_values(self, _id):
+		values = self.grid.get(_id).read()
+		values = zlib.decompress(values)
+		values = json.loads(values)
+
+		
+		fts = values[0][0]
+		offset = values[0][1]
+		values = values[1]
+
+		i = 0
+		for value in values:
+			if not isinstance(value ,list):
+				values[i] = [0, value]
+			ts = values[i][0]
+			nts = fts + ts + offset
+			values[i][0] = nts
+			fts = nts
+			i += 1
+
+		return values
+
+	def purge(self, _id):
+		try:
+			# Delete config
+			#self.storage.remove(_id, namespace=self.namespace)
+
+			# Delete Binaries
+			rows = self.backend.find({'_id': { '$regex' : '^'+_id+'.\d*'} })
+			for row in rows:
+				self.grid.delete(row['_id'])
+
+			# Delete rotate
+			self.backend.remove({'_id': { '$regex' : '^'+_id+'.*'} })
+		except:
+			raise Exception('Impossible to find config record ...')
+	
+		
+
+
