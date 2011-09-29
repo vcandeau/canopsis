@@ -873,12 +873,18 @@ install_python_daemon "$PREFIX/opt/amqp2mongodb/amqp2mongodb.py"
 make_package "amqp2mongodb"
 
 ######################################
-#  Webcore
+#  amqp2perfstore
 ######################################
-cd $SRC_PATH
-install_basic_source "webcore"
-#install_basic_source "highcharts"
+cd $src_path
+install_basic_source "amqp2perfstore"
+install_python_daemon "$PREFIX/opt/amqp2perfstore/amqp2perfstore.py"
+make_package "amqp2perfstore"
 
+######################################
+#  webcore
+######################################
+cd $src_path
+install_basic_source "webcore"
 make_package "webcore"
 
 ######################################
