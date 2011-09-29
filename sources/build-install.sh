@@ -238,13 +238,6 @@ function install_basic_source(){
 
 detect_os
 
-echo "Install OS dependencies for $DIST $DIST_VERS ..."
-if [ -e "extra/dependencies/"$DIST"_"$DIST_VERS ]; then
-	$SUDO bash "extra/dependencies/"$DIST"_"$DIST_VERS
-else
-	echo " + Impossible to find dependencies file ..." 
-fi
-check_code $?
 
 #### CLEAN
 ARG1=$1
@@ -284,6 +277,15 @@ if [ "$ARG1" = "mkpkg" ]; then
 	exit 0
 fi
 
+if [ "$ARG1" != "nocheckdeps" ]; then
+	echo "Install OS dependencies for $DIST $DIST_VERS ..."
+	if [ -e "extra/dependencies/"$DIST"_"$DIST_VERS ]; then
+		$SUDO bash "extra/dependencies/"$DIST"_"$DIST_VERS
+	else
+		echo " + Impossible to find dependencies file ..." 
+	fi
+	check_code $?
+fi
 
 ######################################
 #  Init file listing
@@ -876,18 +878,6 @@ make_package "amqp2mongodb"
 cd $SRC_PATH
 install_basic_source "webcore"
 #install_basic_source "highcharts"
-
-cd $SRC_PATH/externals
-BASE="ext-$VERS_EXTJS"
-FCHECK="$PREFIX/var/www/html/$BASE"
-if [ ! -e $FCHECK ]; then
-	echo "Install ExtJS ..."
-	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tar.bz2"
-	fi
-	$SUDO cp -Rf $BASE $PREFIX/var/www/html/
-	$SUDO ln -sf $PREFIX/var/www/html/$BASE $PREFIX/var/www/html/extjs
-fi
 
 make_package "webcore"
 
