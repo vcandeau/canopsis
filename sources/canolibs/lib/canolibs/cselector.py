@@ -228,8 +228,9 @@ class cselector(crecord):
 		ok = "'ok'=%s%%;%s;%s;0;100" % (self.data['availability_pct']['ok'], self.data['threshold_warn'], self.data['threshold_crit'])
 		warn = "'warn'=%s%%;0;0;0;100" % (self.data['availability_pct']['warning'])
 		crit = "'crit'=%s%%;0;0;0;100" % (self.data['availability_pct']['critical'])
+		unkn = "'unkn'=%s%%;0;0;0;100" % (self.data['availability_pct']['unknown'])
 
-		dump['perf_data'] = ok + " " + warn + " " + crit
+		dump['perf_data'] = ok + " " + warn + " " + crit + " " + unkn
 
 		return dump
 
