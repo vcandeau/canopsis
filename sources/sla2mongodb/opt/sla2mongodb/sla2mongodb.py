@@ -34,44 +34,8 @@ myamqp = None
 
 DEFAULT_ACCOUNT = caccount(user="root", group="root")
 
-SLAS = []
-SLA_LASTUPDATE = 0
 SLA_RTIME = 300
-
-SELS = []
-SEL_LASTUPDATE = 0
 SEL_RTIME = 300
-
-########################################################
-#
-#   Callback
-#
-########################################################
-	
-def on_message(msg):
-	global SLA_CHANGE
-	_id = msg.routing_key
-
- 	event = json.loads(msg.content.body)
-	
-	# Create record
-	record = crecord(event)
-	record.type = "event"
-	record._id = _id
-	
-	## Calcul availability for each selector
-	selectors = get_selectors(_id)
-	if selectors:
-		#logger.debug(str(len(selectors)) + " selector(s) match for _id '"+_id+"' ...")
-		for selector in selectors:
-			#logger.debug(" + Calcul availability for "+selector.name)
-			selector.get_current_availability()
-
-			# Publish selector event
-			event = selector.dump_event()
-			msg = Content(json.dumps(event))
-			amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
-
 
 ########################################################
 #
@@ -89,50 +53,45 @@ def signal_handler(signum, frame):
 	RUN = 0
  
 
-def get_selectors(_id):
-	global SEL_LASTUPDATE, SELS
+def calcul_all_availability():
 	
-	now = time.time()
-	
-	if (SEL_LASTUPDATE + SEL_RTIME) <= now:
-		logger.debug("Refresh Selector list ...")
-		SELS = []
-		SEL_LASTUPDATE = now
-		records = storage.find({'crecord_type': 'selector'})
-		for record in records:
-			selector = cselector(storage=storage, record=record, logging_level=logging.DEBUG)
-			SELS.append(selector)
+	logger.debug("Refresh Selector list ...")
+	SELS = []
+	records = storage.find({'crecord_type': 'selector'})
+	for record in records:
+		selector = cselector(storage=storage, record=record, logging_level=logging.DEBUG)
+		SELS.append(selector)
 
-	## Find selector
-	selectors = []
+
+	logger.debug("Launch calculs on all Selector")
 	for sel in SELS:
-		if sel.match(_id):
-			selectors.append(sel)
+		logger.debug(" + Calcul availability for "+sel.name)
+		sel.get_current_availability()
 
-	return selectors
+		# Publish selector event
+		event = sel.dump_event()
+		msg = Content(json.dumps(event))
+		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
+
+	logger.debug(" + End of calculs")
 		
 			
 
 def calcul_all_sla():	
-	global SLA_LASTUPDATE, SLAS
-	
-	now = time.time()
-	
-	if (SLA_LASTUPDATE + SLA_RTIME) <= now:
-		logger.debug("Refresh SLA list ...")
-		SLAS = []
-		SLA_LASTUPDATE = now
-		records = storage.find({'crecord_type': 'sla', 'active': True})
-		for record in records:
-			sla = csla(storage=storage, record=record, logging_level=logging.DEBUG)
-			SLAS.append(sla)
+
+	logger.debug("Refresh SLA list ...")
+	SLAS = []
+	records = storage.find({'crecord_type': 'sla', 'active': True})
+	for record in records:
+		sla = csla(storage=storage, record=record, logging_level=logging.DEBUG)
+		SLAS.append(sla)
 	
 	logger.debug("Launch calculs on all SLA")
 	for sla in SLAS:
-		logger.debug(" + Start on "+sla._id)
+		logger.debug(" + Calcul sla for "+sla._id)
 		sla.get_sla()
 		
-		# Publish selector event
+		# Publish sla event
 		event = sla.dump_event()
 		msg = Content(json.dumps(event))
 		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
@@ -158,25 +117,21 @@ def main():
 
 	## Tasks
 	slaTask = task.LoopingCall(calcul_all_sla)
+	avaTask = task.LoopingCall(calcul_all_availability)
 
 	# AMQP
 	amqp = camqp()
-
-	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
-	
-	time.sleep(1)
 
 	## Refresh SLA list all 5 minutes
-	slaTask.start(60)
+	slaTask.start(SLA_RTIME)
+	avaTask.start(SEL_RTIME)
 
 	while RUN:
 		time.sleep(1)
 
-	try:
-		slaTask.stop()
-	except:
-		pass
+	slaTask.stop()
+	avaTask.stop()
 
 	amqp.stop()
 	amqp.join()
