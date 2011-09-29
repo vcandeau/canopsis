@@ -45,7 +45,7 @@ logger = logging.getLogger("rest")
 def perfstore_get(_id, metric, start=None, stop=None):
 
 	if start:
-		start = int(start) / 1000
+		start = int(int(start) / 1000)
 
 	if not stop:
 		stop = int(time.time())
