@@ -4,6 +4,7 @@ var log = {
 	buffer: 50,
 	
 	window: false,
+	console: true,
 
 	store: Ext.create('Ext.data.ArrayStore', {
 			fields: [
@@ -124,8 +125,13 @@ var log = {
 			this.store.removeAt(0)
 		}
 
-		if (Ext.isDefined(console.log)){
-			console.log(msg)
+		// Chech if firebug console ...
+		if (this.console){
+			try {
+				console.log(msg)
+			}catch (err){
+				this.console = false
+			}
 		}
 	}
 }
