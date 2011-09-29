@@ -363,7 +363,7 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 			}
 		}
 
-		this.start[metric] = values[values.length-1][0] + 1
+		this.start[metric] = values[values.length-1][0]
 
 		return true
 	},
