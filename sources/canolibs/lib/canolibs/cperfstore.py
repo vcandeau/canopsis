@@ -103,7 +103,7 @@ class cperfstore(object):
 		start = int(start)
 		stop = int(stop)
 
-		self.backend.ensure_index([('timestamp',ASCENDING)], ttl=300)
+		self.backend.ensure_index([('last',ASCENDING)], ttl=300)
 
 		data = []
 
@@ -115,7 +115,7 @@ class cperfstore(object):
 		mfilter = { 'id': mid, '$or': [enc1, enc2, enc3, enc4] }
 
 		self.logger.debug(" + Mongo Filter: "+str(mfilter))
-		rows = self.backend.find(mfilter)
+		rows = self.backend.find(mfilter);
 
 		for row in rows:
 			if row['format'] == 'gz':
