@@ -36,7 +36,7 @@ def parse_perfdata(perf_data):
 		for perf in perfs:
 			perf_data = {}
 			perf = perf.replace(',','.')
-			resultat = re.search("'?(\w*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?",perf);
+			resultat = re.search("'?([0-9A-Za-z/]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?",perf);
 			
 			perf_data['metric'] = resultat.group(1)
 			perf_data['value'] = resultat.group(2)
@@ -49,7 +49,10 @@ def parse_perfdata(perf_data):
 			perf_data_clean = {}
 			for key in perf_data.keys():
 				if perf_data[key]:
-					perf_data_clean[key] = perf_data[key]
+					try:
+						perf_data_clean[key] = float(perf_data[key])
+					except:
+						perf_data_clean[key] = perf_data[key]
 
 			
 			perf_data_array[perf_data_clean['metric']] = perf_data_clean
