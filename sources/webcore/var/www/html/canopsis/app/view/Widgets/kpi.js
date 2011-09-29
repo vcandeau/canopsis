@@ -7,6 +7,16 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
   	iconset: 'meteo1',
 	type: 'state',
 
+	colors: {
+		up: '#50b432',
+		down: '#ed241b',
+		unreachable: '#f0f0ff',
+		ok : '#50b432',
+		warning: '#ed941b',
+		critical: '#ed241b',
+		unknown: '#f0f0ff' 
+	},
+
 	items: [{html: 'No data. Please wait ...'}],
 
 	layout: {
@@ -122,11 +132,77 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
 				}
 			}
 			
+		}else if (this.type == 'pie') {
+			var value = this.data.perf_data_array
+
+			if (! this.chart){
+				this.removeAll()
+				this.add({html: "<div id='pie-"+this.id+"' style=height:100%></div>"})
+				this.doLayout();
+
+				this.options = 
+					{
+						defaultHeight: 100,
+						grid: {
+							borderWidth: 0,
+							shadow: false,
+							background: 'transparent'
+						},
+						seriesDefaults: {
+							renderer: jQuery.jqplot.PieRenderer,
+							rendererOptions: {
+								showDataLabels: true
+							}
+						},
+						legend: {
+							show:true,
+							location: 'e',
+						}
+					}
+			}
+
+			if (value){
+				if (this.last_value != value) {
+					log.debug(' + Update pie ...')
+
+					var values = []
+					var legend = []
+					var colors = ['#fff']
+
+					var ok = Math.round(this.data.perf_data_array['ok']['value'])
+					var warn = Math.round(this.data.perf_data_array['warn']['value'])
+					var crit = Math.round(this.data.perf_data_array['crit']['value'])
+					var unkn = Math.round(this.data.perf_data_array['unkn']['value'])
+
+					this.options.seriesColors = []
+					if (ok > 0){   values.push(['Ok', ok]);	       this.options.seriesColors.push(this.colors['ok']);}
+					if (warn > 0){ values.push(['Warning', warn]); this.options.seriesColors.push(this.colors['warning']);}
+					if (crit > 0){ values.push(['Critical', crit]);this.options.seriesColors.push(this.colors['critical']);}
+					if (unkn > 0){ values.push(['Unknown', unkn]); this.options.seriesColors.push(this.colors['unknown']);}
+
+					//log.debug('  + ok: '+ok)
+					//log.debug('  + warn: '+warn)
+					//log.debug('  + crit: '+crit)
+					//log.debug('  + unkn: '+unkn)
+
+					//var legendpos = "east";
+
+					if (! this.chart){
+						this.chart = jQuery.jqplot("pie-"+this.id, [values], this.options);
+					}else{
+						this.chart.series[0].data = values
+						//this.chart.series[0].color = "#FF0000"
+						this.chart.replot(this.options)
+					}
+
+					this.last_value = ok+'-'+warn+'-'+crit+'-'+unkn
+				}
+			}
 		}
 	},
 
 	refresh: function (){
-		log.debug("Refresh "+this.id+" ...")
+		//log.debug("Refresh "+this.id+" ...")
 		Ext.Ajax.request({
 			url: '/rest/inventory/event/'+this._id,
 			scope: this,
