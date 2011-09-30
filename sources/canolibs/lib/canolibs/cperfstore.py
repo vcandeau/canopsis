@@ -12,6 +12,7 @@ import logging, time
 import zlib, json, sys, base64
 
 STEP_MIN = 59
+CONFIG_CACHE_TIME=300
 
 # db.perfdata.dataSize()
 # db.perfdata.totalSize()
@@ -29,6 +30,7 @@ class cperfstore(object):
 		self.logger.debug("Init cperfstore ...")
 
 		self.last_timestamp = {}
+		self.last_config = {}
 
 	def get_config(self, _id):
 		return self.storage.get(_id, namespace=self.namespace)
@@ -43,12 +45,18 @@ class cperfstore(object):
 		except:
 			raise Exception("Imposible to parse: " + str(perf_data))
 
+		try:
+			if ((self.last_config[_id] + CONFIG_CACHE_TIME) < now):
+				## Update config record ...
+				del self.last_config[_id]
+		except:
+			pass
+
 		## Check config
 		try:
-			last_timestamp = self.last_timestamp[_id]
-			#config = self.storage.get(_id, namespace='perfdata')
+			last_config = self.last_config[_id]
 		except:
-			self.logger.debug("Create config record for '"+_id+"' ...")
+			self.logger.debug("Update config record for '"+_id+"' ...")
 			config = crecord({'_id': _id})
 
 			config.data['metrics'] = []
@@ -58,21 +66,16 @@ class cperfstore(object):
 			config.data['perf_data'] = perf_data
 
 			self.storage.put(config, namespace=self.namespace)
-		
+			self.last_config[_id] = now
+			self.last_timestamp[_id] = now - STEP_MIN
+			
 
 		if (checkts):
-			try:
-				if ((self.last_timestamp[_id] + STEP_MIN) > now):
-					self.logger.error(" + Not the moment for "+_id+" (Interval:"+str(now-self.last_timestamp[_id])+")...")
-					return
-				else:
-					self.logger.debug(" + Update timestamp in cache ...")
-					self.last_timestamp[_id] = now
-			except:
-				self.logger.debug(" + Set timestamp in cache ...")
-				self.last_timestamp[_id] = now
-		else:
-			self.last_timestamp[_id] = now
+			if ((self.last_timestamp[_id] + STEP_MIN) > now):
+				self.logger.error(" + Not the moment for "+_id+" (Interval:"+str(now-self.last_timestamp[_id])+")...")
+				return
+
+		self.last_timestamp[_id] = now
 	
 		#records = []
 		for metric in perf_data.keys():
@@ -154,7 +157,7 @@ class cperfstore(object):
 			#perfs['first'] = perfs['values'][0][0]
 			#perfs['last'] = perfs['values'][len(perfs['values'])-1][0]
 
-			(values, ratio) = self.compress_values(perfs['values'])
+			(values, ratio) = self.compress_values(list(perfs['values']))
 
 			if ratio > 0:
 				self.logger.debug("   + Use Compressed values ("+str(ratio)+"%)...")
@@ -175,6 +178,8 @@ class cperfstore(object):
 		i = 0
 		for value in values:
 			pts = value[0]
+			if int(value[1]) == value[1]:
+				values[i][1] = int(value[1])
 			values[i][0] = value[0] - fts
 			fts = pts
 			i += 1
