@@ -83,7 +83,7 @@ def main():
 
 	storage = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
 
-	perfstore = cperfstore(storage=storage, logging_level=logging.INFO)
+	perfstore = cperfstore(storage=storage, logging_level=logging.DEBUG)
 
 	# AMQP
 	amqp = camqp()
