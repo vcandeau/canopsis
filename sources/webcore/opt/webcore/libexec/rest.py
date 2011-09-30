@@ -74,7 +74,7 @@ def rest_get(namespace, ctype=None, _id=None):
 
 	output={'total': len(output), 'success': True, 'data': output}
 
-	logger.debug(" + Output: "+str(output))
+	#logger.debug(" + Output: "+str(output))
 
 	return output
 
@@ -104,7 +104,7 @@ def rest_put(namespace, ctype):
 
 	record = crecord(raw_record=data)
 
-	print record.dump()
+	#print record.dump()
 
 	storage.put(record, namespace=namespace)
 
