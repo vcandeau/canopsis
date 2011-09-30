@@ -88,6 +88,7 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 		this.options = {
 			chart: {
 				renderTo: "graph-"+this.id,
+				zoomType: 'x',
 				//marginTop : 100,
 				//width: 300,
 				
@@ -103,6 +104,7 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 				enabled: true
 			},
 			xAxis: {
+				min: Date.now() - (60 * 60 * 24 * 1000), // 24hours
 				maxZoom: 60 * 60 * 1000, // 1 hour
 			},
 			yAxis: {
@@ -204,7 +206,7 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 			this.options.series.push({type: 'pie', data: []})
 		}else {
 			this.metrics = config.metrics
-			log.dump(config)
+			
 			var i = 0
 			for (metric in config.metrics){
 				metric = config.metrics[metric]
@@ -225,6 +227,14 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 				i+=1
 			}
 		}
+
+		log.debug(' + Create graphe')
+		if (this.type == 'line' || this.type == 'pie'){
+			this.chart = new Highcharts.Chart(this.options);
+		}else if (this.type == 'stock'){
+			this.chart = new Highcharts.StockChart(this.options);
+		}
+
 		this.init_task()
 	},
 
@@ -317,12 +327,8 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 
 			//log.dump(values)
 
-			if (! this.chart){
-				this.options.series[0].data = values
-				this.chart = new Highcharts.Chart(this.options);	
-			}else{
-				//TODO !!
-				//this.chart.series[0].setData(values);
+			if (this.chart){
+				this.chart.series[0].setData(values)
 			}
 			return true
 		}
@@ -339,30 +345,23 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 		metric_id = this.metrics.indexOf(metric)
 		log.debug('  + Set data for serie '+metric+' ('+metric_id+') ...')
 
-		if (! this.chart){
-			log.debug(' + Create graphe')
-			this.options.series[metric_id].data = values
-
-			if (this.type == 'line' || this.type == 'pie'){
-				this.chart = new Highcharts.Chart(this.options);
-			}else if (this.type == 'stock'){
-				this.chart = new Highcharts.StockChart(this.options);
-			}
-		}else{
-			if (this.chart.series[metric_id].data.length == 0){
+		if (this.chart){
+			
+			if (! this.start[metric]){
 				log.debug(' + Set data')
-				this.chart.series[metric_id].setData(values);
+				this.chart.series[metric_id].setData(values,true);
 			}else{
 				log.debug(' + Push data')
 				for (value in values) {
 					value = values[value]
-					//log.dump(value)
+					//log.dump(this.chart.series[metric_id])
 					//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
             				this.chart.series[metric_id].addPoint(value, true, true, false);
 				}
 			}
 		}
 
+		//log.dump(this.chart.series[metric_id])
 		this.start[metric] = values[values.length-1][0]
 
 		return true
