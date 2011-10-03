@@ -84,7 +84,7 @@ class crecord(object):
 		else:
 			pass
 
-	def dump(self):
+	def dump(self, json=False):
 		dump = self.data.copy()
 		dump['_id'] = self._id
 		dump['aaa_owner'] = self.owner
@@ -99,6 +99,20 @@ class crecord(object):
 	
 		dump['parent'] =  self.parent
 		dump['children'] =  self.children
+
+		if json:
+			dump['_id'] = str(self._id)
+
+			items  = []
+			for item in dump['parent']:
+				items.append(str(item))
+			dump['parent']  = list(items)
+
+			items  = []
+			for item in dump['children']:
+				items.append(str(item))
+			dump['children'] = list(items)
+
 
 		#dump['children'] = []
 		#for child in self.children:
