@@ -42,7 +42,7 @@ function detect_os(){
 		DIST_VERS=`lsb_release -r | cut -f2`
 		echo " + $DIST $DIST_VERS"
 	elif [ $ARCHL -ne 0 ]; then
-		DIST="ARCH"
+		DIST="ARCHLINUX"
 		DIST_VERS=`pacman -Q glibc | cut -d ' ' -f2 | cut -d '-' -f1`
 		echo " + $DIST $DIST_VERS"
 	else
