@@ -22,7 +22,7 @@ function detect_os(){
 	UBUNTU=`echo "$VERSION" | grep -i ubuntu | wc -l`
 	REDHAT=`echo "$VERSION" | grep -i redhat | wc -l`
 	CENTOS=`echo "$VERSION" | grep -i centos | wc -l`
-	ARCH=`if [ -e /etc/arch-release ]; then echo 1; fi`
+	ARCHL=`if [ -e /etc/arch-release ]; then echo 1; fi`
 	DIST_VERS=""
 	
 	if [ $DEBIAN -ne 0 ]; then
@@ -41,9 +41,9 @@ function detect_os(){
 		DIST="CENTOS"
 		DIST_VERS=`lsb_release -r | cut -f2`
 		echo " + $DIST $DIST_VERS"
-	elif [ $ARCH -ne 0 ]; then
+	elif [ $ARCHL -ne 0 ]; then
 		DIST="ARCH"
-		DIST_VERS=""
+		DIST_VERS=`pacman -Q glibc | cut -d ' ' -f2 | cut -d '-' -f1`
 		echo " + $DIST $DIST_VERS"
 	else
 		echo " + Impossible to find distribution ..."
