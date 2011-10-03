@@ -8,6 +8,7 @@ from caccount import caccount
 
 import logging
 import time
+import json
 #storage = cstorage.
 
 STORAGE = None
@@ -183,6 +184,8 @@ class KnownValues(unittest.TestCase):
 		STORAGE.set_record_tree(record1)
 
 		STORAGE.print_record_tree(record1)
+		
+		json.dumps(record1.dump(json=True))
 
 	def test_17_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
