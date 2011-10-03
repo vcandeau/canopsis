@@ -86,7 +86,12 @@ function install_pylib {
 }
 
 function install_init {
-	IFILE="$SRC_PATH/extra/init/$1"
+	if [ -e "$SRC_PATH/extra/init/$1.$DIST" ]; then
+		IFILE="$SRC_PATH/extra/init/$1.$DIST"
+	else
+		IFILE="$SRC_PATH/extra/init/$1"
+	fi
+
 	if [ -e $IFILE ]; then
 		echo " + Install init script '$1' ..."
 		$SUDO cp $IFILE $PREFIX/etc/init.d/$1
