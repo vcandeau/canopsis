@@ -13,6 +13,7 @@ import zlib, json, sys, base64
 
 STEP_MIN = 59
 CONFIG_CACHE_TIME=300
+TS_TOLERANCE = 3
 
 # db.perfdata.dataSize()
 # db.perfdata.totalSize()
@@ -186,18 +187,25 @@ class cperfstore(object):
 
 		# Timestamp mean
 		offset = 0
-		for value in values:
-			offset += value[0]
+		if len(values) > 1:
+			for value in values:
+				offset += value[0]
 
-		offset = int(round((offset/(len(values)-1)),0))
+			offset = int(round((offset/(len(values)-1)),0))
+	
 
 		if offset > 0:
 			# Apply offset
 			i = 0
 			for value in values:
-				values[i][0] = value[0] - offset
-				if values[i][0] == 0:
+				ts = value[0] - offset
+				if ts < TS_TOLERANCE and ts > -TS_TOLERANCE:
+					ts = 0
+
+				if ts == 0:
 					values[i] = values[i][1]
+				else:
+					values[i][0] = ts
 				i += 1
 		
 
