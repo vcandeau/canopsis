@@ -2,7 +2,7 @@
 
 import ConfigParser
 
-import bottle, logging
+import bottle, logging, hashlib
 from bottle import route, get, request, post, HTTPError
 
 ## Canopsis
@@ -49,7 +49,39 @@ def auth_log():
 	logger.debug("name = " + name)
 	logger.debug("password = " + password)
 	
-	if name == '' and password == '':
-		return "<p>no information in post<p>"
-	else:
+	result = auth_check_account(name,password)
+	
+	#logger.debug(account)
+	
+	account = caccount(result)
+
+	
+	###########temporary auto hash password##############
+	password = hashlib.sha1(repr(password)).hexdigest()
+	#####################################################
+	
+	if account  and account.check_passwd(password):
 		return "<p>login will work (when included)<p>"
+	else:
+		return "<p>unknown user<p>"
+
+	
+
+### check account , return the account or None
+def auth_check_account(name, password):
+	namespace = "object"
+	#names are added with a tag in mongodb
+	name_search = "account-" + name
+	
+	try:
+		account = storage.get(name_search,namespace=namespace)
+	except:
+		account = None
+		
+	#logger.debug(account)
+	
+	if account != None:
+		return account
+	else:
+		return None
+			
