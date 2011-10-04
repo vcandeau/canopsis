@@ -15,6 +15,9 @@ from crecord import crecord
 account = caccount(user="root", group="root")
 storage = cstorage(account, namespace="object", logging_level=logging.INFO)
 
+account.passwd("root")
+storage.put(account)
+
 debug = False
 
 ## Logger
@@ -29,59 +32,48 @@ logger = logging.getLogger("auth")
 
 #########################################################################
 
-#### logging form
-@get('/auth/login/:name/:password')
-@get('/auth/login/:name')
-@get('/auth/login')
-def auth_form(name=None,password=None):
-	return '''<form method="POST">
-                <input name="name"     type="text" />
-                <input name="password" type="password" />
-                <input type="submit" value="Envoyer">
-              </from>'''
-              
-### posting form
-@post('/auth/login')
-def auth_log():
-	name = request.forms.get('name')
-	password = request.forms.get('password')
-	
-	logger.debug("name = " + name)
-	logger.debug("password = " + password)
-	
-	result = auth_check_account(name,password)
-	
-	#logger.debug(account)
-	
-	account = caccount(result)
+@get('/auth/:login/:password')
+@get('/auth/:login')
+@get('/auth')
+def auth(login=None, password=None):
+	if not login:
+		login = request.params.get('login', default=None)
 
-	
-	###########temporary auto hash password##############
-	password = hashlib.sha1(repr(password)).hexdigest()
-	#####################################################
-	
-	if account  and account.check_passwd(password):
-		return "<p>login will work (when included)<p>"
-	else:
-		return "<p>unknown user<p>"
+	shadow = request.params.get('shadow', default=False)
+	if shadow:
+		shadow = True
 
-	
+	if not password:
+		password = request.params.get('password', default=None)
 
-### check account , return the account or None
-def auth_check_account(name, password):
-	namespace = "object"
-	#names are added with a tag in mongodb
-	name_search = "account-" + name
-	
+	if not login or not password:
+		return HTTPError(404, "Invalid arguments")
+
+	_id = "account-" + login
+
+	logger.debug(" + _id: "+_id)
+	logger.debug(" + Login: "+login)
+	logger.debug(" + Password: "+password)
+	logger.debug(" + Shadow: "+str(shadow))
+
 	try:
-		account = storage.get(name_search,namespace=namespace)
+		account = caccount(storage.get(_id))
+		logger.debug(" + Check shadow password ...")
+
+		if shadow:
+			access = account.check_shadowpasswd(password)
+		else:
+			access = account.check_passwd(password)
+
+		if access:
+			output = [ account.dump() ]
+			output = {'total': len(output), 'success': True, 'data': output}
+			return output
+		else:
+			logger.debug(" + Invalid password ...")
 	except:
-		account = None
+		pass
 		
-	#logger.debug(account)
-	
-	if account != None:
-		return account
-	else:
-		return None
-			
+	return HTTPError(403, "Forbidden")
+
+
