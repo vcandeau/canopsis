@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
-import re
+import re, logging
 
 legend = ['ok','warning','critical','unknown']
+
+
+logging_level=logging.DEBUG
+
+logger = logging.getLogger('ctools')
+logger.setLevel(logging_level)
 
 def calcul_pct(data, total=None):
 	if not total:
@@ -58,4 +64,40 @@ def parse_perfdata(perf_data):
 			perf_data_array[perf_data_clean['metric']] = perf_data_clean
 
 		return perf_data_array
+
+
+def dynmodloads(path=".", subdef=False, pattern=".*"):
+	import os, sys
+
+	loaded = []
+	path=os.path.expanduser(path)
+	logger.debug("Append path '%s' ..." % path)
+	sys.path.append(path)
+
+	for mfile in os.listdir(path):
+		try:
+			ext = mfile.split(".")[1]
+			name = mfile.split(".")[0]
+
+			if name != "." and ext == "py":
+				logger.info("Load '%s' ..." % name)
+				try:
+					exec "import %s" % name
+					if subdef:
+						exec "alldefs = dir(%s)" % name
+						for mydef in alldefs:
+							if mydef not in ["__builtins__", "__doc__", "__file__", "__name__", "__package__"]:
+								if re.search(pattern, mydef):
+									logger.debug(" + From %s import %s ..." % (name, mydef))
+									exec "from %s import %s" % (name, mydef)
+						
+					loaded.append(name)
+					logger.debug(" + Success")
+				except Exception, err:
+					logger.error("\t%s" % err)
+		except:
+			pass
+
+
+	return loaded
 
