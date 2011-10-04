@@ -1,1 +1,23 @@
+_service()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts=`ls -1 ~/etc/init.d/`
+    opts_action="start stop restart"
 
+    #echo "cur: ${cur}"
+    #echo "prev: ${prev}"
+
+    if [[ ${prev} != "service" ]] && [[ ${cur} == '' ]]; then
+        COMPREPLY=( $(compgen -W "${opts_action}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${cur} == * ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _service service
