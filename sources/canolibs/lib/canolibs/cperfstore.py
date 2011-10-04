@@ -72,7 +72,13 @@ class cperfstore(object):
 			
 
 		if (checkts):
-			if ((self.last_timestamp[_id] + STEP_MIN) > now):
+			checkts = now - (self.last_timestamp[_id] + STEP_MIN)
+			if checkts < TS_TOLERANCE and checkts > -TS_TOLERANCE:
+				checkts = False
+			else:
+				checkts = True
+
+			if checkts:
 				self.logger.error(" + Not the moment for "+_id+" (Interval:"+str(now-self.last_timestamp[_id])+")...")
 				return
 
@@ -172,6 +178,7 @@ class cperfstore(object):
 
 	def compress_values(self, values, level=9):
 		bsize = sys.getsizeof(values)
+		timestamps = []
 
 		# Compress timestamp
 		fts = values[0][0]
@@ -182,17 +189,19 @@ class cperfstore(object):
 			if int(value[1]) == value[1]:
 				values[i][1] = int(value[1])
 			values[i][0] = value[0] - fts
+			if i:
+				timestamps.append(values[i][0])
 			fts = pts
 			i += 1
 
 		# Timestamp mean
+		self.logger.debug("     + TS Intervals:\t" + str(timestamps))
 		offset = 0
-		if len(values) > 1:
-			for value in values:
-				offset += value[0]
+		if len(timestamps) > 1:
+			timestamps = sorted(timestamps)
+			offset = sum(timestamps)/len(timestamps)
 
-			offset = int(round((offset/(len(values)-1)),0))
-	
+		self.logger.debug("     + TS Offset:\t" + str(offset))
 
 		if offset > 0:
 			# Apply offset
@@ -211,7 +220,7 @@ class cperfstore(object):
 
 		values = json.dumps([[first, offset], values])
 		values = values.replace(' ', '')
-		print values
+		self.logger.debug(values)
 
 		values = zlib.compress(values, level)
 		zsize = sys.getsizeof(values)
@@ -241,7 +250,10 @@ class cperfstore(object):
 			if not isinstance(value ,list):
 				values[i] = [0, value]
 			ts = values[i][0]
-			nts = fts + ts + offset
+			if i:
+				nts = fts + ts + offset
+			else:
+				nts = fts + ts
 			values[i][0] = nts
 			fts = nts
 			i += 1
