@@ -67,9 +67,8 @@ def rest_get(namespace, ctype=None, _id=None):
 	output = []
 	for record in records:
 		if record:
-			## small hack, json dont like ObjectID of PyMongo
-			data = record.dump()
-			data['id'] = str(data['_id'])
+			data = record.dump(json=True)
+			data['id'] = data['_id']
 			output.append(data)
 
 	output={'total': len(output), 'success': True, 'data': output}
