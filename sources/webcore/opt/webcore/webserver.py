@@ -7,6 +7,8 @@ import ConfigParser
 import bottle
 from bottle import route, run, static_file, redirect
 
+from ctools import dynmodloads
+
 ## Read config file
 config = ConfigParser.RawConfigParser()
 config.read(os.path.expanduser('~/etc/webcore.conf'))
@@ -18,9 +20,6 @@ debug=config.getboolean("server", "debug")
 debug = True
 
 bottle.debug(debug)
-
-ws_dir=os.path.expanduser("~/opt/webcore/libexec/")
-sys.path.append(ws_dir)
 
 ## Logger
 if debug:
@@ -42,19 +41,8 @@ def server_static(path):
 def index():
 	redirect("/static/canopsis/index.html")
 
-## Load libexec
-for ws in os.listdir(ws_dir):
-	if ws[0] != "." :
-		ext = ws.split(".")[1]
-		ws = ws.split(".")[0]
-		if ext == "py":
-			logger.debug("Trying to load webservice '%s'" % ws)
-			try:
-				exec "import %s" % ws
-				logger.debug("\tLoaded successfully ...")
-			except Exception, err:
-				logger.error("\t%s" % err)
-				logger.error("\tImpossible to load.")
+## Load webservices
+dynmodloads("~/opt/webcore/libexec/")
 
 def main():
 		try:
