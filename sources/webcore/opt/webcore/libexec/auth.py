@@ -15,9 +15,6 @@ from crecord import crecord
 account = caccount(user="root", group="root")
 storage = cstorage(account, namespace="object", logging_level=logging.INFO)
 
-account.passwd("root")
-storage.put(account)
-
 debug = False
 
 ## Logger
