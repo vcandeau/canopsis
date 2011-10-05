@@ -513,6 +513,7 @@ if [ ! -e $FCHECK ]; then
 
 	echo " + Post install configurations ..."
 	$SUDO mkdir -p $PREFIX/var/log/mongodb
+	$SUDO mkdir -p $PREFIX/var/lib/mongodb
 
 	install_init "mongodb"
 	install_conf "mongodb.conf"
