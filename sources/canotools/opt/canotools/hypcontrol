@@ -6,6 +6,7 @@ if [ "$1" = "start" ]; then
 	service amqp2mongodb start
 	service nagios2amqp start
 	service sla2mongodb start
+	service amqp2perfstore start
 	#service amqp2graphite start
 	#service carbon-cache start
 	#service graphite_webserver start
@@ -16,6 +17,7 @@ if [ "$1" = "stop" ]; then
 	#service carbon-cache stop
 	#service amqp2graphite stop
 	service nagios2amqp stop
+	service amqp2perfstore stop
 	service sla2mongodb stop
 	service amqp2mongodb stop
 	service rabbitmq-server stop
