@@ -616,7 +616,6 @@ $SUDO mkdir -p $PREFIX/opt/event-brokers/nagios/
 LOG="$LOG_PATH/neb2socket.log"
 
 cd event-brokers/nagios/neb2socket
-$SUDO cp api/neb2socket.py $PREFIX/lib/canolibs/
 check_code $?
 
 FCHECK="$PREFIX/opt/event-brokers/nagios/neb2socket.o"
@@ -628,7 +627,8 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 	echo " + Install ..."
 	$SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
-	
+	$SUDO cp -R api/ $PREFIX/opt/event-brokers/nagios/
+
 	echo " + Configuration ..."
 	echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"
 	check_code $?
