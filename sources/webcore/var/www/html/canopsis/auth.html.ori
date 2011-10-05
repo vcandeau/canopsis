@@ -1,0 +1,41 @@
+<html>
+<head>
+    	<title>authentification</title>
+    	<link rel="stylesheet" type="text/css" href="resources/css/ext-all.css">
+    	<script type="text/javascript" src="resources/lib/jquery.js"></script>
+</head>
+
+	
+<!-- My functions ------------------------------------------------->
+	
+	<script type="text/javascript">
+	
+	$('#login_form').submit(function() {
+		var login = $("#login").val();
+		var password = $("#password").val();
+		$.getJSON("/auth/" + login + "/" + password, function(json){
+			(function(){ 
+				var url = getURLParameter('url');
+				alert (url);
+				if (url != 'null'){
+					$(location).attr('href',url);
+				} else {
+					$(location).attr('href','/');
+				}
+			})()
+		});
+		alert('identifiant ou mot de passe incorrect');
+		return false;
+	});
+	
+	//regex function to get a parametre in the url
+	function getURLParameter(name) {
+		return decodeURI(
+			(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+		);
+	}
+
+	</script>
+	
+</body>
+</html>
