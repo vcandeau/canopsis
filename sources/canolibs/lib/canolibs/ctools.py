@@ -69,7 +69,7 @@ def parse_perfdata(perf_data):
 def dynmodloads(path=".", subdef=False, pattern=".*"):
 	import os, sys
 
-	loaded = []
+	loaded = {}
 	path=os.path.expanduser(path)
 	logger.debug("Append path '%s' ..." % path)
 	sys.path.append(path)
@@ -82,22 +82,25 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 			if name != "." and ext == "py":
 				logger.info("Load '%s' ..." % name)
 				try:
-					exec "import %s" % name
+
+					module = __import__(name)
+					loaded[name] = module
+	
 					if subdef:
-						exec "alldefs = dir(%s)" % name
+						alldefs = dir(module)
 						for mydef in alldefs:
 							if mydef not in ["__builtins__", "__doc__", "__file__", "__name__", "__package__"]:
 								if re.search(pattern, mydef):
 									logger.debug(" + From %s import %s ..." % (name, mydef))
-									exec "from %s import %s" % (name, mydef)
+									#exec "from %s import %s" % (name, mydef)
+									exec "loaded[mydef] = module.%s" % mydef
 						
-					loaded.append(name)
+					 
 					logger.debug(" + Success")
 				except Exception, err:
 					logger.error("\t%s" % err)
 		except:
 			pass
-
 
 	return loaded
 
