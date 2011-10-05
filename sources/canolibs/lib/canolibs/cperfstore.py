@@ -36,7 +36,7 @@ class cperfstore(object):
 	def get_config(self, _id):
 		return self.storage.get(_id, namespace=self.namespace)
 
-	def put(self, _id, perf_data, timestamp=0, checkts=True):
+	def put(self, _id, perf_data, timestamp=0, checkts=False):
 		timestamp = int(timestamp)
 		now = int(time.time())
 
@@ -166,11 +166,11 @@ class cperfstore(object):
 
 			(values, ratio) = self.compress_values(list(perfs['values']))
 
-			if ratio > 0:
-				self.logger.debug("   + Use Compressed values ("+str(ratio)+"%)...")
-				perfs['format'] = 'gz'
-				self.grid.put(values, _id=perfs['_id'])
-				perfs['values'] = []
+			#if ratio > 0:
+			self.logger.debug("   + Use Compressed values ("+str(ratio)+"%)...")
+			perfs['format'] = 'gz'
+			self.grid.put(values, _id=perfs['_id'])
+			perfs['values'] = []
 			
 			self.logger.debug("   + Save "+perfs['_id']+" ...")
 			self.backend.insert(perfs, safe=True)
