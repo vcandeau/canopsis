@@ -15,6 +15,9 @@ from cstorage import cstorage
 from crecord import crecord
 from cperfstore import cperfstore
 
+#import protection function
+from libexec.auth import check_auth
+
 ## Initialisation
 
 account = caccount(user="root", group="root")
@@ -37,9 +40,9 @@ logger = logging.getLogger("rest")
 #########################################################################
 
 #### GET@
-@get('/perfstore/:_id/:metric')
-@get('/perfstore/:_id/:metric/:start')
-@get('/perfstore/:_id/:metric/:start/:stop')
+@get('/perfstore/:_id/:metric',apply=[check_auth])
+@get('/perfstore/:_id/:metric/:start',apply=[check_auth])
+@get('/perfstore/:_id/:metric/:start/:stop',apply=[check_auth])
 def perfstore_get(_id, metric, start=None, stop=None):
 
 	if start:
