@@ -16,13 +16,21 @@
 	<div id="form" style='margin: 50 auto; width: 350;'></div>
 
 	<script type="text/javascript">
+		
+		function getURLParameter(name) {
+			return decodeURI(
+				(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+			);
+		}
+		
+		
 		Ext.require([
 			'Ext.form.Panel',
 		]);
 
 		Ext.onReady(function(){
 			var winform = Ext.create('Ext.form.Panel', {
-				url:'save-form.php',
+				url:'/auth',
 				frame:true,
 				title: 'Authentification',
 				renderTo: 'form',
@@ -41,12 +49,33 @@
 					allowBlank:false
 				},{
 					fieldLabel: 'Password',
-					name: 'passwd',
+					name: 'password',
+					inputType: 'password',
 					allowBlank:false
 				}],
-		
 				buttons: [{
-					text: 'Login'
+					text: 'Login',
+					handler: function() {
+					var form = this.up('form').getForm(); // get the basic form
+					if (form.isValid()) { // make sure the form contains valid data before submitting
+						form.submit({
+							method: 'GET',
+							success: function(form, action) {
+								var param = getURLParameter('url');	
+								if(param != 'null'){
+									window.location.href=param;
+								} else {
+									window.location.href='/';
+								}
+							},
+							failure: function(form, action) {
+								Ext.MessageBox.alert('authentification failed', 'login or password incorrect');
+							}
+						});
+					} else { // display error alert if the data is invalid
+						Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
+					}
+				}
 				}]
 			});
 
