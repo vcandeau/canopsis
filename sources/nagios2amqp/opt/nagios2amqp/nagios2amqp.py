@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-import time, signal, threading, json, os
+import time, signal, threading, json, os, sys
 import daemon,lockfile
-from neb2socket import *
 from Queue import Queue
 
 from camqp import camqp, files_preserve
 from txamqp.content import Content
 
+sys.path.append(os.path.expanduser("~/opt/event-brokers/nagios/api"))
+from neb2socket import *
 
 ########################################################
 #

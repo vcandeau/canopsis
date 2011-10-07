@@ -64,7 +64,11 @@ class cbrule(object):
 		self.logger.debug("Save Bussiness Rule ...")
 		if not self.config:
 			self.logger.debug(" + Create record ...")
-			self.config = crecord(	data={'raw_checks': self.raw_checks, 'raw_actions': self.raw_actions, 'hardonly': self.hardonly, 'ids': self.ids, 'selector': self.selector_id},
+			ids = self.ids
+			if self.selector_id:
+				ids = None
+
+			self.config = crecord(	data={'raw_checks': self.raw_checks, 'raw_actions': self.raw_actions, 'hardonly': self.hardonly, 'ids': ids, 'selector': self.selector_id},
 						name='brule-'+name,
 						type='brule',
 					)
