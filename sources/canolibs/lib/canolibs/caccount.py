@@ -25,7 +25,7 @@ class caccount(crecord):
 		self.type = "account"
 
 		if self.user:
-			self._id = self.type+"-"+self.user	
+			self._id = self.type+"."+self.user	
 
 		self.access_owner=['r','w']
 		self.access_group=[]
