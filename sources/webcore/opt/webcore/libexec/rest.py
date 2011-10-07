@@ -11,6 +11,9 @@ from caccount import caccount
 from cstorage import cstorage
 from crecord import crecord
 
+#import protection function
+from libexec.auth import check_auth
+
 ## Initialisation
 
 account = caccount(user="root", group="root")
@@ -31,9 +34,9 @@ logger = logging.getLogger("rest")
 #########################################################################
 
 #### GET
-@get('/rest/:namespace/:ctype/:_id')
-@get('/rest/:namespace/:ctype')
-@get('/rest/:namespace')
+@get('/rest/:namespace/:ctype/:_id',apply=[check_auth])
+@get('/rest/:namespace/:ctype',apply=[check_auth])
+@get('/rest/:namespace',apply=[check_auth])
 def rest_get(namespace, ctype=None, _id=None):
 
 	limit = int(request.params.get('limit', default=20))
@@ -78,7 +81,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	return output
 
 #### PUT
-@put('/rest/:namespace/:ctype')
+@put('/rest/:namespace/:ctype',apply=[check_auth])
 def rest_put(namespace, ctype):
 	logger.debug("PUT:")
 
@@ -108,7 +111,7 @@ def rest_put(namespace, ctype):
 	storage.put(record, namespace=namespace)
 
 #### DELETE
-@delete('/rest/:namespace/:ctype/:_id')
+@delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
 def rest_delete(namespace, ctype, _id):
 	logger.debug("DELETE:")
 	logger.debug(" + _id: "+str(_id))

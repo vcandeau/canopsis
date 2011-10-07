@@ -11,6 +11,9 @@ from caccount import caccount
 from cstorage import cstorage
 from crecord import crecord
 
+#import protection function
+from libexec.auth import check_auth
+
 ## Initialisation
 
 account = caccount(user="root", group="root")
@@ -31,7 +34,7 @@ logger = logging.getLogger("ui-menu")
 #########################################################################
 
 #### GET
-@get('/ui/menu')
+@get('/ui/menu',apply=[check_auth])
 def get_all_menu():
 	_id = request.params.get('node', default=[])
 
