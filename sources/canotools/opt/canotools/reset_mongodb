@@ -103,7 +103,7 @@ storage.put(record1)
 
 ## Create Bussiness Rukles
 
-myrule1 = cbrule(name='myrule1', storage=storage, ids=[ 'eventsource.nagios.Central.check.service.william.HTTP', 'eventsource.nagios.Central.check.service.william.SSH' ])
+myrule1 = cbrule(name='myrule1', autoinit=False, storage=storage, ids=[ 'eventsource.nagios.Central.check.service.william.HTTP', 'eventsource.nagios.Central.check.service.william.SSH' ])
 
 crit_binrule = { 'and': [
 	{'id|state|eventsource.nagios.Central.check.service.william.HTTP': 2},
