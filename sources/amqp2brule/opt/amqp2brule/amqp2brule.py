@@ -5,6 +5,7 @@ import logging
 
 from camqp import camqp, files_preserve
 from txamqp.content import Content
+from twisted.internet import task
 
 from pymongo import Connection
 import json
@@ -34,6 +35,7 @@ myamqp = None
 bussiness_rules  = None
 
 DEFAULT_ACCOUNT = caccount(user="root", group="root")
+BRULE_RTIME = 300
 
 ########################################################
 #
@@ -73,6 +75,20 @@ def signal_handler(signum, frame):
 	RUN = 0
  
 
+def init_bussiness_rules():
+	global bussiness_rules
+
+	logger.debug("Load bussiness rules ...")
+	tmp = []
+	
+	records = storage.find({'crecord_type': 'brule'}, namespace='object')
+
+	for record in records:
+		brule = cbrule(record)
+		tmp.append(brule)
+
+	bussiness_rules = tmp
+
 
 ########################################################
 #
@@ -91,27 +107,7 @@ def main():
 	storage = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
 
 	# Rules Engine
-
-	#myrule1 = cbrule(name='myrule1', ids=['eventsource.nagios.Central.check.service.olivier.HTTP', 'eventsource.nagios.Central.check.service.william.HTTP', 'eventsource.nagios.Central.check.service.olivier.SSH'])
-
-	#myrule1 = cbrule(name='myrule2', selector='selector-root-all-services')
-	myrule1 = cbrule(name='myrule2', ids=[ 'eventsource.nagios.Central.check.service.william.HTTP', 'eventsource.nagios.Central.check.service.william.SSH' ])
-	#myrule1.add_check('check_state')
-	crit_binrule = { 'and': [
-		{'id|state|eventsource.nagios.Central.check.service.william.HTTP': 2},
-		{'id|state|eventsource.nagios.Central.check.service.william.SSH': 2},
-	] }
-
-	warn_binrule = { 'or': [
-		{'id|state|eventsource.nagios.Central.check.service.william.HTTP': 2},
-		{'id|state|eventsource.nagios.Central.check.service.william.SSH': 2},
-	] }
-
-	myrule1.add_check('check_binarierule', {'warn_rule': warn_binrule, 'crit_rule': crit_binrule })
-
-	#eventsource.nagios.Central.check.service.olivier.SSH
-
-	bussiness_rules = [myrule1]
+	bruleTask = task.LoopingCall(init_bussiness_rules)
 
 	# AMQP
 	amqp = camqp(logging_level=logging.INFO)
@@ -119,9 +115,12 @@ def main():
 	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 
+	bruleTask.start(BRULE_RTIME)
+
 	while RUN:
 		time.sleep(1)
 
+	bruleTask.stop()
 	amqp.stop()
 	amqp.join()
 
