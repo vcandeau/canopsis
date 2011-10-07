@@ -14,6 +14,7 @@ namespaces = ['cache', 'inventory', 'history', 'sla', 'object']
 
 ## Create root account
 account = caccount(user="root", group="root")
+account.passwd("root")
 
 ## Create storage
 storage = cstorage(account, namespace='object', logging_level=logging.DEBUG)
