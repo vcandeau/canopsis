@@ -92,6 +92,9 @@ class cperfstore(object):
 			mid = _id + "." + metric
 			value = perf_data[metric]['value']
 
+			if int(value) == value:
+				value = int(value)
+
 			self.logger.debug(" + Put metric '"+metric+"' ("+str(value)+") for ts '"+str(now)+"' ...")
 
 
@@ -186,8 +189,6 @@ class cperfstore(object):
 		i = 0
 		for value in values:
 			pts = value[0]
-			if int(value[1]) == value[1]:
-				values[i][1] = int(value[1])
 			values[i][0] = value[0] - fts
 			if i:
 				timestamps.append(values[i][0])
