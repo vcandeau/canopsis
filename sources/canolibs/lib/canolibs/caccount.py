@@ -53,6 +53,8 @@ class caccount(crecord):
 		return False
 
 	def dump(self):
+		self.name = self.user
+		self.data['user'] = self.user
 		self.data['lastname'] = self.lastname
 		self.data['firstname'] = self.firstname
 		self.data['mail'] = self.mail
