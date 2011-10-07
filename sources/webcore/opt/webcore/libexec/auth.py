@@ -5,6 +5,8 @@ import ConfigParser
 import bottle, logging, hashlib
 from bottle import route, get, request, post, HTTPError, redirect
 
+from beaker.middleware import SessionMiddleware
+
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
@@ -48,7 +50,7 @@ def auth(login=None, password=None):
 	if not login or not password:
 		return HTTPError(404, "Invalid arguments")
 
-	_id = "account-" + login
+	_id = "account." + login
 
 	logger.debug(" + _id: "+_id)
 	logger.debug(" + Login: "+login)
@@ -65,9 +67,7 @@ def auth(login=None, password=None):
 			access = account.check_passwd(password)
 
 		if access:
-			#test for session
-			session_accounts.append(1)
-			##########
+			put_session(_id)
 			output = [ account.dump() ]
 			output = {'total': len(output), 'success': True, 'data': output}
 			return output
@@ -78,6 +78,11 @@ def auth(login=None, password=None):
 		
 	return HTTPError(403, "Forbidden")
 
+@get('/disconnect')
+def disconnect():
+	s = bottle.request.environ.get('beaker.session')
+	s.delete()
+	return 'your are now disconnected'
 
 #decorator in order to protect request
 def check_auth(callback):
@@ -87,9 +92,14 @@ def check_auth(callback):
 		except:
 			path = None
 
-		session = request.params.get('session', default=0)
-		
-		if int(session) == 1 or path == "canopsis/auth.html":
+		s = bottle.request.environ.get('beaker.session')
+		#testing attribut auth_on from the session
+		if s.get('auth_on',0) == True:
+			already_auth = True
+		else:
+			already_auth = False
+
+		if already_auth or path == "canopsis/auth.html":
 			return callback(*args, **kawrgs)
 
 		return redirect('/static/canopsis/auth.html')
@@ -99,7 +109,11 @@ def check_auth(callback):
 
 @get('/secure', apply=[check_auth])
 def secure():
-	return 'i\'m secured test2'
-	
-	
+	return 'i\'m secured test2 , you can <a href="/disconnect">disconnect</a>'
 
+def put_session(id):
+	s = bottle.request.environ.get('beaker.session')
+	s['_id'] = id
+	s['auth_on'] = True
+	s.save()
+	

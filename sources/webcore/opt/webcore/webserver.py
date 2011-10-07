@@ -7,6 +7,8 @@ import ConfigParser
 import bottle
 from bottle import route, run, static_file, redirect
 
+from beaker.middleware import SessionMiddleware
+
 from ctools import dynmodloads
 
 ## Read config file
@@ -31,15 +33,39 @@ logging.basicConfig(level=logging_level,
 )
 logger = logging.getLogger("webcore")
 
+##Session system with beaker
+session_opts = {
+    'session.type': 'file',
+    'session.cookie_expires': 300,
+    'session.data_dir': '/opt/canopsis/tmp/webcore_cache',
+    'session.auto': True
+}
+app = SessionMiddleware(bottle.app(), session_opts)
+logger.debug(str(app))
+
+#test for beaker
+@bottle.route('/test')
+def test():
+	s = bottle.request.environ.get('beaker.session')
+	s['test'] = s.get('test',0) + 1
+	s.save()
+	return 'Test counter: %d' % s['test']
+
 ## Basic Handler
-@route('/static/:path#.+#')
+@bottle.route('/static/:path#.+#')
 def server_static(path):
 	return static_file(path, root=root_directory)
 
-@route('/')
-@route('/index.html')
+@bottle.route('/')
+@bottle.route('/index.html')
 def index():
 	redirect("/static/canopsis/index.html")
+
+
+
+	
+
+
 
 ## Load webservices
 dynmodloads("~/opt/webcore/libexec/")
@@ -47,7 +73,7 @@ dynmodloads("~/opt/webcore/libexec/")
 def main():
 		try:
 			logger.debug("Start listenning on port %i" % port)
-			run(host='0.0.0.0', port=port, reloader=debug, server='gevent')
+			bottle.run(app, host='0.0.0.0', port=port, reloader=debug, server='gevent')
 		except:
 			pass
 
