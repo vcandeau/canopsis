@@ -11,8 +11,8 @@ from cselector import cselector
 
 STATE = ['OK', 'WARNING', 'CRITICAL']
 
-ALL_CHECKS = dynmodloads("/home/wpain/Bureau/hypervision/sources/amqp2brule/opt/amqp2brule/checks", True, '^check_')
-ALL_ACTIONS = dynmodloads("/home/wpain/Bureau/hypervision/sources/amqp2brule/opt/amqp2brule/checks", True, '^action_')
+ALL_CHECKS = dynmodloads("~/opt/amqp2brule/checks", True, '^check_')
+ALL_ACTIONS = dynmodloads("~/opt/amqp2brule/actions", True, '^action_')
 
 class cbrule(object):
 	def __init__(self, name, selector=None, ids=None, logging_level=logging.DEBUG, amqp=None, storage=None):
