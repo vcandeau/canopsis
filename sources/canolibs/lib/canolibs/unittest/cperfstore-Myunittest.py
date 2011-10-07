@@ -16,7 +16,7 @@ perfstore = None
 #NB_PERF = 1440 # 1 perf/min for 24 hours
 #NB_PERF = 288 # 1 perf/5min for 24 hours
 NB_PERF = 10
-
+SLEEP=2
 ID='test.id'
 last = 0
 #result = []
@@ -32,13 +32,14 @@ class KnownValues(unittest.TestCase):
 		#raise Exception('Error in perfdata parsing ...')
 
 	def test_03_Put(self):
-		global start, stop, last
+		global first, last
 		ts = 60
 		timer.start()
+		first = int(time.time())
 		for i in range(0,NB_PERF):
 			last = int(time.time())
 			perfstore.put(ID, "'ok'="+str((i*100)/NB_PERF)+".0%;98;95;0;100 'warn'=0%;0;0;0;100 'crit'=0%;0;0;0;100", checkts=False)			
-			time.sleep(1)
+			time.sleep(SLEEP)
 			pass
 		timer.stop()
 
@@ -57,10 +58,11 @@ class KnownValues(unittest.TestCase):
                 # enc3:                   |-------|
 		# enc4: |-------------------------|
 
-		enc1 = [ last-(NB_PERF-1)+2, last-2 ]
-		enc2 = [ last-(NB_PERF-1)-2, last - (NB_PERF-1)+2 ]
-		enc3 = [ last-2, last+2 ]
-		enc4 = [ last-(NB_PERF-1)-2, last + 2 ]
+		OFFSET = 2 * SLEEP
+		enc1 = [ first	+ OFFSET , last	 - OFFSET ]
+		enc2 = [ first	- OFFSET , first + OFFSET ]
+		enc3 = [ last	- OFFSET , last	 + OFFSET ]
+		enc4 = [ first	- OFFSET , last	 + OFFSET ]
 
 		records =  perfstore.get(ID, 'ok', enc1[0], enc1[1])
 		if len(records) != 6:
