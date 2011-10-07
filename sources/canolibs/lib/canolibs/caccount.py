@@ -89,7 +89,7 @@ def caccount_getall(storage):
 	return accounts
 
 def caccount_get(storage, user):
-	record = storage.get('account-'+user)
+	record = storage.get('account.'+user)
 	account = caccount(record)
 	return account
 	
