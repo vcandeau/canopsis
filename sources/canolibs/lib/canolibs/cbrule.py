@@ -15,53 +15,54 @@ ALL_CHECKS = dynmodloads("~/opt/amqp2brule/checks", True, '^check_')
 ALL_ACTIONS = dynmodloads("~/opt/amqp2brule/actions", True, '^action_')
 
 class cbrule(object):
-	def __init__(self, name, selector=None, ids=None, logging_level=logging.DEBUG, amqp=None, storage=None):
+	def __init__(self, record=None, name=None, selector=None, ids=None, logging_level=logging.DEBUG, amqp=None, storage=None, autoinit=True):
+
+		self.hardonly = True
+		self.selector_id = selector
+		self.ids = ids
+		self.raw_checks = []
+		self.raw_actions = []
+		self.amqp = amqp
+		self.fired_state = 0
 
 		if not storage:
 			self.storage = cstorage(caccount(user="root", group="root"), namespace='inventory', logging_level=logging.DEBUG)
 		else:
 			self.storage = storage
 
-		logging_level=logging.DEBUG
-		self.logger = logging.getLogger('cbrules.'+name)
-		self.logger.setLevel(logging_level)
+		if isinstance(record, crecord):
+			self.config = record
+		elif not name:
+			raise Exception('You must specify name or record ...')
+		else:
+			self.name = name
+			try:
+				self.config = self.storage.get('brule.'+self.name)
+			except:
+				self.config = None
 
-		self.name = name
-		self.amqp = amqp
 
-		self.hardonly = True
-		self.raw_checks = []
-		#	{'fn': 'check_state_more', 'args': {'state': 2, 'twarn': 1, 'tcrit': 2} },
-		#	{'fn': 'check_state', 'args': {} }
-		#]
-
-		self.raw_actions = []
-		#	{'fn': 'check_state_more', 'args': {'state': 2, 'twarn': 1, 'tcrit': 2} }
-		#]
-
-		try:
-			self.config = self.storage.get('brule-'+name)
-			ids = self.config.data['ids']
-			selector = self.config.data['selector']
+		if self.config:
+			self.ids = self.config.data['ids']
+			self.selector_id = self.config.data['selector_id']
 			self.hardonly = self.config.data['hardonly']
 			self.raw_checks = self.config.data['raw_checks']
 			self.raw_actions = self.config.data['raw_actions']
-			
-		except:
-			self.config = None
+			self.name = self.config.name
 
-		self.selector_id = None
-		if ids:
-			self.ids = ids
-		else:
-			self.selector_id = selector
-			self.init_selector()
+		logging_level=logging.DEBUG
+		self.logger = logging.getLogger('cbrules.'+self.name)
+		self.logger.setLevel(logging_level)
 
-		self.fired_state = 0
+		if not self.ids and self.selector_id:
+			if autoinit:
+				self.init_selector()
 
-		self.init_env()
-		self.init_checks()
-		self.init_actions()
+		if autoinit:
+			self.init_env()
+			self.init_actions()
+			self.init_checks()
+
 
 	def save(self):
 		self.logger.debug("Save Bussiness Rule ...")
@@ -71,7 +72,7 @@ class cbrule(object):
 			if self.selector_id:
 				ids = None
 
-			self.config = crecord(	data={'_id': 'brule.'+self.storage.account.user+'.'+self.name,'raw_checks': self.raw_checks, 'raw_actions': self.raw_actions, 'hardonly': self.hardonly, 'ids': ids, 'selector': self.selector_id},
+			self.config = crecord(	data={'_id': 'brule.'+self.storage.account.user+'.'+self.name,'raw_checks': self.raw_checks, 'raw_actions': self.raw_actions, 'hardonly': self.hardonly, 'ids': ids, 'selector_id': self.selector_id},
 						name=self.name,
 						type='brule',
 					)
@@ -80,7 +81,7 @@ class cbrule(object):
 
 	def init_checks(self, doCheck=True):
 		self.logger.debug("Init checks ...")
-		
+
 		self.checks = []
 		for raw_check in self.raw_checks:
 			check = raw_check.copy()
@@ -94,7 +95,7 @@ class cbrule(object):
 			except Exception, err:
 				self.logger.error("   + Impossible to load '%s' (%s)" % (name, err))
 
-		if self.checks:
+		if self.checks and doCheck:
 			self.check()
 
 	def init_actions(self):
@@ -131,11 +132,11 @@ class cbrule(object):
 				self.logger.debug(" + Success for '%s'" % _id)
 			except:
 				self.logger.error(" + Id '%s' not found in inventory ..." % _id)
-				del(self.ids[self.ids.index(_id)])
+				#del(self.ids[self.ids.index(_id)])
 
-	def add_check(self, fn, args={}):
+	def add_check(self, fn, args={}, doCheck=False):
 		self.raw_checks.append({'fn': fn, 'args': json.dumps(args)})
-		self.init_checks()
+		self.init_checks(doCheck)
 
 	def add_action(self, fn, args={}):
 		self.raw_actions.append({'fn': fn, 'args': json.dumps(args)})
