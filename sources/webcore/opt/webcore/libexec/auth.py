@@ -91,7 +91,7 @@ def check_auth(callback):
 			path = kawrgs['path']
 		except:
 			path = None
-
+		url = bottle.request.url
 		s = bottle.request.environ.get('beaker.session')
 		#testing attribut auth_on from the session
 		if s.get('auth_on',0) == True:
@@ -102,7 +102,7 @@ def check_auth(callback):
 		if already_auth or path == "canopsis/auth.html":
 			return callback(*args, **kawrgs)
 
-		return redirect('/static/canopsis/auth.html')
+		return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
 	return do_auth
 				
