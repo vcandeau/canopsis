@@ -608,6 +608,14 @@ install_python_daemon "$PREFIX/opt/sla2mongodb/sla2mongodb.py"
 make_package "sla2mongodb"
 
 ######################################
+#  amqp2brule
+######################################
+install_basic_source "amqp2brule"
+install_python_daemon "$PREFIX/opt/amqp2brule/amqp2brule.py"
+make_package "amqp2brule"
+
+
+######################################
 #  Event-brokers
 ######################################
 cd $SRC_PATH
