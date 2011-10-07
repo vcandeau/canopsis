@@ -9,6 +9,9 @@ from bottle import route, run, static_file, redirect
 
 from beaker.middleware import SessionMiddleware
 
+#import protection function
+from libexec.auth import check_auth
+
 from ctools import dynmodloads
 
 ## Read config file
@@ -41,29 +44,18 @@ session_opts = {
     'session.auto': True
 }
 app = SessionMiddleware(bottle.app(), session_opts)
-logger.debug(str(app))
 
-#test for beaker
-@bottle.route('/test')
-def test():
-	s = bottle.request.environ.get('beaker.session')
-	s['test'] = s.get('test',0) + 1
-	s.save()
-	return 'Test counter: %d' % s['test']
 
 ## Basic Handler
 @bottle.route('/static/:path#.+#')
 def server_static(path):
 	return static_file(path, root=root_directory)
 
-@bottle.route('/')
-@bottle.route('/index.html')
+@bottle.route('/',apply=[check_auth])
+@bottle.route('/index.html', apply=[check_auth])
 def index():
 	redirect("/static/canopsis/index.html")
 
-
-
-	
 
 
 
