@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time, os, sys, logging
+import time, os, sys, logging, json
 
 from ctools import dynmodloads
 
@@ -11,13 +11,16 @@ from cselector import cselector
 
 STATE = ['OK', 'WARNING', 'CRITICAL']
 
-ALL_CHECKS = dynmodloads("/home/wpain/Bureau/hypervision/sources/rulesd/opt/rulesd/checks", True, '^check_')
-ALL_ACTIONS = dynmodloads("/home/wpain/Bureau/hypervision/sources/rulesd/opt/rulesd/checks", True, '^action_')
-
-STORAGE = cstorage(caccount(user="root", group="root"), namespace='inventory', logging_level=logging.DEBUG)
+ALL_CHECKS = dynmodloads("/home/wpain/Bureau/hypervision/sources/amqp2brule/opt/amqp2brule/checks", True, '^check_')
+ALL_ACTIONS = dynmodloads("/home/wpain/Bureau/hypervision/sources/amqp2brule/opt/amqp2brule/checks", True, '^action_')
 
 class cbrule(object):
-	def __init__(self, name, selector=None, ids=None, logging_level=logging.DEBUG, amqp=None):
+	def __init__(self, name, selector=None, ids=None, logging_level=logging.DEBUG, amqp=None, storage=None):
+
+		if not storage:
+			self.storage = cstorage(caccount(user="root", group="root"), namespace='inventory', logging_level=logging.DEBUG)
+		else:
+			self.storage = storage
 
 		logging_level=logging.DEBUG
 		self.logger = logging.getLogger('cbrules.'+name)
@@ -37,7 +40,7 @@ class cbrule(object):
 		#]
 
 		try:
-			self.config = STORAGE.get('brule-'+name)
+			self.config = self.storage.get('brule-'+name)
 			ids = self.config.data['ids']
 			selector = self.config.data['selector']
 			self.hardonly = self.config.data['hardonly']
@@ -47,7 +50,7 @@ class cbrule(object):
 		except:
 			self.config = None
 
-
+		self.selector_id = None
 		if ids:
 			self.ids = ids
 		else:
@@ -68,12 +71,12 @@ class cbrule(object):
 			if self.selector_id:
 				ids = None
 
-			self.config = crecord(	data={'raw_checks': self.raw_checks, 'raw_actions': self.raw_actions, 'hardonly': self.hardonly, 'ids': ids, 'selector': self.selector_id},
-						name='brule-'+name,
+			self.config = crecord(	data={'_id': 'brule.'+self.storage.account.user+'.'+self.name,'raw_checks': self.raw_checks, 'raw_actions': self.raw_actions, 'hardonly': self.hardonly, 'ids': ids, 'selector': self.selector_id},
+						name=self.name,
 						type='brule',
 					)
 
-		STORAGE.put(self.config)
+		self.storage.put(self.config)
 
 	def init_checks(self, doCheck=True):
 		self.logger.debug("Init checks ...")
@@ -85,6 +88,7 @@ class cbrule(object):
 			try:
 				self.logger.debug(" + Add '%s'" % name)
 				check['fn'] = ALL_CHECKS[check['fn']]
+				check['args'] = json.loads(check['args'])
 				self.checks.append(check)
 				self.logger.debug("   + Success")
 			except Exception, err:
@@ -103,6 +107,7 @@ class cbrule(object):
 			try:
 				self.logger.debug(" + Add '%s'" % name)
 				action['fn'] = ALL_ACTIONS[action['fn']]
+				check['args'] = json.loads(action['args'])
 				self.actions.append(action)
 				self.logger.debug("   + Success")
 			except Exception, err:
@@ -121,7 +126,7 @@ class cbrule(object):
 		self.env = {}
 		for _id in self.ids:
 			try:
-				record = STORAGE.get(_id)
+				record = self.storage.get(_id)
 				self.env[_id] = record.dump()
 				self.logger.debug(" + Success for '%s'" % _id)
 			except:
@@ -129,11 +134,11 @@ class cbrule(object):
 				del(self.ids[self.ids.index(_id)])
 
 	def add_check(self, fn, args={}):
-		self.raw_checks.append({'fn': fn, 'args': args})
+		self.raw_checks.append({'fn': fn, 'args': json.dumps(args)})
 		self.init_checks()
 
 	def add_action(self, fn, args={}):
-		self.raw_actions.append({'fn': fn, 'args': args})
+		self.raw_actions.append({'fn': fn, 'args': json.dumps(args)})
 		self.init_actions()
 
 	def push_event(self, _id, event):
@@ -166,6 +171,7 @@ class cbrule(object):
 				check_state = check['fn'](self.logger, self.env, **check['args'])
 				self.logger.debug("   + %s" % STATE[check_state])
 			except Exception, err:
+				check_state = 0
 				self.logger.error("   + Exception in '%s' (%s)" % (check['fn'].__name__, err))
 
 			if check_state > state:
