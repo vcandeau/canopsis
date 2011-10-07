@@ -3,7 +3,7 @@
 import ConfigParser
 
 import bottle, logging, hashlib
-from bottle import route, get, request, post, HTTPError
+from bottle import route, get, request, post, HTTPError, redirect
 
 ## Canopsis
 from caccount import caccount
@@ -26,6 +26,8 @@ logging.basicConfig(level=logging_level,
 		format='%(asctime)s %(name)s %(levelname)s %(message)s',
 )
 logger = logging.getLogger("auth")
+
+session_accounts = [ 1 ]
 
 #########################################################################
 
@@ -63,6 +65,9 @@ def auth(login=None, password=None):
 			access = account.check_passwd(password)
 
 		if access:
+			#test for session
+			session_accounts.append(1)
+			##########
 			output = [ account.dump() ]
 			output = {'total': len(output), 'success': True, 'data': output}
 			return output
@@ -73,4 +78,28 @@ def auth(login=None, password=None):
 		
 	return HTTPError(403, "Forbidden")
 
+
+#decorator in order to protect request
+def check_auth(callback):
+	def do_auth(*args, **kawrgs):
+		try:
+			path = kawrgs['path']
+		except:
+			path = None
+
+		session = request.params.get('session', default=0)
+		
+		if int(session) == 1 or path == "canopsis/auth.html":
+			return callback(*args, **kawrgs)
+
+		return redirect('/static/canopsis/auth.html')
+
+	return do_auth
+				
+
+@get('/secure', apply=[check_auth])
+def secure():
+	return 'i\'m secured test2'
+	
+	
 
