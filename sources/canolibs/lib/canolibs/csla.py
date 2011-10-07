@@ -52,7 +52,7 @@ class csla(crecord):
 		## Init object
 		if not record:
 			if name:
-				self._id = "sla-"+storage.account.user+"-"+name
+				self._id = "sla."+storage.account.user+"."+name
 				self.name = name
 			elif _id:
 				self._id = _id		
