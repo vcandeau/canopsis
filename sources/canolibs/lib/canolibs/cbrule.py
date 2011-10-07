@@ -26,7 +26,7 @@ class cbrule(object):
 		self.fired_state = 0
 
 		if not storage:
-			self.storage = cstorage(caccount(user="root", group="root"), namespace='inventory', logging_level=logging.DEBUG)
+			self.storage = cstorage(caccount(user="root", group="root"), namespace='inventory', logging_level=logging.INFO)
 		else:
 			self.storage = storage
 

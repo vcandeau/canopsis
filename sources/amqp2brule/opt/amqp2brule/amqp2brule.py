@@ -37,6 +37,8 @@ bussiness_rules  = None
 DEFAULT_ACCOUNT = caccount(user="root", group="root")
 BRULE_RTIME = 300
 
+bussiness_rules_loaded = {}
+
 ########################################################
 #
 #   Callback
@@ -49,14 +51,8 @@ def on_message(msg):
  	event = json.loads(msg.content.body)
 
 	#logger.debug("Push event for "+_id)
-	for bussiness_rule in bussiness_rules:
-		bussiness_rule.push_event(_id, event)
-
-	# Create record
-	#record = crecord(event)
-	#record.type = "event"
-	#record.chmod("o+r")
-	#record._id = rk
+	for key in bussiness_rules.keys():
+		bussiness_rules[key].push_event(_id, event)
 
 
 ########################################################
@@ -78,14 +74,24 @@ def signal_handler(signum, frame):
 def init_bussiness_rules():
 	global bussiness_rules
 
-	logger.debug("Load bussiness rules ...")
-	tmp = []
+	logger.debug("Load all bussiness rules ...")
+	tmp = {}
 	
 	records = storage.find({'crecord_type': 'brule'}, namespace='object')
 
 	for record in records:
-		brule = cbrule(record)
-		tmp.append(brule)
+		try:
+			if bussiness_rules_loaded[record._id] != record.write_time:
+				logger.debug(" + Reload '%s'" % record._id)
+				tmp[record._id] = cbrule(record, storage=storage)
+				bussiness_rules_loaded[record._id] = record.write_time
+			else:
+				tmp[record._id] = bussiness_rules[record._id]
+				
+		except:
+			bussiness_rules_loaded[record._id] = record.write_time
+			tmp[record._id] = cbrule(record, storage=storage)
+			
 
 	bussiness_rules = tmp
 
