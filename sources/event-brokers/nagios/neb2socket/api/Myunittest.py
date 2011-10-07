@@ -3,7 +3,7 @@
 import unittest
 import threading, time, json
 import socket
-import os, os.path
+import os, os.path, sys
 
 sys.path.append(os.path.expanduser("~/opt/event-brokers/nagios/api"))
 from neb2socket import *
