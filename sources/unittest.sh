@@ -13,6 +13,7 @@ export HOME=$PREFIX
 alias python=$PREFIX/bin/python
 export PYTHONPATH=$PREFIX/lib/hyp-libs/
 
+$SUDO su - $HUSER -c 'hypcontrol stop &> /dev/null'
 $SUDO su - $HUSER -c 'hypcontrol start'
 
 UNITTESTS=`find ./ | grep Myunittest.py`
