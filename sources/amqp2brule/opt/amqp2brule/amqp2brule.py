@@ -83,14 +83,15 @@ def init_bussiness_rules():
 		try:
 			if bussiness_rules_loaded[record._id] != record.write_time:
 				logger.debug(" + Reload '%s'" % record._id)
-				tmp[record._id] = cbrule(record, storage=storage)
+				tmp[record._id] = cbrule(record.name, storage=storage)
 				bussiness_rules_loaded[record._id] = record.write_time
 			else:
 				tmp[record._id] = bussiness_rules[record._id]
 				
 		except:
+			logger.debug(" + Load '%s'" % record._id)
 			bussiness_rules_loaded[record._id] = record.write_time
-			tmp[record._id] = cbrule(record, storage=storage)
+			tmp[record._id] = cbrule(record.name, storage=storage)
 			
 
 	bussiness_rules = tmp
@@ -110,7 +111,7 @@ def main():
 	signal.signal(signal.SIGTERM, signal_handler)
 	global amqp, storage, bussiness_rules 
 
-	storage = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
+	storage = cstorage(DEFAULT_ACCOUNT, namespace='object', logging_level=logging.INFO)
 
 	# Rules Engine
 	bruleTask = task.LoopingCall(init_bussiness_rules)
