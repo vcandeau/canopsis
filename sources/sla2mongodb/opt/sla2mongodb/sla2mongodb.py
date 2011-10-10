@@ -92,7 +92,7 @@ def calcul_all_sla():
 		sla.get_sla()
 		
 		# Publish sla event
-		event = sla.dump_event()
+		event = sla.make_event()
 		msg = Content(json.dumps(event))
 		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
 

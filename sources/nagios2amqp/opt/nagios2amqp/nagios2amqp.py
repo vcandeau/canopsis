@@ -66,7 +66,7 @@ class thread_listen_queue(threading.Thread):
 			try:
 				event = to_amqp_queue.get(True, timeout=1)
 				#logger.debug("Send event to AMQP ...")
-				key = DAEMON_TYPE+".nagios."+event["source_name"]+"."+event["type"]+"."+event["source_type"]
+				key = "nagios."+event["source_name"]+"."+event["type"]+"."+event["source_type"]
 				
 				if event["type"] == "check":
 					key = key +"."+ event["host_name"]

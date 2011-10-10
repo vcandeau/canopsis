@@ -119,7 +119,7 @@ def main():
 	# AMQP
 	amqp = camqp(logging_level=logging.INFO)
 
-	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_events)
+	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 
 	bruleTask.start(BRULE_RTIME)
