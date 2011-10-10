@@ -35,7 +35,10 @@ class cselector(crecord):
 
 		self.timer = ctimer(logging_level=logging.INFO)
 		self.cache_time = 60 # 1 minute
-		self.data['mfilter'] = {}
+		self.nocache = False
+
+		self.data['mfilter'] = None
+		self.data['mids'] = []
 		self.data['last_resolv_time'] = 0
 		self.data['last_nb_records'] = 0
 		self.data['threshold_warn'] = 98
@@ -45,13 +48,15 @@ class cselector(crecord):
 		self._ids = []
 		self.records = []
 
-		self.mfilter = {}
+		self.mfilter = None
+		self.mids = []
 
 		if namespace:
 			self.namespace = namespace
 		else:
 			self.namespace = storage.namespace
 
+		
 		if _id:
 			self._id = _id
 		else:
@@ -59,17 +64,23 @@ class cselector(crecord):
 				raise Exception('You must specify name or _id !')
 			self._id = self.type+"."+self.storage.account.user+"."+name	
 			self.name = name
-		try:
-			record = self.storage.get(self._id, namespace=namespace)
-			self.load(record.dump())
-		except:
-			pass
 
 		## Init logger
 		self.logger = logging.getLogger(self._id)
 		self.logger.setLevel(logging_level)
 
+		try:	
+			record = self.storage.get(self._id)
+			try:
+				self.load(record.dump())
+			except Exception, err:
+				self.logger.error("   + Exception: %s" % err)
+
+		except:
+			pass
+
 	def dump(self):
+		self.data['mids'] = self.mids
 		self.data['namespace'] = self.namespace
 		self.data['mfilter'] = json.dumps(self.mfilter)
 		return crecord.dump(self)
@@ -78,39 +89,48 @@ class cselector(crecord):
 		crecord.load(self, dump)
 		self.mfilter = json.loads(self.data['mfilter'])
 		self.namespace = self.data['namespace']
+		self.mids = self.data['mids']
 
-	def resolv(self):
-		# check cache freshness
-		if (self.data['last_resolv_time'] + self.cache_time) > time.time():
-			return self.records
+	def resolv(self, nocache=False):
 
-		self.timer.start()	
-		## get from cache	
-		#_ids = self.cache.get(self._id, 10)
-		#if _ids or _ids == []:
-		#	return _ids
+		if not (nocache or self.nocache):
+			# check cache freshness
+			if (self.data['last_resolv_time'] + self.cache_time) > time.time():
+				return self.records
 
-		# resolv filter ...
-		self._ids = []
+		_ids = []
 
-		records = self.storage.find(self.mfilter, namespace=self.namespace)
+		records = []
+		
+		if self.mfilter or self.mfilter == {}:	
+			records = self.storage.find(self.mfilter, namespace=self.namespace)
+
+		if self.mids:
+			for mid in self.mids:
+				try:
+					records.append(self.storage.get(mid, namespace=self.namespace))
+				except:
+					self.logger.error("'%s' not found in '%s' ..." % (mid, self.namespace))
+
 		state = 0
 		for record in records:
 			try:
+				#print "%s: %s" % (record._id, record.data['state'])
 				if record.data['state'] > state:
 					state = record.data['state']
 			except:
 				pass
-			self._ids.append(record._id)
+			_ids.append(record._id)
 
 		self.state = state
 
 		# Put in cache
 		#self.cache.put(self._id, _ids)
-		self.timer.stop()
-		self.data['last_resolv_time'] = self.timer.elapsed
+
+		#self.data['last_resolv_time'] = self.timer.elapsed
 		self.data['last_nb_records'] = len(records)
 
+		self._ids = _ids
 		self.records = records
 
 		self.save()
