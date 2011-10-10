@@ -24,6 +24,12 @@ class caccount(crecord):
 
 		self.type = "account"
 
+		if not self.user:
+			self.user="anonymous"
+
+		if not self.group:
+			self.group ="anonymous"
+
 		if self.user:
 			self._id = self.type+"."+self.user	
 
@@ -34,11 +40,6 @@ class caccount(crecord):
 
 		self.groups = groups
 
-		if not self.user:
-			self.user="anonymous"
-
-		if not self.group:
-			self.group ="anonymous"
 
 	def passwd(self, passwd):
 		self.shadowpasswd = hashlib.sha1(repr(passwd)).hexdigest()
@@ -64,7 +65,7 @@ class caccount(crecord):
 
 	def load(self, dump):
 		crecord.load(self, dump)
-
+		self.user = self.data['user']
 		self.lastname = self.data['lastname']
 		self.firstname = self.data['firstname']
 		self.mail = self.data['mail']
