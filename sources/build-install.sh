@@ -513,8 +513,8 @@ if [ ! -e $FCHECK ]; then
 	check_code $?
 
 	echo " + Post install configurations ..."
-	$SUDO mkdir -p $PREFIX/var/log/mongodb
-	$SUDO mkdir -p $PREFIX/var/lib/mongodb
+	#$SUDO mkdir -p $PREFIX/var/log/mongodb
+	#$SUDO mkdir -p $PREFIX/var/lib/mongodb
 
 	install_init "mongodb"
 	install_conf "mongodb.conf"
