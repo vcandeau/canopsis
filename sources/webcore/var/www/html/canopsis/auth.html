@@ -87,7 +87,6 @@
 		var nav = Ext.create('Ext.util.KeyNav', Ext.getDoc(), {
 			scope: 'my_form',
 			enter: function(){
-				alert("test");
 					if (winform.getForm().isValid()) { // make sure the form contains valid data before submitting
 						winform.getForm().submit({
 							method: 'GET',
