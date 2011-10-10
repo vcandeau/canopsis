@@ -6,6 +6,7 @@ from cselector import cselector
 
 from ctools import calcul_pct
 from ctools import legend
+from ctools import make_event
 
 from datetime import datetime
 
@@ -345,24 +346,16 @@ class csla(crecord):
 
 		return (sla, sla_pct)
 
-	def dump_event(self):
-		dump = {}
-
-		dump['source_name'] = 'Worker'
-		dump['source_type'] = self.type
-		dump['service_description'] =  self._id
-		dump['host_name'] = self.type
-		dump['rk'] = 'eventsource.canopsis.' + dump['source_name'] + '.check.'+ dump['source_type'] + "." + dump['service_description']
-		dump['state_type'] = 1
-		dump['state'] = self.data['state']
-		dump['output'] = ''
-		dump['timestamp'] = int(time.time())
+	def make_event(self):
+	
 		#'label'=value[UOM];[warn];[crit];[min];[max]
 		ok = "'ok'=%s%%;%s;%s;0;100" % (self.data['sla_pct']['ok'], self.data['threshold_warn'], self.data['threshold_crit'])
 		warn = "'warn'=%s%%;0;0;0;100" % (self.data['sla_pct']['warning'])
 		crit = "'crit'=%s%%;0;0;0;100" % (self.data['sla_pct']['critical'])
 		unkn = "'unkn'=%s%%;0;0;0;100" % (self.data['sla_pct']['unknown'])
 
-		dump['perf_data'] = ok + " " + warn + " " + crit + " " + unkn
+		perf_data = ok + " " + warn + " " + crit + " " + unkn
+
+		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.data['state'], output='', perf_data=perf_data)
 
 		return dump
