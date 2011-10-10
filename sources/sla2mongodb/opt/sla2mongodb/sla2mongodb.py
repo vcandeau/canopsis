@@ -69,7 +69,7 @@ def calcul_all_availability():
 		sel.get_current_availability()
 
 		# Publish selector event
-		event = sel.dump_event()
+		event = sel.make_event()
 		msg = Content(json.dumps(event))
 		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
 
