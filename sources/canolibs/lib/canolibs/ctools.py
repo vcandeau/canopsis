@@ -116,7 +116,7 @@ def make_event(service_description, source_name='internal', source_type='service
 	dump['source_type'] = source_type
 	dump['service_description'] =  service_description
 	dump['host_name'] = host_name
-	dump['rk'] = 'eventsource.canopsis.' + dump['source_name'] + '.check.'+ dump['source_type'] + "." + dump['host_name'] + "." + dump['service_description']
+	dump['rk'] = 'canopsis.' + dump['source_name'] + '.check.'+ dump['source_type'] + "." + dump['host_name'] + "." + dump['service_description']
 	dump['state_type'] = state_type
 	dump['state'] = state
 	dump['output'] = output

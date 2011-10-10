@@ -113,7 +113,7 @@ def main():
 	# AMQP
 	amqp = camqp()
 
-	amqp.add_queue(DAEMON_NAME, ['eventsource.#.check.#'], on_message, amqp.exchange_name_liveevents)
+	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_liveevents)
 	amqp.start()
 	
 	while RUN:
