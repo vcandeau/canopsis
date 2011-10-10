@@ -21,12 +21,13 @@ class KnownValues(unittest.TestCase):
 	def test_01_Init(self):
 		global SELECTOR 
 		SELECTOR = cselector(name="myselector", storage=STORAGE)
+		SELECTOR.nocache = True
 
 	def test_02_PutData(self):
 		global ID
 		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0})
-		record2 = crecord({'check': 'test2', 'state': 0})
-		record3 = crecord({'check': 'test3', 'state': 0})
+		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 0})
+		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 0})
 
 		STORAGE.put([record1, record2, record3])
 		ID = record2._id
@@ -35,6 +36,12 @@ class KnownValues(unittest.TestCase):
 		SELECTOR.mfilter = {'$or': [ {'check': 'test1'},  {'check': 'test2'}] }
 		records = SELECTOR.resolv()
 		if len(records) != 2:
+			raise Exception('Error in selector resolving ...')
+
+
+		SELECTOR.mids = ['check3']
+		records = SELECTOR.resolv()
+		if len(records) != 3:
 			raise Exception('Error in selector resolving ...')
 
 	def test_04_Cat(self):
@@ -52,7 +59,9 @@ class KnownValues(unittest.TestCase):
 
 	def test_06_state(self):
 		SELECTOR.mfilter = {}
+		SELECTOR.mids = []
 		SELECTOR.resolv()
+
 		if SELECTOR.state != 0:
 			raise Exception('Invalid ok state (%s) ...' % SELECTOR.state)
 
