@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-import re, logging
+import re, logging, socket, time
 
 legend = ['ok','warning','critical','unknown']
 
 
-logging_level=logging.DEBUG
+logging_level=logging.INFO
 
 logger = logging.getLogger('ctools')
 logger.setLevel(logging_level)
@@ -74,33 +74,53 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 	logger.debug("Append path '%s' ..." % path)
 	sys.path.append(path)
 
-	for mfile in os.listdir(path):
-		try:
-			ext = mfile.split(".")[1]
-			name = mfile.split(".")[0]
+	try:
+		for mfile in os.listdir(path):
+			try:
+				ext = mfile.split(".")[1]
+				name = mfile.split(".")[0]
 
-			if name != "." and ext == "py":
-				logger.info("Load '%s' ..." % name)
-				try:
+				if name != "." and ext == "py":
+					logger.info("Load '%s' ..." % name)
+					try:
 
-					module = __import__(name)
-					loaded[name] = module
+						module = __import__(name)
+						loaded[name] = module
 	
-					if subdef:
-						alldefs = dir(module)
-						for mydef in alldefs:
-							if mydef not in ["__builtins__", "__doc__", "__file__", "__name__", "__package__"]:
-								if re.search(pattern, mydef):
-									logger.debug(" + From %s import %s ..." % (name, mydef))
-									#exec "from %s import %s" % (name, mydef)
-									exec "loaded[mydef] = module.%s" % mydef
+						if subdef:
+							alldefs = dir(module)
+							for mydef in alldefs:
+								if mydef not in ["__builtins__", "__doc__", "__file__", "__name__", "__package__"]:
+									if re.search(pattern, mydef):
+										logger.debug(" + From %s import %s ..." % (name, mydef))
+										#exec "from %s import %s" % (name, mydef)
+										exec "loaded[mydef] = module.%s" % mydef
 						
-					 
-					logger.debug(" + Success")
-				except Exception, err:
-					logger.error("\t%s" % err)
-		except:
-			pass
+						 
+						logger.debug(" + Success")
+					except Exception, err:
+						logger.error("\t%s" % err)
+			except:
+				pass
+	except:
+		pass
 
 	return loaded
+
+def make_event(service_description, source_name='internal', source_type='service', host_name=None, state_type=1, state=0, output='', perf_data=''):
+	if not host_name:
+		host_name = socket.gethostname()
+
+	dump = {}
+	dump['source_name'] = source_name
+	dump['source_type'] = source_type
+	dump['service_description'] =  service_description
+	dump['host_name'] = host_name
+	dump['rk'] = 'eventsource.canopsis.' + dump['source_name'] + '.check.'+ dump['source_type'] + "." + dump['host_name'] + "." + dump['service_description']
+	dump['state_type'] = state_type
+	dump['state'] = state
+	dump['output'] = output
+	dump['timestamp'] = int(time.time())
+	dump['perf_data'] = perf_data
+	return dump
 
