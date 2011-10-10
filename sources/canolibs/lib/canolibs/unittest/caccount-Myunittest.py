@@ -50,13 +50,23 @@ class KnownValues(unittest.TestCase):
 		ACCOUNT.chgrp('toto')
 		STORAGE.put(ACCOUNT)
 
-	def test_07_CheckEdit(self):
+	def test_07_CheckGet(self):
+		record = STORAGE.get("account.wpain")
+		record.cat()
+		account = caccount(record)
+		account.cat()
+
+		if account.user != 'wpain':
+			raise Exception('Corruption in load ...')
+		
+
+	def test_08_CheckEdit(self):
 		account = caccount_get(STORAGE, "wpain")
 
 		if account.group != 'toto':
 			raise Exception('Impossible to edit account in DB ...')
 
-	def test_08_Remove(self):
+	def test_09_Remove(self):
 		## Anonymous cant remove account
 		self.assertRaises(ValueError, STORAGE.remove, ACCOUNT, caccount())
 
