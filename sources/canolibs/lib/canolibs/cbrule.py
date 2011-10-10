@@ -3,11 +3,14 @@
 import time, os, sys, logging, json
 
 from ctools import dynmodloads
+from ctools import make_event
 
 from cstorage import cstorage
 from crecord import crecord
 from caccount import caccount
 from cselector import cselector
+
+from txamqp.content import Content
 
 STATE = ['OK', 'WARNING', 'CRITICAL']
 
@@ -15,7 +18,7 @@ ALL_CHECKS = None
 ALL_ACTIONS = None
 
 class cbrule(cselector):
-	def __init__(self, name=None, _id=None, storage=None, namespace='inventory', record=None, autoinit=True, mids=None, mfilter=None, logging_level=logging.DEBUG):
+	def __init__(self, name=None, _id=None, storage=None, namespace='inventory', record=None, autoinit=True, mids=None, mfilter=None, amqp=None, logging_level=logging.DEBUG):
 
 		if not storage:
 			self.storage = cstorage(caccount(user="root", group="root"), namespace='object', logging_level=logging.INFO)
@@ -29,7 +32,7 @@ class cbrule(cselector):
 		self.raw_checks = []
 		self.raw_actions = []
 		self.fired_state = 0
-		#self.amqp = amqp
+		self.amqp = amqp
 
 		self._id = 'brule.'+self.storage.account.user+'.'+name
 
@@ -59,6 +62,7 @@ class cbrule(cselector):
 		self.data['hardonly'] = self.hardonly
 		self.data['raw_checks'] = self.raw_checks
 		self.data['raw_actions'] = self.raw_actions
+		self.data['fired_state'] = self.fired_state
 		return cselector.dump(self)
 
 	def load(self, dump):
@@ -66,6 +70,7 @@ class cbrule(cselector):
 		self.hardonly = self.data['hardonly']
 		self.raw_checks = self.data['raw_checks']
 		self.raw_actions = self.data['raw_actions']
+		self.fired_state = self.data['fired_state']
 
 	def init_checks(self, doCheck=True):
 		self.logger.debug("Init checks ...")
@@ -174,10 +179,19 @@ class cbrule(cselector):
 
 	def fire(self, state):
 		self.logger.debug("fire %s !!!" % STATE[state])
+		message = "Rule '%s' fire with state %s ..." % (self.name, STATE[state])
 		for action in self.actions:
 			try:
 				self.logger.debug(" + '%s' ..." % action['fn'].__name__)
-				action['fn'](self.logger, state, **check['args'])
+				action['fn'](self.logger, self.env, state, **check['args'])
 			except Exception, err:
 				self.logger.error("   + Exception in '%s' (%s)" % (check['fn'].__name__, err))
+
+
+		if self.amqp:
+			event = make_event(service_description=self.name, source_name='amqp2brule', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=state, output=message)
+			msg = Content(json.dumps(event))
+			self.logger.debug(" + Publish with RK '%s' ..." % event['rk'])
+			self.amqp.publish(msg, event['rk'], self.amqp.exchange_name_liveevents)
+			self.save()
 
