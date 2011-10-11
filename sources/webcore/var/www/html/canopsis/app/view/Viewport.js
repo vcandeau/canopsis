@@ -32,9 +32,17 @@ Ext.define('canopsis.view.Viewport', {
 			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
 				text: 'Disconnect',
 				handler: function () {
-					window.location.href='/disconnect';
-				},
-			}) },
+					Ext.Ajax.request({
+					url: '/logout',
+					scope: this,
+					success: function(response){
+						window.location.href='/';
+					},
+					failure: function ( result, request) {
+						log.error("Logout impossible, maybe you're already logout")
+					}
+				})
+			}}) },
 			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
 				text: 'Show log console',
 				handler: function () {
