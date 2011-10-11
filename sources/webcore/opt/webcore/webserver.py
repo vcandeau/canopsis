@@ -41,7 +41,9 @@ session_opts = {
     'session.type': 'file',
     'session.cookie_expires': 300,
     'session.data_dir': '/opt/canopsis/tmp/webcore_cache',
-    'session.auto': True
+    'session.auto': True,
+    'session.timeout': 300,
+    'session.secret': 'canopsis'
 }
 app = SessionMiddleware(bottle.app(), session_opts)
 
