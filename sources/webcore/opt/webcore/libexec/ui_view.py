@@ -9,12 +9,8 @@ from bottle import route, get, put, delete, request, HTTPError
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
+from cstorage import get_storage
 from crecord import crecord
-
-## Initialisation
-
-account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.INFO)
 
 debug = True
 
@@ -33,7 +29,6 @@ logger = logging.getLogger("ui-view")
 #### GET
 @get('/ui/view')
 def get_all_menu():
-	
 	return
 
 

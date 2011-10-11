@@ -366,7 +366,7 @@ class cstorage(object):
 			self.print_record_tree(child, depth)
 
 
-	def get_childs_of_parent(self, record_or_id, rtype=None):
+	def get_childs_of_parent(self, record_or_id, rtype=None, account=None):
 
 		if isinstance(record_or_id, crecord):
 			_id = record_or_id._id
@@ -378,9 +378,9 @@ class cstorage(object):
 		if rtype:
 			mfilter['crecord_type'] = rtype
 		
-		return self.find(mfilter)		
+		return self.find(mfilter, account=account)		
 
-	def get_parents_of_child(self, record_or_id, rtype=None):
+	def get_parents_of_child(self, record_or_id, rtype=None, account=None):
 
 		if isinstance(record_or_id, crecord):
 			_id = record_or_id._id
@@ -392,12 +392,12 @@ class cstorage(object):
 		if rtype:
 			mfilter['crecord_type'] = rtype
 
-		return self.find(mfilter)
+		return self.find(mfilter, account=account)
 
 
 
 	def __del__(self):
-		self.logger.debug("Object deleted.")
+		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
 
 
 
@@ -408,4 +408,16 @@ class cstorage(object):
 #            return_one = True
 #            docs = [docs]	
 ##################
+
+## Cache storage
+STORAGES = {}
+def get_storage(namespace='object', account=None, logging_level=logging.INFO):
+	try:
+		return STORAGES[namespace]
+	except:
+		if not account:
+			account = caccount()
+		
+		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
+		return STORAGES[namespace]
 

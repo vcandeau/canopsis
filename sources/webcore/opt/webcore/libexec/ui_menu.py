@@ -7,17 +7,8 @@ import bottle
 from bottle import route, get, put, delete, request, HTTPError
 
 ## Canopsis
-from caccount import caccount
-from cstorage import cstorage
-from crecord import crecord
-
-#import protection function
-from libexec.auth import check_auth
-
-## Initialisation
-
-account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.INFO)
+from cstorage import get_storage
+from libexec.auth import check_auth, get_account
 
 debug = True
 
@@ -41,10 +32,13 @@ def get_all_menu():
 	if _id == 'root':
 		_id = []
 
+	account = get_account()
+	storage = get_storage(namespace='object')
+
 	logger.debug("Get menu:")
 	logger.debug(" + Node: "+str(_id))
 
-	records = storage.get_childs_of_parent(_id, rtype='menu')
+	records = storage.get_childs_of_parent(_id, rtype='menu', account=account)
 
 	output = []
 	for record in records:
