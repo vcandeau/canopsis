@@ -54,7 +54,8 @@ class cstorage(object):
 			] }
 
 			if account.user != "anonymous":
-				Read_mfilter['$or'].append({'aaa_access_other': 'w'})
+				Read_mfilter['$or'].append({'aaa_access_other': 'r'})
+				Write_mfilter['$or'].append({'aaa_access_other': 'w'})
 
 		return (Read_mfilter, Write_mfilter)
 
@@ -172,6 +173,8 @@ class cstorage(object):
 		self.logger.debug("Find '%s' records ..." % mfilter)
 
 		mfilter = dict(mfilter.items() + Read_mfilter.items())
+
+		self.logger.debug(" + %s" % mfilter)
 
 		backend = self.get_backend(namespace)
 
