@@ -2,7 +2,7 @@
 
 import ConfigParser
 
-import bottle, logging, hashlib
+import bottle, logging, hashlib, json
 from bottle import route, get, request, post, HTTPError, redirect
 
 from beaker.middleware import SessionMiddleware
@@ -15,9 +15,9 @@ from crecord import crecord
 ## Initialisation
 
 account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.INFO)
+storage = cstorage(account, namespace="object", logging_level=logging.DEBUG)
 
-debug = False
+debug = True
 
 ## Logger
 if debug:
@@ -29,7 +29,8 @@ logging.basicConfig(level=logging_level,
 )
 logger = logging.getLogger("auth")
 
-session_accounts = [ 1 ]
+#session variable
+session_accounts = {}
 
 #########################################################################
 
@@ -67,7 +68,11 @@ def auth(login=None, password=None):
 			access = account.check_passwd(password)
 
 		if access:
-			put_session(_id)
+			s = bottle.request.environ.get('beaker.session')
+			s['account'] = _id
+			s['auth_on'] = True
+			s.save()
+
 			output = [ account.dump() ]
 			output = {'total': len(output), 'success': True, 'data': output}
 			return output
@@ -78,11 +83,13 @@ def auth(login=None, password=None):
 		
 	return HTTPError(403, "Forbidden")
 
+#Access for disconnect and clean session
 @get('/disconnect')
 def disconnect():
 	s = bottle.request.environ.get('beaker.session')
 	s.delete()
 	return 'your are now disconnected'
+
 
 #decorator in order to protect request
 def check_auth(callback):
@@ -91,15 +98,12 @@ def check_auth(callback):
 			path = kawrgs['path']
 		except:
 			path = None
+	
 		url = bottle.request.url
+		#get beaker session and test it right after
 		s = bottle.request.environ.get('beaker.session')
-		#testing attribut auth_on from the session
-		if s.get('auth_on',0) == True:
-			already_auth = True
-		else:
-			already_auth = False
-
-		if already_auth or path == "canopsis/auth.html":
+		#add caccount to parameters
+		if s.get('auth_on',False) or path == "canopsis/auth.html":
 			return callback(*args, **kawrgs)
 
 		return redirect('/static/canopsis/auth.html' + '?url=' + url)
@@ -109,11 +113,43 @@ def check_auth(callback):
 
 @get('/secure', apply=[check_auth])
 def secure():
-	return 'i\'m secured test2 , you can <a href="/disconnect">disconnect</a>'
+	account = get_account()
+	return "i'm secured test2 (%s) , you can <a href='/disconnect'>disconnect</a>" % account.user
 
-def put_session(id):
-	s = bottle.request.environ.get('beaker.session')
-	s['_id'] = id
-	s['auth_on'] = True
-	s.save()
-	
+
+#debug in order to see who is online
+@get('/online', apply=[check_auth])
+def online():
+	output = ""
+	for i in session_accounts:
+		output += "session name : " + i + "</br>"
+	return output
+
+#find the account in memory, or try to find it from database, if not in db log anon
+def get_account(_id=None):
+	logger.debug("Get Account:")
+	if not _id:
+		s = bottle.request.environ.get('beaker.session')
+		_id = s.get('account',0)
+		logger.debug(" + Get _id from Beaker Session (%s)" % _id)
+
+	logger.debug(" + Try to load account '%s' ..." % _id)
+
+	try:
+		account = session_accounts[_id]
+		logger.debug(" + Load account from memory.")
+	except:
+		if _id:
+			record = storage.get(_id)
+			logger.debug(" + Load account from DB.")
+			account = caccount(record)
+			session_accounts[_id] = account
+		else:
+			logger.debug(" + Impossible to load account, return Anonymous account.")
+			try:
+				return session_accounts['anonymous']
+			except:
+				session_accounts['anonymous'] = caccount()
+				return session_accounts['anonymous']
+
+	return account
