@@ -40,6 +40,19 @@ class KnownValues(unittest.TestCase):
 		CACHE.put('mycache3', {'data': 'titit'})
 		CACHE.remove('mycache3')
 
+	def test_05_Decorator(self):
+	
+		@CACHE.deco('toto', 5, ['i'])
+		def test(i):
+			return int(time.time())
+
+		t1 = test(i=1)
+		time.sleep(2)
+		t2 = test(i=1)
+		
+		if t1 != t2:
+			raise Exception('Error in decorator ...')
+
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 		pass
