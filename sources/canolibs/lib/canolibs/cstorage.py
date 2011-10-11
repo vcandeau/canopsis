@@ -109,8 +109,13 @@ class cstorage(object):
 				if account.user == 'root':
 					access = True
 				else:
-					oldrecord = self.get(_id)
-					access = oldrecord.check_write(account)
+					try:
+						oldrecord = self.get(_id)
+						access = oldrecord.check_write(account)
+					except:
+						## New record
+						## Todo: check if account have right to create record ...
+						access = True
 
 				if access:
 					try:
@@ -415,6 +420,7 @@ class cstorage(object):
 ## Cache storage
 STORAGES = {}
 def get_storage(namespace='object', account=None, logging_level=logging.INFO):
+	global STORAGES
 	try:
 		return STORAGES[namespace]
 	except:
