@@ -30,6 +30,12 @@ Ext.define('canopsis.view.Viewport', {
 			{ html: '' },
 			{ html: '' },
 			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
+				text: 'Disconnect',
+				handler: function () {
+					window.location.href='/disconnect';
+				},
+			}) },
+			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
 				text: 'Show log console',
 				handler: function () {
 					log.show_console()
