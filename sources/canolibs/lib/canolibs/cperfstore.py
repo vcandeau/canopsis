@@ -7,6 +7,7 @@ import pickle
 
 from ctools import parse_perfdata
 from crecord import crecord
+from ccache import get_cache
 
 import logging, time
 import zlib, json, sys, base64
@@ -14,6 +15,7 @@ import zlib, json, sys, base64
 STEP_MIN = 59
 CONFIG_CACHE_TIME=300
 TS_TOLERANCE = 3
+CACHE = get_cache()
 
 # db.perfdata.dataSize()
 # db.perfdata.totalSize()
@@ -133,7 +135,7 @@ class cperfstore(object):
 		for row in rows:
 			if row['format'] == 'gz':
 				self.logger.debug(" + Decompress values ...")
-				values = self.decompress_values(row['_id'])
+				values = self.decompress_values(str(row['_id']))
 			else:
 				values = row['values']
 
@@ -208,14 +210,19 @@ class cperfstore(object):
 			# Apply offset
 			i = 0
 			for value in values:
-				ts = value[0] - offset
-				if ts < TS_TOLERANCE and ts > -TS_TOLERANCE:
-					ts = 0
+				## For first TS
+				if i:
+					ts = value[0] - offset
+					#if ts < TS_TOLERANCE and ts > -TS_TOLERANCE:
+					#	ts = 0
 
-				if ts == 0:
-					values[i] = values[i][1]
+					if ts == 0:
+						values[i] = values[i][1]
+					else:
+						values[i][0] = ts
 				else:
-					values[i][0] = ts
+					values[i] = values[i][1]
+
 				i += 1
 		
 
@@ -236,12 +243,12 @@ class cperfstore(object):
 		self.logger.debug("     + Ratio:\t\t"+str(ratio)+"%")
 		return (values, ratio)
 
+	@CACHE.deco('perfstore', 300)
 	def decompress_values(self, _id):
 		values = self.grid.get(_id).read()
 		values = zlib.decompress(values)
 		values = json.loads(values)
 
-		
 		fts = values[0][0]
 		offset = values[0][1]
 		values = values[1]
