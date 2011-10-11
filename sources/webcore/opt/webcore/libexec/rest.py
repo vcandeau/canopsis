@@ -12,7 +12,7 @@ from cstorage import cstorage
 from crecord import crecord
 
 #import protection function
-from libexec.auth import check_auth
+from libexec.auth import check_auth,get_account
 
 ## Initialisation
 
@@ -38,7 +38,10 @@ logger = logging.getLogger("rest")
 @get('/rest/:namespace/:ctype',apply=[check_auth])
 @get('/rest/:namespace',apply=[check_auth])
 def rest_get(namespace, ctype=None, _id=None):
-
+	
+	#get the session (security)
+	account = get_account()
+	
 	limit = int(request.params.get('limit', default=20))
 	page =  int(request.params.get('page', default=0))
 	start =  int(request.params.get('start', default=0))
@@ -60,12 +63,12 @@ def rest_get(namespace, ctype=None, _id=None):
 		mfilter = {'crecord_type': ctype}
 	if _id:	
 		try:
-			records = [ storage.get(_id, namespace=namespace) ]
+			records = [ storage.get(_id, namespace=namespace, account=account) ]
 		except:
 			return HTTPError(404, _id+" Not Found")
 		
 	else:
-		records = storage.find(mfilter, namespace=namespace, limit=limit, offset=start)
+		records = storage.find(mfilter, namespace=namespace, limit=limit, offset=start, account=account)
 
 	output = []
 	for record in records:
@@ -83,6 +86,9 @@ def rest_get(namespace, ctype=None, _id=None):
 #### PUT
 @put('/rest/:namespace/:ctype',apply=[check_auth])
 def rest_put(namespace, ctype):
+	#get the session (security)
+	account = get_account()
+	
 	logger.debug("PUT:")
 
 	data = request.body.readline()
