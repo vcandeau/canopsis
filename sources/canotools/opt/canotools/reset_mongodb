@@ -13,16 +13,18 @@ import time
 namespaces = ['cache', 'inventory', 'history', 'sla', 'object']
 
 ## Create root account
-account = caccount(user="root", group="root")
-account.passwd("root")
+account1 = caccount(user="root", group="root")
+account1.passwd("root")
+account2 = caccount(user="canopsis", group="canopsis")
+account2.passwd("canopsis")
 
 ## Create storage
-storage = cstorage(account, namespace='object', logging_level=logging.DEBUG)
+storage = cstorage(account1, namespace='object', logging_level=logging.DEBUG)
 for namespace in namespaces:
 	storage.drop_namespace(namespace)
 
 ## Save account
-storage.put(account)
+storage.put([account1, account2])
 
 ## Save Selectors
 selector = cselector(name="all-hosts", storage=storage, namespace="inventory")
@@ -38,15 +40,22 @@ selector.mfilter = {'source_type': 'service', 'service_description': 'HTTP'}
 selector.save()
 
 ## Save SLA
-sla = csla(name="all-http-services", storage=storage, selector=selector)
+#sla = csla(name="all-http-services", storage=storage, selector=selector)
+sla = csla(name="all-http-services", storage=storage)
+sla.mfilter = {'source_type': 'service', 'service_description': 'HTTP'}
 sla.set_threshold(98,95)
 sla.set_cycle(int(time.time())+120, 360, True)
 sla.save()
 
 ## Menu
 record1 = crecord({'expanded': True, 'leaf': False }, type='menu', name='View')
+record1.chmod('o+r')
+
 record2 = crecord({'leaf': True, 'view': 'view.my_view' }, type='menu', name='Host')
+record2.chmod('o+r')
+
 record3 = crecord({'leaf': True, 'view': 'view.my_view2' }, type='menu', name='Service')
+record3.chmod('o+r')
 
 record4 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
 record5 = crecord({'leaf': True }, type='menu', name='Selector')
