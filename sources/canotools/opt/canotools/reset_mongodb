@@ -23,6 +23,9 @@ storage = cstorage(account1, namespace='object', logging_level=logging.DEBUG)
 for namespace in namespaces:
 	storage.drop_namespace(namespace)
 
+## Create 100MB cache
+storage.db.create_collection('cache', options={'capped': True, 'size': 104857600})
+
 ## Save account
 storage.put([account1, account2])
 
