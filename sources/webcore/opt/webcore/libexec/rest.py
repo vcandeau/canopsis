@@ -9,15 +9,11 @@ from bottle import route, get, put, delete, request, HTTPError
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
+from cstorage import get_storage
 from crecord import crecord
 
 #import protection function
-from libexec.auth import check_auth,get_account
-
-## Initialisation
-
-account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.INFO)
+from libexec.auth import check_auth, get_account
 
 debug = False
 
@@ -41,7 +37,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	
 	#get the session (security)
 	account = get_account()
-	
+
 	limit = int(request.params.get('limit', default=20))
 	page =  int(request.params.get('page', default=0))
 	start =  int(request.params.get('start', default=0))
@@ -49,6 +45,8 @@ def rest_get(namespace, ctype=None, _id=None):
 	search = request.params.get('search', default=None)
 
 	logger.debug("GET:")
+	logger.debug(" + User: "+str(account.user))
+	logger.debug(" + Group(s): "+str(account.groups))
 	logger.debug(" + namespace: "+str(namespace))
 	logger.debug(" + Ctype: "+str(ctype))
 	logger.debug(" + _id: "+str(_id))
@@ -58,17 +56,19 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + Groups: "+str(groups))
 	logger.debug(" + Search: "+str(search))
 
+	storage = get_storage(namespace=namespace)
+
 	mfilter = {}
 	if ctype:
 		mfilter = {'crecord_type': ctype}
 	if _id:	
 		try:
-			records = [ storage.get(_id, namespace=namespace, account=account) ]
+			records = [ storage.get(_id, account=account) ]
 		except:
 			return HTTPError(404, _id+" Not Found")
 		
 	else:
-		records = storage.find(mfilter, namespace=namespace, limit=limit, offset=start, account=account)
+		records = storage.find(mfilter, limit=limit, offset=start, account=account)
 
 	output = []
 	for record in records:
@@ -84,11 +84,12 @@ def rest_get(namespace, ctype=None, _id=None):
 	return output
 
 #### PUT
-@put('/rest/:namespace/:ctype',apply=[check_auth])
+@put('/rest/:namespace/:ctype', apply=[check_auth])
 def rest_put(namespace, ctype):
 	#get the session (security)
 	account = get_account()
-	
+	storage = get_storage(namespace=namespace)
+
 	logger.debug("PUT:")
 
 	data = request.body.readline()
@@ -114,15 +115,18 @@ def rest_put(namespace, ctype):
 
 	#print record.dump()
 
-	storage.put(record, namespace=namespace)
+	storage.put(record, account=account)
 
 #### DELETE
 @delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
 def rest_delete(namespace, ctype, _id):
+	account = get_account()
+	storage = get_storage(namespace=namespace)
+
 	logger.debug("DELETE:")
 	logger.debug(" + _id: "+str(_id))
 	try:
-		storage.remove(_id, namespace=namespace)
+		storage.remove(_id, account=account)
 	except:
 		HTTPError(404, _id+" Not Found")
 

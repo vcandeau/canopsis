@@ -11,19 +11,15 @@ from StringIO import StringIO
 
 ## Canopsis
 from caccount import caccount
-from cstorage import cstorage
+from cstorage import get_storage
 from crecord import crecord
 from cperfstore import cperfstore
 
 #import protection function
-from libexec.auth import check_auth
+from libexec.auth import check_auth, get_account
 
 ## Initialisation
-
-account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.INFO)
-
-perfstore = cperfstore(storage=storage, logging_level=logging.DEBUG)
+perfstore = cperfstore(storage=get_storage(namespace='perfdata'), logging_level=logging.DEBUG)
 
 debug = False
 

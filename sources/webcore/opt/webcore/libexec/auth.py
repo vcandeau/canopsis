@@ -10,12 +10,8 @@ from beaker.middleware import SessionMiddleware
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
+from cstorage import get_storage
 from crecord import crecord
-
-## Initialisation
-
-account = caccount(user="root", group="root")
-storage = cstorage(account, namespace="object", logging_level=logging.DEBUG)
 
 debug = True
 
@@ -58,8 +54,10 @@ def auth(login=None, password=None):
 	logger.debug(" + Password: "+password)
 	logger.debug(" + Shadow: "+str(shadow))
 
+	storage = get_storage(namespace='object')
+
 	try:
-		account = caccount(storage.get(_id))
+		account = caccount(storage.get(_id, caccount(user=login)))
 		logger.debug(" + Check shadow password ...")
 
 		if shadow:
@@ -69,7 +67,8 @@ def auth(login=None, password=None):
 
 		if access:
 			s = bottle.request.environ.get('beaker.session')
-			s['account'] = _id
+			s['account_id'] = _id
+			s['account_user'] = login
 			s['auth_on'] = True
 			s.save()
 
@@ -84,11 +83,12 @@ def auth(login=None, password=None):
 	return HTTPError(403, "Forbidden")
 
 #Access for disconnect and clean session
+@get('/logout')
 @get('/disconnect')
 def disconnect():
 	s = bottle.request.environ.get('beaker.session')
 	s.delete()
-	return 'your are now disconnected'
+	return {'total': 0, 'success': True, 'data': []}
 
 
 #decorator in order to protect request
@@ -130,17 +130,21 @@ def get_account(_id=None):
 	logger.debug("Get Account:")
 	if not _id:
 		s = bottle.request.environ.get('beaker.session')
-		_id = s.get('account',0)
+		_id = s.get('account_id',0)
 		logger.debug(" + Get _id from Beaker Session (%s)" % _id)
 
-	logger.debug(" + Try to load account '%s' ..." % _id)
+	user = s.get('account_user',0)
+
+	logger.debug(" + Try to load account %s ('%s') ..." % (user, _id))
+
+	storage = get_storage(namespace='object')
 
 	try:
 		account = session_accounts[_id]
 		logger.debug(" + Load account from memory.")
 	except:
 		if _id:
-			record = storage.get(_id)
+			record = storage.get(_id, account=caccount(user=user) )
 			logger.debug(" + Load account from DB.")
 			account = caccount(record)
 			session_accounts[_id] = account
