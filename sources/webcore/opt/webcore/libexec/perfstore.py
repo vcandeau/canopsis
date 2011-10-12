@@ -10,9 +10,7 @@ from bottle import route, get, put, delete, request, HTTPError, response
 from StringIO import StringIO
 
 ## Canopsis
-from caccount import caccount
 from cstorage import get_storage
-from crecord import crecord
 from cperfstore import cperfstore
 
 #import protection function
