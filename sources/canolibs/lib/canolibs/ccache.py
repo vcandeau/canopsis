@@ -59,7 +59,9 @@ class ccache(object):
 		return dec
 
 	def remove(self, _id, account=None):
-		self.storage.remove('cache.'+_id, namespace=self.namespace, account=account)
+		#Dont remove capped record in collection
+		#self.storage.remove('cache.'+_id, namespace=self.namespace, account=account)
+		pass
 
 	def put(self, _id, data, account=None):
 		record = self.make_record('cache.'+_id)
