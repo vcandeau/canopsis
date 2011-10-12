@@ -1,16 +1,7 @@
 #!/usr/bin/env python
 
 class crecord(object):
-	def __init__(self, data = {}, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, type='raw'):
-		#if account:
-		#	self.account = account
-		#	self.owner=account.user
-		#	self.group=account.group
-		#else:
-		#	self.owner=None
-		#	self.group=None
-		#	self.account=None
-
+	def __init__(self, data = {}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None, type='raw'):
 		self.write_time = None
 
 		self.owner=owner
@@ -24,12 +15,18 @@ class crecord(object):
 		self.parent = []
 		self.children = []
 		self.children_record = []
+		self._id = _id
+
+		if account:
+			#self.account = account
+			self.owner=account.user
+			self.group=account.group
 
 		try:
 			self._id = data['_id']
 			del data['_id']
 		except:
-			self._id = None
+			pass
 
 		self.data = data
 		self.storage = storage

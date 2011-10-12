@@ -18,7 +18,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global ACCOUNT
-		ACCOUNT = caccount(user="wpain", lastname="Pain", firstname="William", mail="wpain@capensis.fr", group="capensis")
+		ACCOUNT = caccount(user="wpain", lastname="Pain", firstname="William", mail="wpain@capensis.fr", group="capensis", groups=['titi', 'tata'])
 
 	def test_02_Cat(self):
 		ACCOUNT.cat()
@@ -34,9 +34,12 @@ class KnownValues(unittest.TestCase):
 		if not ACCOUNT.check_passwd('mypassword'):
 			raise Exception('Invalid passwd ...')
 
+		ACCOUNT.cat()
+
 	def test_04_Store(self):
 		STORAGE.put(ACCOUNT)
-
+		ACCOUNT.cat()
+	"""
 	def test_05_GetAll(self):
 		account = caccount(user="ojan", lastname="Jan", firstname="Olivier", mail="ojan@capensis.fr", group="capensis")
 		STORAGE.put(account)
@@ -45,9 +48,10 @@ class KnownValues(unittest.TestCase):
 
 		if len(accounts) != 2:
 			raise Exception('caccount_getall dont work ...')
-
+	"""
 	def test_06_Edit(self):
 		ACCOUNT.chgrp('toto')
+		ACCOUNT.cat()
 		STORAGE.put(ACCOUNT)
 
 	def test_07_CheckGet(self):
@@ -57,7 +61,13 @@ class KnownValues(unittest.TestCase):
 		account.cat()
 
 		if account.user != 'wpain':
-			raise Exception('Corruption in load ...')
+			raise Exception('account.user: Corruption in load ...')
+
+		if account.group != 'toto':
+			raise Exception('account.group: Corruption in load ...')
+
+		if account.groups != ['titi', 'tata']:
+			raise Exception('account.groups: Corruption in load ...')
 		
 
 	def test_08_CheckEdit(self):
@@ -78,7 +88,7 @@ class KnownValues(unittest.TestCase):
 
 if __name__ == "__main__":
 	STORAGE = cstorage(caccount(user="root", group="root"), namespace='unittest')
-	unittest.main(verbosity=1)
+	unittest.main(verbosity=2)
 	
 
 

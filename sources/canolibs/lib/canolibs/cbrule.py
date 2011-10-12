@@ -5,9 +5,6 @@ import time, os, sys, logging, json
 from ctools import dynmodloads
 from ctools import make_event
 
-from cstorage import cstorage
-from crecord import crecord
-from caccount import caccount
 from cselector import cselector
 
 from txamqp.content import Content
@@ -18,37 +15,16 @@ ALL_CHECKS = None
 ALL_ACTIONS = None
 
 class cbrule(cselector):
-	def __init__(self, name=None, _id=None, storage=None, namespace='inventory', record=None, autoinit=True, mids=None, mfilter=None, amqp=None, logging_level=logging.DEBUG):
-
-		if not storage:
-			self.storage = cstorage(caccount(user="root", group="root"), namespace='object', logging_level=logging.INFO)
-		else:
-			self.storage = storage
-
-		if not name:
-			raise Exception('You must specify name or record ...')
-
+	def __init__(self, autoinit=True, amqp=None, *args, **kargs):
+		## Default vars
 		self.hardonly = True
 		self.raw_checks = []
 		self.raw_actions = []
 		self.fired_state = 0
 		self.amqp = amqp
 
-		self._id = 'brule.'+self.storage.account.user+'.'+name
-
-		cselector.__init__(self, storage=self.storage, _id=self._id, logging_level=logging_level, namespace=namespace)
-
-		if mids:
-			self.mids = mids
-		if mfilter:
-			self.mfilter = mfilter
-
-		self.name = name
-		self.type = 'brule'
-
-		logging_level=logging.DEBUG
-		self.logger = logging.getLogger('cbrules.'+self.name)
-		self.logger.setLevel(logging_level)
+		## Init
+		cselector.__init__(self, type='brule', *args, **kargs)
 
 		if autoinit:
 			self.init()

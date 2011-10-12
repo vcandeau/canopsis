@@ -18,10 +18,23 @@ class KnownValues(unittest.TestCase):
 	def setUp(self):
 		pass
 
-	def test_01_Init(self):
+	def test_01_InitPutGet(self):
 		global SELECTOR 
-		SELECTOR = cselector(name="myselector", storage=STORAGE)
+		SELECTOR = cselector(name="myselector", namespace='unittest', storage=STORAGE)
 		SELECTOR.nocache = True
+
+		_id = SELECTOR._id
+
+		## Put in db
+		STORAGE.put(SELECTOR)
+		record = STORAGE.get(_id)
+
+		## Load
+		SELECTOR = cselector(name="myselector", storage=STORAGE)
+		SELECTOR = cselector(_id=_id, storage=STORAGE)
+		SELECTOR = cselector(record=record, storage=STORAGE)
+		
+		
 
 	def test_02_PutData(self):
 		global ID

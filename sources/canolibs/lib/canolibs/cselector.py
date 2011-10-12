@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 #import logging
-from crecord import crecord
+from crecord_ng import crecord_ng
+
 from ccache import ccache
 from ctimer import ctimer
 from ctools import calcul_pct
 from pymongo import objectid
+
+from caccount import caccount
+from cstorage import get_storage
 
 from ctools import make_event
 
@@ -14,81 +18,35 @@ import json
 import logging
 
 
-class cselector(crecord):
-	def __init__(self, name=None, _id=None, storage=None, namespace=None, record=None, logging_level=logging.INFO, *args):
+class cselector(crecord_ng):
+	def __init__(self, namespace='inventory', type='selector',  mids=[], mfilter=None, logging_level=logging.INFO, *args, **kargs):
 
-		if not storage:
-			raise Exception('You must specify storage !')
-
-		self.storage = storage
-
-		if record:
-			if record.name:
-				name = record.name
-
-		crecord.__init__(self, storage=storage, name=name, record=record, *args)
-
-		#if isinstance(record, crecord):
-		#	crecord.__init__(self, raw_record=record.dump())
-		#else:
-		#	crecord.__init__(self, *args)
-
-		self.type = "selector"
-
+		## Default vars
+		self.namespace = namespace
+		self.mfilter = mfilter
+		self.mids = mids
 		self.timer = ctimer(logging_level=logging.INFO)
-		self.cache_time = 60 # 1 minute
 		self.nocache = False
-
-		self.data['mfilter'] = None
-		self.data['mids'] = []
-		self.data['last_resolv_time'] = 0
-		self.data['last_nb_records'] = 0
-		self.data['threshold_warn'] = 98
-		self.data['threshold_crit'] = 95
-		self.data['state'] = 0
-
+		self.cache_time = 60
+		self.last_resolv_time = 0
+		self.last_nb_records = 0
+		self.threshold_warn = 98
+		self.threshold_crit = 95
+		self.state = 0
+		self.state_type = 1
 		self._ids = []
-		self.records = []
-
-		self.mfilter = None
-		self.mids = []
-
-		if namespace:
-			self.namespace = namespace
-		else:
-			self.namespace = storage.namespace
-
 		
-		if _id:
-			self._id = _id
-		else:
-			if not name:
-				raise Exception('You must specify name or _id !')
-			self._id = self.type+"."+self.storage.account.user+"."+name	
-			self.name = name
-
-		## Init logger
-		self.logger = logging.getLogger(self._id)
-		self.logger.setLevel(logging_level)
-
-		try:	
-			record = self.storage.get(self._id)
-			try:
-				self.load(record.dump())
-			except Exception, err:
-				self.logger.error("   + Exception: %s" % err)
-
-		except:
-			pass
+		## Init
+		crecord_ng.__init__(self, type=type, *args, **kargs)
 
 	def dump(self):
 		self.data['mids'] = self.mids
 		self.data['namespace'] = self.namespace
 		self.data['mfilter'] = json.dumps(self.mfilter)
-		return crecord.dump(self)
+		return crecord_ng.dump(self)
 
 	def load(self, dump):
-		crecord.load(self, dump)
+		crecord_ng.load(self, dump)
 		self.mfilter = json.loads(self.data['mfilter'])
 		self.namespace = self.data['namespace']
 		self.mids = self.data['mids']
@@ -97,7 +55,7 @@ class cselector(crecord):
 
 		if not (nocache or self.nocache):
 			# check cache freshness
-			if (self.data['last_resolv_time'] + self.cache_time) > time.time():
+			if (self.last_resolv_time + self.cache_time) > time.time():
 				return self.records
 
 		_ids = []
@@ -129,8 +87,8 @@ class cselector(crecord):
 		# Put in cache
 		#self.cache.put(self._id, _ids)
 
-		#self.data['last_resolv_time'] = self.timer.elapsed
-		self.data['last_nb_records'] = len(records)
+		#self.last_resolv_time = self.timer.elapsed
+		self.last_nb_records = len(records)
 
 		self._ids = _ids
 		self.records = records
@@ -204,8 +162,8 @@ class cselector(crecord):
 		#self.cache.put(cid, availability)
 
 		## Check
-		self.data['availability'] = availability
-		self.data['availability_pct'] = availability_pct
+		self.availability = availability
+		self.availability_pct = availability_pct
 
 		#self.logger.debug(" + Availabilityt:\t\t%s" % availability)
 		#self.logger.debug(" + Availability pct:\t%s" % availability_pct)
@@ -217,18 +175,18 @@ class cselector(crecord):
 
 	def check(self, autosave=True):
 		
-		result = self.data['availability_pct']
+		result = self.availability_pct
 
 		state = 0
 		
-		if result['ok'] < self.data['threshold_warn']:
+		if result['ok'] < self.threshold_warn:
 			state = 1
 
-		if result['ok'] < self.data['threshold_crit']:
+		if result['ok'] < self.threshold_crit:
 			state = 2
 
-		if self.data['state'] != state:
-			self.data['state'] = state
+		if self.state != state:
+			self.state = state
 			if autosave:
 				self.save()
 
@@ -237,14 +195,14 @@ class cselector(crecord):
 	def make_event(self):
 
 		#'label'=value[UOM];[warn];[crit];[min];[max]
-		ok = "'ok'=%s%%;%s;%s;0;100" % (self.data['availability_pct']['ok'], self.data['threshold_warn'], self.data['threshold_crit'])
-		warn = "'warn'=%s%%;0;0;0;100" % (self.data['availability_pct']['warning'])
-		crit = "'crit'=%s%%;0;0;0;100" % (self.data['availability_pct']['critical'])
-		unkn = "'unkn'=%s%%;0;0;0;100" % (self.data['availability_pct']['unknown'])
+		ok = "'ok'=%s%%;%s;%s;0;100" % (self.availability_pct['ok'], self.threshold_warn, self.threshold_crit)
+		warn = "'warn'=%s%%;0;0;0;100" % (self.availability_pct['warning'])
+		crit = "'crit'=%s%%;0;0;0;100" % (self.availability_pct['critical'])
+		unkn = "'unkn'=%s%%;0;0;0;100" % (self.availability_pct['unknown'])
 
 		perf_data = ok + " " + warn + " " + crit + " " + unkn
 
-		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.data['state'], output='', perf_data=perf_data)
+		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
 
 		return dump
 
