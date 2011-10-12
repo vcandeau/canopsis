@@ -80,7 +80,7 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 				ext = mfile.split(".")[1]
 				name = mfile.split(".")[0]
 
-				if name != "." and ext == "py":
+				if name != "." and ext == "py" and name != '__init__':
 					logger.info("Load '%s' ..." % name)
 					try:
 
