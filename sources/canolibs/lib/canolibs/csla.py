@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from crecord import crecord
 from ccache import ccache
 from cselector import cselector
 
@@ -18,103 +17,22 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
-class csla(crecord):
-	def __init__(self, name=None, _id=None, storage=None, cb_on_state_change=None, selector=None, namespace=None, logging_level=logging.INFO, record=None, *args):
+class csla(cselector):
+	def __init__(self, cb_on_state_change=None, *args, **kargs):
 
-		self._id = _id
-
-		## Set storage
-		if not storage:
-			raise Exception('You must specify storage !')
-
-		self.storage = storage
-
-		## Init default var
-		self.data = {}
-		self.data['threshold_warn'] = 98
-		self.data['threshold_crit'] = 95
-
-		self.data['sla'] = {'ok': 1.0}
-		self.data['sla_pct'] = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
-		self.data['state'] = 0
-		self.data['state_type'] = 1
-
-		self.data['selector_id'] = None
-		self.selector = None
+		## Default vars
+		self.namespace = 'history'
 		self.slippery = False
 		self.cycle = 86400 # 24 hours
 		self.start = None
 		self.stop = None
-		self.active = True
-
-		## Set callback function
+		self.active = True,
+		self.sla = {'ok': 1.0}
+		self.sla_pct = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
 		self.cb_on_state_change = cb_on_state_change
 
-		## Init object
-		if not record:
-			if name:
-				self._id = "sla."+storage.account.user+"."+name
-				self.name = name
-			elif _id:
-				self._id = _id		
-			else:
-				raise Exception('You must specify record, name or _id !')
-		else:
-			self._id = record._id
-
-		## Init logger
-		self.logger = logging.getLogger(self._id)
-		self.logger.setLevel(logging_level)
-
-		self.logger.debug("My _id is '%s'" % self._id)
-
-		if not record:
-			try:
-				self.logger.debug("Get my record ...")
-				record = storage.get(self._id)
-				self.logger.debug(" + Ok")
-			except Exception, err:
-				#print err
-				self.logger.debug(" + I'm not saved.")
-				record = None
-
-		self.data['_id'] = self._id
-
-		if record:
-			self.logger.debug("Init from record ...")
-			crecord.__init__(self, storage=storage, data = {}, record=record, *args)
-			self.logger.debug(" + Ok")
-		else:
-			self.logger.debug("Init with default values ...")
-			crecord.__init__(self, storage=storage, name=name, data = self.data, *args)
-			self.logger.debug(" + Ok")
-
-		self.type = 'sla'
-		
-		self.logger.debug("Init Cache ...")
-		self.cache = ccache(storage, self.type)
-		self.logger.debug(" + Ok")
-
-		self.logger.debug("Init my selector ...")
-		if not self.data['selector_id']:
-			if not selector:
-				raise Exception('You must specify selector !')
-			else:
-				self.logger.debug(" + get selector from argument")
-				self.data['selector_id'] = selector._id
-				self.selector = selector
-				self.logger.debug("   + Ok")
-		else:
-			self.logger.debug(" + get selector '%s' from DB" % self.data['selector_id'])
-			self.selector = cselector(_id=self.data['selector_id'], storage=storage)
-			self.logger.debug("   + Ok")
-		
-		#if namespace:
-		#	self.namespace = namespace
-		#else:
-		#	self.namespace = self.selector.namespace
-		#
-		#self.logger.debug("Use Namespace: %s" % self.namespace)
+		## Init
+		cselector.__init__(self, type='sla', *args, **kargs)
 
 	def dump(self):
 		self.data['slippery'] = self.slippery
@@ -122,27 +40,39 @@ class csla(crecord):
 		self.data['start'] = self.start
 		self.data['stop'] = self.stop
 		self.data['active'] = self.active
-		return crecord.dump(self)
+
+		self.data['threshold_warn'] = self.threshold_warn
+		self.data['threshold_crit'] = self.threshold_crit
+
+		self.data['sla'] = self.sla
+		self.data['sla_pct'] = self.sla_pct
+		self.data['state'] = self.state
+		self.data['state_type'] = self.state_type
+		return cselector.dump(self)
 
 	def load(self, dump):
-		crecord.load(self, dump)
+		cselector.load(self, dump)
 		self.slippery = self.data['slippery']
 		self.cycle = self.data['cycle']
 		self.start = self.data['start']
 		self.stop = self.data['stop']
 		self.active = self.data['active']
 
-	#def save(self):
-	#	self.selector.save()
-	#	crecord.save(self)
+		self.threshold_warn = self.data['threshold_warn']
+		self.threshold_crit = self.data['threshold_crit']
+
+		self.sla = self.data['sla']
+		self.sla_pct = self.data['sla_pct']
+		self.state = self.data['state']
+		self.state_type = self.data['state_type']
 
 	def _cb_on_state_change(self, from_state, to_state):
 		if   to_state == 0:
-			self.logger.debug("Back to normal (%s>%s)" % (self.data['sla_pct']['ok'], self.data['threshold_warn']))
+			self.logger.debug("Back to normal (%s>%s)" % (self.sla_pct['ok'], self.threshold_warn))
 		elif to_state == 1:
-			self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.data['sla_pct']['ok'], self.data['threshold_warn']))
+			self.logger.debug("Warning threshold reached ! (%s<%s)" % (self.sla_pct['ok'], self.threshold_warn))
 		elif to_state == 2:
-			self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.data['sla_pct']['ok'], self.data['threshold_crit']))
+			self.logger.debug("Critical threshold reached ! (%s<%s)" % (self.sla_pct['ok'], self.threshold_crit))
 
 		if self.cb_on_state_change:
 			try:
@@ -173,8 +103,8 @@ class csla(crecord):
 		self.get_sla_by_timeperiod(start, stop)
 
 	def set_threshold(self, warn, crit):
-		self.data['threshold_warn'] = warn
-		self.data['threshold_crit'] = crit
+		self.threshold_warn = warn
+		self.threshold_crit = crit
 
 	def set_cycle(self, start, cycle, slippery=True):
 		self.start = start
@@ -219,45 +149,45 @@ class csla(crecord):
 
 		if (start or start == 0) and stop:
 			(sla, sla_pct) = self.get_sla_by_timeperiod(start, stop, cachetime=cachetime)
-			if sla != self.data['sla']:
-				self.data['sla'] = sla
-				self.data['sla_pct'] = sla_pct
+
+			if sla != self.sla:
+				self.sla = sla
+				self.sla_pct = sla_pct
 				self.check(autosave=False)
 				self.save()
 
 	def get_sla_by_timeperiod(self, start, stop, cachetime=0):
-
 		self.logger.debug("Get SLA between %s and %s" % (start, stop))
 		cid = self._id+"."+str(start)+"-"+str(stop)
 
 		# get from cache
-		sla = self.cache.get(cid, cachetime)
+		#sla = self.cache.get(cid, cachetime)
 
-		if not sla:
-			(sla, sla_pct) = self.calcul_by_timeperiod(start, stop)
-			self.cache.put(cid, sla)
-		else:
-			self.logger.debug(" + From cache.")
-			sla_pct = calcul_pct(sla)
+		#if not sla:
+		(sla, sla_pct) = self.calcul_by_timeperiod(start, stop)
+		#	self.cache.put(cid, sla)
+		#else:
+		#	self.logger.debug(" + From cache.")
+		#	sla_pct = calcul_pct(sla)
 
 		return (sla, sla_pct)
 
 	def check(self, result=None, autosave=True):
 		
 		if not result:
-			result = self.data['sla_pct']
+			result = self.sla_pct
 
 		state = 0
 		
-		if result['ok'] < self.data['threshold_warn']:
+		if result['ok'] < self.threshold_warn:
 			state = 1
 
-		if result['ok'] < self.data['threshold_crit']:
+		if result['ok'] < self.threshold_crit:
 			state = 2
 
-		if self.data['state'] != state:
-			self._cb_on_state_change(self.data['state'], state)
-			self.data['state'] = state
+		if self.state != state:
+			self._cb_on_state_change(self.state, state)
+			self.state = state
 			if autosave:
 				self.save()
 
@@ -281,15 +211,16 @@ class csla(crecord):
 			stop = now
 
 		if start > now:
-			return (self.data['sla'], self.data['sla_pct'])
+			return (self.sla, self.sla_pct)
 
 		window = stop - start
 
-		records = self.selector.resolv()
-
+		self.resolv()
+		print "_ids:", self._ids
 		## Get sla for each ID
 		allsla = []
-		for _id in self.selector._ids:
+		for _id in self._ids:
+			self.logger.debug("   + Calcul for %s" % _id)
 			(mysla, mysla_pct) = self.calcul_by_timeperiod_for_id( _id, start, stop)
 			allsla.append(mysla)
 
@@ -349,13 +280,13 @@ class csla(crecord):
 	def make_event(self):
 	
 		#'label'=value[UOM];[warn];[crit];[min];[max]
-		ok = "'ok'=%s%%;%s;%s;0;100" % (self.data['sla_pct']['ok'], self.data['threshold_warn'], self.data['threshold_crit'])
-		warn = "'warn'=%s%%;0;0;0;100" % (self.data['sla_pct']['warning'])
-		crit = "'crit'=%s%%;0;0;0;100" % (self.data['sla_pct']['critical'])
-		unkn = "'unkn'=%s%%;0;0;0;100" % (self.data['sla_pct']['unknown'])
+		ok = "'ok'=%s%%;%s;%s;0;100" % (self.sla_pct['ok'], self.threshold_warn, self.threshold_crit)
+		warn = "'warn'=%s%%;0;0;0;100" % (self.sla_pct['warning'])
+		crit = "'crit'=%s%%;0;0;0;100" % (self.sla_pct['critical'])
+		unkn = "'unkn'=%s%%;0;0;0;100" % (self.sla_pct['unknown'])
 
 		perf_data = ok + " " + warn + " " + crit + " " + unkn
 
-		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.data['state'], output='', perf_data=perf_data)
+		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
 
 		return dump
