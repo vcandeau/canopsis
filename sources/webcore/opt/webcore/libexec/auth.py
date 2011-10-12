@@ -106,7 +106,8 @@ def check_auth(callback):
 		if s.get('auth_on',False) or path == "canopsis/auth.html":
 			return callback(*args, **kawrgs)
 
-		return redirect('/static/canopsis/auth.html' + '?url=' + url)
+		return {'total': 0, 'success': False, 'data': []}
+		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
 	return do_auth
 				
