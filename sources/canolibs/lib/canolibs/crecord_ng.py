@@ -53,7 +53,7 @@ class crecord_ng(crecord):
 
 
 		if data:
-			crecord.__init__(self, data)
+			crecord.__init__(self, data, name=name)
 		elif raw_record:
 			crecord.__init__(self, raw_record=raw_record)
 		else:
@@ -73,7 +73,7 @@ class crecord_ng(crecord):
 				crecord.__init__(self, storage=storage, record=record)
 			else:
 				self.logger.debug(" + Init new object")
-				crecord.__init__(self, storage=storage)
+				crecord.__init__(self, storage=storage, name=name)
 
 		self.type = type
 		self._id = _id
