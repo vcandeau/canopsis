@@ -59,7 +59,7 @@ class ccache(object):
 		return dec
 
 	def remove(self, _id, account=None):
-		#Dont remove capped record in collection
+		#Dont remove record in capped collection
 		#self.storage.remove('cache.'+_id, namespace=self.namespace, account=account)
 		pass
 
