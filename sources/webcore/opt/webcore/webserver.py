@@ -10,7 +10,7 @@ from bottle import route, run, static_file, redirect
 from beaker.middleware import SessionMiddleware
 
 #import protection function
-from libexec.auth import check_auth
+#from libexec.auth import check_auth
 
 from ctools import dynmodloads
 
@@ -42,7 +42,7 @@ session_opts = {
     'session.cookie_expires': 300,
     'session.data_dir': '/opt/canopsis/tmp/webcore_cache',
     'session.auto': True,
-    'session.timeout': 300,
+#   'session.timeout': 300,
     'session.secret': 'canopsis'
 }
 app = SessionMiddleware(bottle.app(), session_opts)
@@ -53,12 +53,10 @@ app = SessionMiddleware(bottle.app(), session_opts)
 def server_static(path):
 	return static_file(path, root=root_directory)
 
-@bottle.route('/',apply=[check_auth])
-@bottle.route('/index.html', apply=[check_auth])
+@bottle.route('/')
+@bottle.route('/index.html')
 def index():
-	redirect("/static/canopsis/index.html")
-
-
+	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
 
 
 ## Load webservices
