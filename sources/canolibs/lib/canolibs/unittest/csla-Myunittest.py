@@ -26,22 +26,43 @@ class KnownValues(unittest.TestCase):
 	def setUp(self):
 		pass
 
-	def test_01_Creation(self):
+	def test_01_InitPutGet(self):
 		global SLA
-		SLA = csla(name="mysla", storage=STORAGE, selector=SELECTOR)
+		SLA = csla(name="mysla", storage=STORAGE, namespace='unittest', logging_level=logging.DEBUG)
+		SLA.mfilter = {'source_type': 'service' }
+	 
 		SLA.set_threshold(10,5)
 		SLA.set_cycle(0, 100, False)
 
-		SLA.save()
+		_id = SLA._id
 
-	def test_02_Load(self):
-		global SLA
-		SLA = csla(name="mysla", storage=STORAGE, cb_on_state_change=cb_on_state_change, logging_level=logging.DEBUG)
-		#SLA.selector.cat()
+		## Put in db
+		STORAGE.put(SLA)
+		record = STORAGE.get(_id)
+
+		## Load
+		SLA = csla(name="mysla", storage=STORAGE)
+		SLA = csla(_id=_id, storage=STORAGE)
+		SLA = csla(record=record, storage=STORAGE)
+
+
+	def test_02_calcul_timeperiod_for_id(self):
+		(sla, sla_pct) = SLA.calcul_by_timeperiod_for_id("check1", 0, 100)
+
+		if sla_pct['warning'] == 20 and sla_pct['critical'] == 20 and sla_pct['critical'] == 60:
+			raise Exception('Invalid pct calculation for timeperiod ...')
+
+	def test_03_calcul_timeperiod(self):
+		SLA.mfilter = { '$or': [{'_id': 'check1'}, {'_id': 'check2'},] }
+
+		(sla, sla_pct) = SLA.calcul_by_timeperiod(0, 100)
+
+		if sla_pct['warning'] == 12.5 and sla_pct['critical'] == 17.5 and sla_pct['critical'] == 70:
+			raise Exception('Invalid pct calculation for timeperiod ...')
+
 
 	def test_04_check(self):
 		SLA.get_sla(stop=100, cachetime=-1)
-		#SLA.cat()
 
 		SLA.set_threshold(60,50)
 		state = SLA.check()
@@ -62,7 +83,10 @@ class KnownValues(unittest.TestCase):
 		if state != 2:
 			raise Exception('Invalid Critical check ...')
 
+	
 	def test_05_checkCB(self):
+		SLA.cb_on_state_change = cb_on_state_change
+
 		SLA.set_threshold(80,60)
 		SLA.check()
 
@@ -82,42 +106,21 @@ class KnownValues(unittest.TestCase):
 		if STATE != 0:
 			raise Exception('Invalid CB Ok check ...')
 
-	def test_06_calcul_timeperiod_for_id(self):
-		(sla, sla_pct) = SLA.calcul_by_timeperiod_for_id("check1", 0, 100)
 
-		if sla_pct['warning'] == 20 and sla_pct['critical'] == 20 and sla_pct['critical'] == 60:
-			raise Exception('Invalid pct calculation for timeperiod ...')
-
-	def test_07_calcul_timeperiod(self):
-		SLA.selector.mfilter = { '$or': [{'_id': 'check1'}, {'_id': 'check2'},] }
-
-		(sla, sla_pct) = SLA.calcul_by_timeperiod(0, 100)
-
-		if sla_pct['warning'] == 12.5 and sla_pct['critical'] == 17.5 and sla_pct['critical'] == 70:
-			raise Exception('Invalid pct calculation for timeperiod ...')
-
-	def test_08_process_hourly(self):
+	def test_06_process_hourly(self):
 		SLA.process_hourly(time.time())
 
-	def test_09_process_daily(self):
+	def test_07_process_daily(self):
 		SLA.process_daily(time.time())
 
 	def test_99_DropNamespace(self):
 		for HID in HIDS:
 			STORAGE.remove(HID, namespace='history')
 		STORAGE.drop_namespace('unittest')
-		pass
-
 
 
 if __name__ == "__main__":
-	STORAGE = cstorage(caccount(user="root", group="root"), namespace='unittest')
-
-	SELECTOR = cselector(name="myselector", storage=STORAGE, namespace='unittest')
-	SELECTOR.mfilter = {'source_type': 'service'}
-	#SELECTOR.mfilter = {'$or': [ {'inventory_id': 'check1'}, {'inventory_id': 'check1'} ]}
-
-	SELECTOR.save()
+	STORAGE = cstorage(caccount(user="root", group="root"), namespace='unittest', logging_level=logging.INFO)
 
 	HIDS = []
 	

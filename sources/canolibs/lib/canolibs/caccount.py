@@ -5,7 +5,7 @@ from crecord import crecord
 import hashlib
 
 class caccount(crecord):
-	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], *args):
+	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], *args, **kargs):
 
 		self.user = user
 		self.owner = user
@@ -16,11 +16,6 @@ class caccount(crecord):
 		self.lastname = lastname
 		self.firstname = firstname
 		self.mail = mail
-
-		if isinstance(record, crecord):
-			crecord.__init__(self, raw_record=record.dump())
-		else:
-			crecord.__init__(self, owner=user, group=group, data = {}, *args)
 
 		self.type = "account"
 
@@ -38,7 +33,11 @@ class caccount(crecord):
 		self.access_other=[]
 		self.access_unauth=[]
 
-		self.groups = groups
+		if isinstance(record, crecord):
+			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
+		else:
+			crecord.__init__(self, _id=self._id, owner=self.user, group=self.group, type=self.type, *args, **kargs)
+
 
 
 	def passwd(self, passwd):
@@ -59,7 +58,10 @@ class caccount(crecord):
 		self.data['lastname'] = self.lastname
 		self.data['firstname'] = self.firstname
 		self.data['mail'] = self.mail
-		self.data['groups'] = self.groups
+		self.data['groups'] = list(self.groups)
+		if self.group:
+			self.data['groups'].insert(0, self.group)
+
 		self.data['shadowpasswd'] = self.shadowpasswd
 		return crecord.dump(self)
 
@@ -70,6 +72,12 @@ class caccount(crecord):
 		self.firstname = self.data['firstname']
 		self.mail = self.data['mail']
 		self.groups = self.data['groups']
+		print self.groups
+		if len(self.groups) > 0:
+			if self.groups[0] == self.group:
+				self.groups.pop(0)
+		print self.groups
+
 		self.shadowpasswd = self.data['shadowpasswd']
 
 	def cat(self):
