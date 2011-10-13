@@ -43,29 +43,28 @@ function db_parse(){
 }
 
 function get_ppath(){
-        PNAME=$1
-        PPATH=""
-        #echo "Get path of '$PNAME' ..."
+	PNAME=$1
+    PPATH=""
+    #echo "Get path of '$PNAME' ..."
 
-        PPATH="$VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/$PNAME"
-        if [ ! -e $PPATH ]; then
+    PPATH="$VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/$PNAME"
+    if [ ! -e $PPATH ]; then
 		if [ ! -e $PPATH.tgz ]; then
-		        echo "Package $PNAME not found ($PPATH.tgz)" >&2
-	                exit 1
+			echo "Package $PNAME not found ($PPATH.tgz)" >&2
+	        exit 1
 		else
 			cd $VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/
 			tar xfz $PNAME.tgz
 			check_code $?
 			rm -f $PNAME.tgz		
 		fi
-        fi
-
+	fi
 	echo $PPATH
 }
 
 function install_package(){
-        PNAME=$1
-        PPATH=$(get_ppath "$PNAME")
+    PNAME=$1
+    PPATH=$(get_ppath "$PNAME")
 	check_code $?
 
 	DBINFO=$(db_get "$PNAME")
@@ -96,8 +95,8 @@ function install_package(){
 }
 
 function remove_package(){
-        PNAME=$1
-        PPATH=$(get_ppath "$PNAME")
+    PNAME=$1
+    PPATH=$(get_ppath "$PNAME")
 	check_code $?
 
 	DBINFO=$(db_get "$PNAME")
@@ -146,5 +145,3 @@ if [ "x$ACTION" = "xupdate" ]; then
 	echo "Update DB ..."
 	exit $?
 fi
-
-
