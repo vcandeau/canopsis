@@ -1,4 +1,13 @@
 #!/bin/sh
+
+show_help() {
+	echo "Usage : service [SERVICE] [ACTION]"
+    exit 1
+}
+
+if [ -z $1 ]; then show_help; fi
+if [ -z $2 ]; then show_help; fi
+
 if [ -e ~/etc/init.d/$1 ]; then
 	~/etc/init.d/$1 $2
 else

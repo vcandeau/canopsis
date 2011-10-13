@@ -211,7 +211,6 @@ function make_package(){
 		
 		make_package_archive "$PNAME"	
 	
-	
 		echo "    + Re-init initial listing ..."
 		mv $FLIST_TMP $FLIST
 		check_code $?
@@ -239,14 +238,45 @@ function install_basic_source(){
 	
 }
 
-#### MAIN
+function init_pkgmgr(){
+	echo "    + Initialize PkgMgr ..."
+	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+}
 
+######################################
+# Check help if asked
+######################################
+if [[ "$1" =~ ^(-h|help|--help)$ ]]; then
+    echo "Usage : ./build-install.sh [OPTION]"
+    echo "     mkpkg [PKGNAME]    ->  Create specific package"
+    echo "     pkg                ->  Build, install and make packages"
+    echo "     clean              ->  Uninstall Canopsis"
+    echo "     nocheckdeps        ->  Don't check dependencies"
+    echo "     help               ->  Print this help"
+    exit 1
+fi
+
+######################################
+#  Pre Check
+######################################
 detect_os
 
+######################################
+#  Init file listing
+######################################
+echo "Init files listing ..."
+$SUDO mkdir -p $PREFIX
+cd $PREFIX &> /dev/null
+find ./ -type f > $SRC_PATH/packages/files.lst
+find ./ -type l >> $SRC_PATH/packages/files.lst
+cd - &> /dev/null
 
-#### CLEAN
+######################################
+#  Check Arguments
+######################################
 ARG1=$1
 ARG2=$2
+
 if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all canopsis process ..."
@@ -274,7 +304,7 @@ if [ "$ARG1" = "mkpkg" ]; then
 	PNAME=$ARG2
 	echo "Make package $PNAME ..."
 	if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
-		make_package_archive "$PNAME"	
+		make_package_archive "$PNAME"
 	else
 		echo " + Impossible to find file.lst ..."
 		exit 1
@@ -292,15 +322,6 @@ if [ "$ARG1" != "nocheckdeps" ]; then
 	check_code $?
 fi
 
-######################################
-#  Init file listing
-######################################
-echo "Init files listing ..."
-$SUDO mkdir -p $PREFIX
-cd $PREFIX &> /dev/null
-find ./ -type f > $SRC_PATH/packages/files.lst
-find ./ -type l >> $SRC_PATH/packages/files.lst
-cd - &> /dev/null
 
 ######################################
 #  CanoHome
