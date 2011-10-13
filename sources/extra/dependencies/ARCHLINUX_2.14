@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pacman --noconfirm -S xmlto base-devel
