@@ -39,7 +39,7 @@ function db_parse(){
 	elif [ "x$INFO" = "xstatus" ]; then
 		FIELD=2
 	fi
-	echo "$DATA" | cut -d '~' -f$FIELD
+	echo "$DATA" | cut -d '|' -f$FIELD
 }
 
 function get_ppath(){
@@ -137,7 +137,7 @@ if [ "x$ACTION" = "xlist" ]; then
 	echo
 	echo -e "Package        Version        Status"
  	echo "-------------------------------------------------"
-	awk '{ printf "%-15s%-15s%s\n",$1,$2,$3}' FS=\~ $DB_PATH
+	awk '{ printf "%-15s%-15s%s\n",$1,$2,$3}' FS=\| $DB_PATH
 	exit $?
 fi
 
