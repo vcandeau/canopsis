@@ -72,11 +72,10 @@ class caccount(crecord):
 		self.firstname = self.data['firstname']
 		self.mail = self.data['mail']
 		self.groups = self.data['groups']
-		print self.groups
+
 		if len(self.groups) > 0:
 			if self.groups[0] == self.group:
 				self.groups.pop(0)
-		print self.groups
 
 		self.shadowpasswd = self.data['shadowpasswd']
 
