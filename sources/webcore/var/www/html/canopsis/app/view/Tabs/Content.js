@@ -30,7 +30,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			item['height'] = '100%'
 			item['width'] = '100%'
 			item['title'] = ''
-			item['baseCls'] = 'x-plain'
+			//item['baseCls'] = 'x-plain'
 			item['mytab'] = this
 
 			this.items = [ item ]
