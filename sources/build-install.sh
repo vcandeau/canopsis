@@ -147,7 +147,7 @@ function install_python_daemon(){
 	#$SUDO ln -s $DPATH $PREFIX/opt/hyp-daemons/
 
 	$SUDO rm -f $PREFIX/etc/init.d/$DAEMON_NAME &>/dev/null
-	$SUDO ln -s $PREFIX/lib/canolibs/daemon-python.py $PREFIX/etc/init.d/$DAEMON_NAME
+	$SUDO ln -s $PREFIX/opt/canotools/daemon $PREFIX/etc/init.d/$DAEMON_NAME
 	check_code $?
 }
 
@@ -923,6 +923,7 @@ make_package "amqp2perfstore"
 ######################################
 cd $src_path
 install_basic_source "webcore"
+install_python_daemon "$PREFIX/opt/webcore/webserver.py"
 make_package "webcore"
 
 ######################################

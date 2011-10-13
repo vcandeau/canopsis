@@ -1,0 +1,102 @@
+#!/bin/bash
+
+CONF_PATH=~/etc/daemon.d/
+APP_NAME=`basename $0`
+
+if [ "x$APP_NAME" == "xdaemon" ]; then
+	echo "You must use with symlink ..."
+	exit 1
+fi
+
+if [ -e $CONF_PATH/$APP_NAME.conf ]; then
+	. $CONF_PATH/$APP_NAME.conf
+else
+	echo "Impossible to find daemon configuration ..."
+	exit 1
+fi
+
+if [ "x$APP_BIN" == "x" ]; then
+	echo "Error in configuration ..."
+	exit 1
+fi
+
+if [ "x$START" == "x" ]; then START=0; fi
+if [ "x$NB_PROC" == "x" ]; then  NB_PROC=1; fi
+
+if [ $START -eq 0 ]; then
+	echo "This Daemon are disable ... Set START=1 in configuration's file for start it."
+	exit 1
+fi
+
+PID_FILE=~/var/run/$APP_NAME.pid
+LOG=~/var/log/$APP_NAME.log
+
+function check_pid(){
+	PID=$1
+	echo `ps a | grep "$PID" | grep -v grep | wc -l`
+}
+
+function set_pid(){
+	PID=$1
+	echo $PID >> $PID_FILE
+}
+
+function get_pid(){
+	echo `cat $PID_FILE`
+}
+
+function remove_pid(){
+	PID=$1
+	TMP=`mktemp`
+	cat $PID_FILE | grep -v $PID > $TMP
+	mv $TMP $PID_FILE
+}
+
+function stop_pid(){
+	PID=$1
+	if [ `check_pid $PID` -eq 0 ]; then
+		echo " + $PID seems dead."
+		remove_pid $PID
+	else
+		#echo " + Try to kill $PID ..."
+		kill $PID
+		remove_pid $PID
+	fi
+}
+
+function start(){
+	for NB in `seq $NB_PROC`; do
+		if [ $NB_PROC -ne 1 ]; then
+			echo " + Start process $NB ..."
+		fi
+		nohup python $APP_BIN $NB &>> $LOG &
+		PID=$!
+		set_pid $PID
+	done
+}
+
+function stop(){
+	PIDS=`get_pid`
+	for PID in $PIDS; do
+		stop_pid $PID
+	done	
+}
+
+case "$1" in
+	start)
+		echo "Starting $APP_NAME ..."
+		start
+		;;
+	stop)
+		echo "Stopping $APP_NAME ..."
+		stop
+		;;
+	restart)
+		echo "Restarting $APP_NAME ..."
+		stop
+		start
+		;;
+	*)
+		echo "$0 [start|stop|restart]"
+		;;
+esac
