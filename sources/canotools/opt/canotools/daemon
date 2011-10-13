@@ -42,7 +42,11 @@ function set_pid(){
 }
 
 function get_pid(){
-	echo "`cat $PID_FILE`"
+	if [ -e $PID_FILE ]; then
+		echo "`cat $PID_FILE`"
+	else
+		echo
+	fi
 }
 
 function remove_pid(){
@@ -81,7 +85,7 @@ function start(){
 		if [ $NB_PROC -ne 1 ]; then
 			echo " + Start process $NB ..."
 		fi
-		nohup python $APP_BIN $NB &>> $LOG &
+		nohup python $APP_BIN $NB 1>> $LOG 2>> $LOG &
 		PID=$!
 		set_pid $PID
 	done
