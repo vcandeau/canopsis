@@ -1,3 +1,4 @@
 #!/bin/bash
 
-pacman --noconfirm -S xmlto base-devel
+# Not sure about xmlto
+pacman --noconfirm -S base-devel curl
