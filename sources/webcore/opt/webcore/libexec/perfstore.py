@@ -16,20 +16,18 @@ from cperfstore import cperfstore
 #import protection function
 from libexec.auth import check_auth, get_account
 
-## Initialisation
-perfstore = cperfstore(storage=get_storage(namespace='perfdata'), logging_level=logging.DEBUG)
-
-debug = False
-
 ## Logger
-if debug:
+if bottle.debug:
 	logging_level=logging.DEBUG
 else:
-	logging_level=logging.ERROR
+	logging_level=logging.INFO
 logging.basicConfig(level=logging_level,
 		format='%(asctime)s %(name)s %(levelname)s %(message)s',
 )
 logger = logging.getLogger("rest")
+
+## Initialisation
+perfstore = cperfstore(storage=get_storage(namespace='perfdata'), logging_level=logging_level)
 
 #########################################################################
 
