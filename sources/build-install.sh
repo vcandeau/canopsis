@@ -239,8 +239,17 @@ function install_basic_source(){
 }
 
 function init_pkgmgr(){
-	echo "    + Initialize PkgMgr ..."
-	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+	echo "    + Update Package Manager ..."
+	ARCHPKGPATH=$SRC_PATH/../binaries/$ARCH/
+	PKGMGRPATH=$PREFIX/var/lib/pkgmgr/packages
+
+	PNAME=$1
+    PPATH=$(get_ppath "$PNAME")
+    check_code $?
+
+    DBINFO=$(db_get "$PNAME")
+    PSTATUS=$(db_parse "status" "$DBINFO")
+    PVERS=$(db_parse "version" "$DBINFO")	
 }
 
 ######################################
