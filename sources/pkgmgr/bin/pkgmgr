@@ -12,6 +12,7 @@ LOG_PATH=$HOME/var/log/pkgmgr
 
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
+touch $VARLIB_PATH/info
 touch $LOG_PATH
 
 detect_os > /dev/null
@@ -33,8 +34,9 @@ function db_set(){
 	PNAME=$1
 	VERS=$2
 	STATUS=$3
+	MD5=$4
 	sed "/$PNAME/d" -i $LOCAL_DB_PATH
-	echo "$PNAME|$VERS|$STATUS" >> $LOCAL_DB_PATH
+	echo "$PNAME|$VERS|$STATUS|$MD5" >> $LOCAL_DB_PATH
 	check_code $?
 }
 
@@ -80,7 +82,6 @@ function get_ppath(){
 			cd $PACKAGES_PATH
 			tar xfz $PNAME.tgz
 			check_code $?
-			rm -f $PNAME.tgz
 		fi
 	fi
 	echo $PPATH
@@ -89,20 +90,21 @@ function get_ppath(){
 function install_package(){
     PNAME=$1
 
+	update_db
 	download_package "$PNAME"
 
-    PPATH=$(get_ppath "$PNAME")
-	check_code $?
+	R_INFO=$(echo `cat $REMOTE_DB_PATH | grep $PNAME | tail -n1`)
+	R_MD5=$(db_parse "md5" "$R_INFO")
 
-	DBINFO=$(db_get "$PNAME")
-	PSTATUS=$(db_parse "status" "$DBINFO")
-	PVERS=$(db_parse "version" "$DBINFO")
+	PPATH=$(get_ppath "$PNAME")
+    check_code $?
+	
+	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 
-	#echo "DBINFO: $DBINFO"
-	#echo "PSTATUS: $PSTATUS, PVERS: $PVERS"
+	if [ "$L_MD5" != "$R_MD5" ]; then echo "Md5sum Error!" && exit 0; fi
 
 	if [ "x$PSTATUS" = "x" ]; then
-	        #echo "Install package $PNAME ..."
+	        echo "Install package $PNAME ..."
 
 	        cd $PREFIX
 	        tar xfz $PPATH/files.tgz
@@ -145,7 +147,46 @@ function remove_package(){
 	echo " + Ok"
 }
 
+function upgrade_package(){
+    PNAME=$1
+
+    update_db
+    download_package "$PNAME"
+
+    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep $PNAME | tail -n1`)
+    R_MD5=$(db_parse "md5" "$R_INFO")
+
+    PPATH=$(get_ppath "$PNAME")
+    check_code $?
+
+    L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
+
+    if [ "$L_MD5" != "$R_MD5" ]; then echo "Md5sum Error!" && exit 0; fi
+
+    if [ "x$PSTATUS" = "x" ]; then
+            echo "Upgrade package $PNAME ..."
+
+            cd $PREFIX
+            tar xfz $PPATH/files.tgz
+            check_code $?
+
+            . $PPATH/control
+            check_code $?
+            update
+        check_code $?
+
+        db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+    else
+        echo "$PNAME is allready install."
+        exit 1
+    fi
+    echo " + Ok"
+}
+
 function create_view(){
+	LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "LAST_UPDATE" | tail -n1)
+	echo
+	echo "Last update : `echo $LAST_UPDATE | cut -d '|' -f2`"
 	echo
 	echo -e "#===========================================================#"
     echo -e "| Package               Version             Status          |"
@@ -205,38 +246,31 @@ function update_db(){
 
 	echo "Download Packages.list ..."
 	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
+	check_code $?
+
+	echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
 }
 
+function show_help(){
+    echo "Usage : pkgmgr [OPTION]"
+    echo "     install [PKGNAME]     ->  Install package"
+    echo "     upgrade [PKGNAME]     ->  Upgrade package"
+    echo "     remove [PKGNAME]      ->  Remove package"
+    echo "     update                ->  Update local database"
+    echo "     list                  ->  List packages"
+    echo "     help                  ->  Print this help"
+    exit 1
+}
 ######### MAIN ##########
 ACTION=$1
 
-if [[ "$1" =~ ^(-h|help|--help)$ ]]; then
-    echo "Usage : pkgmgr [OPTION]"
-    echo "     install [PKGNAME]  ->  Install package"
-    echo "     remove [PKGNAME]   ->  Remove package"
-    echo "     update             ->  Update local database"
-    echo "     list               ->  List packages (auto update before)"
-    echo "     help               ->  Print this help"
-    exit 1
-fi
-
-if [ "x$ACTION" = "xinstall" ]; then
-	install_package $2
-	exit $?
-fi
-
-if [ "x$ACTION" = "xremove" ]; then
-	remove_package $2
-	exit $?
-fi
-
-if [ "x$ACTION" = "xlist" ]; then
-	create_view
-	exit $?
-fi
-
-if [ "x$ACTION" = "xupdate" ]; then
-	echo "Update DB ..."
-	update_db
-	exit $?
+if [[ "x$ACTION" =~ ^(xinstall|xupgrade|xremove|xlist|xupdate)$ ]]; then
+	if [[ "x$ACTION" = "xinstall" && $# -eq 2 ]]; then install_package $2 && exit $?; fi
+	if [[ "x$ACTION" = "xupgrade" && $# -eq 2 ]]; then upgrade_package $2 && exit $?; fi
+	if [[ "x$ACTION" = "xremove" && $# -eq 2 ]]; then remove_package $2 && exit $?; fi
+	if [ "x$ACTION" = "xlist" ]; then create_view && exit $?; fi
+	if [ "x$ACTION" = "xupdate" ]; then update_db && exit $?; fi
+	show_help
+else
+	show_help
 fi
