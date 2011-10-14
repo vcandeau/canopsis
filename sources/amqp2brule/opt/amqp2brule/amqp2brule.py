@@ -83,7 +83,7 @@ def init_bussiness_rules():
 		try:
 			if bussiness_rules_loaded[record._id] != record.write_time:
 				logger.debug(" + Reload '%s'" % record._id)
-				tmp[record._id] = cbrule(record.name, storage=storage, amqp=amqp)
+				tmp[record._id] = cbrule(name=record.name, storage=storage, amqp=amqp)
 				bussiness_rules_loaded[record._id] = record.write_time
 			else:
 				tmp[record._id] = bussiness_rules[record._id]
@@ -91,7 +91,7 @@ def init_bussiness_rules():
 		except:
 			logger.debug(" + Load '%s'" % record._id)
 			bussiness_rules_loaded[record._id] = record.write_time
-			tmp[record._id] = cbrule(record.name, storage=storage, amqp=amqp)
+			tmp[record._id] = cbrule(name=record.name, storage=storage, amqp=amqp)
 			
 
 	bussiness_rules = tmp
