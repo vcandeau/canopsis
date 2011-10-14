@@ -20,6 +20,9 @@ function remove(){
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
 	rm -Rf $PREFIX/var/lib/pkgmgr/packages
+	rm -Rf $PREFIX/var/lib/pkgmgr/local_db
+	rm -Rf $PREFIX/var/lib/pkgmgr/remote_db
+	rm -Rf $PREFIX/var/log/pkgmgr
 	#check_code $?
 }
 
