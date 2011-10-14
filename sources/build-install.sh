@@ -414,11 +414,12 @@ install_pylib "txAMQP" "0.4"
 install_pylib "txamqp-helpers" "0.5"
 
 install_pylib "pycha" "0.6.0"
-install_pylib "bottle" "0.9.6"
 
-install_pylib "gevent" "0.13.6"
+install_pylib "bottle" "0.9.6"
 install_pylib "Beaker" "1.5.4"
 
+install_pylib "gevent" "0.13.6"
+install_pylib "gevent-websocket" "0.2.3"
 
 if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
 	echo " + Patch python-txamqp ..."
@@ -937,6 +938,7 @@ make_package "amqp2perfstore"
 cd $src_path
 install_basic_source "webcore"
 install_python_daemon "$PREFIX/opt/webcore/webserver.py"
+install_python_daemon "$PREFIX/opt/webcore/amqp2websocket.py"
 make_package "webcore"
 
 ######################################

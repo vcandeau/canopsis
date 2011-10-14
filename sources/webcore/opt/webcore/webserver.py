@@ -6,9 +6,9 @@ import bottle
 from bottle import route, run, static_file, redirect
 from beaker.middleware import SessionMiddleware
 
-def main():
-	from gevent import monkey; monkey.patch_all()
+from gevent import monkey; monkey.patch_all()
 
+def main():
 	#import protection function
 	#from libexec.auth import check_auth
 
@@ -16,12 +16,13 @@ def main():
 
 	## Read config file
 	config = ConfigParser.RawConfigParser()
-	config.read(os.path.expanduser('~/etc/webcore.conf'))
+	config.read(os.path.expanduser('~/etc/webserver.conf'))
 
 	## get config
 	root_directory=os.path.expanduser(config.get("server", "root_directory"))
 	port=config.getint("server", "port")
 	debug=config.getboolean("server", "debug")
+	interface=config.get("server", "interface")
 
 	try:
 		process = int(sys.argv[1])
@@ -39,7 +40,7 @@ def main():
 	logging.basicConfig(level=logging_level,
 			format='%(asctime)s %(name)s %(levelname)s %(message)s',
 	)
-	logger = logging.getLogger("webcore")
+	logger = logging.getLogger("webserver-"+str(port))
 
 	##Session system with beaker
 	session_opts = {
@@ -69,7 +70,7 @@ def main():
 
 	try:
 		logger.info("Start listenning on port %i" % port)
-		bottle.run(app, host='0.0.0.0', port=port, reloader=False, server='gevent')
+		bottle.run(app, host=interface, port=port, reloader=False, server='gevent')
 	except:
 		pass
 
