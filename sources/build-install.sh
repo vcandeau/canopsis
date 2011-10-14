@@ -139,7 +139,6 @@ function install_bin {
 	fi
 }
 
-
 function install_python_daemon(){
 	DPATH=$1
 	DAEMON_NAME=`basename $DPATH .py`
@@ -184,6 +183,21 @@ function make_package_archive(){
 	check_code $?
 }
 
+function update_packages_list() {
+	PNAME=$1
+	PPATH=$SRC_PATH/packages/$PNAME
+	echo "    + Update Packages list Db ..."
+	
+    PKGLIST=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/Packages.list
+
+	. $PPATH/control
+	
+	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
+
+	sed "/$PNAME/d" -i $PKGLIST
+    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5" >> $PKGLIST
+}
+
 function make_package(){
 	PNAME=$1
 	if [ "$ARG1" = "pkg" ]; then
@@ -210,7 +224,8 @@ function make_package(){
 		check_code $?
 		
 		make_package_archive "$PNAME"	
-	
+		update_packages_list "$PNAME"	
+
 		echo "    + Re-init initial listing ..."
 		mv $FLIST_TMP $FLIST
 		check_code $?
