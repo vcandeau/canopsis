@@ -8,7 +8,7 @@ PACKAGES_PATH=$VARLIB_PATH/packages
 
 LOCAL_DB_PATH=$VARLIB_PATH/local_db
 REMOTE_DB_PATH=$VARLIB_PATH/remote_db
-LOG_PATH=$HOME/var/log/pkgmgr
+LOG_PATH=$HOME/var/log/pkgmgr.log
 
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
@@ -230,7 +230,7 @@ function create_view(){
 
 function download_package(){
 	PNAME=$1
-	FINAL_URL=$REPO_URL/$REPO_BASE/builds/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
 
 	echo "Remove old packages"
 	rm -Rf $PACKAGES_PATH/$PNAME.tgz*
@@ -240,7 +240,7 @@ function download_package(){
 }
 
 function update_db(){
-	FINAL_URL=$REPO_URL/$REPO_BASE/builds/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
 
 	rm -Rf $REMOTE_DB_PATH
 
