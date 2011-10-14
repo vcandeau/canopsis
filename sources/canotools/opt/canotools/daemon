@@ -43,9 +43,7 @@ function set_pid(){
 
 function get_pid(){
 	if [ -e $PID_FILE ]; then
-		echo "`cat $PID_FILE`"
-	else
-		echo -n
+		echo "`cat $PID_FILE`" | grep -v "^$"
 	fi
 }
 
