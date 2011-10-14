@@ -1,70 +1,86 @@
 #!/bin/bash
 
 VARLIB_PATH="$HOME/var/lib/pkgmgr"
+PACKAGES_PATH=$VARLIB_PATH/packages
+
 . $HOME/lib/common.sh
 . $HOME/etc/pkgmgr.conf
 
-detect_os > /dev/null
+LOCAL_DB_PATH=$VARLIB_PATH/local_db
+REMOTE_DB_PATH=$VARLIB_PATH/remote_db
+LOG_PATH=$HOME/var/log/pkgmgr
 
-DB_PATH=$VARLIB_PATH/db
-touch $DB_PATH
+touch $LOCAL_DB_PATH
+touch $REMOTE_DB_PATH
+touch $LOG_PATH
+
+detect_os > /dev/null
 
 function check_repo(){
 	response=$(curl --write-out %{http_code} --silent --output /dev/null ${REPO_URL})
 	if [ $response -ne 200 ]; then
-	    echo "Error: $REPO_URL is not joinable ($response) !"
+	    echo "\033[91mError\033[0m: $REPO_URL is not joinable ($response) !"
 	fi
 }
 
 function db_get(){
 	PNAME=$1
-	touch $DB_PATH
-	echo `cat $DB_PATH | grep $PNAME | tail -n1`
+	touch $LOCAL_DB_PATH
+	echo `cat $LOCAL_DB_PATH | grep $PNAME | tail -n1`
 }
 
 function db_set(){
 	PNAME=$1
 	VERS=$2
 	STATUS=$3
-	sed "/$PNAME/d" -i $DB_PATH
-	echo "$PNAME~$VERS~$STATUS" >> $DB_PATH
+	sed "/$PNAME/d" -i $LOCAL_DB_PATH
+	echo "$PNAME|$VERS|$STATUS" >> $LOCAL_DB_PATH
 	check_code $?
 }
 
 function db_del(){
 	PNAME=$1
-	sed "/$PNAME/d" -i $DB_PATH
+	sed "/$PNAME/d" -i $LOCAL_DB_PATH
 	check_code $?
 }
 
 function db_parse(){
 	INFO=$1
 	DATA=$2
-	if [ "x$INFO" = "xname" ]; then
-		FIELD=1	
-	elif [ "x$INFO" = "xversion" ]; then
+	if [ "x$INFO" = "xversion" ]; then
+        FIELD=1
+		VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
+        echo "$VERS_INFO" | cut -d '-' -f$FIELD
+	elif [ "x$INFO" = "xrelease" ]; then
 		FIELD=2
-	elif [ "x$INFO" = "xstatus" ]; then
-		FIELD=2
+		VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
+		echo "$VERS_INFO" | cut -d '-' -f$FIELD
+	else
+		if [ "x$INFO" = "xname" ]; then
+			FIELD=1	
+		elif [ "x$INFO" = "xstatus" ]; then
+			FIELD=3
+		elif [ "x$INFO" = "xmd5" ]; then
+			FIELD=4
+		fi
+		echo "$DATA" | cut -d '|' -f$FIELD
 	fi
-	echo "$DATA" | cut -d '|' -f$FIELD
 }
 
 function get_ppath(){
 	PNAME=$1
     PPATH=""
-    #echo "Get path of '$PNAME' ..."
 
-    PPATH="$VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/$PNAME"
+    PPATH="$PACKAGES_PATH/$PNAME"
     if [ ! -e $PPATH ]; then
 		if [ ! -e $PPATH.tgz ]; then
 			echo "Package $PNAME not found ($PPATH.tgz)" >&2
 	        exit 1
 		else
-			cd $VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/
+			cd $PACKAGES_PATH
 			tar xfz $PNAME.tgz
 			check_code $?
-			rm -f $PNAME.tgz		
+			rm -f $PNAME.tgz
 		fi
 	fi
 	echo $PPATH
@@ -72,6 +88,9 @@ function get_ppath(){
 
 function install_package(){
     PNAME=$1
+
+	download_package "$PNAME"
+
     PPATH=$(get_ppath "$PNAME")
 	check_code $?
 
@@ -123,14 +142,83 @@ function remove_package(){
 		echo "$PNAME is not installed."
 		exit 1
 	fi
-	
 	echo " + Ok"
+}
+
+function create_view(){
+	echo
+	echo -e "#===========================================================#"
+    echo -e "| Package               Version             Status          |"
+    echo -e "#===========================================================#"
+	while read line; do
+		FIELD=1
+		R_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
+		R_VERS=$(db_parse "version" "$line")
+		R_REL=$(db_parse "release" "$line")
+		L_INFO=$(db_get "$R_PNAME")
+		L_VERS=$(db_parse "version" "$L_INFO")
+		L_REL=$(db_parse "release" "$L_INFO")
+		L_STATUS=$(db_parse "status" "$L_INFO")
+
+		if [ -z "$L_STATUS" ]; then 
+			L_STATUS="\e[0;101m \033[0m Not Installed"
+			L_VERS_INFO=""
+			R_VERS_INFO=[$R_VERS-$R_REL]
+		else
+			if [ $R_VERS == $L_VERS ]; then
+			    if [ $R_REL == $L_REL ]; then
+			        L_STATUS="\e[42m \033[0m Up-to-date"
+					R_VERS_INFO=""
+					L_VERS_INFO=$L_VERS-$L_REL
+			    else
+	        		L_STATUS="\E[43;31m \033[0m New Release"
+					R_VERS_INFO=[$R_VERS-$R_REL]
+					L_VERS_INFO="$L_VERS-$L_REL -> "
+			    fi
+			else
+				L_STATUS="\E[43;31m \033[0m New Version"
+				R_VERS_INFO=[$R_VERS-$R_REL]
+				L_VERS_INFO="$L_VERS-$L_REL -> "
+			fi
+		fi
+		
+	    echo -e "  $R_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
+	done < "$REMOTE_DB_PATH"
+	echo
+}
+
+function download_package(){
+	PNAME=$1
+	FINAL_URL=$REPO_URL/$REPO_BASE/builds/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+
+	echo "Remove old packages"
+	rm -Rf $PACKAGES_PATH/$PNAME.tgz*
+
+	echo "Download $PNAME ..."
+	wget "$FINAL_URL/$PNAME.tgz" -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH
+}
+
+function update_db(){
+	FINAL_URL=$REPO_URL/$REPO_BASE/builds/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+
+	rm -Rf $REMOTE_DB_PATH
+
+	echo "Download Packages.list ..."
+	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
 }
 
 ######### MAIN ##########
 ACTION=$1
 
-check_repo
+if [[ "$1" =~ ^(-h|help|--help)$ ]]; then
+    echo "Usage : pkgmgr [OPTION]"
+    echo "     install [PKGNAME]  ->  Install package"
+    echo "     remove [PKGNAME]   ->  Remove package"
+    echo "     update             ->  Update local database"
+    echo "     list               ->  List packages (auto update before)"
+    echo "     help               ->  Print this help"
+    exit 1
+fi
 
 if [ "x$ACTION" = "xinstall" ]; then
 	install_package $2
@@ -143,15 +231,12 @@ if [ "x$ACTION" = "xremove" ]; then
 fi
 
 if [ "x$ACTION" = "xlist" ]; then
-	echo "Build info: `cat $VARLIB_PATH/packages/$ARCH/$DIST/$DIST_VERS/build.info`"
-	echo
-	echo -e "Package        Version        Status"
- 	echo "-------------------------------------------------"
-	awk '{ printf "%-15s%-15s%s\n",$1,$2,$3}' FS=\| $DB_PATH
+	create_view
 	exit $?
 fi
 
 if [ "x$ACTION" = "xupdate" ]; then
 	echo "Update DB ..."
+	update_db
 	exit $?
 fi
