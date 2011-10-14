@@ -14,6 +14,8 @@ from twisted.internet import reactor, task
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 
+import ConfigParser, os
+
 ########################################################
 #
 #   Configuration
@@ -22,14 +24,35 @@ from geventwebsocket.handler import WebSocketHandler
 DAEMON_NAME = "amqp2websocket"
 DAEMON_TYPE = "transport"
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-logger = logging.getLogger(DAEMON_NAME)
 amqp = None
 wsclients = []
 
 MAX_WSCLIENT = 20
+
+## Read config file
+config = ConfigParser.RawConfigParser()
+config.read(os.path.expanduser('~/etc/amqp2websocket.conf'))
+
+## get config
+port=config.getint("server", "port")
+debug=config.getboolean("server", "debug")
+interface=config.get("server", "interface")
+
+try:
+	process = int(sys.argv[1])
+	port = port + (process - 1)
+except:
+	pass
+
+## Logger
+if debug:
+	logging_level=logging.DEBUG
+else:
+	logging_level=logging.INFO
+logging.basicConfig(level=logging_level,
+		format='%(asctime)s %(name)s %(levelname)s %(message)s',
+)
+logger = logging.getLogger("amqp2websocket")
 
 ########################################################
 #
@@ -96,10 +119,10 @@ def main():
 	# AMQP
 	amqp = camqp()
 
-	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_liveevents)
+	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 
-	wsserver = pywsgi.WSGIServer(('0.0.0.0', 8090), on_websocket, handler_class=WebSocketHandler)
+	wsserver = pywsgi.WSGIServer((interface, port), on_websocket, handler_class=WebSocketHandler)
 
 	try:
 		wsserver.serve_forever()
