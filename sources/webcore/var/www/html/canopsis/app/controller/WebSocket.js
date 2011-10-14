@@ -6,7 +6,6 @@ Ext.define('canopsis.controller.WebSocket', {
 
     autoconnect: true,
     ws_enable: true,
-    ws_url: 'ws://192.168.3.56:8090/',
     open: false,
     ws: false,
 
@@ -19,6 +18,11 @@ Ext.define('canopsis.controller.WebSocket', {
 		}
 	}
 
+	var location = document.location.host;
+	var host = location.split(":")
+	host = host[0]
+	this.ws_url = "ws://"+host+":8090";
+
 	if (this.autoconnect){
 		this.connect();
 	}
@@ -26,7 +30,7 @@ Ext.define('canopsis.controller.WebSocket', {
 
     connect: function() {
 	if (this.ws_enable) {
-		log.debug("Connect to websocket ...")
+		log.debug("Connect Websocket  to '"+this.ws_url+"'...")
 		this.ws = new WebSocket(this.ws_url);
 		this.ws.extctrl = this
 		this.ws.onopen = this.ws_onopen;
