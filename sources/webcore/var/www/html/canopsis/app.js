@@ -1,11 +1,12 @@
 Ext.onReady(function() {
 	Ext.Loader.setConfig({enabled:true});
 
-	Ext.application({
+	var app = Ext.application({
 		name: 'canopsis',
 		appFolder: 'app',
 
 		controllers: [
+			'Notify',
 			'Menu',
 			'View',
 			'Tabs',
