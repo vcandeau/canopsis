@@ -45,7 +45,7 @@ function get_pid(){
 	if [ -e $PID_FILE ]; then
 		echo "`cat $PID_FILE`"
 	else
-		echo
+		echo -n
 	fi
 }
 

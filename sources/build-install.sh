@@ -238,20 +238,6 @@ function install_basic_source(){
 	
 }
 
-function init_pkgmgr(){
-	echo "    + Update Package Manager ..."
-	ARCHPKGPATH=$SRC_PATH/../binaries/$ARCH/
-	PKGMGRPATH=$PREFIX/var/lib/pkgmgr/packages
-
-	PNAME=$1
-    PPATH=$(get_ppath "$PNAME")
-    check_code $?
-
-    DBINFO=$(db_get "$PNAME")
-    PSTATUS=$(db_parse "status" "$DBINFO")
-    PVERS=$(db_parse "version" "$DBINFO")	
-}
-
 ######################################
 # Check help if asked
 ######################################
@@ -271,17 +257,7 @@ fi
 detect_os
 
 ######################################
-#  Init file listing
-######################################
-echo "Init files listing ..."
-$SUDO mkdir -p $PREFIX
-cd $PREFIX &> /dev/null
-find ./ -type f > $SRC_PATH/packages/files.lst
-find ./ -type l >> $SRC_PATH/packages/files.lst
-cd - &> /dev/null
-
-######################################
-#  Check Arguments
+#  Clean Arguments
 ######################################
 ARG1=$1
 ARG2=$2
@@ -309,6 +285,19 @@ if [ "$ARG1" = "clean" ]; then
 	exit 0
 fi
 
+######################################
+#  Init file listing
+######################################
+echo "Init files listing ..."
+$SUDO mkdir -p $PREFIX
+cd $PREFIX &> /dev/null
+find ./ -type f > $SRC_PATH/packages/files.lst
+find ./ -type l >> $SRC_PATH/packages/files.lst
+cd - &> /dev/null
+
+######################################
+# Check other arguments
+######################################
 if [ "$ARG1" = "mkpkg" ]; then
 	PNAME=$ARG2
 	echo "Make package $PNAME ..."
