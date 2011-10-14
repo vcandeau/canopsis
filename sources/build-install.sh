@@ -923,6 +923,7 @@ make_package "amqp2perfstore"
 cd $src_path
 install_basic_source "webcore"
 install_python_daemon "$PREFIX/opt/webcore/webserver.py"
+install_python_daemon "$PREFIX/opt/webcore/amqp2websocket.py"
 make_package "webcore"
 
 ######################################
