@@ -2,11 +2,19 @@
 
 VARLIB_PATH="$HOME/var/lib/pkgmgr"
 . $HOME/lib/common.sh
+. $HOME/etc/pkgmgr.conf
 
 detect_os > /dev/null
 
 DB_PATH=$VARLIB_PATH/db
 touch $DB_PATH
+
+function check_repo(){
+	response=$(curl --write-out %{http_code} --silent --output /dev/null ${REPO_URL})
+	if [ $response -ne 200 ]; then
+	    echo "Error: $REPO_URL is not joinable ($response) !"
+	fi
+}
 
 function db_get(){
 	PNAME=$1
@@ -121,6 +129,8 @@ function remove_package(){
 
 ######### MAIN ##########
 ACTION=$1
+
+check_repo
 
 if [ "x$ACTION" = "xinstall" ]; then
 	install_package $2
