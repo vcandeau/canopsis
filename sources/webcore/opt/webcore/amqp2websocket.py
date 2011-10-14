@@ -11,7 +11,9 @@ import json
 
 from twisted.internet import reactor, task
 
+from gevent import spawn
 from gevent import pywsgi
+from gevent.pool import Pool
 from geventwebsocket.handler import WebSocketHandler
 
 import ConfigParser, os
@@ -105,7 +107,6 @@ def signal_handler(signum, frame):
 	RUN = 0
  
 
-
 ########################################################
 #
 #   Main
@@ -117,17 +118,18 @@ def main():
 	signal.signal(signal.SIGTERM, signal_handler)
 	global amqp, RUN
 	# AMQP
-	amqp = camqp()
+	amqp = camqp(logging_level=logging_level)
 
 	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 
+	#pool = Pool(MAX_WSCLIENT)
 	wsserver = pywsgi.WSGIServer((interface, port), on_websocket, handler_class=WebSocketHandler)
 
 	try:
 		wsserver.serve_forever()
 	except:
-		RUN = 0
+		RUN=0
 
 	amqp.stop()
 	amqp.join()
