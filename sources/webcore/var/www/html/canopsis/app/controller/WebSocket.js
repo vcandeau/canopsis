@@ -42,16 +42,16 @@ Ext.define('canopsis.controller.WebSocket', {
     ws_onopen: function(evt) {
 	log.debug("Websocket Connected.")
 	this.open = true;
-	this.extctrl.fireEvent('onopen', this, evt);
+	this.extctrl.fireEvent('open', this, evt);
     },
     ws_onclose: function(evt) {
 	log.debug("Websocket Closed.")
 	this.open = false;
-	this.extctrl.fireEvent('onclose', this, evt);
+	this.extctrl.fireEvent('close', this, evt);
     },
     ws_onmessage: function(evt) {
 	//log.debug("New message from Websocket ...")
-	this.extctrl.fireEvent('onmessage', this, evt);
+	this.extctrl.fireEvent('message', this, evt);
     },
 
 });
