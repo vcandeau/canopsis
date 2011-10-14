@@ -10,6 +10,7 @@ Ext.onReady(function() {
 			'View',
 			'Tabs',
 			'Widgets',
+			'WebSocket',
 			'Account'
 		],
 	
