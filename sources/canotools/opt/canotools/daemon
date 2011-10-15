@@ -70,7 +70,24 @@ function stop_pid(){
 	else
 		#echo " + Try to kill $PID ..."
 		kill $PID
-		remove_pid $PID
+		check=1
+
+		while [ 1 ]; do
+			sleep 1
+			echo -n '.'
+			if [[ `check_pid $PID` -eq 0 || $check -ge 5 ]]; then
+				break
+			fi
+			kill -2 $PID
+			check=$((check + 1))
+		done
+
+		if [ `check_pid $PID` -eq 0 ]; then
+			echo " Ok"
+			remove_pid $PID
+		else
+			echo " Failed"
+		fi
 	fi
 }
 
@@ -92,6 +109,7 @@ function start(){
 function stop(){
 	PIDS=`get_pid`
 	for PID in $PIDS; do
+		echo -n " + $PID"
 		stop_pid $PID
 	done	
 }
@@ -109,7 +127,7 @@ case "$1" in
 		start
 		;;
 	stop)
-		echo "Stopping $APP_NAME ..."
+		echo "Stopping $APP_NAME :"
 		stop
 		;;
 	status)
