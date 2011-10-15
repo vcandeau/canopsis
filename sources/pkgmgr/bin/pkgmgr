@@ -1,19 +1,20 @@
 #!/bin/bash
 
-VARLIB_PATH="$HOME/var/lib/pkgmgr"
-PACKAGES_PATH=$VARLIB_PATH/packages
-
 . $HOME/lib/common.sh
 . $HOME/etc/pkgmgr.conf
-
-LOCAL_DB_PATH=$VARLIB_PATH/local_db
-REMOTE_DB_PATH=$VARLIB_PATH/remote_db
-LOG_PATH=$HOME/var/log/pkgmgr.log
 
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
 touch $VARLIB_PATH/info
 touch $LOG_PATH
+
+#================#
+# VARLIB_PATH    #
+# PACKAGES_PATH  #
+# LOCAL_DB_PATH  #
+# REMOTE_DB_PATH #
+# LOG_PATH       #
+#================#
 
 detect_os > /dev/null
 
@@ -58,9 +59,9 @@ function db_parse(){
 		VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
 		echo "$VERS_INFO" | cut -d '-' -f$FIELD
 	else
-		if [ "x$INFO" = "xname" ]; then
-			FIELD=1	
-		elif [ "x$INFO" = "xstatus" ]; then
+		if [ "x$INFO" = "xname" ]; then	
+			FIELD=1
+		elif [ "x$INFO" = "xstatus" ]; then 
 			FIELD=3
 		elif [ "x$INFO" = "xmd5" ]; then
 			FIELD=4
@@ -71,8 +72,6 @@ function db_parse(){
 
 function get_ppath(){
 	PNAME=$1
-    PPATH=""
-
     PPATH="$PACKAGES_PATH/$PNAME"
     if [ ! -e $PPATH ]; then
 		if [ ! -e $PPATH.tgz ]; then
@@ -90,6 +89,8 @@ function get_ppath(){
 function install_package(){
     PNAME=$1
 
+	echo "Install package $PNAME ..."
+
 	update_db
 	download_package "$PNAME"
 
@@ -104,17 +105,13 @@ function install_package(){
 	if [ "$L_MD5" != "$R_MD5" ]; then echo "Md5sum Error!" && exit 0; fi
 
 	if [ "x$PSTATUS" = "x" ]; then
-	        echo "Install package $PNAME ..."
-
 	        cd $PREFIX
 	        tar xfz $PPATH/files.tgz
 	        check_code $?
-	
 	        . $PPATH/control
 	        check_code $?
 	        install
 		check_code $?
-
 		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
 	else
 		echo "$PNAME is allready install."
@@ -133,7 +130,7 @@ function remove_package(){
 	PVERS=$(db_parse "version" "$DBINFO")
 
 	if [ ! "x$PSTATUS" = "x" ]; then
-	        #echo "Remove package $PNAME ..."
+	        echo "Remove package $PNAME ..."
 	        . $PPATH/control
 	        check_code $?
 	        remove
@@ -150,6 +147,8 @@ function remove_package(){
 function upgrade_package(){
     PNAME=$1
 
+	echo "Upgrade package $PNAME ..."
+
     update_db
     download_package "$PNAME"
 
@@ -161,36 +160,70 @@ function upgrade_package(){
 
     L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 
-    if [ "$L_MD5" != "$R_MD5" ]; then echo "Md5sum Error!" && exit 0; fi
+	echo " + Checking Md5Sum.."
+    if [ "$L_MD5" != "$R_MD5" ]; then echo "   + Md5sum Error!" && exit 0; fi
 
-    if [ "x$PSTATUS" = "x" ]; then
-            echo "Upgrade package $PNAME ..."
+    cd $PREFIX
+    tar xfz $PPATH/files.tgz
+    check_code $?
+    . $PPATH/control
+    check_code $?
+    update
+    check_code $?
 
-            cd $PREFIX
-            tar xfz $PPATH/files.tgz
-            check_code $?
-
-            . $PPATH/control
-            check_code $?
-            update
-        check_code $?
-
-        db_set "$PNAME" "$VERSION-$RELEASE" "installed"
-    else
-        echo "$PNAME is allready install."
-        exit 1
-    fi
-    echo " + Ok"
+    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+    
+	echo " + Ok"
 }
 
 function create_view(){
 	LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "LAST_UPDATE" | tail -n1)
+	if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
 	echo
 	echo "Last update : `echo $LAST_UPDATE | cut -d '|' -f2`"
 	echo
 	echo -e "#===========================================================#"
     echo -e "| Package               Version             Status          |"
     echo -e "#===========================================================#"
+	while read line; do
+        FIELD=1
+        L_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
+        L_VERS=$(db_parse "version" "$line")
+        L_REL=$(db_parse "release" "$line")
+        L_STATUS=$(db_parse "status" "$line")
+
+		R_INFO=$(cat $REMOTE_DB_PATH | grep $L_PNAME | tail -n1)
+        if [[ -z "$R_INFO" ]];then
+			L_STATUS="\e[42m \033[0m Installed"
+            echo -e "  $L_PNAME(extra)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
+        else
+			R_VERS=$(db_parse "version" "$R_INFO")
+			R_REL=$(db_parse "release" "$R_INFO")
+			if [ -z "$L_STATUS" ]; then 
+	            L_STATUS="\e[0;101m \033[0m Not Installed"
+    	        L_VERS_INFO=""
+        	    R_VERS_INFO=[$R_VERS-$R_REL]
+	        else
+    	        if [ "$R_VERS" == "$L_VERS" ]; then
+        	        if [ "$R_REL" == "$L_REL" ]; then
+            	        L_STATUS="\e[42m \033[0m Up-to-date"
+                	    R_VERS_INFO=""
+                    	L_VERS_INFO=$L_VERS-$L_REL
+	                else
+    	                L_STATUS="\E[43;31m \033[0m New Release"
+        	            R_VERS_INFO=[$R_VERS-$R_REL]
+            	        L_VERS_INFO="$L_VERS-$L_REL -> "
+                	fi
+	            else
+    	            L_STATUS="\E[43;31m \033[0m New Version"
+        	        R_VERS_INFO=[$R_VERS-$R_REL]
+            	    L_VERS_INFO="$L_VERS-$L_REL -> "
+	            fi
+    	    fi    
+	        echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
+		fi
+    done < "$LOCAL_DB_PATH"
+
 	while read line; do
 		FIELD=1
 		R_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
@@ -201,29 +234,12 @@ function create_view(){
 		L_REL=$(db_parse "release" "$L_INFO")
 		L_STATUS=$(db_parse "status" "$L_INFO")
 
-		if [ -z "$L_STATUS" ]; then 
+		R_VERS_INFO=[$R_VERS-$R_REL]	
+	
+		if [ -z "$L_INFO" ]; then
 			L_STATUS="\e[0;101m \033[0m Not Installed"
-			L_VERS_INFO=""
-			R_VERS_INFO=[$R_VERS-$R_REL]
-		else
-			if [ $R_VERS == $L_VERS ]; then
-			    if [ $R_REL == $L_REL ]; then
-			        L_STATUS="\e[42m \033[0m Up-to-date"
-					R_VERS_INFO=""
-					L_VERS_INFO=$L_VERS-$L_REL
-			    else
-	        		L_STATUS="\E[43;31m \033[0m New Release"
-					R_VERS_INFO=[$R_VERS-$R_REL]
-					L_VERS_INFO="$L_VERS-$L_REL -> "
-			    fi
-			else
-				L_STATUS="\E[43;31m \033[0m New Version"
-				R_VERS_INFO=[$R_VERS-$R_REL]
-				L_VERS_INFO="$L_VERS-$L_REL -> "
-			fi
+			echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
 		fi
-		
-	    echo -e "  $R_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
 	done < "$REMOTE_DB_PATH"
 	echo
 }
@@ -232,44 +248,67 @@ function download_package(){
 	PNAME=$1
 	FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
 
-	echo "Remove old packages"
+	echo " + Remove old packages"
 	rm -Rf $PACKAGES_PATH/$PNAME.tgz*
 
-	echo "Download $PNAME ..."
+	echo " + Download $PNAME ..."
 	wget "$FINAL_URL/$PNAME.tgz" -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH
 }
 
 function update_db(){
-	FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	if [ -z "$REPO_BASE" ]; then
+		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	else
+		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	fi
 
 	rm -Rf $REMOTE_DB_PATH
 
-	echo "Download Packages.list ..."
+	echo " + Download Packages.list ..."
 	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
 	check_code $?
 
 	echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
 }
 
+function clean_cache(){
+	echo "Clean cache"
+	echo " + Remove Remote Db"
+	rm -Rf $REMOTE_DB_PATH
+	echo " + Remove Packages in cache"
+	rm -Rm $VARLIB_PATH/packages
+}
+
+function install_local_package(){
+	echo "Work in progress"
+}
+
 function show_help(){
     echo "Usage : pkgmgr [OPTION]"
-    echo "     install [PKGNAME]     ->  Install package"
-    echo "     upgrade [PKGNAME]     ->  Upgrade package"
-    echo "     remove [PKGNAME]      ->  Remove package"
-    echo "     update                ->  Update local database"
-    echo "     list                  ->  List packages"
-    echo "     help                  ->  Print this help"
+    echo "     install [PKGNAME]       ->  Install package"
+    echo "     install-local [PKGNAME] ->  Install package"
+    echo "     upgrade [PKGNAME]       ->  Upgrade package"
+    echo "     remove [PKGNAME]        ->  Remove package"
+    echo "     update                  ->  Update local database"
+    echo "     list                    ->  List packages"
+    echo "     clean                   ->  Clean cache"
+    echo "     help                    ->  Print this help"
     exit 1
 }
-######### MAIN ##########
+
+###############
+###   RUN   ###
+###############
 ACTION=$1
 
 if [[ "x$ACTION" =~ ^(xinstall|xupgrade|xremove|xlist|xupdate)$ ]]; then
 	if [[ "x$ACTION" = "xinstall" && $# -eq 2 ]]; then install_package $2 && exit $?; fi
+	if [[ "x$ACTION" = "xinstall-local" && $# -eq 2 ]]; then install_local_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xupgrade" && $# -eq 2 ]]; then upgrade_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xremove" && $# -eq 2 ]]; then remove_package $2 && exit $?; fi
-	if [ "x$ACTION" = "xlist" ]; then create_view && exit $?; fi
-	if [ "x$ACTION" = "xupdate" ]; then update_db && exit $?; fi
+	if [[ "x$ACTION" = "xlist" ]]; then create_view && exit $?; fi
+	if [[ "x$ACTION" = "xclean" ]]; then clean_cache && exit $?; fi
+	if [[ "x$ACTION" = "xupdate" ]]; then update_db && exit $?; fi
 	show_help
 else
 	show_help
