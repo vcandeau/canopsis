@@ -11,13 +11,11 @@ Ext.define('canopsis.controller.Notify', {
 		
 		var type = undefined;
 		var icon = undefined;
-		var title = data['source_name'] + " > " + data['host_name'];
+		var title = data['source_name'] + " > " + data['source_type']  + " > " +  data['host_name'];
 		var message = data['output'];
 
-		try{
+		if (data['service_description']) {
 			title = title + " > " + data['service_description']
-		} catch(err) {
-		
 		}
 
 		if (data['state'] == 0){
