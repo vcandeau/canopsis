@@ -6,6 +6,7 @@
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
 touch $VARLIB_PATH/info
+mkdir -p var/log
 touch $LOG_PATH
 
 #================#
@@ -177,14 +178,14 @@ function upgrade_package(){
 }
 
 function create_view(){
-	LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "LAST_UPDATE" | tail -n1)
+	LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "LAST_UPDATE" | tail -n1 | cut -d '|' -f2)
 	if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
 	echo
-	echo "Last update : `echo $LAST_UPDATE | cut -d '|' -f2`"
+	echo "Last update : `echo $LAST_UPDATE`"
 	echo
-	echo -e "#===========================================================#"
-    echo -e "| Package               Version             Status          |"
-    echo -e "#===========================================================#"
+	echo -e "#=============================================================#"
+    echo -e "| Package               Version               Status          |"
+    echo -e "#=============================================================#"
 	while read line; do
         FIELD=1
         L_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
@@ -195,7 +196,7 @@ function create_view(){
 		R_INFO=$(cat $REMOTE_DB_PATH | grep $L_PNAME | tail -n1)
         if [[ -z "$R_INFO" ]];then
 			L_STATUS="\e[42m \033[0m Installed"
-            echo -e "  $L_PNAME(extra)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
+            echo -e "  $L_PNAME(*)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
         else
 			R_VERS=$(db_parse "version" "$R_INFO")
 			R_REL=$(db_parse "release" "$R_INFO")
@@ -220,7 +221,7 @@ function create_view(){
             	    L_VERS_INFO="$L_VERS-$L_REL -> "
 	            fi
     	    fi    
-	        echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
+	        echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
 		fi
     done < "$LOCAL_DB_PATH"
 
@@ -238,7 +239,7 @@ function create_view(){
 	
 		if [ -z "$L_INFO" ]; then
 			L_STATUS="\e[0;101m \033[0m Not Installed"
-			echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-24s%-20s%s\n",$1,$2,$3}' FS=\|
+			echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
 		fi
 	done < "$REMOTE_DB_PATH"
 	echo
@@ -276,7 +277,10 @@ function clean_cache(){
 	echo " + Remove Remote Db"
 	rm -Rf $REMOTE_DB_PATH
 	echo " + Remove Packages in cache"
-	rm -Rm $VARLIB_PATH/packages
+	rm -Rf $VARLIB_PATH/packages/*
+	echo " + Update Pkgmgr info file"
+	sed "/LAST_UPDATE/d" -i $VARLIB_PATH/info
+	exit 1
 }
 
 function install_local_package(){
@@ -301,7 +305,7 @@ function show_help(){
 ###############
 ACTION=$1
 
-if [[ "x$ACTION" =~ ^(xinstall|xupgrade|xremove|xlist|xupdate)$ ]]; then
+if [[ "x$ACTION" =~ ^(xinstall|xinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
 	if [[ "x$ACTION" = "xinstall" && $# -eq 2 ]]; then install_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xinstall-local" && $# -eq 2 ]]; then install_local_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xupgrade" && $# -eq 2 ]]; then upgrade_package $2 && exit $?; fi
