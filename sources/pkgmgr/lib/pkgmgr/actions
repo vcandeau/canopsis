@@ -1,0 +1,187 @@
+#!/bin/bash
+
+function load_control_tpl(){
+	. $HOME/lib/pkgmgr/control.tpl
+	check_code $? "Source control default template failure"
+}
+
+function get_ppath(){
+    PNAME=$1
+    PPATH="$PACKAGES_PATH/$PNAME"
+    if [ ! -e $PPATH ]; then
+        if [ ! -e $PPATH.tgz ]; then
+            check_code $? "Package $PNAME not found ($PPATH.tgz)" >&2
+            exit 1
+        else
+            cd $PACKAGES_PATH
+            tar xfz $PNAME.tgz
+            check_code $? "Untar package ($PNAME.tgz) failure"
+        fi
+    fi
+    echo $PPATH
+}
+
+function download_package(){
+    PNAME=$1
+    FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+
+    echo "   + Remove old packages"
+    rm -Rf $PACKAGES_PATH/$PNAME*
+    check_code $? "Removing old packages failure"
+
+    echo "   + Download $PNAME ..."
+    wget "$FINAL_URL/$PNAME.tgz" -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH
+    check_code $? "Failure during download package"
+}
+
+function install_package(){
+    PNAME=$1
+    DBINFO=$(db_get "$PNAME")
+    L_STATUS=$(db_parse "status" "$DBINFO")
+    if [ "$L_STATUS" == "installed" ]; then
+        echo " :: Reinstall package $PNAME"
+    else
+        echo " :: Install package $PNAME"
+    fi
+
+    update_db
+    download_package "$PNAME"
+
+    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep $PNAME | tail -n1`)
+    R_MD5=$(db_parse "md5" "$R_INFO")
+
+    PPATH=$(get_ppath "$PNAME")
+    check_code $?
+
+    L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
+
+    if [ "$L_MD5" != "$R_MD5" ]; then check_code $? "Md5sum Error!" && exit 0; fi
+
+	load_control_tpl
+    . $PPATH/control
+    check_code $? "Source control file from $PNAME failure"
+    echo "   + Pre-install"
+    pre_install
+    check_code $? "Pre-install step failure"
+    echo "   + Copying files"
+    cd $PREFIX
+    tar xfz $PPATH/files.tgz
+    check_code $? "Untar files.tgz ($PNAME) failure"
+	echo "   + Post-install"
+    post_install
+    check_code $? "Post-install function ($PNAME) failure"
+    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+
+    echo " + Done"
+}
+
+function install_local_package(){
+    FULLPATH=$1
+    FILENAME="${FULLPATH##*/}"
+    if ! [[ ${FILENAME: -4} == ".tgz" || $(exit $?) == 1 ]]; then
+        echo "Package format must be packagename.tgz"
+        exit 1
+    fi
+    PNAME="${FILENAME%.[^.]*}"
+    if [ -z "$PNAME" ]; then
+        echo "There is an error in the path"
+        exit 1
+    fi
+    DBINFO=$(db_get "$PNAME")
+    L_STATUS=$(db_parse "status" "$DBINFO")
+    if [ "$L_STATUS" == "installed" ]; then
+        echo " :: Reinstall package $PNAME"
+    else
+        echo " :: Install package $PNAME"
+    fi
+
+    cp $FULLPATH $PACKAGES_PATH
+    cd $PACKAGES_PATH
+    tar xfz $PNAME.tgz
+    check_code $? "Untar package ($PNAME.tgz) failure"
+    PPATH=$PACKAGES_PATH/$PNAME
+	
+	load_control_tpl
+	. $PPATH/control	
+    check_code $? "Source control file from $PNAME failure"
+	echo "   + Pre-install"
+    pre_install
+	check_code $? "Pre-install step failure"
+	echo "   + Copying files"
+    cd $PREFIX
+    tar xfz $PPATH/files.tgz
+    check_code $? "Untar files.tgz ($PNAME) failure"
+	echo "   + Post-install"
+    post_install
+    check_code $? "Post-install step ($PNAME) failure"
+
+    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+    echo " + Done"  
+}
+
+function remove_package(){
+    PNAME=$1
+    DBINFO=$(db_get "$PNAME")
+    PSTATUS=$(db_parse "status" "$DBINFO")
+
+    if [ ! "x$PSTATUS" = "x" ]; then
+        echo " :: Remove package $PNAME"
+        PPATH=$PACKAGES_PATH/$PNAME
+		load_control_tpl
+        . $PPATH/control
+        check_code $? "Source control file from $PNAME failure"
+		echo "   + Pre-remove"
+        pre_remove
+		check_code $? "Pre-remove step failure"
+		echo "   + Remove files"
+		while read line; do
+			rm -Rf $(echo $line | cut -b 1-2 --complement)
+		done < $PPATH/files.list
+        check_code $? "Remove files in files.lst ($PNAME) failure"
+		echo "   + Post-remove"
+		post_remove
+		check_code $? "Post-remove step failure"
+
+        db_del "$PNAME"
+    else
+        echo " :: Package $PNAME is not installed"
+        exit 1
+    fi
+    echo " + Done"
+}
+
+function upgrade_package(){
+    PNAME=$1
+    echo " :: Upgrade package $PNAME ..."
+
+    update_db
+    download_package "$PNAME"
+
+    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep $PNAME | tail -n1`)
+    R_MD5=$(db_parse "md5" "$R_INFO")
+
+    PPATH=$(get_ppath "$PNAME")
+    check_code $?
+
+    L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
+
+    echo "   + Checking Md5Sum.."
+    if [ "$L_MD5" != "$R_MD5" ]; then check_code $? "Md5sum Error!" && exit 0; fi
+
+	load_control_tpl
+    . $PPATH/control
+	pre_
+
+    cd $PREFIX
+    tar xfz $PPATH/files.tgz
+    check_code $? "Untar package ($PNAME.tgz) failure"
+	load_control_tpl
+    . $PPATH/control
+    check_code $? "Source control file from $PNAME failure"
+    update
+    check_code $? "Update function ($PNAME) failure"
+
+    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+
+    echo "   + Done"
+}
