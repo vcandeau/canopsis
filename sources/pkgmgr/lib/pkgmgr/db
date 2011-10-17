@@ -1,0 +1,83 @@
+#!/bin/bash
+
+###############
+# LOCAL #######
+###############
+function db_get(){
+    PNAME=$1
+    touch $LOCAL_DB_PATH
+    echo `cat $LOCAL_DB_PATH | grep $PNAME | tail -n1`
+}
+
+function db_set(){
+    PNAME=$1
+    VERS=$2
+    STATUS=$3
+    MD5=$4
+    DEPS=$5
+    sed "/$PNAME/d" -i $LOCAL_DB_PATH
+    echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> $LOCAL_DB_PATH
+    check_code $? "Database insertion ($PNAME)"
+}
+
+function db_del(){
+    PNAME=$1
+    sed "/$PNAME/d" -i $LOCAL_DB_PATH
+    check_code $? "Database deletion ($PNAME)"
+}
+
+function db_parse(){
+    INFO=$1
+    DATA=$2
+    if [ "x$INFO" = "xversion" ]; then
+        FIELD=1
+        VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
+        echo "$VERS_INFO" | cut -d '-' -f$FIELD
+    elif [ "x$INFO" = "xrelease" ]; then
+        FIELD=2
+        VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
+        echo "$VERS_INFO" | cut -d '-' -f$FIELD
+    else
+        if [ "x$INFO" = "xname" ]; then
+            FIELD=1
+        elif [ "x$INFO" = "xstatus" ]; then
+            FIELD=3
+        elif [ "x$INFO" = "xmd5" ]; then
+            FIELD=4
+        elif [ "x$DEPs" = "xdeps" ]; then
+            FIELD=5
+        fi
+        echo "$DATA" | cut -d '|' -f$FIELD
+    fi
+}
+
+##############
+# REMOTE #####
+##############
+function check_repo(){
+    response=$(curl --write-out %{http_code} --silent --output /dev/null ${REPO_URL})
+    if [ $response -ne 200 ]; then
+        echo -e "\033[91mError\033[0m: $REPO_URL is not joinable ($response) !"
+        exit 1
+    fi
+}
+
+function update_db(){
+    check_repo
+    if [ -z "$REPO_BASE" ]; then
+        FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+    else
+        FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+    fi
+
+    rm -Rf $REMOTE_DB_PATH
+    check_code $? "Failure during remove old database"
+
+    echo " :: Download Packages.list ..."
+    wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
+    check_code $? "Packages.list not accessible"
+
+    echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
+    check_code $? "Pkgmgr info file insertion error"
+    echo "   + Done"
+}
