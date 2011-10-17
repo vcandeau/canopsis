@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys, os, logging, json
-import ConfigParser
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError
