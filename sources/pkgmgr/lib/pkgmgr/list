@@ -1,0 +1,69 @@
+#!/bin/bash
+
+function create_view(){
+    LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "LAST_UPDATE" | tail -n1 | cut -d '|' -f2)
+    if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
+    echo
+    echo "Last update : `echo $LAST_UPDATE`"
+    echo
+    echo -e "#=============================================================#"
+    echo -e "| Package                 Version             Status          |"
+    echo -e "#=============================================================#"
+    while read line; do
+        FIELD=1
+        L_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
+        L_VERS=$(db_parse "version" "$line")
+        L_REL=$(db_parse "release" "$line")
+        L_STATUS=$(db_parse "status" "$line")
+
+        R_INFO=$(cat $REMOTE_DB_PATH | grep $L_PNAME | tail -n1)
+        if [[ -z "$R_INFO" ]];then
+            L_STATUS="\e[42m \033[0m Installed"
+            echo -e "  $L_PNAME(*)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+        else
+            R_VERS=$(db_parse "version" "$R_INFO")
+            R_REL=$(db_parse "release" "$R_INFO")
+            if [ -z "$L_STATUS" ]; then
+                L_STATUS="\e[0;101m \033[0m Not Installed"
+                L_VERS_INFO=""
+                R_VERS_INFO=[$R_VERS-$R_REL]
+            else
+                if [ "$R_VERS" == "$L_VERS" ]; then
+                    if [ "$R_REL" == "$L_REL" ]; then
+                        L_STATUS="\e[42m \033[0m Up-to-date"
+                        R_VERS_INFO=""
+                        L_VERS_INFO=$L_VERS-$L_REL
+                    else
+                        L_STATUS="\E[43;31m \033[0m New Release"
+                        R_VERS_INFO=[$R_VERS-$R_REL]
+                        L_VERS_INFO="$L_VERS-$L_REL -> "
+                    fi
+                else
+                    L_STATUS="\E[43;31m \033[0m New Version"
+                    R_VERS_INFO=[$R_VERS-$R_REL]
+                    L_VERS_INFO="$L_VERS-$L_REL -> "
+                fi
+            fi
+            echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+        fi
+    done < "$LOCAL_DB_PATH"
+
+    while read line; do
+        FIELD=1
+        R_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
+        R_VERS=$(db_parse "version" "$line")
+        R_REL=$(db_parse "release" "$line")
+        L_INFO=$(db_get "$R_PNAME")
+        L_VERS=$(db_parse "version" "$L_INFO")
+        L_REL=$(db_parse "release" "$L_INFO")
+        L_STATUS=$(db_parse "status" "$L_INFO")
+
+        R_VERS_INFO=[$R_VERS-$R_REL]
+
+        if [ -z "$L_INFO" ]; then
+            L_STATUS="\e[0;101m \033[0m Not Installed"
+            echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+        fi
+    done < "$REMOTE_DB_PATH"
+    echo
+}
