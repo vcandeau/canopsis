@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys, os, logging, time
-import ConfigParser
 
 import bottle
 from bottle import route, run, static_file, redirect
@@ -8,21 +7,21 @@ from beaker.middleware import SessionMiddleware
 
 from gevent import monkey; monkey.patch_all()
 
+from cconfig import cconfig
+
+CONFIG = cconfig(name="webserver")
+
 def main():
 	#import protection function
 	#from libexec.auth import check_auth
 
 	from ctools import dynmodloads
 
-	## Read config file
-	config = ConfigParser.RawConfigParser()
-	config.read(os.path.expanduser('~/etc/webserver.conf'))
-
 	## get config
-	root_directory=os.path.expanduser(config.get("server", "root_directory"))
-	port=config.getint("server", "port")
-	debug=config.getboolean("server", "debug")
-	interface=config.get("server", "interface")
+	root_directory=os.path.expanduser(CONFIG.getstring("root_directory", "~/var/www/html"))
+	port=CONFIG.getint("port", 8082)
+	debug=CONFIG.getbool("debug", False)
+	interface=CONFIG.getstring("interface", "0.0.0.0")
 
 	try:
 		process = int(sys.argv[1])
