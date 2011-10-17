@@ -189,13 +189,14 @@ function update_packages_list() {
 	echo "    + Update Packages list Db ..."
 	
     PKGLIST=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/Packages.list
+	touch $PKGLIST
 
 	. $PPATH/control
 	
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
 
 	sed "/$PNAME/d" -i $PKGLIST
-    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5" >> $PKGLIST
+    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
 }
 
 function make_package(){
@@ -258,7 +259,6 @@ function install_basic_source(){
 ######################################
 if [[ "$1" =~ ^(-h|help|--help)$ ]]; then
     echo "Usage : ./build-install.sh [OPTION]"
-    echo "     mkpkg [PKGNAME]    ->  Create specific package"
     echo "     pkg                ->  Build, install and make packages"
     echo "     clean              ->  Uninstall Canopsis"
     echo "     nocheckdeps        ->  Don't check dependencies"
@@ -280,7 +280,7 @@ ARG2=$2
 if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all canopsis process ..."
-	if [ -e $PREFIX/opt/hyp-tools/hypcontrol ]; then
+	if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
 		$SUDO su - $HUSER -c "hypcontrol stop"
 		check_code $?
 	fi
@@ -967,4 +967,26 @@ if [ "$ARG1" = "wut" ]; then
 	fi
 	check_code $UTR
 	echo " + Ok"
+fi
+
+if [ "$1" = "pkg" ]; then
+	INSTALLER_PATH="$SRC_PATH/../binaries/canopsis_installer"
+	BSTRAP_PATH="$INSTALLER_PATH/bootstrap"
+	PKGS_PATH="$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS"
+
+	cp $SRC_PATH/canohome/lib/common.sh $SRC_PATH/../binaries
+
+	echo "Create tarball installer ..."
+	echo "  + Create bootstrap env"
+	mkdir -p $BSTRAP_PATH
+	echo "  + Copy install script"
+	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
+	echo "  + Copy packages ..."
+	cp $PKGS_PATH/{canohome.tgz,canolibs.tgz,canotools.tgz,pkgmgr.tgz} $BSTRAP_PATH
+	echo "  + Make archive"
+	cd $SRC_PATH/../binaries
+	tar cfz canopsis_installer.tgz canopsis_installer
+	echo "  + Clean tmp files"
+	rm -Rf $INSTALLER_PATH $BSTRAP_PATH
+	echo "  + Done"
 fi
