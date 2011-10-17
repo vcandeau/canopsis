@@ -189,13 +189,14 @@ function update_packages_list() {
 	echo "    + Update Packages list Db ..."
 	
     PKGLIST=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/Packages.list
+	touch $PKGLIST
 
 	. $PPATH/control
 	
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
 
 	sed "/$PNAME/d" -i $PKGLIST
-    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5" >> $PKGLIST
+    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
 }
 
 function make_package(){
@@ -967,4 +968,26 @@ if [ "$ARG1" = "wut" ]; then
 	fi
 	check_code $UTR
 	echo " + Ok"
+fi
+
+if [ "$1" = "pkg" ]; then
+	INSTALLER_PATH="$SRC_PATH/../binaries/canopsis_installer"
+	BSTRAP_PATH="$INSTALLER_PATH/bootstrap"
+	PKGS_PATH="$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS"
+
+	cp $SRC_PATH/canohome/lib/common.sh $SRC_PATH/../binaries
+
+	echo "Create tarball installer ..."
+	echo "  + Create bootstrap env"
+	mkdir -p $BSTRAP_PATH
+	echo "  + Copy install script"
+	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
+	echo "  + Copy packages ..."
+	cp $PKGS_PATH/{canohome.tgz,canolibs.tgz,canotools.tgz,pkgmgr.tgz} $BSTRAP_PATH
+	echo "  + Make archive"
+	cd $SRC_PATH/../binaries
+	tar cfz canopsis_installer.tgz canopsis_installer
+	echo "  + Clean tmp files"
+	rm -Rf $INSTALLER_PATH $BSTRAP_PATH
+	echo "  + Done"
 fi
