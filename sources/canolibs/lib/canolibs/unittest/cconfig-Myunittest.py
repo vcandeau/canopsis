@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import unittest
+import unittest, logging
 
 from cconfig import cconfig
 from caccount import caccount
@@ -16,7 +16,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global config
-		config = cconfig(name="testconfig", account=root_account, storage=storage)
+		config = cconfig(name="testconfig", storage=storage, logging_level=logging.DEBUG)
 
 	def test_02_Set(self):
 		config.set('set', 'test')
