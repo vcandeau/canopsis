@@ -2,7 +2,6 @@
 #https://beaker.groovie.org/
 
 import sys, os, logging, json, time
-import ConfigParser
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, response
