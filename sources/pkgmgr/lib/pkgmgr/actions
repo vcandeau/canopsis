@@ -170,16 +170,17 @@ function upgrade_package(){
 
 	load_control_tpl
     . $PPATH/control
-	pre_
-
+    check_code $? "Source control file from $PNAME failure"
+	echo "   + Pre-update"
+	pre_update
+	check_code $? "Pre-update function ($PNAME) failure"
+	echo "   + Update"
     cd $PREFIX
     tar xfz $PPATH/files.tgz
     check_code $? "Untar package ($PNAME.tgz) failure"
-	load_control_tpl
-    . $PPATH/control
-    check_code $? "Source control file from $PNAME failure"
-    update
-    check_code $? "Update function ($PNAME) failure"
+	echo "   + Post-update"
+    post_update
+    check_code $? "Post-update function ($PNAME) failure"
 
     db_set "$PNAME" "$VERSION-$RELEASE" "installed"
 
