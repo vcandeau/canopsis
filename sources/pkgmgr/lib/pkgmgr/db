@@ -55,7 +55,7 @@ function db_parse(){
 # REMOTE #####
 ##############
 function check_repo(){
-    response=$(curl --write-out %{http_code} --silent --output /dev/null ${REPO_URL})
+    response=$(wget --server-response $REPO_URL -a log 2>&1 | awk '/^  HTTP/{print $2}')
     if [ $response -ne 200 ]; then
         echo -e "\033[91mError\033[0m: $REPO_URL is not joinable ($response) !"
         exit 1
