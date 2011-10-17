@@ -10,6 +10,7 @@ SUDO="sudo -E"
 function check_code {
 	if [ $1 -ne 0 ]; then
 		echo "Error: Code: $1"
+		echo "Output: $2"
 		exit $1
 	fi
 }
