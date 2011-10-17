@@ -9,12 +9,16 @@ from crecord_ng import crecord_ng
 class cconfig(crecord_ng):
 	def __init__(self, logging_level=logging.INFO, *args, **kargs):
 
+		self.logger = logging.getLogger('config')
+		self.logger.setLevel(logging_level)
+
 		## Default vars
 		## Init
-		crecord_ng.__init__(self, type='config', *args, **kargs)
+		crecord_ng.__init__(self, type='config', logging_level=logging_level, *args, **kargs)
 
 	## SET
 	def set(self, varname, value):
+		self.logger.debug("Set: %s = '%s'" % (varname, value))
 		self.data[varname] = value
 
 	def setstring(self, varname, value):
@@ -32,9 +36,12 @@ class cconfig(crecord_ng):
 	## GET
 	def get(self, varname, default=None):
 		try:
-			return self.data[varname]
+			value = self.data[varname]
 		except:
-			return default
+			value = default
+
+		self.logger.debug("Get: '%s', return '%s'" % (varname, value))
+		return value
 
 	def getstring(self, varname, default=''):
 		return str(self.get(varname, default))
