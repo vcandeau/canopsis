@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # General
+pacman --noconfirm -Sy
 pacman --noconfirm -S base-devel
 # RabbitMQ
 pacman --noconfirm -S xmlto
