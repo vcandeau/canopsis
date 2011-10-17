@@ -1,85 +1,27 @@
 Ext.define('canopsis.view.Account.View' ,{
-	extend: 'Ext.grid.Panel',
+	extend: 'Ext.panel.Panel',
 	alias : 'widget.AccountView',
+	model: 'Account',
+	store : 'Account',
 	
-	store : 'store.Account',
-	requires: [
-        'Ext.grid.plugin.CellEditing',
-        'Ext.form.field.Text',
-        'Ext.toolbar.TextItem'
-    ],
-
-	//add an infinite scrolling, beware bugs, the doc say that some stuff can be disabled
-	verticalScrollerType: 'paginggridscroller',
-	invalidateScrollerOnRefresh: false,
-
-	iconCls: 'icon-grid',
-    //frame: true,
-    selType: 'rowmodel',
-    plugins: [
-        Ext.create('Ext.grid.plugin.RowEditing', {
-            clicksToEdit: 2
-        })
-    ],
-
-    dockedItems: [{
-                xtype: 'toolbar',
-                dock: 'bottom',
-                items: [{
-                    //iconCls: 'icon-add',
-                    text: 'Add',
-                    itemId: 'addButton',
-                }, {
-                    //iconCls: 'icon-delete',
-                    text: 'Delete',
-                    disabled: false,
-                    itemId: 'deleteButton',
-                }, {
-                    text: 'save',
-                    itemId: 'saveButton',
-                    disabled: false,                 
-                }]
-		}],
-
-
-
-	columns: [{
-                header: 'id',
-                flex: 1,
-                sortable: true,
-                dataIndex: 'id',
-            },{
-                text: 'Last name',
-                sortable: true,
-                dataIndex: 'lastname',
-                field: {
-                    type: 'textfield'
-                }
-            }, {
-                header: 'First name',
-                flex: 1,
-                sortable: true,
-                dataIndex: 'firstname',
-                field: {
-                    type: 'textfield'
-                }
-			}, {
-                header: 'User',
-                flex: 1,
-                sortable: true,
-                dataIndex: 'User',
-                field: {
-                    type: 'textfield'
-                }
-            } ],
+	layout: {
+            type: 'fit',
+            //align: 'stretch'
+        },
+	
+	items : [{
+		xtype : 'AccountGrid',
+		//flex : 2
+	}],
 	
 	initComponent: function() {
-		
-		//this.editing = Ext.create('Ext.grid.plugin.CellEditing');
-	
-
-
 		this.callParent(arguments);
+	},
+
+	beforeDestroy : function() {
+	log.debug("Destroy items ...")
+	canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
+        log.debug(this.id + " Destroyed.")
 	}
 
 });
