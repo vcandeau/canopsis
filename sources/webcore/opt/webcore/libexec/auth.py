@@ -1,7 +1,4 @@
 #!/usr/bin/env pythonimport sys, os, logging, json
-
-import ConfigParser
-
 import bottle, logging, hashlib, json
 from bottle import route, get, request, post, HTTPError, redirect
 

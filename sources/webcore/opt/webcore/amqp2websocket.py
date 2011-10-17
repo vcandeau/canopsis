@@ -16,7 +16,7 @@ from gevent import pywsgi
 from gevent.pool import Pool
 from geventwebsocket.handler import WebSocketHandler
 
-import ConfigParser, os
+from cconfig import cconfig
 
 ########################################################
 #
@@ -26,19 +26,18 @@ import ConfigParser, os
 DAEMON_NAME = "amqp2websocket"
 DAEMON_TYPE = "transport"
 
+CONFIG = cconfig(name=DAEMON_NAME)
+
 amqp = None
 wsclients = []
 
 MAX_WSCLIENT = 20
 
-## Read config file
-config = ConfigParser.RawConfigParser()
-config.read(os.path.expanduser('~/etc/amqp2websocket.conf'))
-
 ## get config
-port=config.getint("server", "port")
-debug=config.getboolean("server", "debug")
-interface=config.get("server", "interface")
+port=CONFIG.getint("port", 8090)
+debug=CONFIG.getbool("debug", False)
+interface=CONFIG.getstring("interface", "0.0.0.0")
+MAX_WSCLIENT=CONFIG.getint("max_clients", 20)
 
 try:
 	process = int(sys.argv[1])
