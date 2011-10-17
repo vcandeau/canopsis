@@ -2,20 +2,21 @@
 
 SRC_PATH=`pwd`
 . $SRC_PATH/common.sh
-
 VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
 $SUDO mkdir -p $VARLIB_PATH
 check_code $?
-
 DB_PATH=$VARLIB_PATH/local_db
+
+echo
+echo "#========================#"
+echo "|   Canopsis Installer   |"
+echo "#========================#"
+echo
 
 detect_os
 
 function get_ppath(){
 	PNAME=$1
-	PPATH=""
-	#echo "Get path of '$PNAME' ..."
-	
 	PPATH="$SRC_PATH/bootstrap/$PNAME.tgz"
 	if [ -e $CPPATH ]; then
 		echo $PPATH
@@ -46,17 +47,20 @@ function install_package(){
 	cd $SRC_PATH
 }
 
-
 echo "Install Bootstrap in $PREFIX ..."
 install_package "canohome"
 install_package "canotools"
 install_package "canolibs"
 install_package "pkgmgr"
 
-#cd $SRC_PATH
+cd $SRC_PATH
 
-#echo "Copy packages ..."
-#$SUDO cp -R $SRC_PATH/$ARCH $PREFIX/var/lib/pkgmgr/packages/
+echo "Copy packages ..."
+$SUDO cp -R $SRC_PATH/bootstrap/* $PREFIX/var/lib/pkgmgr/packages/
 
 echo "Fix permissions ..."
 $SUDO chown $HUSER:$HGROUP -R $PREFIX
+
+echo
+echo " :: Run sudo su - canopsis to start using Canopsis"
+echo
