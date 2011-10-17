@@ -22,7 +22,8 @@ detect_os > /dev/null
 function check_repo(){
 	response=$(curl --write-out %{http_code} --silent --output /dev/null ${REPO_URL})
 	if [ $response -ne 200 ]; then
-	    echo "\033[91mError\033[0m: $REPO_URL is not joinable ($response) !"
+	    echo -e "\033[91mError\033[0m: $REPO_URL is not joinable ($response) !"
+		exit 1
 	fi
 }
 
@@ -37,15 +38,16 @@ function db_set(){
 	VERS=$2
 	STATUS=$3
 	MD5=$4
+	DEPS=$5
 	sed "/$PNAME/d" -i $LOCAL_DB_PATH
-	echo "$PNAME|$VERS|$STATUS|$MD5" >> $LOCAL_DB_PATH
-	check_code $?
+	echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> $LOCAL_DB_PATH
+	check_code $? "Database insertion ($PNAME)"
 }
 
 function db_del(){
 	PNAME=$1
 	sed "/$PNAME/d" -i $LOCAL_DB_PATH
-	check_code $?
+	check_code $? "Database deletion ($PNAME)"
 }
 
 function db_parse(){
@@ -66,6 +68,8 @@ function db_parse(){
 			FIELD=3
 		elif [ "x$INFO" = "xmd5" ]; then
 			FIELD=4
+		elif [ "x$DEPs" = "xdeps" ]; then
+			FIELD=5
 		fi
 		echo "$DATA" | cut -d '|' -f$FIELD
 	fi
@@ -76,12 +80,12 @@ function get_ppath(){
     PPATH="$PACKAGES_PATH/$PNAME"
     if [ ! -e $PPATH ]; then
 		if [ ! -e $PPATH.tgz ]; then
-			echo "Package $PNAME not found ($PPATH.tgz)" >&2
+			check_code $? "Package $PNAME not found ($PPATH.tgz)" >&2
 	        exit 1
 		else
 			cd $PACKAGES_PATH
 			tar xfz $PNAME.tgz
-			check_code $?
+			check_code $? "Untar package ($PNAME.tgz) failure"
 		fi
 	fi
 	echo $PPATH
@@ -89,8 +93,13 @@ function get_ppath(){
 
 function install_package(){
     PNAME=$1
-
-	echo "Install package $PNAME ..."
+	DBINFO=$(db_get "$PNAME")
+    L_STATUS=$(db_parse "status" "$DBINFO")
+	if [ "$L_STATUS" == "installed" ]; then 
+		echo " :: Reinstall package $PNAME"
+	else
+		echo " :: Install package $PNAME"
+	fi
 
 	update_db
 	download_package "$PNAME"
@@ -103,52 +112,45 @@ function install_package(){
 	
 	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 
-	if [ "$L_MD5" != "$R_MD5" ]; then echo "Md5sum Error!" && exit 0; fi
+	if [ "$L_MD5" != "$R_MD5" ]; then check_code $? "Md5sum Error!" && exit 0; fi
 
-	if [ "x$PSTATUS" = "x" ]; then
-	        cd $PREFIX
-	        tar xfz $PPATH/files.tgz
-	        check_code $?
-	        . $PPATH/control
-	        check_code $?
-	        install
-		check_code $?
-		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
-	else
-		echo "$PNAME is allready install."
-		exit 1
-	fi
-	echo " + Ok"
+	cd $PREFIX
+	tar xfz $PPATH/files.tgz
+	check_code $? "Untar files.tgz ($PNAME) failure"
+	. $PPATH/control
+	check_code $? "Source control file from $PNAME failure"
+	install
+	check_code $? "Install function ($PNAME) failure"
+	db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+
+	echo " + Done"
 }
 
 function remove_package(){
     PNAME=$1
-    PPATH=$(get_ppath "$PNAME")
-	check_code $?
-
 	DBINFO=$(db_get "$PNAME")
-	PSTATUS=$(db_parse "status" "$DBINFO")
-	PVERS=$(db_parse "version" "$DBINFO")
+    PSTATUS=$(db_parse "status" "$DBINFO")
 
 	if [ ! "x$PSTATUS" = "x" ]; then
-	        echo "Remove package $PNAME ..."
-	        . $PPATH/control
-	        check_code $?
-	        remove
+	    echo " :: Remove package $PNAME"
+		PPATH=$(get_ppath "$PNAME")
 		check_code $?
+	    . $PPATH/control
+	    check_code $? "Source control file from $PNAME failure"
+	    remove
+		check_code $? "Remove function ($PNAME) failure"
 
 		db_del "$PNAME"
 	else
-		echo "$PNAME is not installed."
+		echo " :: Package $PNAME is not installed"
 		exit 1
 	fi
-	echo " + Ok"
+	echo " + Done"
 }
 
 function upgrade_package(){
     PNAME=$1
-
-	echo "Upgrade package $PNAME ..."
+	echo " :: Upgrade package $PNAME ..."
 
     update_db
     download_package "$PNAME"
@@ -161,20 +163,20 @@ function upgrade_package(){
 
     L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 
-	echo " + Checking Md5Sum.."
-    if [ "$L_MD5" != "$R_MD5" ]; then echo "   + Md5sum Error!" && exit 0; fi
+	echo "   + Checking Md5Sum.."
+    if [ "$L_MD5" != "$R_MD5" ]; then check_code $? "Md5sum Error!" && exit 0; fi
 
     cd $PREFIX
     tar xfz $PPATH/files.tgz
-    check_code $?
+    check_code $? "Untar package ($PNAME.tgz) failure"
     . $PPATH/control
-    check_code $?
+    check_code $? "Source control file from $PNAME failure"
     update
-    check_code $?
+    check_code $? "Update function ($PNAME) failure"
 
     db_set "$PNAME" "$VERSION-$RELEASE" "installed"
     
-	echo " + Ok"
+	echo "   + Done"
 }
 
 function create_view(){
@@ -184,7 +186,7 @@ function create_view(){
 	echo "Last update : `echo $LAST_UPDATE`"
 	echo
 	echo -e "#=============================================================#"
-    echo -e "| Package               Version               Status          |"
+    echo -e "| Package                 Version             Status          |"
     echo -e "#=============================================================#"
 	while read line; do
         FIELD=1
@@ -249,14 +251,17 @@ function download_package(){
 	PNAME=$1
 	FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
 
-	echo " + Remove old packages"
-	rm -Rf $PACKAGES_PATH/$PNAME.tgz*
+	echo "   + Remove old packages"
+	rm -Rf $PACKAGES_PATH/$PNAME*
+	check_code $? "Removing old packages failure"
 
-	echo " + Download $PNAME ..."
+	echo "   + Download $PNAME ..."
 	wget "$FINAL_URL/$PNAME.tgz" -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH
+	check_code $? "Failure during download package"
 }
 
 function update_db(){
+	check_repo
 	if [ -z "$REPO_BASE" ]; then
 		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
 	else
@@ -264,39 +269,79 @@ function update_db(){
 	fi
 
 	rm -Rf $REMOTE_DB_PATH
+	check_code $? "Failure during remove old database"
 
-	echo " + Download Packages.list ..."
+	echo " :: Download Packages.list ..."
 	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
-	check_code $?
+	check_code $? "Packages.list not accessible"
 
 	echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
+	check_code $? "Pkgmgr info file insertion error"
+	echo "   + Done"
 }
 
 function clean_cache(){
-	echo "Clean cache"
-	echo " + Remove Remote Db"
+	echo " :: Clean cache"
+	echo "   + Remove Remote Db"
 	rm -Rf $REMOTE_DB_PATH
-	echo " + Remove Packages in cache"
+	check_code $? "Failure during remove old database"
+	echo "   + Remove Packages in cache"
 	rm -Rf $VARLIB_PATH/packages/*
-	echo " + Update Pkgmgr info file"
+	check_code $? "Failure during remove old packages"
+	echo "   + Update Pkgmgr info file"
 	sed "/LAST_UPDATE/d" -i $VARLIB_PATH/info
+	echo "   + Done"
 	exit 1
 }
 
 function install_local_package(){
-	echo "Work in progress"
+	FULLPATH=$1
+	FILENAME="${FULLPATH##*/}"
+	if ! [[ ${FILENAME: -4} == ".tgz" || $(exit $?) == 1 ]]; then 
+		echo "Package format must be packagename.tgz"
+        exit 1
+	fi
+	PNAME="${FILENAME%.[^.]*}"
+	if [ -z "$PNAME" ]; then
+		echo "There is an error in the path"
+		exit 1
+	fi
+	DBINFO=$(db_get "$PNAME")
+    L_STATUS=$(db_parse "status" "$DBINFO")
+    if [ "$L_STATUS" == "installed" ]; then
+        echo " :: Reinstall package $PNAME"
+    else
+        echo " :: Install package $PNAME"
+    fi
+
+    cp $FULLPATH $PACKAGES_PATH
+	cd $PACKAGES_PATH
+    tar xfz $PNAME.tgz
+    check_code $? "Untar package ($PNAME.tgz) failure"
+	PPATH=$PACKAGES_PATH/$PNAME
+
+	cd $PREFIX
+    tar xfz $PPATH/files.tgz
+    check_code $? "Untar files.tgz ($PNAME) failure"
+    . $PPATH/control
+    check_code $? "Source control file from $PNAME failure"
+    install
+    check_code $? "Install function ($PNAME) failure"
+    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+
+    echo " + Done"	
 }
 
 function show_help(){
     echo "Usage : pkgmgr [OPTION]"
-    echo "     install [PKGNAME]       ->  Install package"
-    echo "     install-local [PKGNAME] ->  Install package"
-    echo "     upgrade [PKGNAME]       ->  Upgrade package"
-    echo "     remove [PKGNAME]        ->  Remove package"
-    echo "     update                  ->  Update local database"
-    echo "     list                    ->  List packages"
-    echo "     clean                   ->  Clean cache"
-    echo "     help                    ->  Print this help"
+    echo "     install [PKGNAME]        ->  Install package"
+    echo "     install-local [PKGPATH]  ->  Install local  package"
+    echo "     upgrade [PKGNAME]        ->  Upgrade package"
+    echo "     remove [PKGNAME]         ->  Remove package"
+    echo "     update                   ->  Update local database"
+    echo "     list                     ->  List packages"
+    echo "     clean                    ->  Clean cache"
+    echo "     help                     ->  Print this help"
     exit 1
 }
 
@@ -310,9 +355,9 @@ if [[ "x$ACTION" =~ ^(xinstall|xinstall-local|xupgrade|xremove|xlist|xclean|xupd
 	if [[ "x$ACTION" = "xinstall-local" && $# -eq 2 ]]; then install_local_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xupgrade" && $# -eq 2 ]]; then upgrade_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xremove" && $# -eq 2 ]]; then remove_package $2 && exit $?; fi
+	if [[ "x$ACTION" = "xupdate" ]]; then update_db && exit $?; fi
 	if [[ "x$ACTION" = "xlist" ]]; then create_view && exit $?; fi
 	if [[ "x$ACTION" = "xclean" ]]; then clean_cache && exit $?; fi
-	if [[ "x$ACTION" = "xupdate" ]]; then update_db && exit $?; fi
 	show_help
 else
 	show_help
