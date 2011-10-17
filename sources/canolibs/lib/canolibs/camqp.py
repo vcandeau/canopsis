@@ -7,9 +7,9 @@ from txamqp.content import Content
 from txamqp.protocol import AMQClient
 import txamqp.spec
 
-import time, logging, threading
+import time, logging, threading, os
+
 from cconfig import cconfig
-from caccount import caccount
 
 files_preserve = [reactor.waker.o, reactor.waker.i]
 
@@ -297,7 +297,7 @@ class camqp(threading.Thread):
 
 	def read_config(self, name):
 
-		self.config = cconfig(name=name, account=caccount(user="root", group="root"))
+		self.config = cconfig(name=name)
 
 		self.host = self.config.getstring("host", self.host)
 		self.port = self.config.getint("port", self.port)
