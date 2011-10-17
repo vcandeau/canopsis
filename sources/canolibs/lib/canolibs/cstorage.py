@@ -8,17 +8,36 @@ from crecord import crecord
 
 import logging
 import time
+import sys, os
+import ConfigParser
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
+
+CONFIG = ConfigParser.RawConfigParser()
+CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
+
 class cstorage(object):
 	def __init__(self, account, namespace='object', logging_level=logging.INFO, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
 
-		self.mongo_host=mongo_host
-		self.mongo_port=mongo_port
-		self.mongo_db=mongo_db
+
+		try:
+			self.mongo_host=CONFIG.get("master", "host")
+		except:
+			self.mongo_host=mongo_host
+
+		try:
+			self.mongo_port=CONFIG.getint("master", "port")
+		except:
+			self.mongo_port=mongo_port
+
+		try:
+			self.mongo_db=CONFIG.get("master", "db")
+		except:	
+			self.mongo_db=mongo_db
+		
 		self.mongo_safe=True
 
 		self.account = account
