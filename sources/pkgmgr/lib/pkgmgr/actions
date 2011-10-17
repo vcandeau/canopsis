@@ -29,23 +29,28 @@ function download_package(){
     rm -Rf $PACKAGES_PATH/$PNAME*
     check_code $? "Removing old packages failure"
 
-    echo "   + Download $PNAME ..."
-    wget "$FINAL_URL/$PNAME.tgz" -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH
+	cd $PACKAGES_PATH
+    echo "   + Download $PNAME.tgz ..."
+    #wget -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH --progress=dot "$FINAL_URL/$PNAME.tgz" 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+    wget --progress=dot "$FINAL_URL/$PNAME.tgz" 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+    echo -ne "\b\b\b\b"
+    echo "     + DONE"
     check_code $? "Failure during download package"
 }
 
 function install_package(){
     PNAME=$1
     DBINFO=$(db_get "$PNAME")
+	
+	update_db
+    download_package "$PNAME"
+
     L_STATUS=$(db_parse "status" "$DBINFO")
     if [ "$L_STATUS" == "installed" ]; then
         echo " :: Reinstall package $PNAME"
     else
         echo " :: Install package $PNAME"
     fi
-
-    update_db
-    download_package "$PNAME"
 
     R_INFO=$(echo `cat $REMOTE_DB_PATH | grep $PNAME | tail -n1`)
     R_MD5=$(db_parse "md5" "$R_INFO")
