@@ -259,7 +259,6 @@ function install_basic_source(){
 ######################################
 if [[ "$1" =~ ^(-h|help|--help)$ ]]; then
     echo "Usage : ./build-install.sh [OPTION]"
-    echo "     mkpkg [PKGNAME]    ->  Create specific package"
     echo "     pkg                ->  Build, install and make packages"
     echo "     clean              ->  Uninstall Canopsis"
     echo "     nocheckdeps        ->  Don't check dependencies"
@@ -281,7 +280,7 @@ ARG2=$2
 if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all canopsis process ..."
-	if [ -e $PREFIX/opt/hyp-tools/hypcontrol ]; then
+	if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
 		$SUDO su - $HUSER -c "hypcontrol stop"
 		check_code $?
 	fi
@@ -837,7 +836,7 @@ else
 	echo " + Allready install"
 fi
 
-make_package "graphite"
+#make_package "graphite"
 
 ######################################
 #  amqp2graphite

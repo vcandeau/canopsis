@@ -5,6 +5,8 @@ import sys, os, logging, json
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post
 
+import hashlib
+
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
@@ -22,15 +24,16 @@ else:
 logging.basicConfig(level=logging_level,
 		format='%(asctime)s %(name)s %(levelname)s %(message)s',
 )
-logger = logging.getLogger("rest")
+logger = logging.getLogger('Account')
 
 #########################################################################
 
 #### GET
-@get('/rest/:namespace/:ctype/:_id',apply=[check_auth])
-@get('/rest/:namespace/:ctype',apply=[check_auth])
-@get('/rest/:namespace',apply=[check_auth])
-def rest_get(namespace, ctype=None, _id=None):
+@get('/account/:_id',apply=[check_auth])
+@get('/account/',apply=[check_auth])
+def rest_get(_id=None):
+	namespace = 'object'
+	ctype= 'account'
 	
 	#get the session (security)
 	account = get_account()
@@ -80,46 +83,14 @@ def rest_get(namespace, ctype=None, _id=None):
 
 	return output
 
-#### PUT
-@put('/rest/:namespace/:ctype', apply=[check_auth])
-def rest_put(namespace, ctype):
-	#get the session (security)
-	account = get_account()
-	storage = get_storage(namespace=namespace)
-
-	logger.debug("PUT:")
-
-	data = request.body.readline()
-	if not data:
-		HTTPError(400, "No data received")
-
-	
-	data = json.loads(data)
-	data['crecord_type'] = ctype
-	## Clean data
-	_id = None
-	try:
-		_id = data['_id']
-		#del data['_id']
-	except:
-		pass
-
-	logger.debug(" + _id: "+str(_id))
-	logger.debug(" + ctype: "+str(ctype))
-	logger.debug(" + Data: "+str(data))
-
-	record = crecord(raw_record=data)
-
-	#print record.dump()
-
-	storage.put(record, account=account)
 	
 #### POST
-@post('/rest/:namespace/:ctype', apply=[check_auth])
-def rest_put(namespace, ctype):
+@post('/account/', apply=[check_auth])
+def account_put():
 	#get the session (security)
 	account = get_account()
-	storage = get_storage(namespace=namespace)
+	
+	storage = get_storage(namespace='object')
 
 	logger.debug("PUT:")
 
@@ -129,35 +100,30 @@ def rest_put(namespace, ctype):
 
 	
 	data = json.loads(data)
-	data['crecord_type'] = ctype
-	## Clean data
-	_id = None
-	try:
-		_id = data['_id']
-		#del data['_id']
-	except:
-		pass
+	
+	logger.debug(str(data))
+	
+	#create caccount with password
+	new_account = caccount(user=str(data['user']), group=str(data['aaa_group']), firstname=str(data['firstname']),lastname=str(data['lastname']), mail=str(data['mail']), groups=str(data['groups']))
+	new_account.passwd(str(data['passwd']))
+	logger.debug('putting account in db ...')
+	try
+		storage.put(new_account)
+		logger.debug('account added in db')
+	except
+		logger.debug('WARNING : failed to added account in db')
 
-	logger.debug(" + _id: "+str(_id))
-	logger.debug(" + ctype: "+str(ctype))
-	logger.debug(" + Data: "+str(data))
-
-	record = crecord(raw_record=data)
-
-	#print record.dump()
-
-	storage.put(record, account=account)
 
 #### DELETE
-@delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
-def rest_delete(namespace, ctype, _id):
-	account = get_account()
-	storage = get_storage(namespace=namespace)
+#@delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
+#def rest_delete(namespace, ctype, _id):
+	#account = get_account()
+	#storage = get_storage(namespace=namespace)
 
-	logger.debug("DELETE:")
-	logger.debug(" + _id: "+str(_id))
-	try:
-		storage.remove(_id, account=account)
-	except:
-		HTTPError(404, _id+" Not Found")
+	#logger.debug("DELETE:")
+	#logger.debug(" + _id: "+str(_id))
+	#try:
+		#storage.remove(_id, account=account)
+	#except:
+		#HTTPError(404, _id+" Not Found")
 
