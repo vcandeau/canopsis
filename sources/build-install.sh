@@ -836,7 +836,7 @@ else
 	echo " + Allready install"
 fi
 
-make_package "graphite"
+#make_package "graphite"
 
 ######################################
 #  amqp2graphite
