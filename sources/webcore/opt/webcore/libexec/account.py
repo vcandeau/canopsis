@@ -5,8 +5,6 @@ import sys, os, logging, json
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post
 
-import hashlib
-
 ## Canopsis
 from caccount import caccount
 from cstorage import cstorage
@@ -31,7 +29,7 @@ logger = logging.getLogger('Account')
 #### GET
 @get('/account/:_id',apply=[check_auth])
 @get('/account/',apply=[check_auth])
-def rest_get(_id=None):
+def account_get(_id=None):
 	namespace = 'object'
 	ctype= 'account'
 	
@@ -107,23 +105,23 @@ def account_put():
 	new_account = caccount(user=str(data['user']), group=str(data['aaa_group']), firstname=str(data['firstname']),lastname=str(data['lastname']), mail=str(data['mail']), groups=str(data['groups']))
 	new_account.passwd(str(data['passwd']))
 	logger.debug('putting account in db ...')
-	try
+	try:
 		storage.put(new_account)
 		logger.debug('account added in db')
-	except
+	except:
 		logger.debug('WARNING : failed to added account in db')
 
 
 #### DELETE
-#@delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
-#def rest_delete(namespace, ctype, _id):
-	#account = get_account()
-	#storage = get_storage(namespace=namespace)
+@delete('/account/:_id',apply=[check_auth])
+def account_delete(_id):
+	account = get_account()
+	storage = get_storage(namespace='object')
 
-	#logger.debug("DELETE:")
-	#logger.debug(" + _id: "+str(_id))
-	#try:
-		#storage.remove(_id, account=account)
-	#except:
-		#HTTPError(404, _id+" Not Found")
-
+	logger.debug("DELETE:")
+	logger.debug(" + _id: "+str(_id))
+	try:
+		storage.remove(_id, account=account)
+		logger.debug('account removed')
+	except:
+		HTTPError(404, _id+" Not Found")
