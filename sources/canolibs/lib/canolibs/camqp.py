@@ -13,7 +13,7 @@ import ConfigParser
 files_preserve = [reactor.waker.o, reactor.waker.i]
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.INFO, read_config_file=True):
 		threading.Thread.__init__(self)
 		
 		logging.basicConfig(level=logging_level,
