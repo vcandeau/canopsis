@@ -7,13 +7,14 @@ from txamqp.content import Content
 from txamqp.protocol import AMQClient
 import txamqp.spec
 
-import time, signal, logging, threading, os, sys
-import ConfigParser
+import time, logging, threading, os
+
+from cconfig import cconfig
 
 files_preserve = [reactor.waker.o, reactor.waker.i]
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.DEBUG, read_config_file=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.INFO, read_config_file=True):
 		threading.Thread.__init__(self)
 		
 		logging.basicConfig(level=logging_level,
@@ -31,18 +32,17 @@ class camqp(threading.Thread):
 		self.password=password
 		self.virtual_host=virtual_host
 		self.exchange_name=exchange_name
-		self.exchange_name_events=exchange_name+".events"
-		self.exchange_name_liveevents=exchange_name+".live_events"
-		self.exchange_name_rpc=exchange_name+".rpc"
+		self.logging_level = logging_level
 		
 		self.connected = False
 		
 		self.RUN = 1
 		
-		camqpconf = os.path.expanduser("~/etc/camqp.conf")
-		if os.path.exists(camqpconf):
-			if read_config_file:
-				self.read_config(camqpconf)
+		self.read_config("amqp")
+
+		self.exchange_name_events=exchange_name+".events"
+		self.exchange_name_liveevents=exchange_name+".live_events"
+		self.exchange_name_rpc=exchange_name+".rpc"
 		
 		self.logger.setLevel(logging_level)
 		
@@ -295,27 +295,13 @@ class camqp(threading.Thread):
 		while self.RUN and not self.connected:
 			time.sleep(0.5)
 
-	def read_config(self, filename):
-		# Read config file
-		config = ConfigParser.RawConfigParser()
-		#config.read(os.path.expanduser('~/etc/pyamqp.conf'))
-		config.read(filename)
+	def read_config(self, name):
 
-		self.host = config.get("master", "host")
-		self.port = config.getint("master", "port")
-		self.userid = config.get("master", "userid")
-		self.password = config.get("master", "password")
-		self.virtual_host = config.get("master", "virtual_host")
-		self.exchange_name = config.get("master", "exchange_name")
-		self.logging_level = config.get("master", "logging_level")
+		self.config = cconfig(name=name)
 
-		if self.logging_level == "DEBUG":
-			self.logging_level = logging.DEBUG
-		elif self.logging_level == "INFO":
-			self.logging_level = logging.INFO
-		elif self.logging_level == "WARNING":
-			self.logging_level = logging.WARNING
-		elif self.logging_level == "ERROR":
-			self.logging_level = logging.ERROR
-		elif self.logging_level == "CRITICAL":
-			self.logging_level = logging.CRITICAL
+		self.host = self.config.getstring("host", self.host)
+		self.port = self.config.getint("port", self.port)
+		self.userid = self.config.getstring("userid", self.userid)
+		self.password = self.config.getstring("password", self.password)
+		self.virtual_host = self.config.getstring("virtual_host", self.virtual_host)
+		self.exchange_name = self.config.getstring("exchange_name", self.exchange_name)

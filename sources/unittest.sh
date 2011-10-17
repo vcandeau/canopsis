@@ -15,6 +15,7 @@ export PYTHONPATH=$PREFIX/lib/hyp-libs/
 
 $SUDO su - $HUSER -c 'hypcontrol stop &> /dev/null'
 $SUDO su - $HUSER -c 'hypcontrol start'
+sleep 2
 
 UNITTESTS=`find ./ | grep Myunittest.py`
 

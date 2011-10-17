@@ -28,7 +28,7 @@ class crecord(object):
 		except:
 			pass
 
-		self.data = data
+		self.data = data.copy()
 		self.storage = storage
 
 		if   isinstance(record, crecord):
@@ -67,7 +67,7 @@ class crecord(object):
 		del dump['children']
 		del dump['parent']
 
-		self.data = dump
+		self.data = dump.copy()
 
 	def save(self, storage=None):
 		mystorage = None
@@ -138,7 +138,7 @@ class crecord(object):
 		if dump:
 			data = self.dump()
 		else:
-			data = self.data
+			data = self.data.copy()
 
 		output = ""
 		for key in data.keys():
