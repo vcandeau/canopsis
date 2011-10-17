@@ -13,6 +13,7 @@ function install(){
 	check_code $?
 
 	echo " + Create Canopsis user ('$HUSER')..."
+	$SUDO userdel $HUSER
 	$SUDO groupadd $HGROUP &> /dev/null
 	$SUDO useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
 	$SUDO usermod -a -G nagios $HUSER &> /dev/null
