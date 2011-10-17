@@ -5,6 +5,9 @@ Ext.define('canopsis.model.Account', {
 		{name : 'firstname'},
 		{name : 'lastname'},
 		{name : 'user'},
-		
+		{name : 'mail'},
+		{name : 'aaa_group'},//todo cahnger nom , en groupe
+		{name : 'groups'},
+		{name : 'passwd'}
 		],
 });
