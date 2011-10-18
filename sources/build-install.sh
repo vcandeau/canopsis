@@ -21,7 +21,6 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
-
 ######################################
 #  functions
 ######################################
@@ -269,26 +268,42 @@ fi
 ######################################
 #  Pre Check
 ######################################
+ARG1=$1
+ARG2=$2
+
 detect_os
+
+if [[ "$ARG1" != "nocheckdeps" && "$ARG1" != "clean" ]]; then
+    echo "Install OS dependencies for $DIST $DIST_VERS ..."
+    if [ -e "extra/dependencies/"$DIST"_"$DIST_VERS ]; then
+        bash "extra/dependencies/"$DIST"_"$DIST_VERS
+    else
+        echo " + Impossible to find dependencies file ..." 
+    fi
+    check_code $? "Install extra dependencies failure"
+fi
+
+echo " + Fix env vars ..."
+export PATH="$PREFIX/bin:$PATH"
+export TARGET_DIR="$PREFIX/opt/rabbitmq-server"
+export SBIN_DIR="$PREFIX/bin/"
+export MAN_DIR="$PREFIX/share/man/"
 
 ######################################
 #  Clean Arguments
 ######################################
-ARG1=$1
-ARG2=$2
-
 if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all canopsis process ..."
 	if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
 		su - $HUSER -c ". .bash_profile; hypcontrol stop"
-		check_code $?
+		check_code $? "Run hypcontrol stop failure"
 	fi
 	PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
 	for PID in $PIDS; do
 		echo "  + Kill $PID"
 		kill -9 $PID || true
-		#check_code $?
+		check_code $? "Kill user pid failure"
 	done
 	sleep 1
 
@@ -324,16 +339,6 @@ if [ "$ARG1" = "mkpkg" ]; then
 		exit 1
 	fi
 	exit 0
-fi
-
-if [ "$ARG1" != "nocheckdeps" ]; then
-	echo "Install OS dependencies for $DIST $DIST_VERS ..."
-	if [ -e "extra/dependencies/"$DIST"_"$DIST_VERS ]; then
-		bash "extra/dependencies/"$DIST"_"$DIST_VERS
-	else
-		echo " + Impossible to find dependencies file ..." 
-	fi
-	check_code $?
 fi
 
 ######################################
