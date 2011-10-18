@@ -380,20 +380,20 @@ for ITEM in $ITEMS; do
 
 			echo " + Build ..."
 			build
-			check_code $?
+			check_code $? "Build failure"
 
 			echo " + Pre-install ..."	
 			pre_install
 
 			echo " + Install ..."
 			install
-			check_code $?
+			check_code $? "Install failure"
 
 			echo " + Post-install ..."
 			post_install
 
 			make_package $NAME
-			check_code $?
+			check_code $? "Make package failure"
 		else
 			echo " + Allready install"
 		fi
