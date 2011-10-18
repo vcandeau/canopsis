@@ -17,14 +17,14 @@ function build(){
 
 function install(){
 	echo "Install Event Brokers: Neb2socket ..."
-	$SUDO mkdir -p $PREFIX/opt/event-brokers/nagios/
+	mkdir -p $PREFIX/opt/event-brokers/nagios/
 
 	cd $SRC_PATH
 	cd event-brokers/nagios/neb2socket
 	check_code $?
 
-	$SUDO cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
-	$SUDO cp -R api/ $PREFIX/opt/event-brokers/nagios/
+	cp src/neb2socket.o $PREFIX/opt/event-brokers/nagios/
+	cp -R api/ $PREFIX/opt/event-brokers/nagios/
 
 	echo " + Configuration ..."
 	echo "    - nagios.cfg: broker_module=$PREFIX/opt/event-brokers/nagios/neb2socket.o name=Central"

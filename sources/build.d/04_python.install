@@ -37,7 +37,7 @@ function build(){
 }
 
 function install(){
-	$SUDO make install 1>> $LOG 2>> $LOG
+	make install 1>> $LOG 2>> $LOG
 	check_code $?
 
 	cd $SRC_PATH/externals
@@ -70,8 +70,8 @@ function install(){
 		echo " + Patch python-txamqp ..."
 		# https://bugs.launchpad.net/txamqp/+bug/741147
 		cd $PREFIX
-		$SUDO rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
-		$SUDO patch -b -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
+		rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
+		patch -b -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
 		check_code $?
 		cd - &> /dev/null
 	fi

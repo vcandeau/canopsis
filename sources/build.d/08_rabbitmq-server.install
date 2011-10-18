@@ -34,12 +34,12 @@ function build(){
 }
 
 function install(){
-	$SUDO make install 1>> $LOG 2>> $LOG
+	make install 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Post install configurations ..."
-	$SUDO cp $SRC_PATH/externals/rabbitmq-plugins/* $PREFIX/opt/rabbitmq-server/plugins
-	$SUDO sed -i s#/etc/rabbitmq#$PREFIX/etc#g $PREFIX/bin/rabbitmq-env
+	cp $SRC_PATH/externals/rabbitmq-plugins/* $PREFIX/opt/rabbitmq-server/plugins
+	sed -i s#/etc/rabbitmq#$PREFIX/etc#g $PREFIX/bin/rabbitmq-env
 	check_code $?
 
 	install_init "rabbitmq-server"
