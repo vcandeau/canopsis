@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function clean_cache(){
+    echo " :: Clean cache"
+    echo "   + Remove Remote Db"
+    rm -Rf $REMOTE_DB_PATH
+    check_code $? "Failure during remove old database"
+    echo "   + Remove Packages in cache"
+    rm -Rf $VARLIB_PATH/packages/*.tgz
+    check_code $? "Failure during remove old packages"
+    echo "   + Update Pkgmgr info file"
+    sed "/LAST_UPDATE/d" -i $VARLIB_PATH/info
+    echo "   + Done"
+    exit 1
+}
