@@ -1,5 +1,5 @@
 NAME="neb2socket"
-VERSION="0.1"
+
 FCHECK="$PREFIX/opt/event-brokers/nagios/neb2socket.o"
 
 LOG="$LOG_PATH/neb2socket.log"
