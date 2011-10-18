@@ -1,5 +1,5 @@
 NAME="mongodb"
-VERSION="1.8.1"
+
 FCHECK="$PREFIX/bin/mongod"
 
 BASE="mongodb-linux-$ARCH-static-$VERSION"

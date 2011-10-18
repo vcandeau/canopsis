@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="canotools"
+NAME="amqp2brule"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr"
+REQUIRES=""
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -12,7 +12,7 @@ function pre_install(){
 }
 
 function post_install(){
-	eho "Post-install $NAME $VERSION-$RELEASE ..."
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 
 }
 
