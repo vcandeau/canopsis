@@ -305,7 +305,8 @@ if [ "$ARG1" = "clean" ]; then
 	sleep 1
 
 	. $SRC_PATH/packages/canohome/control
-	remove
+	pre_remove
+	post_remove
 	purge
 
 	rm -f $SRC_PATH/packages/files.lst &> /dev/null
