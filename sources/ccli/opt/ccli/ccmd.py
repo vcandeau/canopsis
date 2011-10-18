@@ -57,6 +57,16 @@ class cbrowser(ccmd):
 		except Exception, err:
 			print "Impossible to cat",_id,":", err
 
+	def do_dump(self, _id):
+		try:
+			if _id == '*':
+				pass
+			else:
+				record = self.storage.get(_id)
+				record.cat(dump=True)
+		except Exception, err:
+			print "Impossible to dump",_id,":", err
+
 	def do_rm(self, _id):
 		try:
 			self.storage.remove(_id)
@@ -69,6 +79,7 @@ class cbrowser(ccmd):
 
 	def print_records(self, records):
 		print "Total:", len(records)
+		lines = []
 		for record in records:
 			line = []
 
@@ -89,7 +100,46 @@ class cbrowser(ccmd):
 
 			line.append(str(record._id))
 
-			self.columnize(line, displaywidth=200)
+			line.append(str(record.name))
+
+			#self.columnize(line, displaywidth=200)
+			lines.append(line)
+
+		### Quick and dirty ...
+
+		max_ln = {}
+		for line in lines:
+			i = 0
+			for word in line:
+				try:
+					if len(word) > max_ln[i]:
+						max_ln[i] = len(word)
+				except:
+					max_ln[i] = len(word)
+
+				i+=1
+
+		
+		#new_lines = []
+		for line in lines:
+			i = 0
+			new_line = ""
+			for word in line:
+				empty = ""
+				nb = max_ln[i]-len(word)
+
+				for s in range(nb+2):
+					empty += " "
+
+				new_line += word + empty
+				i+=1
+
+			print new_line
+
+		
+
+
+				
 
 
 	
