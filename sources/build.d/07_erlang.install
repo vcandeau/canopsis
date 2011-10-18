@@ -1,5 +1,5 @@
 NAME="erlang"
-VERSION="R14B02"
+
 FCHECK="$PREFIX/bin/erl"
 
 BASE="otp_src_$VERSION"

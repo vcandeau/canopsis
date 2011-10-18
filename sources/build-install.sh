@@ -238,14 +238,26 @@ function install_basic_source(){
 	NAME=$1
 	#echo "Install $NAME ..."
 	#echo " + Install ..."
+
+	CTRLFILE="$SRC_PATH/packages/$NAME/control"
+	function pre_install(){	true; }
+	function post_install(){ true; }
+
 	if [ -e "$NAME" ]; then
+		## Pre install
+		if [ -e $CTRLFILE ]; then
+			. $CTRLFILE
+			pre_install
+		fi
+
+		## Install file
 		cp -Rf $NAME/* $PREFIX/
 		check_code $?
 		cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null
-		if [ -e $SRC_PATH/packages/$NAME/control ]; then
-			. $SRC_PATH/packages/$NAME/control
-			echo " + launch install from package control script ..."
-			install
+
+		## Post install
+		if [ -e $CTRLFILE ]; then
+			post_install
 		fi
 	else
 		echo "Error: Impossible to find '$NAME'"
@@ -293,7 +305,8 @@ if [ "$ARG1" = "clean" ]; then
 	sleep 1
 
 	. $SRC_PATH/packages/canohome/control
-	remove
+	pre_remove
+	post_remove
 	purge
 
 	rm -f $SRC_PATH/packages/files.lst &> /dev/null
@@ -344,17 +357,33 @@ ITEMS=`ls -1 $INST_CONF | grep ".install$"`
 for ITEM in $ITEMS; do
 	cd $SRC_PATH
 
-	install=""
-	build=""
 	NAME="x"
-	VERSION=""
+	VERSION="0.1"
 	FCHECK="/tmp/notexist"
 
 	. /$INST_CONF/$ITEM
 	if [ "$NAME" != 'x' ]; then
+		## Check package sources
+		if [ -e packages/$NAME/control ]; then
+			. packages/$NAME/control
+		else
+			mkdir -p packages/$NAME
+			cp pkgmgr/lib/pkgmgr/control.tpl packages/$NAME/control
+			sed "s#@NAME@#$NAME#g" -i packages/$NAME/control
+			sed "s#@VERSION@#$VERSION#g" -i packages/$NAME/control
+			. packages/$NAME/control
+		fi
+
+		function install(){ true; }
+		function build(){ true; }
+
+		. /$INST_CONF/$ITEM
+
 		echo "################################"
 		echo "# $NAME $VERSION"
-		echo "################################"
+		echo "################################"	
+
+		## Build and install
 		if [ ! -e $FCHECK ]; then
 
 			echo " + Build ..."
