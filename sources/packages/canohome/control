@@ -10,21 +10,21 @@ REQUIRES=""
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	echo " + Make home directories ..."
-	$SUDO mkdir -p $PREFIX
+	mkdir -p $PREFIX
 	check_code $?
 
 	echo " + Create Canopsis user ('$HUSER')..."
-	$SUDO userdel $HUSER &> /dev/null
-	$SUDO groupadd $HGROUP &> /dev/null
-	$SUDO useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
-	$SUDO usermod -a -G nagios $HUSER &> /dev/null
+	userdel $HUSER &> /dev/null
+	groupadd $HGROUP &> /dev/null
+	useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
+	usermod -a -G nagios $HUSER &> /dev/null
 }
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	if [ ! -e $PREFIX/.ssh/id_dsa ]; then
 		echo " + Generate ssh keys ..."
-		$SUDO ssh-keygen -N '' -q -f $PREFIX/.ssh/id_dsa
+		ssh-keygen -N '' -q -f $PREFIX/.ssh/id_dsa
 	fi
 
 	export PATH="$PREFIX/bin/:$PATH"
@@ -34,7 +34,7 @@ function post_install(){
 	check_code $?
 
 	echo " + Fix permissions..."
-	$SUDO chown $HUSER:$HGROUP -R $PREFIX
+	chown $HUSER:$HGROUP -R $PREFIX
 	check_code $?
 }
 
@@ -46,7 +46,7 @@ function pre_remove(){
 function post_remove(){
 	echo "Post-remove $NAME $VERSION-$RELEASE ..."
 	echo " + Del user $HUSER ..."
-	$SUDO userdel $HUSER
+	userdel $HUSER
 	check_code $?
 }
 
@@ -63,6 +63,6 @@ function post_update(){
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
 	echo " + Remove $PREFIX ..."
-	$SUDO rm -Rf $PREFIX
+	rm -Rf $PREFIX
 	check_code $?
 }
