@@ -14,6 +14,8 @@ function build(){
 	fi
 	cd  $BASE
 
+	export MAKEFLAGS=""
+
 	echo "   + Clean ..."
 	make clean 1>> $LOG 2>> $LOG
 	#check_code $?

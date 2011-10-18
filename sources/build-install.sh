@@ -21,7 +21,6 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
-export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
 
 ######################################
 #  functions
@@ -358,6 +357,8 @@ ITEMS=`ls -1 $INST_CONF | grep ".install$"`
 
 for ITEM in $ITEMS; do
 	cd $SRC_PATH
+
+	export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
 
 	NAME="x"
 	VERSION="0.1"
