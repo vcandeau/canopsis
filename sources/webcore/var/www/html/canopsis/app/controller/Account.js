@@ -11,30 +11,30 @@ Ext.define('canopsis.controller.Account', {
         console.log('Initialized REST store Account! ');
         
         this.control({
-			'AccountView': {
-				selectionchange : this.selectChange
-			},/*
-			'#deleteButton': {
-				click: this.deleteButton
+			////////////////Action for AccountGrid
+			'AccountGrid': {
+				itemdblclick: this.updateRecord
 			},
-			'AccountGrid #saveButton': {
-				click: this.saveButton
-			},*/
 			'AccountGrid #addButton' : {
 				click: this.addButton
 			},
+			'AccountGrid #deleteButton' : {
+				click: this.deleteButton
+			},
+			/////////////Action gor AccountForm (adding form)
 			'AccountForm #saveForm': {
 				click: this.saveForm
 			},
 			'AccountForm #cancelForm': {
 				click: this.cancelForm
 			},
-			'AccountFormEdit #updateForm': {
-				click: this.updateForm
+			///////////Action for AccountFormEdit (updating form)
+			'AccountFormEdit #saveForm': {
+				click: this.saveForm
 			},
-			'AccountGrid #deleteButton' : {
-				click: this.deleteButton
-			}
+			'AccountFormEdit #cancelForm': {
+				click: this.cancelForm
+			},
 			
 		});
 	},
@@ -56,16 +56,18 @@ Ext.define('canopsis.controller.Account', {
 			main_tabs.add({
 				title: 'New User',
 				xtype: 'AccountForm',
+				id: 'AccountForm',
 				closable: true,}).show();
 		} else {
 			console.log('tab already created')
 		}
 	},
 	
-	saveForm :function(form, data) {
+	saveForm :function() {
 		console.log('clicked on the save form button');
 		//get elements
-		var form = Ext.getCmp('AccountForm').getForm();
+		//var form = Ext.getCmp('AccountForm').getForm();
+		var form = Ext.getCmp('main-tabs').getActiveTab().getForm();
 		var storeform = Ext.data.StoreManager.lookup('Account');
 		//log.dump(form);
 		
@@ -82,8 +84,8 @@ Ext.define('canopsis.controller.Account', {
 				}
 			);
 
-			//if record doesn't exist
-			if (already_exist == true){
+			//if record doesn't exist and in AccountForm
+			if ((already_exist == true) && (form == Ext.getCmp('AccountForm')) ){
 					Ext.MessageBox.show({
                         title: form.getValues()['user'] + ' already exist !',
                         msg: 'you can\'t add the same user twice',
@@ -101,7 +103,7 @@ Ext.define('canopsis.controller.Account', {
 				storeform.add(test);
 				//storeform.sync();
 				//storeform.load();
-				Ext.getCmp('main-tabs').remove('AccountForm');
+				remove_active_tab();
 				//reloading the store
 				storeform.load();
             }
@@ -113,17 +115,31 @@ Ext.define('canopsis.controller.Account', {
 	
 	cancelForm : function(button) {
 		console.log('clicked on cancel form button');
-		Ext.getCmp('main-tabs').remove('AccountForm');
-	}
+		remove_active_tab();
+	},
 	
-	
-	
-	
-	
-	/*
-	selectChange: function(selection){
-		console.log('the item selectionned has changed');
+	updateRecord: function(record, item, index) {
+			console.log('double click on the item');
+			if (item) {
+				console.log('record get');
+				var main_tabs = Ext.getCmp('main-tabs')
+				if(!Ext.getCmp('AccountFormEdit'))
+				{
+					//adding edit tab
+					main_tabs.add({
+						title: 'Update Account',
+						xtype: 'AccountForm',
+						id: 'AccountFormEdit',
+						closable: true,}).show();
+					Ext.getCmp('AccountFormEdit').getForm().loadRecord(item);	
+				} else {
+					console.log('tab already created');
+				}
+					
+			} else {
+				console.log('no record selected');
+			}
 		//Ext.ComponentQuery.query('#deleteButton').setDisabled(selections.length === 0);
-	}*/
+	}
 	
 });

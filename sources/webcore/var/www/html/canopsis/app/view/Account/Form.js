@@ -8,52 +8,12 @@ Ext.define('canopsis.view.Account.Form', {
     
     //iconCls: 'icon-user',
     frame: true,
-    id: 'AccountForm',
+    //id: 'AccountForm',
     title: 'Add a new user',
     defaultType: 'textfield',
     //anchor: '90%',
-   // bodyPadding: 25,
-	//layout: 'fit',
-    /*
-    items: [{
-		//layout : 'column',
-		//anchor : '100%',
-		items : [{
-					xtype : 'container',
-					//layout : 'anchor',
-					//columnWidth:.5,
-					//anchor: '50%',
-					items : [{
-								fieldLabel: 'First Name',
-								name: 'firstname',
-								//allowBlank: false
-							}, {
-								fieldLabel: 'Last Name',
-								name: 'lastname',
-								//allowBlank: false
-							},
-							{
-								fieldLabel: 'Login',
-								name: 'user',
-								allowBlank: false,
-							},
-							{
-								fieldLabel: 'password',
-								name: 'password',
-								allowBlank: false,
-							}]
-				},{
-					xtype : 'container',
-					//layout : 'anchor',
-					//columnWidth:.5,
-					//anchor: '50%',
-					items : [{
-								fieldLabel: 'mail adress',
-								//name: 'address'
-							}]		
-				}]	
-	}],*/
-	
+    //bodyPadding: '20%',
+	//layout: 'fit',	
 	
 	items: [{
 				fieldLabel: 'Login',
@@ -62,18 +22,17 @@ Ext.define('canopsis.view.Account.Form', {
 			},{
 				fieldLabel: 'First Name',
 				name: 'firstname',
-				allowBlank: false
 			}, {
 				fieldLabel: 'Last Name',
 				name: 'lastname',
-				allowBlank: false
 			},/*{
 				fieldLabel: 'aaa access owner',
 				name: 'aaa_access_owner'
 			},*/{
 				fieldLabel: 'E-mail',
 				name: 'mail',
-				vtype: 'email'
+				vtype: 'email',
+				allowBlank : true
 			},/*{
 				fieldLabel: 'groups',
 				name: 'groups'
@@ -83,7 +42,6 @@ Ext.define('canopsis.view.Account.Form', {
 			},{
 				fieldLabel: 'password',
 				name: 'passwd',
-				allowBlank: false,
 			}/*,{
 				fieldLabel: 'aaa owner',
 				name: 'aaa_owner'

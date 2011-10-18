@@ -47,5 +47,9 @@ function add_view_tab(id, title, closable){
 	}
 }
 
+function remove_active_tab(){
+	Ext.getCmp('main-tabs').remove(Ext.getCmp('main-tabs').getActiveTab())
+}
+
 var random_id = function () { return Math.floor(Math.random()*11)}
 
