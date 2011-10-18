@@ -14,6 +14,7 @@ echo "#========================#"
 echo
 
 detect_os
+echo
 
 function get_ppath(){
 	PNAME=$1
@@ -47,7 +48,7 @@ function install_package(){
 	cd $SRC_PATH
 }
 
-echo "Install Bootstrap in $PREFIX ..."
+echo "Install Bootstrap in $PREFIX"
 install_package "canohome"
 install_package "canotools"
 install_package "canolibs"
