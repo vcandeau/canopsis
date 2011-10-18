@@ -30,6 +30,9 @@ function post_install(){
 	export PATH="$PREFIX/bin/:$PATH"
 	check_code $?
 
+	mkdir -p $PREFIX/var/log
+	check_code $?
+
 	echo " + Fix permissions..."
 	$SUDO chown $HUSER:$HGROUP -R $PREFIX
 	check_code $?
