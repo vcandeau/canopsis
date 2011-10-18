@@ -42,7 +42,7 @@ Ext.define('canopsis.controller.Account', {
 	deleteButton: function(button) {
 		console.log('clicked the delete button');
 		var selection = Ext.getCmp('AccountGrid').getSelectionModel().getSelection();
-		//log.dump(selection);
+		log.dump(selection);
 		if (selection) {
             Ext.data.StoreManager.lookup('Account').remove(selection);
         }
@@ -100,7 +100,7 @@ Ext.define('canopsis.controller.Account', {
 				//console.log(test);
 				storeform.add(test);
 				//storeform.sync();
-				storeform.load();
+				//storeform.load();
 				Ext.getCmp('main-tabs').remove('AccountForm');
 				//reloading the store
 				storeform.load();
