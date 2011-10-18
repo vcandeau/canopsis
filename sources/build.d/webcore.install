@@ -1,5 +1,4 @@
 NAME="webcore"
-VERSION="0.1"
 
 function build(){
 	true
