@@ -1,0 +1,53 @@
+NAME="rabbitmq-server"
+VERSION="2.4.1"
+FCHECK="$PREFIX/bin/rabbitmq-env"
+
+BASE="rabbitmq-server-$VERSION"
+LOG="$LOG_PATH/$BASE.log"
+rm -f $LOG &> /dev/null
+
+
+function build(){
+	cd $SRC_PATH/externals
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.gz"
+	fi
+	cd  $BASE
+	echo " + Clean ..."
+	make clean 1>> $LOG 2>> $LOG
+	#check_code $?
+
+	echo " + Fix env vars ..."
+	export PATH="$PATH:$PREFIX/bin"
+	export TARGET_DIR="$PREFIX/opt/rabbitmq-server"
+	export SBIN_DIR="$PREFIX/bin/"
+	export MAN_DIR="$PREFIX/share/man/"
+
+	#echo " + Configure ..."
+	#./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	#check_code $?
+
+	echo " + Build ..."
+	make all 1>> $LOG 2>> $LOG
+	check_code $?
+}
+
+function install(){
+	$SUDO make install 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Post install configurations ..."
+	$SUDO cp $SRC_PATH/externals/rabbitmq-plugins/* $PREFIX/opt/rabbitmq-server/plugins
+	$SUDO sed -i s#/etc/rabbitmq#$PREFIX/etc#g $PREFIX/bin/rabbitmq-env
+	check_code $?
+
+	install_init "rabbitmq-server"
+	install_bin "rabbitmqadmin"
+	install_conf "rabbitmq.conf"
+	install_conf "rabbitmq-env.conf"
+
+	echo " + Exec install script from package's control ..."
+	. $SRC_PATH/packages/rabbitmq-server/control
+	install
+}

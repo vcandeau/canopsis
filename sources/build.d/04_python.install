@@ -1,0 +1,78 @@
+NAME="python"
+VERSION="2.7.1"
+FCHECK=$PREFIX/bin/python
+
+BASE="Python-$VERSION"
+LOG="$LOG_PATH/$BASE.log"
+rm -f $LOG &> /dev/null
+
+function build(){
+	cd $SRC_PATH/externals
+	
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tar.bz2"
+	fi
+	cd $BASE
+
+	echo " + Fix env vars"
+	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH 2>> /dev/null`
+	if [ $? -eq 0 ]; then
+		export LDFLAGS="$LDFLAGS -L/usr/lib/$DEB_HOST_MULTIARCH"
+		check_code $?
+	fi
+
+	if [ -e Makefile ]; then
+		echo " + Clean ..."
+		make clean 1>> $LOG 2>> $LOG
+		#check_code $?
+	fi
+	
+	echo " + Configure ..."
+	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	check_code $?
+
+	echo " + Build ..."
+	make 1>> $LOG 2>> $LOG
+	check_code $?
+}
+
+function install(){
+	$SUDO make install 1>> $LOG 2>> $LOG
+	check_code $?
+
+	cd $SRC_PATH/externals
+	install_pylib "setuptools" "0.6c11"
+	install_pylib "simplejson" "2.1.6"
+	install_pylib "pika" "0.9.5"
+	install_pylib "amqplib" "0.6.1"
+	install_pylib "kombu" "1.1.3"
+	install_pylib "sysv_ipc" "0.6.3"
+	install_pylib "pymongo" "2.0.1"
+	# For debian
+	install_pylib "pycurl" "7.18.2"
+	install_pylib "tornado" "1.2.1"
+	install_pylib "python-daemon" "1.5.5"
+
+	install_pylib "Twisted" "11.0.0"
+	install_pylib "txAMQP" "0.4"
+	install_pylib "txamqp-helpers" "0.5"
+
+	install_pylib "pycha" "0.6.0"
+
+	install_pylib "bottle" "0.9.6"
+	install_pylib "Beaker" "1.5.4"
+
+	install_pylib "gevent" "0.13.6"
+	install_pylib "gevent-websocket" "0.2.3"
+
+
+	if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
+		echo " + Patch python-txamqp ..."
+		# https://bugs.launchpad.net/txamqp/+bug/741147
+		cd $PREFIX
+		$SUDO rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
+		$SUDO patch -b -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
+		check_code $?
+		cd - &> /dev/null
+	fi
+}

@@ -1,0 +1,11 @@
+NAME="amqp2perfstore"
+VERSION="0.1"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+	install_python_daemon "$PREFIX/opt/amqp2perfstore/amqp2perfstore.py"
+}
