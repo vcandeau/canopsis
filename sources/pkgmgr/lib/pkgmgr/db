@@ -44,7 +44,7 @@ function db_parse(){
             FIELD=3
         elif [ "x$INFO" = "xmd5" ]; then
             FIELD=4
-        elif [ "x$DEPs" = "xdeps" ]; then
+        elif [ "x$INFO" = "xdeps" ]; then
             FIELD=5
         fi
         echo "$DATA" | cut -d '|' -f$FIELD
