@@ -1,7 +1,19 @@
 #!/bin/bash
 
+### Check user
+if [ `id -u` -ne 0 ]; then
+    echo "You must be root ..."
+    exit 1
+fi
+
+### Configurations
 SRC_PATH=`pwd`
-. $SRC_PATH/common.sh
+if [ -e $SRC_PATH/canohome/lib/common.sh ]; then
+    . $SRC_PATH/canohome/lib/common.sh
+else
+    echo "Impossible to find common's lib ..."
+    exit 1
+fi
 VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
 $SUDO mkdir -p $VARLIB_PATH
 check_code $?
