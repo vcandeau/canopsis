@@ -22,9 +22,8 @@ function install(){
 	check_code $?
 
 	echo " + Post install configurations ..."
-	#mkdir -p $PREFIX/var/log/mongodb
-	#mkdir -p $PREFIX/var/lib/mongodb
+	
+	install_basic_source $NAME
 
 	install_init "mongodb"
-	install_conf "mongodb.conf"
 }
