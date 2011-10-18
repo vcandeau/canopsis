@@ -351,6 +351,9 @@ for ITEM in $ITEMS; do
 	VERSION="0.1"
 	FCHECK="/tmp/notexist"
 
+	function pre_install(){	true; }
+	function post_install(){ true; }
+
 	. /$INST_CONF/$ITEM
 	if [ "$NAME" != 'x' ]; then
 		## Check package sources
@@ -366,8 +369,6 @@ for ITEM in $ITEMS; do
 
 		function install(){ true; }
 		function build(){ true; }
-		function pre_install(){	true; }
-		function post_install(){ true; }
 
 		. /$INST_CONF/$ITEM
 

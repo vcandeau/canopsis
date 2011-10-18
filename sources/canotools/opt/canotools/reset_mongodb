@@ -63,16 +63,20 @@ record3.chmod('o+r')
 record4 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
 record5 = crecord({'leaf': True }, type='menu', name='Selector')
 record6 = crecord({'leaf': True }, type='menu', name='SLA')
+record7 = crecord({'leaf': True, 'view': 'view.account_manager' }, type='menu', name='account manager')
+record8 = crecord({'leaf': True, 'view': 'view.config_editor'}, type='menu', name='config editor')
 
-storage.put([record1, record2, record3, record4, record5, record6])
+storage.put([record1, record2, record3, record4, record5, record6,record7, record8])
 
 record1.add_children(record2)
 record1.add_children(record3)
 
 record4.add_children(record5)
 record4.add_children(record6)
+record4.add_children(record7)
+record4.add_children(record8)
 
-storage.put([record1, record2, record3, record4, record5, record6])
+storage.put([record1, record2, record3, record4, record5, record6, record7, record8])
 
 ## View (Dashboard)
 record1 = crecord({'_id': 'view.root.dashboard' }, type='view', name='Dashboard')
@@ -112,7 +116,19 @@ record1.data['lines'] = [{ 'xtype': 'highcharts', 'type': 'line', 'refreshInterv
 
 storage.put(record1)
 
+##account manager
 
+record1 = crecord({'_id': 'view.account_manager' }, type='view', name='account manager')
+
+#record1.data['lines'] = [ { 'xtype': 'kpi', 'refreshInterval': 10, '_id': 'canopsis.Worker.check.selector.selector.root.all-services', 'title': 'All services', 'type': 'speedometer', 'label': 'ok' } ]
+record1.data['lines'] = [ { 'xtype': 'AccountView'} ]
+
+storage.put(record1)
+
+##config editor
+record1 = crecord({'_id': 'view.config_editor' }, type='view', name='config editor')
+record1.data['lines'] = [ { 'xtype': 'panel'} ]
+storage.put(record1)
 ## Create Bussiness Rukles
 
 myrule1 = cbrule(name='myrule1', autoinit=False, storage=storage, mids=[ 'nagios.Central.check.service.william.HTTP', 'nagios.Central.check.service.william.SSH' ])
