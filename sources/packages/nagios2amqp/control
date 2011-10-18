@@ -12,7 +12,7 @@ function pre_install(){
 }
 
 function post_install(){
-	eho "Post-install $NAME $VERSION-$RELEASE ..."
+	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 
 }
 
