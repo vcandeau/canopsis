@@ -1,18 +1,18 @@
 #!/bin/bash
 
-NAME="<NAME>"
-VERSION=1
+NAME="@NAME@"
+VERSION=@VERSION@
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr"
+REQUIRES=""
 
 function pre_install(){
-    echo "Pre-install $NAME $VERSION-$RELEASE ..."
-    check_code $? 
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	check_code $? 
 }
 
 function post_install(){
-	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	eho "Post-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 
 }
 
@@ -22,18 +22,18 @@ function pre_remove(){
 }
 
 function post_remove(){
-    echo "Post-remove $NAME $VERSION-$RELEASE ..."
-    check_code $?
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
 }
 
 function pre_update(){
-    echo "Pre-update $NAME $VERSION-$RELEASE ..."
-    check_code $?
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
 }
 
 function post_update(){
-    echo "Post-update $NAME $VERSION-$RELEASE ..."
-    check_code $?
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
 }
 
 function purge(){

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="canotools"
+NAME="amqp2perfstore"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr"
+REQUIRES=""
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
