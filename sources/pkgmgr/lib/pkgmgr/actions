@@ -31,7 +31,6 @@ function download_package(){
 
 	cd $PACKAGES_PATH
     echo "   + Download $PNAME.tgz ..."
-    #wget -O $PACKAGES_PATH/$PNAME.tgz -a $LOG_PATH --progress=dot "$FINAL_URL/$PNAME.tgz" 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     wget --progress=dot "$FINAL_URL/$PNAME.tgz" 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo -ne "\b\b\b\b"
     echo "         + Done"
@@ -137,6 +136,11 @@ function install_local_package(){
     check_code $? "Post-install step ($PNAME) failure"
 
     db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+	
+	echo "   + Remove package folder"
+    rm -Rf $PPATH
+    check_code $? "Post install-local package folder remove failure"
+
     echo " + Done"  
 }
 
@@ -147,7 +151,8 @@ function remove_package(){
 
     if [ ! "x$PSTATUS" = "x" ]; then
         echo " :: Remove package $PNAME"
-        PPATH=$PACKAGES_PATH/$PNAME
+	    PPATH=$(get_ppath "$PNAME")
+		check_code $? "Package manipulation failure (Untar..)"
 		load_control_tpl
         . $PPATH/control
         check_code $? "Source control file from $PNAME failure"
@@ -163,6 +168,10 @@ function remove_package(){
 		post_remove
 		check_code $? "Post-remove step failure"
 
+		echo "   + Remove package folder"
+	    rm -Rf $PPATH
+    	check_code $? "Post remove package folder remove failure"
+	
         db_del "$PNAME"
     else
         echo " :: Package $PNAME is not installed"
@@ -204,6 +213,10 @@ function upgrade_package(){
     check_code $? "Post-update function ($PNAME) failure"
 
     db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+
+	echo "   + Remove package folder"
+    rm -Rf $PPATH
+    check_code $? "Post upgrade package folder remove failure"
 
     echo "   + Done"
 }
