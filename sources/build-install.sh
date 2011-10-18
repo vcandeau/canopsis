@@ -246,7 +246,7 @@ function install_basic_source(){
 		## Install file
 		cp -Rf $NAME/* $PREFIX/
 		check_code $?
-		cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null
+		cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null || true
 	else
 		echo "Error: Impossible to find '$NAME'"
 		exit 1
@@ -309,7 +309,7 @@ mkdir -p $PREFIX
 cd $PREFIX &> /dev/null
 find ./ -type f > $SRC_PATH/packages/files.lst
 find ./ -type l >> $SRC_PATH/packages/files.lst
-cd - &> /dev/null
+cd - &> /dev/null|| true
 
 ######################################
 # Check other arguments
