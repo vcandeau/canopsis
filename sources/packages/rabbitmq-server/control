@@ -6,8 +6,14 @@ RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr erlang canotools"
 
-function install(){
-	echo "Install $NAME $VERSION-$RELEASE ..."
+function pre_install(){
+	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	check_code $? 
+}
+
+function post_install(){
+	eho "Post-install $NAME $VERSION-$RELEASE ..."
+
 	mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq
 	$PREFIX/etc/init.d/rabbitmq-server start
 
@@ -22,20 +28,28 @@ function install(){
 	check_code $?
 }
 
-function remove(){
-	echo "Remove $NAME $VERSION-$RELEASE ..."
+function pre_remove(){
+	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
 	service rabbitmq-server stop 
-	#check_code $?
+}
+
+function post_remove(){
+	echo "Post-remove $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function pre_update(){
+	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
+}
+
+function post_update(){
+	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	check_code $?
 }
 
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
 	rm -Rf $PREFIX/var/lib/rabbitmq
 	rm -Rf $PREFIX/var/log/rabbitmq
-	#check_code $?
-}
-
-function update(){
-	echo "Update $NAME $VERSION-$RELEASE ..."
-	check_code $?
 }

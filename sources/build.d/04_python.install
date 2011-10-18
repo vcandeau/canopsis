@@ -1,5 +1,5 @@
 NAME="python"
-VERSION="2.7.1"
+
 FCHECK=$PREFIX/bin/python
 
 BASE="Python-$VERSION"
