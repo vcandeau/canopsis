@@ -18,12 +18,6 @@ function build(){
 	make clean 1>> $LOG 2>> $LOG
 	#check_code $?
 
-	echo " + Fix env vars ..."
-	export PATH="$PATH:$PREFIX/bin"
-	export TARGET_DIR="$PREFIX/opt/rabbitmq-server"
-	export SBIN_DIR="$PREFIX/bin/"
-	export MAN_DIR="$PREFIX/share/man/"
-
 	#echo " + Configure ..."
 	#./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	#check_code $?
