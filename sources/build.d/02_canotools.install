@@ -1,5 +1,4 @@
 NAME="canotools"
-VERSION="0.1"
 
 function build(){
 	true
