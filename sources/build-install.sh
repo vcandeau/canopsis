@@ -240,26 +240,13 @@ function install_basic_source(){
 	#echo "Install $NAME ..."
 	#echo " + Install ..."
 
-	CTRLFILE="$SRC_PATH/packages/$NAME/control"
-	function pre_install(){	true; }
-	function post_install(){ true; }
+	#CTRLFILE="$SRC_PATH/packages/$NAME/control"
 
 	if [ -e "$NAME" ]; then
-		## Pre install
-		if [ -e $CTRLFILE ]; then
-			. $CTRLFILE
-			pre_install
-		fi
-
 		## Install file
 		cp -Rf $NAME/* $PREFIX/
 		check_code $?
 		cp -Rf $NAME/.[a-zA-Z0-9]* $PREFIX/ &> /dev/null
-
-		## Post install
-		if [ -e $CTRLFILE ]; then
-			post_install
-		fi
 	else
 		echo "Error: Impossible to find '$NAME'"
 		exit 1
@@ -379,6 +366,8 @@ for ITEM in $ITEMS; do
 
 		function install(){ true; }
 		function build(){ true; }
+		function pre_install(){	true; }
+		function post_install(){ true; }
 
 		. /$INST_CONF/$ITEM
 
@@ -393,9 +382,15 @@ for ITEM in $ITEMS; do
 			build
 			check_code $?
 
+			echo " + Pre-install ..."	
+			pre_install
+
 			echo " + Install ..."
 			install
 			check_code $?
+
+			echo " + Post-install ..."
+			post_install
 
 			make_package $NAME
 			check_code $?
