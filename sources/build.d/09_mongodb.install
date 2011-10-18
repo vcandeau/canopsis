@@ -17,12 +17,12 @@ function build(){
 }
 
 function install(){
-	echo " + Install ..."
 	cp -R bin/* $PREFIX/bin/
 	check_code $?
 
 	echo " + Post install configurations ..."
-	
+
+	cd $SRC_PATH	
 	install_basic_source $NAME
 
 	install_init "mongodb"
