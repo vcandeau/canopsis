@@ -10,7 +10,7 @@
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
 touch $VARLIB_PATH/info
-mkdir -p var/log
+mkdir -p $HOME/var/log
 touch $LOG_PATH
 
 #================#
