@@ -1,5 +1,4 @@
 NAME="amqp2brule"
-VERSION="0.1"
 
 function build(){
 	true

@@ -31,20 +31,23 @@ Ext.define('canopsis.controller.Account', {
 			},
 			'AccountFormEdit #updateForm': {
 				click: this.updateForm
+			},
+			'AccountGrid #deleteButton' : {
+				click: this.deleteButton
 			}
 			
 		});
 	},
     
-	/*
 	deleteButton: function(button) {
 		console.log('clicked the delete button');
-		var selection = Ext.widget('AccountView').getSelectionModel().getSelection();
+		var selection = Ext.getCmp('AccountGrid').getSelectionModel().getSelection();
 		log.dump(selection);
 		if (selection) {
-            view = Ext.ComponentQuery.query('AccountView').getStore().remove(selection);
+            Ext.data.StoreManager.lookup('Account').remove(selection);
         }
-	},*/
+	},
+	
 	addButton: function(button) {
 		console.log('clicked the add user button');
 		var main_tabs = Ext.getCmp('main-tabs')
@@ -61,12 +64,10 @@ Ext.define('canopsis.controller.Account', {
 	
 	saveForm :function(form, data) {
 		console.log('clicked on the save form button');
-		//get the form
+		//get elements
 		var form = Ext.getCmp('AccountForm').getForm();
-		//get store
 		var storeform = Ext.data.StoreManager.lookup('Account');
 		//log.dump(form);
-		
 		
 		//check if form is valid before submit
 		if (form.isValid()){
@@ -99,7 +100,7 @@ Ext.define('canopsis.controller.Account', {
 				//console.log(test);
 				storeform.add(test);
 				//storeform.sync();
-				storeform.load();
+				//storeform.load();
 				Ext.getCmp('main-tabs').remove('AccountForm');
 				//reloading the store
 				storeform.load();

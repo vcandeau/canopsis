@@ -24,7 +24,7 @@ Ext.define('canopsis.store.Account', {
                 exception: function(proxy, response, operation){
                     Ext.MessageBox.show({
                         title: 'REMOTE EXCEPTION',
-                        msg: 'Loading accounts failed',
+                        msg: 'Accounts request failed',
                         icon: Ext.MessageBox.ERROR,
                         buttons: Ext.Msg.OK
                     });
