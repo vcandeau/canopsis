@@ -17,7 +17,10 @@ function post_install(){
 	mkdir -p $PREFIX/var/lib/mongodb
 	chown $HUSER -R $PREFIX/var/log/mongodb
 	chown $HUSER -R $PREFIX/var/lib/mongodb
-	launch_cmd "service mongodb start && sleep 1 && python ~/opt/mongodb/initDB.py && service mongodb stop"
+	launch_cmd "service mongodb start && sleep 1"
+	launch_cmd "python ~/opt/mongodb/initDB.py"
+	launch_cmd "service mongodb stop"
+
 	check_code $? "Impossible to init mongoDB ..."
 }
 
