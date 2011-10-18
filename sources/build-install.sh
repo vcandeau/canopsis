@@ -38,7 +38,7 @@ function extract_archive(){
 	if [ "$EXTCMD" != "" ]; then
 		echo " + Extract '$1' ('$EXTCMD') ..."
 		$EXTCMD $1
-		check_code $?
+		check_code $? "Extract archive failure"
 	else
 		echo "Error: Impossible to extract '$1', no command ..."
 		exit 1
@@ -77,7 +77,7 @@ function install_pylib(){
 		cd $BASE
 		echo " + Install $BASE ..."
 		$PY_BIN setup.py install --prefix=$PREFIX 1>> $LOG 2>> $LOG
-		check_code $?
+		check_code $? "Setup.py install failure"
 		cd ../
 		rm -Rf $BASE  &> /dev/null
 		cd $SRC_PATH
@@ -96,12 +96,12 @@ function install_init(){
 	if [ -e $IFILE ]; then
 		echo " + Install init script '$1' ..."
 		cp $IFILE $PREFIX/etc/init.d/$1
-		check_code $?
+		check_code $? "Copy init file into init.d failure"
 		sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/init.d/$1
 		sed "s#@HUSER@#$HUSER#g" -i $PREFIX/etc/init.d/$1
 		sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/etc/init.d/$1
 
-		check_code $?
+		check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in init.d failure"
 	else
 		echo "Error: Impossible to find '$IFILE'"
 		exit 1
@@ -113,11 +113,11 @@ function install_conf(){
 	if [ -e $IFILE ]; then
 		echo " + Install conf file '$1' ..."
 		cp $IFILE $PREFIX/etc/$1
-		check_code $?
+		check_code $? "Copy conf into etc failure"
 		sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/etc/$1
 		sed "s#@HUSER@#$HUSER#g" -i $PREFIX/etc/$1
 		sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/etc/$1
-		check_code $?
+		check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in etc failure"
 	else
 		echo "Error: Impossible to find '$IFILE'"
 		exit 1
@@ -129,11 +129,11 @@ function install_bin(){
 	if [ -e $IFILE ]; then
 		echo " + Install bin file '$1' ..."
 		cp $IFILE $PREFIX/bin/$1
-		check_code $?
+		check_code $? "Copy bin into bin failure"
 		sed "s#@PREFIX@#$PREFIX#g" -i $PREFIX/bin/$1
 		sed "s#@HUSER@#$HUSER#g" -i $PREFIX/bin/$1
 		sed "s#@HGROUP@#$HGROUP#g" -i $PREFIX/bin/$1
-		check_code $?
+		check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in bin failure"
 	else
 		echo "Error: Impossible to find '$IFILE'"
 		exit 1
@@ -147,8 +147,9 @@ function install_python_daemon(){
 	#ln -s $DPATH $PREFIX/opt/hyp-daemons/
 
 	rm -f $PREFIX/etc/init.d/$DAEMON_NAME &>/dev/null
+	check_code $? "Remove init.d script failure"
 	ln -s $PREFIX/opt/canotools/daemon $PREFIX/etc/init.d/$DAEMON_NAME
-	check_code $?
+	check_code $? "Symbolic link creation of daemon script failure"
 }
 
 function make_package_archive(){
@@ -158,7 +159,7 @@ function make_package_archive(){
 	echo "    + Make Package archive ..."
 	cd $PREFIX &> /dev/null
 	tar cfz $PPATH/files.tgz -T $PPATH/files.lst
-	check_code $?
+	check_code $? "Files archive creation failure"
 	cd - &> /dev/null
 	
 	echo "    + Check control script ..."
@@ -168,20 +169,19 @@ function make_package_archive(){
 	echo "    + Make final archive ..."
 	cd $SRC_PATH/packages/
 	tar cfz $PNAME.tgz $PNAME
-	check_code $?
+	check_code $? "Package archive creation failure"
 
 	echo "    + Move to binaries directory ..."
 	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
 	mkdir -p $BPATH
+	check_code $? "Create Build folder failure"
 	cat /proc/version > $BPATH/build.info
-	mkdir -p $BPATH
 	mv $PNAME.tgz $BPATH/
-	check_code $?
+	check_code $? "Move binaries into build folder failure"
 
 	echo "    + Clean ..."
 	rm -f $PPATH/files.tgz
-	#rm -f $PPATH/files.lst
-	check_code $?
+	check_code $? "Remove files archive failure"
 }
 
 function update_packages_list() {
@@ -193,6 +193,7 @@ function update_packages_list() {
 	touch $PKGLIST
 
 	. $PPATH/control
+	check_code $? "Source control file failure"
 	
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
 
@@ -209,18 +210,17 @@ function make_package(){
 		FLIST_TMP=$SRC_PATH/packages/files.tmp
 	
 		echo "    + Purge old build ..."
-		#rm -Rf $PPATH &> /dev/null
 		rm -f $PPATH.tgz &> /dev/null
 	
 		echo "    + Make files listing ..."
 		mkdir -p $PPATH
 		touch $FLIST
-		check_code $?
+		check_code $? "Touch files file failure"
 	
 		cd $PREFIX &> /dev/null
 		find ./ -type f > $FLIST_TMP
 		find ./ -type l >> $FLIST_TMP
-		check_code $?
+		check_code $? "List files with find failure"
 	
 		diff $FLIST $FLIST_TMP  | grep ">" | sed 's#> ##g' > $PPATH/files.lst
 		check_code $?
