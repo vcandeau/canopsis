@@ -1,0 +1,11 @@
+NAME="nagios2amqp"
+VERSION="0.1"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+	install_python_daemon "$PREFIX/opt/nagios2amqp/nagios2amqp.py"
+}
