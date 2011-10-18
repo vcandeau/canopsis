@@ -46,8 +46,4 @@ function install(){
 	install_bin "rabbitmqadmin"
 	install_conf "rabbitmq.conf"
 	install_conf "rabbitmq-env.conf"
-
-	echo " + Exec install script from package's control ..."
-	. $SRC_PATH/packages/rabbitmq-server/control
-	install
 }
