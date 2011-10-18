@@ -12,7 +12,8 @@ Ext.onReady(function() {
 			'Tabs',
 			'Widgets',
 			'WebSocket',
-			'Account'
+			'Account',
+			'Config'
 		],
 	
 		autoCreateViewport: true,
