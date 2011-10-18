@@ -3,7 +3,7 @@ NAME="erlang"
 FCHECK="$PREFIX/bin/erl"
 
 BASE="otp_src_$VERSION"
-LOG="$LOG_PATH/$BASE.log"
+LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
 function build(){
