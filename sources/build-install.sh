@@ -295,7 +295,7 @@ if [ "$ARG1" = "clean" ]; then
 	echo "Clean $PREFIX ..."
 	echo " + kill all canopsis process ..."
 	if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
-		su - $HUSER -c "hypcontrol stop"
+		su - $HUSER -c ". .bash_profile; hypcontrol stop"
 		check_code $?
 	fi
 	PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
