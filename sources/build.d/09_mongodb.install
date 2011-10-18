@@ -1,0 +1,32 @@
+NAME="mongodb"
+VERSION="1.8.1"
+FCHECK="$PREFIX/bin/mongod"
+
+BASE="mongodb-linux-$ARCH-static-$VERSION"
+LOG="$LOG_PATH/$BASE.log"
+rm -f $LOG &> /dev/null
+
+
+function build(){
+	cd $SRC_PATH/externals
+
+	if [ ! -e $BASE ]; then
+		extract_archive "$BASE.tgz"
+	fi
+	cd $BASE
+}
+
+function install(){
+	echo " + Install ..."
+	$SUDO cp -R bin/* $PREFIX/bin/
+	check_code $?
+
+	echo " + Post install configurations ..."
+	#$SUDO mkdir -p $PREFIX/var/log/mongodb
+	#$SUDO mkdir -p $PREFIX/var/lib/mongodb
+	. $SRC_PATH/packages/mongodb/control
+        install
+
+	install_init "mongodb"
+	install_conf "mongodb.conf"
+}
