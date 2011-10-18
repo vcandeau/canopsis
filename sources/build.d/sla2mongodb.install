@@ -1,0 +1,11 @@
+NAME="sla2mongodb"
+VERSION="0.1"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+	install_python_daemon "$PREFIX/opt/sla2mongodb/sla2mongodb.py"
+}

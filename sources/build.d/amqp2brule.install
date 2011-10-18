@@ -1,0 +1,11 @@
+NAME="amqp2brule"
+VERSION="0.1"
+
+function build(){
+	true
+}
+
+function install(){
+	install_basic_source $NAME
+	install_python_daemon "$PREFIX/opt/amqp2brule/amqp2brule.py"
+}
