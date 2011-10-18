@@ -34,15 +34,22 @@ function install_package(){
 	echo "Install package $PNAME ..."
 	cd $SRC_PATH && mkdir -p tmp && cd tmp
 	tar xfz $PPATH
-	check_code $?
+	check_code $? "Untar package failure"
 	
 	cd $PREFIX
-	$SUDO tar xfz $SRC_PATH/tmp/$PNAME/files.tgz
-	check_code $?
-
-	. $SRC_PATH/tmp/$PNAME/control	
-	$SUDO bash -c ". $SRC_PATH/common.sh && . $SRC_PATH/tmp/$PNAME/control && install && echo '$PNAME|$VERSION-$RELEASE|installed|' >> $DB_PATH"
-	check_code $?
+	. $SRC_PATH/tmp/$PNAME/control
+	echo "  + Pre-install"
+	pre_install
+	check_code $? "Pre-install step failure"
+	echo "  + Copy files"
+	tar xfz $SRC_PATH/tmp/$PNAME/files.tgz
+	check_code $? "Untar files.tgz failure"
+	echo "  + Post-install"
+	post_install
+	check_code $? "Post-install step failure"
+	echo "  + Update Local packages database"
+	echo '$PNAME|$VERSION-$RELEASE|installed||$REQUIRES' >> $DB_PATH
+	check_code $? "Echo package informations in db_local failure"
 
 	rm -Rf $SRC_PATH/tmp
 	cd $SRC_PATH
