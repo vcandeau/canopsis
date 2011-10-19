@@ -42,9 +42,12 @@ function install_package(){
     PNAME=$1
     DBINFO=$(db_get "$PNAME")
 	L_STATUS=$(db_parse "status" "$DBINFO")
-    if [ "$L_STATUS" == "installed" ]; then
+    if [[ "$L_STATUS" == "installed" && "$2" == "force" ]]; then
         echo " :: Reinstall package $PNAME"
-    else
+    elif [[ "$L_STATUS" == "installed" && -z "$2" ]]; then
+		echo " :: Package $PNAME already installed"
+		exit 1
+	else
         echo " :: Install package $PNAME"
     fi
 
@@ -109,9 +112,12 @@ function install_local_package(){
     fi
     DBINFO=$(db_get "$PNAME")
     L_STATUS=$(db_parse "status" "$DBINFO")
-    if [ "$L_STATUS" == "installed" ]; then
-        echo " :: Reinstall package $PNAME"
-    else
+    if [[ "$L_STATUS" == "installed"  && "$2" == "force" ]]; then
+        echo " :: Reinstall $PNAME"
+    elif [[ "$L_STATUS" == "installed" && -z "$2" ]]; then
+		echo " :: Package $PNAME already installed"
+		exit 1
+	else
         echo " :: Install package $PNAME"
     fi
 

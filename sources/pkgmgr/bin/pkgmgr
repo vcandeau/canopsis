@@ -43,7 +43,9 @@ ACTION=$1
 
 if [[ "x$ACTION" =~ ^(xinstall|xinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
 	if [[ "x$ACTION" = "xinstall" && $# -eq 2 ]]; then install_package $2 && exit $?; fi
+	if [[ "x$ACTION" = "xreinstall" && $# -eq 2 ]]; then install_package $2 "force" && exit $?; fi
 	if [[ "x$ACTION" = "xinstall-local" && $# -eq 2 ]]; then install_local_package $2 && exit $?; fi
+	if [[ "x$ACTION" = "xreinstall-local" && $# -eq 2 ]]; then install_local_package "force" $2 && exit $?; fi
 	if [[ "x$ACTION" = "xupgrade" && $# -eq 2 ]]; then upgrade_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xremove" && $# -eq 2 ]]; then remove_package $2 && exit $?; fi
 	if [[ "x$ACTION" = "xupdate" ]]; then update_db && exit $?; fi
