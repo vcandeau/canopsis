@@ -15,7 +15,13 @@ function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	mkdir -p $PREFIX/var/log/mongodb
 	mkdir -p $PREFIX/var/lib/mongodb
-	check_code $?
+	chown $HUSER -R $PREFIX/var/log/mongodb
+	chown $HUSER -R $PREFIX/var/lib/mongodb
+	launch_cmd "service mongodb start && sleep 2"
+	launch_cmd "python ~/opt/mongodb/initDB.py"
+	launch_cmd "service mongodb stop"
+
+	check_code $? "Impossible to init mongoDB ..."
 }
 
 function pre_remove(){

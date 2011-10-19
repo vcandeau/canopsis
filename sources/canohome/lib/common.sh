@@ -5,8 +5,6 @@ HGROUP="canopsis"
 ARCH=`uname -m`
 SUDO="sudo -E"
 
-
-
 function check_code {
 	if [ $1 -ne 0 ]; then
 		echo "Error: Code: $1"
@@ -51,4 +49,22 @@ function detect_os(){
 		exit 1
 	fi
 }
+
+function launch_cmd() {
+	MYCMD=$1
+	if [ "x$MYCMD" != "x" ]; then
+		if [ "x`id -un`" == "x$HUSER" ]; then
+			$MYCMD
+			check_code $? "Error in command '$MYCMD'..."
+		else
+			if [ `id -u` -eq 0 ]; then
+				su - $HUSER -c ". .bash_profile && $MYCMD"
+				check_code $? "Error in command '$MYCMD'..."
+			else
+				"Impossible to launch command with '`id -un`' ..."
+			fi
+		fi
+	fi
+}
+
 
