@@ -19,6 +19,9 @@ function build(){
 function install(){
 	cp -R bin/* $PREFIX/bin/
 	check_code $?
+	
+	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
+	check_code $?
 
 	echo " + Post install configurations ..."
 
@@ -26,4 +29,5 @@ function install(){
 	install_basic_source $NAME
 
 	install_init "mongodb"
+	install_conf "mongodb.conf"
 }
