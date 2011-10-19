@@ -177,7 +177,7 @@ function make_package_archive(){
 	cat /proc/version > $BPATH/build.info
 	mv $PNAME.tgz $BPATH/
 	check_code $? "Move binaries into build folder failure"
-	cp $BPATH/$PNAME.tgz $PREFIX/var/lib/pkgmgr/packages
+	cp $BPATH/$PNAME.tgz $PREFIX/var/lib/pkgmgr/packages/
 	check_code $? "Copy binaries into Canopsis env failure"
 
 	echo "    + Clean ..."
@@ -342,6 +342,9 @@ if [[ "$1" =~ ^(pkg|clean|nocheckdeps|wut)$ ]]; then detect_os;
     elif [[ "$1" = "mkpkg" && $# -eq 2 ]]; then extra_deps; export_env; pkgondemand $2;
     elif [[ "$1" = "mkpkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; pkgondemand $2;
 	else show_help; fi
+elif [ -z "$1" ];then
+	extra_deps
+	export_env
 else show_help; fi
 
 ######################################
@@ -354,9 +357,9 @@ find ./ -type f > $SRC_PATH/packages/files.lst
 find ./ -type l >> $SRC_PATH/packages/files.lst
 cd - &> /dev/null|| true
 
-VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
+VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
 mkdir -p $VARLIB_PATH
-touch $VARLIB_PATH/local_db
+touch $PREFIX/var/lib/pkgmgr/local_db
 
 ######################################
 #  Build all packages
