@@ -316,10 +316,13 @@ function show_help(){
 	echo
 	echo "Options:"
     echo "    clean              ->  Uninstall"
+    echo "    wut [nocheckdeps]  ->  Run unittest and the end"
     echo "    mkpkg [ARGUMENT]   ->  Install deps, build and make a package"
-	echo "    pkg [OPTION]       ->  Install deps, build, install and make packages"
-    echo "    nocheckdeps        ->  Don't check dependencies"
+	echo "    pkg [nocheckdeps]  ->  Install deps, build, install and make packages"
     echo "    help               ->  Print this help"
+	echo
+	echo "Arguments:"
+    echo "    nocheckdeps        ->  Don't check dependencies"
     exit 1
 }
 
@@ -329,18 +332,17 @@ function show_help(){
 ARG1=$1
 ARG2=$2
 
-if [[ "$1" =~ ^(pkg|clean|nocheckdeps)$ ]]; then
-	detect_os
-    if [[ "$1" = "pkg" && $# -eq 1 ]]; then extra_deps; export_env; fi
-    if [[ "$1" = "pkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; fi
-    if [[ "$1" = "nocheckdeps" && $# -eq 1 ]]; then export_env; fi
-    if [[ "$1" = "clean" && $# -eq 1 ]]; then run_clean; fi
-    if [[ "$1" = "mkpkg" && $# -eq 2 ]]; then extra_deps; export_env; pkgondemand $2; fi
-    if [[ "$1" = "mkpkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; pkgondemand $2; fi
-    show_help
-else
-    show_help
-fi
+if [[ "$1" =~ ^(pkg|clean|nocheckdeps|wut)$ ]]; then detect_os;
+    if [[ "$1" = "pkg" && $# -eq 1 ]]; then extra_deps; export_env;
+    elif [[ "$1" = "pkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env;
+    elif [[ "$1" = "wut" && $# -eq 1 ]]; then extra_deps; export_env; run_wut="True";
+    elif [[ "$1" = "wut" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; run_wut="True";
+    elif [[ "$1" = "nocheckdeps" && $# -eq 1 ]]; then export_env;
+    elif [[ "$1" = "clean" && $# -eq 1 ]]; then run_clean;
+    elif [[ "$1" = "mkpkg" && $# -eq 2 ]]; then extra_deps; export_env; pkgondemand $2;
+    elif [[ "$1" = "mkpkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; pkgondemand $2;
+	else show_help; fi
+else show_help; fi
 
 ######################################
 #  Init file listing
@@ -351,21 +353,6 @@ cd $PREFIX &> /dev/null
 find ./ -type f > $SRC_PATH/packages/files.lst
 find ./ -type l >> $SRC_PATH/packages/files.lst
 cd - &> /dev/null|| true
-
-######################################
-# Check other arguments
-######################################
-if [ "$ARG1" = "mkpkg" ]; then
-	PNAME=$ARG2
-	echo "Make package $PNAME ..."
-	if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
-		make_package_archive "$PNAME"
-	else
-		echo " + Impossible to find file.lst ..."
-		exit 1
-	fi
-	exit 0
-fi
 
 ######################################
 #  Build all packages
@@ -452,7 +439,7 @@ chown $HUSER:$HGROUP -R $PREFIX
 check_code $?
 echo " + Ok"
 
-if [ "$ARG1" = "wut" ]; then
+if [ "$run_wut" = "True" ]; then
 	echo "################################"
 	echo "# Launch Unit Tests"
 	echo "################################"
