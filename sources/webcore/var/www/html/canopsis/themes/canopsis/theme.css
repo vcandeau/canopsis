@@ -1,5 +1,6 @@
 /* Include all CSS */
 
+@import "resources/css/icons.css"; 
 @import "resources/css/ext-all.css"; 
 /* @import "resources/css/main-menu_panel.css"; */
 @import "resources/css/header-footer.css";

@@ -14,8 +14,8 @@ function pre_install(){
 	check_code $?
 
 	echo " + Create Canopsis user ('$HUSER')..."
-	userdel $HUSER &> /dev/null
-	groupadd $HGROUP &> /dev/null
+	userdel $HUSER &> /dev/null || true
+	groupadd $HGROUP &> /dev/null || true
 	useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
 	usermod -a -G nagios $HUSER &> /dev/null || true
 }
@@ -46,7 +46,7 @@ function pre_remove(){
 function post_remove(){
 	echo "Post-remove $NAME $VERSION-$RELEASE ..."
 	echo " + Del user $HUSER ..."
-	userdel $HUSER
+	userdel $HUSER || true
 	check_code $?
 }
 

@@ -12,10 +12,11 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	//add an infinite scrolling, beware bugs, the doc say that some stuff can be disabled
 	//verticalScrollerType: 'paginggridscroller',
 	//invalidateScrollerOnRefresh: false,
-	title : 'user list',
+	title : '',
 	//iconCls: 'icon-grid',
-    frame: true,
+    //frame: true,
     id: 'AccountGrid',
+    border: 0,
     //selType: 'rowmodel',
     //plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
     /*dockedItems: [{
@@ -33,14 +34,13 @@ Ext.define('canopsis.view.Account.Grid' ,{
                 }]
 		}],*/
 
-	bbar: [ {
+	tbar: [ {
+                    iconCls: 'icon-add',
                     text: 'Add user',
                     itemId: 'addButton',
-                    disabled: false,      
                 },{
-                    //iconCls: 'icon-delete',
+                    iconCls: 'icon-delete',
                     text: 'Delete',
-                    disabled: false,
                     itemId: 'deleteButton',
                 }],
 
