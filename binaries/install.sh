@@ -60,7 +60,7 @@ function install_package(){
 	post_install
 	check_code $? "Post-install step failure"
 	echo "  + Update Local packages database"
-	echo '$PNAME|$VERSION-$RELEASE|installed||$REQUIRES' >> $DB_PATH
+	echo "$PNAME|$VERSION-$RELEASE|installed||$REQUIRES" >> $DB_PATH
 	check_code $? "Echo package informations in db_local failure"
 
 	rm -Rf $SRC_PATH/tmp
