@@ -8,8 +8,8 @@ fi
 
 ### Configurations
 SRC_PATH=`pwd`
-if [ -e $SRC_PATH/canohome/lib/common.sh ]; then
-    . $SRC_PATH/canohome/lib/common.sh
+if [ -e $SRC_PATH/common.sh ]; then
+    . $SRC_PATH/common.sh
 else
     echo "Impossible to find common's lib ..."
     exit 1
