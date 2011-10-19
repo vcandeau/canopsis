@@ -15,14 +15,14 @@ function db_set(){
     STATUS=$3
     MD5=$4
     DEPS=$5
-    sed "/$PNAME/d" -i $LOCAL_DB_PATH
+    sed "/^$PNAME/d" -i $LOCAL_DB_PATH
     echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> $LOCAL_DB_PATH
     check_code $? "Database insertion ($PNAME)"
 }
 
 function db_del(){
     PNAME=$1
-    sed "/$PNAME/d" -i $LOCAL_DB_PATH
+    sed "/^$PNAME/d" -i $LOCAL_DB_PATH
     check_code $? "Database deletion ($PNAME)"
 }
 
@@ -44,7 +44,7 @@ function db_parse(){
             FIELD=3
         elif [ "x$INFO" = "xmd5" ]; then
             FIELD=4
-        elif [ "x$DEPs" = "xdeps" ]; then
+        elif [ "x$INFO" = "xdeps" ]; then
             FIELD=5
         fi
         echo "$DATA" | cut -d '|' -f$FIELD
