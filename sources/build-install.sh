@@ -354,6 +354,10 @@ find ./ -type f > $SRC_PATH/packages/files.lst
 find ./ -type l >> $SRC_PATH/packages/files.lst
 cd - &> /dev/null|| true
 
+VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
+mkdir -p $VARLIB_PATH
+touch $VARLIB_PATH/local_db
+
 ######################################
 #  Build all packages
 ######################################
