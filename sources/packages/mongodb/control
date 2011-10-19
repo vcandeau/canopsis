@@ -17,7 +17,22 @@ function post_install(){
 	mkdir -p $PREFIX/var/lib/mongodb
 	chown $HUSER -R $PREFIX/var/log/mongodb
 	chown $HUSER -R $PREFIX/var/lib/mongodb
-	launch_cmd "service mongodb start && sleep 2"
+	launch_cmd "service mongodb start"
+
+	## Wait mongo ready
+        i=0
+        while [ `ls /tmp/mongodb-*.sock 2> /dev/null| wc -l` -eq 0 ]; do
+                if [ $i -gt 30 ]; then
+                        echo 
+                        echo "Impossible to connect mongoDB ..."
+                        exit 1
+                fi
+                i=$((i+1))
+                echo -n "."
+                sleep 0.5
+        done
+        echo
+
 	launch_cmd "python ~/opt/mongodb/initDB.py"
 	launch_cmd "service mongodb stop"
 
