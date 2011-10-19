@@ -198,7 +198,7 @@ function update_packages_list() {
 	
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
 
-	sed "/$PNAME/d" -i $PKGLIST
+	sed "/^$PNAME/d" -i $PKGLIST
     echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
 }
 
@@ -423,7 +423,7 @@ for ITEM in $ITEMS; do
 
 			echo " + Update local pkgmgr database"
 			PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
-			sed "/$NAME/d" -i $PKGLIST
+			sed "/^$NAME/d" -i $PKGLIST
 		    echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES" >> $PKGLIST
 			check_code $? "Package entrie insertion in local pkgmgr database failure"
 
