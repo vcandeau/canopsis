@@ -46,7 +46,7 @@ function pre_remove(){
 function post_remove(){
 	echo "Post-remove $NAME $VERSION-$RELEASE ..."
 	echo " + Del user $HUSER ..."
-	userdel $HUSER
+	userdel $HUSER || true
 	check_code $?
 }
 
