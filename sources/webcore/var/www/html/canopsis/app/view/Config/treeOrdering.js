@@ -1,72 +1,77 @@
 Ext.define('canopsis.view.Config.treeOrdering' ,{
 	extend: 'Ext.tree.Panel',
 	alias : 'widget.treeOrdering',
+	model : 'Widget',
 	
 	//store: store,
+	id: 'treeOrdering',
 	
 	viewConfig: {
 		plugins: {
 			ptype: 'treeviewdragdrop'
 		}
 	},
-	//renderTo: 'tree-div',
 	//height: 300,
 	//width: 250,
 	title: 'User config panel',
 	//useArrows: true,
-	
-	/*bbar : [{
-			text: 'Expand All',
-			handler: function(){
-				this.expandAll();
-			}
-		}, {
-			text: 'Collapse All',
-			handler: function(){
-				this.collapseAll();
-			}
-	}]*/
-	
+	rootVisible: false,	
+	//toggleOnDblClick: false,
+	/*selType: 'cellmodel',
+	plugins: [
+        Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 2
+    })],*/
+    
+    bbar: [{
+		text : 'delete selected row',
+		itemId : 'deleteRow'
+	},{
+		xtype: 'tbseparator'
+	},{
+		text : 'clear all',
+		itemId : 'clearAll'
+	}],
+
 	columns: [{
 		xtype: 'treecolumn', //this is so we know which column will show the tree
 		text: 'Option name',
 		flex: 1,
 		sortable: true,
-		dataIndex: 'task'
+		dataIndex: 'text'
 	},{
 		//we must use the templateheader component so we can use a custom tpl
 		//xtype: 'templatecolumn',
 		text: 'title',
 		flex: 1,
 		sortable: true,
-		//dataIndex: 'duration',
-		align: 'center',
-		//add in the custom tpl for the rows
-		/*tpl: Ext.create('Ext.XTemplate', '{duration:this.formatHours}', {
-			formatHours: function(v) {
-				if (v < 1) {
-					return Math.round(v * 60) + ' mins';
-				} else if (Math.floor(v) !== v) {
-					var min = v - Math.floor(v);
-					return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
-				} else {
-					return v + ' hour' + (v === 1 ? '' : 's');
-				}
-			}
-		})*/
+		dataIndex: 'title',
+		//align: 'center',
 	},{
 		text: 'colspan',
 		flex: 1,
-		//dataIndex: 'user',
+		dataIndex: 'colspan',
 	},{
 		text: '_id',
 		flex: 1,
-		//dataIndex: 'user',
+		dataIndex: '_id',
 	},{
 		text: 'refresh interval',
 		flex: 1,
-		//dataIndex: 'user',
-	}]
+		dataIndex: 'rinterval',
+	}],
+	
+	/*root: {
+        name: 'Root',
+        expanded: true,
+	},*/
+	
+	initComponent: function() {
+
+		this.callParent(arguments);
+		
+		
+	}
 	
 	
 });
