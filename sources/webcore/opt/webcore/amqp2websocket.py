@@ -12,9 +12,10 @@ import json
 from twisted.internet import reactor, task
 
 from gevent import spawn
-from gevent import pywsgi
-from gevent.pool import Pool
-from geventwebsocket.handler import WebSocketHandler
+
+import gevent.pywsgi
+from ws4py.server.wsgi.middleware import WebSocketUpgradeMiddleware
+from ws4py.server.geventserver import UpgradableWSGIHandler, WebSocketServer
 
 from cconfig import cconfig
 
@@ -73,28 +74,37 @@ def on_message(msg):
 
 
 
-def on_websocket(environ, start_response):
-    if environ["PATH_INFO"] == '/':
+def on_websocket(websocket, environ):
+	websocket.sock.settimeout(None)
+	nb = len(wsclients)
+	if nb >= MAX_WSCLIENT:
+		logger.warning("Max websocket clients reached ...")
+		websocket.close()
+		return
+
+	wsclients.append(websocket)
+	nb += 1
+	logger.debug("Open websocket ... (%s/%s)" % (nb, MAX_WSCLIENT))
+
 	try:
-	        ws = environ["wsgi.websocket"]
-		nb = len(wsclients)
-		if nb >= MAX_WSCLIENT:
-			logger.warning("Max websocket clients reached ...")
-		else:
-			wsclients.append(ws)
-			nb += 1
-			logger.debug("Open websocket ... (%s/%s)" % (nb, MAX_WSCLIENT))
-			
-			while RUN:
-			        message = ws.wait()
-				if not message:
+		while True:
+			msg = websocket.receive(msg_obj=True)
+			logger.debug("Msg: %s" % msg)
+
+			if websocket.client_terminated:
+					logger.debug("Client terminated !")	
 					break
 
-			logger.debug("Close websocket.")
-			wsclients.remove(ws)
-			
-	except:
-		logger.error("Impossible to create websocket ...")
+			if websocket.server_terminated:
+					logger.debug("Server terminated !")	
+					break
+
+	except IOError:
+		logger.error("Websocket IOError ...")
+
+	logger.debug("Close websocket ... ")	
+	wsclients.remove(websocket)
+	websocket.close()
 
 
 #### Connect signals
@@ -123,7 +133,8 @@ def main():
 	amqp.start()
 
 	#pool = Pool(MAX_WSCLIENT)
-	wsserver = pywsgi.WSGIServer((interface, port), on_websocket, handler_class=WebSocketHandler)
+	#wsserver = pywsgi.WSGIServer((interface, port), on_websocket, handler_class=WebSocketHandler)
+	wsserver = WebSocketServer((interface, port), on_websocket)
 
 	try:
 		wsserver.serve_forever()
