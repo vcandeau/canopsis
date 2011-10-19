@@ -12,7 +12,7 @@ class ctimer(object):
 		self.started = False
 		self.logger = logging.getLogger('timer')
 		self.logger.setLevel(logging_level)
-		pass
+		self.RUN = True
 
 	def start(self):
 		#self.logger.debug("Start timer")
@@ -27,3 +27,31 @@ class ctimer(object):
 			self.logger.debug("Elapsed time: %f ms", self.elapsed * 1000)
 
 		self.started = False
+
+	def start_task(self, task, interval=1, count=None, *args, **kargs):
+		i=0
+		tcount = 0
+		start = time.time()
+		while self.RUN:
+			task(*args, **kargs)
+			if count:
+				tcount +=1
+				if tcount >= count:
+					break
+
+			derive = time.time() - (start + (i*interval))
+			i+=1
+			if i >= 100:
+				start = start + (i*interval)
+				i=0
+
+			pause = ((start + (i*interval)) - time.time())
+			if pause < 0:
+				pause = 0
+			try:
+				time.sleep(pause)
+			except:
+				self.RUN = False
+
+	def __del__(self):
+		self.RUN = False
