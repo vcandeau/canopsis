@@ -177,6 +177,8 @@ function make_package_archive(){
 	cat /proc/version > $BPATH/build.info
 	mv $PNAME.tgz $BPATH/
 	check_code $? "Move binaries into build folder failure"
+	cp $BPATH/$PNAME.tgz $PREFIX/var/lib/pkgmgr/packages/
+	check_code $? "Copy binaries into Canopsis env failure"
 
 	echo "    + Clean ..."
 	rm -f $PPATH/files.tgz
@@ -196,7 +198,7 @@ function update_packages_list() {
 	
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
 
-	sed "/$PNAME/d" -i $PKGLIST
+	sed "/^$PNAME/d" -i $PKGLIST
     echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
 }
 
@@ -253,27 +255,7 @@ function install_basic_source(){
 	
 }
 
-######################################
-# Check help if asked
-######################################
-if [[ "$1" =~ ^(-h|help|--help)$ ]]; then
-    echo "Usage : ./build-install.sh [OPTION]"
-    echo "     pkg                ->  Build, install and make packages"
-    echo "     clean              ->  Uninstall Canopsis"
-    echo "     nocheckdeps        ->  Don't check dependencies"
-    echo "     help               ->  Print this help"
-    exit 1
-fi
-
-######################################
-#  Pre Check
-######################################
-ARG1=$1
-ARG2=$2
-
-detect_os
-
-if [[ "$ARG1" != "nocheckdeps" && "$ARG1" != "clean" ]]; then
+function extra_deps(){
     echo "Install OS dependencies for $DIST $DIST_VERS ..."
     if [ -e "extra/dependencies/"$DIST"_"$DIST_VERS ]; then
         bash "extra/dependencies/"$DIST"_"$DIST_VERS
@@ -281,40 +263,89 @@ if [[ "$ARG1" != "nocheckdeps" && "$ARG1" != "clean" ]]; then
         echo " + Impossible to find dependencies file ..." 
     fi
     check_code $? "Install extra dependencies failure"
-fi
+}
 
-echo " + Fix env vars ..."
-export PATH="$PREFIX/bin:$PATH"
-export TARGET_DIR="$PREFIX/opt/rabbitmq-server"
-export SBIN_DIR="$PREFIX/bin/"
-export MAN_DIR="$PREFIX/share/man/"
+function run_clean(){
+    echo "Clean $PREFIX ..."
+    echo " + kill all canopsis process ..."
+    if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
+        su - $HUSER -c ". .bash_profile; hypcontrol stop"
+        check_code $? "Run hypcontrol stop failure"
+    fi
+    PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
+    for PID in $PIDS; do
+        echo "  + Kill $PID"
+        kill -9 $PID || true
+        check_code $? "Kill user pid failure"
+    done
+    sleep 1
 
-######################################
-#  Clean Arguments
-######################################
-if [ "$ARG1" = "clean" ]; then
-	echo "Clean $PREFIX ..."
-	echo " + kill all canopsis process ..."
-	if [ -e $PREFIX/opt/canotools/hypcontrol ]; then
-		su - $HUSER -c ". .bash_profile; hypcontrol stop"
-		check_code $? "Run hypcontrol stop failure"
-	fi
-	PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
-	for PID in $PIDS; do
-		echo "  + Kill $PID"
-		kill -9 $PID || true
-		check_code $? "Kill user pid failure"
-	done
-	sleep 1
+    . $SRC_PATH/packages/canohome/control
+    pre_remove
+    post_remove
+    purge
 
-	. $SRC_PATH/packages/canohome/control
-	pre_remove
-	post_remove
-	purge
+    rm -f $SRC_PATH/packages/files.lst &> /dev/null
+    exit 0
+}
 
-	rm -f $SRC_PATH/packages/files.lst &> /dev/null
-	exit 0
-fi
+function export_env(){
+	echo " + Fix env vars ..."
+	export PATH="$PREFIX/bin:$PATH"
+	export TARGET_DIR="$PREFIX/opt/rabbitmq-server"
+	export SBIN_DIR="$PREFIX/bin/"
+	export MAN_DIR="$PREFIX/share/man/"
+}
+
+function pkgondemand(){
+    PNAME=$1
+    echo "Make package $PNAME ..."
+    if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
+        make_package_archive "$PNAME"
+    else
+        echo " + Impossible to find file.lst ..."
+        exit 1
+    fi
+    exit 0
+}
+
+function show_help(){
+    echo "Usage : ./build-install.sh [OPTION]"
+	echo
+	echo "     Install build deps, build and install Canopsis"
+	echo
+	echo "Options:"
+    echo "    clean              ->  Uninstall"
+    echo "    wut [nocheckdeps]  ->  Run unittest and the end"
+    echo "    mkpkg [ARGUMENT]   ->  Install deps, build and make a package"
+	echo "    pkg [nocheckdeps]  ->  Install deps, build, install and make packages"
+    echo "    help               ->  Print this help"
+	echo
+	echo "Arguments:"
+    echo "    nocheckdeps        ->  Don't check dependencies"
+    exit 1
+}
+
+###########
+### RUN ###
+###########
+ARG1=$1
+ARG2=$2
+
+if [[ "$1" =~ ^(pkg|clean|nocheckdeps|wut)$ ]]; then detect_os;
+    if [[ "$1" = "pkg" && $# -eq 1 ]]; then extra_deps; export_env;
+    elif [[ "$1" = "pkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env;
+    elif [[ "$1" = "wut" && $# -eq 1 ]]; then extra_deps; export_env; run_wut="True";
+    elif [[ "$1" = "wut" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; run_wut="True";
+    elif [[ "$1" = "nocheckdeps" && $# -eq 1 ]]; then export_env;
+    elif [[ "$1" = "clean" && $# -eq 1 ]]; then run_clean;
+    elif [[ "$1" = "mkpkg" && $# -eq 2 ]]; then extra_deps; export_env; pkgondemand $2;
+    elif [[ "$1" = "mkpkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; pkgondemand $2;
+	else show_help; fi
+elif [ -z "$1" ];then
+	extra_deps
+	export_env
+else show_help; fi
 
 ######################################
 #  Init file listing
@@ -326,20 +357,9 @@ find ./ -type f > $SRC_PATH/packages/files.lst
 find ./ -type l >> $SRC_PATH/packages/files.lst
 cd - &> /dev/null|| true
 
-######################################
-# Check other arguments
-######################################
-if [ "$ARG1" = "mkpkg" ]; then
-	PNAME=$ARG2
-	echo "Make package $PNAME ..."
-	if [ -e $SRC_PATH/packages/$PNAME/files.lst ]; then
-		make_package_archive "$PNAME"
-	else
-		echo " + Impossible to find file.lst ..."
-		exit 1
-	fi
-	exit 0
-fi
+VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
+mkdir -p $VARLIB_PATH
+touch $PREFIX/var/lib/pkgmgr/local_db
 
 ######################################
 #  Build all packages
@@ -395,6 +415,12 @@ for ITEM in $ITEMS; do
 			install
 			check_code $? "Install failure"
 
+			echo " + Update local pkgmgr database"
+			PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
+			sed "/^$NAME/d" -i $PKGLIST
+		    echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES" >> $PKGLIST
+			check_code $? "Package entrie insertion in local pkgmgr database failure"
+
 			echo " + Post-install ..."
 			post_install
 
@@ -420,7 +446,7 @@ chown $HUSER:$HGROUP -R $PREFIX
 check_code $?
 echo " + Ok"
 
-if [ "$ARG1" = "wut" ]; then
+if [ "$run_wut" = "True" ]; then
 	echo "################################"
 	echo "# Launch Unit Tests"
 	echo "################################"

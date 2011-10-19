@@ -17,7 +17,7 @@ function pre_install(){
 	userdel $HUSER &> /dev/null
 	groupadd $HGROUP &> /dev/null
 	useradd -s /bin/bash -d $PREFIX -g $HGROUP $HUSER &> /dev/null
-	usermod -a -G nagios $HUSER &> /dev/null
+	usermod -a -G nagios $HUSER &> /dev/null || true
 }
 
 function post_install(){
