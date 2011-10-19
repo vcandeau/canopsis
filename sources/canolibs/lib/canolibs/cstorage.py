@@ -55,6 +55,13 @@ class cstorage(object):
 		if mongo_autoconnect:
 			self.backend_connect()
 
+	def clean_id(self, _id):
+		try:
+			int(_id, 16)
+			return objectid.ObjectId(_id)
+		except:
+			return _id	
+
 	def make_mongofilter(self, account):
 		Read_mfilter = {}
 		Write_mfilter = {}
@@ -254,10 +261,7 @@ class cstorage(object):
 		self.logger.debug(" + Get record '%s'" % _id)
 
 		try:
-			try:
-				oid = objectid.ObjectId(_id)
-			except:
-				oid = _id
+			oid = self.clean_id(_id)
 
 			(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 			oid_mfilter = {'_id': oid}
@@ -304,15 +308,12 @@ class cstorage(object):
 		for _id in _ids:
 			self.logger.debug(" + Remove record '%s'" % _id)
 			
-			try:
-				oid = objectid.ObjectId(_id)
-			except:
-				oid = _id
+			oid = self.clean_id(_id)
 
 			if account.user == 'root':
 				access = True
 			else:
-				oldrecord = self.get(_id)
+				oldrecord = self.get(oid)
 				access = oldrecord.check_write(account)			
 	
 			if access:
