@@ -10,8 +10,16 @@ REQUIRES=""
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	echo " + Make home directories ..."
-	mkdir -p $PREFIX
+	mkdir -p $PREFIX $PREFIX/etc
 	check_code $?
+
+	echo " + Gen UUID"
+	if [ -e $PREFIX/etc/uuid ]; then
+		echo "   + Allready exist."
+	else
+		echo "UUID=`uuidgen`" > $PREFIX/etc/uuid
+		check_code $?
+	fi
 
 	echo " + Create Canopsis user ('$HUSER')..."
 	userdel $HUSER &> /dev/null || true
