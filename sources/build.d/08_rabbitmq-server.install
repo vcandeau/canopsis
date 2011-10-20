@@ -28,6 +28,8 @@ function build(){
 }
 
 function install(){
+	cd $SRC_PATH/externals/$BASE
+
 	make install 1>> $LOG 2>> $LOG
 	check_code $?
 
