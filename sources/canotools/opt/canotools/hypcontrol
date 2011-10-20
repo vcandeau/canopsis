@@ -27,7 +27,7 @@ if [ "$1" = "stop" ]; then
 	service sla2mongodb stop
 	service amqp2brule stop
 	service amqp2mongodb stop
-	service clock2amqp start
+	service clock2amqp stop
 	service rabbitmq-server stop
 	service mongodb stop
 fi
