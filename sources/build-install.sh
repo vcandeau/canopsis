@@ -356,7 +356,10 @@ while getopts "cnupdh" opt; do
 done
 
 if [ $OPT_CLEAN -eq 1 ]; then
-	run_clean        
+	run_clean
+	if [ $# -eq 1 ]; then
+		exit 0
+	fi
 fi
 
 export_env
