@@ -69,7 +69,7 @@ function install_pylib(){
 			elif [ -e "$BASE.tar.bz2" ]; then
 				extract_archive "$BASE.tar.bz2"
 			else
-				print "Impossible to find archive ..."
+				echo "Impossible to find archive ..."
 				exit 1
 			fi
 		fi
@@ -177,8 +177,6 @@ function make_package_archive(){
 	cat /proc/version > $BPATH/build.info
 	mv $PNAME.tgz $BPATH/
 	check_code $? "Move binaries into build folder failure"
-	cp $BPATH/$PNAME.tgz $PREFIX/var/lib/pkgmgr/packages/
-	check_code $? "Copy binaries into Canopsis env failure"
 
 	echo "    + Clean ..."
 	rm -f $PPATH/files.tgz
@@ -204,7 +202,7 @@ function update_packages_list() {
 
 function make_package(){
 	PNAME=$1
-	if [ "$ARG1" = "pkg" ]; then
+	if [ $OPT_MPKG -eq 1 ]; then
 		echo " + Make package $PNAME ..."
 		PPATH=$SRC_PATH/packages/$PNAME
 		FLIST=$SRC_PATH/packages/files.lst
@@ -286,7 +284,6 @@ function run_clean(){
     purge
 
     rm -f $SRC_PATH/packages/files.lst &> /dev/null
-    exit 0
 }
 
 function export_env(){
@@ -335,6 +332,7 @@ if [ "x$ARG1" == "xhelp" ]; then
 	show_help	
 fi
 
+OPT_CLEAN=0
 OPT_NOBUILD=0
 OPT_WUT=0
 OPT_MPKG=0
@@ -342,7 +340,7 @@ OPT_DCD=0
 
 while getopts "cnupdh" opt; do
 	case $opt in
-		c) run_clean ;;
+		c) OPT_CLEAN=1 ;;
 		n) OPT_NOBUILD=1 ;;
 		u) OPT_WUT=1 ;;
 		p) OPT_MPKG=1 ;;
@@ -354,6 +352,13 @@ while getopts "cnupdh" opt; do
 		;;
 	esac
 done
+
+if [ $OPT_CLEAN -eq 1 ]; then
+	run_clean
+	if [ "x$ARG1" == "x-c" ]; then
+		exit 0
+	fi
+fi
 
 export_env
 detect_os

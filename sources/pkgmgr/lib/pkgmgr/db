@@ -6,7 +6,7 @@
 function db_get(){
     PNAME=$1
     touch $LOCAL_DB_PATH
-    echo `cat $LOCAL_DB_PATH | grep $PNAME | tail -n1`
+    echo `cat $LOCAL_DB_PATH | grep "^$PNAME|*" | tail -n1`
 }
 
 function db_set(){
@@ -30,13 +30,11 @@ function db_parse(){
     INFO=$1
     DATA=$2
     if [ "x$INFO" = "xversion" ]; then
-        FIELD=1
         VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
-        echo "$VERS_INFO" | cut -d '-' -f$FIELD
+        echo "$VERS_INFO" | cut -d '-' -f1
     elif [ "x$INFO" = "xrelease" ]; then
-        FIELD=2
         VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
-        echo "$VERS_INFO" | cut -d '-' -f$FIELD
+        echo "$VERS_INFO" | cut -d '-' -f2
     else
         if [ "x$INFO" = "xname" ]; then
             FIELD=1

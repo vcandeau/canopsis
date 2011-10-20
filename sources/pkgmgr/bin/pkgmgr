@@ -23,18 +23,25 @@ touch $LOG_PATH
 
 detect_os > /dev/null
 
+trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
+
+on_die()
+{
+    echo "Wait..."
+}
+
 function show_help(){
     echo "Usage : pkgmgr [OPTION]"
-    echo "     install [PKGNAME]          ->  Install package"
-    echo "     install-local [PKGPATH]    ->  Install local package"
-    echo "     reinstall [PKGNAME]        ->  Reinstall package"
-    echo "     reinstall-local [PKGPATH]  ->  Reinstall local package"
-    echo "     upgrade [PKGNAME]          ->  Upgrade package"
-    echo "     remove [PKGNAME]           ->  Remove package"
-    echo "     update                     ->  Update local database"
-    echo "     list                       ->  List packages"
-    echo "     clean                      ->  Clean cache"
-    echo "     help                       ->  Print this help"
+    echo "   install [PKG]              ->  Install package(s)"
+    echo "   install-local [PKGPATH]    ->  Install local package(s)"
+    echo "   reinstall [PKG]            ->  Reinstall package(s)"
+    echo "   reinstall-local [PKGPATH]  ->  Reinstall local package(s)"
+    echo "   upgrade [PKG]              ->  Upgrade package(s)"
+    echo "   remove [PKG]               ->  Remove package(s)"
+    echo "   update                     ->  Update local database"
+    echo "   list                       ->  List packages"
+    echo "   clean                      ->  Clean cache"
+    echo "   help                       ->  Print this help"
     exit 1
 }
 
@@ -44,15 +51,15 @@ function show_help(){
 ACTION=$1
 
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
-	if [[ "x$ACTION" = "xinstall" ]]; then install_package "${@:2}" && exit $?; fi
-	if [[ "x$ACTION" = "xreinstall" ]]; then install_package "${@:2}" "_force" && exit $?; fi
-	if [[ "x$ACTION" = "xinstall-local" ]]; then install_local_package "${@:2}" && exit $?; fi
-	if [[ "x$ACTION" = "xreinstall-local" ]]; then install_local_package "${@:2}" "_force" && exit $?; fi
-	if [[ "x$ACTION" = "xupgrade" && $# -eq 2 ]]; then upgrade_package $2 && exit $?; fi
-	if [[ "x$ACTION" = "xremove" && $# -eq 2 ]]; then remove_package $2 && exit $?; fi
-	if [[ "x$ACTION" = "xupdate" ]]; then update_db && exit $?; fi
-	if [[ "x$ACTION" = "xlist" ]]; then create_view && exit $?; fi
-	if [[ "x$ACTION" = "xclean" ]]; then clean_cache && exit $?; fi
+	if [ "x$ACTION" = "xinstall" ]; then install_package "${@:2}" && exit $?; fi
+	if [ "x$ACTION" = "xreinstall" ]; then install_package "${@:2}" "_force" && exit $?; fi
+	if [ "x$ACTION" = "xinstall-local" ]; then install_local_package "${@:2}" && exit $?; fi
+	if [ "x$ACTION" = "xreinstall-local" ]; then install_local_package "${@:2}" "_force" && exit $?; fi
+	if [ "x$ACTION" = "xupgrade" ]; then upgrade_package "${@:2}" && exit $?; fi
+	if [ "x$ACTION" = "xremove"  ]; then remove_package "${@:2}" && exit $?; fi
+	if [ "x$ACTION" = "xupdate" ]; then update_db && exit $?; fi
+	if [ "x$ACTION" = "xlist" ]; then create_view && exit $?; fi
+	if [ "x$ACTION" = "xclean" ]; then clean_cache && exit $?; fi
 	show_help
 else
 	show_help
