@@ -286,7 +286,6 @@ function run_clean(){
     purge
 
     rm -f $SRC_PATH/packages/files.lst &> /dev/null
-    exit 0
 }
 
 function export_env(){
@@ -335,6 +334,7 @@ if [ "x$ARG1" == "xhelp" ]; then
 	show_help	
 fi
 
+OPT_CLEAN=0
 OPT_NOBUILD=0
 OPT_WUT=0
 OPT_MPKG=0
@@ -342,7 +342,7 @@ OPT_DCD=0
 
 while getopts "cnupdh" opt; do
 	case $opt in
-		c) run_clean ;;
+		c) OPT_CLEAN=1 ;;
 		n) OPT_NOBUILD=1 ;;
 		u) OPT_WUT=1 ;;
 		p) OPT_MPKG=1 ;;
@@ -354,6 +354,10 @@ while getopts "cnupdh" opt; do
 		;;
 	esac
 done
+
+if [ $OPT_CLEAN -eq 1 ]; then
+	run_clean        
+fi
 
 export_env
 detect_os
