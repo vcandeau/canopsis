@@ -26,6 +26,35 @@ logger = logging.getLogger('Account')
 
 #########################################################################
 
+#### GET Me
+@get('/account/me',apply=[check_auth])
+def account_get(_id=None):
+	namespace = 'object'
+	ctype= 'account'
+	
+	#get the session (security)
+	account = get_account()
+
+	storage = get_storage(namespace=namespace)
+
+	try:
+		records = [ storage.get(account._id, account=account) ]
+	except:
+		return HTTPError(404, _id+" Not Found")
+
+	output = []
+	for record in records:
+		if record:
+			data = record.dump(json=True)
+			data['id'] = data['_id']
+			output.append(data)
+
+	output={'total': len(output), 'success': True, 'data': output}
+
+	#logger.debug(" + Output: "+str(output))
+
+	return output
+
 #### GET
 @get('/account/:_id',apply=[check_auth])
 @get('/account/',apply=[check_auth])
