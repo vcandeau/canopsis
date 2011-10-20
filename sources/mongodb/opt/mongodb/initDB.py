@@ -15,8 +15,13 @@ namespaces = ['cache', 'inventory', 'history', 'sla', 'object', 'perfdata.fs.fil
 
 ## Create root account
 account1 = caccount(user="root", group="root")
+account1.firstname = "Call-me"
+account1.lastname = "God"
 account1.passwd("root")
+
 account2 = caccount(user="canopsis", group="canopsis")
+account2.firstname = "Canop"
+account2.lastname = "Psis"
 account2.passwd("canopsis")
 
 ## Create storage
