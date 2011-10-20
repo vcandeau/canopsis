@@ -64,7 +64,7 @@ record4 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configu
 record5 = crecord({'leaf': True }, type='menu', name='Selector')
 record6 = crecord({'leaf': True }, type='menu', name='SLA')
 record7 = crecord({'leaf': True, 'view': 'view.account_manager' }, type='menu', name='account manager')
-record8 = crecord({'leaf': True, 'view': 'view.config_editor'}, type='menu', name='config editor')
+record8 = crecord({'leaf': True, 'view': 'view.view_editor'}, type='menu', name='view editor')
 
 storage.put([record1, record2, record3, record4, record5, record6,record7, record8])
 
@@ -126,8 +126,8 @@ record1.data['lines'] = [ { 'xtype': 'AccountView'} ]
 storage.put(record1)
 
 ##config editor
-record1 = crecord({'_id': 'view.config_editor' }, type='view', name='config editor')
-record1.data['lines'] = [ { 'xtype': 'panel'} ]
+record1 = crecord({'_id': 'view.view_editor' }, type='view', name='view editor')
+record1.data['lines'] = [ { 'xtype': 'ViewEditor'} ]
 storage.put(record1)
 ## Create Bussiness Rukles
 
