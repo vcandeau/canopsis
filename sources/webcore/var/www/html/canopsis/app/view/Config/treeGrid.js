@@ -36,29 +36,7 @@ Ext.define('canopsis.view.Config.treeGrid' ,{
 			dataIndex: 'rinterval',
 			hidden : true
 		}*/],
-        
-        
-/*	root: {
-			name: 'Root',
-			description: 'Root description',
-			expanded: true,
-			children: [{
-				text: 'kpi',
-				title: 'truc',
-				colspan: '5',
-				_id : 'fdesqeq',
-				rinterval : '58',
-				leaf: true
-			}, {
-				text: 'highcharts',
-				title: 'freu',
-				colspan: '65',
-				_id : 'frfrqre',
-				rinterval : '10',
-				leaf: true
-			}]
-		},
-	*/
+
 	/*root: {
 		//text: 'Menu',
 		//id: 'root',
