@@ -37,7 +37,12 @@ def get_dashboard():
 	storage = get_storage(namespace=namespace)
 
 	try:
-		records = [ storage.get("view._default_.dashboard", account=account) ]
+		vid = account.data["dashboard"]
+	except:
+		vid = "view._default_.dashboard"
+
+	try:
+		records = [ storage.get(vid, account=account) ]
 	except:
 		return HTTPError(404, _id+" Not Found")
 
