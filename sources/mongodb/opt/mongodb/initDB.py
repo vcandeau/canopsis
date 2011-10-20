@@ -31,28 +31,25 @@ storage.db.create_collection('cache', options={'capped': True, 'size': 104857600
 storage.put([account1, account2])
 
 ## Menu
-record1 = crecord({'expanded': True, 'leaf': False }, type='menu', name='View')
+record1 = crecord({'_id': 'menu.view', 'expanded': True, 'leaf': False }, type='menu', name='View')
 record1.chmod('o+r')
 
-record2 = crecord({'leaf': True, 'view': 'view.my_view' }, type='menu', name='Host')
-record2.chmod('o+r')
+record2 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
+record21 = crecord({'leaf': True, 'view': 'view.config_editor'}, type='menu', name='Views')
 
-record3 = crecord({'leaf': True, 'view': 'view.my_view2' }, type='menu', name='Service')
-record3.chmod('o+r')
+record3 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Administration')
+record31 = crecord({'leaf': True, 'view': 'view.account_manager' }, type='menu', name='Accounts')
 
-record4 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
-record5 = crecord({'leaf': True }, type='menu', name='Selector')
-record6 = crecord({'leaf': True }, type='menu', name='SLA')
 
-storage.put([record1, record2, record3, record4, record5, record6])
+storage.put([record1, record2, record3])
+storage.put([record21, record31])
 
-record1.add_children(record2)
-record1.add_children(record3)
+record2.add_children(record21)
 
-record4.add_children(record5)
-record4.add_children(record6)
+record3.add_children(record31)
 
-storage.put([record1, record2, record3, record4, record5, record6])
+storage.put([record1, record2, record3])
+storage.put([record21, record31])
 
 ## Configuration
 
