@@ -13,7 +13,8 @@ Ext.onReady(function() {
 			'Widgets',
 			'WebSocket',
 			'Account',
-			'Config'
+			'Config',
+			'ViewEditor'
 		],
 	
 		autoCreateViewport: true,
