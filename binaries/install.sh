@@ -15,9 +15,10 @@ else
     exit 1
 fi
 VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
-$SUDO mkdir -p $VARLIB_PATH
+mkdir -p $VARLIB_PATH
 check_code $?
 DB_PATH=$VARLIB_PATH/local_db
+rm -Rf $DB_PATH
 
 echo
 echo "#========================#"
@@ -76,10 +77,10 @@ install_package "pkgmgr"
 cd $SRC_PATH
 
 echo "Copy packages ..."
-$SUDO cp -R $SRC_PATH/bootstrap/* $PREFIX/var/lib/pkgmgr/packages/
+cp -R $SRC_PATH/bootstrap/* $PREFIX/var/lib/pkgmgr/packages/
 
 echo "Fix permissions ..."
-$SUDO chown $HUSER:$HGROUP -R $PREFIX
+chown $HUSER:$HGROUP -R $PREFIX
 
 echo
 echo " :: Run sudo su - canopsis to start using Canopsis"
