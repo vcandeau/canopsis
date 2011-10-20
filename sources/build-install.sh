@@ -204,7 +204,7 @@ function update_packages_list() {
 
 function make_package(){
 	PNAME=$1
-	if [ "$ARG1" = "pkg" ]; then
+	if [ $OPT_MPKG -eq 1 ]; then
 		echo " + Make package $PNAME ..."
 		PPATH=$SRC_PATH/packages/$PNAME
 		FLIST=$SRC_PATH/packages/files.lst
