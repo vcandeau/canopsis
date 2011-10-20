@@ -18,6 +18,7 @@ VARLIB_PATH="$PREFIX/var/lib/pkgmgr"
 mkdir -p $VARLIB_PATH
 check_code $?
 DB_PATH=$VARLIB_PATH/local_db
+rm -Rf $DB_PATH
 
 echo
 echo "#========================#"
