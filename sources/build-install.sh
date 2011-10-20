@@ -310,20 +310,19 @@ function pkgondemand(){
 }
 
 function show_help(){
-    echo "Usage : ./build-install.sh [OPTION]"
+	echo "Usage : ./build-install.sh [OPTION]"
 	echo
 	echo "     Install build deps, build and install Canopsis"
 	echo
 	echo "Options:"
-    echo "    clean              ->  Uninstall"
-    echo "    wut [nocheckdeps]  ->  Run unittest and the end"
-    echo "    mkpkg [ARGUMENT]   ->  Install deps, build and make a package"
-	echo "    pkg [nocheckdeps]  ->  Install deps, build, install and make packages"
-    echo "    help               ->  Print this help"
-	echo
-	echo "Arguments:"
-    echo "    nocheckdeps        ->  Don't check dependencies"
-    exit 1
+	echo "    -c		->  Uninstall"
+	echo "    -n		->  Not build package"
+	echo "    -u		->  Run unittest and the end"
+#	echo "    -m [ARGUMENT]       ->  Install deps, build and make a package"
+	echo "    -p 		->  Install deps, build, install and make packages"
+	echo "    -d		->  Don't check dependencies"
+	echo "    -h, help	->  Print this help"
+	exit 1
 }
 
 ###########
@@ -332,20 +331,36 @@ function show_help(){
 ARG1=$1
 ARG2=$2
 
-if [[ "$1" =~ ^(pkg|clean|nocheckdeps|wut)$ ]]; then detect_os;
-    if [[ "$1" = "pkg" && $# -eq 1 ]]; then extra_deps; export_env;
-    elif [[ "$1" = "pkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env;
-    elif [[ "$1" = "wut" && $# -eq 1 ]]; then extra_deps; export_env; run_wut="True";
-    elif [[ "$1" = "wut" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; run_wut="True";
-    elif [[ "$1" = "nocheckdeps" && $# -eq 1 ]]; then export_env;
-    elif [[ "$1" = "clean" && $# -eq 1 ]]; then run_clean;
-    elif [[ "$1" = "mkpkg" && $# -eq 2 ]]; then extra_deps; export_env; pkgondemand $2;
-    elif [[ "$1" = "mkpkg" && "$2" = "nocheckdeps" && $# -eq 2 ]]; then export_env; pkgondemand $2;
-	else show_help; fi
-elif [ -z "$1" ];then
+if [ "x$ARG1" == "xhelp" ]; then
+	show_help	
+fi
+
+OPT_NOBUILD=0
+OPT_WUT=0
+OPT_MPKG=0
+OPT_DCD=0
+
+while getopts "cnupdh" opt; do
+	case $opt in
+		c) run_clean ;;
+		n) OPT_NOBUILD=1 ;;
+		u) OPT_WUT=1 ;;
+		p) OPT_MPKG=1 ;;
+		d) OPT_DCD=1;;
+		h) show_help ;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			show_help
+		;;
+	esac
+done
+
+export_env
+detect_os
+
+if [ $OPT_DCD -ne 1 ]; then
 	extra_deps
-	export_env
-else show_help; fi
+fi
 
 ######################################
 #  Init file listing
@@ -404,10 +419,12 @@ for ITEM in $ITEMS; do
 		## Build and install
 		if [ ! -e $FCHECK ]; then
 
-			echo " + Build ..."
-			build
-			check_code $? "Build failure"
-
+			if [ $OPT_NOBUILD -ne 1 ]; then
+				echo " + Build ..."
+				build
+				check_code $? "Build failure"
+			fi
+	
 			echo " + Pre-install ..."	
 			pre_install
 
@@ -446,7 +463,7 @@ chown $HUSER:$HGROUP -R $PREFIX
 check_code $?
 echo " + Ok"
 
-if [ "$run_wut" = "True" ]; then
+if [ $OPT_WUT -eq 1 ]; then
 	echo "################################"
 	echo "# Launch Unit Tests"
 	echo "################################"
@@ -463,7 +480,7 @@ if [ "$run_wut" = "True" ]; then
 	echo " + Ok"
 fi
 
-if [ "$1" = "pkg" ]; then
+if [ $OPT_MPKG -eq 1 ]; then
 	echo "################################"
 	echo "# Make installer"
 	echo "################################"
