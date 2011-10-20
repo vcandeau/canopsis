@@ -30,12 +30,33 @@ storage.db.create_collection('cache', options={'capped': True, 'size': 104857600
 ## Save account
 storage.put([account1, account2])
 
+## View
+
+### Default Dasboard
+record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
+record1.chmod('o+r')
+record1.data['lines'] = [ { 'xtype': 'panel', 'html': 'Welcome to Canopsis !'} ]
+storage.put(record1)
+
+### Account
+record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
+record1.data['lines'] = [ { 'xtype': 'AccountView'} ]
+storage.put(record1)
+
+### Views
+record1 = crecord({'_id': 'view.config_editor' }, type='view', name='Views')
+record1.data['lines'] = [ { 'xtype': 'panel'} ]
+record1.chmod('o+r')
+storage.put(record1)
+
 ## Menu
 record1 = crecord({'_id': 'menu.view', 'expanded': True, 'leaf': False }, type='menu', name='View')
 record1.chmod('o+r')
 
 record2 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
+record2.chmod('o+r')
 record21 = crecord({'leaf': True, 'view': 'view.config_editor'}, type='menu', name='Views')
+record21.chmod('o+r')
 
 record3 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Administration')
 record31 = crecord({'leaf': True, 'view': 'view.account_manager' }, type='menu', name='Accounts')
@@ -74,4 +95,3 @@ config.setint("port", 8082)
 config.setbool("debug", False)
 config.setstring("interface", "0.0.0.0")
 config.save()
-
