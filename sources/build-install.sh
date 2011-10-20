@@ -69,7 +69,7 @@ function install_pylib(){
 			elif [ -e "$BASE.tar.bz2" ]; then
 				extract_archive "$BASE.tar.bz2"
 			else
-				print "Impossible to find archive ..."
+				echo "Impossible to find archive ..."
 				exit 1
 			fi
 		fi
@@ -177,8 +177,6 @@ function make_package_archive(){
 	cat /proc/version > $BPATH/build.info
 	mv $PNAME.tgz $BPATH/
 	check_code $? "Move binaries into build folder failure"
-	cp $BPATH/$PNAME.tgz $PREFIX/var/lib/pkgmgr/packages/
-	check_code $? "Copy binaries into Canopsis env failure"
 
 	echo "    + Clean ..."
 	rm -f $PPATH/files.tgz
