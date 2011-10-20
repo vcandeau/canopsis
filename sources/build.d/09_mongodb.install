@@ -17,6 +17,8 @@ function build(){
 }
 
 function install(){
+	cd $SRC_PATH/externals/$BASE
+
 	cp -R bin/* $PREFIX/bin/
 	check_code $?
 	
