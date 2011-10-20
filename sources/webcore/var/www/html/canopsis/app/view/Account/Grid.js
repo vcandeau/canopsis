@@ -7,7 +7,7 @@ Ext.define('canopsis.view.Account.Grid' ,{
         'Ext.grid.plugin.CellEditing',
         'Ext.form.field.Text',
         'Ext.toolbar.TextItem'
-    ],
+	],
 
 	//add an infinite scrolling, beware bugs, the doc say that some stuff can be disabled
 	//verticalScrollerType: 'paginggridscroller',
@@ -19,21 +19,7 @@ Ext.define('canopsis.view.Account.Grid' ,{
     border: 0,
     //selType: 'rowmodel',
     //plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
-    /*dockedItems: [{
-                xtype: 'toolbar',
-                dock: 'bottom',
-                items: [{
-                    text: 'Add user',
-                    itemId: 'addButton',
-                    disabled: false,      
-                },{
-                    //iconCls: 'icon-delete',
-                    text: 'Delete',
-                    disabled: false,
-                    itemId: 'deleteButton',
-                }]
-		}],*/
-
+ 
 	tbar: [ {
                     iconCls: 'icon-add',
                     text: 'Add user',
@@ -41,48 +27,61 @@ Ext.define('canopsis.view.Account.Grid' ,{
                 },{
                     iconCls: 'icon-delete',
                     text: 'Delete',
+		    disabled: true,
                     itemId: 'deleteButton',
                 }],
 
-	columns: [{
-                header: 'id',
-                flex: 2,
-                sortable: true,
-                dataIndex: 'id',
-            },{
-                header: 'Login',
-                flex: 2,
-                sortable: true,
-                dataIndex: 'user',
-			},{
-                text: 'Last name',
-                sortable: true,
-                flex : 2,
-                dataIndex: 'lastname',
-            }, {
-                header: 'First name',
-                flex: 2,
-                sortable: true,
-                dataIndex: 'firstname',
-			},{
-                header: 'email',
-                flex: 2,
-                sortable: true,
-                dataIndex: 'mail',
-            },{
-                header: 'group',
-                flex: 2,
-                sortable: true,
-                dataIndex: 'aaa_group',
-            } ,{
-                header: 'groups',
-                flex: 2,
-                sortable: true,
-                dataIndex: 'groups',
-            } 
+	columns: [
+		{
+                	header: '',
+	                width: 25,
+	                sortable: false,
+			renderer: rdr_crecord_type,
+	                dataIndex: 'crecord_type',
+        	},{
+        	        header: 'Login',
+	                flex: 2,
+	                sortable: true,
+                	dataIndex: 'user',
+		},{
+	                header: 'First name',
+	                flex: 2,
+	                sortable: false,
+                	dataIndex: 'firstname',
+		},{
+	                text: 'Last name',
+	                flex : 2,
+	                sortable: false,
+	                dataIndex: 'lastname',
+		},{
+                	header: 'email',
+	                flex: 2,
+	                sortable: false,
+                	dataIndex: 'mail',
+		},{
+	                header: 'group',
+	                flex: 2,
+	                sortable: false,
+	                dataIndex: 'aaa_group',
+        	},{
+                	header: 'groups',
+	                flex: 2,
+	                sortable: false,
+	                dataIndex: 'groups',
+		} 
             
             ],
 	
+	viewConfig: {
+            stripeRows: true,
+            /*listeners: {
+                itemcontextmenu: function(view, rec, node, index, e) {
+                    e.stopEvent();
+                    contextMenu.showAt(e.getXY());
+                    return false;
+                }
+            }*/
+        },
 	initComponent: function() {
 		this.callParent(arguments);
 	}
