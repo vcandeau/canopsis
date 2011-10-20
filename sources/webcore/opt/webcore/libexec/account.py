@@ -28,7 +28,7 @@ logger = logging.getLogger('Account')
 
 #### GET Me
 @get('/account/me',apply=[check_auth])
-def account_get(_id=None):
+def account_get_me(_id=None):
 	namespace = 'object'
 	ctype= 'account'
 	

@@ -53,3 +53,19 @@ function remove_active_tab(){
 
 var random_id = function () { return Math.floor(Math.random()*11)}
 
+function show_dashboard(){
+	log.dump("Get my dashboard ...")
+	Ext.Ajax.request({
+		url: '/ui/dashboard',
+		success: function(response){
+			data = Ext.JSON.decode(response.responseText)
+			data = data.data[0]
+			this.data = data
+			add_view_tab(data._id, 'Dashboard', false)
+		},
+		failure: function (result, request) {
+				log.error("Ajax request failed ... ("+request.url+")")
+		} 
+	});
+}
+
