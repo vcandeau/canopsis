@@ -32,6 +32,7 @@ class ctimer(object):
 		i=0
 		tcount = 0
 		start = time.time()
+		self.logger.debug("Start task ...")
 		while self.RUN:
 			task(*args, **kargs)
 			if count:
@@ -48,10 +49,34 @@ class ctimer(object):
 			pause = ((start + (i*interval)) - time.time())
 			if pause < 0:
 				pause = 0
+
+			self.logger.debug("i: %s, Start: %s, Derive: %s, Pause: %s" % (i, start, derive, pause))
 			try:
-				time.sleep(pause)
+				step = int(pause / 0.5)
+				rest = pause - (step * 0.5)
+				self.logger.debug(" + Sleep: %s seconds (%s * 0.5)" % ((step * 0.5), step))
+				if step > 0:
+					for x in range(step-1):
+						if self.RUN:
+							time.sleep(0.5)
+						else:
+							self.logger.debug(" + Break !")
+							break
+				if self.RUN:
+					self.logger.debug(" + Sleep %s seconds" % rest)
+					pause = ((start + (i*interval)) - time.time())		
+					time.sleep(pause)
 			except:
+				self.logger.debug(" + Exception !")
 				self.RUN = False
 
+		self.logger.debug("End of task ...")
+
+	def stop_task(self):
+		if self.RUN:
+			self.logger.debug("Stop task ...")
+			self.RUN = False
+
 	def __del__(self):
-		self.RUN = False
+		self.stop_task()
+		
