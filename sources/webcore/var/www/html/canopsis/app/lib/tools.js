@@ -60,7 +60,6 @@ function show_dashboard(){
 		success: function(response){
 			data = Ext.JSON.decode(response.responseText)
 			data = data.data[0]
-			this.data = data
 			add_view_tab(data._id, 'Dashboard', false)
 		},
 		failure: function (result, request) {
