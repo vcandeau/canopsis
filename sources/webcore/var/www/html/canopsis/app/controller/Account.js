@@ -13,7 +13,8 @@ Ext.define('canopsis.controller.Account', {
         this.control({
 			////////////////Action for AccountGrid
 			'AccountGrid': {
-				itemdblclick: this.updateRecord
+				itemdblclick: this.updateRecord,
+				selectionchange: this.selectionchange
 			},
 			'AccountGrid #addButton' : {
 				click: this.addButton
@@ -38,7 +39,11 @@ Ext.define('canopsis.controller.Account', {
 			
 		});
 	},
-    
+   
+	selectionchange: function(selections){
+		Ext.getCmp('AccountGrid').down('#deleteButton').setDisabled(selections.length === 0);
+	}, 
+
 	deleteButton: function(button) {
 		console.log('clicked the delete button');
 		var selection = Ext.getCmp('AccountGrid').getSelectionModel().getSelection();

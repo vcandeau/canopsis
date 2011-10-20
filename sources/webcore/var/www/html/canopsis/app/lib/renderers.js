@@ -22,3 +22,9 @@ var rdr_host_name = function(val){
                 return val
         }
     }
+
+var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, store) {
+	if (val != ''){
+		return "<span class='icon icon-crecord_type-"+val+"' />"
+	}
+}
