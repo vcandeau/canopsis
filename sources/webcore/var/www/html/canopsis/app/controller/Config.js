@@ -28,10 +28,27 @@ Ext.define('canopsis.controller.Config', {
 			
 			'ConfigView #saveView': {
 				click : this.save
-			}
+			},
 			
+			//buttons from the form
+			'ConfigForm #saveForm' : {
+				click : this.saveForm
+			},
+			
+			'ConfigForm #cancelForm' : {
+				click : this.cancelForm
+			}			
 		});
 	},
+	
+	saveForm : function() {
+		console.log('clicked on button to save form');
+	},
+	
+	cancelForm : function() {
+		console.log('clicked on button to cancel form');
+		remove_active_tab();
+	},	
 	
 	deleteRow : function(){
 		console.log('clicked on delete row');
