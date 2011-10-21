@@ -18,7 +18,7 @@ def main():
 	from ctools import dynmodloads
 
 	## get config
-	root_directory=os.path.expanduser(CONFIG.getstring("root_directory", "~/var/www/html"))
+	root_directory=os.path.expanduser(CONFIG.getstring("root_directory", "~/var/www/"))
 	port=CONFIG.getint("port", 8082)
 	debug=CONFIG.getbool("debug", False)
 	interface=CONFIG.getstring("interface", "0.0.0.0")
