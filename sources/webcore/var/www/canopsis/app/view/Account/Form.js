@@ -1,19 +1,6 @@
 Ext.define('canopsis.view.Account.Form', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.AccountForm',
-	model: 'Account',
-	store : 'Account',
-
-    requires: ['Ext.form.field.Text'],
-    
-    //iconCls: 'icon-user',
-    frame: true,
-    //id: 'AccountForm',
-    title: 'Add a new user',
-    defaultType: 'textfield',
-    //anchor: '90%',
-    //bodyPadding: '20%',
-	//layout: 'fit',	
+	extend: 'canopsis.lib.view.cform',
+	alias: 'widget.AccountForm',
 	
 	items: [{
 				fieldLabel: 'Login',
@@ -46,31 +33,10 @@ Ext.define('canopsis.view.Account.Form', {
 				fieldLabel: 'aaa owner',
 				name: 'aaa_owner'
 			}*/],
-            
-
-	bbar: [{
-			//iconCls: 'icon-user-add',
-			text: 'Save',
-			itemId: 'saveForm',
-		},{
-			text: 'Cancel',
-			itemId: 'cancelForm',
-		}
-	],
-
+    
 
     initComponent: function(){
         this.callParent();
     },
-    
-    beforeDestroy : function() {
-		log.debug("Destroy items ...")
-		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
-		log.debug(this.id + " Destroyed.");
-		var tab = Ext.getCmp('view.account_manager.tab');
-		if (tab){
-			tab.show()
-		}
-	}
     
 });

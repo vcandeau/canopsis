@@ -45,7 +45,7 @@ storage.put(record1)
 
 ### Account
 record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
-record1.data['lines'] = [ { 'xtype': 'AccountView'} ]
+record1.data['lines'] = [ { 'xtype': 'AccountGrid'} ]
 storage.put(record1)
 
 ### Views
