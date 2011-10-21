@@ -5,6 +5,8 @@ Ext.define('canopsis.controller.Account', {
 	stores: ['Account'],
 	models: ['Account'],
 
+	iconCls: 'icon-crecord_type-account',
+
 	init: function() {
 		console.log('[account] - Initialize ...');
 
