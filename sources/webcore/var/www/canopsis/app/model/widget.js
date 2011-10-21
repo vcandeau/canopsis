@@ -1,4 +1,4 @@
-Ext.define('canopsis.model.Widget', {
+Ext.define('canopsis.model.widget', {
     extend: 'Ext.data.Model',
     fields: [
 		{name : 'text'},

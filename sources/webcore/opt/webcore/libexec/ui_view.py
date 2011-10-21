@@ -3,7 +3,7 @@
 import sys, os, logging, json
 
 import bottle
-from bottle import route, get, put, delete, request, HTTPError
+from bottle import route, get, put, delete, request, HTTPError, post
 
 ## Canopsis
 from caccount import caccount
@@ -58,6 +58,42 @@ def get_dashboard():
 	#logger.debug(" + Output: "+str(output))
 
 	return output
+
+### GET
+@get('/ui/views')
+def get_tree_views():
+	
+	account = get_account()
+	storage = get_storage(namespace='object')
+	
+	mfilter = {'crecord_type': 'view'}
+		
+	logger.debug('Get all views like a tree for ViewEditor')	
+		
+	records = storage.find(mfilter,account=account)
+	output = []
+	for record in records:
+		logger.debug(str(record.dump()))
+		data = record.data
+		#data['id'] = str(record._id)
+		data['name'] = record.name
+		data['id'] = record._id
+		data['leaf'] = True
+		output.append(data)
+			
+	output = json.dumps(output)
+	#logger.debug(" + Output: "+str(output))
+	return output
+
+@post('/ui/views')
+def post_views_in_db():
+	logger.debug('not implemented yet')
+	return
+
+
+
+
+
 
 
 #### GET
