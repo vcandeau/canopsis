@@ -50,7 +50,6 @@ Ext.define('canopsis.controller.ViewEditor', {
 	
 	deleteButton: function() {
 		console.log('viewEdit : delete a view');
-		//var node = Ext.getCmp('ViewEditor').getSelectionModel().getSelectedNode();
 		var tree = Ext.getCmp('ViewEditor');
 		var node = tree.getSelectedNode();
 		console.log(node)

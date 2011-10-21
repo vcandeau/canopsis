@@ -10,8 +10,7 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	id : 'ViewEditor',
 
     title: 'Available Views',
-
-	
+    
     viewConfig: {
 		plugins: {
 			ptype: 'treeviewdragdrop'
@@ -40,27 +39,13 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 					flex: 2,
 					sortable: true,
 					dataIndex: 'id',
-				},/* {
-					header: 'First name',
+				}/*,
+				{
+					header: 'lines',
 					flex: 2,
 					sortable: true,
-					dataIndex: 'firstname',
-				},{
-					header: 'email',
-					flex: 2,
-					sortable: true,
-					dataIndex: 'mail',
-				},{
-					header: 'group',
-					flex: 2,
-					sortable: true,
-					dataIndex: 'aaa_group',
-				} ,{
-					header: 'groups',
-					flex: 2,
-					sortable: true,
-					dataIndex: 'groups',
-				} */
+					dataIndex: 'lines',
+				}*/
 	],
 
 	initComponent: function() {
