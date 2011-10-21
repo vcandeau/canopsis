@@ -66,10 +66,17 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.items = ext_items
 
 		}
-
+		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
     },
     
+    beforeclose: function(tab, object){
+	old_tab = Ext.getCmp('main-tabs').old_tab;
+	if (old_tab) {
+		Ext.getCmp('main-tabs').setActiveTab(old_tab);
+	}
+    },
+
     beforeDestroy : function() {
 	log.debug("Destroy items ...")
 	canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
