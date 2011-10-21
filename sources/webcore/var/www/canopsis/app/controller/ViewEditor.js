@@ -3,7 +3,7 @@ Ext.define('canopsis.controller.ViewEditor', {
     
     views: ['ViewEditor.View'],
     stores: ['ViewEditor'],
-    models: ['ViewEditor'],
+    models: ['view'],
 
     init: function() {
         console.log('Initialized ViewEditor');

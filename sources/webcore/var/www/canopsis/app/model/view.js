@@ -1,4 +1,4 @@
-Ext.define('canopsis.model.ViewEditor', {
+Ext.define('canopsis.model.view', {
     extend: 'Ext.data.Model',
     fields: [
 		{name: 'id'},
