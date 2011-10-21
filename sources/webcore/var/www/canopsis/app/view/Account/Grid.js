@@ -1,35 +1,11 @@
 Ext.define('canopsis.view.Account.Grid' ,{
-	extend: 'Ext.grid.Panel',
-	alias : 'widget.AccountGrid',
-	model: 'Account',
-	store : 'Account',
-	requires: [
-        'Ext.grid.plugin.CellEditing',
-        'Ext.form.field.Text',
-        'Ext.toolbar.TextItem'
-	],
+	extend: 'canopsis.lib.view.cgrid',
 
-	//add an infinite scrolling, beware bugs, the doc say that some stuff can be disabled
-	//verticalScrollerType: 'paginggridscroller',
-	//invalidateScrollerOnRefresh: false,
-	title : '',
-	//iconCls: 'icon-grid',
-    //frame: true,
-    id: 'AccountGrid',
-    border: 0,
-    //selType: 'rowmodel',
-    //plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
- 
-	tbar: [ {
-                    iconCls: 'icon-add',
-                    text: 'Add user',
-                    itemId: 'addButton',
-                },{
-                    iconCls: 'icon-delete',
-                    text: 'Delete',
-		    disabled: true,
-                    itemId: 'deleteButton',
-                }],
+	id: 'AccountGrid',
+	alias: 'widget.AccountGrid',
+
+	model: 'Account',
+	store : 'Account',	
 
 	columns: [
 		{
@@ -70,18 +46,8 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	                dataIndex: 'groups',
 		} 
             
-            ],
-	
-	viewConfig: {
-            stripeRows: true,
-            /*listeners: {
-                itemcontextmenu: function(view, rec, node, index, e) {
-                    e.stopEvent();
-                    contextMenu.showAt(e.getXY());
-                    return false;
-                }
-            }*/
-        },
+	],
+
 	initComponent: function() {
 		this.callParent(arguments);
 	}

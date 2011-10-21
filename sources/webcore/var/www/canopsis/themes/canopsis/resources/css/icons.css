@@ -24,3 +24,15 @@
     background-image: url(../images/icons/account.png) !important; 
 }
 
+.icon-reload { 
+    background-image: url(../images/icons/reload.png) !important; 
+}
+
+.icon-cancel { 
+    background-image: url(../images/icons/move.png) !important; 
+}
+
+.icon-save { 
+    background-image: url(../images/icons/save.png) !important; 
+}
+
