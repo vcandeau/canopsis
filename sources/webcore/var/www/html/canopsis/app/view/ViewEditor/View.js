@@ -1,20 +1,27 @@
 Ext.define('canopsis.view.ViewEditor.View' ,{
-	extend: 'Ext.tree.Panel',
+	extend: 'Ext.grid.Panel',
 	alias : 'widget.ViewEditor',
-	model: 'Menu',
+	
+	
+	
+	//model: 'Menu',
 	store: 'ViewEditor',
+	
+	id : 'ViewEditor',
 
     title: 'Available Views',
-    rootVisible: false,
-    //hideHeaders: true,
-	rootVisible: false,
-	title: 'Menu',
-	animCollapse: false,
-	collapsible: false,
+
+	/*
+    viewConfig: {
+		plugins: {
+			ptype: 'treeviewdragdrop'
+		}
+	},
+    */
     
 	tbar: [ {
 				iconCls: 'icon-add',
-				text: 'Add user',
+				text: 'Add new view',
 				itemId: 'addButton',
 			},{
 				iconCls: 'icon-delete',
@@ -26,17 +33,12 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 					header: 'name',
 					flex: 2,
 					sortable: true,
-					dataIndex: 'text',
+					dataIndex: 'crecord_name',
 				},{
-					header: 'Login',
+					header: 'id',
 					flex: 2,
 					sortable: true,
-					dataIndex: 'user',
-				},{
-					text: 'Last name',
-					sortable: true,
-					flex : 2,
-					dataIndex: 'lastname',
+					dataIndex: 'id',
 				},/* {
 					header: 'First name',
 					flex: 2,
