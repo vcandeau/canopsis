@@ -4,7 +4,7 @@ Ext.define('canopsis.view.Config.View' ,{
 	//model: '',
 	//store : '',
 	
-	id : 'configView',
+	id : 'ConfigView',
 	
 	layout: {
             type: 'column',
@@ -13,9 +13,10 @@ Ext.define('canopsis.view.Config.View' ,{
         
     tbar: [{
 		xtype: 'textfield',
-		 name: "view's name",
-		 fieldLabel: "view's name",
-		 width: 300,
+		name: "view's name",
+		itemId : "viewName",
+		fieldLabel: "view's name",
+		width: 300,
 	},{
 		xtype: 'tbseparator'
 	},{
