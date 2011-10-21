@@ -39,6 +39,7 @@ function add_view_tab(id, title, closable){
 		maintabs.add({
 			title: title,
 			id: id+".tab",
+			iconCls: [ 'icon-tab-default', 'icon-tab-'+view.data.crecord_name ],
 			view_id: id,
 			view: view,
 			xtype: 'TabsContent',

@@ -1,7 +1,9 @@
 Ext.define('canopsis.view.Account.Form', {
 	extend: 'canopsis.lib.view.cform',
 	alias: 'widget.AccountForm',
-	
+
+	iconCls: 'icon-crecord_type-account',
+
 	items: [{
 				fieldLabel: 'Login',
 				name: 'user',
