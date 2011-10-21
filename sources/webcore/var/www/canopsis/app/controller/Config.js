@@ -3,7 +3,7 @@ Ext.define('canopsis.controller.Config', {
     
     views: ['Config.View','Config.treeGrid','Config.treeOrdering','Config.ConfigForm'],
     stores: ['Widget'],
-    models: ['widget','view'],
+    //models: ['widget','view'],
     
     init: function() {
 		console.log('Initialized Configuration editor');
