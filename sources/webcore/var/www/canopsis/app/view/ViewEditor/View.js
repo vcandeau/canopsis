@@ -4,7 +4,7 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	
 	
 	
-	model: 'view',
+	//model: 'Menu',
 	store: 'ViewEditor',
 	
 	id : 'ViewEditor',
