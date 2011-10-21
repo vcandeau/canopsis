@@ -3,7 +3,7 @@ Ext.define('canopsis.controller.ViewEditor', {
     
     views: ['ViewEditor.View'],
     stores: ['ViewEditor'],
-    //models: ['Menu'],
+    models: ['ViewEditor'],
 
     init: function() {
         console.log('Initialized ViewEditor');
@@ -16,9 +16,22 @@ Ext.define('canopsis.controller.ViewEditor', {
 				click: this.deleteButton
 			},
 		
+			'ViewEditor': {
+				selectionchange: this.selectionchange
+			},
+			
+			//listener on the editor, because we must get option from editor
+			'ConfigView #saveView': {
+				click : this.addview
+			}
+			
 		});
 	},
 	
+	
+	addView : function() {
+		console.log('cliqué sur addview');
+	},
 	
 	addButton: function() {
 		console.log('viewEdit : adding a new view');
@@ -43,6 +56,9 @@ Ext.define('canopsis.controller.ViewEditor', {
 		console.log(node)
 	},
 	
+	selectionchange: function(selections){
+		Ext.getCmp('ViewEditor').down('#deleteButton').setDisabled(selections.length === 0);
+	}, 
 	
 	
 });

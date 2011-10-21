@@ -27,6 +27,7 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 				iconCls: 'icon-delete',
 				text: 'Delete',
 				itemId: 'deleteButton',
+				disabled: true,
 			}],
 
 	columns: [{
