@@ -36,3 +36,14 @@
     background-image: url(../images/icons/save.png) !important; 
 }
 
+
+/* VIEW */
+
+.icon-tab-default { 
+    background-image: url(../images/icons/report.png) !important; 
+} 
+
+.icon-tab-Accounts { 
+    background-image: url(../images/icons/user.png) !important; 
+} 
+
