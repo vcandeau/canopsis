@@ -11,7 +11,7 @@ Ext.define('canopsis.controller.Config', {
 		this.control({
 
 			'treeGrid': {
-				itemdblclick: this.addTree
+				itemdblclick: this.addToTree
 			},
 			
 			'treeOrdering': {
@@ -60,7 +60,7 @@ Ext.define('canopsis.controller.Config', {
 		Ext.getCmp('treeOrdering').getRootNode().removeAll();
 	},
 	
-	addTree : function(record, item, index){
+	addToTree : function(record, item, index){
 		console.log('clicked on tree item')
 		if (item) {			
 			console.log(item)
@@ -71,7 +71,7 @@ Ext.define('canopsis.controller.Config', {
 			//need to copy record, else it disapear from the first tree
 			//console.log(item.data)
 			//console.log(item)
-			copy = Ext.ClassManager.instantiate('canopsis.model.Widget',item.data);
+			copy = Ext.ClassManager.instantiate('canopsis.model.widget',item.data);
 			//console.log(copy)
 			TreeRootNode.appendChild(copy);	
 		} else {
