@@ -32,10 +32,6 @@ Ext.define('canopsis.lib.view.cform', {
 		log.debug("Destroy items ...")
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
 		log.debug(this.id + " Destroyed.");
-		/*var tab = Ext.getCmp('view.account_manager.tab');
-		if (tab){
-			tab.show()
-		}*/
 	}
     
 });
