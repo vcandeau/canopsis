@@ -22,7 +22,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 			
 			//listener on the editor, because we must get option from editor
 			'ConfigView #saveView': {
-				click : this.addview
+				click : this.addView
 			}
 			
 		});
@@ -30,7 +30,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 	
 	
 	addView : function() {
-		console.log('cliqué sur addview');
+		console.log('click on addview');
 	},
 	
 	addButton: function() {
