@@ -30,7 +30,7 @@ Ext.define('canopsis.view.Config.ConfigForm', {
             
 
 	bbar: [{
-			//iconCls: 'icon-user-add',
+			//iconCls: 'icon-add',
 			text: 'Save',
 			itemId: 'saveForm',
 		},{

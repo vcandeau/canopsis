@@ -1,25 +1,28 @@
 Ext.define('canopsis.store.ViewEditor', {
-	extend: 'Ext.data.TreeStore',
+	extend: 'Ext.data.Store',
 	storeId: 'store.ViewEditor',
+	
+	
 	fields: [
 		{name: 'id'},
-		{name: 'leaf'},
-		{name: 'view'},
-		{name: 'expanded'},
-		{name: 'text'},
-    	],		
+		{name: 'crecord_name'},
+		{name: 'column'},
+		{name: 'lines'},
+		{name: 'hunit'},
+    ],	
+    	
+    autoLoad: true,
 	proxy: {
-		type: 'ajax',
-		url: '/ui/menu',
+		type: 'rest',
+		url: '/rest/object/view',
 		reader: {
-			type: 'json'
+			type: 'json',
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success'
 		}
 	},
+
 	
-	root: {
-		//text: 'View',
-		id: 'root',
-		expanded: true
-	}
 });
 
