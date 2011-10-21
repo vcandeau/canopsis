@@ -3,7 +3,7 @@ Ext.define('canopsis.controller.Config', {
     
     views: ['Config.View','Config.treeGrid','Config.treeOrdering','Config.ConfigForm'],
     stores: ['Widget'],
-    models: ['Widget'],
+    models: ['Widget','ViewEditor'],
     
     init: function() {
 		console.log('Initialized Configuration editor');
@@ -25,11 +25,11 @@ Ext.define('canopsis.controller.Config', {
 			'treeOrdering #clearAll': {
 				click: this.clearAll
 			},
-			
+			/*
 			'ConfigView #saveView': {
 				click : this.save
 			},
-			
+			*/
 			//buttons from the form
 			'ConfigForm #saveForm' : {
 				click : this.saveForm
