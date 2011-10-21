@@ -20,8 +20,7 @@ Ext.define('canopsis.store.ViewEditor', {
 			type: 'json',
 		}
 	},
-
-
+	
 	root: {
 			text: 'Views',
 			id: 'root',
