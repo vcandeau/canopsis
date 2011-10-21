@@ -43,6 +43,7 @@ Ext.define('canopsis.controller.Config', {
 	
 	saveForm : function() {
 		console.log('clicked on button to save form');
+
 	},
 	
 	cancelForm : function() {
@@ -107,6 +108,10 @@ Ext.define('canopsis.controller.Config', {
 	
 	save : function(){
 		console.log('clicked on save view');
+		var rootNode = Ext.getCmp('treeOrdering').getRootNode()
+		rootNode.eachChild(function(node) {
+			console.log(node);		
+		});
 	},
 	
 	
