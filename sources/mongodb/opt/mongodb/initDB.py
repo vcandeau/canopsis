@@ -50,7 +50,7 @@ storage.put(record1)
 
 ### Views
 record1 = crecord({'_id': 'view.config_editor' }, type='view', name='Views')
-record1.data['lines'] = [ { 'xtype': 'panel'} ]
+record1.data['lines'] = [ { 'xtype': 'ViewEditor'} ]
 record1.chmod('o+r')
 storage.put(record1)
 
