@@ -51,7 +51,7 @@ sla.set_cycle(int(time.time())+120, 360, True)
 sla.save()
 
 ## Menu
-record1 = crecord({'expanded': True, 'leaf': False }, type='menu', name='View')
+record1 = crecord({'expanded': True, 'leaf': False }, type='menu', name='View', _id='menu.view')
 record1.chmod('o+r')
 
 record2 = crecord({'leaf': True, 'view': 'view.my_view' }, type='menu', name='Host')
