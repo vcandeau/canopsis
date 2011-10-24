@@ -14,15 +14,15 @@ function build(){
 		extract_archive "$BASE.tar.gz"
 	fi
 	cd  $BASE
-	echo " + Clean ..."
+	echo "   + Clean ..."
 	make clean 1>> $LOG 2>> $LOG
 	#check_code $?
 
-	#echo " + Configure ..."
+	#echo "   + Configure ..."
 	#./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	#check_code $?
 
-	echo " + Build ..."
+	echo "   + Build ..."
 	make all 1>> $LOG 2>> $LOG
 	check_code $?
 }
