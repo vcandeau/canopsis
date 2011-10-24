@@ -41,17 +41,20 @@ def get_dashboard():
 	except:
 		vid = "view._default_.dashboard"
 
+	logger.debug('Dashboard View: '+vid)
+
 	try:
-		records = [ storage.get(vid, account=account) ]
+		record = storage.get(vid, account=account)
 	except:
-		return HTTPError(404, _id+" Not Found")
+		logger.debug('View not found')
+		return HTTPError(404, vid+" Not Found")
 
 	output = []
-	for record in records:
-		if record:
-			data = record.dump(json=True)
-			data['id'] = data['_id']
-			output.append(data)
+
+	if record:
+		data = record.dump(json=True)
+		data['id'] = data['_id']
+		output.append(data)
 
 	output={'total': len(output), 'success': True, 'data': output}
 
