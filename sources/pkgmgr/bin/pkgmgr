@@ -33,7 +33,7 @@ function show_help(){
 	echo
     echo " :: Usage : pkgmgr [ACTION] [OPTIONS] <package>"
 	echo
-	echo " :: Actions :"
+	echo " :: Actions"
     echo "   install [OPT] [PKG]            ->  Install package(s)"
     echo "   install-local [OPT] [PKGPATH]  ->  Install local package(s)"
     echo "   reinstall [PKG]                ->  Reinstall package(s)"
@@ -45,13 +45,13 @@ function show_help(){
     echo "   clean                          ->  Clean cache"
     echo "   help                           ->  Print this help"
 	echo
-	echo " :: Options :"
+	echo " :: Options"
 	echo "   --force-yes                    -> Force yes answer"
 	echo
-	echo " :: Examples :"
+	echo " :: Examples"
 	echo "   pkgmgr install python erlang"
 	echo "   pkgmgr remove --force-yes ccli"
-	echo "	 pkgmgr install-local /root/mypkg.tgz mypkg2.tgz"
+	echo "   pkgmgr install-local /root/mypkg.tgz mypkg2.tgz"
 	echo
     exit 1
 }
