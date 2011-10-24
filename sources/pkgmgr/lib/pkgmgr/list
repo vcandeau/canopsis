@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function create_view(){
-    LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "^LAST_UPDATE|*" | tail -n1 | cut -d '|' -f2)
+    LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "^LAST_UPDATE|" | tail -n1 | cut -d '|' -f2)
     if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
     echo
     echo "Last update : `echo $LAST_UPDATE`"
@@ -16,7 +16,7 @@ function create_view(){
         L_REL=$(db_parse "release" "$line")
         L_STATUS=$(db_parse "status" "$line")
 
-        R_INFO=$(cat $REMOTE_DB_PATH | grep "^$L_PNAME|*" | tail -n1)
+        R_INFO=$(cat $REMOTE_DB_PATH | grep "^$L_PNAME|" | tail -n1)
         if [[ -z "$R_INFO" ]];then
             L_STATUS="\e[42m \033[0m Installed"
             echo -e "  $L_PNAME(*)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
