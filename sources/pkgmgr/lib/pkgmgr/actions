@@ -77,7 +77,9 @@ function install_package(){
 	        echo "       + Check MD5"
     	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 	        R_MD5=$(db_parse "md5" "$R_INFO")
+			on_lock
     	    PPATH=$(get_ppath "$PNAME")
+			off_lock
         	check_code $?
 	        L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
     	    if [ "$L_MD5" != "$R_MD5" ]; then echo "         + Fail" && res=False; fi
@@ -88,8 +90,10 @@ function install_package(){
     	    download_package "$PNAME"
     	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
         	R_MD5=$(db_parse "md5" "$R_INFO")
+			on_lock
 	        PPATH=$(get_ppath "$PNAME")
     	    check_code $?
+			off_lock
         	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 	        echo "     + Check MD5"
     	    if [ "$L_MD5" != "$R_MD5" ]; then 
@@ -99,6 +103,7 @@ function install_package(){
 			fi
 	    fi	
 
+		on_lock
 		load_control_tpl
 	    . $PPATH/control
 	    check_code $? "Source control file from $PNAME failure"
@@ -121,6 +126,7 @@ function install_package(){
 	    rm -Rf $PPATH
     	check_code $? "Post installation package folder remove failure"
 	    echo "   + Done"
+		off_lock
 	done
 }
 
@@ -156,7 +162,7 @@ function install_local_package(){
 			echo
 	        echo "    :: Install package $PNAME"
 	    fi
-
+		on_lock
     	cp $FULLPATH $PACKAGES_PATH
 	    cd $PACKAGES_PATH
 	    tar xfz $PNAME.tgz
@@ -188,6 +194,7 @@ function install_local_package(){
 	    check_code $? "Post install-local package folder remove failure"
 	
 	    echo "   + Done"  
+		off_lock
 	done
 }
 
@@ -202,6 +209,7 @@ function remove_package(){
 		
 		if [ "$pbl" == "True" ]; then echo "   :: Package blacklisted ($PNAME)"; continue; fi
 
+		on_lock
 	    DBINFO=$(db_get "$PNAME")
 	    PSTATUS=$(db_parse "status" "$DBINFO")
 	
@@ -239,6 +247,7 @@ function remove_package(){
 	        if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 	    fi
 	    echo "   + Done"
+		off_lock
 	done
 }
 
@@ -266,9 +275,10 @@ function upgrade_package(){
 	
 		    download_package "$PNAME"
 		
+			on_lock
 		    PPATH=$(get_ppath "$PNAME")
 		    check_code $?
-	
+			off_lock
 	    	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 	
 		    echo "     + Checking Md5Sum"
@@ -278,6 +288,7 @@ function upgrade_package(){
 			else
 				echo "       + Success"
 			fi
+			on_lock
 			load_control_tpl
 		    . $PPATH/control
 		    check_code $? "Source control file from $PNAME failure"
@@ -301,6 +312,7 @@ function upgrade_package(){
 			echo "     + Remove package folder"
 	    	rm -Rf $PPATH
 		    check_code $? "Post upgrade package folder remove failure"
+			off_lock
 		else 
 			echo
 			echo "   :: Package $PNAME is not installed"
