@@ -33,15 +33,15 @@ function add_view_tab(id, title, closable){
 		log.debug(" - Create tab ...")
 		log.debug("    - Get view config ("+id+") ...")
 	
-		var store = Ext.data.StoreManager.lookup('store.View')
-		var view = store.getById(id)
+		//var store = Ext.data.StoreManager.lookup('store.View')
+		//var view = store.getById(id)
 		
 		maintabs.add({
 			title: title,
 			id: id+".tab",
-			iconCls: [ 'icon-tab-default', 'icon-tab-'+view.data.crecord_name ],
+			//iconCls: [ 'icon-tab-default', 'icon-tab-'+view.data.crecord_name ],
 			view_id: id,
-			view: view,
+			//view: view,
 			xtype: 'TabsContent',
 			closable: closable
 		}).show();
