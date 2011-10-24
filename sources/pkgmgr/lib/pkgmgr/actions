@@ -38,14 +38,13 @@ function download_package(){
 	echo "     + Download $PNAME"    
     echo -n "    "
     wget --progress=dot $FINAL_URL/$PNAME.tgz 2>&1 | grep --line-buffered "%" | \
-        sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
+    	    sed -u -e "s,\.,,g" | awk '{printf("\b\b\b\b%4s", $2)}'
     echo -ne "\b\b\b\b"
     echo " DONE"
     check_code $? "Failure during download package"
 }
 
 function install_package(){
-	update_db
 	xforce=""
 	if [ "${@: -1}" == "_force" ]; then xforce="True"; lst="${@:1:($#-1)}"; else lst="$@"; fi
 	for ARG in $lst;	do
@@ -58,9 +57,9 @@ function install_package(){
 	    elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
 			echo
 	        echo "   :: Package $PNAME already installed"
-			if [ $PNAME == ${@: -1} ]; then exit 1; else continue; fi
+			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 	    else
-        	R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|*" | tail -n1`)
+        	R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 	        if [ -z "$R_INFO" ]; then
 				echo
     	        echo "   :: Package $PNAME not available"
@@ -76,7 +75,7 @@ function install_package(){
 	    if [[ -e $PACKAGES_PATH/$PNAME.tgz ]]; then
 	        echo "     + Package archive already in cache"
 	        echo "       + Check MD5"
-    	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|*" | tail -n1`)
+    	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 	        R_MD5=$(db_parse "md5" "$R_INFO")
     	    PPATH=$(get_ppath "$PNAME")
         	check_code $?
@@ -87,7 +86,7 @@ function install_package(){
     	# DOWNLOAD PACKAGE
 	    if [[ "$res" == "False" ]]; then
     	    download_package "$PNAME"
-    	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|*" | tail -n1`)
+    	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
         	R_MD5=$(db_parse "md5" "$R_INFO")
 	        PPATH=$(get_ppath "$PNAME")
     	    check_code $?
@@ -244,7 +243,6 @@ function remove_package(){
 }
 
 function upgrade_package(){
-    update_db
 	for ARG in "$@";   do
 		PNAME=$ARG
     	DBINFO=$(db_get "$PNAME")
@@ -253,7 +251,7 @@ function upgrade_package(){
 		if [ "$L_STATUS" == "installed" ]; then
 			L_VERS=$(db_parse "version" "$DBINFO")
 	    	L_REL=$(db_parse "release" "$DBINFO")
-			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|*" | tail -n1`)
+			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_VERS=$(db_parse "version" "$R_INFO")
 			R_REL=$(db_parse "release" "$R_INFO")
 			R_MD5=$(db_parse "md5" "$R_INFO")
