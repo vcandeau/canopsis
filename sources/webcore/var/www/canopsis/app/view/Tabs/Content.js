@@ -21,14 +21,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				width: '100%',
             		}
 		},
-		tdAttrs: {
-			style: {
-	        		//padding: '3px',
-				width: 10
-       			}
-		},
 	},
 
+	/*defaults: {
+		style: {
+	            padding: '3px',
+	        }
+	},*/
 
 	items: [],
     
@@ -85,7 +84,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				var item = lines[i]
 
 				item['mytab'] = this
-				item['tile'] = ''
 
 				var colspan = 1
 				var rowspan = 1
@@ -95,12 +93,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (item['colspan']) { colspan = item['colspan'] }
 				if (item['rowspan']) { rowspan = item['rowspan'] }
 				
-				//item['height'] = rowspan * hunit
-				
 				item['height'] = height
 				item['width'] = ((100/nb_column) * colspan)/100 * totalWidth
-				item['border'] = 0
-	
+				item['border'] = false
+				item['style'] = []
+				item['style']['padding'] = '3px'
+
 				this.add(item)
 	
 			}
