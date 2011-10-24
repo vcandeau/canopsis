@@ -40,11 +40,11 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 		log.debug('Init Graph '+this.id)
 		log.debug(' + Id: '+ this._id)
 
-		var border = 1
-		if (this.border == 0){
+		if (this.title){
+			this.chart_title = this.title
 			this.title = ''
-			this.border = 0
 		}
+
 		this.previous_state = -1
 		this.defaults = { flex: 1, border: 0 }
 
@@ -98,7 +98,8 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 			},
 			colors: [],
 			title: {
-				text: ''
+				text: this.chart_title,
+				floating: true
 			},
 			tooltip: {
 				enabled: true
