@@ -6,6 +6,7 @@
 . $HOME/lib/pkgmgr/list
 . $HOME/lib/pkgmgr/clean
 . $HOME/lib/pkgmgr/actions
+. $HOME/lib/pkgmgr/deps
 
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
@@ -51,15 +52,29 @@ function show_help(){
 ACTION=$1
 
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
-	if [ "x$ACTION" = "xinstall" ]; then install_package "${@:2}" && exit $?; fi
-	if [ "x$ACTION" = "xreinstall" ]; then install_package "${@:2}" "_force" && exit $?; fi
-	if [ "x$ACTION" = "xinstall-local" ]; then install_local_package "${@:2}" && exit $?; fi
-	if [ "x$ACTION" = "xreinstall-local" ]; then install_local_package "${@:2}" "_force" && exit $?; fi
-	if [ "x$ACTION" = "xupgrade" ]; then upgrade_package "${@:2}" && exit $?; fi
-	if [ "x$ACTION" = "xremove"  ]; then remove_package "${@:2}" && exit $?; fi
-	if [ "x$ACTION" = "xupdate" ]; then update_db && exit $?; fi
-	if [ "x$ACTION" = "xlist" ]; then create_view && exit $?; fi
-	if [ "x$ACTION" = "xclean" ]; then clean_cache && exit $?; fi
+	if [ "x$ACTION" = "xinstall" ]; then 
+		update_db
+		tree=$(build_deps_tree ${@:2})
+		install_package "$tree" && exit $?; fi
+	if [ "x$ACTION" = "xreinstall" ]; then 
+		update_db
+		install_package "${@:2}" "_force" && exit $?; fi
+	if [ "x$ACTION" = "xinstall-local" ]; then 
+		tree=$(build_deps_tree ${@:2})
+		install_local_package "$tree" && exit $?; fi
+	if [ "x$ACTION" = "xreinstall-local" ]; then 
+		install_local_package "${@:2}" "_force" && exit $?; fi
+	if [ "x$ACTION" = "xupgrade" ]; then 
+		update_db
+		upgrade_package "${@:2}" && exit $?; fi
+	if [ "x$ACTION" = "xremove"  ]; then 
+		remove_package "${@:2}" && exit $?; fi
+	if [ "x$ACTION" = "xupdate" ]; then 
+		update_db && exit $?; fi
+	if [ "x$ACTION" = "xlist" ]; then 
+		create_view && exit $?; fi
+	if [ "x$ACTION" = "xclean" ]; then 
+		clean_cache && exit $?; fi
 	show_help
 else
 	show_help
