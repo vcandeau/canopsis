@@ -22,6 +22,8 @@ function clean_cache(){
     check_code $? "Failure during remove old database"
     echo "   + Update Pkgmgr info file"
     sed "/LAST_UPDATE/d" -i $VARLIB_PATH/info
+	echo "   + Remove tmp.file"
+	rm -Rf $TMP_FILE
     echo "   + Done"
     exit 1
 }
