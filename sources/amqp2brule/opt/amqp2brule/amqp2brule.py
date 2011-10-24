@@ -32,12 +32,12 @@ logging.basicConfig(level=logging.DEBUG,
                     )
 logger = logging.getLogger(DAEMON_NAME)
 myamqp = None
-bussiness_rules  = None
+business_rules  = None
 
 DEFAULT_ACCOUNT = caccount(user="root", group="root")
 BRULE_RTIME = 300
 
-bussiness_rules_loaded = {}
+business_rules_loaded = {}
 
 ########################################################
 #
@@ -51,8 +51,8 @@ def on_message(msg):
  	event = json.loads(msg.content.body)
 
 	#logger.debug("Push event for "+_id)
-	for key in bussiness_rules.keys():
-		bussiness_rules[key].push_event(_id, event)
+	for key in business_rules.keys():
+		business_rules[key].push_event(_id, event)
 
 
 ########################################################
@@ -71,30 +71,30 @@ def signal_handler(signum, frame):
 	RUN = 0
  
 
-def init_bussiness_rules():
-	global bussiness_rules
+def init_business_rules():
+	global business_rules
 
-	logger.debug("Load all bussiness rules ...")
+	logger.debug("Load all business rules ...")
 	tmp = {}
 	
 	records = storage.find({'crecord_type': 'brule'}, namespace='object')
 
 	for record in records:
 		try:
-			if bussiness_rules_loaded[record._id] != record.write_time:
+			if business_rules_loaded[record._id] != record.write_time:
 				logger.debug(" + Reload '%s'" % record._id)
 				tmp[record._id] = cbrule(name=record.name, storage=storage, amqp=amqp)
-				bussiness_rules_loaded[record._id] = record.write_time
+				business_rules_loaded[record._id] = record.write_time
 			else:
-				tmp[record._id] = bussiness_rules[record._id]
+				tmp[record._id] = business_rules[record._id]
 				
 		except:
 			logger.debug(" + Load '%s'" % record._id)
-			bussiness_rules_loaded[record._id] = record.write_time
+			business_rules_loaded[record._id] = record.write_time
 			tmp[record._id] = cbrule(name=record.name, storage=storage, amqp=amqp)
 			
 
-	bussiness_rules = tmp
+	business_rules = tmp
 
 
 ########################################################
@@ -109,12 +109,12 @@ storage=None
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
 	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, storage, bussiness_rules 
+	global amqp, storage, business_rules 
 
 	storage = cstorage(DEFAULT_ACCOUNT, namespace='object', logging_level=logging.INFO)
 
 	# Rules Engine
-	bruleTask = task.LoopingCall(init_bussiness_rules)
+	bruleTask = task.LoopingCall(init_business_rules)
 
 	# AMQP
 	amqp = camqp(logging_level=logging.INFO)

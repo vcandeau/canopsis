@@ -1,0 +1,49 @@
+.icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+}
+
+.icon-user { 
+    background-image: url(../images/icons/user.png) !important; 
+} 
+ 
+.icon-add { 
+    background-image: url(../images/icons/add.png) !important; 
+} 
+ 
+.icon-delete { 
+    background-image: url(../images/icons/delete.png) !important; 
+}
+
+.icon-config { 
+    background-image: url(../images/icons/delete.png) !important; 
+}
+
+.icon-crecord_type-account { 
+    background-image: url(../images/icons/account.png) !important; 
+}
+
+.icon-reload { 
+    background-image: url(../images/icons/reload.png) !important; 
+}
+
+.icon-cancel { 
+    background-image: url(../images/icons/move.png) !important; 
+}
+
+.icon-save { 
+    background-image: url(../images/icons/save.png) !important; 
+}
+
+
+/* VIEW */
+
+.icon-tab-default { 
+    background-image: url(../images/icons/report.png) !important; 
+} 
+
+.icon-tab-Accounts { 
+    background-image: url(../images/icons/user.png) !important; 
+} 
+
