@@ -3,9 +3,7 @@
 //]);
 
 Ext.define('canopsis.view.Tabs.Content' ,{
- //   extend: 'Ext.container.Container',
     extend: 'Ext.Panel',
-    //extend: 'Ext.panel.Table',
     alias : 'widget.TabsContent', 
     
     style: {borderWidth:'0px'},
@@ -15,7 +13,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	layout: {
 		type: 'table',
 		// The total column count must be specified here
-		columns: 0,
+		columns: 1,
 		tableAttrs: {
 			style: {
 				width: '100%',
@@ -29,9 +27,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	        }
 	},*/
 
+	border: false,
+
 	items: [],
     
     initComponent: function() {
+		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
 		log.dump("Get view '"+this.view_id+"' ...")
 		Ext.Ajax.request({
@@ -64,12 +65,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		if (lines.length == 1 && nb_column == 1) {
 			log.debug(' + Use full mode ...')
+			this.layout = 'fit'
 			item = lines[0]
-			item['height'] = '100%'
+			//item['height'] = '10'
 			item['width'] = '100%'
 			item['title'] = ''
-			item['border'] = 0
-
+			item['border'] = false
+			
 			//item['baseCls'] = 'x-plain'
 			item['mytab'] = this
 
@@ -106,6 +108,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
     },
     
     beforeclose: function(tab, object){
+	console.log('[view][tabs][content] - Active previous tab');
 	old_tab = Ext.getCmp('main-tabs').old_tab;
 	if (old_tab) {
 		Ext.getCmp('main-tabs').setActiveTab(old_tab);
