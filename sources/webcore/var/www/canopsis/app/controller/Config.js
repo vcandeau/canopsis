@@ -13,6 +13,10 @@ Ext.define('canopsis.controller.Config', {
 	{
 		ref: 'Grid',
 		selector: 'TreeGrid'
+	},
+	{
+		ref : 'View',
+		selector: 'ConfigView'
 	}],
     
     
@@ -33,19 +37,22 @@ Ext.define('canopsis.controller.Config', {
 				click: this.deleteRow
 			},
 			
-			'TreeOrdering #clearAll': {
+			'TreeOrdering [action=reset]': {
 				click: this.clearAll
 			},
 			
+			'TreeOrdering [action=deleteRow]': {
+				click: this.deleteRow
+			},
 			
 			//buttons from the form
-			'ConfigForm button[action=save]' : {
+			'ConfigForm [action=save]' : {
 				click : this.saveForm
 			},
 			
-			'ConfigForm #cancelForm' : {
+			'ConfigForm [action=cancel]' : {
 				click : this.cancelForm
-			}			
+			}
 		});
 	},
 	
@@ -55,30 +62,39 @@ Ext.define('canopsis.controller.Config', {
         record = form.getRecord(),
         values = form.getValues();
 		record.set(values);	
+		remove_active_tab();
+		Ext.getCmp('ConfigView').show();
 	},
 	
 	cancelForm : function() {
 		console.log('clicked on button to cancel form');
 		remove_active_tab();
+		Ext.getCmp('ConfigView').show();
+		
 	},	
 	
 	deleteRow : function(){
 		console.log('clicked on delete row');
+		var selection = this.getOrdering().getSelectionModel().getSelection()
+		//console.log(selection)
+		if (selection)
+		{
+			//this.getOrdering().getStore().getNodeById(selection.internalId).destroy();
+		}
 	},
 	
 	clearAll : function(){
 		console.log('clicked on clear all');
-		getOrdering().getRootNode().removeAll();
+		this.getOrdering().getStore().getRootNode().removeAll();
 	},
 	
 	addToTree : function(record, item, index){
 		console.log('clicked on tree item')
 		if (item) {			
-			console.log(item)
+			//console.log(item)
 			var TreeRootNode = this.getOrdering().getRootNode();
-			console.log('Tree root : ')
-			console.log(TreeRootNode);
-			
+			//console.log('Tree root : ')
+			//console.log(TreeRootNode);
 			//need to copy record, else it disapear from the first tree
 			//console.log(item.data)
 			//console.log(item)

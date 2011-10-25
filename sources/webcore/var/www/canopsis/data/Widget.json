@@ -1,22 +1,22 @@
 [{
 	"xtype": "kpi",
-	"title":"truc",
+	"title":"kpi",
 	"colspan":"5",
-	"_id":"fdesqeq",
+	"_id":"",
 	"rinterval":"58",
 	"leaf":true
 },{
 	"xtype":"highcharts",
-	"title":"freu",
-	"colspan":"65",
-	"_id":"frfrqre",
+	"title":"tab",
+	"colspan":"2",
+	"_id":"",
 	"rinterval":"10",
 	"leaf":true
 },{
 	"xtype":"empty",
-	"title":"bleurp",
-	"colspan":"0",
-	"_id":"frfrqre",
+	"title":"noname",
+	"colspan":"1",
+	"_id":"",
 	"rinterval":"20",
 	"leaf":true
 }]
