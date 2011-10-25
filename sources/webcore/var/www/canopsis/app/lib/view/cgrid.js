@@ -13,7 +13,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	//iconCls: 'icon-grid',
 	//frame: true,
 
-	border: 0,
+	border: false,
 	//selType: 'rowmodel',
 	//plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
  
