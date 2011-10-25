@@ -76,7 +76,7 @@ def get_tree_views():
 	records = storage.find(mfilter,account=account)
 	output = []
 	for record in records:
-		logger.debug(str(record.dump()))
+		#logger.debug(str(record.dump()))
 		data = record.data
 		#data['id'] = str(record._id)
 		data['name'] = record.name
@@ -109,27 +109,36 @@ def post_views_in_db():
 	my_record = crecord({'_id': _id },type='view', name=data['name'])
 	my_record.data['lines'] = []
 	
+	#find a better way to fix those info
+	my_record.data['hunit'] = 300
+	my_record.data['column'] = 5
+	####################################
+	
+	#Cleaning extjs output and put the record in base
 	w = data['lines']
-	logger.debug('---------------------dump dict-------------------')
-	logger.debug(w)
+	logger.debug('creating view : cleaning extjs output')
+	#logger.debug(w)
 	for i in w :
-		logger.debug('item')
-		logger.debug(i)
 		d = {}
 		d['xtype'] = i['xtype']
 		d['type'] = i['type']
 		d['refreshInterval'] = i['rinterval']
 		d['_id'] = i['_id']
 		d['title'] = i['title']
+		d['colspan'] = i['colspan']
 		my_record.data['lines'].append(d)
 		
-	logger.debug('------dump the end output---------')	
-	logger.debug(my_record)
-	logger.debug('---------------------end dump dict-------------------')
+	#logger.debug('------dump the end output---------')	
+	#logger.debug(my_record)
+	#logger.debug('---------------------end dump dict-------------------')
 	
-	storage.put(my_record, account=account)
+	try:
+		storage.put(my_record, account=account)
+		logger.debug('creating view : New view added to database')
+	except:
+		logger.debug('creating view : Adding view in database have FAILED !')
 	
-	logger.debug(str(data))
+	#logger.debug(str(data))
 	
 	return
 
