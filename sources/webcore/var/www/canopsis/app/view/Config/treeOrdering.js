@@ -1,7 +1,7 @@
 Ext.define('canopsis.view.Config.treeOrdering' ,{
 	extend: 'Ext.tree.Panel',
 	alias : 'widget.treeOrdering',
-	model : 'Widget',
+	model : 'widget',
 	
 	//store: store,
 	id: 'treeOrdering',
@@ -38,7 +38,7 @@ Ext.define('canopsis.view.Config.treeOrdering' ,{
 		text: 'Option name',
 		flex: 1,
 		sortable: true,
-		dataIndex: 'text'
+		dataIndex: 'xtype'
 	},{
 		//we must use the templateheader component so we can use a custom tpl
 		//xtype: 'templatecolumn',

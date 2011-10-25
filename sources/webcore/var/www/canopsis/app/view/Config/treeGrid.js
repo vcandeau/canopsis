@@ -1,7 +1,7 @@
 Ext.define('canopsis.view.Config.treeGrid' ,{
 	extend: 'Ext.tree.Panel',
 	alias : 'widget.treeGrid',
-	model: 'Widget',
+	model: 'widget',
 	store: 'Widget',
 	
 	id: 'treeGrid',
@@ -18,16 +18,16 @@ Ext.define('canopsis.view.Config.treeGrid' ,{
             text: 'widget',
             flex: 2,
             //sortable: true,
-            dataIndex: 'text',
-        }/*,{
+            dataIndex: 'xtype',
+        },{
 			text: 'title',
 			dataIndex: 'title',
-			hidden : true
+			//hidden : true
 		},{
 			text: 'colspan',
 			dataIndex: 'colspan',
-			hidden : true
-		},{
+			//hidden : true
+		},/*{
 			text: '_id',
 			dataIndex: '_id',
 			hidden : true

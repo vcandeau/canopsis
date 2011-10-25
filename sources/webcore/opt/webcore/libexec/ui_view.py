@@ -60,7 +60,7 @@ def get_dashboard():
 	return output
 
 ### GET
-@get('/ui/views')
+@get('/ui/views', apply=[check_auth])
 def get_tree_views():
 	
 	account = get_account()
@@ -85,9 +85,49 @@ def get_tree_views():
 	#logger.debug(" + Output: "+str(output))
 	return output
 
-@post('/ui/views')
+###POST
+@post('/ui/views', apply=[check_auth])
 def post_views_in_db():
-	logger.debug('not implemented yet')
+	account = get_account()
+	storage = get_storage(namespace='object')
+	
+	logger.debug("PUT:")
+
+	data = request.body.readline()
+	if not data:
+		HTTPError(400, "No data received")
+
+	data = json.loads(data)
+	
+	#Create a good ID
+	_id = 'view.'+ str(account.user) + '.' + str(data['name'])
+	
+	#Creating the crecord for the view
+	my_record = crecord({'_id': _id },type='view', name=data['name'])
+	my_record.data['lines'] = []
+	
+	w = data['lines']
+	logger.debug('---------------------dump dict-------------------')
+	logger.debug(w)
+	for i in w :
+		logger.debug('item')
+		logger.debug(i)
+		d = {}
+		d['xtype'] = i['xtype']
+		d['type'] = i['type']
+		d['refreshInterval'] = i['rinterval']
+		d['_id'] = i['_id']
+		d['title'] = i['title']
+		my_record.data['lines'].append(d)
+		
+	logger.debug('------dump the end output---------')	
+	logger.debug(my_record)
+	logger.debug('---------------------end dump dict-------------------')
+	
+	storage.put(my_record, account=account)
+	
+	logger.debug(str(data))
+	
 	return
 
 
