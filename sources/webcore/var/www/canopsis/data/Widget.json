@@ -1,19 +1,19 @@
 [{
-	"text": "kpi",
+	"xtype": "kpi",
 	"title":"truc",
 	"colspan":"5",
 	"_id":"fdesqeq",
 	"rinterval":"58",
 	"leaf":true
 },{
-	"text":"highcharts",
+	"xtype":"highcharts",
 	"title":"freu",
 	"colspan":"65",
 	"_id":"frfrqre",
 	"rinterval":"10",
 	"leaf":true
 },{
-	"text":"empty",
+	"xtype":"empty",
 	"title":"bleurp",
 	"colspan":"0",
 	"_id":"frfrqre",

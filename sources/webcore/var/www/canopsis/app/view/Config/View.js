@@ -21,7 +21,8 @@ Ext.define('canopsis.view.Config.View' ,{
 		xtype: 'tbseparator'
 	},{
 		text: 'Save',
-		itemId: 'saveView',
+		//itemId: 'saveView',
+		action : 'save'
 	}],
 	
 	
