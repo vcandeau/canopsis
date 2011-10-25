@@ -13,11 +13,15 @@ Ext.define('canopsis.store.ViewEditor', {
     ],
     	
     autoLoad: true,
+    autoSync: true,
 	proxy: {
 		type: 'rest',
 		url: '/ui/views',
 		reader: {
 			type: 'json',
+		},
+		writer: {
+			type: 'json'
 		}
 	},
 	

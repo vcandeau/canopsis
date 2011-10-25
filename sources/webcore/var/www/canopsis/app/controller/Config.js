@@ -25,13 +25,10 @@ Ext.define('canopsis.controller.Config', {
 			'treeOrdering #clearAll': {
 				click: this.clearAll
 			},
-			/*
-			'ConfigView #saveView': {
-				click : this.save
-			},
-			*/
+			
+			
 			//buttons from the form
-			'ConfigForm #saveForm' : {
+			'ConfigForm button[action=save]' : {
 				click : this.saveForm
 			},
 			
@@ -41,9 +38,12 @@ Ext.define('canopsis.controller.Config', {
 		});
 	},
 	
-	saveForm : function() {
-		console.log('clicked on button to save form');
-
+	saveForm : function(button) {
+		var form    = button.up('ConfigForm');
+		console.log(form);
+        record = form.getRecord(),
+        values = form.getValues();
+		record.set(values);	
 	},
 	
 	cancelForm : function() {
@@ -96,7 +96,7 @@ Ext.define('canopsis.controller.Config', {
 						xtype: 'ConfigForm',
 						id: myName,
 						closable: true,}).show();
-					Ext.getCmp(myName).getForm().loadRecord(item);	
+					Ext.getCmp(myName).getForm().loadRecord(item);
 				} else {
 					console.log('tab already created');
 				}
@@ -105,14 +105,5 @@ Ext.define('canopsis.controller.Config', {
 				console.log('no record selected');
 			}
 	},
-	
-	save : function(){
-		console.log('clicked on save view');
-		var rootNode = Ext.getCmp('treeOrdering').getRootNode()
-		rootNode.eachChild(function(node) {
-			console.log(node);		
-		});
-	},
-	
 	
 });

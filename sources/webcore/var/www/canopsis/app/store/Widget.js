@@ -2,15 +2,15 @@ Ext.define('canopsis.store.Widget', {
     extend: 'Ext.data.TreeStore',
     model: 'canopsis.model.Widget',
 
-	/*fields: [
+	fields: [
 	{name : 'xtype'},
 	{name : 'leaf'},
-	//{name : 'colspan'},
-	//{name : 'type'},
-	//{name : 'refreshInterval'},
-	//{name : '_id'},
-	//{name : 'title'}
-	],*/
+	{name : 'colspan'},
+	{name : 'type'},
+	{name : 'rinterval'},
+	{name : '_id'},
+	{name : 'title'}
+	],
 
 	autoLoad: true,
 	//autoSync: true,

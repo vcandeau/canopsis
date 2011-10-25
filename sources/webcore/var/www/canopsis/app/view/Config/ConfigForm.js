@@ -1,7 +1,7 @@
 Ext.define('canopsis.view.Config.ConfigForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.ConfigForm',
-	model: 'Widget',
+	model: 'widget',
 	
 	
 	//iconCls: 'icon-user',
@@ -32,7 +32,8 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 	bbar: [{
 			//iconCls: 'icon-add',
 			text: 'Save',
-			itemId: 'saveForm',
+			//itemId: 'saveForm',
+			action : 'save'
 		},{
 			text: 'Cancel',
 			itemId: 'cancelForm',
