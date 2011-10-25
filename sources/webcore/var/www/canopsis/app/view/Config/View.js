@@ -25,7 +25,6 @@ Ext.define('canopsis.view.Config.View' ,{
 		action : 'save'
 	}],
 	
-	
 	items : [{
 		xtype : 'TreeGrid',
 		height: '100%',

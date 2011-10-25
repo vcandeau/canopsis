@@ -36,7 +36,8 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 			action : 'save'
 		},{
 			text: 'Cancel',
-			itemId: 'cancelForm',
+			//itemId: 'cancelForm',
+			action: 'cancel'
 		}
 	],
 
