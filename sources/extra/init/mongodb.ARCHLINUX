@@ -4,7 +4,7 @@
 . /etc/rc.conf
 . /etc/rc.d/functions
 
-PID=$(pidof ~/bin/mongod)
+PID=$(pidof @PREFIX@/bin/mongod)
 case "$1" in
   start)    
     stat_busy "Starting mongodb"
