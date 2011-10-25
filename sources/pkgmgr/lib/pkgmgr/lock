@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function on_die(){
+	exit_pending="True"
+	if ! [ -a "$LOCK_FILE" ]; then 
+		echo
+		exit 1
+	else
+		echo "Wait..."
+	fi
+}
+
+function on_lock (){
+	touch $LOCK_FILE
+}
+
+function off_lock (){
+	rm -Rf $LOCK_FILE
+	check_lock
+}
+
+function check_lock (){
+	if [[ ! -a "$LOCK_FILE" && "$exit_pending" == "True" ]]; then
+		exit 1; fi
+}

@@ -11,14 +11,14 @@ Ext.define('canopsis.view.Viewport', {
 	items: [
 	{
 		region: 'north',
-		border: 0,
+		border: false,
 		height: 65,
 		html: '<div id="div-header"><div id="title"><h1>Canopsis</h1></div><div id="logo"/></div>',
 		id: 'main-header'
 	},
 	{
 		region: 'south',
-		border: 0,
+		border: false,
 		height: 40,
 		layout: {
 			type: 'hbox',
@@ -54,13 +54,13 @@ Ext.define('canopsis.view.Viewport', {
 		id: 'main-footer'
 	},{
 		region: 'center',
-		border: 0,
+		border: false,
 		xtype: 'TabsView',
 		id: 'main-tabs',
 
 	},{
 		region: 'west',
-		border: 1,
+		border: true,
 		width: 150,
 		xtype: 'MenuView',
 		id: 'main-menu'
