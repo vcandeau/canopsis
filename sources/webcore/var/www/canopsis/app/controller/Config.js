@@ -1,28 +1,39 @@
 Ext.define('canopsis.controller.Config', {
     extend: 'Ext.app.Controller',
     
-    views: ['Config.View','Config.treeGrid','Config.treeOrdering','Config.ConfigForm'],
+    views: ['Config.View','Config.TreeGrid','Config.TreeOrdering','Config.ConfigForm'],
     stores: ['Widget'],
     models: ['widget','view'],
+    
+    refs : [
+    {
+		ref : 'Ordering',
+		selector: 'TreeOrdering'
+	},
+	{
+		ref: 'Grid',
+		selector: 'TreeGrid'
+	}],
+    
     
     init: function() {
 		console.log('Initialized Configuration editor');
 		
 		this.control({
 
-			'treeGrid': {
+			'TreeGrid': {
 				itemdblclick: this.addToTree
 			},
 			
-			'treeOrdering': {
+			'TreeOrdering': {
 				itemdblclick: this.configureItem
 			},
 			
-			'treeOrdering #deleteRow': {
+			'TreeOrdering #deleteRow': {
 				click: this.deleteRow
 			},
 			
-			'treeOrdering #clearAll': {
+			'TreeOrdering #clearAll': {
 				click: this.clearAll
 			},
 			
@@ -57,14 +68,14 @@ Ext.define('canopsis.controller.Config', {
 	
 	clearAll : function(){
 		console.log('clicked on clear all');
-		Ext.getCmp('treeOrdering').getRootNode().removeAll();
+		getOrdering().getRootNode().removeAll();
 	},
 	
 	addToTree : function(record, item, index){
 		console.log('clicked on tree item')
 		if (item) {			
 			console.log(item)
-			var TreeRootNode = Ext.getCmp('treeOrdering').getRootNode();
+			var TreeRootNode = this.getOrdering().getRootNode();
 			console.log('Tree root : ')
 			console.log(TreeRootNode);
 			

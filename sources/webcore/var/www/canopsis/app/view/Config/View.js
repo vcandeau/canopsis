@@ -27,11 +27,11 @@ Ext.define('canopsis.view.Config.View' ,{
 	
 	
 	items : [{
-		xtype : 'treeGrid',
+		xtype : 'TreeGrid',
 		height: '100%',
         width: '20%'
 	},{
-		xtype : 'treeOrdering',
+		xtype : 'TreeOrdering',
 		height: '100%',
         width: '80%'
 	}],
@@ -39,8 +39,8 @@ Ext.define('canopsis.view.Config.View' ,{
 	initComponent: function() {
 		this.callParent(arguments);
 		//fix to refresh the panel at every build/rebuild
-		Ext.getCmp('treeOrdering').setRootNode(Ext.ClassManager.instantiate('Ext.data.NodeInterface'));
-		Ext.getCmp('treeOrdering').getRootNode().expand();
+		Ext.getCmp('TreeOrdering').setRootNode(Ext.ClassManager.instantiate('Ext.data.NodeInterface'));
+		Ext.getCmp('TreeOrdering').getRootNode().expand();
 	},
 
 	beforeDestroy : function() {

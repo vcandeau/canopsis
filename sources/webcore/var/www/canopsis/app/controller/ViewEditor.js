@@ -9,6 +9,10 @@ Ext.define('canopsis.controller.ViewEditor', {
 	{
 		ref : 'tree',
 		selector: 'ViewEditor'
+	},
+	{
+		ref : 'treeOrder',
+		selector: 'TreeOrdering'
 	}],
 
     init: function() {
@@ -61,32 +65,32 @@ Ext.define('canopsis.controller.ViewEditor', {
 	
 	deleteButton: function() {
 		console.log('viewEdit : delete a view');
-		if (this.myselection){
-			console.log(this.myselection);
-			var tree = Ext.getCmp('ViewEditor');
-			console.log(tree)
-			//var selectedNode = tree.getSelectionModel().select(node);
-		}
+		var selectedNode = Ext.getCmp('ViewEditor').getSelectionModel().getSelection();
+		if (selectedNode)
+		{
+			console.log(selectedNode)
+			var rootnode = Ext.getCmp('ViewEditor').getStore().getRootNode();
+			if(rootnode.removeChild(selectedNode))
+			{
+				console.log('removed');
+			}else{
+				console.log('don\'t removed');
+			}
+		}	
 	},
 	
 	selectionchange: function(selections){
-		Ext.getCmp('ViewEditor').down('#deleteButton').setDisabled(selections.length === 0);
-		this.myselection = selections;
+		this.getTree().down('#deleteButton').setDisabled(selections.length === 0);
 	}, 
 	
 	saveView : function(button){
+		var view = this.getTree()
+		var store = view.store;
+		var store_source = this.getTreeOrder().store;
+		
 		console.log('clicked on save view');
-		/*var view = button.up('ConfigView');
-		//console.log(view);*/
-		var name = button.up('ConfigView').down('textfield');
-		/*//console.log(name);
-		var tree = view.down('treeOrdering');
-		var store = Ext.getCmp('ViewEditor').getStore();
-		//console.log(tree)
-		//mystore = Ext.getCmp('ViewEditor').getStore();
-		var mystore = this.getTree().getRootNode();
-		console.log(mystore);*/
-		rootNode = Ext.getCmp('treeOrdering').getRootNode()
+		var name = Ext.getCmp('ConfigView').down('textfield');
+		//console.log(name);
 		
 		//TODO : Better way to fix that
 		var record = Ext.create('canopsis.model.view');
@@ -95,21 +99,19 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('column', '5');
 		record.set('leaf',true);
 		
+		//get all node and stock them in an object
 		var temptab = [];
 		
-		Ext.getCmp('treeOrdering').getRootNode().eachChild(function(node) {
-			console.log(node.data);
+		store_source.getRootNode().eachChild(function(node) {
 			temptab.push(node.data);
 		});	
 		
 		record.set('lines', temptab);
-		
-		console.log('the record');
-		console.log(record);
-		//store.getRootNode().appendChild(record);
-		Ext.data.StoreManager.lookup('ViewEditor').getRootNode().insertChild(0,record);
-		Ext.data.StoreManager.lookup('ViewEditor').sync();
-		Ext.data.StoreManager.lookup('ViewEditor').load();
+		//console.log('the record');
+		//console.log(record);
+		store.getRootNode().insertChild(0,record);
+		store.sync();
+		store.load();
 	},
 	
 });
