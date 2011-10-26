@@ -48,7 +48,7 @@ Ext.define('canopsis.view.Config.TreeOrdering' ,{
 		dataIndex: 'title',
 		//align: 'center',
 	},{
-		text: 'colspan',
+		text: 'length',
 		flex: 1,
 		dataIndex: 'colspan',
 	},{
