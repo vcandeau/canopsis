@@ -75,11 +75,11 @@ Ext.define('canopsis.controller.Config', {
 	
 	deleteRow : function(){
 		console.log('clicked on delete row');
-		var selection = this.getOrdering().getSelectionModel().getSelection()
-		//console.log(selection)
+		var selection = this.getOrdering().getSelectionModel().getSelection()[0];
+		console.log(selection)
 		if (selection)
 		{
-			//this.getOrdering().getStore().getNodeById(selection.internalId).destroy();
+			this.getOrdering().getStore().getRootNode().removeChild(selection);
 		}
 	},
 	

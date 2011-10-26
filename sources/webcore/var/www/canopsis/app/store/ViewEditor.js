@@ -13,15 +13,22 @@ Ext.define('canopsis.store.ViewEditor', {
     ],
     	
     autoLoad: true,
-    autoSync: true,
+    //autoSync: true,
 	proxy: {
 		type: 'rest',
 		url: '/ui/views',
+		//actionMethods: {
+			//create : 'POST',
+			//read : 'GET', // defaults to GET
+			//update : 'DELETE', //need this tweak to destroy views
+			//destroy: 'DELETE'
+		//},
 		reader: {
 			type: 'json',
 		},
 		writer: {
-			type: 'json'
+			type: 'json',
+			writeAllFields: false
 		}
 	},
 	

@@ -16,6 +16,7 @@ Ext.define('canopsis.view.Config.View' ,{
 		name: "view's name",
 		itemId : "viewName",
 		fieldLabel: "view's name",
+		allowBlank:false,
 		width: 300,
 	},{
 		xtype: 'tbseparator'
