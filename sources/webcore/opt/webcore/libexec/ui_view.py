@@ -142,8 +142,25 @@ def post_views_in_db():
 	
 	return
 
+###PUT
+@put('/ui/views/:_id',apply=[check_auth])
+def ui_views_put(_id):
+	#extjs try to give another index to the node, so bottle do nothing, views arn't node
+	logger.debug('PUT request intercept, do nothing (views aren\'t a real tree')
+	return
 
+#### DELETE
+@delete('/ui/views/:_id',apply=[check_auth])
+def ui_views_delete(_id):
+	account = get_account()
+	storage = get_storage(namespace='object')
 
+	logger.debug("DELETE:")
+	logger.debug(" + _id: "+str(_id))
+	try:
+		storage.remove(_id, account=account)
+	except:
+		HTTPError(404, _id+" Not Found")
 
 
 

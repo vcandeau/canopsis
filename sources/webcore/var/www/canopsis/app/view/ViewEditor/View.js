@@ -10,13 +10,13 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	id : 'ViewEditor',
 
     title: 'Available Views',
-    
+    /*
     viewConfig: {
 		plugins: {
 			ptype: 'treeviewdragdrop'
 		}
 	},
-    
+    */
     
 	tbar: [ {
 				iconCls: 'icon-add',
@@ -50,6 +50,12 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 
 	initComponent: function() {
 			this.callParent(arguments);
-		}
+		},
+		
+	beforeDestroy : function() {
+		log.debug("Destroy items ...")
+		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
+		log.debug(this.id + " Destroyed.")
+	}
 			
 });
