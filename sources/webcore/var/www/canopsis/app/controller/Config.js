@@ -15,7 +15,7 @@ Ext.define('canopsis.controller.Config', {
 		selector: 'TreeGrid'
 	},
 	{
-		ref : 'View',
+		ref : 'ConfigView',
 		selector: 'ConfigView'
 	}],
     
@@ -52,8 +52,17 @@ Ext.define('canopsis.controller.Config', {
 			
 			'ConfigForm [action=cancel]' : {
 				click : this.cancelForm
+			},
+			
+			'ConfigForm' : {
+				close : this.closeTab
 			}
+			
 		});
+	},
+	
+	closeTab : function(button) {
+		this.getConfigView().show();
 	},
 	
 	saveForm : function(button) {
@@ -63,13 +72,13 @@ Ext.define('canopsis.controller.Config', {
         values = form.getValues();
 		record.set(values);	
 		remove_active_tab();
-		Ext.getCmp('ConfigView').show();
+		this.getConfigView().show();
 	},
 	
 	cancelForm : function() {
 		console.log('clicked on button to cancel form');
 		remove_active_tab();
-		Ext.getCmp('ConfigView').show();
+		this.getConfigView().show();
 		
 	},	
 	
