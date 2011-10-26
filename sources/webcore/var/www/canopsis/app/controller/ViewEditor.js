@@ -42,6 +42,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 	},
 	
 	configureItem :function(view, item, index) {
+		console.log('configure the item')
 		console.log(item);
 		console.log(view);
 		console.log(index);
@@ -64,18 +65,33 @@ Ext.define('canopsis.controller.ViewEditor', {
 	},
 	
 	deleteButton: function() {
+		var store = this.getTree().getStore();
 		console.log('viewEdit : delete a view');
-		var selectedNode = Ext.getCmp('ViewEditor').getSelectionModel().getSelection();
+		var selectedNode = this.getTree().getSelectionModel().getSelection()[0];
+
 		if (selectedNode)
 		{
+			//this is UNSTABLE and can ERASE the entire tree (and your database)
+			/*
 			console.log(selectedNode)
-			var rootnode = Ext.getCmp('ViewEditor').getStore().getRootNode();
+			console.log(store)
+			var rootnode = store.getRootNode();
 			if(rootnode.removeChild(selectedNode))
 			{
 				console.log('removed');
 			}else{
 				console.log('don\'t removed');
 			}
+			store.sync();
+			*/
+			
+			//this solve temporary the problem
+			Ext.Ajax.request({
+				url: '/ui/views/' + selectedNode.internalId,
+				method: 'DELETE',
+			});
+			store.load();
+			Ext.data.StoreManager.lookup('Menu').load();
 		}	
 	},
 	
@@ -109,9 +125,42 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('lines', temptab);
 		//console.log('the record');
 		//console.log(record);
-		store.getRootNode().insertChild(0,record);
-		store.sync();
-		store.load();
+		if(this.validateView(store,record))
+		{
+			Ext.MessageBox.show({
+				title: record.get('name') + 'view already exist !',
+				msg: 'you can\'t add the same view twice',
+				icon: Ext.MessageBox.WARNING,
+  				buttons: Ext.Msg.OK
+			});
+		} else {
+			//this is UNSTABLE and can ERASE all the tree (and your database)
+			
+			//store.getRootNode().appendChild(record);
+			//store.sync();
+			//store.load();
+			
+			//this solv the problem
+			Ext.Ajax.request({
+				url: '/ui/views',
+				params: Ext.JSON.encode(record.data),
+				method: 'POST',
+			});
+			store.load();
+			//reloading menu tree
+			Ext.data.StoreManager.lookup('Menu').load();
+			//destroy Config view and get back on viewEditor
+			remove_active_tab();
+			this.getTree().show();
+		}
 	},
+	
+	validateView : function(store, record){
+		var already_exist = false;
+		if(store.getRootNode().findChild('name', record.get('name')) != null){
+			already_exist = true;
+		}
+		return already_exist;
+	}
 	
 });
