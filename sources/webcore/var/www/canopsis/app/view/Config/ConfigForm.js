@@ -18,7 +18,7 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 				name: 'title',
 				allowBlank: false,
 			},{
-				fieldLabel: 'colspan',
+				fieldLabel: 'length',
 				name: 'colspan',
 			}, {
 				fieldLabel: '_id',
