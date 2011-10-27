@@ -88,32 +88,36 @@ Ext.define('canopsis.controller.ViewEditor', {
 	deleteButton: function() {
 		var store = this.getTree().getStore();
 		console.log('viewEdit : delete a view');
-		var selectedNode = this.getTree().getSelectionModel().getSelection()[0];
+		var selectedNode = this.getTree().getSelectionModel().getSelection();
 
 		if (selectedNode)
 		{
-			//this is UNSTABLE and can ERASE the entire tree (and your database)
-			/*
-			console.log(selectedNode)
-			console.log(store)
-			var rootnode = store.getRootNode();
-			if(rootnode.removeChild(selectedNode))
-			{
-				console.log('removed');
-			}else{
-				console.log('don\'t removed');
+			for (i in selectedNode){
+				//this is UNSTABLE and can ERASE the entire tree (and your database)
+				/*
+				console.log(selectedNode)
+				console.log(store)
+				var rootnode = store.getRootNode();
+				if(rootnode.removeChild(selectedNode))
+				{
+					console.log('removed');
+				}else{
+					console.log('don\'t removed');
+				}
+				store.sync();
+				*/
+				
+				//this solve temporary the problem
+				Ext.Ajax.request({
+					url: '/ui/views/' + selectedNode[i].internalId,
+					method: 'DELETE',
+				});
+
 			}
-			store.sync();
-			*/
-			
-			//this solve temporary the problem
-			Ext.Ajax.request({
-				url: '/ui/views/' + selectedNode.internalId,
-				method: 'DELETE',
-			});
-			store.load();
-			Ext.data.StoreManager.lookup('Menu').load();
-		}	
+		}
+		
+		store.load();
+		Ext.data.StoreManager.lookup('Menu').load();	
 	},
 	
 	selectionchange: function(selections){
@@ -127,7 +131,8 @@ Ext.define('canopsis.controller.ViewEditor', {
 		
 		console.log('clicked on save view');
 		var name = button.up('ConfigView').down('textfield');
-		//console.log(name);
+		console.log('the name')
+		console.log(name.value);
 		
 		//TODO : Better way to fix that
 		var record = Ext.create('canopsis.model.view');

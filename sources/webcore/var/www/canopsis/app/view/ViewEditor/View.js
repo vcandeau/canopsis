@@ -18,6 +18,8 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	},
     */
     
+    multiSelect: true,
+    
 	tbar: [ {
 				iconCls: 'icon-add',
 				text: 'Add new view',
