@@ -1,7 +1,7 @@
 Ext.define('canopsis.controller.Config', {
     extend: 'Ext.app.Controller',
     
-    views: ['Config.View','Config.TreeGrid','Config.TreeOrdering','Config.ConfigForm'],
+    views: ['Config.View','Config.TreeGrid','Config.TreeOrdering','Config.ConfigForm','LiveSearch.View'],
     stores: ['Widget'],
     models: ['widget','view'],
     
@@ -45,7 +45,7 @@ Ext.define('canopsis.controller.Config', {
 				click: this.deleteRow
 			},
 			
-			//buttons from the form
+			////buttons from the widget form
 			'ConfigForm [action=save]' : {
 				click : this.saveForm
 			},
@@ -57,8 +57,18 @@ Ext.define('canopsis.controller.Config', {
 			'ConfigForm' : {
 				close : this.closeTab
 			}
+			/*
+			////buttons from the livesearch form
+			'LiveSearch Grid' : {
+				itemdblclick : this.setID
+			}
+			*/
 			
 		});
+	},
+	
+	setID : function(record, item, esp, index){
+		
 	},
 	
 	closeTab : function(button) {

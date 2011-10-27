@@ -21,8 +21,28 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 				fieldLabel: 'length',
 				name: 'colspan',
 			}, {
+				//xtype: 'displayfield',
 				fieldLabel: '_id',
 				name: '_id',
+			},{
+				xtype : 'button',
+				text : 'Search',
+				handler : function() {
+					console.log('button');
+					win = Ext.widget('window', {
+						title: 'Live search',
+						closeAction: 'hide',
+						width: 500,
+						height: 400,
+						minHeight: 400,
+						layout: 'fit',
+						resizable: true,
+						modal: true,
+						items: [{
+							xtype : 'LiveSearch'
+							}],
+					}).show();
+				}			
 			},{
 				fieldLabel: 'refresh interval',
 				name: 'refreshInterval',
