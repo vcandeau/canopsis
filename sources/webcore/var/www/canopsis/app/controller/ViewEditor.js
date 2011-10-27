@@ -25,12 +25,10 @@ Ext.define('canopsis.controller.ViewEditor', {
 			'ViewEditor #deleteButton' : {
 				click: this.deleteButton
 			},
-			'ViewEditor' : {
-				itemdblclick: this.configureItem
-			},
 		
 			'ViewEditor': {
-				selectionchange: this.selectionchange
+				selectionchange: this.selectionchange,
+				itemdblclick: this.configureItem
 			},
 			
 			//listener on the editor, because we must get option from editor
@@ -41,11 +39,34 @@ Ext.define('canopsis.controller.ViewEditor', {
 		});
 	},
 	
-	configureItem :function(view, item, index) {
+	configureItem :function(record, item, esp, index) {
 		console.log('configure the item')
-		console.log(item);
-		console.log(view);
-		console.log(index);
+		if (item) {
+			var myName = 'ViewEditNode' + index
+			var main_tabs = Ext.getCmp('main-tabs')
+			if(!Ext.getCmp(myName))
+			{
+				//adding edit tab
+				main_tabs.add({
+					title: 'Edit View',
+					xtype: 'ConfigView',
+					id: myName,
+					closable: true,}).show();
+				//Ext.getCmp(myName).getForm().loadRecord(item);
+				console.log(item.data.lines)
+				widgets = item.data.lines;
+				for (i in widgets){
+					//console.log(widgets[i])
+					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
+					copy.set('leaf', true)
+					//console.log(copy)
+					Ext.getCmp(myName).down('TreeOrdering').getStore().getRootNode().appendChild(copy);
+				}
+				Ext.getCmp(myName).down('textfield').setValue(item.get('name'))
+			} else {
+				console.log('tab already created');
+			}
+		}
 	},
 	
 	
@@ -105,7 +126,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 		var store_source = this.getTreeOrder().store;
 		
 		console.log('clicked on save view');
-		var name = Ext.getCmp('ConfigView').down('textfield');
+		var name = button.up('ConfigView').down('textfield');
 		//console.log(name);
 		
 		//TODO : Better way to fix that
@@ -125,17 +146,9 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('lines', temptab);
 		//console.log('the record');
 		//console.log(record);
-		if(this.validateView(store,record))
+		if((!this.validateView(store,record)) || (!Ext.getCmp('ConfigView')))
 		{
-			Ext.MessageBox.show({
-				title: record.get('name') + 'view already exist !',
-				msg: 'you can\'t add the same view twice',
-				icon: Ext.MessageBox.WARNING,
-  				buttons: Ext.Msg.OK
-			});
-		} else {
 			//this is UNSTABLE and can ERASE all the tree (and your database)
-			
 			//store.getRootNode().appendChild(record);
 			//store.sync();
 			//store.load();
@@ -152,6 +165,14 @@ Ext.define('canopsis.controller.ViewEditor', {
 			//destroy Config view and get back on viewEditor
 			remove_active_tab();
 			this.getTree().show();
+			
+		} else {
+			Ext.MessageBox.show({
+				title: record.get('name') + 'view already exist !',
+				msg: 'you can\'t add the same view twice',
+				icon: Ext.MessageBox.WARNING,
+  				buttons: Ext.Msg.OK
+			});
 		}
 	},
 	
