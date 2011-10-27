@@ -64,7 +64,7 @@ layout: {
 			flex: 1,
 			margins: '0',
 			columns : [
-				{header : 'name', flex : 1}
+				{header : '',dataIndex : '_id', flex : 1}
 			],
 			store : Ext.create('Ext.data.Store', {
 				fields: ['name']
