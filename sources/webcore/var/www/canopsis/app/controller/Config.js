@@ -67,7 +67,7 @@ Ext.define('canopsis.controller.Config', {
 	
 	saveForm : function(button) {
 		var form    = button.up('ConfigForm');
-		console.log(form);
+		//console.log(form);
         record = form.getRecord(),
         values = form.getValues();
 		record.set(values);	
