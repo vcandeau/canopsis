@@ -25,7 +25,7 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 				name: '_id',
 			},{
 				fieldLabel: 'refresh interval',
-				name: 'rinterval',
+				name: 'refreshInterval',
 			}],
             
 

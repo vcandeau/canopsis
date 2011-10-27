@@ -5,7 +5,7 @@ Ext.define('canopsis.model.widget', {
 		{name : 'leaf'},
 		{name : 'colspan'},
 		{name : 'type'},
-		{name : 'rinterval'},
+		{name : 'refreshInterval'},
 		{name : '_id'},
 		{name : 'title'}
 		]

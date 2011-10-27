@@ -58,7 +58,7 @@ Ext.define('canopsis.view.Config.TreeOrdering' ,{
 	},{
 		text: 'refresh interval',
 		flex: 1,
-		dataIndex: 'rinterval',
+		dataIndex: 'refreshInterval',
 	}],
 	
 	/*root: {
