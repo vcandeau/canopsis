@@ -122,7 +122,7 @@ def post_views_in_db():
 		d = {}
 		d['xtype'] = i['xtype']
 		d['type'] = i['type']
-		d['refreshInterval'] = i['rinterval']
+		d['refreshInterval'] = i['refreshInterval']
 		d['_id'] = i['_id']
 		d['title'] = i['title']
 		d['colspan'] = i['colspan']
