@@ -59,5 +59,7 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
 		log.debug(this.id + " Destroyed.")
 	}
+
+	
 			
 });

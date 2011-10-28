@@ -2,8 +2,9 @@ Ext.define('canopsis.view.LiveSearch.View', {
     extend: 'Ext.form.Panel',
     alias: 'widget.LiveSearch',
 
+	store : ['Inventory'],
 
-layout: {
+	layout: {
 			type: 'vbox',
 			align: 'stretch'
 		},
@@ -33,60 +34,55 @@ layout: {
 			items: [{
 				flex: 1,
 				//name: 'firstName',
+				itemId : 'source_name',
 				fieldLabel: 'Source Name',
-				allowBlank: false
 			},{
 				flex: 1,
 				//name: 'lastName',
+				itemId : 'type',
 				fieldLabel: 'Type',
-				allowBlank: false,
 				margins: '0 0 0 5'
 			},{
 				flex: 1,
 				//name: 'lastName',
+				itemId : 'source_type',
 				fieldLabel: 'Source type',
-				allowBlank: false,
 				margins: '0 0 0 5'
 			},{
 				flex: 1,
 				//name: 'lastName',
+				itemId : 'host_name',
 				fieldLabel: 'Host name',
-				allowBlank: false,
 				margins: '0 0 0 5'
 			},{
 				xtype : 'button',
 				flex: 1,
 				text : 'search',
+				itemId : 'LiveSearchButton',
 				margins: '0 0 0 5'
 			}]
 		}, {
+			xtype : 'LiveGrid',
+			/*
 			xtype: 'grid',
 			flex: 1,
 			margins: '0',
+			store : ['Inventory'],
 			columns : [
-				{header : '',dataIndex : '_id', flex : 1}
+				{header : 'name', dataIndex : '_id', flex : 1},
+				{header : 'type', dataIndex : 'source_type', flex : 1},
 			],
-			store : Ext.create('Ext.data.Store', {
+			/*store : Ext.create('Ext.data.Store', {
 				fields: ['name']
-			})
+			})*/
+				
 		}],
-
+/*
 		buttons: [{
 			text: 'Cancel',
-			handler: function() {
-				this.up('form').getForm().reset();
-				this.up('window').hide();
-			}
 		}, {
 			text: 'Send',
-			handler: function() {
-				if (this.up('form').getForm().isValid()) {
-					// In a real application, this would submit the form to the configured url
-					// this.up('form').getForm().submit();
-					this.up('form').getForm().reset();
-					this.up('window').hide();
-					Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
-				}
 			}
 		}]
+		*/
 	});

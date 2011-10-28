@@ -14,7 +14,8 @@ Ext.onReady(function() {
 			'WebSocket',
 			'Account',
 			'Config',
-			'ViewEditor'
+			'ViewEditor',
+			'LiveSearch'
 		],
 	
 		autoCreateViewport: true,

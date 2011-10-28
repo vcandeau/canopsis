@@ -22,6 +22,7 @@ Ext.define('canopsis.view.Config.View' ,{
 		xtype: 'tbseparator'
 	},{
 		text: 'Save',
+		iconCls: 'icon-save',
 		//itemId: 'saveView',
 		action : 'save'
 	}],
@@ -48,5 +49,6 @@ Ext.define('canopsis.view.Config.View' ,{
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
 		log.debug(this.id + " Destroyed.")
 	}
+	
 
 });

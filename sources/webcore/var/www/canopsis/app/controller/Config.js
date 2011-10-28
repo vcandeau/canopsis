@@ -1,7 +1,7 @@
 Ext.define('canopsis.controller.Config', {
     extend: 'Ext.app.Controller',
     
-    views: ['Config.View','Config.TreeGrid','Config.TreeOrdering','Config.ConfigForm','LiveSearch.View'],
+    views: ['Config.View','Config.TreeGrid','Config.TreeOrdering','Config.ConfigForm'],
     stores: ['Widget'],
     models: ['widget','view'],
     
@@ -53,7 +53,7 @@ Ext.define('canopsis.controller.Config', {
 			'ConfigForm [action=cancel]' : {
 				click : this.cancelForm
 			},
-			
+			/*
 			'ConfigForm' : {
 				close : this.closeTab
 			}
