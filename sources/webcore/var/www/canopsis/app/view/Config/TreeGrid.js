@@ -6,7 +6,8 @@ Ext.define('canopsis.view.Config.TreeGrid' ,{
 	
 	id: 'TreeGrid',
 	
-	title: 'Available options',
+	//title: 'Available options',
+	title: '',
 	//collapsible: true,
 	//useArrows: true,
 	rootVisible: false,
