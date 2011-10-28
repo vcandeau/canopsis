@@ -3,11 +3,16 @@ Ext.define('canopsis.view.Config.ConfigForm', {
     alias: 'widget.ConfigForm',
 	model: 'widget',
 	
+	requires: ['Ext.form.field.Text'],
 	
 	//iconCls: 'icon-user',
-    frame: true,
+    //frame: true,
     //id: 'AccountForm',
     title: 'Edit properties',
+    
+    bodyStyle:'padding:5px 5px 0',
+	border: 0,
+    
     defaultType: 'textfield',
     //anchor: '90%',
     //bodyPadding: '20%',
@@ -49,12 +54,13 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 			}],
             
 
-	bbar: [{
-			//iconCls: 'icon-add',
+	tbar: [{
+			iconCls: 'icon-save',
 			text: 'Save',
 			//itemId: 'saveForm',
 			action : 'save'
 		},{
+			iconCls: 'icon-cancel',
 			text: 'Cancel',
 			//itemId: 'cancelForm',
 			action: 'cancel'
