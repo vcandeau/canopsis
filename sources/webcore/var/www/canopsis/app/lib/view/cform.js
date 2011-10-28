@@ -11,7 +11,7 @@ Ext.define('canopsis.lib.view.cform', {
 
 	defaultType: 'textfield',
 	
-	bbar: [{
+	tbar: [{
 			iconCls: 'icon-save',
 			text: 'Save',
 			itemId: 'saveForm',
@@ -25,7 +25,7 @@ Ext.define('canopsis.lib.view.cform', {
 
     initComponent: function(){
 	this.on('beforeclose', this.beforeclose)
-	this.tbar =  this.bbar;
+	//this.tbar =  this.bbar;
         this.callParent();
     },
     
