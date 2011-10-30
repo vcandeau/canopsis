@@ -476,7 +476,8 @@ if [ $OPT_WUT -eq 1 ]; then
 	echo
 	echo "Unit tests ..."
 	LOG=$LOG_PATH/unittest.log
-	./unittest.sh 2> $LOG 1> $LOG
+	chown $HUSER $LOG
+	launch_cmd "$PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG"
 	UTR=$?
 	if [ $UTR -ne 0 ]; then
 		cat $LOG
