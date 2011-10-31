@@ -475,14 +475,14 @@ if [ $OPT_WUT -eq 1 ]; then
 	cd $SRC_PATH
 	echo
 	echo "Unit tests ..."
-	LOG=$LOG_PATH/unittest.log
-	chown $HUSER $LOG
-	launch_cmd "$PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG"
-	UTR=$?
-	if [ $UTR -ne 0 ]; then
+	LOG=$PREFIX/var/log/unittest.log
+	launch_cmd "$PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG" 0
+	EXCODE=$?
+	cp $LOG $SRC_PATH/log
+	if [ $EXCODE -ne 0 ]; then
 		cat $LOG
 	fi
-	check_code $UTR
+	check_code $EXCODE "Unit tests failed ..."
 	echo " + Ok"
 fi
 
