@@ -52,16 +52,28 @@ function detect_os(){
 
 function launch_cmd() {
 	MYCMD=$1
+	CHECK="x$2"
 	if [ "x$MYCMD" != "x" ]; then
 		if [ "x`id -un`" == "x$HUSER" ]; then
 			$MYCMD
-			check_code $? "Error in command '$MYCMD'..."
+			EXCODE=$?
+			if [ "$CHECK" == "x" ]; then
+				check_code $EXCODE "Error in command '$MYCMD'..."
+			else
+				return $EXCODE
+			fi
 		else
 			if [ `id -u` -eq 0 ]; then
 				su - $HUSER -c ". .bash_profile && $MYCMD"
-				check_code $? "Error in command '$MYCMD'..."
+				EXCODE=$?
+				if [ "$CHECK" == "x" ]; then
+					check_code $EXCODE "Error in command '$MYCMD'..."
+				else
+					return $EXCODE
+				fi
 			else
-				"Impossible to launch command with '`id -un`' ..."
+				echo "Impossible to launch command with '`id -un`' ..."
+				exit 1
 			fi
 		fi
 	fi
