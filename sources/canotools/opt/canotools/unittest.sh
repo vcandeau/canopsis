@@ -20,11 +20,11 @@ UNITTESTS=`find ./ | grep Myunittest.py`
 for UNITTEST in $UNITTESTS; do 
         echo "##### Proceed to $UNITTEST" 
         python $UNITTEST
-		EXCODE=$?
-		if [ $EXCODE -ne 0 ]; then 
-			hypcontrol stop
-	        check_code $EXCODE
-		fi
+	EXCODE=$?
+	if [ $EXCODE -ne 0 ]; then 
+		hypcontrol stop
+       		check_code $EXCODE
+	fi
         echo "#### END ####" 
         echo 
 done 
