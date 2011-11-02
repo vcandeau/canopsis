@@ -21,14 +21,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
         
         this.control({
 			////////////////Action for AccountGrid
-			'gridpanel': {
+			'#cgrid': {
 				itemdblclick: this._editRecord,
 				selectionchange: this._selectionchange
 			},
-			'gridpanel #addButton' : {
+			'#cgrid #addButton' : {
 				click: this._addButton
 			},
-			'gridpanel #deleteButton' : {
+			'#cgrid #deleteButton' : {
 				click: this._deleteButton
 			},
 			/////////////Action gor AccountForm (adding form)
