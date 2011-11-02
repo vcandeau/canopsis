@@ -27,7 +27,7 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
 	initComponent: function() {
 		log.debug('Init KPI '+this.id)
 		var me = this
-		log.debug(' - Id: '+ this._id)
+		log.debug(' - Id: '+ this.nodeId)
 
 		var border = 1
 		if (this.border == 0){
@@ -204,7 +204,7 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
 	refresh: function (){
 		//log.debug("Refresh "+this.id+" ...")
 		Ext.Ajax.request({
-			url: '/rest/inventory/event/'+this._id,
+			url: '/rest/inventory/event/'+this.nodeId,
 			scope: this,
 			success: function(response){
 				data = Ext.JSON.decode(response.responseText)
