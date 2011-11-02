@@ -61,10 +61,15 @@ Ext.define('canopsis.view.Config.View' ,{
 			}]
 	},{
 		title : 'preview',
-		xtype : 'ConfigPreview',
+		xtype : 'panel',
 		colspan : 2,
 		rowspan : 2,
 		height : 300,
+		layout : 'fit',
+		items : [{
+			xtype : 'ConfigPreview'
+			
+		}]
 	},{
 		xtype : 'TreeGrid',
 		//colspan : 1,
