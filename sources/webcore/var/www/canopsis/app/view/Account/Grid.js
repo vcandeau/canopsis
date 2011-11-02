@@ -1,7 +1,7 @@
 Ext.define('canopsis.view.Account.Grid' ,{
 	extend: 'canopsis.lib.view.cgrid',
 
-	id: 'AccountGrid',
+	//id: 'AccountGrid',
 	alias: 'widget.AccountGrid',
 
 	model: 'Account',
