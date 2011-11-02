@@ -36,34 +36,34 @@ sla.save()
 ## View (Dashboard)
 record1 = crecord({'_id': 'view.root.test' }, type='view', name='Test')
 
-record1.data['column'] =  5
-record1.data['hunit'] =  300
-record1.data['lines'] = []
+record1.data['nbColumn'] =  5
+record1.data['rowHeight'] =  300
+record1.data['items'] = []
 
-#record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'nagios.Central.check.service.olivier.HTTP', 'title': 'olivier - HTTP (HARD)', 'type': 'state', 'iconset': 'meteo2'})
-#record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': False, '_id': 'nagios.Central.check.service.olivier.HTTP', 'title': 'olivier - HTTP (SOFT)'})
-#record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'canopsis.Worker.check.selector.selector.root.all-hosts', 'title': 'All Hosts'})
-#record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'canopsis.Worker.check.selector.selector.root.all-services', 'title': 'All Services' })
-#record1.data['lines'].append({ 'xtype': 'kpi', 'refreshInterval': 10, '_id': 'canopsis.Worker.check.sla.sla.root.all-http-services', 'title': 'SLA - HTTP', 'type': 'speedometer', 'label': 'ok' })
-record1.data['lines'].append({ 'colspan': 5, 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'canopsis.sla2mongodb.check.selector.root.all-http-services', 'title': 'SLA - HTTP'})
-#record1.data['lines'].append({ 'colspan': 2, 'xtype': 'highcharts', 'type': 'pie', 'refreshInterval': 60, '_id': 'canopsis.Worker.check.sla.sla.root.all-http-services', 'title': 'SLA - HTTP' })
-#record1.data['lines'].append({ 'colspan': 5, 'xtype': 'graph', 'type': 'img', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load average' })
-record1.data['lines'].append({ 'colspan': 3, 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load Average' })
-record1.data['lines'].append({ 'colspan': 1, 'xtype': 'highcharts', 'type': 'pie', 'refreshInterval': 60, '_id': 'canopsis.sla2mongodb.check.selector.root.all-http-services', 'title': 'SLA - HTTP' })
-record1.data['lines'].append({ 'colspan': 1, 'xtype': 'kpi', 'refreshInterval': 10, '_id': 'canopsis.sla2mongodb.check.selector.root.all-http-services', 'title': 'SLA - HTTP', 'type': 'speedometer', 'label': 'ok' })
-record1.data['lines'].append({ 'colspan': 5, 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.check Mongo', 'title': 'MongoDB' })
-#record1.data['lines'].append({ 'colspan': 5, 'xtype': 'highcharts', 'type': 'stock', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load Average' })
+#record1.data['items'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'nagios.Central.check.service.olivier.HTTP', 'title': 'olivier - HTTP (HARD)', 'type': 'state', 'iconset': 'meteo2'})
+#record1.data['items'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': False, '_id': 'nagios.Central.check.service.olivier.HTTP', 'title': 'olivier - HTTP (SOFT)'})
+#record1.data['items'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'canopsis.Worker.check.selector.selector.root.all-hosts', 'title': 'All Hosts'})
+#record1.data['items'].append({ 'xtype': 'kpi', 'refreshInterval': 10, 'only_hard': True, '_id': 'canopsis.Worker.check.selector.selector.root.all-services', 'title': 'All Services' })
+#record1.data['items'].append({ 'xtype': 'kpi', 'refreshInterval': 10, '_id': 'canopsis.Worker.check.sla.sla.root.all-http-services', 'title': 'SLA - HTTP', 'type': 'speedometer', 'label': 'ok' })
+record1.data['items'].append({ 'colspan': 5, 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'canopsis.sla2mongodb.check.selector.root.all-http-services', 'title': 'SLA - HTTP'})
+#record1.data['items'].append({ 'colspan': 2, 'xtype': 'highcharts', 'type': 'pie', 'refreshInterval': 60, '_id': 'canopsis.Worker.check.sla.sla.root.all-http-services', 'title': 'SLA - HTTP' })
+#record1.data['items'].append({ 'colspan': 5, 'xtype': 'graph', 'type': 'img', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load average' })
+record1.data['items'].append({ 'colspan': 3, 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load Average' })
+record1.data['items'].append({ 'colspan': 1, 'xtype': 'highcharts', 'type': 'pie', 'refreshInterval': 60, '_id': 'canopsis.sla2mongodb.check.selector.root.all-http-services', 'title': 'SLA - HTTP' })
+record1.data['items'].append({ 'colspan': 1, 'xtype': 'kpi', 'refreshInterval': 10, '_id': 'canopsis.sla2mongodb.check.selector.root.all-http-services', 'title': 'SLA - HTTP', 'type': 'speedometer', 'label': 'ok' })
+record1.data['items'].append({ 'colspan': 5, 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.check Mongo', 'title': 'MongoDB', 'rowHeight': 400 })
+#record1.data['items'].append({ 'colspan': 5, 'xtype': 'highcharts', 'type': 'stock', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load Average' })
 
 storage.put(record1)
 
 ## View
 record1 = crecord({'_id': 'view.my_view' }, type='view', name='My View ...')
-record1.data['lines'] = [ { 'xtype': 'kpi', 'refreshInterval': 10, '_id': 'canopsis.Worker.check.selector.selector.root.all-services', 'title': 'All services', 'type': 'speedometer', 'label': 'ok' } ]
+record1.data['items'] = [ { 'xtype': 'kpi', 'refreshInterval': 60, '_id': 'canopsis.Worker.check.selector.selector.root.all-services', 'title': 'All services', 'type': 'speedometer', 'label': 'ok' } ]
 storage.put(record1)
 
 
 record1 = crecord({'_id': 'view.my_view2' }, type='view', name='My View ...')
-record1.data['lines'] = [{ 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load Average' }]
+record1.data['items'] = [{ 'xtype': 'highcharts', 'type': 'line', 'refreshInterval': 60, '_id': 'nagios.Central.check.service.william.Current Load 8', 'title': 'Load Average' }]
 storage.put(record1)
 
 

@@ -16,6 +16,7 @@ class crecord(object):
 		self.children = []
 		self.children_record = []
 		self._id = _id
+		self.enable = True
 
 		if account:
 			#self.account = account
@@ -48,6 +49,7 @@ class crecord(object):
 		self.name = str(dump['crecord_name'])
 		self.children = dump['children']
 		self.parent = dump['parent']
+		self.enable = dump['enable']
 
 		try:
 			self._id = dump['_id']
@@ -55,6 +57,7 @@ class crecord(object):
 		except:
 			self._id = None
 
+		del dump['enable']
 		del dump['aaa_owner']
 		del dump['aaa_group']
 		del dump['aaa_access_owner']
@@ -93,6 +96,7 @@ class crecord(object):
 		dump['crecord_type'] = self.type
 		dump['crecord_write_time'] = self.write_time
 		dump['crecord_name'] = self.name
+		dump['enable'] = self.enable
 	
 		dump['parent'] =  self.parent
 		dump['children'] =  self.children
@@ -261,6 +265,20 @@ class crecord(object):
 			return True
 		else:
 			return False
+
+
+	def is_enable(self):
+		return self.enable
+	
+	def set_enable(self, autosave=True):
+		self.enable = True
+		if autosave:
+			self.save()
+
+	def set_disable(self, autosave=True):
+		self.enable = False
+		if autosave:
+			self.save()
 
 def access_to_str(access):
 	output = ''
