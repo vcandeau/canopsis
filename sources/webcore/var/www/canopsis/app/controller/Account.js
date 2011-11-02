@@ -8,22 +8,32 @@ Ext.define('canopsis.controller.Account', {
 	iconCls: 'icon-crecord_type-account',
 
 	init: function() {
-		console.log('[account] - Initialize ...');
+		console.log('['+this.id+'] - Initialize ...');
 
-		this.form = 'AccountForm'
-		this.model = 'Account'
+		this.formXtype = 'AccountForm'
+		this.listXtype = 'AccountGrid'
+
+		this.modelId = 'Account'
 
 		this.callParent(arguments);
+	},
+
+	beforeload_EditForm: function(form){
+		var user_textfield = Ext.ComponentQuery.query("#" + form.id + " textfield[name=user]")[0]
+		if (user_textfield){
+			user_textfield.hide()
+		}
 	},
 
 	validateForm: function(store, data, form){
 		var already_exist = false;
 
+		// in creation mode
 		if (! form._record) {
 			store.findBy(
 				function(record, id){
 					if(record.get('user') == data['user']){
-						console.log('[account][validateForm] -  User already exist');
+						console.log('['+this.id+'][validateForm] -  User already exist');
 						already_exist = true;  // a record with this data exists
 					}
 				}
