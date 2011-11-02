@@ -1,7 +1,7 @@
 Ext.define('canopsis.lib.view.cgrid' ,{
 	extend: 'Ext.grid.Panel',
 
-	id: 'cgrid',
+	controllerId: 'cgrid',
 
 	requires: [
 		'Ext.grid.plugin.CellEditing',
@@ -20,16 +20,19 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	tbar: [ {
                     iconCls: 'icon-add',
                     text: 'Add user',
-                    itemId: 'addButton',
+                    action: 'add',
                 },{
+                    iconCls: 'icon-reload',
+                    text: 'Reload',
+                    action: 'reload',
+                },'-',{
                     iconCls: 'icon-delete',
                     text: 'Delete',
 		    disabled: true,
-                    itemId: 'deleteButton',
+                    action: 'delete',
                 }],
  
 	initComponent: function() {
-		console.log('[view][cgrid] - Initialize ...');
 		this.callParent(arguments);
 	}
 
