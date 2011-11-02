@@ -50,23 +50,28 @@ Ext.define('canopsis.view.Tabs.Content' ,{
     },
 
     setContent: function(){
-		var nb_column = this.view.column
-		var lines = this.view.lines
-		var hunit = this.view.hunit
+		
+		var items = this.view.items
 		var totalWidth = this.getWidth() - 20
+		
+		//General options
+		var _id = this.view._id
+		var refreshInterval = this.view.refreshInterval
+		var nbColumn = this.view.nbColumn
+		var rowHeight = this.view.rowHeight
 
-		if (! hunit) { hunit = 200 }
-		if (! nb_column) { nb_column = 1 }
+		if (! rowHeight) { rowHeight = 200 }
+		if (! refreshInterval) { refreshInterval = 300 }
+		if (! nbColumn) { nbColumn = 1 }
 
-		//this.layout.tdAttrs.width = 100/nb_column + '%'
-		this.layout.columns = nb_column
+		this.layout.columns = nbColumn
 
-		log.debug('Create '+nb_column+' column(s)..')
+		log.debug('Create '+nbColumn+' column(s)..')
 
-		if (lines.length == 1 && nb_column == 1) {
+		if (items.length == 1 && nbColumn == 1) {
 			log.debug(' + Use full mode ...')
 			this.layout = 'fit'
-			item = lines[0]
+			item = items[0]
 			//item['height'] = '10'
 			item['width'] = '100%'
 			item['title'] = ''
@@ -75,31 +80,37 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//item['baseCls'] = 'x-plain'
 			item['mytab'] = this
 
+			//Set default options
+			if (! item._id) { item._id=_id}
+			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
+
 			this.add(item)
 		}else{
 
 			this.removeAll();
 	
 			var ext_items = []
-			for(var i= 0; i < lines.length; i++) {
+			for(var i= 0; i < items.length; i++) {
 				log.debug(' - Item '+i+':')
-				var item = lines[i]
+				var item = items[i]
 
 				item['mytab'] = this
 
 				var colspan = 1
 				var rowspan = 1
-				var height = hunit
 
-				if (item['height'])  { height = item['height'] }
 				if (item['colspan']) { colspan = item['colspan'] }
 				if (item['rowspan']) { rowspan = item['rowspan'] }
 				
-				item['height'] = height
-				item['width'] = ((100/nb_column) * colspan)/100 * totalWidth
+				item['width'] = ((100/nbColumn) * colspan)/100 * totalWidth
 				item['border'] = false
 				item['style'] = []
 				item['style']['padding'] = '3px'
+
+				//Set default options
+				if (! item._id) { item._id=_id}
+				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
+				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 
 				this.add(item)
 	
