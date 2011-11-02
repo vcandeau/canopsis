@@ -22,7 +22,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Data corruption ...')
 
 	def test_02_InitFromRaw(self):
-		raw = {'parent': [], 'children': [], 'crecord_name': 'titi', 'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None}
+		raw = {'parent': [], 'children': [], 'crecord_name': 'titi', 'aaa_access_group': ['r'], 'aaa_access_owner': ['r', 'w'], 'aaa_group': None, 'aaa_access_unauth': [], 'aaa_owner': None, 'aaa_access_other': [], 'mydata1': 'data1', 'mydata3': 'data3', 'mydata2': 'data2', 'crecord_type': 'raw', 'crecord_write_time': None, 'enable': True}
 
 		record = crecord(raw_record=raw)
 
@@ -89,6 +89,17 @@ class KnownValues(unittest.TestCase):
 			
 		if record1.is_parent(record3):
 			raise Exception('Invalid children supression ...')
+
+	def test_07_enable(self):
+		record = crecord(self.data)
+
+		record.set_enable()
+		if not record.is_enable():
+			raise Exception('Impossible to enable ...')
+
+		record.set_disable()
+		if record.is_enable():
+			raise Exception('Impossible to disable ...')
 		
 if __name__ == "__main__":
 	unittest.main(verbosity=1)
