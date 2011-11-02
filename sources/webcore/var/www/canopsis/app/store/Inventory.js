@@ -14,7 +14,7 @@ Ext.define('canopsis.store.Inventory', {
 	//autoLoad: true,
 	storeId: 'store.Inventory',
 	
-/*	
+
 	proxy: {
 		type: 'rest',
 		url: '/rest/inventory',
@@ -25,8 +25,8 @@ Ext.define('canopsis.store.Inventory', {
 			successProperty: 'success'
 		},
 	}
-*/
 
+/*
 	proxy: {
 			type: 'memory',
 			reader: {
@@ -40,6 +40,6 @@ Ext.define('canopsis.store.Inventory', {
         { "_id": "id_super_longue2",  "host_name": "computer2","source_name" : "two", "source_type": "check" },
 
     ]},
-	
+	*/
 	
 });

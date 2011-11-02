@@ -68,7 +68,7 @@ Ext.define('canopsis.controller.Config', {
 	},
 	
 	setID : function(record, item, esp, index){
-		
+		console.log('ID selected')
 	},
 	
 	closeTab : function(button) {
