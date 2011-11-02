@@ -36,7 +36,6 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 					console.log('button');
 					win = Ext.widget('window', {
 						title: 'Live search',
-						closeAction: 'hide',
 						width: 500,
 						height: 400,
 						minHeight: 400,
