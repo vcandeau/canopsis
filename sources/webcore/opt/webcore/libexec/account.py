@@ -135,7 +135,7 @@ def account_put():
 	new_account.passwd(str(data['passwd']))
 	logger.debug('putting account in db ...')
 	try:
-		storage.put(new_account)
+		storage.put(new_account, account=account)
 		logger.debug('account added in db')
 	except:
 		logger.debug('WARNING : failed to added account in db')
