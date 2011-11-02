@@ -31,6 +31,9 @@ class csla(cselector):
 		self.sla_pct = {'unknown': 0, 'warning': 0, 'ok': 100.0, 'critical': 0}
 		self.cb_on_state_change = cb_on_state_change
 
+		self.state = 0
+		self.state_type = 1
+
 		## Init
 		cselector.__init__(self, type='sla', *args, **kargs)
 
@@ -287,6 +290,6 @@ class csla(cselector):
 
 		perf_data = ok + " " + warn + " " + crit + " " + unkn
 
-		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
+		dump = make_event(service_description=self.name, source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
 
 		return dump

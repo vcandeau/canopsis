@@ -30,10 +30,7 @@ class cselector(crecord_ng):
 		self.cache_time = 60
 		self.last_resolv_time = 0
 		self.last_nb_records = 0
-		self.threshold_warn = 98
-		self.threshold_crit = 95
-		self.state = 0
-		self.state_type = 1
+
 		self._ids = []
 		
 		## Init
@@ -110,101 +107,6 @@ class cselector(crecord_ng):
 
 		return False
 
-	def get_current_availability(self):
-
-		## Use cache
-		cid = self._id+".current_availability"
-		#availability = self.cache.get(cid, 10)
-		#if availability:
-		#	self.logger.debug(" + From cache.")
-		#	return (availability, calcul_pct(availability))
-
-		## Caclul
-		self.resolv()
-		
-		mfilter = self.mfilter
-
-		from bson.code import Code
-	
-		mmap = Code("function () {"
-		"	var state = this.state;"
-		"	if (this.state_type == 0) {"
-		"		state = this.previous_state"
-		"	}"
-		"	if (this.source_type == 'host'){"
-		"		if (state == 0){ emit('ok', 1) }"
-		"		else if (state == 1){ emit('critical', 1) }"
-		"		else if (state == 2){ emit('unknown', 1) }"
-		"		else if (state == 3){ emit('unknown', 1) }"
-		"	}"
-		"	else if (this.source_type == 'service'){"
-		"		if (state == 0){ emit('ok', 1) }"
-		"		else if (state == 1){ emit('warning', 1) }"
-		"		else if (state == 2){ emit('critical', 1) }"
-		"		else if (state == 3){ emit('unknown', 1) }"
-		"	}"
-		"}")
-
-		mreduce = Code("function (key, values) {"
-		"  var total = 0;"
-		"  for (var i = 0; i < values.length; i++) {"
-		"    total += values[i];"
-		"  }"
-		"  return total;"
-		"}")
-
-
-
-		availability = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
-		availability_pct = calcul_pct(availability)
-
-		## Put in cache
-		#self.cache.put(cid, availability)
-
-		## Check
-		self.availability = availability
-		self.availability_pct = availability_pct
-
-		#self.logger.debug(" + Availabilityt:\t\t%s" % availability)
-		#self.logger.debug(" + Availability pct:\t%s" % availability_pct)
-
-		self.check(autosave=False)
-		self.save()
-
-		return (availability, availability_pct)
-
-	def check(self, autosave=True):
-		
-		result = self.availability_pct
-
-		state = 0
-		
-		if result['ok'] < self.threshold_warn:
-			state = 1
-
-		if result['ok'] < self.threshold_crit:
-			state = 2
-
-		if self.state != state:
-			self.state = state
-			if autosave:
-				self.save()
-
-		return state
-
-	def make_event(self):
-
-		#'label'=value[UOM];[warn];[crit];[min];[max]
-		ok = "'ok'=%s%%;%s;%s;0;100" % (self.availability_pct['ok'], self.threshold_warn, self.threshold_crit)
-		warn = "'warn'=%s%%;0;0;0;100" % (self.availability_pct['warning'])
-		crit = "'crit'=%s%%;0;0;0;100" % (self.availability_pct['critical'])
-		unkn = "'unkn'=%s%%;0;0;0;100" % (self.availability_pct['unknown'])
-
-		perf_data = ok + " " + warn + " " + crit + " " + unkn
-
-		dump = make_event(service_description=self.name, source_name='sla2mongodb', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
-
-		return dump
 
 #	def cat(self):
 #		print "Id:\t\t\t", self._id
