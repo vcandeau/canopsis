@@ -53,9 +53,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		var items = this.view.items
 		var totalWidth = this.getWidth() - 20
-		
+		nodeId
 		//General options
-		var _id = this.view._id
+		var nodeId = this.view.nodeId
 		var refreshInterval = this.view.refreshInterval
 		var nbColumn = this.view.nbColumn
 		var rowHeight = this.view.rowHeight
@@ -81,7 +81,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			item['mytab'] = this
 
 			//Set default options
-			if (! item._id) { item._id=_id}
+			if (! item.nodeId) { item.nodeId=nodeId}
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 
 			this.add(item)
@@ -108,7 +108,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				item['style']['padding'] = '3px'
 
 				//Set default options
-				if (! item._id) { item._id=_id}
+				if (! item.nodeId) { item.nodeId=nodeId}
 				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 

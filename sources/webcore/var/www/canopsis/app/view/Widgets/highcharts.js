@@ -38,7 +38,7 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 
 	initComponent: function() {
 		log.debug('Init Graph '+this.id)
-		log.debug(' + Id: '+ this._id)
+		log.debug(' + Id: '+ this.nodeId)
 
 		if (this.title){
 			this.chart_title = this.title
@@ -57,7 +57,7 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 	get_config: function(){
 		log.debug(" + Get config "+this.id+" ...")
 		Ext.Ajax.request({
-			url: '/rest/perfdata/raw/'+this._id,
+			url: '/rest/perfdata/raw/'+this.nodeId,
 			scope: this,
 			success: function(response){
 				data = Ext.JSON.decode(response.responseText)
@@ -280,9 +280,9 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 		//log.debug(" + Refresh metric "+metric+" ...")
 
 		if (this.type == 'pie'){
-			var url = '/rest/inventory/event/'+this._id
+			var url = '/rest/inventory/event/'+this.nodeId
 		}else{
-			var url = '/perfstore/'+this._id+'/'+metric
+			var url = '/perfstore/'+this.nodeId+'/'+metric
 			if (this.start[metric]){
 				// only last values
 				url = url + '/' + (this.start[metric]+1000)
