@@ -63,8 +63,11 @@ Ext.define('canopsis.controller.Config', {
 				itemdblclick : this.setID
 			}
 		
-			
 		});
+	},
+	
+	createPreview : function() {
+		console.log('creating preview')
 	},
 	
 	setID : function(record, item, esp, index){
@@ -100,29 +103,27 @@ Ext.define('canopsis.controller.Config', {
 		{
 			this.getOrdering().getStore().getRootNode().removeChild(selection);
 		}
+		this.createPreview();
 	},
 	
 	clearAll : function(){
 		console.log('clicked on clear all');
 		this.getOrdering().getStore().getRootNode().removeAll();
+		this.createPreview();
 	},
 	
 	addToTree : function(record, item, index){
 		console.log('clicked on tree item')
 		if (item) {			
-			//console.log(item)
 			var TreeRootNode = this.getOrdering().getRootNode();
-			//console.log('Tree root : ')
-			//console.log(TreeRootNode);
 			//need to copy record, else it disapear from the first tree
-			//console.log(item.data)
-			//console.log(item)
 			copy = Ext.ClassManager.instantiate('canopsis.model.widget',item.data);
 			//console.log(copy)
 			TreeRootNode.appendChild(copy);	
 		} else {
 			console.log('no record selected');
 		}
+		this.createPreview();
 	},
 	
 	configureItem : function(record, item, esp, index) {
