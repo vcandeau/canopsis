@@ -7,10 +7,25 @@ Ext.define('canopsis.view.Config.View' ,{
 	id : 'ConfigView',
 	
 	layout: {
-            type: 'column',
-            align: 'stretch'
-        },
+        type: 'table',
+        columns: 3,
         
+    },
+    
+    //border:false,
+    
+    defaults: {
+		width:400, 
+		height: 150,
+		padding:4,
+		//margin:2
+		},
+    
+/*    defaults: {
+        // applied to each contained panel
+        bodyStyle: 'padding:20px'
+    },
+   
     tbar: [{
 		xtype: 'textfield',
 		name: "view's name",
@@ -26,16 +41,42 @@ Ext.define('canopsis.view.Config.View' ,{
 		//itemId: 'saveView',
 		action : 'save'
 	}],
-	
+*/
+
 	items : [{
+		xtype: 'form',
+		//colspan : 1,
+		//rowspan : 1,
+		defaultType: 'textfield',
+		items : [{
+				fieldLabel: 'view\'s name',
+				name: 'name',
+				allowBlank: false,
+			},{
+				fieldLabel: 'refresh interval',
+				name: 'rinterval',
+			}, {
+				fieldLabel: 'nb column',
+				name: 'column',
+			}]
+	},{
+		title : 'preview',
+		xtype : 'ConfigPreview',
+		colspan : 2,
+		rowspan : 2,
+		height : 300,
+	},{
 		xtype : 'TreeGrid',
-		height: '100%',
-        width: '20%'
+		//colspan : 1,
+		//rowspan : 1
 	},{
 		xtype : 'TreeOrdering',
-		height: '100%',
-        width: '80%'
-	}],
+		colspan : 3,
+		width : 800,
+		height : 200,
+		rowspan : 2
+	}
+	],
 	
 	initComponent: function() {
 		this.callParent(arguments);
