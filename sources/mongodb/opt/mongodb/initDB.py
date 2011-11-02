@@ -40,17 +40,17 @@ storage.put([account1, account2])
 ### Default Dasboard
 record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
 record1.chmod('o+r')
-record1.data['lines'] = [ { 'xtype': 'panel', 'html': 'Welcome to Canopsis !'} ]
+record1.data['items'] = [ { 'xtype': 'panel', 'html': 'Welcome to Canopsis !'} ]
 storage.put(record1)
 
 ### Account
 record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
-record1.data['lines'] = [ { 'xtype': 'AccountGrid'} ]
+record1.data['items'] = [ { 'xtype': 'AccountGrid'} ]
 storage.put(record1)
 
 ### Views
 record1 = crecord({'_id': 'view.config_editor' }, type='view', name='Views')
-record1.data['lines'] = [ { 'xtype': 'ViewEditor'} ]
+record1.data['items'] = [ { 'xtype': 'ViewEditor'} ]
 record1.chmod('o+r')
 storage.put(record1)
 
