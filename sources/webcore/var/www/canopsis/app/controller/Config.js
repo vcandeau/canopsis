@@ -56,13 +56,13 @@ Ext.define('canopsis.controller.Config', {
 			/*
 			'ConfigForm' : {
 				close : this.closeTab
-			}
-			/*
+			}*/
+		
 			////buttons from the livesearch form
 			'LiveSearch Grid' : {
 				itemdblclick : this.setID
 			}
-			*/
+		
 			
 		});
 	},
