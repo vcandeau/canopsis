@@ -1,68 +1,89 @@
 Ext.define('canopsis.lib.controller.cgrid', {
 	extend: 'Ext.app.Controller',
-  	
-	refs: [
-		{
-			ref: 'deleteButton',
-			selector: '#deleteButton'
-		},
-		{
-			ref: 'grid',
-			selector: 'gridpanel'
-		},
-		{
-			ref: 'form',
-			selector: 'form'
-		}
-	],
 
-    init: function() {
-        console.log('[controller][cgrid] - Initialize ...');
-        
-        this.control({
-			////////////////Action for AccountGrid
-			'#cgrid': {
-				itemdblclick: this._editRecord,
-				selectionchange: this._selectionchange
-			},
-			'#cgrid #addButton' : {
-				click: this._addButton
-			},
-			'#cgrid #deleteButton' : {
-				click: this._deleteButton
-			},
-			/////////////Action gor AccountForm (adding form)
-			'form #saveForm': {
-				click: this._saveForm
-			},
-			'form #cancelForm': {
-				click: this._cancelForm
-			},
-			///////////Action for AccountFormEdit (updating form)
-			'form #saveForm': {
-				click: this._saveForm
-			},
-			'form #cancelForm': {
-				click: this._cancelForm
-			},
-			
-		});
+	init: function() {
+		log.debug('[controller][cgrid] - Initialize ...');
+
+		this.query_grid = this.listXtype
+
+		var control = {}
+		control[this.query_grid] = {
+		                render: this._bindGridEvents
+		}
+		this.control(control);
+
+		this.callParent(arguments);
+
 	},
    
-	_selectionchange: function(view, records){
-		console.log('[controller][cgrid] - selectionchange');
+	_bindGridEvents: function(grid) {
+		var id = grid.id
+		log.debug('[controller][cgrid] - Bind events "'+id+'" ...')
+
+		grid.on('selectionchange',	function (view, records){	this._selectionchange(grid, view, records)}, this)
+		grid.on('itemdblclick', 	this._editRecord, this)
+
+		// Add buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]')
+		for (i in btns){
+			btns[i].on('click', this._addButton, this)
+		}
+
+		// Delete buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=delete]')
+		for (i in btns){
+			btns[i].on('click', this._deleteButton, this)
+		}
+
+		// Reload buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]')
+		for (i in btns){
+			btns[i].on('click', function (){this._reloadButton(grid)}, this)
+		}
+
+		this._reloadButton(grid)
+		
+	},
+
+	_bindFormEvents: function(form) {
+		var id = form.id
+		log.debug('[controller][cgrid][form] - Bind events on "'+id+'" ...')
+
+		// Save buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]')
+		for (i in btns){
+			btns[i].on('click', function(){ this._saveForm(form) }, this)
+		}
+
+		// Cancel buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]')
+		for (i in btns){
+			btns[i].on('click', function(){ this._cancelForm(form) }, this)
+		}
+	},
+
+	_reloadButton: function(grid) {
+		log.debug('[controller][cgrid] - Reload store');
+		grid.store.load()
+	},
+
+	_selectionchange: function(grid, view, records){
+		log.debug('[controller][cgrid] - selectionchange');
 
 		//Enable delete Button
-		this.getDeleteButton().setDisabled(records.length === 0);
+		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]')
+		for (i in btns){
+			btns[i].setDisabled(records.length === 0);
+		}
 
 		if (this.selectionchange) {
-			this.selectionchange(view, records)
+			this.selectionchange(grid, view, records)
 		}
 	}, 
 
 	_deleteButton: function(button) {
-		console.log('[controller][cgrid] - clicked deleteButton');
-		var grid = this.getGrid();
+		log.debug('[controller][cgrid] - clicked deleteButton');
+		var grid = Ext.ComponentQuery.query(this.query_grid)[0]
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
@@ -76,23 +97,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_addButton: function(button) {
-		console.log('[controller][cgrid] - clicked addButton');
+		log.debug('[controller][cgrid] - clicked addButton');
 
-		if (this.form) {
+		if (this.formXtype) {
 			var main_tabs = Ext.getCmp('main-tabs')
-			var id = this.form +'.tab'
-			var tab = Ext.getCmp(id);
-			if (tab) {
-				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
-				main_tabs.setActiveTab(tab);
-			}else{
-				log.debug("[controller][cgrid] - Create tab '"+id+"'")
-				main_tabs.add({
-					title: '* New '+this.model,
-					xtype: this.form,
-					id: id,
-					closable: true,}).show();
-			}
+
+			log.debug("[controller][cgrid] - Create tab '"+id+"'")
+			var form = main_tabs.add({
+				title: '* New '+this.modelId,
+				xtype: this.formXtype,
+				closable: true,}).show();
+
+			this._bindFormEvents(form)
+				
 		}
 		
 
@@ -102,35 +119,35 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		
 	},
 	
-	_saveForm: function(button) {
-		console.log('[controller][cgrid][form] - clicked saveForm');
-		var form = this.getForm().form;
-		var store = this.getGrid().store;
+	_saveForm: function(form) {
+		log.debug('[controller][cgrid][form] - clicked saveForm');
 
-		if (form.isValid()){
+		var store = Ext.ComponentQuery.query(this.query_grid)[0].store;
+
+		if (form.form.isValid()){
 			var data = form.getValues();
-			if (this._validateForm(store, data, form)) {
-				console.log('[controller][cgrid][form] - Form is conform');
-				var record = Ext.create('canopsis.model.'+this.model, data);
-				console.log('[controller][cgrid][form] - Store record in store');
+			if (this._validateForm(store, data, form.form)) {
+				log.debug('[controller][cgrid][form] - Form is conform');
+				var record = Ext.create('canopsis.model.'+this.modelId, data);
+				log.debug('[controller][cgrid][form] - Store record in store');
 				this._preSave(record)
 				store.add(record);
 				this._postSave(record)
-				console.log('[controller][cgrid][form] - Reload store');
+				log.debug('[controller][cgrid][form] - Reload store');
 				store.load();
 
-				this._cancelForm();
+				this._cancelForm(form);
 
 
 			}else{
-				console.log('[controller][cgrid][form] - Form is not valid !');
+				log.debug('[controller][cgrid][form] - Form is not valid !');
 			}
 		}else{
-			console.log('[controller][cgrid][form] - Form is not valid !');
+			log.debug('[controller][cgrid][form] - Form is not valid !');
 		}
 
 		if (this.saveForm) {
-			this.saveForm(button)
+			this.saveForm(form)
 		}
 			
 	},
@@ -144,7 +161,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_preSave: function(record){
-		console.log('[controller][cgrid][form] - Pre-Save');
+		log.debug('[controller][cgrid][form] - Pre-Save');
 		if (this.preSave){
 			return this.preSave(record)
 		}else{
@@ -153,7 +170,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_postSave: function(record){
-		console.log('[controller][cgrid][form] - Post-Save');
+		log.debug('[controller][cgrid][form] - Post-Save');
 		if (this.postSave){
 			return this.postSave(record)
 		}else{
@@ -161,41 +178,49 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-	_cancelForm : function(button) {
-		console.log('[controller][cgrid][form] - clicked cancelForm');
-		if (this.form) {
-			var id = this.getForm().form.id
-			console.log("[controller][cgrid][form] - Close '"+id+"'");
-			var tab = Ext.getCmp(id);
-			if (tab) {
-				tab.close()
-			}
+	_cancelForm : function(form) {
+		log.debug('[controller][cgrid][form] - clicked cancelForm');
+		if (this.formXtype) {
+			var id = form.id
+			log.debug("[controller][cgrid][form] - Close '"+id+"'");
+			form.close()
 		}
 
 		if (this.cancelForm) {
-			this.cancelForm(button)
+			this.cancelForm(form)
 		}
 	},
 
 	_editRecord: function(view, item, index) {
-		console.log('[controller][cgrid][form] - clicked editRecord');
+		log.debug('[controller][cgrid] - clicked editRecord');
 
-		if (this.form) {
+		if (this.formXtype) {
 			var main_tabs = Ext.getCmp('main-tabs')
-			var id = this.form + '.' + item.internalId + '.tab'
+			var id = this.formXtype + '-' + item.internalId.replace('.','-') + '-tab'
 			var tab = Ext.getCmp(id);
 			if (tab) {
 				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
-				maintabs.setActiveTab(tab);
+				main_tabs.setActiveTab(tab);
 			}else{
 				log.debug("[controller][cgrid] - Create tab '"+id+"'")
-				main_tabs.add({
+				var form = main_tabs.add({
 					title: 'Edit '+item.raw.crecord_name,
-					xtype: this.form,
+					xtype: this.formXtype,
 					id: id,
 					closable: true,}).show();
+				
 
-				this.getForm().form.loadRecord(item);
+				if (this.beforeload_EditForm) {
+					this.beforeload_EditForm(form)
+				}
+
+				form.loadRecord(item);
+
+				if (this.afterload_EditForm) {
+					this.afterload_EditForm(form)
+				}
+
+				this._bindFormEvents(form)
 
 			}
 		}	
