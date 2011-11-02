@@ -12,7 +12,8 @@ import json
 from cstorage import cstorage
 from crecord import crecord
 from caccount import caccount
-from cselector import cselector
+
+from cavailability import cavailability
 from csla import csla
 
 from twisted.internet import reactor, task
@@ -55,21 +56,21 @@ def signal_handler(signum, frame):
 
 def calcul_all_availability():
 	
-	logger.debug("Refresh Selector list ...")
+	logger.debug("Refresh 'Availability' list ...")
 	SELS = []
-	records = storage.find({'crecord_type': 'selector'})
+	records = storage.find({'crecord_type': 'availability'})
 	for record in records:
-		selector = cselector(storage=storage, record=record, logging_level=logging.DEBUG)
-		SELS.append(selector)
+		availability = cavailability(storage=storage, record=record, logging_level=logging.DEBUG)
+		SELS.append(availability)
 
 
-	logger.debug("Launch calculs on all Selector")
-	for sel in SELS:
-		logger.debug(" + Calcul availability for "+sel.name)
-		sel.get_current_availability()
+	logger.debug("Launch calculs on all 'Availability'")
+	for availability in SELS:
+		logger.debug(" + Calcul availability for "+availability.name)
+		availability.get_current_availability()
 
-		# Publish selector event
-		event = sel.make_event()
+		# Publish availability event
+		event = availability.make_event()
 		msg = Content(json.dumps(event))
 		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
 
