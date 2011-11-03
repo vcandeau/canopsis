@@ -82,8 +82,8 @@ Ext.define('canopsis.controller.Config', {
 		
 		
 		//get number of column
-		if (global_opt.down('#nbcolumn').getValue()){
-			var nbColumn = global_opt.down('#nbcolumn').getValue();
+		if (global_opt.down('#column').getValue()){
+			var nbColumn = global_opt.down('#column').getValue();
 			console.log('column defined');
 		} else {
 			var nbColumn = 5;
