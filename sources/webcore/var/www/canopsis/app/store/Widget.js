@@ -3,13 +3,14 @@ Ext.define('canopsis.store.Widget', {
     model: 'canopsis.model.Widget',
 
 	fields: [
-	{name : 'xtype'},
-	{name : 'leaf'},
-	{name : 'colspan'},
-	{name : 'type'},
-	{name : 'refreshInterval'},
-	{name : '_id'},
-	{name : 'title'}
+		{name : 'xtype'},
+		{name : 'leaf'},
+		{name : 'colspan'},
+		{name : 'rowspan'},
+		{name : 'type'},
+		{name : 'refreshInterval'},
+		{name : 'nodeId'},
+		{name : 'title'}
 	],
 
 	autoLoad: true,

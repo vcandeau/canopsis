@@ -23,12 +23,15 @@ Ext.define('canopsis.view.Config.ConfigForm', {
 				name: 'title',
 				allowBlank: false,
 			},{
-				fieldLabel: 'length',
+				fieldLabel: 'colspan',
 				name: 'colspan',
+			},{
+				fieldLabel: 'rowspan',
+				name: 'rowspan',
 			}, {
 				//xtype: 'displayfield',
-				fieldLabel: '_id',
-				name: '_id',
+				fieldLabel: 'nodeId',
+				name: 'nodeId',
 			},{
 				xtype : 'button',
 				text : 'Search',

@@ -53,8 +53,8 @@ Ext.define('canopsis.controller.ViewEditor', {
 					id: myName,
 					closable: true,}).show();
 				//Ext.getCmp(myName).getForm().loadRecord(item);
-				console.log(item.data.lines)
-				widgets = item.data.lines;
+				console.log(item.data.items)
+				widgets = item.data.items;
 				for (i in widgets){
 					//console.log(widgets[i])
 					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
@@ -62,7 +62,9 @@ Ext.define('canopsis.controller.ViewEditor', {
 					//console.log(copy)
 					Ext.getCmp(myName).down('TreeOrdering').getStore().getRootNode().appendChild(copy);
 				}
-				Ext.getCmp(myName).down('textfield').setValue(item.get('name'))
+				Ext.getCmp(myName).down('#name').setValue(item.get('name'))
+				//create preview
+				this.getController('canopsis.controller.Config').createPreview();
 			} else {
 				console.log('tab already created');
 			}
@@ -88,8 +90,16 @@ Ext.define('canopsis.controller.ViewEditor', {
 	deleteButton: function() {
 		var store = this.getTree().getStore();
 		console.log('viewEdit : delete a view');
+		
+		var selection = this.getTree().getSelectionModel().getSelection();
+		if (selection) {
+			log.debug("ViewEditor : Remove record ")
+			store.remove(selection);
+		}
+		
+		//for tree
+		/*
 		var selectedNode = this.getTree().getSelectionModel().getSelection();
-
 		if (selectedNode)
 		{
 			for (i in selectedNode){
@@ -105,7 +115,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 					console.log('don\'t removed');
 				}
 				store.sync();
-				*/
+				
 				
 				//this solve temporary the problem
 				Ext.Ajax.request({
@@ -114,7 +124,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 				});
 
 			}
-		}
+		}*/
 		
 		store.load();
 		Ext.data.StoreManager.lookup('Menu').load();	
@@ -126,21 +136,26 @@ Ext.define('canopsis.controller.ViewEditor', {
 	
 	saveView : function(button){
 		var view = this.getTree()
-		var store = view.store;
+		var store = view.getStore();
 		var store_source = this.getTreeOrder().store;
 		
 		console.log('clicked on save view');
-		var name = button.up('ConfigView').down('textfield');
-		console.log('the name')
+		var name = button.up('ConfigView').down('#name');
+		var column = button.up('ConfigView').down('#nbcolumn');
+		var refreshInterval = button.up('ConfigView').down('#refreshInterval');
+		var nodeId = button.up('ConfigView').down('#nodeId')
+		console.log('the name and column');
 		console.log(name.value);
+		console.log(column.value);
+		console.log(refreshInterval.value);
 		
-		//TODO : Better way to fix that
 		var record = Ext.create('canopsis.model.view');
 		record.set('name', name.value);
-		record.set('hunit', '200');
-		record.set('column', '5');
-		record.set('leaf',true);
-		
+		record.set('column', column.value);
+		record.set('refreshInterval',refreshInterval.value);
+		record.set('nodeId', nodeId.value);
+		//record.set('leaf',true);
+	
 		//get all node and stock them in an object
 		var temptab = [];
 		
@@ -148,23 +163,25 @@ Ext.define('canopsis.controller.ViewEditor', {
 			temptab.push(node.data);
 		});	
 		
-		record.set('lines', temptab);
+		record.set('items', temptab);
 		//console.log('the record');
 		//console.log(record);
-		if((!this.validateView(store,record)) || (!Ext.getCmp('ConfigView')))
+		if((!this.validateView(store,record, name)) || (!Ext.getCmp('ConfigView')))
 		{
 			//this is UNSTABLE and can ERASE all the tree (and your database)
 			//store.getRootNode().appendChild(record);
-			//store.sync();
-			//store.load();
+			store.add(record)
+			store.sync();
+			store.load();
+			console.log(record)
 			
-			//this solv the problem
+		/*	//this solv the problem
 			Ext.Ajax.request({
 				url: '/ui/views',
 				params: Ext.JSON.encode(record.data),
 				method: 'POST',
 			});
-			store.load();
+			store.load();*/
 			//reloading menu tree
 			Ext.data.StoreManager.lookup('Menu').load();
 			//destroy Config view and get back on viewEditor
@@ -181,12 +198,37 @@ Ext.define('canopsis.controller.ViewEditor', {
 		}
 	},
 	
-	validateView : function(store, record){
+	validateView : function(store, record, name){
 		var already_exist = false;
-		if(store.getRootNode().findChild('name', record.get('name')) != null){
+		//for grid
+		store.findBy(
+			function(record, id){
+				console.log('validate name');
+				console.log(record.get('name'));
+				console.log(name.value);
+				if(record.get('name') == name.value){
+					console.log('Vieweditor : view already exist');
+					already_exist = true;  // a record with this data exists
+				}
+			}
+		);
+
+		if (already_exist){
+			Ext.MessageBox.show({
+				title: data['user'] + ' already exist !',
+				msg: 'you can\'t add the same user twice',
+				icon: Ext.MessageBox.WARNING,
+  				buttons: Ext.Msg.OK
+			});
+			return true
+		}else{
+			return false
+		}	
+		//for trees
+	/*	if(store.getRootNode().findChild('name', record.get('name')) != null){
 			already_exist = true;
 		}
-		return already_exist;
+		return already_exist; */
 	}
 	
 });

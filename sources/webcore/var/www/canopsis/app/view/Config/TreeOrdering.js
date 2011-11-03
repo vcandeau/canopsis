@@ -53,9 +53,13 @@ Ext.define('canopsis.view.Config.TreeOrdering' ,{
 		flex: 1,
 		dataIndex: 'colspan',
 	},{
-		text: '_id',
+		text: 'height',
 		flex: 1,
-		dataIndex: '_id',
+		dataIndex: 'rowspan',
+	},{
+		text: 'nodeId',
+		flex: 1,
+		dataIndex: 'nodeId',
 	},{
 		text: 'refresh interval',
 		flex: 1,

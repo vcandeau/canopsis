@@ -7,16 +7,20 @@ Ext.define('canopsis.controller.Config', {
     
     refs : [
     {
-		ref : 'Ordering',
+		ref : 'ordering',
 		selector: 'TreeOrdering'
 	},
 	{
-		ref: 'Grid',
+		ref: 'grid',
 		selector: 'TreeGrid'
 	},
 	{
-		ref : 'ConfigView',
+		ref : 'configView',
 		selector: 'ConfigView'
+	},
+	{
+		ref : 'configPreview',
+		selector: '#ConfigPreview'
 	}],
     
     
@@ -68,6 +72,60 @@ Ext.define('canopsis.controller.Config', {
 	
 	createPreview : function() {
 		console.log('creating preview')
+		//get the container
+		var preview_container = this.getConfigPreview();
+		//cleaning and adding new preview
+		preview_container.removeAll();
+		
+		//global options
+		var global_opt = preview_container.up('panel').down('form');
+		
+		
+		//get number of column
+		if (global_opt.down('#nbcolumn').getValue()){
+			var nbColumn = global_opt.down('#nbcolumn').getValue();
+			console.log('column defined');
+		} else {
+			var nbColumn = 5;
+			console.log('column by default');
+		}
+
+		var myLayout = []
+		myLayout['type'] = 'table';
+		myLayout['columns'] = nbColumn;
+		
+		preview_container.add({
+			xtype: 'ConfigPreview',
+			layout : myLayout,
+		});
+			
+		//get the simulation preview
+		var draw = preview_container.down('ConfigPreview');
+
+		//get the store node
+		var TreeRootNode = this.getOrdering().getRootNode()
+		//console.log(TreeRootNode);
+		
+		//calculate width
+		var totalWidth = preview_container.getWidth() - 20;
+		//if pass nbColumn , take this, else 5 by default
+		//console.log(preview_container.up('panel').down('form').down('#nbcolumn').getValue());
+		console.log(draw)
+		
+		//starting loop
+		TreeRootNode.eachChild(function(node) {
+			panel_width = ((100/nbColumn) * node.data.colspan)/100 * totalWidth;
+			base_heigth = 30 * node.data.rowspan;
+			draw.add({
+				xtype : 'panel',
+				html : node.data.xtype,
+				colspan : node.data.colspan,
+				rowspan : node.data.rowspan,
+				width : panel_width,
+				height : base_heigth,
+			})
+		});	
+		
 	},
 	
 	setID : function(record, item, esp, index){
@@ -86,6 +144,8 @@ Ext.define('canopsis.controller.Config', {
 		record.set(values);	
 		remove_active_tab();
 		this.getConfigView().show();
+		//update the preview
+		this.createPreview();
 	},
 	
 	cancelForm : function() {
