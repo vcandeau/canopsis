@@ -62,7 +62,11 @@ Ext.define('canopsis.controller.ViewEditor', {
 					//console.log(copy)
 					Ext.getCmp(myName).down('TreeOrdering').getStore().getRootNode().appendChild(copy);
 				}
+				console.log(item)
 				Ext.getCmp(myName).down('#name').setValue(item.get('name'))
+				Ext.getCmp(myName).down('#refreshInterval').setValue(item.get('refreshInterval'))
+				Ext.getCmp(myName).down('#column').setValue(item.get('column'))
+				Ext.getCmp(myName).down('#nodeId').setValue(item.get('nodeId'))
 				//create preview
 				this.getController('canopsis.controller.Config').createPreview();
 			} else {
@@ -141,13 +145,13 @@ Ext.define('canopsis.controller.ViewEditor', {
 		
 		console.log('clicked on save view');
 		var name = button.up('ConfigView').down('#name');
-		var column = button.up('ConfigView').down('#nbcolumn');
+		var column = button.up('ConfigView').down('#column');
 		var refreshInterval = button.up('ConfigView').down('#refreshInterval');
 		var nodeId = button.up('ConfigView').down('#nodeId')
-		console.log('the name and column');
-		console.log(name.value);
-		console.log(column.value);
-		console.log(refreshInterval.value);
+		//console.log('the name and column');
+		//console.log(name.value);
+		//console.log(column.value);
+		//console.log(refreshInterval.value);
 		
 		var record = Ext.create('canopsis.model.view');
 		record.set('name', name.value);

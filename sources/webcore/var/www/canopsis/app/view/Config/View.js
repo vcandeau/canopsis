@@ -53,7 +53,7 @@ Ext.define('canopsis.view.Config.View' ,{
 				name: 'refreshInterval',
 			},{
 				fieldLabel: 'nb column',
-				itemId: 'nbcolumn',
+				itemId: 'column',
 				name: 'column',
 			},{
 				fieldLabel: 'nodeId',
