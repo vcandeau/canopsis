@@ -53,7 +53,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		var items = this.view.items
 		var totalWidth = this.getWidth() - 20
-		nodeId
+
 		//General options
 		var nodeId = this.view.nodeId
 		var refreshInterval = this.view.refreshInterval

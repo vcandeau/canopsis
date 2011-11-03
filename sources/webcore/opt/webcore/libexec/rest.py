@@ -115,8 +115,9 @@ def rest_put(namespace, ctype):
 	storage.put(record, account=account)
 	
 #### POST
+@post('/rest/:namespace/:ctype/:_id', apply=[check_auth])
 @post('/rest/:namespace/:ctype', apply=[check_auth])
-def rest_put(namespace, ctype):
+def rest_put(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
 	storage = get_storage(namespace=namespace)
@@ -125,34 +126,86 @@ def rest_put(namespace, ctype):
 
 	data = request.body.readline()
 	if not data:
-		HTTPError(400, "No data received")
+		return HTTPError(400, "No data received")
 
 	
 	data = json.loads(data)
 	data['crecord_type'] = ctype
+	
+	if not _id:
+		try:
+			_id = str(data['_id'])
+		except:
+			pass
+
+		try:
+			_id = str(data['id'])
+		except:
+			pass
+	
 	## Clean data
-	_id = None
 	try:
-		_id = data['_id']
-		#del data['_id']
+		del data['_id']
 	except:
 		pass
 
+	try:
+		del data['id']
+	except:
+		pass
+	
 	logger.debug(" + _id: "+str(_id))
 	logger.debug(" + ctype: "+str(ctype))
 	logger.debug(" + Data: "+str(data))
 
-	record = crecord(raw_record=data)
+	update = False
+	if _id:
+		try:
+			record = storage.get(_id ,account=account)
+			logger.debug('Update record %s' % _id)
+			update = True
+		except:
+			logger.debug('Create record %s' % _id)
 
-	#print record.dump()
+	if update:
+		for key in dict(data).keys():
+			record.data[key] = data[key]
+	else:
+		raw_record = crecord(_id=_id, type=str(ctype)).dump()
+		for key in dict(data).keys():
+			raw_record[key] = data[key]
+
+		record = crecord(raw_record=raw_record)
+		record.chown(account.user)
+		record.chgrp(account.group)
 
 	storage.put(record, account=account)
 
 #### DELETE
 @delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
-def rest_delete(namespace, ctype, _id):
+@delete('/rest/:namespace/:ctype',apply=[check_auth])
+def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace)
+
+	if not _id:
+		data = request.body.readline()
+		if not data:
+			return HTTPError(400, "No data received")
+		print data
+		_id = None
+		try:
+			_id = str(data['_id'])
+		except:
+			pass
+	
+		try:
+			_id = str(data['id'])
+		except:
+			pass
+
+	if not _id:
+		return HTTPError(404, "Id not found ...")
 
 	logger.debug("DELETE:")
 	logger.debug(" + _id: "+str(_id))
