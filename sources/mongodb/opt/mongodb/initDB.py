@@ -11,7 +11,7 @@ from cconfig import cconfig
 import logging
 import time
 
-namespaces = ['cache', 'inventory', 'history', 'sla', 'object', 'perfdata.fs.files', 'perfdata.fs.chunks']
+namespaces = ['cache', 'inventory', 'history', 'sla', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
 
 ## Create accounts and groups
 group1 = crecord({'_id': 'group.root' }, type='group', name='root')
