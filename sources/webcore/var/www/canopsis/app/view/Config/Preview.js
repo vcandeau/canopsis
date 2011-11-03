@@ -2,11 +2,13 @@ Ext.define('canopsis.view.Config.Preview', {
     extend: 'Ext.form.Panel',
     alias: 'widget.ConfigPreview',
 
+
+
 	layout: {
 		type: 'table',
 		columns : 5
 	},
-	
+
 	defaults: {
 		//width:40, 
 		height: 40,
@@ -19,6 +21,8 @@ Ext.define('canopsis.view.Config.Preview', {
 		},
 	},
 	
+/*	
+	//dummy entries -> testing preview 
 	items: [{
 		xtype : 'panel',
 		html : '1',
@@ -31,10 +35,28 @@ Ext.define('canopsis.view.Config.Preview', {
 	},{
 		xtype : 'panel',
 		html : '3',
-		colspan : 2
+		colspan : 2,
+		rowspan : 2
 	},{
 		xtype : 'panel',
 		html : '4',
 		colspan : 5
-	}]
+	}],
+*/
+	initComponent: function() {
+		this.callParent(arguments);	
+		/*
+		var totalWidth = Ext.getCmp('#ConfigPreview').getWidth() - 20;
+		console.log(totalWidth);
+		//if pass nbColumn , take this, else 5 by default
+		if (this.nbColumn){
+			var nbColumn = this.nbColumn;
+			console.log('column defined');
+		} else {
+			var nbColumn = 5;
+			console.log('column by default, 5');
+		}
+		
+		*/
+	}
 });

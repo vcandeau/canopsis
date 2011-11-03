@@ -107,26 +107,28 @@ def post_views_in_db():
 	
 	#Creating the crecord for the view
 	my_record = crecord({'_id': _id },type='view', name=data['name'])
-	my_record.data['lines'] = []
+	my_record.data['items'] = []
 	
-	#find a better way to fix those info
-	my_record.data['hunit'] = 300
-	my_record.data['column'] = 5
+	#my_record.data['hunit'] = 300
+	my_record.data['column'] = data['column']
 	####################################
 	
 	#Cleaning extjs output and put the record in base
-	w = data['lines']
+	w = data['items']
 	logger.debug('creating view : cleaning extjs output')
+	#logger.debug('##############################################################');
 	#logger.debug(w)
+	#logger.debug('##############################################################');
 	for i in w :
 		d = {}
 		d['xtype'] = i['xtype']
 		d['type'] = i['type']
 		d['refreshInterval'] = i['refreshInterval']
-		d['_id'] = i['_id']
+		d['nodeId'] = i['nodeId']
 		d['title'] = i['title']
 		d['colspan'] = i['colspan']
-		my_record.data['lines'].append(d)
+		d['rowspan'] = i['rowspan']
+		my_record.data['items'].append(d)
 		
 	#logger.debug('------dump the end output---------')	
 	#logger.debug(my_record)

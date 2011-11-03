@@ -4,12 +4,11 @@ Ext.define('canopsis.view.Config.View' ,{
 	//model: '',
 	//store : '',
 	
-	id : 'ConfigView',
+	//id : 'ConfigView',
 	
 	layout: {
         type: 'table',
         columns: 3,
-        
     },
     
     //border:false,
@@ -24,24 +23,19 @@ Ext.define('canopsis.view.Config.View' ,{
 /*    defaults: {
         // applied to each contained panel
         bodyStyle: 'padding:20px'
-    },
+    },*/
    
     tbar: [{
-		xtype: 'textfield',
-		name: "view's name",
-		itemId : "viewName",
-		fieldLabel: "view's name",
-		allowBlank:false,
-		width: 300,
-	},{
-		xtype: 'tbseparator'
-	},{
-		text: 'Save',
-		iconCls: 'icon-save',
-		//itemId: 'saveView',
-		action : 'save'
-	}],
-*/
+			iconCls: 'icon-save',
+			text: 'Save',
+			action : 'save',
+		},{
+			iconCls: 'icon-cancel',
+			text: 'Cancel',
+			action: 'cancel',
+		}
+	],
+
 
 	items : [{
 		xtype: 'form',
@@ -50,26 +44,34 @@ Ext.define('canopsis.view.Config.View' ,{
 		defaultType: 'textfield',
 		items : [{
 				fieldLabel: 'view\'s name',
+				itemId: 'name',
 				name: 'name',
 				allowBlank: false,
 			},{
 				fieldLabel: 'refresh interval',
-				name: 'rinterval',
-			}, {
+				itemId : 'refreshInterval',
+				name: 'refreshInterval',
+			},{
 				fieldLabel: 'nb column',
+				itemId: 'nbcolumn',
 				name: 'column',
+			},{
+				fieldLabel: 'nodeId',
+				itemId: 'nodeId',
+				name: 'nodeId',
 			}]
 	},{
 		title : 'preview',
 		xtype : 'panel',
+		id : 'ConfigPreview',
 		colspan : 2,
 		rowspan : 2,
 		height : 300,
 		layout : 'fit',
-		items : [{
+	/*	items : [{
 			xtype : 'ConfigPreview'
 			
-		}]
+		}] */
 	},{
 		xtype : 'TreeGrid',
 		//colspan : 1,

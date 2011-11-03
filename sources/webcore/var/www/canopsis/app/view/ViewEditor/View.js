@@ -1,5 +1,5 @@
 Ext.define('canopsis.view.ViewEditor.View' ,{
-	extend: 'Ext.tree.Panel',
+	extend: 'Ext.grid.Panel',
 	alias : 'widget.ViewEditor',
 	
 	
@@ -43,10 +43,10 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 					dataIndex: 'id',
 				}/*,
 				{
-					header: 'lines',
+					header: 'items',
 					flex: 2,
 					sortable: true,
-					dataIndex: 'lines',
+					dataIndex: 'items',
 				}*/
 	],
 
