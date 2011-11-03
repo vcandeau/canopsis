@@ -127,8 +127,21 @@ def account_post():
 
 	data = json.loads(data)
 
-	logger.debug(str(data))
+	## Clean data
+	try:
+		del data['_id']
+	except:
+		pass
 
+	try:
+		del data['id']
+	except:
+		pass
+
+	try:
+		del data['crecord_type']
+	except:
+		pass
 	
 	if data['user']:
 		_id = "account." + str(data['user'])
@@ -156,9 +169,15 @@ def account_post():
 			storage.put(update_account, account=account)
 
 		else:
-			new_account = caccount(user=str(data['user']), group=str(data['aaa_group']), firstname=str(data['firstname']),lastname=str(data['lastname']), mail=str(data['mail']), groups=str(data['groups']))
-			new_account.passwd(str(data['passwd']))
-			storage.put(new_account, account=account)
+			raw_record = crecord(_id=_id, type='account', name=data['user']).dump()
+			for key in dict(data).keys():
+				raw_record[key] = data[key]
+
+			record = crecord(raw_record=raw_record)
+			record.chown(data['user'])
+			record.chgrp(data['aaa_group'])
+
+			storage.put(record, account=account)
 	else:
 		logger.warning('WARNING : no user specified ...')
 
