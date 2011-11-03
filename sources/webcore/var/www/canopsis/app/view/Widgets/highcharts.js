@@ -357,8 +357,9 @@ Ext.define('canopsis.view.Widgets.highcharts' ,{
 					value = values[value]
 					//log.dump(this.chart.series[metric_id])
 					//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
-            				this.chart.series[metric_id].addPoint(value, true, false, false);
+            				this.chart.series[metric_id].addPoint(value, false, false, false);
 				}
+				this.chart.redraw();
 			}
 		}
 
