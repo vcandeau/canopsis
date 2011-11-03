@@ -113,32 +113,73 @@ def account_get(_id=None):
 	
 #### POST
 @post('/account/', apply=[check_auth])
-def account_put():
+def account_post():
 	#get the session (security)
 	account = get_account()
 	
 	storage = get_storage(namespace='object')
 
-	logger.debug("PUT:")
+	logger.debug("POST:")
 
 	data = request.body.readline()
 	if not data:
-		HTTPError(400, "No data received")
+		return HTTPError(400, "No data received")
 
-	
 	data = json.loads(data)
-	
-	logger.debug(str(data))
-	
-	#create caccount with password
-	new_account = caccount(user=str(data['user']), group=str(data['aaa_group']), firstname=str(data['firstname']),lastname=str(data['lastname']), mail=str(data['mail']), groups=str(data['groups']))
-	new_account.passwd(str(data['passwd']))
-	logger.debug('putting account in db ...')
+
+	## Clean data
 	try:
-		storage.put(new_account, account=account)
-		logger.debug('account added in db')
+		del data['_id']
 	except:
-		logger.debug('WARNING : failed to added account in db')
+		pass
+
+	try:
+		del data['id']
+	except:
+		pass
+
+	try:
+		del data['crecord_type']
+	except:
+		pass
+	
+	if data['user']:
+		_id = "account." + str(data['user'])
+
+		update = False
+		try:
+			record = storage.get(_id ,account=account)
+			logger.debug('Update account %s' % _id)
+			update = True
+		except:
+			logger.debug('Create account %s' % _id)
+
+		if update:
+			passwd = str(data['passwd'])
+			del data['passwd']
+
+			for key in dict(data).keys():
+				record.data[key] = data[key]
+
+			update_account = caccount(record)			
+			if passwd:
+				logger.debug(' + Update password ...')
+				update_account.passwd(passwd)
+
+			storage.put(update_account, account=account)
+
+		else:
+			raw_record = crecord(_id=_id, type='account', name=data['user']).dump()
+			for key in dict(data).keys():
+				raw_record[key] = data[key]
+
+			record = crecord(raw_record=raw_record)
+			record.chown(data['user'])
+			record.chgrp(data['aaa_group'])
+
+			storage.put(record, account=account)
+	else:
+		logger.warning('WARNING : no user specified ...')
 
 
 #### DELETE

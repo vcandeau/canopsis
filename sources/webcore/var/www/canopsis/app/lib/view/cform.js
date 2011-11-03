@@ -1,7 +1,7 @@
 Ext.define('canopsis.lib.view.cform', {
 	extend: 'Ext.form.Panel',
 
-	id: 'cform',
+	alias: 'widget.cform',
 
 	requires: ['Ext.form.field.Text'],
 
@@ -14,11 +14,11 @@ Ext.define('canopsis.lib.view.cform', {
 	tbar: [{
 			iconCls: 'icon-save',
 			text: 'Save',
-			itemId: 'saveForm',
+			action: 'save',
 		},{
 			iconCls: 'icon-cancel',
 			text: 'Cancel',
-			itemId: 'cancelForm',
+			action: 'cancel',
 		}
 	],
 
