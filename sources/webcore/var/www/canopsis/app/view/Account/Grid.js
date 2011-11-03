@@ -8,6 +8,8 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	model: 'Account',
 	store : 'Account',	
 
+	opt_grouping: true,
+
 	columns: [
 		{
                 	header: '',
@@ -40,12 +42,12 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'aaa_group',
-        	},{
+        	},/*{
                 	header: 'groups',
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'groups',
-		} 
+		}*/
             
 	],
 

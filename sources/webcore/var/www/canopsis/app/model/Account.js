@@ -8,7 +8,7 @@ Ext.define('canopsis.model.Account', {
 		{name : 'user'},
 		{name : 'mail'},
 		{name : 'aaa_group'},//todo cahnger nom , en groupe
-		{name : 'groups'},
+		//{name : 'groups'},
 		{name : 'passwd'}
 		],
 });
