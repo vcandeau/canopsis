@@ -24,6 +24,10 @@
     background-image: url(../images/icons/account.png) !important; 
 }
 
+.icon-crecord_type-group { 
+    background-image: url(../images/icons/group.png) !important; 
+}
+
 .icon-reload { 
     background-image: url(../images/icons/reload.png) !important; 
 }

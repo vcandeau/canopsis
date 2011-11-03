@@ -2,12 +2,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	extend: 'Ext.app.Controller',
 
 	init: function() {
-		log.debug('[controller][cgrid] - Initialize ...');
-
-		this.query_grid = this.listXtype
+		log.debug('[controller][cgrid] - '+this.id+' Initialize ...');
 
 		var control = {}
-		control[this.query_grid] = {
+		control[this.listXtype] = {
 		                render: this._bindGridEvents
 		}
 		this.control(control);
@@ -18,10 +16,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
    
 	_bindGridEvents: function(grid) {
 		var id = grid.id
+		this.grid = grid
+
 		log.debug('[controller][cgrid] - Bind events "'+id+'" ...')
 
-		grid.on('selectionchange',	function (view, records){	this._selectionchange(grid, view, records)}, this)
-		grid.on('itemdblclick', 	this._editRecord, this)
+		grid.on('selectionchange',	this._selectionchange,	this)
+		grid.on('itemdblclick', 	this._editRecord,	this)
 
 		// Add buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]')
@@ -38,7 +38,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		// Reload buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]')
 		for (i in btns){
-			btns[i].on('click', function (){this._reloadButton(grid)}, this)
+			btns[i].on('click', this._reloadButton, this)
 		}
 
 		this._reloadButton(grid)
@@ -62,13 +62,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-	_reloadButton: function(grid) {
-		log.debug('[controller][cgrid] - Reload store');
-		grid.store.load()
+	_reloadButton: function() {
+		log.debug('[controller][cgrid] - Reload store "'+this.grid.store.storeId+'" of '+this.grid.id);
+		this.grid.store.load()
 	},
 
-	_selectionchange: function(grid, view, records){
+	_selectionchange: function(view, records){
 		log.debug('[controller][cgrid] - selectionchange');
+		var grid = this.grid
 
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]')
@@ -77,13 +78,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		if (this.selectionchange) {
-			this.selectionchange(grid, view, records)
+			this.selectionchange(view, records)
 		}
 	}, 
 
 	_deleteButton: function(button) {
 		log.debug('[controller][cgrid] - clicked deleteButton');
-		var grid = Ext.ComponentQuery.query(this.query_grid)[0]
+		var grid = this.grid
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
@@ -122,7 +123,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_saveForm: function(form) {
 		log.debug('[controller][cgrid][form] - clicked saveForm');
 
-		var store = Ext.ComponentQuery.query(this.query_grid)[0].store;
+		var store = this.grid.store;
 
 		if (form.form.isValid()){
 			var data = form.getValues();
@@ -130,7 +131,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				log.debug('[controller][cgrid][form] - Form is conform');
 				var record = Ext.create('canopsis.model.'+this.modelId, data);
 				log.debug('[controller][cgrid][form] - Store record in store');
-				this._preSave(record)
+				record = this._preSave(record)
 				store.add(record);
 				this._postSave(record)
 				log.debug('[controller][cgrid][form] - Reload store');

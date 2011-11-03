@@ -5,7 +5,9 @@ Ext.define('canopsis.store.Account', {
 	autoLoad: true,
 	autoSync: true,
 	storeId: 'store.Account',
-    proxy: {
+	sorters: ['user'],
+	groupField: 'aaa_group',
+	proxy: {
 		type: 'rest',
 		url: '/account/',
 		reader: {

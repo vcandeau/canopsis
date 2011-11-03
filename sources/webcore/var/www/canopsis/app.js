@@ -13,6 +13,7 @@ Ext.onReady(function() {
 			'Widgets',
 			'WebSocket',
 			'Account',
+			'Group',
 			'Config',
 			'ViewEditor',
 			'LiveSearch'
