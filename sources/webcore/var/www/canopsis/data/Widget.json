@@ -1,22 +1,25 @@
 [{
 	"xtype": "kpi",
 	"title":"kpi",
-	"colspan":"5",
-	"_id":"",
+	"colspan":"1",
+	"rowspan":"1",
+	"nodeId":"",
 	"refreshInterval":"58",
 	"leaf":true
 },{
 	"xtype":"highcharts",
 	"title":"tab",
 	"colspan":"2",
-	"_id":"",
+	"rowspan":"1",
+	"nodeId":"",
 	"refreshInterval":"10",
 	"leaf":true
 },{
 	"xtype":"empty",
 	"title":"noname",
 	"colspan":"1",
-	"_id":"",
+	"rowspan":"2",
+	"nodeId":"",
 	"refreshInterval":"20",
 	"leaf":true
 }]

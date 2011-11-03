@@ -3,9 +3,10 @@ Ext.define('canopsis.model.view', {
     fields: [
 		{name: 'id'},
 		{name: 'name'},
+		{name: 'nodeId'},
 		{name: 'column'},
-		{name: 'lines'},
+		{name: 'items'},
 		{name: 'hunit'},
-		{name: 'leaf'}
+		//{name: 'leaf'}
 		],
 });
