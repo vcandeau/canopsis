@@ -1,11 +1,14 @@
 Ext.define('canopsis.view.Account.Grid' ,{
 	extend: 'canopsis.lib.view.cgrid',
 
-	//id: 'AccountGrid',
+	controllerId: 'Account',
+
 	alias: 'widget.AccountGrid',
 
 	model: 'Account',
 	store : 'Account',	
+
+	opt_grouping: true,
 
 	columns: [
 		{
@@ -39,12 +42,12 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'aaa_group',
-        	},{
+        	},/*{
                 	header: 'groups',
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'groups',
-		} 
+		}*/
             
 	],
 

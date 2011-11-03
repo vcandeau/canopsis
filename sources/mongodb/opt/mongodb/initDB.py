@@ -11,16 +11,19 @@ from cconfig import cconfig
 import logging
 import time
 
-namespaces = ['cache', 'inventory', 'history', 'sla', 'object', 'perfdata.fs.files', 'perfdata.fs.chunks']
+namespaces = ['cache', 'inventory', 'history', 'sla', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
 
-## Create root account
+## Create accounts and groups
+group1 = crecord({'_id': 'group.root' }, type='group', name='root')
+group2 = crecord({'_id': 'group.canopsis' }, type='group', name='canopsis')
+
 account1 = caccount(user="root", group="root")
 account1.firstname = "Call-me"
 account1.lastname = "God"
 account1.passwd("root")
 
 account2 = caccount(user="canopsis", group="canopsis")
-account2.firstname = "Canop"
+account2.firstname = "Cano"
 account2.lastname = "Psis"
 account2.passwd("canopsis")
 
@@ -32,20 +35,28 @@ for namespace in namespaces:
 ## Create 100MB cache
 storage.db.create_collection('cache', options={'capped': True, 'size': 104857600})
 
-## Save account
+## Save accounts and groups
 storage.put([account1, account2])
+storage.put([group1, group2])
 
 ## View
 
 ### Default Dasboard
 record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
 record1.chmod('o+r')
+record1.data['nbColumn'] =  2
+record1.data['rowHeight'] =  300
 record1.data['items'] = [ { 'xtype': 'panel', 'html': 'Welcome to Canopsis !'} ]
 storage.put(record1)
 
 ### Account
 record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
 record1.data['items'] = [ { 'xtype': 'AccountGrid'} ]
+storage.put(record1)
+
+### Group
+record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
+record1.data['items'] = [ { 'xtype': 'GroupGrid'} ]
 storage.put(record1)
 
 ### Views
@@ -65,17 +76,18 @@ record21.chmod('o+r')
 
 record3 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Administration')
 record31 = crecord({'leaf': True, 'view': 'view.account_manager' }, type='menu', name='Accounts')
-
+record32 = crecord({'leaf': True, 'view': 'view.group_manager' }, type='menu', name='Groups')
 
 storage.put([record1, record2, record3])
-storage.put([record21, record31])
+storage.put([record21, record31, record32])
 
 record2.add_children(record21)
 
 record3.add_children(record31)
+record3.add_children(record32)
 
 storage.put([record1, record2, record3])
-storage.put([record21, record31])
+storage.put([record21, record31, record32])
 
 ## Configuration
 

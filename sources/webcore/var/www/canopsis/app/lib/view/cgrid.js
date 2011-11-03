@@ -1,13 +1,16 @@
 Ext.define('canopsis.lib.view.cgrid' ,{
 	extend: 'Ext.grid.Panel',
 
-	id: 'cgrid',
-
 	requires: [
 		'Ext.grid.plugin.CellEditing',
 		'Ext.form.field.Text',
 		'Ext.toolbar.TextItem'
 	],
+
+	// Options
+	opt_grouping: false,
+
+	features: [],
 
 	title : '',
 	//iconCls: 'icon-grid',
@@ -19,17 +22,28 @@ Ext.define('canopsis.lib.view.cgrid' ,{
  
 	tbar: [ {
                     iconCls: 'icon-add',
-                    text: 'Add user',
-                    itemId: 'addButton',
+                    text: 'Add',
+                    action: 'add',
                 },{
+                    iconCls: 'icon-reload',
+                    text: 'Reload',
+                    action: 'reload',
+                },'-',{
                     iconCls: 'icon-delete',
                     text: 'Delete',
 		    disabled: true,
-                    itemId: 'deleteButton',
+                    action: 'delete',
                 }],
  
 	initComponent: function() {
-		console.log('[view][cgrid] - Initialize ...');
+		/*if (this.opt_grouping){
+			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
+				hideGroupedColumn: true,
+				groupHeaderTpl: '{name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
+			});
+			this.features.push(groupingFeature);
+		}*/
+
 		this.callParent(arguments);
 	}
 
