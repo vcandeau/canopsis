@@ -1,4 +1,4 @@
-Ext.define('canopsis.view.Config.TreeGrid' ,{
+Ext.define('canopsis.view.ViewEditor.tree.TreeGrid' ,{
 	extend: 'Ext.tree.Panel',
 	alias : 'widget.TreeGrid',
 	model: 'widget',

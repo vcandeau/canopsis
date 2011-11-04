@@ -1,4 +1,4 @@
-Ext.define('canopsis.view.Config.Preview', {
+Ext.define('canopsis.view.ViewEditor.view.Preview', {
     extend: 'Ext.form.Panel',
     alias: 'widget.ConfigPreview',
 

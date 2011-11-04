@@ -1,7 +1,7 @@
 Ext.define('canopsis.controller.Config', {
     extend: 'Ext.app.Controller',
     
-    views: ['Config.View','Config.TreeGrid','Config.TreeOrdering','Config.ConfigForm','Config.Preview'],
+    views: ['ViewEditor.view.View','ViewEditor.tree.TreeGrid','ViewEditor.tree.TreeOrdering','ViewEditor.form.ConfigForm','ViewEditor.view.Preview'],
     stores: ['Widget'],
     models: ['widget','view'],
     
