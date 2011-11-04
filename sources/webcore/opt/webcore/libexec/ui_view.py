@@ -76,12 +76,13 @@ def get_tree_views():
 	records = storage.find(mfilter,account=account)
 	output = []
 	for record in records:
-		#logger.debug(str(record.dump()))
+		logger.debug('#####################here##########################')
+		logger.debug(str(record.dump()))
 		data = record.data
 		#data['id'] = str(record._id)
 		data['name'] = record.name
 		data['id'] = record._id
-		data['leaf'] = True
+		#data['leaf'] = True
 		output.append(data)
 			
 	output = json.dumps(output)
@@ -106,11 +107,14 @@ def post_views_in_db():
 	_id = 'view.'+ str(account.user) + '.' + str(data['name'])
 	
 	#Creating the crecord for the view
-	my_record = crecord({'_id': _id },type='view', name=data['name'])
+	my_record = crecord({'_id': _id },type='view', name=data['name'] )
 	my_record.data['items'] = []
+	my_record.data['nodeId'] = data['nodeId']
+	my_record.data['refreshInterval'] = data['refreshInterval']
+	my_record.data['column'] = data['column']
 	
 	#my_record.data['hunit'] = 300
-	my_record.data['column'] = data['column']
+	#my_record.data['column'] = data['column']
 	####################################
 	
 	#Cleaning extjs output and put the record in base
