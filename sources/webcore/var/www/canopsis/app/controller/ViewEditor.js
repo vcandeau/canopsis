@@ -62,11 +62,11 @@ Ext.define('canopsis.controller.ViewEditor', {
 					//console.log(copy)
 					Ext.getCmp(myName).down('TreeOrdering').getStore().getRootNode().appendChild(copy);
 				}
-				console.log(item)
-				Ext.getCmp(myName).down('#name').setValue(item.get('name'))
-				Ext.getCmp(myName).down('#refreshInterval').setValue(item.get('refreshInterval'))
-				Ext.getCmp(myName).down('#column').setValue(item.get('column'))
-				Ext.getCmp(myName).down('#nodeId').setValue(item.get('nodeId'))
+				console.log(item);
+				Ext.getCmp(myName).down('#name').setValue(item.get('name'));
+				Ext.getCmp(myName).down('#refreshInterval').setValue(item.get('refreshInterval'));
+				Ext.getCmp(myName).down('#column').setValue(item.get('column'));
+				Ext.getCmp(myName).down('#nodeId').setValue(item.get('nodeId'));
 				//create preview
 				this.getController('canopsis.controller.Config').createPreview();
 			} else {
