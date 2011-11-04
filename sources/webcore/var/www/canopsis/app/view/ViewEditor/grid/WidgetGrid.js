@@ -1,16 +1,16 @@
-Ext.define('canopsis.view.ViewEditor.tree.TreeGrid' ,{
-	extend: 'Ext.tree.Panel',
-	alias : 'widget.TreeGrid',
+Ext.define('canopsis.view.ViewEditor.grid.WidgetGrid' ,{
+	extend: 'Ext.grid.Panel',
+	alias : 'widget.WidgetGrid',
 	model: 'widget',
 	store: 'Widget',
 	
-	id: 'TreeGrid',
+	id: 'WidgetGrid',
 	
 	//title: 'Available options',
 	title: '',
 	//collapsible: true,
 	//useArrows: true,
-	rootVisible: false,
+	//rootVisible: false,
 	//multiSelect: true,
 	//singleExpand: true,
 	//the 'columns' property is now 'headers'

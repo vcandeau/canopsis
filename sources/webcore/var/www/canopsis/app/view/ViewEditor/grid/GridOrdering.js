@@ -1,16 +1,19 @@
-Ext.define('canopsis.view.ViewEditor.tree.TreeOrdering' ,{
-	extend: 'Ext.tree.Panel',
-	alias : 'widget.TreeOrdering',
-	model : 'widget',
+Ext.define('canopsis.view.ViewEditor.grid.GridOrdering' ,{
+	extend: 'Ext.grid.Panel',
+	alias : 'widget.GridOrdering',
+	model: 'widget',
+	//store: 'Widget',
 	
-	//store: store,
-	id: 'TreeOrdering',
+	/*store: new Ext.data.Store({
+        model: 'canopsis.model.widget',
+    }),*/
+	id: 'GridOrdering',
 	
-	viewConfig: {
+/*	viewConfig: {
 		plugins: {
 			ptype: 'treeviewdragdrop'
 		}
-	},
+	},*/
 	//height: 300,
 	//width: 250,
 	//title: 'User config panel',
@@ -35,17 +38,14 @@ Ext.define('canopsis.view.ViewEditor.tree.TreeOrdering' ,{
 	}],
 
 	columns: [{
-		xtype: 'treecolumn', //this is so we know which column will show the tree
 		text: 'Option name',
 		flex: 1,
-		sortable: true,
 		dataIndex: 'xtype'
 	},{
 		//we must use the templateheader component so we can use a custom tpl
 		//xtype: 'templatecolumn',
 		text: 'title',
 		flex: 1,
-		sortable: true,
 		dataIndex: 'title',
 		//align: 'center',
 	},{
@@ -72,10 +72,10 @@ Ext.define('canopsis.view.ViewEditor.tree.TreeOrdering' ,{
 	},*/
 	
 	initComponent: function() {
-
+		this.store = new Ext.data.Store({
+        model: 'canopsis.model.widget',
+    });
 		this.callParent(arguments);
-		
-		
 	}
 	
 	

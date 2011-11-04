@@ -7,12 +7,12 @@ Ext.define('canopsis.controller.ViewEditor', {
 
 	refs : [
 	{
-		ref : 'tree',
+		ref : 'viewGrid',
 		selector: 'ViewEditor'
 	},
 	{
-		ref : 'treeOrder',
-		selector: 'TreeOrdering'
+		ref : 'GridOrder',
+		selector: 'GridOrdering'
 	}],
 
     init: function() {
@@ -52,17 +52,16 @@ Ext.define('canopsis.controller.ViewEditor', {
 					xtype: 'ConfigView',
 					id: myName,
 					closable: true,}).show();
-				//Ext.getCmp(myName).getForm().loadRecord(item);
-				console.log(item.data.items)
+				//console.log(item.data.items)
 				widgets = item.data.items;
 				for (i in widgets){
 					//console.log(widgets[i])
 					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
 					copy.set('leaf', true)
 					//console.log(copy)
-					Ext.getCmp(myName).down('TreeOrdering').getStore().getRootNode().appendChild(copy);
+					Ext.getCmp(myName).down('GridOrdering').getStore().add(copy);
 				}
-				console.log(item);
+				//console.log(item);
 				Ext.getCmp(myName).down('#name').setValue(item.get('name'));
 				Ext.getCmp(myName).down('#refreshInterval').setValue(item.get('refreshInterval'));
 				Ext.getCmp(myName).down('#column').setValue(item.get('column'));
@@ -79,6 +78,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 	addButton: function() {
 		console.log('viewEdit : adding a new view');
 		var main_tabs = Ext.getCmp('main-tabs');
+		
 		if(!Ext.getCmp('ConfigView'))
 		{
 			main_tabs.add({
@@ -86,16 +86,18 @@ Ext.define('canopsis.controller.ViewEditor', {
 				xtype: 'ConfigView',
 				id: 'ConfigView',
 				closable: true,}).show();
+				
+			
 		} else {
-			console.log('tab already created');
+			console.log('ViewEditor : tab already created');
 		}
 	},
 	
 	deleteButton: function() {
-		var store = this.getTree().getStore();
+		var store = this.getViewGrid().getStore();
 		console.log('viewEdit : delete a view');
 		
-		var selection = this.getTree().getSelectionModel().getSelection();
+		var selection = this.getViewGrid().getSelectionModel().getSelection();
 		if (selection) {
 			log.debug("ViewEditor : Remove record ")
 			store.remove(selection);
@@ -135,13 +137,13 @@ Ext.define('canopsis.controller.ViewEditor', {
 	},
 	
 	selectionchange: function(selections){
-		this.getTree().down('#deleteButton').setDisabled(selections.length === 0);
+		this.getViewGrid().down('#deleteButton').setDisabled(selections.length === 0);
 	}, 
 	
 	saveView : function(button){
-		var view = this.getTree()
+		var view = this.getViewGrid()
 		var store = view.getStore();
-		var store_source = this.getTreeOrder().store;
+		var store_source = this.getGridOrder().getStore();
 		
 		console.log('clicked on save view');
 		var name = button.up('ConfigView').down('#name');
@@ -163,8 +165,8 @@ Ext.define('canopsis.controller.ViewEditor', {
 		//get all node and stock them in an object
 		var temptab = [];
 		
-		store_source.getRootNode().eachChild(function(node) {
-			temptab.push(node.data);
+		store_source.each(function(record) {
+			temptab.push(record.data);
 		});	
 		
 		record.set('items', temptab);
@@ -190,7 +192,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 			Ext.data.StoreManager.lookup('Menu').load();
 			//destroy Config view and get back on viewEditor
 			remove_active_tab();
-			this.getTree().show();
+			this.getViewGrid().show();
 			
 		} else {
 			Ext.MessageBox.show({
