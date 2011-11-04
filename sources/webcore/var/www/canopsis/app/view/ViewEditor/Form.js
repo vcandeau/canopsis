@@ -73,6 +73,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			]
 		}
 
+		//fixing layout (table goes wild without it)
 		for (i; i<this.nbColumns; i++){
 			this.add({ html: '', border: 0, height: 0, padding:0})
 		}
@@ -87,9 +88,54 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				dataIndex: 'xtype',
 				flex: 1
        			 }],
-		})
+		});
+		
+		var ItemsStore = Ext.data.Store({model: 'canopsis.model.widget'});
 
-		var ItemsList = { html: 'Items List', colspan: 3, width: this.DefaultWidth * 3 }
+		var ItemsList = Ext.create('Ext.grid.Panel', {
+			store: ItemsStore,
+			
+			bbar: [{
+					text : 'delete selected row',
+					action : 'deleteRow'
+				},{
+					xtype: 'tbseparator'
+				},{
+					text : 'clear all',
+					action : 'reset'
+				}],
+
+				columns: [{
+					text: 'Option name',
+					flex: 1,
+					dataIndex: 'xtype'
+				},{
+					//we must use the templateheader component so we can use a custom tpl
+					//xtype: 'templatecolumn',
+					text: 'title',
+					flex: 1,
+					dataIndex: 'title',
+					//align: 'center',
+				},{
+					text: 'length',
+					flex: 1,
+					dataIndex: 'colspan',
+				},{
+					text: 'height',
+					flex: 1,
+					dataIndex: 'rowspan',
+				},{
+					text: 'nodeId',
+					flex: 1,
+					dataIndex: 'nodeId',
+				},{
+					text: 'refresh interval',
+					flex: 1,
+					dataIndex: 'refreshInterval',
+				}],
+				
+			html: 'Items List', colspan: 3, width: this.DefaultWidth * 3 
+		});
 
 		this.add(GlobalOptions)
 		this.add(Preview)
