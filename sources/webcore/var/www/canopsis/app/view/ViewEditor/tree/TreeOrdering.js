@@ -1,4 +1,4 @@
-Ext.define('canopsis.view.Config.TreeOrdering' ,{
+Ext.define('canopsis.view.ViewEditor.tree.TreeOrdering' ,{
 	extend: 'Ext.tree.Panel',
 	alias : 'widget.TreeOrdering',
 	model : 'widget',
