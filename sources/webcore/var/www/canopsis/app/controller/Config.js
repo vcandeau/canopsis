@@ -1,18 +1,18 @@
 Ext.define('canopsis.controller.Config', {
     extend: 'Ext.app.Controller',
     
-    views: ['ViewEditor.view.View','ViewEditor.tree.TreeGrid','ViewEditor.tree.TreeOrdering','ViewEditor.form.ConfigForm','ViewEditor.view.Preview'],
+    views: ['ViewEditor.view.View','ViewEditor.grid.WidgetGrid','ViewEditor.grid.GridOrdering','ViewEditor.form.ConfigForm','ViewEditor.view.Preview'],
     stores: ['Widget'],
     models: ['widget','view'],
     
     refs : [
     {
 		ref : 'ordering',
-		selector: 'TreeOrdering'
+		selector: 'GridOrdering'
 	},
 	{
 		ref: 'grid',
-		selector: 'TreeGrid'
+		selector: 'WidgetGrid'
 	},
 	{
 		ref : 'configView',
@@ -29,23 +29,23 @@ Ext.define('canopsis.controller.Config', {
 		
 		this.control({
 
-			'TreeGrid': {
+			'WidgetGrid': {
 				itemdblclick: this.addToTree
 			},
 			
-			'TreeOrdering': {
+			'GridOrdering': {
 				itemdblclick: this.configureItem
 			},
 			
-			'TreeOrdering #deleteRow': {
+			'GridOrdering #deleteRow': {
 				click: this.deleteRow
 			},
 			
-			'TreeOrdering [action=reset]': {
+			'GridOrdering [action=reset]': {
 				click: this.clearAll
 			},
 			
-			'TreeOrdering [action=deleteRow]': {
+			'GridOrdering [action=deleteRow]': {
 				click: this.deleteRow
 			},
 			
@@ -102,9 +102,8 @@ Ext.define('canopsis.controller.Config', {
 		//get the simulation preview
 		var draw = preview_container.down('ConfigPreview');
 
-		//get the store node
-		var TreeRootNode = this.getOrdering().getRootNode()
-		//console.log(TreeRootNode);
+		//get the store
+		var store = this.getOrdering().getStore()
 		
 		//calculate width
 		var totalWidth = preview_container.getWidth() - 20;
@@ -113,14 +112,14 @@ Ext.define('canopsis.controller.Config', {
 		console.log(draw)
 		
 		//starting loop
-		TreeRootNode.eachChild(function(node) {
-			panel_width = ((100/nbColumn) * node.data.colspan)/100 * totalWidth;
-			base_heigth = 30 * node.data.rowspan;
+		store.each(function(record) {
+			panel_width = ((100/nbColumn) * record.data.colspan)/100 * totalWidth;
+			base_heigth = 30 * record.data.rowspan;
 			draw.add({
 				xtype : 'panel',
-				html : node.data.xtype,
-				colspan : node.data.colspan,
-				rowspan : node.data.rowspan,
+				html : record.data.xtype,
+				colspan : record.data.colspan,
+				rowspan : record.data.rowspan,
 				width : panel_width,
 				height : base_heigth,
 			})
@@ -161,25 +160,28 @@ Ext.define('canopsis.controller.Config', {
 		console.log(selection)
 		if (selection)
 		{
-			this.getOrdering().getStore().getRootNode().removeChild(selection);
+			this.getOrdering().getStore().remove(selection);
 		}
 		this.createPreview();
 	},
 	
 	clearAll : function(){
 		console.log('clicked on clear all');
-		this.getOrdering().getStore().getRootNode().removeAll();
+		this.getOrdering().getStore().removeAll();
 		this.createPreview();
 	},
 	
 	addToTree : function(record, item, index){
 		console.log('clicked on tree item')
 		if (item) {			
-			var TreeRootNode = this.getOrdering().getRootNode();
+			//console.log(item)
+			var store = this.getOrdering().getStore();
+			//console.log('the store')
+			//console.log(store)
 			//need to copy record, else it disapear from the first tree
 			copy = Ext.ClassManager.instantiate('canopsis.model.widget',item.data);
 			//console.log(copy)
-			TreeRootNode.appendChild(copy);	
+			store.add(copy);	
 		} else {
 			console.log('no record selected');
 		}
