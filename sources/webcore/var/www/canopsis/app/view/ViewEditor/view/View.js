@@ -1,4 +1,4 @@
-Ext.define('canopsis.view.Config.View' ,{
+Ext.define('canopsis.view.ViewEditor.view.View' ,{
 	extend: 'Ext.panel.Panel',
 	alias : 'widget.ConfigView',
 	//model: '',
