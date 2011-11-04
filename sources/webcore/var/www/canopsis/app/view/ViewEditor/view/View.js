@@ -68,16 +68,15 @@ Ext.define('canopsis.view.ViewEditor.view.View' ,{
 		rowspan : 2,
 		height : 300,
 		layout : 'fit',
-	/*	items : [{
+		items : [{
 			xtype : 'ConfigPreview'
-			
-		}] */
+		}] 
 	},{
-		xtype : 'TreeGrid',
+		xtype : 'WidgetGrid',
 		//colspan : 1,
 		//rowspan : 1
 	},{
-		xtype : 'TreeOrdering',
+		xtype : 'GridOrdering',
 		colspan : 3,
 		width : 800,
 		height : 200,
@@ -88,8 +87,8 @@ Ext.define('canopsis.view.ViewEditor.view.View' ,{
 	initComponent: function() {
 		this.callParent(arguments);
 		//fix to refresh the panel at every build/rebuild
-		Ext.getCmp('TreeOrdering').setRootNode(Ext.ClassManager.instantiate('Ext.data.NodeInterface'));
-		Ext.getCmp('TreeOrdering').getRootNode().expand();
+		//Ext.getCmp('TreeOrdering').setRootNode(Ext.ClassManager.instantiate('Ext.data.NodeInterface'));
+		//Ext.getCmp('TreeOrdering').getRootNode().expand();
 	},
 
 	beforeDestroy : function() {
