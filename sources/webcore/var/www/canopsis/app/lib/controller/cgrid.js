@@ -103,12 +103,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.formXtype) {
 			var main_tabs = Ext.getCmp('main-tabs')
 
-			log.debug("[controller][cgrid] - Create tab '"+id+"'")
+			log.debug("[controller][cgrid] - Create tab '"+this.formXtype+"'")
 			var form = main_tabs.add({
 				title: '* New '+this.modelId,
 				xtype: this.formXtype,
 				closable: true,}).show();
-
+			
 			this._bindFormEvents(form)
 				
 		}
