@@ -10,6 +10,7 @@ Ext.define('canopsis.store.ViewEditor', {
 		{name: 'column'},
 		{name: 'items'},
 		{name: 'hunit'},
+		{name: 'refreshInterval'}
 
 		//{name: 'expanded'},
 		//{name: 'leaf'},
