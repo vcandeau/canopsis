@@ -7,6 +7,7 @@ Ext.define('canopsis.model.view', {
 		{name: 'column'},
 		{name: 'items'},
 		{name: 'hunit'},
+		{name: 'refreshInterval'}
 		//{name: 'leaf'}
 		],
 });
