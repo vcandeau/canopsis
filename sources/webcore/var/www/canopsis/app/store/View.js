@@ -1,19 +1,6 @@
-Ext.define('canopsis.model.View', {
-    extend: 'Ext.data.Model',
-
-	fields: [
-		{name: 'id'},
-		{name: 'crecord_name'},
-		{name: 'column'},
-		{name: 'lines'},
-		{name: 'hunit'},
-    ],
-
-});
-
 Ext.define('canopsis.store.View', {
 	extend: 'Ext.data.Store',
-	model: 'canopsis.model.View',
+	model: 'canopsis.model.view',
 	storeId: 'store.View',
 	autoLoad: true,
 	proxy: {

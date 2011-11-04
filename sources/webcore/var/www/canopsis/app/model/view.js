@@ -1,13 +1,13 @@
 Ext.define('canopsis.model.view', {
     extend: 'Ext.data.Model',
-    fields: [
+
+	fields: [
 		{name: 'id'},
-		{name: 'name'},
+		{name: 'crecord_name'},
+		{name: 'nbColumn'},
 		{name: 'nodeId'},
-		{name: 'column'},
 		{name: 'items'},
-		{name: 'hunit'},
-		{name: 'refreshInterval'}
-		//{name: 'leaf'}
-		],
+		{name: 'rowHeight'},
+    ],
+
 });
