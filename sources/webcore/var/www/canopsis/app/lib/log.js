@@ -1,7 +1,7 @@
 var log = {
 	/* 0: none, 1: info, 2: error, 3: error + warning, 4: error + warning + debug, 5: error + warning + debug + dump */
-	level: 5,
-	buffer: 50,
+	level: global.log.level,
+	buffer: global.log.buffer,
 	
 	window: false,
 	console: true,
@@ -73,37 +73,37 @@ var log = {
 		}
 	},
 
-	info: function (msg) {
+	info: function (msg, author) {
 		if (this.level >= 1){
-			this.writeMsg(msg, 1)
+			this.writeMsg(msg, 1, author)
 		}
 	},
 
-	debug: function (msg) {
+	debug: function (msg, author) {
 		if (this.level >= 4){
-			this.writeMsg(msg, 4)
+			this.writeMsg(msg, 4, author)
 		}
 	},
 
-	warning: function (msg) {
+	warning: function (msg, author) {
 		if (this.level >= 3){
-			this.writeMsg(msg, 2)
+			this.writeMsg(msg, 2, author)
 		}
 	},
 
-	error: function (msg) {
+	error: function (msg, author) {
 		if (this.level >= 2){
-			this.writeMsg(msg, 3)
+			this.writeMsg(msg, 3, author)
 		}
 	},
 
-	dump: function (msg) {
+	dump: function (msg, author) {
 		if (this.level >= 5){
-			this.writeMsg(msg, 5)
+			this.writeMsg(msg, 5, author)
 		}		
 	},
 
-	writeMsg: function (msg, level) {
+	writeMsg: function (msg, level, author) {
 		var level_msg = ""
 
 		if	(level == 1){
@@ -119,10 +119,14 @@ var log = {
 		}
 
 		var date = new Date;
-		this.store.add([[level, level_msg,	date,	'ui',	'<pre>'+msg+'</pre>',	'william']]);
+		this.store.add([[level, level_msg,	date,	'ui',	'<pre>'+msg+'</pre>',	author]]);
 		
 		if (this.store.count() > this.buffer){
 			this.store.removeAt(0)
+		}
+
+		if (author){
+			msg = author + " - " + msg
 		}
 
 		// Chech if firebug console ...
