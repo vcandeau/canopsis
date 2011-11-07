@@ -105,21 +105,6 @@ def check_auth(callback):
 		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
 	return do_auth
-				
-
-@get('/secure', apply=[check_auth])
-def secure():
-	account = get_account()
-	return "i'm secured test2 (%s) , you can <a href='/disconnect'>disconnect</a>" % account.user
-
-
-#debug in order to see who is online
-@get('/online', apply=[check_auth])
-def online():
-	output = ""
-	for i in session_accounts:
-		output += "session name : " + i + "</br>"
-	return output
 
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):
