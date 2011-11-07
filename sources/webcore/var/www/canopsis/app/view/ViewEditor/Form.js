@@ -63,8 +63,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					name: 'refreshInterval',
 				},{
 					fieldLabel: 'nb column',
-					itemId: 'nbColumn',
-					name: 'nbColumn',
+					itemId: 'nbColumns',
+					name: 'nbColumns',
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
 					multiSelect: false,
@@ -146,16 +146,52 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//////////////binding events//////////////////
 		//autolaunch  Previews
 		this.ItemsStore.on('datachanged', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
-		GlobalOptions.down('#nbColumn').on('change', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
+		GlobalOptions.down('#nbColumns').on('change', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
 		
 		//others listeners
 		Widgets.on('itemdblclick',this.addItem,this);
+		ItemsList.on('itemdblclick',this.ModifyItem,this);
 		
 		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
 		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
 		
 		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
 		clearAllButton[0].on('click',function(){this.ItemsStore.removeAll()},this);
+	},
+	
+	ModifyItem : function(view, item, index){
+			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
+			console.log(item);
+			this.window = Ext.create('Ext.window.Window', {
+				closable: true,
+				title: 'Edit ' + item.data.xtype,
+				items:[{
+					xtype : 'cform',
+					model: 'widget',
+					closeAction: 'hide',
+					width: 300,
+					height: 250,
+					items:[{
+							fieldLabel: 'colspan',
+							name: 'colspan',
+						},{
+							fieldLabel: 'rowspan',
+							name: 'rowspan',
+						},{
+							fieldLabel: 'refresh interval',
+							name: 'refreshInterval',
+						},
+						Ext.create('canopsis.lib.form.field.cinventory', {
+							multiSelect: false,
+						})
+					]
+					
+				}]
+			});
+			this.window.show();
+			console.log(window);
+			this.window.down('cform').getForm().loadRecord(item);
+				
 	},
 	
 	deleteButton: function(grid) {
@@ -183,7 +219,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		}
 		this.GlobalOptions.down('#crecord_name').setValue(record.get('crecord_name'));
 		this.GlobalOptions.down('#refreshInterval').setValue(record.get('refreshInterval'));
-		this.GlobalOptions.down('#nbColumn').setValue(record.get('nbColumn'));
+		this.GlobalOptions.down('#nbColumns').setValue(record.get('nbColumns'));
 	},
 	
 
@@ -208,17 +244,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		container.removeAll();
 		
 		//get number of column
-		if (options.down('#nbColumn').getValue()){
-			var nbColumn = options.down('#nbColumn').getValue();
+		if (options.down('#nbColumns').getValue()){
+			var nbColumns = options.down('#nbColumns').getValue();
 			console.log('column defined');
 		} else {
-			var nbColumn = 5;
+			var nbColumns = 5;
 			console.log('column by default');
 		}
 
 		var myLayout = []
 		myLayout['type'] = 'table';
-		myLayout['columns'] = nbColumn;
+		myLayout['columns'] = nbColumns;
 		//need this container for columns
 		var preview = container.add({
 			xtype: 'panel',
@@ -238,7 +274,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//starting loop
 		var totalWidth = container.getWidth() - 20;
 		store.each(function(record) {
-			panel_width = ((100/nbColumn) * record.data.colspan)/100 * totalWidth;
+			panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
 			base_heigth = 30 * record.data.rowspan;
 			preview.add({
 				xtype : 'panel',
