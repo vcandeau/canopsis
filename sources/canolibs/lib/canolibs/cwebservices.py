@@ -19,8 +19,11 @@ class cwebservices(object):
 		self.base_url = 'http://' + host + ':' + str(port)
 
 		self.jar = cookielib.CookieJar()
+		self.jar.clear_session_cookies()
+
 		self.handler = urllib2.HTTPCookieProcessor(self.jar)
 		self.opener = urllib2.build_opener(self.handler)
+
 		urllib2.install_opener(self.opener)
 
 		self.is_login = False
@@ -35,9 +38,15 @@ class cwebservices(object):
 			try:
 				data_json = json.loads(str(data))
 				data = data_json['data']
-				self.logger.debug('     + Success')
+				state = data_json['success']
 			except:
 				self.logger.debug('     + Failed')
+				raise Exception("Failed to parse response ...")
+
+			if not state:
+				raise Exception("Request marked failed by server ...")
+			
+			self.logger.debug('     + Success')
 	
 		return data
 
