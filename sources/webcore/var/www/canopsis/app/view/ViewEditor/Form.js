@@ -79,6 +79,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 
 		var Preview = Ext.create('Ext.panel.Panel', { 
+			title : Preview,
 			colspan: 2,
 			width: this.DefaultWidth * 2,
 		});
@@ -117,11 +118,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					flex: 1,
 					dataIndex: 'title',
 				},{
-					text: 'length',
+					text: 'colspan',
 					flex: 1,
 					dataIndex: 'colspan',
 				},{
-					text: 'height',
+					text: 'rowspan',
 					flex: 1,
 					dataIndex: 'rowspan',
 				},{
@@ -291,7 +292,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			if (record.data.rowspan){
 				base_heigth = 30 * record.data.rowspan;
 			}else{
-				base_heigth = 30
+				base_heigth = 30;
 			}
 			preview.add({
 				xtype : 'panel',
