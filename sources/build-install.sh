@@ -188,7 +188,7 @@ function update_packages_list() {
 	PPATH=$SRC_PATH/packages/$PNAME
 	echo "    + Update Packages list Db ..."
 	
-    PKGLIST=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/Packages.list
+	PKGLIST=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/Packages.list
 	touch $PKGLIST
 
 	. $PPATH/control
@@ -200,37 +200,47 @@ function update_packages_list() {
     echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
 }
 
+function files_listing(){
+	local DST=$1
+	if [ "x$DST" == "x" ]; then
+		echo "You must specify destination ..."
+		exit 1
+	fi
+	echo "    + Files listing in $DST ..."
+	mkdir -p $PREFIX
+	cd $PREFIX &> /dev/null
+	find ./ -type f > $DST
+	find ./ -type l >> $DST
+	cd - &> /dev/null|| true
+	#check_code $? "List files with find failure"
+}
+
 function make_package(){
 	PNAME=$1
-	if [ $OPT_MPKG -eq 1 ]; then
-		echo " + Make package $PNAME ..."
-		PPATH=$SRC_PATH/packages/$PNAME
-		FLIST=$SRC_PATH/packages/files.lst
-		FLIST_TMP=$SRC_PATH/packages/files.tmp
-	
-		echo "    + Purge old build ..."
-		rm -f $PPATH.tgz &> /dev/null
-	
-		echo "    + Make files listing ..."
-		mkdir -p $PPATH
-		touch $FLIST
-		check_code $? "Touch files file failure"
-	
-		cd $PREFIX &> /dev/null
-		find ./ -type f > $FLIST_TMP
-		find ./ -type l >> $FLIST_TMP
-		check_code $? "List files with find failure"
-	
-		diff $FLIST $FLIST_TMP  | grep ">" | sed 's#> ##g' > $PPATH/files.lst
-		check_code $?
 		
-		make_package_archive "$PNAME"	
-		update_packages_list "$PNAME"	
+	echo " + Make package $PNAME ..."
+	PPATH=$SRC_PATH/packages/$PNAME
+	FLIST=$SRC_PATH/packages/files.lst
+	FLIST_TMP=$SRC_PATH/packages/files.tmp
+	
+	mkdir -p $PPATH
 
-		echo "    + Re-init initial listing ..."
-		mv $FLIST_TMP $FLIST
+	echo "    + Purge old build ..."
+	rm -f $PPATH.tgz &> /dev/null
+
+	if [ ! -f $PPATH/files.lst ]; then
+		echo "    + Make files listing ..."
+		files_listing "$FLIST_TMP"
+	
+		diff $FLIST $FLIST_TMP  | grep ">" | grep -v "\.pid$" sed 's#> ##g' > $PPATH/files.lst
 		check_code $?
+
+		rm $FLIST_TMP
+		check_code $? 'Impossible to delete tmp files listing ...'
 	fi
+		
+	make_package_archive "$PNAME"	
+	update_packages_list "$PNAME"	
 }
 
 function install_basic_source(){
@@ -316,7 +326,7 @@ function show_help(){
 	echo "    -n		->  Not build package"
 	echo "    -u		->  Run unittest and the end"
 #	echo "    -m [ARGUMENT]       ->  Install deps, build and make a package"
-	echo "    -p 		->  Install deps, build, install and make packages"
+	echo "    -p 		->  Make packages"
 	echo "    -d		->  Don't check dependencies"
 	echo "    -h, help	->  Print this help"
 	exit 1
@@ -370,12 +380,12 @@ fi
 ######################################
 #  Init file listing
 ######################################
-echo "Init files listing ..."
-mkdir -p $PREFIX
-cd $PREFIX &> /dev/null
-find ./ -type f > $SRC_PATH/packages/files.lst
-find ./ -type l >> $SRC_PATH/packages/files.lst
-cd - &> /dev/null|| true
+#echo "Init files listing ..."
+#mkdir -p $PREFIX
+#cd $PREFIX &> /dev/null
+#find ./ -type f > $SRC_PATH/packages/files.lst
+#find ./ -type l >> $SRC_PATH/packages/files.lst
+#cd - &> /dev/null|| true
 
 VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
 mkdir -p $VARLIB_PATH
@@ -429,6 +439,10 @@ for ITEM in $ITEMS; do
 				build
 				check_code $? "Build failure"
 			fi
+
+			if [ $OPT_MPKG -eq 1 ]; then
+				files_listing "$SRC_PATH/packages/files.lst"
+			fi
 	
 			echo " + Pre-install ..."	
 			pre_install
@@ -445,9 +459,11 @@ for ITEM in $ITEMS; do
 
 			echo " + Post-install ..."
 			post_install
-
-			make_package $NAME
-			check_code $? "Make package failure"
+			
+			if [ $OPT_MPKG -eq 1 ]; then
+				make_package $NAME
+				check_code $? "Make package failure"
+			fi
 		else
 			echo " + Allready install"
 		fi
@@ -457,10 +473,6 @@ for ITEM in $ITEMS; do
 	fi
 done
 
-
-######################################
-#  Fix permissions
-######################################
 echo "################################"
 echo "# Fix permissions"
 echo "################################"
