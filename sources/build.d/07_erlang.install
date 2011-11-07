@@ -35,10 +35,10 @@ function install(){
 
 	if [ ! -e 'build' ]; then
 		mkdir -p build
-		make DESTDIR=build/ install 1>> $LOG 2>> $LOG
-		check_code $?
+		make DESTDIR=$PWD/build/ install 1>> $LOG 2>> $LOG
+		check_code $? 'Impossible to install erlang ...'
 	fi
 	
-	cp -R build/* $PREFIX/	
-	check_code $?
+	cp -Rf build/* / 1>> $LOG 2>> $LOG	
+	check_code $? 'Impossible to copy binaries ...'
 }
