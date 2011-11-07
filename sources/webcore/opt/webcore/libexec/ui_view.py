@@ -169,11 +169,3 @@ def ui_views_delete(_id):
 		HTTPError(404, _id+" Not Found")
 
 
-
-
-#### GET
-@get('/ui/view')
-def get_all_menu():
-	return
-
-

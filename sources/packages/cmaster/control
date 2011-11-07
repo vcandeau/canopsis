@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="erlang"
-VERSION=R14B02
+NAME="cmaster"
+VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome"
+REQUIRES="canohome pkgmgr amqp2brule amqp2mongodb amqp2perfstore canolibs canotools ccli clock2amqp erlang mongodb nagios2amqp neb2socket python rabbitmq-server sla2mongodb webcore"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
