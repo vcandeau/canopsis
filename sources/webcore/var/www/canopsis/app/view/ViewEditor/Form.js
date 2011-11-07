@@ -111,12 +111,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					flex: 1,
 					dataIndex: 'xtype'
 				},{
-					//we must use the templateheader component so we can use a custom tpl
-					//xtype: 'templatecolumn',
 					text: 'title',
 					flex: 1,
 					dataIndex: 'title',
-					//align: 'center',
 				},{
 					text: 'length',
 					flex: 1,
@@ -138,23 +135,50 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			html: 'Items List', colspan: 3, width: this.DefaultWidth * 3 
 		});
 
-		this.add(GlobalOptions)
-		this.add(Preview)
-		this.add(Widgets)
-		this.add(ItemsList)
+		this.GlobalOptions = this.add(GlobalOptions);
+		this.add(Preview);
+		this.add(Widgets);
+		this.ItemsList = this.add(ItemsList);
+		
+		//////////////binding events//////////////////
+		Widgets.on('itemdblclick',this.addItem,this);
+		
+		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
+		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
+		
+		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
+		clearAllButton[0].on('click',function(){this.ItemsStore.removeAll()},this);
+	},
+	
+	deleteButton: function(grid) {
+		log.debug('[controller][cgrid][Form] - clicked on deleteRow Button');
+		var selection = grid.getSelectionModel().getSelection();
+		if (selection) {
+			this.ItemsStore.remove(selection);
+			log.debug('[controller][cgrid][Form] - record deleted')
+		}
+	},
+	
+	
+	addItem : function(view, item, index) {
+		copy = Ext.ClassManager.instantiate('canopsis.model.widget',item.data);
+		this.ItemsStore.add(copy);
 	},
 
 	loadRecord: function(record){
 		widgets =  record.data.items;
 		for (i in widgets){
 					//console.log(widgets[i])
-					console.log('adding loop');
 					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
 					//console.log(copy)
-					console.log(this.ItemsStore);
 					this.ItemsStore.add(copy);
 		}
+		this.GlobalOptions.down('#crecord_name').setValue(record.get('crecord_name'));
+		this.GlobalOptions.down('#refreshInterval').setValue(record.get('refreshInterval'));
+		this.GlobalOptions.down('#nbColumn').setValue(record.get('nbColumn'));
 	},
+	
+
 
 	beforeclose: function(tab, object){
 		console.log('[ViewEditor][cform] - Active previous tab');
