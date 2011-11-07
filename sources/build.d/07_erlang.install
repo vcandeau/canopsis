@@ -25,6 +25,7 @@ function build(){
 	check_code $?
 
 	echo "   + Build ..."
+	rm -Rf build/ &> /dev/null
 	make 1>> $LOG 2>> $LOG
 	check_code $?
 }
@@ -32,6 +33,12 @@ function build(){
 function install(){
 	cd $SRC_PATH/externals/$BASE
 
-	make install 1>> $LOG 2>> $LOG
+	if [ -e 'build' ]; then
+		mkdir -p build
+		make DESTDIR=build/ install 1>> $LOG 2>> $LOG
+		check_code $?
+	fi
+	
+	cp -R build/* $PREFIX/	
 	check_code $?
 }
