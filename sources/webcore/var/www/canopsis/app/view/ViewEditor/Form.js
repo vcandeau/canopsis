@@ -172,6 +172,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					width: 300,
 					height: 250,
 					items:[{
+							fieldLabel: 'title',
+							name: 'title',
+						},{
 							fieldLabel: 'colspan',
 							name: 'colspan',
 						},{
