@@ -36,7 +36,7 @@ sla.save()
 ## View 
 record1 = crecord({'_id': 'view.root.test' }, type='view', name='Test')
 
-record1.data['nbColumn'] =  5
+record1.data['nbColumns'] =  5
 record1.data['rowHeight'] =  300
 record1.data['nodeId'] =  'canopsis.internal.check.sla.root.all-http-services'
 record1.data['items'] = []
