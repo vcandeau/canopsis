@@ -19,17 +19,20 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			this.grow = false
 		}
 
-		Ext.define('cinventory', {
-			extend: 'Ext.data.Model',
-			fields: [
-				{name : 'id'},
-				{name : 'type'},
-				{name : 'source_name'},
-				{name : 'source_type'},
-				{name : 'service_description'},
-				{name : 'host_name'},
-			],
-		});
+		var model = Ext.ModelManager.getModel('cinventory');
+		if (! model){
+			Ext.define('cinventory', {
+				extend: 'Ext.data.Model',
+				fields: [
+					{name : 'id'},
+					{name : 'type'},
+					{name : 'source_name'},
+					{name : 'source_type'},
+					{name : 'service_description'},
+					{name : 'host_name'},
+				],
+			});
+		}
 
 		this.Win_columns = [{
 				header: '',
