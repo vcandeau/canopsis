@@ -41,8 +41,11 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('refreshInterval',form.down('#refreshInterval').getValue());
 		record.set('nbColumns',form.down('#nbColumns').getValue());
 		
-		record.set('nodeId',form.down('gridpanel').store.getAt(0).get('id'));
-		
+		//get nodeId if defined
+		_nodeId = form.down('gridpanel').store.getAt(0);
+		if (_nodeId){
+			record.set('nodeId', _nodeId.get('id'));
+		}
 		
 		log.debug('[controller][cgrid][form] - Store record in store');
 		store.add(record);
