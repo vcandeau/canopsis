@@ -20,14 +20,6 @@
     background-image: url(../images/icons/delete.png) !important; 
 }
 
-.icon-crecord_type-account { 
-    background-image: url(../images/icons/account.png) !important; 
-}
-
-.icon-crecord_type-group { 
-    background-image: url(../images/icons/group.png) !important; 
-}
-
 .icon-reload { 
     background-image: url(../images/icons/reload.png) !important; 
 }
@@ -40,8 +32,54 @@
     background-image: url(../images/icons/save.png) !important; 
 }
 
+/* state */
 
-/* VIEW */
+/*.icon-state-0 { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/places/server.png) !important; 
+}*/
+
+
+/* source_type */
+
+.icon-crecord_type- { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/help.png) !important; 
+}
+
+.icon-crecord_type-brule { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/preferences-desktop-theme.png) !important; 
+}
+
+.icon-crecord_type-clock { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/apps/date.png) !important; 
+}
+
+.icon-crecord_type-sla { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/mimetypes/spreadsheet.png) !important; 
+}
+
+.icon-crecord_type-availability { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/status/image-loading.png) !important; 
+}
+
+.icon-crecord_type-host { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/places/server.png) !important; 
+}
+
+.icon-crecord_type-service { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/categories/applications-system.png) !important; 
+}
+
+/* crecord_type */
+
+.icon-crecord_type-account { 
+    background-image: url(../images/icons/account.png) !important; 
+}
+
+.icon-crecord_type-group { 
+    background-image: url(../images/icons/group.png) !important; 
+}
+
+/* TAB */
 
 .icon-tab-default { 
     background-image: url(../images/icons/report.png) !important; 
