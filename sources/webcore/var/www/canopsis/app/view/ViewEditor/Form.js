@@ -161,7 +161,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	
 	ModifyItem : function(view, item, index){
 			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
-			console.log(item);
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
 				title: 'Edit ' + item.data.xtype,
@@ -185,13 +184,27 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							multiSelect: false,
 						})
 					]
-					
 				}]
 			});
 			this.window.show();
-			console.log(window);
 			this.window.down('cform').getForm().loadRecord(item);
-				
+			
+			////////////////////add listeners on button////////////////
+			var WidgetForm = this.window.down('cform')
+			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
+			//Save Button
+			WidgetForm.down('button[action=save]').on('click',
+			function(){
+					console.log('[controller][cgrid][Form][WidgetForm]');
+					record = WidgetForm.getRecord();
+					record.set(WidgetForm.getValues());
+					//if nodeId is defined
+					var nodeId = WidgetForm.down('gridpanel').store.getAt(0);
+					if (nodeId){
+						record.set('nodeId', nodeId.get('id'));
+					}
+					this.window.hide();
+				},this);				
 	},
 	
 	deleteButton: function(grid) {
@@ -275,7 +288,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var totalWidth = container.getWidth() - 20;
 		store.each(function(record) {
 			panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
-			base_heigth = 30 * record.data.rowspan;
+			if (record.data.rowspan){
+				base_heigth = 30 * record.data.rowspan;
+			}else{
+				base_heigth = 30
+			}
 			preview.add({
 				xtype : 'panel',
 				html : record.data.xtype,
