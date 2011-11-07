@@ -25,6 +25,7 @@ function build(){
 	check_code $?
 
 	echo "   + Build ..."
+	rm -Rf build/ &> /dev/null
 	make 1>> $LOG 2>> $LOG
 	check_code $?
 }
