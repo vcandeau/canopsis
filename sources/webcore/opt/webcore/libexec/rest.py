@@ -65,6 +65,8 @@ def rest_get(namespace, ctype=None, _id=None):
 			return HTTPError(404, _id+" Not Found")
 		
 	else:
+		if search:
+			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
 		records = storage.find(mfilter, limit=limit, offset=start, account=account)
 
 	output = []
