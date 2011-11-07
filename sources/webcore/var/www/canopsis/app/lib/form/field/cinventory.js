@@ -105,7 +105,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			var secondGrid = Ext.create('Ext.grid.Panel', {
 				multiSelect: this.multiSelect,
-				flex : 1,
+				flex : 4,
 				//border: 0,
 				viewConfig: {
 					plugins: {
@@ -139,16 +139,20 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				this.store.removeAt(index)
 			}, this);
 
-			var searchForm = Ext.create('Ext.form.Panel', {
+			this.searchForm = Ext.create('Ext.form.Panel', {
 				border: 0,
 				defaultType: 'textfield',
 				//bodyStyle: 'padding: 5px;',
 				//height: 100,
 				flex : 1,
-				items: [/*{
+				items: [{
+					fieldLabel: 'Search',
+					name: 'search',
+					allowBlank: false,
+				},/*{
 					fieldLabel: 'Type',
 					name: 'type',
-				},*/{
+				},{
 					fieldLabel: 'Source',
 					name: 'source_name',
 				},{
@@ -160,7 +164,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				},{
 					fieldLabel: 'Service',
 					name: 'service_description',
-				}],
+				}*/],
 			});
 
 			var displayPanel = Ext.create('Ext.Panel', {
@@ -172,7 +176,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				title: 'Search',
 				border: 1,
 				flex : 1,
-				items: [searchForm, secondGrid],
+				items: [this.searchForm, secondGrid],
 				dockedItems: {
 					xtype: 'toolbar',
 					dock: 'bottom',
@@ -211,7 +215,12 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			this.KeyNav = Ext.create('Ext.util.KeyNav', this.window.id, {
 				scope: this,
 				enter: function(){
-					this.InventoryStore.load()
+					var form = this.searchForm.getForm()
+					if (form.isValid()){
+						var values = form.getValues()
+						var search = values.search
+						this.InventoryStore.load({params: { 'search': search}})
+					}
 				}
 			});
 
