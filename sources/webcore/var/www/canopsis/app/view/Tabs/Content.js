@@ -57,18 +57,18 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//General options
 		var nodeId = this.view.nodeId
 		var refreshInterval = this.view.refreshInterval
-		var nbColumn = this.view.nbColumn
+		var nbColumns = this.view.nbColumns
 		var rowHeight = this.view.rowHeight
 
 		if (! rowHeight) { rowHeight = 200 }
 		if (! refreshInterval) { refreshInterval = 300 }
-		if (! nbColumn) { nbColumn = 1 }
+		if (! nbColumns) { nbColumns = 1 }
 
-		this.layout.columns = nbColumn
+		this.layout.columns = nbColumns
 
-		log.debug('Create '+nbColumn+' column(s)..')
+		log.debug('Create '+nbColumns+' column(s)..')
 
-		if (items.length == 1 && nbColumn == 1) {
+		if (items.length == 1 && nbColumns == 1) {
 			log.debug(' + Use full mode ...')
 			this.layout = 'fit'
 			item = items[0]
@@ -88,6 +88,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}else{
 
 			this.removeAll();
+
+			//fixing layout (table goes wild without it)
+			for (i; i<nbColumns; i++){
+				this.add({ html: '', border: 0, height: 0, padding:0})
+			}
 	
 			var ext_items = []
 			for(var i= 0; i < items.length; i++) {
@@ -102,7 +107,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (item['colspan']) { colspan = item['colspan'] }
 				if (item['rowspan']) { rowspan = item['rowspan'] }
 				
-				item['width'] = ((100/nbColumn) * colspan)/100 * totalWidth
+				item['width'] = ((100/nbColumns) * colspan)/100 * totalWidth
 				item['border'] = false
 				item['style'] = []
 				item['style']['padding'] = '3px'
