@@ -55,8 +55,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			defaultType: 'textfield',
 			items : [{
 					fieldLabel: 'view\'s name',
-					itemId: 'name',
-					name: 'name',
+					itemId: 'crecord_name',
+					name: 'crecord_name',
 					allowBlank: false,
 				},{
 					fieldLabel: 'refresh interval',
@@ -64,8 +64,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					name: 'refreshInterval',
 				},{
 					fieldLabel: 'nb column',
-					itemId: 'column',
-					name: 'column',
+					itemId: 'nbColumn',
+					name: 'nbColumn',
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
 					multiSelect: false,
@@ -90,10 +90,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
        			 }],
 		});
 		
-		var ItemsStore = Ext.data.Store({model: 'canopsis.model.widget'});
+		this.ItemsStore = Ext.create('Ext.data.Store', {
+				model: 'cinventory',});
 
 		var ItemsList = Ext.create('Ext.grid.Panel', {
-			store: ItemsStore,
+			store: this.ItemsStore,
 			
 			bbar: [{
 					text : 'delete selected row',
@@ -144,6 +145,15 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 
 	loadRecord: function(record){
+		widgets =  record.data.items;
+		for (i in widgets){
+					//console.log(widgets[i])
+					console.log('adding loop');
+					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
+					//console.log(copy)
+					console.log(this.ItemsStore);
+					this.ItemsStore.add(copy);
+		}
 	},
 
 	beforeclose: function(tab, object){
