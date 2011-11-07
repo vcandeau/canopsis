@@ -5,7 +5,11 @@ var rdr_tstodate = function (val) {
 
 var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
 	if (val > 0){ val=2; }
-	return "<img width='16' height='16' src='themes/canopsis/resources/images/states/"+val+".png'/>"
+	return "<spain class='icon icon-state-"+val+"' />"
+}
+
+var rdr_source_type = function (val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-crecord_type-"+val+"' />"
 }
 
 var reload_grid = function(grid) {

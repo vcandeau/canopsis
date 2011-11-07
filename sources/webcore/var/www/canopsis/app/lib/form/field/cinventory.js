@@ -31,10 +31,13 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			],
 		});
 
-		this.Win_columns = [/*{
-				header: 'Id',
-				dataIndex: 'id',
-	       		},*/{
+		this.Win_columns = [{
+				header: '',
+				width: 25,
+				sortable: false,
+				dataIndex: 'source_type',
+				renderer: rdr_source_type
+	       		},{
 				header: 'Node Name',
 				flex: 1,
 				dataIndex: 'host_name',
