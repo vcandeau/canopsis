@@ -228,16 +228,16 @@ function make_package(){
 	echo "    + Purge old build ..."
 	rm -f $PPATH.tgz &> /dev/null
 
-	if [ ! -f $PPATH/files.lst ]; then
+	#if [ ! -f $PPATH/files.lst ]; then
 		echo "    + Make files listing ..."
 		files_listing "$FLIST_TMP"
 	
-		diff $FLIST $FLIST_TMP  | grep ">" | grep -v "\.pid$" sed 's#> ##g' > $PPATH/files.lst
+		diff $FLIST $FLIST_TMP  | grep ">" | grep -v "\.pid$" | sed 's#> ##g' > $PPATH/files.lst
 		check_code $?
 
 		rm $FLIST_TMP
 		check_code $? 'Impossible to delete tmp files listing ...'
-	fi
+	#fi
 		
 	make_package_archive "$PNAME"	
 	update_packages_list "$PNAME"	
@@ -323,7 +323,7 @@ function show_help(){
 	echo
 	echo "Options:"
 	echo "    -c		->  Uninstall"
-	echo "    -n		->  Not build package"
+	echo "    -n		->  Don't build sources if possible"
 	echo "    -u		->  Run unittest and the end"
 #	echo "    -m [ARGUMENT]       ->  Install deps, build and make a package"
 	echo "    -p 		->  Make packages"
