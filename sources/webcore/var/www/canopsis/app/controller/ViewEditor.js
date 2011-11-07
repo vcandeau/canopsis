@@ -25,13 +25,14 @@ Ext.define('canopsis.controller.ViewEditor', {
 		
 		log.debug('[controller][cgrid][form] - Form is conform');
 		
-		/*//parsing items
+		//parsing items
 		var temptab = [];
 		
-		this.form.ItemsStore.each(function(record) {
+		form.ItemsStore.each(function(record) {
 			temptab.push(record.data);
 		});
-		*/
+		record.set('items', temptab);
+		
 		//crecord_name and name fixing
 		var record_name = form.down('#crecord_name').getValue()
 		record.set('crecord_name',record_name);
@@ -39,6 +40,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 		
 		record.set('refreshInterval',form.down('#refreshInterval').getValue());
 		record.set('nbColumn',form.down('#nbColumn').getValue());
+		
 		
 		log.debug('[controller][cgrid][form] - Store record in store');
 		store.add(record);
