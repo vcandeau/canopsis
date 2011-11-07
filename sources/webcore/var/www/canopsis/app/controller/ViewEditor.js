@@ -17,5 +17,34 @@ Ext.define('canopsis.controller.ViewEditor', {
 
 		this.callParent(arguments);
 	},
+	
+	_saveForm : function(form){
+		
+		var store = this.grid.store;
+		var record = Ext.create('canopsis.model.'+this.modelId, data);
+		
+		log.debug('[controller][cgrid][form] - Form is conform');
+		
+		/*//parsing items
+		var temptab = [];
+		
+		this.form.ItemsStore.each(function(record) {
+			temptab.push(record.data);
+		});
+		*/
+		//crecord_name and name fixing
+		var record_name = form.down('#crecord_name').getValue()
+		record.set('crecord_name',record_name);
+		record.set('id','view.' + record_name);
+		
+		record.set('refreshInterval',form.down('#refreshInterval').getValue());
+		record.set('nbColumn',form.down('#nbColumn').getValue());
+		
+		log.debug('[controller][cgrid][form] - Store record in store');
+		store.add(record);
+		store.load();
+		
+		this._cancelForm(form);
+	},
 
 });
