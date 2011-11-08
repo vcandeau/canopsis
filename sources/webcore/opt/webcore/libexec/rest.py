@@ -40,6 +40,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	start =  int(request.params.get('start', default=0))
 	groups = request.params.get('groups', default=None)
 	search = request.params.get('search', default=None)
+	onlyWritable = request.params.get('onlyWritable', default=False)
 
 	logger.debug("GET:")
 	logger.debug(" + User: "+str(account.user))
@@ -51,6 +52,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + Page: "+str(page))
 	logger.debug(" + Start: "+str(start))
 	logger.debug(" + Groups: "+str(groups))
+	logger.debug(" + onlyWritable: "+str(onlyWritable))
 	logger.debug(" + Search: "+str(search))
 
 	storage = get_storage(namespace=namespace)
@@ -59,6 +61,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	records = []
 	if ctype:
 		mfilter = {'crecord_type': ctype}
+
 	if _id:
 		list_id = _id.split(',')
 		if len(list_id) == 1:
@@ -83,9 +86,16 @@ def rest_get(namespace, ctype=None, _id=None):
 	output = []
 	for record in records:
 		if record:
-			data = record.dump(json=True)
-			data['id'] = data['_id']
-			output.append(data)
+			data = None
+			if onlyWritable:
+				if record.check_write(account=account):
+					data = record.dump(json=True)
+			else:
+				data = record.dump(json=True)
+
+			if data:
+				data['id'] = data['_id']
+				output.append(data)
 
 	output={'total': len(output), 'success': True, 'data': output}
 
