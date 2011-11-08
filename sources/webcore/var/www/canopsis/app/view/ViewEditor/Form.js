@@ -147,6 +147,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					flex: 1,
 					dataIndex: 'rowspan',
 				},{
+					text: 'Row height',
+					flex: 1,
+					dataIndex: 'rowHeight',
+				},{
 					text: 'NodeId',
 					flex: 1,
 					dataIndex: 'nodeId',
@@ -193,22 +197,26 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					model: 'widget',
 					closeAction: 'hide',
 					width: 300,
-					height: 250,
+					height: 270,
 					items:[{
 							fieldLabel: 'title',
 							name: 'title',
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'colspan',
+							fieldLabel: 'Colspan',
 							name: 'colspan',
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'rowspan',
+							fieldLabel: 'Rowspan',
 							name: 'rowspan',
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'refresh interval',
+							fieldLabel: 'Refresh interval',
 							name: 'refreshInterval',
+						},{
+							xtype: 'numberfield',
+							fieldLabel: 'RowHeight',
+							name: 'rowHeight',
 						},
 						Ext.create('canopsis.lib.form.field.cinventory', {
 							multiSelect: false,
@@ -218,10 +226,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			});
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
-			tab = []
-			tab.push(item.data.nodeId);
-			this.window.down('cform').down('panel').LoadStore(tab);
-			
+			if (item.data.nodeId){
+				tab = []
+				tab.push(item.data.nodeId);
+				this.window.down('cform').down('panel').LoadStore(tab);
+			}
 			
 			////////////////////add listeners on button////////////////
 			var WidgetForm = this.window.down('cform')
