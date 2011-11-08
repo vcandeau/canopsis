@@ -63,16 +63,16 @@ Ext.define('canopsis.controller.ViewEditor', {
 
 	afterload_EditForm: function(form){
 		var cinventory = form.GlobalOptions.down('panel');
-		var search = form.nodeId.split(".");
-		console.log(search);
+		var splited = form.nodeId.split(".");
 		//cinventory.InventoryStore.load({params: { 'search': search}});
 		//console.log(cinventory.InventoryStore);
 		//console.log(cinventory.InventoryStore.first());
 		node = Ext.ClassManager.instantiate('canopsis.model.inventory',{
-			host_name : search[5],
-			service_description : search[6],
+			_id : form.nodeId,
+			source_type : splited[4],
+			host_name : splited[5],
+			service_description : splited[6],
 		});
-		console.log(node);
 		cinventory.store.add(node);
 		
 		
