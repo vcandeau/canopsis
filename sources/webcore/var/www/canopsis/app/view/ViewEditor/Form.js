@@ -120,6 +120,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				}
 			},
 			
+			
+			
 			bbar: [{
 					text : 'delete selected row',
 					action : 'deleteRow'

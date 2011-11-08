@@ -23,7 +23,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 		var store = this.grid.store;
 		var record = Ext.create('canopsis.model.'+this.modelId, data);
 		
-		log.debug('[controller][cgrid][form] - Form is conform');
+		log.debug('[controller][cgrid][form] - Saving form');
 		
 		//parsing items
 		var temptab = [];
@@ -40,11 +40,12 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
 		record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
 		record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
+		record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
 		
 		//get nodeId if defined
 		panel = form.down('gridpanel');
 		_nodeId = panel.store.getAt(0);
-		console.log(_nodeId);
+		//console.log(_nodeId);
 		if (_nodeId){
 			console.log('there is a nodeId');
 			record.set('nodeId', _nodeId.get('id'));
