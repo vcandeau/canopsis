@@ -130,34 +130,42 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					text : 'clear all',
 					action : 'reset'
 				}],
+				
 
 				columns: [{
 					text: 'Option name',
 					flex: 1,
-					dataIndex: 'xtype'
+					dataIndex: 'xtype',
+					sortable: false,
 				},{
 					text: 'Title',
 					flex: 1,
+					sortable: false,
 					dataIndex: 'title',
 				},{
 					text: 'Colspan',
 					flex: 1,
+					sortable: false,
 					dataIndex: 'colspan',
 				},{
 					text: 'Rowspan',
 					flex: 1,
+					sortable: false,
 					dataIndex: 'rowspan',
 				},{
 					text: 'Row height',
 					flex: 1,
+					sortable: false,
 					dataIndex: 'rowHeight',
 				},{
 					text: 'NodeId',
 					flex: 1,
+					sortable: false,
 					dataIndex: 'nodeId',
 				},{
 					text: 'Refresh interval',
 					flex: 1,
+					sortable: false,
 					dataIndex: 'refreshInterval',
 				}],
 				
