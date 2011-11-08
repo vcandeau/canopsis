@@ -77,7 +77,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					fieldLabel: 'Row height',
 					//itemId: 'nbColumns',
 					name: 'rowHeight',
-					value: 200,
 					minValue: 0
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
@@ -231,7 +230,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			if (item.data.nodeId){
 				tab = []
 				tab.push(item.data.nodeId);
-				this.window.down('cform').down('panel').LoadStore(tab);
+				//this.window.down('cform').down('panel').LoadStore(tab);
 			}
 			
 			////////////////////add listeners on button////////////////
@@ -302,17 +301,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 	
 	createPreview : function(store, container, options) {
-		console.log('[ViewEditor][cform] - Creating preview')
+		//console.log('[ViewEditor][cform] - Creating preview')
 		//cleaning and adding new preview
 		container.removeAll();
 		
 		//get number of column
 		if (options.down('numberfield[name=nbColumns]').getValue()){
 			var nbColumns = options.down('numberfield[name=nbColumns]').getValue();
-			console.log('column defined');
+			//console.log('column defined');
 		} else {
 			var nbColumns = 1;
-			console.log('column by default');
+			//console.log('column by default');
 		}
 
 		//set the layout
