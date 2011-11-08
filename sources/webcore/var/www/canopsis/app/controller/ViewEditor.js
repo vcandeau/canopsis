@@ -63,6 +63,10 @@ Ext.define('canopsis.controller.ViewEditor', {
 		console.log(output);
 		store.load();
 		
+		//reload menu view
+		Ext.data.StoreManager.lookup('Menu').load();
+		
+		
 		this._cancelForm(form);
 	},
 	
