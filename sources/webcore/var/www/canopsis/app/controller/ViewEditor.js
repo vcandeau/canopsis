@@ -55,11 +55,28 @@ Ext.define('canopsis.controller.ViewEditor', {
 	},
 	
 	beforeload_EditForm: function(form){
-		//console.log('before load editing');
 		var user_textfield = form.GlobalOptions.down('textfield[name=crecord_name]')
 		if (user_textfield){
-			user_textfield.disable()
+			user_textfield.disable();
 		}
 	},
+
+	afterload_EditForm: function(form){
+		var cinventory = form.GlobalOptions.down('panel');
+		var search = form.nodeId.split(".");
+		console.log(search);
+		//cinventory.InventoryStore.load({params: { 'search': search}});
+		//console.log(cinventory.InventoryStore);
+		//console.log(cinventory.InventoryStore.first());
+		node = Ext.ClassManager.instantiate('canopsis.model.inventory',{
+			host_name : search[5],
+			service_description : search[6],
+		});
+		console.log(node);
+		cinventory.store.add(node);
+		
+		
+	}
+
 
 });
