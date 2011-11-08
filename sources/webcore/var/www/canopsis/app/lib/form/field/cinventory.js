@@ -94,14 +94,18 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			// request
 			Ext.Ajax.request({
 				url: '/rest/inventory/state/' + ids_txt,
-				scope: this.store,
+				scope: this,
 				success: function(response){
 					data = Ext.JSON.decode(response.responseText)
 					data = data.data
 					if (data){
-						var i;
-						for (i in data){
-							this.add(Ext.create('cinventory', data[i]))
+						if (this.multiSelect){
+							var i;
+							for (i in data){
+								this.store.add(Ext.create('cinventory', data[i]))
+							}
+						}else{
+							this.store.add(Ext.create('cinventory', data[0]))
 						}
 					}
 				},
