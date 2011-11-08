@@ -58,13 +58,19 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					name: 'crecord_name',
 					allowBlank: false,
 				},{
+					xtype: 'numberfield',
 					fieldLabel: 'refresh interval',
 					itemId : 'refreshInterval',
 					name: 'refreshInterval',
+					value: 0,
+					minValue: 0
 				},{
+					xtype: 'numberfield',
 					fieldLabel: 'nb column',
 					itemId: 'nbColumns',
 					name: 'nbColumns',
+					value: 1,
+					minValue: 0
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
 					multiSelect: false,
@@ -271,11 +277,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			console.log('column by default');
 		}
 
-		console.log(store.getCount());
 		//set the layout
 		if(store.getCount() != 1)
 		{
-			console.log('store != 1 fixing layout table')
+			//console.log('store != 1 fixing layout table')
 			var myLayout = []
 			myLayout['type'] = 'table';
 			myLayout['columns'] = nbColumns;
@@ -295,7 +300,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				}
 			});
 		} else {
-			console.log('store == 1 , fixing layout fit')
+			//console.log('store == 1 , fixing layout fit')
 			var preview = container.add({
 				xtype: 'panel',
 				border: 0,
@@ -310,7 +315,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		
 		if (store.getCount() == 1)
 		{
-			console.log('Preview : only one record, adding it fullscreen')
+			//console.log('Preview : only one record, adding it fullscreen')
 			record = store.getAt(0)
 			preview.add({
 					xtype : 'panel',
@@ -320,7 +325,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			
 		}else{
-			console.log('Preview : many records set multiple items')
+			//console.log('Preview : many records set multiple items')
 			store.each(function(record) {
 				panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
 				if (record.data.rowspan){
@@ -340,7 +345,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			});
 		}
 	},
-	
 	
 	
 	
