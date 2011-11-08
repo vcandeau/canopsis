@@ -61,6 +61,7 @@ class cperfstore(object):
 		except:
 			self.logger.debug("Update config record for '"+_id+"' ...")
 			config = crecord({'_id': _id})
+			config.chmod('o+r')
 
 			config.data['metrics'] = []
 			for metric in perf_data.keys():
