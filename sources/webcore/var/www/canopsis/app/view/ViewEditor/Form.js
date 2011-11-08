@@ -230,7 +230,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			if (item.data.nodeId){
 				tab = []
 				tab.push(item.data.nodeId);
-				//this.window.down('cform').down('panel').LoadStore(tab);
+				this.window.down('cform').down('panel').LoadStore(tab);
 			}
 			
 			////////////////////add listeners on button////////////////
@@ -278,6 +278,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		this.GlobalOptions.down('textfield[name=crecord_name]').setValue(record.get('crecord_name'));
 		this.GlobalOptions.down('numberfield[name=refreshInterval]').setValue(record.get('refreshInterval'));
 		this.GlobalOptions.down('numberfield[name=nbColumns]').setValue(record.get('nbColumns'));
+		this.GlobalOptions.down('numberfield[name=rowHeight]').setValue(record.get('rowHeight'));
 		//needed for loading node, cf ViewEditor controller, beforeload_EditForm function
 		this.nodeId = record.get('nodeId');
 		/*console.log ('nodeId');
@@ -345,8 +346,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			});
 		}
 		
-		
-		
 		//starting loop
 		var totalWidth = container.getWidth() - 20;
 		
@@ -359,26 +358,33 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					html : record.data.xtype,
 					width : '100%'
 			});
-			
-			
+		
 		}else{
 			//console.log('Preview : many records set multiple items')
 			store.each(function(record) {
 				panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
 				if (record.data.rowspan){
 					base_heigth = 30 * record.data.rowspan;
+					//base_heigth = 30;
 				}else{
 					base_heigth = 30;
 				}
-						
-				preview.add({
-					xtype : 'panel',
-					html : record.data.xtype,
-					colspan : record.data.colspan,
-					rowspan : record.data.rowspan,
-					width : panel_width,
-					height : base_heigth,
-				});
+				
+				///////////////////////TODO//////////////////
+				////////Fix the exception with rowspan///////
+				/////////////////////////////////////////////
+				try {		
+					preview.add({
+						xtype : 'panel',
+						html : record.data.xtype,
+						colspan : record.data.colspan,
+						rowspan : record.data.rowspan,
+						width : panel_width,
+						height : base_heigth,
+					});
+				} catch(err) {
+					console.log(err);
+				}
 			});
 		}
 	},
