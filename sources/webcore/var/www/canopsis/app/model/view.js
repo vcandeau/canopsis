@@ -7,7 +7,7 @@ Ext.define('canopsis.model.view', {
 		{name: 'nbColumns'},
 		{name: 'nodeId'},
 		{name: 'items'},
-		{name: 'rowHeight'},
+		{name: 'rowHeight', defaultValue: 200},
 		{name: 'refreshInterval'}
     ],
 
