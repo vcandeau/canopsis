@@ -77,7 +77,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					fieldLabel: 'Row height',
 					//itemId: 'nbColumns',
 					name: 'rowHeight',
-					value: 200,
 					minValue: 0
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
@@ -120,6 +119,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				}
 			},
 			
+			
+			
 			bbar: [{
 					text : 'delete selected row',
 					action : 'deleteRow'
@@ -146,6 +147,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					text: 'Rowspan',
 					flex: 1,
 					dataIndex: 'rowspan',
+				},{
+					text: 'Row height',
+					flex: 1,
+					dataIndex: 'rowHeight',
 				},{
 					text: 'NodeId',
 					flex: 1,
@@ -193,22 +198,26 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					model: 'widget',
 					closeAction: 'hide',
 					width: 300,
-					height: 250,
+					height: 270,
 					items:[{
 							fieldLabel: 'title',
 							name: 'title',
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'colspan',
+							fieldLabel: 'Colspan',
 							name: 'colspan',
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'rowspan',
+							fieldLabel: 'Rowspan',
 							name: 'rowspan',
 						},{
 							xtype: 'numberfield',
-							fieldLabel: 'refresh interval',
+							fieldLabel: 'Refresh interval',
 							name: 'refreshInterval',
+						},{
+							xtype: 'numberfield',
+							fieldLabel: 'RowHeight',
+							name: 'rowHeight',
 						},
 						Ext.create('canopsis.lib.form.field.cinventory', {
 							multiSelect: false,
@@ -218,10 +227,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			});
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
-			tab = []
-			tab.push(item.data.nodeId);
-			this.window.down('cform').down('panel').LoadStore(tab);
-			
+			if (item.data.nodeId){
+				tab = []
+				tab.push(item.data.nodeId);
+				//this.window.down('cform').down('panel').LoadStore(tab);
+			}
 			
 			////////////////////add listeners on button////////////////
 			var WidgetForm = this.window.down('cform')
@@ -291,17 +301,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 	
 	createPreview : function(store, container, options) {
-		console.log('[ViewEditor][cform] - Creating preview')
+		//console.log('[ViewEditor][cform] - Creating preview')
 		//cleaning and adding new preview
 		container.removeAll();
 		
 		//get number of column
 		if (options.down('numberfield[name=nbColumns]').getValue()){
 			var nbColumns = options.down('numberfield[name=nbColumns]').getValue();
-			console.log('column defined');
+			//console.log('column defined');
 		} else {
 			var nbColumns = 1;
-			console.log('column by default');
+			//console.log('column by default');
 		}
 
 		//set the layout
