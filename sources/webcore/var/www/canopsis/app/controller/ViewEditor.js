@@ -42,9 +42,11 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
 		
 		//get nodeId if defined
-		_nodeId = form.down('gridpanel').store.getAt(0);
+		panel = form.down('gridpanel');
+		_nodeId = panel.store.getAt(0);
 		console.log(_nodeId);
 		if (_nodeId){
+			console.log('there is a nodeId');
 			record.set('nodeId', _nodeId.get('id'));
 		}
 		
@@ -64,19 +66,10 @@ Ext.define('canopsis.controller.ViewEditor', {
 
 	afterload_EditForm: function(form){
 		if (form.nodeId){
-			
 			var cinventory = form.GlobalOptions.down('panel');
-			var splited = form.nodeId.split(".");
-			//cinventory.InventoryStore.load({params: { 'search': search}});
-			//console.log(cinventory.InventoryStore);
-			//console.log(cinventory.InventoryStore.first());
-			node = Ext.ClassManager.instantiate('canopsis.model.inventory',{
-				_id : form.nodeId,
-				source_type : splited[4],
-				host_name : splited[5],
-				service_description : splited[6],
-			});
-			cinventory.store.add(node);
+			tab = []
+			tab.push(form.nodeId);
+			cinventory.LoadStore(tab);
 		}
 		
 	}
