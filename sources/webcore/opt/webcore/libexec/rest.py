@@ -56,13 +56,24 @@ def rest_get(namespace, ctype=None, _id=None):
 	storage = get_storage(namespace=namespace)
 
 	mfilter = {}
+	records = []
 	if ctype:
 		mfilter = {'crecord_type': ctype}
-	if _id:	
-		try:
-			records = [ storage.get(_id, account=account) ]
-		except:
-			return HTTPError(404, _id+" Not Found")
+	if _id:
+		list_id = _id.split(',')
+		if len(list_id) == 1:
+			_id = list_id[0]
+			try:
+				records = [ storage.get(_id, account=account) ]
+			except:
+				return HTTPError(404, _id+" Not Found")
+		else:
+			for _id in list_id:
+				if _id:
+					try:
+						records.append(storage.get(_id, account=account))
+					except:
+						pass
 		
 	else:
 		if search:
