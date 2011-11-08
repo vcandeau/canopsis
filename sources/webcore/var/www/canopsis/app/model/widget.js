@@ -6,6 +6,7 @@ Ext.define('canopsis.model.widget', {
 		{name : 'rowspan',		defaultValue: 1},
 		{name : 'refreshInterval', 	defaultValue: 0},
 		{name : 'nodeId',		defaultValue: undefined},
-		{name : 'title', 		defaultValue: undefined}
+		{name : 'title', 		defaultValue: undefined},
+		{name : 'rowHeight', defaultValue: 200}
 		]
 });
