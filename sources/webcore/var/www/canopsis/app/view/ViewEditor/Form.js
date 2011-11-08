@@ -176,6 +176,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 	
 	ModifyItem : function(view, item, index){
+			var test = item.nodeId;
+			//alert(item.data.nodeId);
 			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
@@ -210,6 +212,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			});
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
+			console.log(this.window.down('cform').down('panel'));
+			this.window.down('cform').down('panel').LoadStore(item.data.nodeId);
+			
 			
 			////////////////////add listeners on button////////////////
 			var WidgetForm = this.window.down('cform')
