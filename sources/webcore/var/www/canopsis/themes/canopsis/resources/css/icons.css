@@ -32,6 +32,15 @@
     background-image: url(../images/icons/save.png) !important; 
 }
 
+.icon-perfdata { 
+    background-image: url(../images/icons/stats.png) !important; 
+}
+
+.icon-bullet-orange { 
+    background-image: url(../images/icons/bullet_orange.png) !important; 
+}
+
+
 /* state */
 
 /*.icon-state-0 { 

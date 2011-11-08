@@ -32,6 +32,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					{name : 'source_type'},
 					{name : 'service_description'},
 					{name : 'host_name'},
+					{name : 'perf_data'},
 				],
 			});
 		}
@@ -42,6 +43,12 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				sortable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
+	       		},{
+				header: '',
+				width: 25,
+				sortable: false,
+				dataIndex: 'perf_data',
+				renderer: rdr_havePerfdata
 	       		},{
 				header: 'Node Name',
 				flex: 1,
