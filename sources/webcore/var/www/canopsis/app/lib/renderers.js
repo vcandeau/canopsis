@@ -32,3 +32,9 @@ var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, stor
 		return "<span class='icon icon-crecord_type-"+val+"' />"
 	}
 }
+
+var rdr_havePerfdata = function (val, metadata, record, rowIndex, colIndex, store) {
+	if (val != ''){
+		return "<span class='icon icon-perfdata'/>"
+	}
+}

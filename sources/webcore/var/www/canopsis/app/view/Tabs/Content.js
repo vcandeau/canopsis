@@ -21,11 +21,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		},
 	},
 
-	/*defaults: {
-		style: {
+	defaults: {
+		border: false,
+		/*style: {
 	            padding: '3px',
-	        }
-	},*/
+	        }*/
+	},
 
 	border: false,
 
@@ -61,7 +62,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var rowHeight = this.view.rowHeight
 
 		if (! rowHeight) { rowHeight = 200 }
-		if (! refreshInterval) { refreshInterval = 300 }
+		if (! refreshInterval) { refreshInterval = 0 }
 		if (! nbColumns) { nbColumns = 1 }
 
 		this.layout.columns = nbColumns
@@ -75,7 +76,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//item['height'] = '10'
 			item['width'] = '100%'
 			item['title'] = ''
-			item['border'] = false
 			
 			//item['baseCls'] = 'x-plain'
 			item['mytab'] = this
@@ -108,9 +108,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (item['rowspan']) { rowspan = item['rowspan'] }
 				
 				item['width'] = ((100/nbColumns) * colspan)/100 * totalWidth
-				item['border'] = false
-				item['style'] = []
-				item['style']['padding'] = '3px'
+
+				item['style'] = {padding: '3px'}
 
 				//Set default options
 				if (! item.nodeId) { item.nodeId=nodeId}

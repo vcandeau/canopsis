@@ -32,6 +32,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					{name : 'source_type'},
 					{name : 'service_description'},
 					{name : 'host_name'},
+					{name : 'perf_data'},
 				],
 			});
 		}
@@ -42,6 +43,12 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				sortable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
+	       		},{
+				header: '',
+				width: 25,
+				sortable: false,
+				dataIndex: 'perf_data',
+				renderer: rdr_havePerfdata
 	       		},{
 				header: 'Node Name',
 				flex: 1,
@@ -88,31 +95,34 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			var i;
 			var ids_txt="";
 			for (i in ids){
-				ids_txt = ids_txt + "," + ids[i]
+				if (ids[i]){
+					ids_txt = ids_txt + "," + ids[i]
+				}
 			}
-
-			// request
-			Ext.Ajax.request({
-				url: '/rest/inventory/state/' + ids_txt,
-				scope: this,
-				success: function(response){
-					data = Ext.JSON.decode(response.responseText)
-					data = data.data
-					if (data){
-						if (this.multiSelect){
-							var i;
-							for (i in data){
-								this.store.add(Ext.create('cinventory', data[i]))
+			if (ids_txt){
+				// request
+				Ext.Ajax.request({
+					url: '/rest/inventory/state/' + ids_txt,
+					scope: this,
+					success: function(response){
+						data = Ext.JSON.decode(response.responseText)
+						data = data.data
+						if (data){
+							if (this.multiSelect){
+								var i;
+								for (i in data){
+									this.store.add(Ext.create('cinventory', data[i]))
+								}
+							}else{
+								this.store.add(Ext.create('cinventory', data[0]))
 							}
-						}else{
-							this.store.add(Ext.create('cinventory', data[0]))
 						}
-					}
-				},
-				failure: function ( result, request) {
-					log.debug('Ajax request failed')
-				} 
-			})
+					},
+					failure: function ( result, request) {
+						log.debug('Ajax request failed')
+					} 
+				})
+			}
 		}
 	},
 
