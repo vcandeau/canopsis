@@ -182,12 +182,15 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							fieldLabel: 'title',
 							name: 'title',
 						},{
+							xtype: 'numberfield',
 							fieldLabel: 'colspan',
 							name: 'colspan',
 						},{
+							xtype: 'numberfield',
 							fieldLabel: 'rowspan',
 							name: 'rowspan',
 						},{
+							xtype: 'numberfield',
 							fieldLabel: 'refresh interval',
 							name: 'refreshInterval',
 						},
@@ -245,6 +248,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		this.GlobalOptions.down('#crecord_name').setValue(record.get('crecord_name'));
 		this.GlobalOptions.down('#refreshInterval').setValue(record.get('refreshInterval'));
 		this.GlobalOptions.down('#nbColumns').setValue(record.get('nbColumns'));
+		//needed for loading node, cf ViewEditor controller, beforeload_EditForm function
+		this.nodeId = record.get('nodeId');
+		/*console.log ('nodeId');
+		console.log(this.nodeId);*/
 	},
 	
 
