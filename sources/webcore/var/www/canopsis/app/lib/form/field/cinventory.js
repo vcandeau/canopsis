@@ -3,6 +3,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 	window: false,
 	multiSelect: true,
+	ids: false,
+
 	//width: '100%',
 
 	initComponent: function() {
@@ -74,7 +76,40 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				model: 'cinventory',
 		});
 
+		this.LoadStore(this.ids)
+
 		this.callParent(arguments);
+	},
+
+	LoadStore: function(ids) {
+		//load list of ids in store
+		if (ids){
+			// format url argument
+			var i;
+			var ids_txt="";
+			for (i in ids){
+				ids_txt = ids_txt + "," + ids[i]
+			}
+
+			// request
+			Ext.Ajax.request({
+				url: '/rest/inventory/state/' + ids_txt,
+				scope: this.store,
+				success: function(response){
+					data = Ext.JSON.decode(response.responseText)
+					data = data.data
+					if (data){
+						var i;
+						for (i in data){
+							this.add(Ext.create('cinventory', data[i]))
+						}
+					}
+				},
+				failure: function ( result, request) {
+					log.debug('Ajax request failed')
+				} 
+			})
+		}
 	},
 
 	DisplaySelWindow: function(field, options){
