@@ -105,7 +105,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					url: '/rest/inventory/state/' + ids_txt,
 					scope: this,
 					success: function(response){
-						data = Ext.JSON.decode(response.responseText)
+						var data = Ext.JSON.decode(response.responseText)
 						data = data.data
 						if (data){
 							if (this.multiSelect){
