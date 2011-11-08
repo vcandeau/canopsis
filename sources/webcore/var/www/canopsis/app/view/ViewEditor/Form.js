@@ -53,20 +53,20 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			border: 0,
 			defaultType: 'textfield',
 			items : [{
-					fieldLabel: 'view\'s name',
+					fieldLabel: 'Name',
 					//itemId: 'crecord_name',
 					name: 'crecord_name',
 					allowBlank: false,
 				},{
 					xtype: 'numberfield',
-					fieldLabel: 'refresh interval',
+					fieldLabel: 'Refresh interval',
 					//itemId : 'refreshInterval',
 					name: 'refreshInterval',
 					value: 0,
 					minValue: 0
 				},{
 					xtype: 'numberfield',
-					fieldLabel: 'nb column',
+					fieldLabel: 'Nb column',
 					//itemId: 'nbColumns',
 					name: 'nbColumns',
 					value: 1,
@@ -114,6 +114,12 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var ItemsList = Ext.create('Ext.grid.Panel', {
 			store: this.ItemsStore,
 			
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop'
+				}
+			},
+			
 			bbar: [{
 					text : 'delete selected row',
 					action : 'deleteRow'
@@ -129,23 +135,23 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					flex: 1,
 					dataIndex: 'xtype'
 				},{
-					text: 'title',
+					text: 'Title',
 					flex: 1,
 					dataIndex: 'title',
 				},{
-					text: 'colspan',
+					text: 'Colspan',
 					flex: 1,
 					dataIndex: 'colspan',
 				},{
-					text: 'rowspan',
+					text: 'Rowspan',
 					flex: 1,
 					dataIndex: 'rowspan',
 				},{
-					text: 'nodeId',
+					text: 'NodeId',
 					flex: 1,
 					dataIndex: 'nodeId',
 				},{
-					text: 'refresh interval',
+					text: 'Refresh interval',
 					flex: 1,
 					dataIndex: 'refreshInterval',
 				}],
@@ -212,8 +218,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			});
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
-			console.log(this.window.down('cform').down('panel'));
-			this.window.down('cform').down('panel').LoadStore(item.data.nodeId);
+			tab = []
+			tab.push(item.data.nodeId);
+			this.window.down('cform').down('panel').LoadStore(tab);
 			
 			
 			////////////////////add listeners on button////////////////
