@@ -34,15 +34,16 @@ Ext.define('canopsis.controller.ViewEditor', {
 		record.set('items', temptab);
 		
 		//crecord_name and name fixing
-		var record_name = form.down('#crecord_name').getValue()
+		var record_name = form.down('textfield[name=crecord_name]').getValue()
 		record.set('crecord_name',record_name);
 		record.set('id','view.' + record_name);
-		
-		record.set('refreshInterval',form.down('#refreshInterval').getValue());
-		record.set('nbColumns',form.down('#nbColumns').getValue());
+		record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
+		record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
+		record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
 		
 		//get nodeId if defined
 		_nodeId = form.down('gridpanel').store.getAt(0);
+		console.log(_nodeId);
 		if (_nodeId){
 			record.set('nodeId', _nodeId.get('id'));
 		}
@@ -62,19 +63,21 @@ Ext.define('canopsis.controller.ViewEditor', {
 	},
 
 	afterload_EditForm: function(form){
-		var cinventory = form.GlobalOptions.down('panel');
-		var splited = form.nodeId.split(".");
-		//cinventory.InventoryStore.load({params: { 'search': search}});
-		//console.log(cinventory.InventoryStore);
-		//console.log(cinventory.InventoryStore.first());
-		node = Ext.ClassManager.instantiate('canopsis.model.inventory',{
-			_id : form.nodeId,
-			source_type : splited[4],
-			host_name : splited[5],
-			service_description : splited[6],
-		});
-		cinventory.store.add(node);
-		
+		if (form.nodeId){
+			
+			var cinventory = form.GlobalOptions.down('panel');
+			var splited = form.nodeId.split(".");
+			//cinventory.InventoryStore.load({params: { 'search': search}});
+			//console.log(cinventory.InventoryStore);
+			//console.log(cinventory.InventoryStore.first());
+			node = Ext.ClassManager.instantiate('canopsis.model.inventory',{
+				_id : form.nodeId,
+				source_type : splited[4],
+				host_name : splited[5],
+				service_description : splited[6],
+			});
+			cinventory.store.add(node);
+		}
 		
 	}
 

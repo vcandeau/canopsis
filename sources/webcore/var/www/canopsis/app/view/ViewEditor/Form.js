@@ -54,22 +54,30 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			defaultType: 'textfield',
 			items : [{
 					fieldLabel: 'view\'s name',
-					itemId: 'crecord_name',
+					//itemId: 'crecord_name',
 					name: 'crecord_name',
 					allowBlank: false,
 				},{
 					xtype: 'numberfield',
 					fieldLabel: 'refresh interval',
-					itemId : 'refreshInterval',
+					//itemId : 'refreshInterval',
 					name: 'refreshInterval',
 					value: 0,
 					minValue: 0
 				},{
 					xtype: 'numberfield',
 					fieldLabel: 'nb column',
-					itemId: 'nbColumns',
+					//itemId: 'nbColumns',
 					name: 'nbColumns',
 					value: 1,
+					minValue: 0
+				},
+				{
+					xtype: 'numberfield',
+					fieldLabel: 'Row height',
+					//itemId: 'nbColumns',
+					name: 'rowHeight',
+					value: 200,
 					minValue: 0
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
@@ -154,7 +162,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//////////////binding events//////////////////
 		//autolaunch  Previews
 		this.ItemsStore.on('datachanged', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
-		GlobalOptions.down('#nbColumns').on('change', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
+		GlobalOptions.down('numberfield[name=nbColumns]').on('change', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
 		
 		//others listeners
 		Widgets.on('itemdblclick',this.addItem,this);
@@ -245,9 +253,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					//console.log(copy)
 					this.ItemsStore.add(copy);
 		}
-		this.GlobalOptions.down('#crecord_name').setValue(record.get('crecord_name'));
-		this.GlobalOptions.down('#refreshInterval').setValue(record.get('refreshInterval'));
-		this.GlobalOptions.down('#nbColumns').setValue(record.get('nbColumns'));
+		this.GlobalOptions.down('textfield[name=crecord_name]').setValue(record.get('crecord_name'));
+		this.GlobalOptions.down('numberfield[name=refreshInterval]').setValue(record.get('refreshInterval'));
+		this.GlobalOptions.down('numberfield[name=nbColumns]').setValue(record.get('nbColumns'));
 		//needed for loading node, cf ViewEditor controller, beforeload_EditForm function
 		this.nodeId = record.get('nodeId');
 		/*console.log ('nodeId');
@@ -276,8 +284,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		container.removeAll();
 		
 		//get number of column
-		if (options.down('#nbColumns').getValue()){
-			var nbColumns = options.down('#nbColumns').getValue();
+		if (options.down('numberfield[name=nbColumns]').getValue()){
+			var nbColumns = options.down('numberfield[name=nbColumns]').getValue();
 			console.log('column defined');
 		} else {
 			var nbColumns = 1;
