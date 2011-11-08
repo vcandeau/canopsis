@@ -53,5 +53,13 @@ Ext.define('canopsis.controller.ViewEditor', {
 		
 		this._cancelForm(form);
 	},
+	
+	beforeload_EditForm: function(form){
+		//console.log('before load editing');
+		var user_textfield = form.GlobalOptions.down('textfield[name=crecord_name]')
+		if (user_textfield){
+			user_textfield.disable()
+		}
+	},
 
 });
