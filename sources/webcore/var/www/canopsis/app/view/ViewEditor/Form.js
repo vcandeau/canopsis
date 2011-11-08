@@ -208,6 +208,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						record.set('nodeId', nodeId.get('id'));
 					}
 					this.window.hide();
+					this.createPreview(this.ItemsStore,this.Preview,this.GlobalOptions);
 				},this);				
 	},
 	
