@@ -7,11 +7,12 @@ Ext.define('canopsis.store.View', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/view',
+		extraParams: { onlyWritable: 1 },
 		reader: {
 			type: 'json',
 			root: 'data',
 			totalProperty  : 'total',
-			successProperty: 'success'
+			successProperty: 'success',
 		},
 		writer: {
 			type: 'json'
