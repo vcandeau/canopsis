@@ -79,9 +79,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 
 		var Preview = Ext.create('Ext.panel.Panel', { 
-			title : Preview,
+			title : 'Preview',
 			colspan: 2,
 			width: this.DefaultWidth * 2,
+			layout : 'fit',
 		});
 
 		var Widgets =  Ext.create('Ext.grid.Panel', {
@@ -266,47 +267,78 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			var nbColumns = options.down('#nbColumns').getValue();
 			console.log('column defined');
 		} else {
-			var nbColumns = 5;
+			var nbColumns = 1;
 			console.log('column by default');
 		}
 
-		var myLayout = []
-		myLayout['type'] = 'table';
-		myLayout['columns'] = nbColumns;
-		//need this container for columns
-		var preview = container.add({
-			xtype: 'panel',
-			border: 0,
-			layout : myLayout,
-			defaults: {
-				height: 40,
-				padding:4,
-				tableAttrs: {
-					style: {
-						width: '100%',
-							}
-				},
-			}
-		});
+		console.log(store.getCount());
+		//set the layout
+		if(store.getCount() != 1)
+		{
+			console.log('store != 1 fixing layout table')
+			var myLayout = []
+			myLayout['type'] = 'table';
+			myLayout['columns'] = nbColumns;
+			//need this container for columns
+			var preview = container.add({
+				xtype: 'panel',
+				border: 0,
+				layout : myLayout,
+				defaults: {
+					height: 40,
+					padding:4,
+					tableAttrs: {
+						style: {
+							width: '100%',
+								}
+					},
+				}
+			});
+		} else {
+			console.log('store == 1 , fixing layout fit')
+			var preview = container.add({
+				xtype: 'panel',
+				border: 0,
+				layout : 'fit',
+			});
+		}
+		
+		
 		
 		//starting loop
 		var totalWidth = container.getWidth() - 20;
-		store.each(function(record) {
-			panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
-			if (record.data.rowspan){
-				base_heigth = 30 * record.data.rowspan;
-			}else{
-				base_heigth = 30;
-			}
+		
+		if (store.getCount() == 1)
+		{
+			console.log('Preview : only one record, adding it fullscreen')
+			record = store.getAt(0)
 			preview.add({
-				xtype : 'panel',
-				html : record.data.xtype,
-				colspan : record.data.colspan,
-				rowspan : record.data.rowspan,
-				width : panel_width,
-				height : base_heigth,
+					xtype : 'panel',
+					html : record.data.xtype,
+					width : '100%'
 			});
-		});
+			
+			
+		}else{
+			console.log('Preview : many records set multiple items')
+			store.each(function(record) {
+				panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
+				if (record.data.rowspan){
+					base_heigth = 30 * record.data.rowspan;
+				}else{
+					base_heigth = 30;
+				}
+						
+				preview.add({
+					xtype : 'panel',
+					html : record.data.xtype,
+					colspan : record.data.colspan,
+					rowspan : record.data.rowspan,
+					width : panel_width,
+					height : base_heigth,
+				});
+			});
+		}
 	},
 	
 	
