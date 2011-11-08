@@ -213,7 +213,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
 			console.log(this.window.down('cform').down('panel'));
-			this.window.down('cform').down('panel').LoadStore(item.data.nodeId);
+			tab = []
+			tab.push(item.data.nodeId);
+			this.window.down('cform').down('panel').LoadStore(tab);
 			
 			
 			////////////////////add listeners on button////////////////
