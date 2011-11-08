@@ -278,6 +278,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		this.GlobalOptions.down('textfield[name=crecord_name]').setValue(record.get('crecord_name'));
 		this.GlobalOptions.down('numberfield[name=refreshInterval]').setValue(record.get('refreshInterval'));
 		this.GlobalOptions.down('numberfield[name=nbColumns]').setValue(record.get('nbColumns'));
+		this.GlobalOptions.down('numberfield[name=rowHeight]').setValue(record.get('rowHeight'));
 		//needed for loading node, cf ViewEditor controller, beforeload_EditForm function
 		this.nodeId = record.get('nodeId');
 		/*console.log ('nodeId');
