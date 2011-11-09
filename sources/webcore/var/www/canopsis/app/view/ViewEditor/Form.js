@@ -133,6 +133,12 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				
 
 				columns: [{
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'xtype',
+					renderer: rdr_widget_preview
+	       		},{
 					text: 'Option name',
 					flex: 1,
 					dataIndex: 'xtype',
@@ -384,7 +390,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				try {		
 					preview.add({
 						xtype : 'panel',
-						html : record.data.xtype,
+						html : "<div style='text-align: center;'>" + record.data.xtype + "</div>",
+						bodyStyle:{"background-color": global.widgetColors[store.indexOf(record)]},
 						colspan : record.data.colspan,
 						rowspan : record.data.rowspan,
 						width : panel_width,
