@@ -120,8 +120,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				}
 			},
 			
-			
-			
 			bbar: [{
 					text : 'delete selected row',
 					action : 'deleteRow'
@@ -132,7 +130,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					action : 'reset'
 				}],
 				
-
 				columns: [{
 					header: '',
 					width: 25,
@@ -194,17 +191,23 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		Widgets.on('itemdblclick',this.addItem,this);
 		ItemsList.on('itemdblclick',this.ModifyItem,this);
 		
+		//delete row listener
 		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
 		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
 		
+		//clear all listener
 		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
-		clearAllButton[0].on('click',function(){this.ItemsStore.removeAll()},this);
+		clearAllButton[0].on('click',function(){
+			this.ItemsStore.removeAll();
+			//don't recognize by the event datachanged, must trigger by hand
+			this.createPreview(this.ItemsStore,Preview,GlobalOptions);
+		},this);
 	},
 	
 	ModifyItem : function(view, item, index){
 			var test = item.nodeId;
-			//alert(item.data.nodeId);
 			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
+			
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
 				title: 'Edit ' + item.data.xtype,
@@ -240,6 +243,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					]
 				}]
 			});
+			
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
 			if (item.data.nodeId){
@@ -280,27 +284,22 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	addItem : function(view, item, index) {
 		copy = Ext.ClassManager.instantiate('canopsis.model.widget',item.data);
 		this.ItemsStore.add(copy);
+		log.debug('[controller][cgrid][Form] - item added')
 	},
 
 	loadRecord: function(record){
 		widgets =  record.data.items;
 		for (i in widgets){
-					//console.log(widgets[i])
 					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
-					//console.log(copy)
 					this.ItemsStore.add(copy);
 		}
 		this.GlobalOptions.down('textfield[name=crecord_name]').setValue(record.get('crecord_name'));
 		this.GlobalOptions.down('numberfield[name=refreshInterval]').setValue(record.get('refreshInterval'));
 		this.GlobalOptions.down('numberfield[name=nbColumns]').setValue(record.get('nbColumns'));
 		this.GlobalOptions.down('numberfield[name=rowHeight]').setValue(record.get('rowHeight'));
-		//needed for loading node, cf ViewEditor controller, beforeload_EditForm function
+		//needed for loading node, cf ViewEditor.js controller, beforeload_EditForm function
 		this.nodeId = record.get('nodeId');
-		/*console.log ('nodeId');
-		console.log(this.nodeId);*/
 	},
-	
-
 
 	beforeclose: function(tab, object){
 		console.log('[ViewEditor][cform] - Active previous tab');
@@ -317,20 +316,16 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 	
 	createPreview : function(store, container, options) {
-		//console.log('[ViewEditor][cform] - Creating preview')
-		//cleaning and adding new preview
 		container.removeAll();
 		
 		//get number of column
 		if (options.down('numberfield[name=nbColumns]').getValue()){
 			var nbColumns = options.down('numberfield[name=nbColumns]').getValue();
-			//console.log('column defined');
 		} else {
 			var nbColumns = 1;
-			//console.log('column by default');
 		}
 
-		//set the layout
+		//set the layout and populate preview
 		if(store.getCount() != 1)
 		{
 			//console.log('store != 1 fixing layout table')
@@ -343,39 +338,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				border: 0,
 				layout : myLayout,
 				defaults: {
-					height: 40,
+					//height: 40,
 					padding:4,
 					tableAttrs: {
-						style: {
-							width: '100%',
-								}
+						style: {width: '100%'}
 					},
 				}
 			});
-		} else {
-			//console.log('store == 1 , fixing layout fit')
-			var preview = container.add({
-				xtype: 'panel',
-				border: 0,
-				layout : 'fit',
-			});
-		}
-		
-		//starting loop
-		var totalWidth = container.getWidth() - 20;
-		
-		if (store.getCount() == 1)
-		{
-			//console.log('Preview : only one record, adding it fullscreen')
-			record = store.getAt(0)
-			preview.add({
-					xtype : 'panel',
-					html : record.data.xtype,
-					width : '100%'
-			});
-		
-		}else{
-			//console.log('Preview : many records set multiple items')
+			
+			///////////////starting loop///////////////////
+			var totalWidth = container.getWidth() - 20;
+			
 			store.each(function(record) {
 				panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
 				if (record.data.rowspan){
@@ -402,9 +375,25 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					console.log(err);
 				}
 			});
+			
+		} else {
+			//if there is only one item, we switch full screen
+			log.debug('[controller][cgrid][Form] - only one item, fullscreen mode')
+			var preview = container.add({
+				xtype: 'panel',
+				border: 0,
+				layout : 'fit',
+			});
+			
+			var totalWidth = container.getWidth() - 20;
+			record = store.getAt(0)
+			preview.add({
+					xtype : 'panel',
+					html : "<div style='text-align: center;'>" + record.data.xtype + "</div>",
+					width : '100%'
+			});
+			
 		}
-	},
-	
-	
+	}
 	
 });
