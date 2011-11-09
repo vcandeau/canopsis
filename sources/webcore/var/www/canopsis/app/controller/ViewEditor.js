@@ -36,15 +36,15 @@ Ext.define('canopsis.controller.ViewEditor', {
 		//crecord_name and name fixing
 		var record_name = form.down('textfield[name=crecord_name]').getValue()
 		record.set('crecord_name',record_name);
-		console.log('crecord_name : ' + record.get('crecord_name'));
+		//console.log('crecord_name : ' + record.get('crecord_name'));
 		record.set('id','view.' + record_name);
-		console.log('id : ' + record.get('id'));
+		//console.log('id : ' + record.get('id'));
 		record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
-		console.log('refreshInterval : ' + record.get('refreshInterval'));
+		//console.log('refreshInterval : ' + record.get('refreshInterval'));
 		record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
-		console.log('nbColumns : ' + record.get('nbColumns'));
+		//console.log('nbColumns : ' + record.get('nbColumns'));
 		record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
-		console.log('rowHeight : ' + record.get('rowHeight'));
+		//console.log('rowHeight : ' + record.get('rowHeight'));
 		
 		
 		//get nodeId if defined
