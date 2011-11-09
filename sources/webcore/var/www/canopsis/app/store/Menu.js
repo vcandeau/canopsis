@@ -1,6 +1,8 @@
 Ext.define('canopsis.store.Menu', {
-	extend: 'Ext.data.TreeStore',
+	extend: 'canopsis.lib.store.ctreeStore',
+	
 	storeId: 'store.Menu',
+	
 	fields: [
 		{name: 'id'},
 		{name: 'leaf'},

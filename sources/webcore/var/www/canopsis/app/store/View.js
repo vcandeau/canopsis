@@ -1,9 +1,12 @@
 Ext.define('canopsis.store.View', {
-	extend: 'Ext.data.Store',
+    extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.view',
+	
 	storeId: 'store.View',
+	
 	autoLoad: true,
 	autoSync: true,
+	
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/view',

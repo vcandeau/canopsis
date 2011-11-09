@@ -1,10 +1,11 @@
 Ext.define('canopsis.store.Account', {
-    extend: 'Ext.data.Store',
+    extend: 'canopsis.lib.store.cstore',
     model: 'canopsis.model.Account',
+
+	storeId: 'store.Account',
 
 	autoLoad: true,
 	autoSync: true,
-	storeId: 'store.Account',
 	sorters: ['user'],
 	groupField: 'aaa_group',
 	proxy: {
@@ -20,18 +21,6 @@ Ext.define('canopsis.store.Account', {
 			type: 'json',
 			writeAllFields: false,
 		},
-		//raise an exception if server didn't accept the request
-		//and display a popup if the store is modified
-		listeners: {
-                exception: function(proxy, response, operation){
-                    Ext.MessageBox.show({
-                        title: 'REMOTE EXCEPTION',
-                        msg: 'Accounts request failed',
-                        icon: Ext.MessageBox.ERROR,
-                        buttons: Ext.Msg.OK
-                    });
-                },
-        }
-      },
+	}
 	
 });
