@@ -5,7 +5,7 @@ var rdr_tstodate = function (val) {
 
 var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
 	if (val > 0){ val=2; }
-	return "<spain class='icon icon-state-"+val+"' />"
+	return "<span class='icon icon-state-"+val+"' />"
 }
 
 var rdr_source_type = function (val, metadata, record, rowIndex, colIndex, store) {
@@ -35,6 +35,10 @@ var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, stor
 
 var rdr_havePerfdata = function (val, metadata, record, rowIndex, colIndex, store) {
 	if (val != ''){
-		return "<span class='icon icon-perfdata'/>"
+		return '<span style="color:green;">' + val + '%</span>';
 	}
+}
+
+var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, store) {	
+	return "<span style='background-color:" + global.widgetColors[rowIndex] + ";color:" + global.widgetColors[rowIndex] + ";'>__</span>"
 }

@@ -77,12 +77,7 @@ Ext.define('canopsis.view.Viewport', {
 				successProperty: 'success'
 			},
 			success: function(response){
-				//global.push(response);
-				console.log(response);
-				console.log(global.colors);
 				global['account'] = Ext.JSON.decode(response.responseText).data[0];
-				console.log(
-				global);
 			},
 			failure: function() {
 				window.location.href='/';
