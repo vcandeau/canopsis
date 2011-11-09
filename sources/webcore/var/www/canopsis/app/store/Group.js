@@ -1,10 +1,11 @@
 Ext.define('canopsis.store.Group', {
-	extend: 'Ext.data.Store',
+    extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Group',
+	
+	storeId: 'store.Group',
 
 	autoLoad: true,
 	autoSync: true,
-	storeId: 'store.Group',
 
 	proxy: {
 		type: 'rest',
