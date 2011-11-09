@@ -77,6 +77,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					fieldLabel: 'Row height',
 					//itemId: 'nbColumns',
 					name: 'rowHeight',
+					value: 200,
 					minValue: 0
 				},
 				Ext.create('canopsis.lib.form.field.cinventory', {
