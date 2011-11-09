@@ -9,10 +9,13 @@ Ext.define('canopsis.model.Selector', {
 });
 
 Ext.define('canopsis.store.Selector', {
-	extend: 'Ext.data.Store',
+    extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Selector',
+	
 	storeId: 'store.Selector',
+	
 	//autoLoad: true,
+	
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/selector',
