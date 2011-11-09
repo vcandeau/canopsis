@@ -64,5 +64,35 @@ Ext.define('canopsis.view.Viewport', {
 		width: 150,
 		xtype: 'MenuView',
 		id: 'main-menu'
-	}]
-});
+	}],
+	
+	getAccount : function(){
+		Ext.Ajax.request({
+			type: 'rest',
+			url: '/account/me',
+			reader: {
+				type: 'json',
+				root: 'data',
+				totalProperty  : 'total',
+				successProperty: 'success'
+			},
+			success: function(response){
+				//global.push(response);
+				console.log(response);
+				console.log(global.colors);
+				global['account'] = Ext.JSON.decode(response.responseText).data[0];
+				console.log(
+				global);
+			},
+			failure: function() {
+				window.location.href='/';
+			}
+		});
+	},
+	
+	initComponent: function() {
+			this.getAccount();
+			this.callParent(arguments);
+		}
+		
+	});
