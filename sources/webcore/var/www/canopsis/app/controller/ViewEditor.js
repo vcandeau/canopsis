@@ -76,6 +76,11 @@ Ext.define('canopsis.controller.ViewEditor', {
 			user_textfield.disable();
 		}
 	},
+	
+	deleteButton: function(){
+		//reload menu view
+		Ext.data.StoreManager.lookup('Menu').load();
+	},
 
 	afterload_EditForm: function(form){
 		if (form.nodeId){
