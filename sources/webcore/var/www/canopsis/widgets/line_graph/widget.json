@@ -1,0 +1,8 @@
+[{
+	"name":  "Line Graph",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"line_graph",
+	"description": "Display perfdata on line's graph"
+}]
