@@ -13,6 +13,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
             		}
 		},
 	},    
+	
+	autoScroll: true,
 
 	tbar: [{
 		iconCls: 'icon-save',
