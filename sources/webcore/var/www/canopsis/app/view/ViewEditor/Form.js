@@ -45,7 +45,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 		this.defaults = {
 			width: this.DefaultWidth,
-			height: 200,
+			height: 250,
 			padding:4,
 		}
 
@@ -56,38 +56,50 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			width: this.DefaultWidth * 2,
 			border: 0,
 			defaultType: 'textfield',
-			items : [{
-					fieldLabel: 'Name',
-					//itemId: 'crecord_name',
-					name: 'crecord_name',
-					allowBlank: false,
-				},{
-					xtype: 'numberfield',
-					fieldLabel: 'Refresh interval',
-					//itemId : 'refreshInterval',
-					name: 'refreshInterval',
-					value: 0,
-					minValue: 0
-				},{
-					xtype: 'numberfield',
-					fieldLabel: 'Nb column',
-					//itemId: 'nbColumns',
-					name: 'nbColumns',
-					value: 1,
-					minValue: 0
-				},
-				{
-					xtype: 'numberfield',
-					fieldLabel: 'Row height',
-					//itemId: 'nbColumns',
-					name: 'rowHeight',
-					value: 200,
-					minValue: 0
-				},
-				Ext.create('canopsis.lib.form.field.cinventory', {
-					multiSelect: false,
-				})
-			]
+			items:[{
+						xtype: 'fieldset',
+						flex: 3,
+						title: 'Global options',
+						layout: 'anchor',
+						defaults: {
+							anchor: '100%',
+							hideEmptyLabel: true
+						},
+						
+						items : [{
+								xtype : 'textfield',
+								fieldLabel: 'Name',
+								//itemId: 'crecord_name',
+								name: 'crecord_name',
+								allowBlank: false,
+							},{
+								xtype: 'numberfield',
+								fieldLabel: 'Refresh interval',
+								//itemId : 'refreshInterval',
+								name: 'refreshInterval',
+								value: 0,
+								minValue: 0
+							},{
+								xtype: 'numberfield',
+								fieldLabel: 'Nb column',
+								//itemId: 'nbColumns',
+								name: 'nbColumns',
+								value: 1,
+								minValue: 0
+							},
+							{
+								xtype: 'numberfield',
+								fieldLabel: 'Row height',
+								//itemId: 'nbColumns',
+								name: 'rowHeight',
+								value: 200,
+								minValue: 0
+							},
+							Ext.create('canopsis.lib.form.field.cinventory', {
+								multiSelect: false,
+							})
+						]
+					}]
 		});
 
 		//fixing layout (table goes wild without it)
@@ -281,14 +293,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				}]
 			});
 			
-			//adding form panel option
-			/*
-			console.log(item.data.options)
-			options = Ext.create('Ext.form.Panel', { 
-					items: item.data.options,
-			});
-			this.window.add(options);
-			*/
 			//showing and loading the window
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
