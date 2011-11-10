@@ -43,7 +43,7 @@ Ext.define('canopsis.view.Widgets.line_graph' ,{
 				renderTo: this.divId,
 				zoomType: 'x',
 				defaultSeriesType: 'area',
-				height: this.height,
+				height: this.divHeight,
 				//marginTop : 100,
 				//width: 300,
 			},
