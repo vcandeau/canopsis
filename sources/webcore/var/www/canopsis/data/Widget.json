@@ -1,9 +1,16 @@
 [{
+	"name":  "Host Header",
 	"xtype": "host_header",
+	"description": "Display host informations"
 },{
+	"name":  "KPI",
 	"xtype": "kpi",
 },{
+	"name":  "Line Grapĥ",
 	"xtype":"line_graph",
+	"description": "Display perfdata on line's graph"
 },{
+	"name":  "Empty cell",
 	"xtype":"empty",
+	"description": "Display empty cell"
 }]

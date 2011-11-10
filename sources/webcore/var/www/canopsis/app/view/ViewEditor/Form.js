@@ -106,9 +106,13 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var Widgets =  Ext.create('Ext.grid.Panel', {
 			store: 'Widget',
 			columns: [{
-				header: 'widget',
-				dataIndex: 'xtype',
+				header: 'Name',
+				dataIndex: 'name',
 				flex: 1
+       			 },{
+				header: 'Description',
+				dataIndex: 'description',
+				flex: 2
        			 }],
 		});
 		
@@ -125,12 +129,14 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			},
 			
 			bbar: [{
-					text : 'delete selected row',
+					iconCls: 'icon-delete',
+					text : 'Delete selected row',
 					action : 'deleteRow'
 				},{
 					xtype: 'tbseparator'
 				},{
-					text : 'clear all',
+					iconCls: 'icon-delete',
+					text : 'Clear all',
 					action : 'reset'
 				}],
 				
@@ -143,7 +149,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	       		},{
 					text: 'Option name',
 					flex: 1,
-					dataIndex: 'xtype',
+					dataIndex: 'name',
 					sortable: false,
 				},{
 					text: 'Title',
