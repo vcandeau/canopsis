@@ -35,7 +35,7 @@ var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, stor
 
 var rdr_havePerfdata = function (val, metadata, record, rowIndex, colIndex, store) {
 	if (val != ''){
-		return '<span style="color:green;">' + val + '%</span>';
+		return "<span class='icon icon-perfdata'/>";
 	}
 }
 
