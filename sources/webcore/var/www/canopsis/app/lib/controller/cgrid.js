@@ -50,20 +50,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('[controller][cgrid][form] - Bind events on "'+id+'" ...')
 
 		// Save buttons
-		//var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]')
-		var btns = form.down('button[action=save]');
-		/*for (i in btns){
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]')
+		for (i in btns){
 			btns[i].on('click', function(){ this._saveForm(form) }, this)
-		}*/
-		btns.on('click', function(){ this._saveForm(form) }, this)
+		}
 
 		// Cancel buttons
-		//var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]')
-		var btns = form.down('button[action=cancel]');
-		/*for (i in btns){
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]')
+		for (i in btns){
 			btns[i].on('click', function(){ this._cancelForm(form) }, this)
-		}*/
-		btns.on('click', function(){ this._cancelForm(form) }, this)
+		}
 	},
 
 	_reloadButton: function() {
@@ -201,7 +197,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if (this.formXtype) {
 			var main_tabs = Ext.getCmp('main-tabs')
-			var id = this.formXtype + '-' + item.internalId.replace('.','-') + '-tab'
+			var id = this.formXtype + '-' + item.internalId.replace(/\./g,'-') + '-tab'
 			var tab = Ext.getCmp(id);
 			if (tab) {
 				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")

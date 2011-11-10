@@ -181,7 +181,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		this.Preview = this.add(Preview);
 		this.add(Widgets);
 		this.ItemsList = this.add(ItemsList);
-		
+
 		//////////////binding events//////////////////
 		//autolaunch  Previews
 		this.ItemsStore.on('datachanged', function(){this.createPreview(this.ItemsStore,Preview,GlobalOptions)}, this);
