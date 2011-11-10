@@ -230,6 +230,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//var test = item.nodeId;
 			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
 			
+			//calculate width
 			widget_option =  {
 				xtype: 'fieldset',
 				flex: 3,
@@ -251,7 +252,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					xtype : 'cform',
 					model: 'widget',
 					//closeAction: 'hide',
-					width: 600,
+					width: 320,
 					layout: 'hbox',
 					margin: '0 0 10',					
 					items:[
@@ -300,6 +301,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//add second panel only if options exist
 			if (item.data.options)
 			{
+				this.window.down('cform').setWidth(600);
 				this.window.down('cform').add({
 					xtype: 'fieldset',
 					flex: 1,
@@ -331,12 +333,22 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			function(){
 					console.log('[controller][cgrid][Form][WidgetForm]');
 					record = WidgetForm.getRecord();
-					record.set(WidgetForm.getValues());
+					new_values = WidgetForm.getValues();
+					record.set(new_values);
 					//if nodeId is defined
 					var nodeId = WidgetForm.down('gridpanel').store.getAt(0);
 					if (nodeId){
 						record.set('nodeId', nodeId.get('id'));
 					}
+					//processing options
+					if (item.data.options)
+					{ 
+						for(var i in item.data.options)
+						{
+							record.data.options[i].value = new_values[record.data.options[i].name]
+						}
+					}
+					
 					this.window.hide();
 					this.createPreview(this.ItemsStore,this.Preview,this.GlobalOptions);
 				},this);				
