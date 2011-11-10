@@ -40,5 +40,5 @@ var rdr_havePerfdata = function (val, metadata, record, rowIndex, colIndex, stor
 }
 
 var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, store) {	
-	return "<span style='background-color:" + global.widgetColors[rowIndex] + ";color:" + global.widgetColors[rowIndex] + ";'>__</span>"
+	return "<span style='background-color:" + global.default_colors[rowIndex] + ";color:" + global.default_colors[rowIndex] + ";'>__</span>"
 }
