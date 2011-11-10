@@ -13,4 +13,16 @@
 	"name":  "Empty cell",
 	"xtype":"empty",
 	"description": "Display empty cell"
-}]
+},{
+	"name":  "Text Cell",
+	"xtype": "text",
+	"description": "Display own text in cell",
+	"options": [{
+			xtype: 'textfield',
+			fieldLabel: 'Text',
+			name: 'text',
+			allowBlank: false,
+			value: 'mon texte'
+		}]
+}
+]
