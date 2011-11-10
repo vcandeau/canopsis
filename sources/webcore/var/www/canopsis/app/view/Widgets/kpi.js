@@ -17,7 +17,7 @@ Ext.define('canopsis.view.Widgets.kpi' ,{
 		unknown: '#f0f0ff' 
 	},
 
-	items: [{html: 'No data. Please wait ...'}],
+	items: [{html: 'KPI: No data. Please wait ...'}],
 
 	layout: {
 		type: 'hbox',
