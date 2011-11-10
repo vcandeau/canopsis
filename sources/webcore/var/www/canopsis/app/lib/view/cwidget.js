@@ -13,8 +13,13 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	initComponent: function() {
 		log.debug('InitComponent '+this.id, this.logAuthor)
 
+		this.divHeight = this.height
+		if (this.title) {
+			this.divHeight = this.height - 30
+		}
+
 		this.divId = this.id+"-content"
-		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>"}]
+		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
 
 		this.callParent(arguments);
 
