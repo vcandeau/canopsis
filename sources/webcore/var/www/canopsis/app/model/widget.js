@@ -4,9 +4,9 @@ Ext.define('canopsis.model.widget', {
 		{name : 'xtype'},
 		{name : 'colspan',		defaultValue: 1},
 		{name : 'rowspan',		defaultValue: 1},
-		{name : 'refreshInterval', 	defaultValue: null},
+		{name : 'refreshInterval', 	defaultValue: undefined},
 		{name : 'nodeId',		defaultValue: undefined},
 		{name : 'title', 		defaultValue: undefined},
-		{name : 'rowHeight', defaultValue: 200}
+		{name : 'rowHeight', defaultValue: undefined}
 		]
 });
