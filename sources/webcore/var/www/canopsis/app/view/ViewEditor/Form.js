@@ -27,9 +27,13 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	
 	initComponent: function() {
 		this.on('beforeclose', this.beforeclose)
+		this.on('afterrender', this.afterrender, this)
+		
+		this.callParent(arguments);
+	},
 
-		//var totalWidth = this.getWidth() - 20
-		var totalWidth = 800
+	afterrender: function() {
+		var totalWidth = this.getWidth()
 
 		this.nbColumns = 4
 		this.layout.columns = this.nbColumns
@@ -42,8 +46,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			height: 200,
 			padding:4,
 		}
-		
-		this.callParent(arguments);
 
 		this.removeAll();
 		
