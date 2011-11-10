@@ -14,11 +14,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		type: 'table',
 		// The total column count must be specified here
 		columns: 1,
-		tableAttrs: {
+		/*tableAttrs: {
 			style: {
 				width: '100%',
             		}
-		},
+		},*/
 	},
 
 	defaults: {
@@ -107,7 +107,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (item['colspan']) { colspan = item['colspan'] }
 				if (item['rowspan']) { rowspan = item['rowspan'] }
 				
-				item['width'] = ((100/nbColumns) * colspan)/100 * totalWidth
+				item['width'] = (totalWidth / nbColumns) * colspan
 
 				item['style'] = {padding: '3px'}
 

@@ -7,11 +7,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 	layout: {
 		type: 'table',
-		tableAttrs: {
+		/*tableAttrs: {
 			style: {
 				width: '100%',
             		}
-		},
+		},*/
 	},    
 
 	tbar: [{
@@ -37,7 +37,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 		this.nbColumns = 4
 		this.layout.columns = this.nbColumns
-		this.layout.tableAttrs.style.width = totalWidth
+		//this.layout.tableAttrs.style.width = totalWidth
 
 		this.DefaultWidth = (totalWidth/this.nbColumns)
 
