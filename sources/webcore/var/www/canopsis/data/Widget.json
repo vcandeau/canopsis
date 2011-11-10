@@ -1,7 +1,9 @@
 [{
+	"xtype": "host_header",
+},{
 	"xtype": "kpi",
 },{
-	"xtype":"highcharts",
+	"xtype":"line_graph",
 },{
 	"xtype":"empty",
 }]
