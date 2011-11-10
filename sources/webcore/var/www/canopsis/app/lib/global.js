@@ -1,5 +1,5 @@
 var global = {
-	colors: {
+	state_colors: {
 		up: '#50b432',
 		down: '#ed241b',
 		unreachable: '#f0f0ff',
@@ -12,5 +12,36 @@ var global = {
 		level: 5,
 		buffer: 50
 	},
-	widgetColors:['SeaGreen','LightBlue','CornflowerBlue ','OrangeRed','DarkRed ','Gold','Green','Indigo','grey','LightSlateGrey','MediumPurple ','DarkBlue ','Orchid','purple','Orange','BurlyWood','Chartreuse','Fuchsia','Grey','Navy','Peru']
+	default_colors:[
+		'#4572A7',
+		'#AA4643',
+		'#89A54E',
+		'#80699B',
+		'#3D96AE',
+		'#DB843D',
+		'#92A8CD',
+		'#A47D7C',
+		'#B5CA92',
+		'SeaGreen',
+		'LightBlue',
+		'CornflowerBlue',
+		'OrangeRed',
+		'DarkRed',
+		'Gold',
+		'Green',
+		'Indigo',
+		'grey',
+		'LightSlateGrey',
+		'MediumPurple',
+		'DarkBlue',
+		'Orchid',
+		'purple',
+		'Orange',
+		'BurlyWood',
+		'Chartreuse',
+		'Fuchsia',
+		'Grey',
+		'Navy',
+		'Peru'
+	]
 }
