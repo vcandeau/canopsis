@@ -215,45 +215,81 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 	
 	ModifyItem : function(view, item, index){
-			var test = item.nodeId;
+			//var test = item.nodeId;
 			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
 			
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
 				title: 'Edit ' + item.data.xtype,
-				items:[{
+				items:[
+				{
 					xtype : 'cform',
 					model: 'widget',
-					closeAction: 'hide',
-					width: 300,
-					height: 270,
+					//closeAction: 'hide',
+					layout: 'column',					
 					items:[{
-							fieldLabel: 'title',
-							name: 'title',
-						},{
-							xtype: 'numberfield',
-							fieldLabel: 'Colspan',
-							name: 'colspan',
-						},{
-							xtype: 'numberfield',
-							fieldLabel: 'Rowspan',
-							name: 'rowspan',
-						},{
-							xtype: 'numberfield',
-							fieldLabel: 'Refresh interval',
-							name: 'refreshInterval',
-						},{
-							xtype: 'numberfield',
-							fieldLabel: 'RowHeight',
-							name: 'rowHeight',
+						xtype: 'fieldset',
+						flex: 3,
+						title: 'Widget Configuration',
+						layout: 'anchor',
+						defaults: {
+							anchor: '100%',
+							hideEmptyLabel: true
 						},
-						Ext.create('canopsis.lib.form.field.cinventory', {
-							multiSelect: false,
-						})
+					
+						items : [{
+									xtype : 'textfield',
+									fieldLabel: 'title',
+									name: 'title',
+								},{
+									xtype: 'numberfield',
+									fieldLabel: 'Colspan',
+									name: 'colspan',
+								},{
+									xtype: 'numberfield',
+									fieldLabel: 'Rowspan',
+									name: 'rowspan',
+								},{
+									xtype: 'numberfield',
+									fieldLabel: 'Refresh interval',
+									name: 'refreshInterval',
+								},{
+									xtype: 'numberfield',
+									fieldLabel: 'RowHeight',
+									name: 'rowHeight',
+								},
+								Ext.create('canopsis.lib.form.field.cinventory', {
+									multiSelect: false,
+								})
+							]
+						},{
+							xtype: 'panel',
+							flex: 1			
+						},{
+							xtype: 'fieldset',
+							flex: 3,
+							title: 'Widget options',
+							layout: 'anchor',
+
+							defaults: {
+								anchor: '100%',
+								//hideEmptyLabel: false
+							},
+							items : item.data.options,
+						}
 					]
 				}]
 			});
 			
+			//adding form panel option
+			/*
+			console.log(item.data.options)
+			options = Ext.create('Ext.form.Panel', { 
+					items: item.data.options,
+			});
+			this.window.add(options);
+			*/
+			//showing and loading the window
 			this.window.show();
 			this.window.down('cform').getForm().loadRecord(item);
 			if (item.data.nodeId){
