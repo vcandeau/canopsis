@@ -366,7 +366,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					preview.add({
 						xtype : 'panel',
 						html : "<div style='text-align: center;'>" + record.data.xtype + "</div>",
-						bodyStyle:{"background-color": global.widgetColors[store.indexOf(record)]},
+						bodyStyle:{"background-color": global.default_colors[store.indexOf(record)]},
 						colspan : record.data.colspan,
 						rowspan : record.data.rowspan,
 						width : panel_width,
