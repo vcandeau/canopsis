@@ -1,9 +1,9 @@
-Ext.define('canopsis.view.Widgets.vheader' ,{
+Ext.define('canopsis.view.Widgets.host_header' ,{
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias : 'widget.vheader',
+	alias : 'widget.host_header',
 
-	htmlTpl: new Ext.Template('{id}', {compiled: true}),
+	htmlTpl: new Ext.Template('<strong>{id}</strong>', {compiled: true}),
 
 	initComponent: function() {
 		this.refreshInterval = 0
