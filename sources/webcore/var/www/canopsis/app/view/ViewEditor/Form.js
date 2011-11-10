@@ -35,7 +35,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 
 	afterrender: function() {
-		var totalWidth = this.getWidth()
+		var totalWidth = this.getWidth() - 20 //scroll
 
 		this.nbColumns = 4
 		this.layout.columns = this.nbColumns
