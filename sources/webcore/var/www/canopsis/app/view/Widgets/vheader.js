@@ -1,0 +1,17 @@
+Ext.define('canopsis.view.Widgets.vheader' ,{
+	extend: 'canopsis.lib.view.cwidget',
+
+	alias : 'widget.vheader',
+
+	htmlTpl: new Ext.Template('{id}', {compiled: true}),
+
+	initComponent: function() {
+		this.refreshInterval = 0
+		this.callParent(arguments);		
+	},
+
+	onRefresh: function(data){
+		this.data = data
+		this.setHtmlTpl(this.htmlTpl, data)
+	}
+});
