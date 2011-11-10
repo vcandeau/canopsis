@@ -77,7 +77,12 @@ Ext.define('canopsis.view.Viewport', {
 				successProperty: 'success'
 			},
 			success: function(response){
-				global['account'] = Ext.JSON.decode(response.responseText).data[0];
+				request_state = Ext.JSON.decode(response.responseText).success
+				if (request_state){
+					global['account'] = Ext.JSON.decode(response.responseText).data[0];
+				} else {
+					window.location.href='/';
+				}
 			},
 			failure: function() {
 				window.location.href='/';
@@ -86,6 +91,7 @@ Ext.define('canopsis.view.Viewport', {
 	},
 	
 	initComponent: function() {
+			console.log('enter getaccount');
 			this.getAccount();
 			this.callParent(arguments);
 		}
