@@ -115,6 +115,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (! item.nodeId) { item.nodeId=nodeId}
 				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
+				if (item.title){ item.border = true }
 
 				this.add(item)
 	
