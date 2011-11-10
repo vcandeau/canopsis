@@ -289,16 +289,18 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 	loadRecord: function(record){
 		widgets =  record.data.items;
-		for (i in widgets){
-					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
-					this.ItemsStore.add(copy);
-		}
 		this.GlobalOptions.down('textfield[name=crecord_name]').setValue(record.get('crecord_name'));
 		this.GlobalOptions.down('numberfield[name=refreshInterval]').setValue(record.get('refreshInterval'));
 		this.GlobalOptions.down('numberfield[name=nbColumns]').setValue(record.get('nbColumns'));
 		this.GlobalOptions.down('numberfield[name=rowHeight]').setValue(record.get('rowHeight'));
 		//needed for loading node, cf ViewEditor.js controller, beforeload_EditForm function
 		this.nodeId = record.get('nodeId');
+		
+		for (i in widgets){
+					copy = Ext.ClassManager.instantiate('canopsis.model.widget',widgets[i]);
+					this.ItemsStore.add(copy);
+		}
+
 	},
 
 	beforeclose: function(tab, object){
@@ -328,8 +330,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//set the layout and populate preview
 		if(store.getCount() != 1)
 		{
-			//console.log('store != 1 fixing layout table')
-			var myLayout = []
+			console.log('store != 1 fixing layout table')
+			var myLayout = [];
 			myLayout['type'] = 'table';
 			myLayout['columns'] = nbColumns;
 			//need this container for columns
@@ -353,7 +355,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				panel_width = ((100/nbColumns) * record.data.colspan)/100 * totalWidth;
 				if (record.data.rowspan){
 					base_heigth = 30 * record.data.rowspan;
-					//base_heigth = 30;
 				}else{
 					base_heigth = 30;
 				}
