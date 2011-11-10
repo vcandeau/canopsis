@@ -12,27 +12,5 @@ var global = {
 		level: 5,
 		buffer: 50
 	},
-	widgetColors:{
-		0:'SeaGreen',
-		1:'LightBlue',
-		2:'CornflowerBlue ',
-		3:'OrangeRed',
-		4:'DarkRed ',
-		5:'Gold',
-		6:'Green',
-		7:'Indigo',
-		8:'grey',
-		9:'LightSlateGrey',
-		10:'MediumPurple ',
-		11:'DarkBlue ',
-		12:'Orchid',
-		13:'purple',
-		14:'Orange',
-		15:'BurlyWood',
-		16:'Chartreuse',
-		17:'Fuchsia',
-		18:'Grey',
-		19:'Navy',
-		20:	'Peru'
-	}
+	widgetColors:['SeaGreen','LightBlue','CornflowerBlue ','OrangeRed','DarkRed ','Gold','Green','Indigo','grey','LightSlateGrey','MediumPurple ','DarkBlue ','Orchid','purple','Orange','BurlyWood','Chartreuse','Fuchsia','Grey','Navy','Peru']
 }
