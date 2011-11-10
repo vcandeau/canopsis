@@ -340,7 +340,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//set the layout and populate preview
 		if(store.getCount() != 1)
 		{
-			console.log('store != 1 fixing layout table')
+			//console.log('store != 1 fixing layout table')
 			var myLayout = [];
 			myLayout['type'] = 'table';
 			myLayout['columns'] = nbColumns;
