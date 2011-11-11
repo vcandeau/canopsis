@@ -79,7 +79,7 @@ fi
 
 . /lib/lsb/init-functions
 
-STARTTIME=2
+STARTTIME=5
 DIETIME=10                   # Time to wait for the server to die, in seconds
                             # If this value is set too low you might not
                             # let some servers to die gracefully and
@@ -165,14 +165,17 @@ case "$1" in
             # NOTE: Some servers might die some time after they start,
             # this code will detect this issue if STARTTIME is set
             # to a reasonable value
-            [ -n "$STARTTIME" ] && sleep $STARTTIME # Wait some time 
-            if  running ;  then
-                # It's ok, the server started and is running
-                log_end_msg 0
-            else
-                # It is not running after we did start
-                log_end_msg 1
-            fi
+            I=0
+            while [ $I -lt $STARTTIME ]; do
+                sleep 1
+                I=$((I+1))
+                if running ;  then
+                    log_end_msg 0
+                    exit 0
+                fi
+            done
+            log_end_msg 1
+
         else
             # Either we could not start it
             log_end_msg 1
