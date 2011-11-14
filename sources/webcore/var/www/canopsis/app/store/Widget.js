@@ -7,11 +7,14 @@ Ext.define('canopsis.store.Widget', {
 	autoLoad: true,
 	
 	proxy: {
-		type: 'ajax',
-		url: 'data/Widget.json',
+		type: 'rest',
+		url: '/ui/widgets',
 		reader: {
 			type: 'json',
-		}
-	 },
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success'
+		},
+	}
 	
 });
