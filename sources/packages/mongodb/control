@@ -4,7 +4,7 @@ NAME="mongodb"
 VERSION=1.8.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome"
+REQUIRES="canohome pkgmgr python canolibs"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -33,7 +33,7 @@ function post_install(){
         done
         echo
 
-	launch_cmd "python ~/opt/mongodb/initDB.py"
+	launch_cmd "python $PREFIX/opt/mongodb/initDB.py"
 	launch_cmd "service mongodb stop"
 
 	check_code $? "Impossible to init mongoDB ..."

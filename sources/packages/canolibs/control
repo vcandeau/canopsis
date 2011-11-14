@@ -4,7 +4,7 @@ NAME="canolibs"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome python"
+REQUIRES="canohome pkgmgr python"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
