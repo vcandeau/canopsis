@@ -8,7 +8,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 	iconCls: 'icon-crecord_type-view',
 
 	init: function() {
-		console.log('['+this.id+'] - Initialize ...');
+		log.debug('['+this.id+'] - Initialize ...');
 
 		this.formXtype = 'ConfigView'
 		this.listXtype = 'ViewEditor'
@@ -36,31 +36,31 @@ Ext.define('canopsis.controller.ViewEditor', {
 		//crecord_name and name fixing
 		var record_name = form.down('textfield[name=crecord_name]').getValue()
 		record.set('crecord_name',record_name);
-		//console.log('crecord_name : ' + record.get('crecord_name'));
+		//log.debug('crecord_name : ' + record.get('crecord_name'));
 		record.set('id','view.'+ global.account.user + '.' + record_name);
-		//console.log('id : ' + record.get('id'));
+		//log.debug('id : ' + record.get('id'));
 		record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
-		//console.log('refreshInterval : ' + record.get('refreshInterval'));
+		//log.debug('refreshInterval : ' + record.get('refreshInterval'));
 		record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
-		//console.log('nbColumns : ' + record.get('nbColumns'));
+		//log.debug('nbColumns : ' + record.get('nbColumns'));
 		record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
-		//console.log('rowHeight : ' + record.get('rowHeight'));
+		//log.debug('rowHeight : ' + record.get('rowHeight'));
 		
 		
 		//get nodeId if defined
 		panel = form.GlobalOptions.down('gridpanel');
 		_nodeId = panel.store.getAt(0);
-		//console.log(_nodeId);
+		//log.debug(_nodeId);
 		if (_nodeId){
-			console.log('there is a nodeId :');
-			console.log(_nodeId.get('id'));
+			log.debug('there is a nodeId :');
+			log.debug(_nodeId.get('id'));
 			record.set('nodeId', _nodeId.get('id'));
 		}
 		
 		log.debug('[controller][cgrid][form] - Store record in store');
 		output = store.add(record);
-		console.log('this record have added to store(what add() have returned) :')
-		console.log(output);
+		log.debug('this record have added to store(what add() have returned) :')
+		log.debug(output);
 		store.load();
 		
 		//reload menu view
