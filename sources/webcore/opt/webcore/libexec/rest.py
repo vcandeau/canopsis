@@ -235,5 +235,5 @@ def rest_delete(namespace, ctype, _id=None):
 	try:
 		storage.remove(_id, account=account)
 	except:
-		HTTPError(404, _id+" Not Found")
+		return HTTPError(404, _id+" Not Found")
 
