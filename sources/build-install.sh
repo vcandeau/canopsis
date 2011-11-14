@@ -235,6 +235,13 @@ function make_package(){
 		diff $FLIST $FLIST_TMP  | grep ">" | grep -v "\.pid$" | sed 's#> ##g' > $PPATH/files.lst
 		check_code $?
 
+		if [ -f $PPATH/blacklist ]; then
+			## blacklist files
+			for line in $(cat $PPATH/blacklist); do
+				cat $PPATH/files.lst | grep -v "$line" > $PPATH/files.lst
+			done	
+		fi
+
 		rm $FLIST_TMP
 		check_code $? 'Impossible to delete tmp files listing ...'
 	#fi
