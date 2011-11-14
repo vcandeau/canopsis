@@ -19,7 +19,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 
 		this.divId = this.id+"-content"
-		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: this.border}]
+		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
 
 		this.callParent(arguments);
 
@@ -79,7 +79,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	setHtml: function(html){
 		log.debug('setHtml in widget', this.logAuthor)
 		this.removeAll()
-		this.add({html: html, border: this.border})
+		this.add({html: html, border: false})
 		this.doLayout();
 	},
 
