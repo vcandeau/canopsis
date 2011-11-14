@@ -33,7 +33,7 @@ function post_install(){
         done
         echo
 
-	launch_cmd "python ~/opt/mongodb/initDB.py"
+	launch_cmd "python $HOME/opt/mongodb/initDB.py"
 	launch_cmd "service mongodb stop"
 
 	check_code $? "Impossible to init mongoDB ..."
