@@ -237,9 +237,11 @@ function make_package(){
 
 		if [ -f $PPATH/blacklist ]; then
 			## blacklist files
+			touch $PPATH/files.lst.tmp
 			for line in $(cat $PPATH/blacklist); do
-				cat $PPATH/files.lst | grep -v "$line" > $PPATH/files.lst
-			done	
+				cat $PPATH/files.lst | grep -v "$line" >> $PPATH/files.lst.tmp
+			done
+			mv $PPATH/files.lst.tmp $PPATH/files.lst
 		fi
 
 		rm $FLIST_TMP
