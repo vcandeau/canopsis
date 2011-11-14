@@ -38,9 +38,9 @@ def get_all_widgets():
 
 	logger.debug(" + Search all widgets ...")
 	for widget in widgets:
-		logger.debug("   + Load '%s'" % widget)
-		
-		widget_path = "%s/%s/" % (base_path, widget)
+		widget_path = "%s/widgets/%s/" % (base_path, widget)
+
+		logger.debug("   + Load '%s' (%s)" % (widget, widget_path))
 		try:
 			FH = open (widget_path + "/widget.json", 'r' )
 			widget_info = FH.read()
