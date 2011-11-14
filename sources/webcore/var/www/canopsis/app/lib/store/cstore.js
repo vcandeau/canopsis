@@ -11,6 +11,7 @@ Ext.define('canopsis.lib.store.cstore', {
 				icon: Ext.MessageBox.ERROR,
 				buttons: Ext.Msg.OK
 			});
+			log.debug(response);
 		},
    }	
 });
