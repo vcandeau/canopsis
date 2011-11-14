@@ -40,7 +40,11 @@ def rest_get(namespace, ctype=None, _id=None):
 	start =  int(request.params.get('start', default=0))
 	groups = request.params.get('groups', default=None)
 	search = request.params.get('search', default=None)
+	filter = request.params.get('filter', default=None)
 	onlyWritable = request.params.get('onlyWritable', default=False)
+
+	if filter:
+		filter = json.loads(filter)
 
 	logger.debug("GET:")
 	logger.debug(" + User: "+str(account.user))
@@ -54,13 +58,18 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + Groups: "+str(groups))
 	logger.debug(" + onlyWritable: "+str(onlyWritable))
 	logger.debug(" + Search: "+str(search))
+	logger.debug(" + filter: "+str(filter))
 
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logging.DEBUG)
 
 	mfilter = {}
 	records = []
 	if ctype:
-		mfilter = {'crecord_type': ctype}
+		if filter:
+			mfilter = filter
+			mfilter['crecord_type'] = ctype
+		else:
+			mfilter = {'crecord_type': ctype}
 
 	if _id:
 		list_id = _id.split(',')
@@ -81,7 +90,10 @@ def rest_get(namespace, ctype=None, _id=None):
 	else:
 		if search:
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
-		records = storage.find(mfilter, limit=limit, offset=start, account=account)
+		
+		logger.debug(" + mfilter: "+str(mfilter))
+		records = storage.find(mfilter, account=account)
+
 
 	output = []
 	for record in records:
