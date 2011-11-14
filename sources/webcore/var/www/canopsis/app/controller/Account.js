@@ -8,7 +8,7 @@ Ext.define('canopsis.controller.Account', {
 	iconCls: 'icon-crecord_type-account',
 
 	init: function() {
-		console.log('['+this.id+'] - Initialize ...');
+		log.debug('['+this.id+'] - Initialize ...');
 
 		this.formXtype = 'AccountForm'
 		this.listXtype = 'AccountGrid'
@@ -33,7 +33,7 @@ Ext.define('canopsis.controller.Account', {
 			store.findBy(
 				function(record, id){
 					if(record.get('user') == data['user']){
-						console.log('['+this.id+'][validateForm] -  User already exist');
+						log.debug('['+this.id+'][validateForm] -  User already exist');
 						already_exist = true;  // a record with this data exists
 					}
 				}

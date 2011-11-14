@@ -331,7 +331,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//Save Button
 			WidgetForm.down('button[action=save]').on('click',
 			function(){
-					console.log('[controller][cgrid][Form][WidgetForm]');
+					log.debug('[controller][cgrid][Form][WidgetForm]');
 					record = WidgetForm.getRecord();
 					new_values = WidgetForm.getValues();
 					record.set(new_values);
@@ -387,7 +387,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 
 	beforeclose: function(tab, object){
-		console.log('[ViewEditor][cform] - Active previous tab');
+		log.debug('[ViewEditor][cform] - Active previous tab');
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
@@ -413,7 +413,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//set the layout and populate preview
 		if(store.getCount() != 1)
 		{
-			//console.log('store != 1 fixing layout table')
+			//log.debug('store != 1 fixing layout table')
 			var myLayout = [];
 			myLayout['type'] = 'table';
 			myLayout['columns'] = nbColumns;
@@ -456,7 +456,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						height : base_heigth,
 					});
 				} catch(err) {
-					console.log(err);
+					log.debug(err);
 				}
 			});
 			
