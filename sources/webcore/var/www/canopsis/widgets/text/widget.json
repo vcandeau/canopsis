@@ -10,7 +10,6 @@
 	"formWidth": 800,
 	"options": [{
 			"xtype": "htmleditor",
-			"fieldLabel": "Text",
 			"name": "text",
 			"height": 150,
 			"width": 500,
