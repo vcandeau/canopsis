@@ -82,7 +82,7 @@ function install_package(){
 			off_lock
         	check_code $?
 	        L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
-    	    if [ "$L_MD5" != "$R_MD5" ]; then echo "         + Fail" && res=False; fi
+    	    if [ "$L_MD5" != "$R_MD5" ]; then echo "         + Fail" && res="False"; fi
 	    else echo "           + Success"; res="False"; fi
 
     	# DOWNLOAD PACKAGE
@@ -96,9 +96,8 @@ function install_package(){
 			off_lock
         	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
 	        echo "     + Check MD5"
-    	    if [ "$L_MD5" != "$R_MD5" ]; then 
-				echo "       + Fail"
-				if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi	
+    	    if [ "$L_MD5" != "$R_MD5" ]; then
+				check_code $? "       + Fail" 
 			else echo "       + Ok";
 			fi
 	    fi	
@@ -284,7 +283,6 @@ function upgrade_package(){
 		    echo "     + Checking Md5Sum"
 	    	if [ "$L_MD5" != "$R_MD5" ]; then 
 				check_code $? "       + Fail"
-				continue
 			else
 				echo "       + Success"
 			fi
