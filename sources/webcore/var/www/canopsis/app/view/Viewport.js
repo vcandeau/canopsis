@@ -91,7 +91,7 @@ Ext.define('canopsis.view.Viewport', {
 	},
 	
 	initComponent: function() {
-			console.log('enter getaccount');
+			log.debug('enter getaccount');
 			this.getAccount();
 			this.callParent(arguments);
 		}
