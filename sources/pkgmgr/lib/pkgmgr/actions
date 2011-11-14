@@ -82,7 +82,7 @@ function install_package(){
 			off_lock
         	check_code $?
 	        L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
-    	    if [ "$L_MD5" != "$R_MD5" ]; then echo "         + Fail" && res=False; fi
+    	    if [ "$L_MD5" != "$R_MD5" ]; then echo "         + Fail" && res="False"; fi
 	    else echo "           + Success"; res="False"; fi
 
     	# DOWNLOAD PACKAGE
