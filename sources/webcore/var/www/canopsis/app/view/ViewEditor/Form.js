@@ -230,19 +230,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//var test = item.nodeId;
 			log.debug('[controller][cgrid][Form][WidgetForm] - Widget window');
 			
-			//calculate width
-			widget_option =  {
-				xtype: 'fieldset',
-				flex: 3,
-				title: 'Widget options',
-				layout: 'anchor',
-
-				defaults: {
-					anchor: '100%',
-					//hideEmptyLabel: false
-				},
-				items : item.data.options,
-			};
 			
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
@@ -252,7 +239,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					xtype : 'cform',
 					model: 'widget',
 					//closeAction: 'hide',
-					width: 320,
+					//Width : 350,
 					layout: 'hbox',
 					margin: '0 0 10',					
 					items:[
@@ -301,7 +288,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//add second panel only if options exist
 			if (item.data.options)
 			{
-				this.window.down('cform').setWidth(600);
+				//this.window.down('cform').setWidth(this.formWidth);
 				this.window.down('cform').add({
 					xtype: 'fieldset',
 					flex: 1,
@@ -318,6 +305,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			//showing and loading the window
 			this.window.show();
+			this.window.down('cform').setWidth(item.data.formWidth);
 			this.window.down('cform').getForm().loadRecord(item);
 			if (item.data.nodeId){
 				tab = []
