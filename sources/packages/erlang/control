@@ -4,7 +4,7 @@ NAME="erlang"
 VERSION=R14B02
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome"
+REQUIRES="canohome pkgmgr"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
