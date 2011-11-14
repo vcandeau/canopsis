@@ -10,7 +10,7 @@ Ext.define('canopsis.controller.Widgets', {
 		log.debug('[controller][Widgets] : parsing Widget store');
 		store.on('load',function(){
 			this.each(function(record){
-				log.debug('[controller][Widgets] : loading' + 'record.data.xtype');
+				log.debug('[controller][Widgets] : loading ' + record.data.xtype);
 				var name ="widgets." + record.data.xtype + "." + record.data.xtype ;
 				Ext.require(name);
 			});
