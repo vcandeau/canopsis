@@ -18,6 +18,7 @@ function post_install(){
 
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
+	service webserver stop || true
 	check_code $?
 }
 
@@ -33,6 +34,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	service webserver restart
 	check_code $?
 }
 
