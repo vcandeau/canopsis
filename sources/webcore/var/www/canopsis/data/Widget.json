@@ -1,22 +1,27 @@
 [{
 	"name":  "Host Header",
 	"xtype": "host_header",
-	"description": "Display host informations"
+	"description": "Display host informations",
+	"refreshInterval": 0,
+	"rowHeight": 30,
 },{
 	"name":  "KPI",
 	"xtype": "kpi",
 },{
 	"name":  "Line Graph",
 	"xtype":"line_graph",
-	"description": "Display perfdata on line's graph"
+	"description": "Display perfdata on line's graph",
+	"refreshInterval": 300,
 },{
 	"name":  "Empty cell",
 	"xtype":"empty",
-	"description": "Display empty cell"
+	"description": "Display empty cell",
+	"refreshInterval": 0,
 },{
 	"name":  "Text Cell",
 	"xtype": "text",
 	"description": "Display own text in cell",
+	"refreshInterval": 0,
 	"options": [{
 			xtype: 'textfield',
 			fieldLabel: 'Text',
