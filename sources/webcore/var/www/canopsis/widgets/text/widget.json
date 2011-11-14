@@ -11,7 +11,8 @@
 			"xtype": "htmleditor",
 			"fieldLabel": "Text",
 			"name": "text",
-			"height": 250,
+			"height": 150,
+			"width": 500,
 			"value": ""
 		}]
 }]
