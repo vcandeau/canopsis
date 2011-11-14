@@ -5,9 +5,9 @@ Ext.define('canopsis.model.inventory', {
 		{name: '_id'},
 		{name: 'host_name'},
 		{name: 'service_description'},
-		{name: 'state',     type: 'int'},
-		{name: 'state_type',  type: 'int'},
-		{name: 'timestamp', type: 'int'},
+		{name: 'state'},
+		{name: 'state_type'},
+		{name: 'timestamp'},
 		{name: 'output'}
 	],
 
