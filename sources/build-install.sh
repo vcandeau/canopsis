@@ -236,12 +236,12 @@ function make_package(){
 		check_code $?
 
 		if [ -f $PPATH/blacklist ]; then
+			echo "    + Blacklist files in listing ..."
 			## blacklist files
-			touch $PPATH/files.lst.tmp
 			for line in $(cat $PPATH/blacklist); do
-				cat $PPATH/files.lst | grep -v "$line" >> $PPATH/files.lst.tmp
+				cat $PPATH/files.lst | grep -v "$line" > $PPATH/files.lst.tmp
+				mv $PPATH/files.lst.tmp $PPATH/files.lst
 			done
-			mv $PPATH/files.lst.tmp $PPATH/files.lst
 		fi
 
 		rm $FLIST_TMP
