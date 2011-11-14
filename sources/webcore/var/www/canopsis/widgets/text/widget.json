@@ -6,11 +6,12 @@
 	"xtype": "text",
 	"description": "Display own text in cell",
 	"refreshInterval": 0,
+	"rowHeight": 50,
 	"options": [{
-			"xtype": "textfield",
+			"xtype": "htmleditor",
 			"fieldLabel": "Text",
 			"name": "text",
-			"allowBlank": false,
-			"value": "mon texte"
+			"height": 250,
+			"value": ""
 		}]
 }]
