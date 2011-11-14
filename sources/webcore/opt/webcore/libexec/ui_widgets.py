@@ -3,7 +3,7 @@
 import sys, os, logging, json
 
 import bottle
-from bottle import route, get, put, delete, request, HTTPError
+from bottle import route, get, put, delete, request, HTTPError, response
 
 ## Canopsis
 from cstorage import get_storage
@@ -21,20 +21,26 @@ logger = logging.getLogger("ui-widgets")
 
 #########################################################################
 
+base_path = os.path.expanduser("~/var/www/canopsis/")
+
+def get_widgets():
+	return os.listdir(base_path + "widgets/")
+
 #### GET
 @get('/ui/widgets', apply=[check_auth])
 def get_all_widgets():
 	#account = get_account()
 	#storage = get_storage(namespace='object')
-	
-	base_path = os.path.expanduser("~/var/www/canopsis/widgets/")
+
 	output = []
 
+	widgets = get_widgets()
+
 	logger.debug(" + Search all widgets ...")
-	for widget in os.listdir(base_path):
-		logger.debug("   + Load '%s'" % widget)
-		
-		widget_path = "%s/%s/" % (base_path, widget)
+	for widget in widgets:
+		widget_path = "%s/widgets/%s/" % (base_path, widget)
+
+		logger.debug("   + Load '%s' (%s)" % (widget, widget_path))
 		try:
 			FH = open (widget_path + "/widget.json", 'r' )
 			widget_info = FH.read()
@@ -50,4 +56,20 @@ def get_all_widgets():
 	output={'total': len(output), 'success': True, 'data': output}
 	return output
 
+#### Widgets CSS
+@get('/ui/widgets.css', apply=[check_auth])
+def get_widgets_css():
+	widgets = get_widgets()
+	output = ""
+
+	logger.debug(" + Search all widgets CSS...")
+	for widget in widgets:
+		css = "widgets/%s/%s.css" % (widget, widget )
+		
+		if os.path.exists(base_path + css):
+			logger.debug(" - %s" % css)
+			output += "@import '%s'\n" % css
+
+	response.content_type = 'text/css'
+	return output
 
