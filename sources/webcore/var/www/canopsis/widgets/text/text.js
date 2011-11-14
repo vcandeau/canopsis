@@ -3,4 +3,13 @@ Ext.define('widgets.text.text' ,{
 	
 	alias : 'widget.text',
 	
+	initComponent: function() {
+		this.callParent(arguments);
+		this.add({
+			xtype : 'panel',
+			html : this.options[0].value,
+			border: 0
+		});
+	},
+	
 });
