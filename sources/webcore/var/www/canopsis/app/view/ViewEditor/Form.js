@@ -309,6 +309,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//showing and loading the window
 			this.window.show();
 			form.setWidth(item.data.formWidth);
+			form.setHeight(310);
 			form.getForm().loadRecord(item);
 			if (item.data.nodeId){
 				tab = []
