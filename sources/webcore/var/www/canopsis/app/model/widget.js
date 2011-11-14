@@ -14,6 +14,7 @@ Ext.define('canopsis.model.widget', {
 		{name : 'nodeId',		defaultValue: undefined},
 		{name : 'title', 		defaultValue: undefined},
 		{name : 'border', 		defaultValue: false},
-		{name : 'rowHeight', defaultValue: undefined}
+		{name : 'rowHeight', defaultValue: undefined},
+		{name : 'formWidth', defaultValue: 350}
 		]
 });
