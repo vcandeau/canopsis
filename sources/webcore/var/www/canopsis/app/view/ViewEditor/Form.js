@@ -234,9 +234,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
 				title: 'Edit ' + item.data.xtype,
-				items:[
-				{
-					xtype : 'cform',
+			});
+				
+			var form = Ext.widget('cform', {
 					model: 'widget',
 					//closeAction: 'hide',
 					//Width : 350,
@@ -278,18 +278,21 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 									multiSelect: false,
 								})
 							]
-					},{
+					}
+					,{
 						xtype: 'component',
 						width: 10
 					}]
-				}]
-			});
+				});
+			
+			//add this pannel to window
+			this.window.add(form);
 			
 			//add second panel only if options exist
 			if (item.data.options)
 			{
 				//this.window.down('cform').setWidth(this.formWidth);
-				this.window.down('cform').add({
+				form.add({
 					xtype: 'fieldset',
 					flex: 1,
 					title: 'Widget options',
@@ -305,12 +308,12 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			//showing and loading the window
 			this.window.show();
-			this.window.down('cform').setWidth(item.data.formWidth);
-			this.window.down('cform').getForm().loadRecord(item);
+			form.setWidth(item.data.formWidth);
+			form.getForm().loadRecord(item);
 			if (item.data.nodeId){
 				tab = []
 				tab.push(item.data.nodeId);
-				this.window.down('cform').down('panel').LoadStore(tab);
+				form.down('panel').LoadStore(tab);
 			}
 			
 			////////////////////add listeners on button////////////////
