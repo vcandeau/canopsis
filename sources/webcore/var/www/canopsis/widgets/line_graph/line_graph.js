@@ -1,4 +1,4 @@
-Ext.define('canopsis.view.Widgets.line_graph' ,{
+Ext.define('widgets.line_graph.line_graph' ,{
 	extend: 'canopsis.lib.view.cwidget',
 
 	alias : 'widget.line_graph',
