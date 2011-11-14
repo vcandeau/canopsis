@@ -4,5 +4,6 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype":"line_graph",
-	"description": "Display perfdata on line's graph"
+	"description": "Display perfdata on line's graph",
+	"refreshInterval": 300
 }]
