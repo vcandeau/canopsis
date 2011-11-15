@@ -117,6 +117,15 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 		var Widgets =  Ext.create('Ext.grid.Panel', {
 			store: 'Widget',
+
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					enableDrop: false,
+					copy: true
+				}
+			},
+
 			columns: [{
 				header: 'Name',
 				dataIndex: 'name',
@@ -136,8 +145,18 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			viewConfig: {
 				plugins: {
-					ptype: 'gridviewdragdrop'
-				}
+					ptype: 'gridviewdragdrop',
+					enableDrag: false,
+					copy: true
+				},
+				listeners: {
+					beforedrop: function(node, data, dropRec, dropPosition) {
+						//small hack for copy record when drop
+						data.copy = true
+						var copy = Ext.create('canopsis.model.widget', dropRec.data);
+						data.records[0] = copy
+					}
+	 			},
 			},
 			
 			bbar: [{
