@@ -9,7 +9,6 @@ Ext.define('widgets.state_list.state_list' ,{
 	
 	
 	initComponent: function() {
-		
 		//creating empty store
 		_store = Ext.create('Ext.data.Store', {
 			model : 'canopsis.model.inventory',
@@ -19,10 +18,21 @@ Ext.define('widgets.state_list.state_list' ,{
 		grid = Ext.widget('gridpanel',{
 			store : _store,
 			columns: [{
+				header: '',
+				width: 25,
+				sortable: false,
+				dataIndex: 'source_type',
+				renderer: rdr_source_type
+	       		},{
 				header: 'name',
-				flex: 2,
-				sortable: true,
-				dataIndex: '_id',
+				flex: 1,
+				sortable: false,
+				dataIndex: 'service_description',
+			},{
+				header: 'information',
+				flex: 6,
+				sortable: false,
+				dataIndex: 'output',
 			}],				
 		});
 		
@@ -30,19 +40,21 @@ Ext.define('widgets.state_list.state_list' ,{
 		
 		//adding grid to widget
 		this.add(grid);
-		
+
 		//request data
+		//find hostname
+		host_name = this.nodeId.split('.')[4];
 		if(this.nodeId){
 			Ext.Ajax.request({
-				url: '/rest/inventory/state/' + this.nodeId,
+				url: '/rest/inventory/event?filter={"host_name":"'+ host_name +'","_id": { "$ne" : "' + this.nodeId + '" }}' ,
 				scope: this,
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data
 					if (data){
-					/*	for (i in data){
-							_store.add(Ext.create('inventory', data[i]))
-						}*/
+						for (i in data){
+							_store.add(Ext.create('canopsis.model.inventory', data[i]))
+						}
 					}
 				},
 				failure: function ( result, request) {
