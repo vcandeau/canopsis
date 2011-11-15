@@ -197,7 +197,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if (this.formXtype) {
 			var main_tabs = Ext.getCmp('main-tabs')
-			var id = this.formXtype + '-' + item.internalId.replace(/\./g,'-') + '-tab'
+			var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
 			var tab = Ext.getCmp(id);
 			if (tab) {
 				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")

@@ -1,0 +1,11 @@
+[{
+	"name":  "State List",
+	"version": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype": "state_list",
+	"description": "Display host services states",
+	"refreshInterval": 0,
+	"rowHeight": 30,
+	"formWidth": 600
+}]
