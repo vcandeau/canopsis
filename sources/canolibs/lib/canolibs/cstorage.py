@@ -230,9 +230,9 @@ class cstorage(object):
 		for raw_record in raw_records:
 			try:
 				records.append(crecord(raw_record=raw_record))
-			except:
-				## Not record format ...
-				pass
+			except Exception, err:
+				## Not record format ..
+				self.logger.error("Impossible parse record ('%s') !" % err)
 
 		self.logger.debug("Found %s record(s)" % len(records))
 
