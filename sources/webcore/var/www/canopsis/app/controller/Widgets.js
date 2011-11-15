@@ -3,6 +3,7 @@ Ext.define('canopsis.controller.Widgets', {
 
     //views: ['Widgets.kpi', 'Widgets.host_header'],
     stores: ['Widget'],
+    models: ['inventory'],
 
     init: function() {
 		Ext.Loader.setPath('widgets', './widgets');
