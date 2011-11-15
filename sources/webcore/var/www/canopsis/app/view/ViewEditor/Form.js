@@ -150,10 +150,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					copy: true
 				},
 				listeners: {
-					beforedrop: function(node, data, dropRec, dropPosition) {
+					beforedrop: function(node, data, dropRec, dropPosition, dropFunction) {
 						//small hack for copy record when drop
-						data.copy = true
-						var copy = Ext.create('canopsis.model.widget', dropRec.data);
+						var copy = Ext.create('canopsis.model.widget', data.records[0].data);
 						data.records[0] = copy
 					}
 	 			},
@@ -376,7 +375,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	
 	
 	addItem : function(view, item, index) {
-		copy = Ext.ClassManager.instantiate('canopsis.model.widget',item.data);
+		copy = Ext.create('canopsis.model.widget',item.data);
 		this.ItemsStore.add(copy);
 		log.debug('[controller][cgrid][Form] - item added')
 	},
