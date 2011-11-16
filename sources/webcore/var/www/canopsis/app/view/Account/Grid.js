@@ -9,6 +9,7 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	store : 'Account',	
 
 	opt_grouping: true,
+	opt_paging: true,
 
 	columns: [
 		{
