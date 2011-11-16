@@ -1,10 +1,10 @@
 [{
-	"name":  "State List",
+	"name":  "States History",
 	"version": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
-	"xtype": "state_list",
-	"description": "Display host services states",
+	"xtype": "history",
+	"description": "Display states history of node",
 	"refreshInterval": 60,
 	"rowHeight": 400,
 	"formWidth": 600
