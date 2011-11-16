@@ -13,6 +13,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	initComponent: function() {
 		log.debug('InitComponent '+this.id, this.logAuthor)
 
+		if (this.title == ''){
+			this.title = false;
+		}
+
 		this.divHeight = this.height
 		if (this.title) {
 			this.divHeight = this.height - 30
