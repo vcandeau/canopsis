@@ -1,6 +1,14 @@
 var rdr_tstodate = function (val) {
-	var d = new Date(parseInt(val)*1000);
-	return Ext.Date.format(d,'Y-m-d H:i:s')
+	var dval = new Date(parseInt(val)*1000);
+	
+	var dval_day = Ext.Date.format(dval,'Y-m-d')
+	var now_day = Ext.Date.format(new Date(),'Y-m-d')
+
+	if (dval_day == now_day){
+		return Ext.Date.format(dval,'H:i:s')
+	}else{
+		return Ext.Date.format(dval,'Y-m-d H:i:s')
+	}
 }
 
 var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
@@ -15,12 +23,7 @@ var rdr_source_type = function (val, metadata, record, rowIndex, colIndex, store
 	return "<span class='icon icon-crecord_type-"+val+"' />"
 }
 
-var reload_grid = function(grid) {
-	var store = Ext.getCmp(grid).store
-	store.load(store.lastOptions)
-}
-
-var HOST_NAME=""
+/*var HOST_NAME=""
 var rdr_host_name = function(val){
         if (val == HOST_NAME){
                 return ""
@@ -29,6 +32,7 @@ var rdr_host_name = function(val){
                 return val
         }
     }
+*/
 
 var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, store) {
 	if (val != ''){
