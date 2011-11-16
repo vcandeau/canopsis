@@ -46,7 +46,7 @@ Ext.define('widgets.state_list.state_list' ,{
 	       	},{
 				header: 'State',
 				sortable: false,
-				width: 40,
+				width: 50,
 				dataIndex: 'state',
 				renderer: rdr_status
 			},{
@@ -58,17 +58,17 @@ Ext.define('widgets.state_list.state_list' ,{
 			},{
 				header: 'Last check',
 				sortable: false,
-				flex: 1,
+				flex: 2,
 				dataIndex: 'timestamp',
-				//render: rdr_tstodate
+				render: rdr_tstodate
 			},{
 				header: 'Name',
-				flex: 1,
+				flex: 3,
 				sortable: false,
 				dataIndex: 'service_description',
 			},{
 				header: 'Information',
-				flex: 6,
+				flex: 4,
 				sortable: false,
 				dataIndex: 'output',
 			}],				
