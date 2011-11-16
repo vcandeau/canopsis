@@ -12,6 +12,11 @@ Ext.define('widgets.state_list.state_list' ,{
 			extend: 'canopsis.lib.store.cstore',
 			model: 'canopsis.model.inventory',
 			
+			sorters: [{
+				property : 'state',
+				direction: 'ASC'
+			}],
+			
 			storeId: 'store.event',
 			proxy: {
 				type: 'rest',
@@ -45,11 +50,17 @@ Ext.define('widgets.state_list.state_list' ,{
 				dataIndex: 'state',
 				renderer: rdr_status
 			},{
-				header: 'hard?',
+				header: '',
 				sortable: false,
 				width: 40,
 				dataIndex: 'state_type',
 				renderer: rdr_state_type
+			},{
+				header: '',
+				sortable: false,
+				flex: 1,
+				dataIndex: 'timestamp',
+				//render: rdr_tstodate
 			},{
 				header: 'name',
 				flex: 1,
