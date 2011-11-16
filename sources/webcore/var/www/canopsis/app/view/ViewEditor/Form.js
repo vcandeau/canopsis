@@ -146,14 +146,16 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
-					enableDrag: false,
-					copy: true
+					//enableDrag: false,
+					//copy: true
 				},
 				listeners: {
 					beforedrop: function(node, data, dropRec, dropPosition, dropFunction) {
 						//small hack for copy record when drop
-						var copy = Ext.create('canopsis.model.widget', data.records[0].data);
-						data.records[0] = copy
+						if (data.view.id != ItemsList.view.id){ //not self DD!
+							var copy = Ext.create('canopsis.model.widget', data.records[0].data);
+							data.records[0] = copy
+						}
 					}
 	 			},
 			},
