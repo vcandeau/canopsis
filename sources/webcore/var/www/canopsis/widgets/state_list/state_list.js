@@ -43,32 +43,32 @@ Ext.define('widgets.state_list.state_list' ,{
 				sortable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
-	       	},{
+	       		},{
+				header: '',
+				sortable: false,
+				width: 25,
+				dataIndex: 'state_type',
+				renderer: rdr_state_type
+			},{
 				header: 'State',
 				sortable: false,
 				width: 50,
 				dataIndex: 'state',
 				renderer: rdr_status
 			},{
-				header: '',
-				sortable: false,
-				width: 40,
-				dataIndex: 'state_type',
-				renderer: rdr_state_type
-			},{
 				header: 'Last check',
 				sortable: false,
 				flex: 2,
 				dataIndex: 'timestamp',
-				render: rdr_tstodate
+				renderer: rdr_tstodate
 			},{
 				header: 'Name',
-				flex: 3,
+				flex: 2,
 				sortable: false,
 				dataIndex: 'service_description',
 			},{
 				header: 'Information',
-				flex: 4,
+				flex: 3,
 				sortable: false,
 				dataIndex: 'output',
 			}],				
