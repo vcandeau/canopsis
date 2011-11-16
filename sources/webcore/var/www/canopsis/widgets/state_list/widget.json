@@ -5,6 +5,6 @@
 	"website": "http://www.canopsis.org",
 	"xtype": "state_list",
 	"description": "Display host services states",
-	"refreshInterval": 0,
+	"refreshInterval": 60,
 	"formWidth": 600
 }]
