@@ -4,8 +4,11 @@ var rdr_tstodate = function (val) {
 }
 
 var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
-	if (val > 0){ val=2; }
 	return "<span class='icon icon-state-"+val+"' />"
+}
+
+var rdr_state_type = function (val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-state-type-"+val+"' />"
 }
 
 var rdr_source_type = function (val, metadata, record, rowIndex, colIndex, store) {

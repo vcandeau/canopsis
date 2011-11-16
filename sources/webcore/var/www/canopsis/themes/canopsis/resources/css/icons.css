@@ -47,6 +47,34 @@
     background-image: url(../images/Tango-Blue-Materia/16x16/places/server.png) !important; 
 }*/
 
+.icon-state-0 { 
+    background-image: url(../images/states/0.png) !important;
+    background-position:center; 
+    
+}
+
+.icon-state-1 { 
+    background-image: url(../images/states/1.png) !important;
+    background-position:center; 
+}
+
+.icon-state-2 { 
+    background-image: url(../images/states/2.png) !important;
+    background-position:center; 
+}
+
+/*  state_type  */
+
+.icon-state-type-0 { 
+    background-image: url(../images/icons/false.png) !important;
+    background-position:center; 
+}
+
+.icon-state-type-1 { 
+    background-image: url(../images/icons/true.png) !important;
+    background-position:center; 
+}
+
 
 /* source_type */
 
