@@ -5,12 +5,17 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	layout: 'fit',
 
-	start: {},
+	start: false,
 
 	logAuthor: '[line_graph]',
 
 	options: {},
 	chart: false,
+
+	// TODO
+	shift: false,
+
+	time_window: 86400,
 
 	initComponent: function() {
 		log.debug('Init Line Graph '+this.id, this.logAuthor)
@@ -38,6 +43,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	createHighchartConfig: function(config){
 
 		log.debug(" + Set config", this.logAuthor)
+
+		var title = ""
+
+		/*if (this.title) {
+			title = this.title;
+			this.border = false
+		}*/
+
 		this.options = {
 			chart: {
 				renderTo: this.divId,
@@ -52,17 +65,17 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			},
 			colors: [],
 			title: {
-				text: '',
+				text: title,
 				floating: true
 			},
 			tooltip: {
 				enabled: true,
 				formatter: function() {
-					return '<b>' + Ext.Date.format(new Date(this.x), 'd/m/y h:i') + '<br/>' + this.series.name + ':</b> ' + this.y;
+					return '<b>' + Ext.Date.format(new Date(this.x), 'Y-m-d H:i') + '<br/>' + this.series.name + ':</b> ' + this.y;
 				}
 			},
 			xAxis: {
-				min: Date.now() - (60 * 60 * 24 * 1000), // 24hours
+				min: Date.now() - (this.time_window * 1000),
 				maxZoom: 60 * 60 * 1000, // 1 hour
 				labels: {
 					formatter: function() {
@@ -133,42 +146,50 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.doRefresh();
 	},
 
-	doRefresh: function(){
+	doRefresh: function (){
 		if (this.chart){
+			var metrics_txt = ""
 			var i;
 			for (i in this.metrics){
-				metric = this.metrics[i]
-				log.debug(" + Refresh metric '"+metric+"' ...", this.logAuthor)
-				this.refresh_metric(metric)
+				metrics_txt += this.metrics[i] + ","
 			}
+
+			log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
+
+			var url = '/perfstore/'+this.nodeId+'/'+metrics_txt
+
+			if (this.start){
+				// only last values
+				url = url + '/' + (this.start+1000)
+			}
+
+			Ext.Ajax.request({
+				url: url,
+				scope: this,
+				success: function(response){
+					var data = Ext.JSON.decode(response.responseText)
+					data = data.data
+					var i;
+					for (i in data){
+						this.addDataOnChart(data[i])
+					}
+
+					if (data[0]){
+						this.start = data[0].values[data[0].values.length-1][0];
+					}
+					this.chart.redraw();
+				},
+				failure: function ( result, request) {
+					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+				} 
+			})
 		}
-	},
-
-	refresh_metric: function (metric){
-		var url = '/perfstore/'+this.nodeId+'/'+metric
-
-		if (this.start[metric]){
-			// only last values
-			url = url + '/' + (this.start[metric]+1000)
-		}
-
-		Ext.Ajax.request({
-			url: url,
-			scope: this,
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				data = data.data[0]
-				this.addDataOnChart(data)
-			},
-			failure: function ( result, request) {
-				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-			} 
-		})
 	},
 
 	addDataOnChart: function(data){
 		var metric = data['metric']
 		var values = data['values']
+		
 		//log.dump(data)
 
 		if (values.length <= 0){
@@ -177,23 +198,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		metric_id = this.metrics.indexOf(metric)
 		log.debug('  + Add data on metric '+metric+' ('+metric_id+')...', this.logAuthor)
-		
 
-		if (! this.start[metric]){
+		if (! this.start){
 			log.debug('   + Set data', this.logAuthor)
 			this.chart.series[metric_id].setData(values,true);
 		}else{
 			log.debug('   + Push data', this.logAuthor)
-			for (value in values) {
-				value = values[value]
-				//log.dump(this.chart.series[metric_id])
-				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
-            			this.chart.series[metric_id].addPoint(value, false, false, false);
-			}
-			this.chart.redraw();
-		}
 
-		this.start[metric] = values[values.length-1][0]
+			var i;
+			for (i in values) {
+				value = values[i]
+				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
+            			this.chart.series[metric_id].addPoint(value, false, this.shift, false);
+			}
+		}
 
 		return true		
 	},
