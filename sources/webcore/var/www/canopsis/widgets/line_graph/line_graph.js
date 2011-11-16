@@ -71,7 +71,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			tooltip: {
 				enabled: true,
 				formatter: function() {
-					return '<b>' + Ext.Date.format(new Date(this.x), 'Y-m-d H:i') + '<br/>' + this.series.name + ':</b> ' + this.y;
+					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + this.y;
 				}
 			},
 			xAxis: {
