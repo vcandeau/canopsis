@@ -130,8 +130,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		this.blur()
 		if (! this.window){
 
-			var firstGrid = Ext.create('Ext.grid.Panel', {
+			var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
+				opt_tbar: false,
+				border: true,
 				flex : 1,
 				viewConfig: {
 					plugins: {
@@ -158,33 +160,35 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				this.store.add(record)
 			}, this);
 
-			var secondGrid = Ext.create('Ext.grid.Panel', {
+			var secondGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
+				opt_tbar: false,
+				border: true,
+				opt_paging: false,
 				flex : 4,
-				//border: 0,
 				viewConfig: {
 					plugins: {
 						ptype: 'gridviewdragdrop',
 						//dragGroup: 'secondGridDDGroup',
 						dropGroup: 'firstGridDDGroup'
 					},
+					listeners: {
+						drop: function(node, data, dropRec, dropPosition) {
+							if (! this.multiSelect){
+								if (dropPosition == 'after'){
+									this.store.removeAt(0)
+								}else{
+									this.store.removeAt(1)
+								}
+							}
+						}
+	 				},
 				},		
 				store: this.store,
 				columns: this.Win_columns,
 				stripeRows: true,
 				//title: 'Selection',
    			});
-
-			secondGrid.on('drop', function(node, data, dropRec, dropPosition) {
-				if (! this.multiSelect){
-					if (dropPosition == 'after'){
-						this.store.removeAt(0)
-					}else{
-						this.store.removeAt(1)
-					}
-				}
-				var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-			}, this);
 
 			secondGrid.on('itemdblclick',function(grid, record, item, index){
 				this.store.removeAt(index)
