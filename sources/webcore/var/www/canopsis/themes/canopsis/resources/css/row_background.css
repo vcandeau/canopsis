@@ -1,9 +1,9 @@
 .row-background-ok { 
-    background-color: GreenYellow  !important; 
+    background-color: PaleGreen  !important; 
 } 
 
 .row-background-warning { 
-    background-color: Orange  !important; 
+    background-color: GoldenRod   !important; 
 } 
 
 .row-background-error {
