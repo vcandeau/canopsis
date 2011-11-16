@@ -1,0 +1,11 @@
+.row-background-ok { 
+    background-color: Chartreuse !important; 
+} 
+
+.row-background-warning { 
+    background-color: Orange  !important; 
+} 
+
+.row-background-error {
+    background-color: Tomato  !important; 
+}
