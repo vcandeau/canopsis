@@ -3,6 +3,9 @@
 from pymongo import Connection
 from pymongo import objectid
 
+from pymongo import ASCENDING
+from pymongo import DESCENDING
+
 from caccount import caccount
 from crecord import crecord
 
@@ -213,13 +216,13 @@ class cstorage(object):
 		backend = self.get_backend(namespace)
 
 		if one:
-			raw_records = backend.find_one(mfilter, safe=self.mongo_safe, sort=sort)
+			raw_records = backend.find_one(mfilter, safe=self.mongo_safe)
 			if raw_records:
 				raw_records = [ raw_records ]
 			else:
 				raw_records = []
 		else:
-			raw_records = backend.find(mfilter, safe=self.mongo_safe, sort=sort)
+			raw_records = backend.find(mfilter, safe=self.mongo_safe)
 			if count:
 				return raw_records.count()
 			## Limit output
@@ -227,9 +230,8 @@ class cstorage(object):
 				raw_records = raw_records.limit(limit)
 			if raw_records and offset:
 				raw_records = raw_records.skip(offset)
-
-		#if raw_records and sort:
-		#	raw_records.sort(sort)
+			if raw_records and sort:
+				raw_records.sort(sort)
 
 		records=[]
 		for raw_record in raw_records:
