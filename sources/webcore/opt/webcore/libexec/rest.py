@@ -94,7 +94,7 @@ def rest_get(namespace, ctype=None, _id=None):
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
 		
 		logger.debug(" + mfilter: "+str(mfilter))
-		records =  storage.find(mfilter, limit=limit, account=account)
+		records =  storage.find(mfilter, limit=limit, offset=start, account=account)
 		total =	   storage.count(mfilter, account=account)
 
 
