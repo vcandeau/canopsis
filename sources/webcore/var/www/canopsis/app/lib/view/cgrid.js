@@ -9,7 +9,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 	// Options
 	opt_grouping: false,
-	opt_paging: false,
+	opt_paging: true,
+	opt_tbar: true,
 
 	features: [],
 	
@@ -23,22 +24,6 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	//selType: 'rowmodel',
 	//plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
  
-	tbar: [ {
-                    iconCls: 'icon-add',
-                    text: 'Add',
-                    action: 'add',
-                },{
-                    iconCls: 'icon-reload',
-                    text: 'Reload',
-                    action: 'reload',
-                },'-',{
-                    iconCls: 'icon-delete',
-                    text: 'Delete',
-		    disabled: true,
-                    action: 'delete',
-                }],
- 
- 
 	initComponent: function() {
 		/*if (this.opt_grouping){
 			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
@@ -47,6 +32,24 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			});
 			this.features.push(groupingFeature);
 		}*/
+
+		if (this.opt_tbar){
+			this.tbar = [{
+                 	  	    iconCls: 'icon-add',
+				    text: 'Add',
+				    action: 'add',
+				},{
+				    iconCls: 'icon-reload',
+				    text: 'Reload',
+				    action: 'reload',
+				},'-',{
+				    iconCls: 'icon-delete',
+				    text: 'Delete',
+				    disabled: true,
+				    action: 'delete',
+				}
+			];
+		}
 
 		if (this.opt_paging){
 			var pagingbar = Ext.create('Ext.PagingToolbar', {
