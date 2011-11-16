@@ -1,7 +1,7 @@
 Ext.define('canopsis.lib.store.cstore', {
     extend: 'Ext.data.Store',
     
-    pageSize: 3,
+    pageSize: 20,
     //raise an exception if server didn't accept the request
 	//and display a popup if the store is modified
     listeners: {
