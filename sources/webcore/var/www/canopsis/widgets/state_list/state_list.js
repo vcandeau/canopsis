@@ -14,7 +14,7 @@ Ext.define('widgets.state_list.state_list' ,{
 			
 			sorters: [{
 				property : 'state',
-				direction: 'ASC'
+				direction: 'DESC'
 			}],
 			
 			storeId: 'store.event',
@@ -44,7 +44,7 @@ Ext.define('widgets.state_list.state_list' ,{
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
 	       	},{
-				header: 'state',
+				header: 'State',
 				sortable: false,
 				width: 40,
 				dataIndex: 'state',
@@ -56,18 +56,18 @@ Ext.define('widgets.state_list.state_list' ,{
 				dataIndex: 'state_type',
 				renderer: rdr_state_type
 			},{
-				header: '',
+				header: 'Last check',
 				sortable: false,
 				flex: 1,
 				dataIndex: 'timestamp',
 				//render: rdr_tstodate
 			},{
-				header: 'name',
+				header: 'Name',
 				flex: 1,
 				sortable: false,
 				dataIndex: 'service_description',
 			},{
-				header: 'information',
+				header: 'Information',
 				flex: 6,
 				sortable: false,
 				dataIndex: 'output',
