@@ -38,18 +38,16 @@ def account_get_me(_id=None):
 	storage = get_storage(namespace=namespace)
 
 	try:
-		records = [ storage.get(account._id, account=account) ]
+		record = storage.get(account._id, account=account)
 	except:
 		return HTTPError(404, _id+" Not Found")
 
-	output = []
-	for record in records:
-		if record:
-			data = record.dump(json=True)
-			data['id'] = data['_id']
-			output.append(data)
+	if record:
+		data = record.dump(json=True)
+		data['id'] = data['_id']
+		output = [data]
 
-	output={'total': len(output), 'success': True, 'data': output}
+	output={'total': 1, 'success': True, 'data': output}
 
 	#logger.debug(" + Output: "+str(output))
 
@@ -85,17 +83,20 @@ def account_get(_id=None):
 
 	storage = get_storage(namespace=namespace)
 
+	total = 0
 	mfilter = {}
 	if ctype:
 		mfilter = {'crecord_type': ctype}
 	if _id:	
 		try:
 			records = [ storage.get(_id, account=account) ]
+			total = 1
 		except:
 			return HTTPError(404, _id+" Not Found")
 		
 	else:
-		records = storage.find(mfilter, limit=limit, offset=start, account=account)
+		records =  storage.find(mfilter, limit=limit, offset=start, account=account)
+		total =	   storage.count(mfilter, account=account)
 
 	output = []
 	for record in records:
@@ -104,7 +105,7 @@ def account_get(_id=None):
 			data['id'] = data['_id']
 			output.append(data)
 
-	output={'total': len(output), 'success': True, 'data': output}
+	output={'total': total, 'success': True, 'data': output}
 
 	#logger.debug(" + Output: "+str(output))
 
