@@ -12,8 +12,6 @@ Ext.define('widgets.state_list.state_list' ,{
 			extend: 'canopsis.lib.store.cstore',
 			model: 'canopsis.model.inventory',
 			
-			autoload : true,
-			
 			storeId: 'store.event',
 			proxy: {
 				type: 'rest',
@@ -23,13 +21,17 @@ Ext.define('widgets.state_list.state_list' ,{
 					root: 'data',
 					totalProperty  : 'total',
 					successProperty: 'success'
-				}
-			},
+				},
+			}
 		}),
 		
 		//inner gridpanel
-		grid = Ext.widget('gridpanel',{
+		this.grid = Ext.widget('gridpanel',{
 			store : this.store,
+			viewConfig: {
+				stripeRows: false,
+				getRowClass: this.coloringRow,
+			},
 			columns: [{
 				header: '',
 				width: 25,
@@ -65,15 +67,41 @@ Ext.define('widgets.state_list.state_list' ,{
 		
 		//adding grid to widget 
 		this.removeAll();
-		this.add(grid);		
+		this.add(this.grid);
+		
+	/*	//coloring row
+		this.grid.getView().getRowClass = this.coloringRow;
+		his.grid.getView().stripeRows = false*/
+			
 	},
 	
 	onRefresh: function(data){
-		this.data = data
+		this.data = data;
 		host_name = data._id.split('.')[4];
 		this.store.load({
-			params : {"filter": '{"host_name":"'+ host_name +'","_id": { "$ne" : "' + this.nodeId + '"}}'}
+			params : {"filter": '{"host_name":"'+ host_name +'","_id": { "$ne" : "' + this.nodeId + '"}}'},
+		/*	scope   : this,
+			callback : function(){log.debug(this.coloringRow())}*/
 		});
-	}
+	},
+	/*
+	coloringRow: function(record,index,rowParams,store){
+		this.store.each(function(record){
+			state = record.get('state');
+			index = record.index;
+			log.debug(this.grid.getView());
+			//this.grid.getView().getRow(index).addClass('row-background-ok');
+		}, this);
+	}*/
 	
+	coloringRow : function(record,index,rowParams,store){
+		state = record.get('state');
+		if (state == 0){
+			return 'row-background-ok'
+		} else if (state == 1){
+			return 'row-background-warning'
+		} else {
+			return 'row-background-error'
+		}
+	}
 });
