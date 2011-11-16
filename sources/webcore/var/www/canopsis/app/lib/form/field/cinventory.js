@@ -4,6 +4,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	window: false,
 	multiSelect: true,
 	ids: false,
+	
+	last_search : '',
 
 	//width: '100%',
 
@@ -62,9 +64,9 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		this.columns = this.Win_columns
 
 		this.InventoryStore = Ext.create('Ext.data.Store', {
-				extend : 'canopsis.lib.store.cstore',
+			
 				model: 'cinventory',
-				pageSize: 5,
+				pageSize: 1,
 				proxy: {
 					type: 'rest',
 					url: '/rest/inventory',
@@ -278,9 +280,15 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				enter: function(){
 					var form = this.searchForm.getForm()
 					if (form.isValid()){
-						var values = form.getValues()
-						var search = values.search
-						this.InventoryStore.load({params: { 'search': search}})
+						var values = form.getValues();
+						var search = values.search;
+						if (search == this.old_search){
+							this.InventoryStore.load();
+						} else {
+							this.InventoryStore.proxy.extraParams = {'search': search};
+							this.InventoryStore.load();
+						}
+						//log.debug(this.InventoryStore.proxy);
 					}
 				}
 			});
@@ -306,5 +314,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		Ext.grid.Panel.superclass.beforeDestroy.call(this);
 	        log.debug("[cinventory] " + this.id + " Destroyed.")
 	}
+
+	
 
 });
