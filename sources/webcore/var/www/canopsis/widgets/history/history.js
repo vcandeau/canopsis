@@ -1,12 +1,19 @@
-Ext.define('widgets.state_list.state_list' ,{
+Ext.define('widgets.history.history' ,{
 	extend: 'canopsis.lib.view.cwidget',
 	
-	alias : 'widget.state_list',
+	alias : 'widget.history',
 
 	initComponent: function() {
-		
+	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			border: (this.title) ? false : true,
+			namespace: 'history',
+			opt_paging: true,
+			pageSize: global.pageSize,
+			sorters: [{
+				property : 'timestamp',
+				direction: 'DESC'
+			}],
 		});
 
 		this.callParent(arguments);
@@ -17,6 +24,6 @@ Ext.define('widgets.state_list.state_list' ,{
 	},
 	
 	onRefresh: function(data){
-		this.grid.load_services_of_host(data.host_name)
+		this.grid.load_host(data.host_name)
 	},
 });
