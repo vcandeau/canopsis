@@ -11,6 +11,8 @@ Ext.define('widgets.text.text' ,{
 	doRefresh: function (){
 		if (this.text){
 			this.setHtml(this.text);
+		}else{
+			this.setHtml("");
 		}
 	}
 	
