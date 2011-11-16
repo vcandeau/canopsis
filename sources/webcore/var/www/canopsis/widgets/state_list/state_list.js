@@ -3,27 +3,50 @@ Ext.define('widgets.state_list.state_list' ,{
 	
 	alias : 'widget.state_list',
 	
-	//model : 'inventory',
-	
-	items: [],
-	
-	
 	initComponent: function() {
-		//creating empty store
-		_store = Ext.create('Ext.data.Store', {
-			model : 'canopsis.model.inventory',
-		});
+		//store
+		
+		this.store = Ext.create('Ext.data.Store', {
+			extend: 'canopsis.lib.store.cstore',
+			model: 'canopsis.model.inventory',
+			
+			autoload : true,
+			
+			storeId: 'store.event',
+			proxy: {
+				type: 'rest',
+				url: '/rest/inventory/event',
+				reader: {
+					type: 'json',
+					root: 'data',
+					totalProperty  : 'total',
+					successProperty: 'success'
+				}
+			},
+		}),
 		
 		//inner gridpanel
 		grid = Ext.widget('gridpanel',{
-			store : _store,
+			store : this.store,
 			columns: [{
 				header: '',
 				width: 25,
 				sortable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
-	       		},{
+	       	},{
+				header: 'state',
+				sortable: false,
+				width: 40,
+				dataIndex: 'state',
+				renderer: rdr_status
+			},{
+				header: 'hard?',
+				sortable: false,
+				width: 40,
+				dataIndex: 'state_type',
+				renderer: rdr_state_type
+			},{
 				header: 'name',
 				flex: 1,
 				sortable: false,
@@ -38,35 +61,17 @@ Ext.define('widgets.state_list.state_list' ,{
 		
 		this.callParent(arguments);		
 		
-		//adding grid to widget
-		this.add(grid);
-
-		//request data
-		//find hostname
-		host_name = this.nodeId.split('.')[4];
-		if(this.nodeId){
-			Ext.Ajax.request({
-				url: '/rest/inventory/event?filter={"host_name":"'+ host_name +'","_id": { "$ne" : "' + this.nodeId + '" }}' ,
-				scope: this,
-				success: function(response){
-					var data = Ext.JSON.decode(response.responseText)
-					data = data.data
-					if (data){
-						for (i in data){
-							_store.add(Ext.create('canopsis.model.inventory', data[i]))
-						}
-					}
-				},
-				failure: function ( result, request) {
-					log.debug('Ajax request failed')
-				} 
-			});
-		}
-		
+		//adding grid to widget 
+		this.removeAll();
+		this.add(grid);		
 	},
 	
-	doRefresh: function (){
-	},
-	
+	onRefresh: function(data){
+		this.data = data
+		host_name = data._id.split('.')[4];
+		this.store.load({
+			params : {"filter": '{"host_name":"'+ host_name +'","_id": { "$ne" : "' + this.nodeId + '"}}'}
+		});
+	}
 	
 });
