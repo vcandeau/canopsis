@@ -1,3 +1,5 @@
+// initComponent -> doRefresh -> get_config -> createHighchartConfig -> doRefresh -> addDataOnChart
+
 Ext.define('widgets.line_graph.line_graph' ,{
 	extend: 'canopsis.lib.view.cwidget',
 
@@ -22,7 +24,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		log.debug(' + NodeId: '+ this.nodeId, this.logAuthor)
 
 		this.callParent(arguments);
+	},
 
+	get_config: function(){
 		log.debug(" + Get config "+this.id+" ...", this.logAuthor)
 		Ext.Ajax.request({
 			url: '/rest/perfdata/raw/'+this.nodeId,
@@ -39,17 +43,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		})
 	},
 
-	
 	createHighchartConfig: function(config){
 
 		log.debug(" + Set config", this.logAuthor)
 
 		var title = ""
 
-		/*if (this.title) {
-			title = this.title;
-			this.border = false
-		}*/
+		if (! this.title) {
+			log.dump(this.nodeData)
+			if (this.nodeData.service_description) {
+				title = this.nodeData.service_description;
+			}else if (this.nodeData.host_name){
+				title = this.nodeData.host_name;
+			}
+		}
 
 		this.options = {
 			chart: {
@@ -146,7 +153,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.doRefresh();
 	},
 
-	doRefresh: function (){
+	onRefresh: function (data){
 		if (this.chart){
 			var metrics_txt = ""
 			var i;
@@ -184,6 +191,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 				} 
 			})
+		}else{
+			this.nodeId_refresh = false;
+			this.get_config();
 		}
 	},
 
