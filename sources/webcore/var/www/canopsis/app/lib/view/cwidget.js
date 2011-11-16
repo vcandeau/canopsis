@@ -2,6 +2,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	extend: 'Ext.panel.Panel',
 
 	border: false,
+	layout : 'fit',
 
 	defaultHtml: 'cwidget: No data. Please wait ...',
 
