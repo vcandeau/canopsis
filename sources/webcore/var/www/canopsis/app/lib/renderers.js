@@ -1,6 +1,6 @@
 var rdr_tstodate = function (val) {
 	var d = new Date(parseInt(val)*1000);
-	return Ext.Date.format(d,'H:i:s')
+	return Ext.Date.format(d,'Y-m-d H:i:s')
 }
 
 var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
