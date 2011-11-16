@@ -62,7 +62,9 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		this.columns = this.Win_columns
 
 		this.InventoryStore = Ext.create('Ext.data.Store', {
+				extend : 'canopsis.lib.store.cstore',
 				model: 'cinventory',
+				pageSize: 5,
 				proxy: {
 					type: 'rest',
 					url: '/rest/inventory',
