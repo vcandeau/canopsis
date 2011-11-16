@@ -62,6 +62,7 @@ def rest_get(namespace, ctype=None, _id=None):
 
 	storage = get_storage(namespace=namespace, logging_level=logging.DEBUG)
 
+	total = 0
 	mfilter = {}
 	records = []
 	if ctype:
@@ -77,6 +78,7 @@ def rest_get(namespace, ctype=None, _id=None):
 			_id = list_id[0]
 			try:
 				records = [ storage.get(_id, account=account) ]
+				total = 1
 			except:
 				return HTTPError(404, _id+" Not Found")
 		else:
