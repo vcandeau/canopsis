@@ -63,10 +63,11 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.columns = this.Win_columns
 
+		//------------------- create stores---------------
 		this.InventoryStore = Ext.create('Ext.data.Store', {
 			
 				model: 'cinventory',
-				pageSize: 1,
+				pageSize: 10,
 				proxy: {
 					type: 'rest',
 					url: '/rest/inventory',
@@ -133,6 +134,29 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	DisplaySelWindow: function(field, options){
 		this.blur()
 		if (! this.window){
+
+			//--------------------stores-----------------
+			
+			var comboSourceTypeStore = Ext.create('Ext.data.Store', {
+				fields: ['name'],
+				data : [
+					{"name":"all"},
+					{"name":"host"},
+					{"name":"service"}
+				]
+			});
+
+			var comboTypeStore = Ext.create('Ext.data.Store', {
+				fields: ['name'],
+				data : [
+					{"name":"all"},
+					{"name":"check"},
+				]
+			});
+			
+			//-----------------------grids--------------------
+
+
 
 			var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
@@ -202,12 +226,34 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				this.store.removeAt(index)
 			}, this);
 
+			//------------------Search Options-------------------
+
+			this.comboSourceType = Ext.create('Ext.form.ComboBox', {
+				fieldLabel: 'Source type',
+				store: comboSourceTypeStore,
+				queryMode: 'local',
+				displayField: 'name',
+				forceSelection: true,
+				editable: false,
+				value: 'All',
+			});
+
+			this.comboType = Ext.create('Ext.form.ComboBox', {
+				fieldLabel: 'Type',
+				store: comboTypeStore,
+				queryMode: 'local',
+				displayField: 'name',
+				forceSelection: true,
+				editable: false,
+				value: 'All',
+			});
+
 			this.searchForm = Ext.create('Ext.form.Panel', {
 				border: 0,
 				defaultType: 'textfield',
 				//bodyStyle: 'padding: 5px;',
 				//height: 100,
-				flex : 1,
+				flex : 2,
 				items: [{
 					fieldLabel: 'Search',
 					name: 'search',
@@ -229,6 +275,9 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					name: 'service_description',
 				}*/],
 			});
+
+			this.searchForm.add(this.comboSourceType);
+			this.searchForm.add(this.comboType);
 
 			var displayPanel = Ext.create('Ext.Panel', {
 				layout: {
@@ -275,6 +324,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			this.window.show();
 
+			//------------------------binding------------------------------
+
 			this.KeyNav = Ext.create('Ext.util.KeyNav', this.window.id, {
 				scope: this,
 				enter: function(){
@@ -282,10 +333,16 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					if (form.isValid()){
 						var values = form.getValues();
 						var search = values.search;
+						//var source_type = 
 						if (search == this.old_search){
 							this.InventoryStore.load();
 						} else {
-							this.InventoryStore.proxy.extraParams = {'search': search};
+						/*	this.InventoryStore.proxy.extraParams = {
+								'search': search
+								'filter': {
+									
+									'source_type': }
+							};*/
 							this.InventoryStore.load();
 						}
 						//log.debug(this.InventoryStore.proxy);
