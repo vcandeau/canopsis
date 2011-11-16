@@ -1,11 +1,13 @@
-Ext.define('widgets.state_list.state_list' ,{
+Ext.define('widgets.state_list.states' ,{
 	extend: 'canopsis.lib.view.cwidget',
 	
-	alias : 'widget.state_list',
+	alias : 'widget.states',
 
 	initComponent: function() {
 		
-		this.grid = Ext.create('canopsis.lib.view.cgrid_state')
+		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
+			border: (this.title) ? false : true,
+		});
 
 		this.callParent(arguments);
 

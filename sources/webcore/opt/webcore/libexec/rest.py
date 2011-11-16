@@ -41,10 +41,23 @@ def rest_get(namespace, ctype=None, _id=None):
 	groups = request.params.get('groups', default=None)
 	search = request.params.get('search', default=None)
 	filter = request.params.get('filter', default=None)
+	sort = request.params.get('sort', default=None)
 	onlyWritable = request.params.get('onlyWritable', default=False)
 
 	if filter:
 		filter = json.loads(filter)
+
+	msort = []
+	if sort:
+		#[{"property":"timestamp","direction":"DESC"}]
+		sort = json.loads(sort)
+		for item in sort:
+			direction = 1
+			if str(item['direction']) == "DESC":
+				direction = -1
+
+			msort.append((str(item['property']), direction))
+		
 
 	logger.debug("GET:")
 	logger.debug(" + User: "+str(account.user))
@@ -57,6 +70,8 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + Start: "+str(start))
 	logger.debug(" + Groups: "+str(groups))
 	logger.debug(" + onlyWritable: "+str(onlyWritable))
+	logger.debug(" + Sort: "+str(sort))
+	logger.debug(" + MSort: "+str(msort))
 	logger.debug(" + Search: "+str(search))
 	logger.debug(" + filter: "+str(filter))
 
@@ -94,7 +109,7 @@ def rest_get(namespace, ctype=None, _id=None):
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
 		
 		logger.debug(" + mfilter: "+str(mfilter))
-		records =  storage.find(mfilter, limit=limit, offset=start, account=account)
+		records =  storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account)
 		total =	   storage.count(mfilter, account=account)
 
 

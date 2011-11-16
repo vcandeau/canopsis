@@ -6,6 +6,15 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	opt_tbar: false,
 	border: true,
 
+	namespace: 'inventory',
+
+	pageSize: 100,
+
+	sorters: [{
+			property : 'state',
+			direction: 'DESC'
+		}],
+
 	columns: [{
 				header: '',
 				width: 25,
@@ -50,16 +59,13 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 				extend: 'canopsis.lib.store.cstore',
 				model: 'canopsis.model.inventory',
 
-				pageSize: 100,
+				pageSize: this.pageSize,
 
-				sorters: [{
-					property : 'state',
-					direction: 'DESC'
-				}],
-	
+				sorters: this.sorters,
+				
 				proxy: {
 					type: 'rest',
-					url: '/rest/inventory/event',
+					url: '/rest/'+this.namespace+'/event',
 					reader: {
 						type: 'json',
 						root: 'data',
@@ -90,9 +96,13 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	},
 
 	load_services_of_host: function(hostname){
-		this.store.load({
-			params : {"filter": '{"host_name":"'+ hostname +'", "source_type": "service"}'},
-		});
+		this.store.proxy.extraParams = {"filter": '{"host_name":"'+ hostname +'", "source_type": "service"}'};
+		this.store.load();
+	},
+
+	load_host: function(hostname){
+		this.store.proxy.extraParams = {"filter": '{"host_name":"'+ hostname +'"}'};
+		this.store.load();
 	}
 
 });
