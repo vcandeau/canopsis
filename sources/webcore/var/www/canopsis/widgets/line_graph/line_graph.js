@@ -169,12 +169,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data
+
 					var i;
 					for (i in data){
 						this.addDataOnChart(data[i])
 					}
 
-					if (data[0]){
+					if (data[0].values.length > 0){
 						this.start = data[0].values[data[0].values.length-1][0];
 					}
 					this.chart.redraw();
