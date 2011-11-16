@@ -3,6 +3,8 @@ Ext.define('widgets.state_list.state_list' ,{
 	
 	alias : 'widget.state_list',
 	
+	layout : 'fit',
+	
 	initComponent: function() {
 		//store
 		
