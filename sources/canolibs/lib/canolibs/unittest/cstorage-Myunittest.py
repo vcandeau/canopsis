@@ -98,7 +98,12 @@ class KnownValues(unittest.TestCase):
 		if not isinstance(record, crecord):
 			raise Exception('Error in find_one ...')
 
-	def test_13_CheckReadRights(self):
+	def test_13_count(self):
+		nb = STORAGE.count({'state': 0})
+		if nb != 2:
+			raise Exception('Error in count ...')
+
+	def test_14_CheckReadRights(self):
 		# Inserts
 		STORAGE.put(crecord({'check': 'test4'}), account=self.anonymous_account)
 		STORAGE.put(crecord({'check': 'test5'}), account=self.anonymous_account)
@@ -125,7 +130,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid rigths for root account ...')
 	
 
-	def test_14_CheckWriteRights(self):
+	def test_15_CheckWriteRights(self):
 		# Insert with user account
 		record = crecord({'check': 'test7'})
 		STORAGE.put(record, account=self.user_account)
@@ -142,7 +147,7 @@ class KnownValues(unittest.TestCase):
 		STORAGE.remove(record, account=self.anonymous_account)
 		
 
-	def test_15_MapReduce(self):
+	def test_16_MapReduce(self):
 		from bson.code import Code
 	
 		mmap = Code("function () {"
@@ -165,7 +170,7 @@ class KnownValues(unittest.TestCase):
 		if result['ok'] != 2 and result['warning'] != 1:
 			raise Exception('Invalid map/reduce result ...')
 
-	def test_16_tree(self):
+	def test_17_tree(self):
 		record1 = crecord({'data': 1}, name="record1")
 		record2 = crecord({'data': 2}, name="record2")
 		record3 = crecord({'data': 3}, name="record3")
@@ -187,12 +192,12 @@ class KnownValues(unittest.TestCase):
 		
 		json.dumps(record1.dump(json=True))
 
-	def test_17_RemoveAll(self):
+	def test_18_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 		pass
 
-	def test_18_DropNamespace(self):
+	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 		pass
 		

@@ -189,10 +189,13 @@ class cstorage(object):
 		else:
 			return return_ids
 
-	def find_one(self, mfilter={}, mfields=None, account=None, namespace=None):
-		return self.find(one=True, mfilter=mfilter, mfields=mfields, account=account, namespace=namespace)
+	def find_one(self, *args, **kargs):
+		return self.find(one=True, *args, **kargs)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, sort=None, limit=0, offset=0):
+	def count(self, *args, **kargs):
+		return self.find(count=True, *args, **kargs)
+
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0):
 		if not account:
 			account = self.account
 
@@ -217,6 +220,8 @@ class cstorage(object):
 				raw_records = []
 		else:
 			raw_records = backend.find(mfilter, safe=self.mongo_safe, sort=sort)
+			if count:
+				return raw_records.count()
 			## Limit output
 			if raw_records and limit:
 				raw_records = raw_records.limit(limit)
