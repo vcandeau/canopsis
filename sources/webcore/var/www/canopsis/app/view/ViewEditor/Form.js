@@ -258,7 +258,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					model: 'widget',
 					//closeAction: 'hide',
 					//Width : 350,
-					layout: 'hbox',
+					layout: {
+						type: 'hbox',
+						align: 'stretch'
+					},
 					margin: '0 0 10',					
 					items:[
 					{
