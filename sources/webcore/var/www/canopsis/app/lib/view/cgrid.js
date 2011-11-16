@@ -9,8 +9,11 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 	// Options
 	opt_grouping: false,
+	opt_paging: false,
 
 	features: [],
+	
+	
 
 	title : '',
 	//iconCls: 'icon-grid',
@@ -35,6 +38,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
                     action: 'delete',
                 }],
  
+ 
 	initComponent: function() {
 		/*if (this.opt_grouping){
 			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
@@ -44,7 +48,20 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			this.features.push(groupingFeature);
 		}*/
 
+		if (this.opt_paging){
+			var pagingbar = Ext.create('Ext.PagingToolbar', {
+				store: this.store,
+				displayInfo: true,
+				displayMsg: 'Displaying topics {0} - {1} of {2}',
+				emptyMsg: "No topics to display",
+				
+			});
+        
+			this.bbar = pagingbar;
+		}
+
 		this.callParent(arguments);
+
 	}
 
 });
