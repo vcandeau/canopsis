@@ -12,6 +12,9 @@ var global = {
 		level: 5,
 		buffer: 50
 	},
+
+	pageSize: 20,
+
 	default_colors:[
 		'#4572A7',
 		'#AA4643',
