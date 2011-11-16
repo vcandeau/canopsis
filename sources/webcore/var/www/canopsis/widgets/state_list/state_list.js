@@ -73,37 +73,21 @@ Ext.define('widgets.state_list.state_list' ,{
 				dataIndex: 'output',
 			}],				
 		});
-		
+
 		this.callParent(arguments);		
 		
 		//adding grid to widget 
 		this.removeAll();
 		this.add(this.grid);
-		
-	/*	//coloring row
-		this.grid.getView().getRowClass = this.coloringRow;
-		his.grid.getView().stripeRows = false*/
-			
 	},
 	
 	onRefresh: function(data){
 		this.data = data;
-		host_name = data._id.split('.')[4];
+		host_name = data.host_name;
 		this.store.load({
 			params : {"filter": '{"host_name":"'+ host_name +'","_id": { "$ne" : "' + this.nodeId + '"}}'},
-		/*	scope   : this,
-			callback : function(){log.debug(this.coloringRow())}*/
 		});
 	},
-	/*
-	coloringRow: function(record,index,rowParams,store){
-		this.store.each(function(record){
-			state = record.get('state');
-			index = record.index;
-			log.debug(this.grid.getView());
-			//this.grid.getView().getRow(index).addClass('row-background-ok');
-		}, this);
-	}*/
 	
 	coloringRow : function(record,index,rowParams,store){
 		state = record.get('state');
