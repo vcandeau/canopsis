@@ -6,8 +6,7 @@ Ext.define('canopsis.controller.Notify', {
     views: [],
 
     init: function() {
-	this.getController('WebSocket').on('message', function(ws, evt) {
-		var data = Ext.JSON.decode(evt.data)
+	this.getController('WebSocket').on('message', function(ws, evt, data) {
 		
 		var type = undefined;
 		var icon = undefined;
