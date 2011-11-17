@@ -44,7 +44,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				    text: 'Add',
 				    action: 'add',
 				},{
-                 	iconCls: 'icon-add',
+                 	iconCls: 'icon-copy', 
 				    text: 'Duplicate',
 				    action: 'duplicate',
 				},{
@@ -79,7 +79,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			
 			if(this.opt_menu_delete){
 				var deleteAction = Ext.create('Ext.Action', {
-					//icon   : '../shared/icons/fam/delete.gif',  // Use a URL in the icon config
+					iconCls: 'icon-delete',
 					text: 'Delete',
 
 				});
@@ -87,7 +87,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			}
 			if (this.opt_menu_duplicate){
 				var duplicateAction = Ext.create('Ext.Action', {
-					//icon   : '../shared/icons/fam/delete.gif',  // Use a URL in the icon config
+					iconCls: 'icon-copy',
 					text: 'Duplicate',
 				});
 				this.contextMenu.add(duplicateAction);

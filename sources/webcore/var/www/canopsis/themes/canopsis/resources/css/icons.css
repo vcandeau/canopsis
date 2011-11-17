@@ -36,6 +36,10 @@
     background-image: url(../images/icons/save.png) !important; 
 }
 
+.icon-copy {
+	background-image: url(../images/icons/copy.png) !important;
+}
+
 .icon-perfdata { 
     background-image: url(../images/states/perfdata.png) !important; 
 }
