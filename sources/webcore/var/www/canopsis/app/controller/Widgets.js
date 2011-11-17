@@ -7,16 +7,16 @@ Ext.define('canopsis.controller.Widgets', {
 
     init: function() {
 		Ext.Loader.setPath('widgets', './widgets');
-		var store = this.getStore('Widget');
+		this.store = this.getStore('Widget');
 		log.debug('[controller][Widgets] : parsing Widget store');
-		store.on('load',function(){
-			this.each(function(record){
+		this.store.on('load',function(){
+			this.store.each(function(record){
 				log.debug('[controller][Widgets] : loading ' + record.data.xtype);
 				var name ='widgets.' + record.data.xtype + '.' + record.data.xtype ;
 				Ext.require(name);
 			});
-			
-		});
+			this.fireEvent('loaded');		
+		}, this);
     },
     
 	
