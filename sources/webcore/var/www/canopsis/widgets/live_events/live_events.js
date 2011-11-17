@@ -7,6 +7,7 @@ Ext.define('widgets.live_events.live_events' ,{
 
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			border: (this.title) ? false : true,
+			opt_show_host_name: true,
 			store: 'LiveEvents'
 		});
 
