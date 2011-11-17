@@ -235,7 +235,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				displayField: 'name',
 				forceSelection: true,
 				editable: false,
-				value: 'All',
+				value: 'all',
+				name : 'source_type'
 			});
 
 			this.comboType = Ext.create('Ext.form.ComboBox', {
@@ -245,7 +246,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				displayField: 'name',
 				forceSelection: true,
 				editable: false,
-				value: 'All',
+				value: 'all',
+				name : 'type'
 			});
 
 			this.searchForm = Ext.create('Ext.form.Panel', {
@@ -332,17 +334,26 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					var form = this.searchForm.getForm()
 					if (form.isValid()){
 						var values = form.getValues();
-						var search = values.search;
-						//var source_type = 
+						//clean searching values
+						search = values.search
+						mfilter = '{"$and": [{ "_id":{"$regex" : ".*'+search+'.*", "$options": "i" }}'
+						if (values.source_type != 'all'){
+							mfilter += ',{"source_type":"'+ values.source_type +'"}';
+						}
+						if (values.type != 'all'){
+							mfilter += ',{"type":"'+ values.type +'"}';
+						}
+						
+						mfilter += "]}"
+						log.debug(mfilter);
+						
+						//request data
 						if (search == this.old_search){
 							this.InventoryStore.load();
 						} else {
-						/*	this.InventoryStore.proxy.extraParams = {
-								'search': search
-								'filter': {
-									
-									'source_type': }
-							};*/
+							this.InventoryStore.proxy.extraParams = {
+								'filter': mfilter
+							};
 							this.InventoryStore.load();
 						}
 						//log.debug(this.InventoryStore.proxy);
