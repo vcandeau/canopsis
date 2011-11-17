@@ -60,11 +60,12 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				    action: 'delete',
 				}
 			];
+			if (!this.opt_duplicate){
+				this.tbar.splice(1,1);
+			}
 		}
 		
-		if (!this.opt_duplicate){
-			this.tbar.splice(1,1);
-		}
+
 		
 		//--------------------Paging toolbar -----------------
 		if (this.opt_paging){

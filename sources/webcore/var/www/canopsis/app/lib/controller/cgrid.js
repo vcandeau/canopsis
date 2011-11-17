@@ -222,6 +222,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				log.debug("[controller][cgrid] - Create tab '"+id+"'")
 				var form = main_tabs.add({
 					title: 'Edit '+item.raw.crecord_name,
+					recordName: item.internalId,
 					xtype: this.formXtype,
 					id: id,
 					closable: true,}).show();
