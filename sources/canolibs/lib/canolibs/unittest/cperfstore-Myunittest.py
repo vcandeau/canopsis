@@ -28,8 +28,8 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global perfstore
-		perfstore = cperfstore(storage=storage, namespace='perfdata_test',logging_level=logging.DEBUG)		
-		#raise Exception('Error in perfdata parsing ...')
+		perfstore = cperfstore(storage=storage, namespace='perfdata_test',logging_level=logging.DEBUG)
+		self.test_99_Purge()
 
 	def test_03_Put(self):
 		global first, last
@@ -91,7 +91,7 @@ class KnownValues(unittest.TestCase):
 		self.test_05_Get()
 		timer.stop()
 
-	def test_08_Purge(self):
+	def test_99_Purge(self):
 		#time.sleep(5)
 		perfstore.purge('test.id')
 		pass
