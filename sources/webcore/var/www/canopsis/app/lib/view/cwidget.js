@@ -6,7 +6,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	nodeId_refresh: true,
 	nodeData: {},
 
-	defaultHtml: 'cwidget: No data. Please wait ...',
+	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
 	refreshInterval: 0,
 	baseUrl: '/rest/inventory/event/',
