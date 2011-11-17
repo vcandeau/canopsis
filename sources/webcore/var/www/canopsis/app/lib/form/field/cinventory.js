@@ -340,8 +340,11 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 						if (values.source_type != 'all'){
 							mfilter += '"source_type":"'+ values.source_type +'"';
 						}
-						if (values.type != 'all'){
+						
+						if ((values.source_type != 'all') && (values.type != 'all')){
 							mfilter += ',"type":"'+ values.type +'"';
+						} else if (values.type != 'all'){
+							mfilter += '"type":"'+ values.type +'"';
 						}
 						
 						mfilter += "}"
@@ -357,7 +360,9 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 							};
 							this.InventoryStore.load();
 							//paging toolbar return to first page
-							secondGrid.moveFirst();
+							if (this.InventoryStore.count() !=0 ){
+								firstGrid.pagingbar.moveFirst();
+							}
 						}
 						//log.debug(this.InventoryStore.proxy);
 					}
