@@ -31,13 +31,15 @@ Ext.define('canopsis.controller.Notify', {
     },
 
     notify: function(title, text, type, icon){
-	$.pnotify({
-		pnotify_title: title,
-		pnotify_text: text,
-		pnotify_type: type,
-		pnotify_history: this.history,
-		pnotify_notice_icon: icon,
-		pnotify_opacity: this.opacity,
-	});
+	if (global.notify){
+		$.pnotify({
+			pnotify_title: title,
+			pnotify_text: text,
+			pnotify_type: type,
+			pnotify_history: this.history,
+			pnotify_notice_icon: icon,
+			pnotify_opacity: this.opacity,
+		});
+	}
    }
 });

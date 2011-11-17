@@ -13,6 +13,8 @@ var global = {
 		buffer: 50
 	},
 
+	notify: false,
+
 	pageSize: 20,
 
 	default_colors:[
