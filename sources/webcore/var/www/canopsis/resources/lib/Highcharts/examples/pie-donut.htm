@@ -23,58 +23,127 @@
 		
 			var chart;
 			$(document).ready(function() {
+				
+				var colors = Highcharts.getOptions().colors,
+					categories = ['MSIE', 'Firefox', 'Chrome', 'Safari', 'Opera'],
+					name = 'Browser brands',
+					data = [{ 
+							y: 55.11,
+							color: colors[0],
+							drilldown: {
+								name: 'MSIE versions',
+								categories: ['MSIE 6.0', 'MSIE 7.0', 'MSIE 8.0', 'MSIE 9.0'],
+								data: [10.85, 7.35, 33.06, 2.81],
+								color: colors[0]
+							}
+						}, {
+						 	y: 21.63,
+							color: colors[1],
+							drilldown: {
+								name: 'Firefox versions',
+								categories: ['Firefox 2.0', 'Firefox 3.0', 'Firefox 3.5', 'Firefox 3.6', 'Firefox 4.0'],
+								data: [0.20, 0.83, 1.58, 13.12, 5.43],
+								color: colors[1]
+							}
+						}, {
+							y: 11.94,
+							color: colors[2],
+							drilldown: {
+								name: 'Chrome versions',
+								categories: ['Chrome 5.0', 'Chrome 6.0', 'Chrome 7.0', 'Chrome 8.0', 'Chrome 9.0', 
+									'Chrome 10.0', 'Chrome 11.0', 'Chrome 12.0'],
+								data: [0.12, 0.19, 0.12, 0.36, 0.32, 9.91, 0.50, 0.22],
+								color: colors[2]
+							}
+						}, {
+							y: 7.15,
+							color: colors[3],
+							drilldown: {
+								name: 'Safari versions',
+								categories: ['Safari 5.0', 'Safari 4.0', 'Safari Win 5.0', 'Safari 4.1', 'Safari/Maxthon', 
+									'Safari 3.1', 'Safari 4.1'],
+								data: [4.55, 1.42, 0.23, 0.21, 0.20, 0.19, 0.14],
+								color: colors[3]
+							}
+						}, {
+							y: 2.14,
+							color: colors[4],
+							drilldown: {
+								name: 'Opera versions',
+								categories: ['Opera 9.x', 'Opera 10.x', 'Opera 11.x'],
+								data: [ 0.12, 0.37, 1.65],
+								color: colors[4]
+							}
+						}];
+				
+				
+				// Build the data arrays
+				var browserData = [];
+				var versionsData = [];
+				for (var i = 0; i < data.length; i++) {
+					
+					// add browser data
+					browserData.push({
+						name: categories[i],
+						y: data[i].y,
+						color: data[i].color
+					});
+					
+					// add version data
+					for (var j = 0; j < data[i].drilldown.data.length; j++) {
+						var brightness = 0.2 - (j / data[i].drilldown.data.length) / 5 ;
+						versionsData.push({
+							name: data[i].drilldown.categories[j],
+							y: data[i].drilldown.data[j],
+							color: Highcharts.Color(data[i].color).brighten(brightness).get()
+						});
+					}
+				}
+				
+				// Create the chart
 				chart = new Highcharts.Chart({
 					chart: {
-						renderTo: 'container',
-						margin: [50, 0, 0, 0],
-						plotBackgroundColor: 'none',
-						plotBorderWidth: 0,
-						plotShadow: false				
+						renderTo: 'container', 
+						type: 'pie'
 					},
 					title: {
-						text: 'Browser market shares at a specific website'
+						text: 'Browser market share, April, 2011'
 					},
-					subtitle: {
-						text: 'Inner circle: 2008, outer circle: 2010'
+					yAxis: {
+						title: {
+							text: 'Total percent market share'
+						}
+					},
+					plotOptions: {
+						pie: {
+							shadow: false
+						}
 					},
 					tooltip: {
 						formatter: function() {
-							return '<b>'+ this.series.name +'</b><br/>'+ 
-								this.point.name +': '+ this.y +' %';
+							return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
 						}
 					},
-				    series: [{
-						type: 'pie',
-						name: '2008',
-						size: '45%',
-						innerSize: '20%',
-						data: [
-							{ name: 'Firefox', y: 44.2, color: '#4572A7' },
-							{ name: 'IE', y: 46.6, color: '#AA4643' },
-							{ name: 'Chrome', y: 3.1, color: '#89A54E' },
-							{ name: 'Safari', y: 2.7, color: '#80699B' },
-							{ name: 'Opera', y: 2.3, color: '#3D96AE' },
-							{ name: 'Mozilla', y: 0.4, color: '#DB843D' }
-						],
+					series: [{
+						name: 'Browsers',
+						data: browserData,
+						size: '60%',
 						dataLabels: {
-							enabled: false
+							formatter: function() {
+								return this.y > 5 ? this.point.name : null;
+							},
+							color: 'white',
+							distance: -30
 						}
 					}, {
-						type: 'pie',
-						name: '2010',
-						innerSize: '45%',
-						data: [
-							{ name: 'Firefox', y: 45.0, color: '#4572A7' },
-							{ name: 'IE', y: 26.8, color: '#AA4643' },
-							{ name: 'Chrome', y: 12.8, color: '#89A54E' },
-							{ name: 'Safari', y: 8.5, color: '#80699B' },
-							{ name: 'Opera', y: 6.2, color: '#3D96AE' },
-							{ name: 'Mozilla', y: 0.2, color: '#DB843D' }
-						],
+						name: 'Versions',
+						data: versionsData,
+						innerSize: '60%',
 						dataLabels: {
-							enabled: true,
-							color: '#000000',
-							connectorColor: '#000000'
+							formatter: function() {
+								// display only if larger than 1
+								return this.y > 1 ? '<b>'+ this.point.name +':</b> '+ this.y +'%'  : null;
+							}
 						}
 					}]
 				});

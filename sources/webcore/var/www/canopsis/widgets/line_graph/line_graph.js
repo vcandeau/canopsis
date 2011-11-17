@@ -64,8 +64,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				zoomType: 'x',
 				defaultSeriesType: 'area',
 				height: this.divHeight,
-				//marginTop : 100,
-				//width: 300,
+				animation: false,
 			},
 			exporting: {
 				enabled: false
@@ -96,8 +95,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
         		},
 			plotOptions: {
+				series: {
+					animation: false,
+					shadow: false
+				},
 				area: {
 					lineWidth: 1,
+					shadow: false,
+					cursor: 'pointer',
 					marker: {
 						enabled: false,
 					}
