@@ -38,8 +38,11 @@ def account_get_me(_id=None):
 	storage = get_storage(namespace=namespace)
 
 	try:
+		logger.debug(" + Try to get '%s' ... " % account._id)
 		record = storage.get(account._id, account=account)
-	except:
+
+	except Exception, err:
+		self.logger.error("Exception !\nReason: %s" % err)
 		return HTTPError(404, _id+" Not Found")
 
 	if record:
@@ -91,7 +94,8 @@ def account_get(_id=None):
 		try:
 			records = [ storage.get(_id, account=account) ]
 			total = 1
-		except:
+		except Exception, err:
+			self.logger.error("Exception !\nReason: %s" % err)
 			return HTTPError(404, _id+" Not Found")
 		
 	else:
