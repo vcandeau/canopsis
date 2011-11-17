@@ -22,8 +22,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		grid.on('selectionchange',	this._selectionchange,	this)
 		grid.on('itemdblclick', 	this._editRecord,	this)
-
+		
+		// context menu
+		grid.on('itemcontextmenu', this._contextMenu);
+		grid.contextMenu.down('menuitem[text=Delete]').on('click', this._deleteButton, this)
+		grid.contextMenu.down('menuitem[text=Duplicate]').on('click', this._duplicateRecord, this)
+		
 		// Add buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]')
+		for (i in btns){
+			btns[i].on('click', this._duplicateRecord, this)
+		}
+
+		//Duplicate buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]')
 		for (i in btns){
 			btns[i].on('click', this._addButton, this)
@@ -229,6 +240,49 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.editRecord) {
 			this.editRecord(view, item, index)
 		}
-	}
+	},
+	
+	_contextMenu : function(view, rec, node, index, e) {
+		e.stopEvent();
+		this.contextMenu.showAt(e.getXY());
+		return false;
+    },
+	
+	_duplicateRecord: function() {
+		log.debug('[controller][cgrid] - clicked duplicateRecord');
+		grid = this.grid;
+		item = grid.getSelectionModel().getSelection()[0];
+
+		if (this.formXtype) {
+			var main_tabs = Ext.getCmp('main-tabs')
+			var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
+			var tab = Ext.getCmp(id);
+			if (tab) {
+				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
+				main_tabs.setActiveTab(tab);
+			}else{
+				log.debug("[controller][cgrid] - Create tab '"+id+"'")
+				var form = main_tabs.add({
+					title: 'Edit '+item.raw.crecord_name,
+					xtype: this.formXtype,
+					id: id,
+					closable: true,}).show();
+				
+
+				if (this.beforeload_DuplicateForm) {
+					this.beforeload_DuplicateForm(form)
+				}
+
+				form.loadRecord(item);
+
+				if (this.afterload_DuplicateForm) {
+					this.afterload_DuplicateForm(form)
+				}
+
+				this._bindFormEvents(form)
+
+			}
+		}
+	},
 	
 });

@@ -90,6 +90,17 @@ Ext.define('canopsis.controller.ViewEditor', {
 			cinventory.LoadStore(tab);
 		}
 		
+	},
+	
+	afterload_DuplicateForm: function(form){
+		if (form.nodeId){
+			var cinventory = form.GlobalOptions.down('panel');
+			tab = []
+			tab.push(form.nodeId);
+			cinventory.LoadStore(tab);
+			form.GlobalOptions.down('textfield[name=crecord_name]').setValue('');
+		}
+		
 	}
 
 
