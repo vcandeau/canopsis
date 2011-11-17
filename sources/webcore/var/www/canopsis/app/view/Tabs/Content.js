@@ -73,9 +73,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			log.debug(' + Use full mode ...')
 			this.layout = 'fit'
 			item = items[0]
+
+			log.debug('   + Add: '+item.xtype)
+
 			//item['height'] = '10'
 			item['width'] = '100%'
 			item['title'] = ''
+			item['fullmode'] = true
 			
 			//item['baseCls'] = 'x-plain'
 			item['mytab'] = this
@@ -99,7 +103,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				log.debug(' - Item '+i+':')
 				var item = items[i]
 
+				log.debug('   + Add: '+item.xtype)
+
 				item['mytab'] = this
+				item['fullmode'] = false
 
 				var colspan = 1
 				var rowspan = 1
