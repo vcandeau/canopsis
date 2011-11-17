@@ -298,6 +298,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 									name: 'rowHeight',
 								},
 								Ext.create('canopsis.lib.form.field.cinventory', {
+									prefetch_id: this.GlobalOptions.down('gridpanel').store.getAt(0).get('host_name'),
 									multiSelect: false,
 								})
 							]
