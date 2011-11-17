@@ -12,8 +12,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_paging: true,
 	opt_tbar: true,
 
-	opt_menu_delete: true,
-	opt_menu_duplicate: true,
+	opt_duplicate: false,
+
+	opt_menu_delete: false,
+	opt_menu_duplicate: false,
 
 	features: [],
 	
@@ -58,6 +60,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				    action: 'delete',
 				}
 			];
+		}
+		
+		if (!this.opt_duplicate){
+			this.tbar.splice(1,1);
 		}
 		
 		//--------------------Paging toolbar -----------------
