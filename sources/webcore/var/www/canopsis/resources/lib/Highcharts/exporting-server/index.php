@@ -51,7 +51,7 @@ if ($type == 'image/png') {
 }
 $outfile = "temp/$tempName.$ext";
 
-if ($typeString) {
+if (isset($typeString)) {
 	
 	// size
 	if ($_POST['width']) {
