@@ -4,6 +4,10 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	store: false,
 	opt_paging: false,
 	opt_tbar: false,
+
+	opt_show_state_type: true,
+	opt_show_host_name: false,
+
 	border: true,
 
 	namespace: 'inventory',
@@ -15,44 +19,69 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			direction: 'DESC'
 		}],
 
-	columns: [{
-				header: '',
-				width: 25,
-				sortable: false,
-				dataIndex: 'source_type',
-				renderer: rdr_source_type
-	       		},{
+	columns: [],
+
+	initComponent: function() {
+		this.columns = []
+
+		//set columns
+		this.columns.push({
+			header: '',
+			width: 25,
+			sortable: false,
+			dataIndex: 'source_type',
+			renderer: rdr_source_type
+	       	});
+	
+		if(this.opt_show_state_type){
+			this.columns.push({
 				header: '',
 				sortable: false,
 				width: 25,
 				dataIndex: 'state_type',
 				renderer: rdr_state_type
-			},{
-				header: 'State',
-				sortable: false,
-				width: 50,
-				dataIndex: 'state',
-				renderer: rdr_status
-			},{
-				header: 'Last check',
-				sortable: false,
-				flex: 2,
-				dataIndex: 'timestamp',
-				renderer: rdr_tstodate
-			},{
-				header: 'Name',
-				flex: 2,
-				sortable: false,
-				dataIndex: 'service_description',
-			},{
-				header: 'Information',
-				flex: 3,
-				sortable: false,
-				dataIndex: 'output',
-			}],				
+			});
+		}
 
+		this.columns.push({
+			header: 'State',
+			sortable: false,
+			width: 50,
+			dataIndex: 'state',
+			renderer: rdr_status
+		});
 
-	initComponent: function() {
+		this.columns.push({
+			header: 'Last check',
+			sortable: false,
+			width: 130,
+			dataIndex: 'timestamp',
+			renderer: rdr_tstodate
+		});
+
+		if(this.opt_show_host_name){
+			this.columns.push({
+				header: 'Host name',
+				flex: 1,
+				sortable: false,
+				dataIndex: 'host_name',
+			});
+		}
+
+		this.columns.push({
+			header: 'Service description',
+			flex: 1,
+			sortable: false,
+			dataIndex: 'service_description',
+		});
+
+		this.columns.push({
+			header: 'Output',
+			flex: 4,
+			sortable: false,
+			dataIndex: 'output',
+		});				
+
 		//store
 		if (! this.store){
 			this.store = Ext.create('Ext.data.Store', {
