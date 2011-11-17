@@ -6,6 +6,9 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	ids: false,
 	
 	last_search : '',
+	
+	search_type : 'all',
+	search_source_type : 'all',
 
 	//width: '100%',
 
@@ -228,25 +231,25 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			//------------------Search Options-------------------
 
-			this.comboSourceType = Ext.create('Ext.form.ComboBox', {
+			comboSourceType = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: 'Source type',
 				store: comboSourceTypeStore,
 				queryMode: 'local',
 				displayField: 'name',
 				forceSelection: true,
 				editable: false,
-				value: 'all',
+				value: this.search_source_type,
 				name : 'source_type'
 			});
 
-			this.comboType = Ext.create('Ext.form.ComboBox', {
+			comboType = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: 'Type',
 				store: comboTypeStore,
 				queryMode: 'local',
 				displayField: 'name',
 				forceSelection: true,
 				editable: false,
-				value: 'all',
+				value: this.search_type,
 				name : 'type'
 			});
 
@@ -277,9 +280,14 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					name: 'service_description',
 				}*/],
 			});
+			
+			var searchButton = Ext.create('Ext.Button', {
+				text: 'Search',
+			});
 
-			this.searchForm.add(this.comboSourceType);
-			this.searchForm.add(this.comboType);
+			this.searchForm.add(comboSourceType);
+			this.searchForm.add(comboType);
+			this.searchForm.add(searchButton);
 
 			var displayPanel = Ext.create('Ext.Panel', {
 				layout: {
@@ -328,9 +336,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			//------------------------binding------------------------------
 
-			this.KeyNav = Ext.create('Ext.util.KeyNav', this.window.id, {
-				scope: this,
-				enter: function(){
+			this.searchFunction = function(){
 					var form = this.searchForm.getForm()
 					if (form.isValid()){
 						var values = form.getValues();
@@ -348,7 +354,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 						}
 						
 						mfilter += "}"
-						log.debug(mfilter);
+						//log.debug(mfilter);
 						
 						//request data
 						if (search == this.old_search){
@@ -364,12 +370,18 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 								firstGrid.pagingbar.moveFirst();
 							}
 						}
-						//log.debug(this.InventoryStore.proxy);
 					}
 				}
+
+
+			this.KeyNav = Ext.create('Ext.util.KeyNav', this.window.id, {
+				scope: this,
+				enter: this.searchFunction
 			});
 
 			// Bind Button
+			searchButton.on('click',this.searchFunction, this);
+			
 			Ext.ComponentQuery.query('#' + this.window.id + ' button[action=empty-selection]')[0].on('click', function(){
 				this.store.removeAll()
 			}, this);
