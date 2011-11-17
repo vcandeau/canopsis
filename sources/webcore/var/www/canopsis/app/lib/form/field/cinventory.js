@@ -9,6 +9,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	
 	search_type : 'all',
 	search_source_type : 'all',
+	prefetch_id : '',
 
 	//width: '100%',
 
@@ -183,6 +184,9 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				stripeRows: true,
 				title: 'Inventory',
    			});
+   			
+   			//needed to move page in paging from function searchFunction
+   			this.firstGrid = firstGrid;
 
 			firstGrid.on('itemdblclick',function(grid, record, item, index){
 				if (! this.multiSelect){
@@ -255,10 +259,11 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			this.searchForm = Ext.create('Ext.form.Panel', {
 				border: 0,
+				buttonAlign: 'right',
 				defaultType: 'textfield',
 				//bodyStyle: 'padding: 5px;',
 				//height: 100,
-				flex : 2,
+				flex : 3,
 				items: [{
 					fieldLabel: 'Search',
 					name: 'search',
@@ -288,6 +293,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			this.searchForm.add(comboSourceType);
 			this.searchForm.add(comboType);
 			this.searchForm.add(searchButton);
+
+			//----------------building dislay pannel---------------
 
 			var displayPanel = Ext.create('Ext.Panel', {
 				layout: {
@@ -331,48 +338,13 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				defaults: { padding: 5 },
 				items: [displayPanel, firstGrid]
 			});
+			
+			//---------------diplay and launch prefetch--------------------
 
 			this.window.show();
+			this.prefetch();
 
 			//------------------------binding------------------------------
-
-			this.searchFunction = function(){
-					var form = this.searchForm.getForm()
-					if (form.isValid()){
-						var values = form.getValues();
-						//clean searching values
-						search = values.search
-						mfilter = '{'
-						if (values.source_type != 'all'){
-							mfilter += '"source_type":"'+ values.source_type +'"';
-						}
-						
-						if ((values.source_type != 'all') && (values.type != 'all')){
-							mfilter += ',"type":"'+ values.type +'"';
-						} else if (values.type != 'all'){
-							mfilter += '"type":"'+ values.type +'"';
-						}
-						
-						mfilter += "}"
-						//log.debug(mfilter);
-						
-						//request data
-						if (search == this.old_search){
-							this.InventoryStore.load();
-						} else {
-							this.InventoryStore.proxy.extraParams = {
-								'search' : search,
-								'filter': mfilter
-							};
-							this.InventoryStore.load();
-							//paging toolbar return to first page
-							if (this.InventoryStore.count() !=0 ){
-								firstGrid.pagingbar.moveFirst();
-							}
-						}
-					}
-				}
-
 
 			this.KeyNav = Ext.create('Ext.util.KeyNav', this.window.id, {
 				scope: this,
@@ -387,7 +359,6 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			}, this);
 
 			Ext.ComponentQuery.query('#' + this.window.id + ' button[action=set-selection]')[0].on('click', function(){
-
 				this.window.hide()
 				this.InventoryStore.removeAll()
 			}, this);
@@ -401,8 +372,51 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	beforeDestroy : function() {
 		Ext.grid.Panel.superclass.beforeDestroy.call(this);
 	        log.debug("[cinventory] " + this.id + " Destroyed.")
+	},
+
+	prefetch : function(){
+		if (this.prefetch_id != ''){
+			this.searchForm.down('textfield[fieldLabel="Search"]').setValue(this.prefetch_id);
+			this.searchFunction();
+		}
+	},
+	
+	searchFunction : function(){
+		var form = this.searchForm.getForm()
+		if (form.isValid()){
+			var values = form.getValues();
+			//clean searching values
+			search = values.search
+			mfilter = '{'
+			if (values.source_type != 'all'){
+				mfilter += '"source_type":"'+ values.source_type +'"';
+			}
+			
+			if ((values.source_type != 'all') && (values.type != 'all')){
+				mfilter += ',"type":"'+ values.type +'"';
+			} else if (values.type != 'all'){
+				mfilter += '"type":"'+ values.type +'"';
+			}
+			
+			mfilter += "}"
+			//log.debug(mfilter);
+			
+			//request data
+			if (search == this.old_search){
+				this.InventoryStore.load();
+			} else {
+				this.InventoryStore.proxy.extraParams = {
+					'search' : search,
+					'filter': mfilter
+				};
+				this.InventoryStore.load();
+				//paging toolbar return to first page
+				if (this.InventoryStore.count() !=0 ){
+					this.firstGrid.pagingbar.moveFirst();
+				}
+			}
+		}
 	}
 
-	
 
 });
