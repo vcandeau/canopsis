@@ -5,6 +5,8 @@ Ext.define('canopsis.view.Group.Grid' ,{
 
 	model: 'Group',
 	store : 'Group',	
+	
+	opt_menu_delete: true,
 
 	columns: [
 		{
