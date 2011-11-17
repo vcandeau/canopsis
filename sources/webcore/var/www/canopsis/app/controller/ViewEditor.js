@@ -37,7 +37,11 @@ Ext.define('canopsis.controller.ViewEditor', {
 		var record_name = form.down('textfield[name=crecord_name]').getValue()
 		record.set('crecord_name',record_name);
 		//log.debug('crecord_name : ' + record.get('crecord_name'));
-		record.set('id','view.'+ global.account.user + '.' + record_name);
+		if (form.recordName){
+			record.set('id',form.recordName);
+		} else {
+			record.set('id','view.'+ global.account.user + '.' + record_name);
+		}
 		//log.debug('id : ' + record.get('id'));
 		record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
 		//log.debug('refreshInterval : ' + record.get('refreshInterval'));
