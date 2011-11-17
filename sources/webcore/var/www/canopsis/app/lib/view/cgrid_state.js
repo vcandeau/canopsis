@@ -2,12 +2,18 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	extend: 'canopsis.lib.view.cgrid',
 
 	store: false,
+	filter: false,
+	autoload: false,
+	remoteSort: false,
+
 	opt_paging: false,
 	opt_tbar: false,
 
 	opt_show_state_type: true,
 	opt_show_host_name: false,
-
+	opt_show_service_description: true,
+	opt_show_row_background: true,
+	
 	border: true,
 
 	namespace: 'inventory',
@@ -68,12 +74,14 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		this.columns.push({
-			header: 'Service description',
-			flex: 1,
-			sortable: false,
-			dataIndex: 'service_description',
-		});
+		if(this.opt_show_service_description){
+			this.columns.push({
+				header: 'Service description',
+				flex: 1,
+				sortable: false,
+				dataIndex: 'service_description',
+			});
+		}
 
 		this.columns.push({
 			header: 'Output',
@@ -91,7 +99,9 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 				pageSize: this.pageSize,
 
 				sorters: this.sorters,
-				
+
+				remoteSort: this.remoteSort,
+
 				proxy: {
 					type: 'rest',
 					url: '/rest/'+this.namespace+'/event',
@@ -103,11 +113,24 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 					},
 				}
 			});
+
+			if (this.filter) {
+				this.store.proxy.extraParams = {
+					'filter': this.filter
+				};
+			}
+
+			if (this.autoload) {
+				this.store.load();
+			}
 		}
 
 		this.viewConfig = {
 			stripeRows: false,
-			getRowClass: this.coloringRow,
+		}
+
+		if (this.opt_show_row_background){
+			this.viewConfig.getRowClass = this.coloringRow;
 		}
 			
 		this.callParent(arguments);
