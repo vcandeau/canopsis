@@ -343,6 +343,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			this.window.show();
 			this.prefetch();
+			this.window.down('textfield[fieldLabel="Search"]').focus('', 700); 
 
 			//------------------------binding------------------------------
 
