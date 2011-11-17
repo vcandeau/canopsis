@@ -30,26 +30,32 @@ Ext.onReady(function() {
 
 function createApplication(){
 	log.debug("Start ExtJS application ...", "app");
+
 	var app = Ext.application({
 		name: 'canopsis',
 		appFolder: 'app',
 
 		controllers: [
+			'Widgets',
 			'Menu',
 			'View',
-			'Tabs',
-			'Widgets',
 			'WebSocket',
 			'Notify',
 			'LiveEvents',
 			'Account',
 			'Group',
-			'ViewEditor'
+			'ViewEditor',
+			'Tabs',
 		],
 	
-		autoCreateViewport: true,
+		//autoCreateViewport: true,
 		launch: function() {
-			log.debug('Remove mask ...')
+			this.getController('Widgets').on('loaded', this.createViewport);
+		},
+
+		createViewport: function(){
+			Ext.create('canopsis.view.Viewport');
+			log.debug('Remove mask ...');
 			Ext.get('loading').remove();
 			Ext.get('loading-mask').remove();
 		}
