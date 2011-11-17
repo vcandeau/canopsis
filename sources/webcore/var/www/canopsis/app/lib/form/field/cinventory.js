@@ -70,7 +70,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				pageSize: 10,
 				proxy: {
 					type: 'rest',
-					url: '/rest/inventory',
+					url: '/rest/inventory/event',
 					reader: {
 						type: 'json',
 						root: 'data',
@@ -336,15 +336,15 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 						var values = form.getValues();
 						//clean searching values
 						search = values.search
-						mfilter = '{"$and": [{ "_id":{"$regex" : ".*'+search+'.*", "$options": "i" }}'
+						mfilter = '{'
 						if (values.source_type != 'all'){
-							mfilter += ',{"source_type":"'+ values.source_type +'"}';
+							mfilter += '"source_type":"'+ values.source_type +'"';
 						}
 						if (values.type != 'all'){
-							mfilter += ',{"type":"'+ values.type +'"}';
+							mfilter += ',"type":"'+ values.type +'"';
 						}
 						
-						mfilter += "]}"
+						mfilter += "}"
 						log.debug(mfilter);
 						
 						//request data
@@ -352,6 +352,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 							this.InventoryStore.load();
 						} else {
 							this.InventoryStore.proxy.extraParams = {
+								'search' : search,
 								'filter': mfilter
 							};
 							this.InventoryStore.load();
