@@ -24,10 +24,15 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		grid.on('itemdblclick', 	this._editRecord,	this)
 		
 		// context menu
-		grid.on('itemcontextmenu', this._contextMenu);
-		grid.contextMenu.down('menuitem[text=Delete]').on('click', this._deleteButton, this)
-		grid.contextMenu.down('menuitem[text=Duplicate]').on('click', this._duplicateRecord, this)
-		
+		if(grid.contextMenu){
+			grid.on('itemcontextmenu', this._contextMenu);
+			if(grid.opt_menu_delete){
+				grid.contextMenu.down('menuitem[text=Delete]').on('click', this._deleteButton, this)
+			}
+			if(grid.opt_menu_duplicate){
+				grid.contextMenu.down('menuitem[text=Duplicate]').on('click', this._duplicateRecord, this)
+			}
+		}
 		// Add buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]')
 		for (i in btns){

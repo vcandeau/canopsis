@@ -6,6 +6,10 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	model: 'view',
 	store: 'View',
 
+	opt_duplicate: true,
+
+	opt_menu_delete: true,
+	opt_menu_duplicate: true,
    
 	columns: [{
 			header: 'name',
