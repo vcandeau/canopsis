@@ -44,9 +44,18 @@ storage.put([group1, group2])
 ### Default Dasboard
 record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
 record1.chmod('o+r')
-record1.data['nbColumns'] =  2
 record1.data['rowHeight'] =  300
-record1.data['items'] = [ { 'xtype': 'panel', 'html': 'Welcome to Canopsis !'} ]
+record1.data['items'] = [{'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'}]
+storage.put(record1)
+
+record1 = crecord({'_id': 'view.hosts' }, type='view', name='Hosts')
+record1.chmod('o+r')
+record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"host"}'} ]
+storage.put(record1)
+
+record1 = crecord({'_id': 'view.services' }, type='view', name='Services')
+record1.chmod('o+r')
+record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"service"}'} ]
 storage.put(record1)
 
 ### Account
