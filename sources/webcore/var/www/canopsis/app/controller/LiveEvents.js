@@ -5,7 +5,7 @@ Ext.define('canopsis.controller.LiveEvents', {
 
 	views: [],
 	
-	maxEvents: 20,
+	maxEvents: 15,
 
 	init: function() {
 		this.store = Ext.data.StoreManager.lookup('LiveEvents');
