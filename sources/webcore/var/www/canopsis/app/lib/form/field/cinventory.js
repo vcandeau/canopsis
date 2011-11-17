@@ -356,6 +356,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 								'filter': mfilter
 							};
 							this.InventoryStore.load();
+							//paging toolbar return to first page
+							secondGrid.moveFirst();
 						}
 						//log.debug(this.InventoryStore.proxy);
 					}
