@@ -52,20 +52,15 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		}
 
 		if (this.opt_paging){
-			var pagingbar = Ext.create('Ext.PagingToolbar', {
+			this.pagingbar = Ext.create('Ext.PagingToolbar', {
 				store: this.store,
 				displayInfo: false,
 				emptyMsg: "No topics to display",
-				handler: function() {
-					this.refresh.hideParent = true;
-					this.refresh.hide();
-				}
-				
 			});
         
-			this.bbar = pagingbar;
-			
+			this.bbar = this.pagingbar;
 			this.bbar.items.items[10].hide();
+			
 		}
 
 		this.callParent(arguments);
