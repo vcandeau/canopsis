@@ -1,10 +1,10 @@
 Ext.define('canopsis.view.Viewport', {
-    extend: 'Ext.container.Viewport',
+	extend: 'Ext.container.Viewport',
 
-    requires: [
-        'Ext.layout.container.Border',
-	'Ext.tab.Panel'
-    ],
+	requires: [
+		'Ext.layout.container.Border',
+		'Ext.tab.Panel'
+	],
 
 	layout: 'border',
 
@@ -66,34 +66,15 @@ Ext.define('canopsis.view.Viewport', {
 		id: 'main-menu'
 	}],
 	
-	getAccount : function(){
-		Ext.Ajax.request({
-			type: 'rest',
-			url: '/account/me',
-			reader: {
-				type: 'json',
-				root: 'data',
-				totalProperty  : 'total',
-				successProperty: 'success'
-			},
-			success: function(response){
-				request_state = Ext.JSON.decode(response.responseText).success
-				if (request_state){
-					global['account'] = Ext.JSON.decode(response.responseText).data[0];
-				} else {
-					window.location.href='/';
-				}
-			},
-			failure: function() {
-				window.location.href='/';
-			}
-		});
-	},
-	
+
 	initComponent: function() {
-			log.debug('enter getaccount');
-			this.getAccount();
-			this.callParent(arguments);
-		}
+		log.debug("Render viewport ...", "viewport");
+		this.on('afterrender', this.afterrender, this)
+		this.callParent(arguments);
+	},
+
+	afterrender: function(){
+		log.debug("Viewport rendered", "viewport");
+	}
 		
-	});
+});
