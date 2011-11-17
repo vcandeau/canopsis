@@ -1,4 +1,4 @@
-Ext.define('widgets.state_list.states' ,{
+Ext.define('widgets.states.states' ,{
 	extend: 'canopsis.lib.view.cwidget',
 	
 	alias : 'widget.states',
