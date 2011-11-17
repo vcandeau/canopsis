@@ -3,6 +3,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	border: false,
 	layout : 'fit',
+	nodeId_refresh: true,
+	nodeData: {},
 
 	defaultHtml: 'cwidget: No data. Please wait ...',
 
@@ -56,23 +58,29 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 
 	doRefresh: function (){
-		log.debug('doRefresh: get informations of ' + this.nodeId, this.logAuthor)
+		log.debug('doRefresh', this.logAuthor)
 		if (this.nodeId) {
-			//this.setLoading(true)
-			Ext.Ajax.request({
-				url: this.baseUrl + this.nodeId,
-				scope: this,
-				success: function(response){
-					var data = Ext.JSON.decode(response.responseText)
-					data = data.data[0]
-					//this.setLoading(false)
-					this.onRefresh(data)
-				},
-				failure: function ( result, request) {
-					log.debug('Ajax request failed', this.logAuthor)
-					//this.setLoading(false)
-				} 
-			})
+			if (this.nodeId_refresh){
+				//this.setLoading(true)
+				log.debug('doRefresh: get informations of ' + this.nodeId, this.logAuthor)
+				Ext.Ajax.request({
+					url: this.baseUrl + this.nodeId,
+					scope: this,
+					success: function(response){
+						var data = Ext.JSON.decode(response.responseText)
+						data = data.data[0]
+						//this.setLoading(false)
+						this.nodeData = data
+						this.onRefresh(data)
+					},
+					failure: function ( result, request) {
+						log.debug('Ajax request failed', this.logAuthor)
+						//this.setLoading(false)
+					} 
+				})
+			}else{
+				this.onRefresh(this.nodeData)
+			}
 		}else{
 			this.on('render', this.onRefresh(), this);
 		}
