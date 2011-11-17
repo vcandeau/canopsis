@@ -4,6 +4,10 @@
 	height: 16px;
 }
 
+.icon-loading { 
+    background-image: url(../images/ajax-loader.gif) !important; 
+} 
+
 .icon-user { 
     background-image: url(../images/icons/user.png) !important; 
 } 
