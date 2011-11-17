@@ -52,7 +52,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			}
 
 		}else{
-			this.doRefresh()
+			this.on('afterrender', this.doRefresh, this);
 		}
 			
 	},
@@ -62,7 +62,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if (this.nodeId) {
 			if (this.nodeId_refresh){
 				//this.setLoading(true)
-				log.debug('doRefresh: get informations of ' + this.nodeId, this.logAuthor)
+				log.debug(' + Get informations of ' + this.nodeId, this.logAuthor)
 				Ext.Ajax.request({
 					url: this.baseUrl + this.nodeId,
 					scope: this,
@@ -79,15 +79,19 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 					} 
 				})
 			}else{
+				log.debug(' + nodeId_refresh is false', this.logAuthor)
 				this.onRefresh(this.nodeData)
 			}
 		}else{
-			this.on('render', this.onRefresh(), this);
+			log.debug(" + No node ...", this.logAuthor)
+			this.onRefresh(this.nodeData)
 		}
 
 	},
 
-	onRefresh: function(data){},
+	onRefresh: function(data){
+		log.debug("onRefresh", this.logAuthor)
+	},
 
 	setHtml: function(html){
 		log.debug('setHtml in widget', this.logAuthor)
