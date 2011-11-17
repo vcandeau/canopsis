@@ -15,7 +15,7 @@ Ext.onReady(function() {
 		success: function(response){
 			request_state = Ext.JSON.decode(response.responseText).success
 			if (request_state){
-				global['account'] = Ext.JSON.decode(response.responseText).data[0];
+				global.account = Ext.JSON.decode(response.responseText).data[0];
 				createApplication()
 			} else {
 				window.location.href='/';
@@ -35,12 +35,13 @@ function createApplication(){
 		appFolder: 'app',
 
 		controllers: [
-			'Notify',
 			'Menu',
 			'View',
 			'Tabs',
 			'Widgets',
 			'WebSocket',
+			'Notify',
+			'LiveEvents',
 			'Account',
 			'Group',
 			'ViewEditor'

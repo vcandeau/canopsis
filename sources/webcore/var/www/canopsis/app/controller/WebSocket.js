@@ -51,7 +51,8 @@ Ext.define('canopsis.controller.WebSocket', {
     },
     ws_onmessage: function(evt) {
 	//log.debug("New message from Websocket ...")
-	this.extctrl.fireEvent('message', this, evt);
+	var data = Ext.JSON.decode(evt.data);
+	this.extctrl.fireEvent('message', this, evt, data);
     },
 
 });
