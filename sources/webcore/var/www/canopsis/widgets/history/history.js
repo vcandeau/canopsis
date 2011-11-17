@@ -6,7 +6,7 @@ Ext.define('widgets.history.history' ,{
 	initComponent: function() {
 	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
-			border: (this.title) ? false : true,
+			border: (this.title || this.fullmode) ? false : true,
 			namespace: 'history',
 			opt_paging: true,
 			pageSize: global.pageSize,
