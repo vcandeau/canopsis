@@ -316,7 +316,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				}
 				mfilter += ']}';
 			}
-			log.debug(mfilter);
+			//log.debug(mfilter);
 			
 			//adding option to store
 			store.proxy.extraParams = {
