@@ -15,7 +15,10 @@ Ext.define('canopsis.controller.Widgets', {
 				var name ='widgets.' + record.data.xtype + '.' + record.data.xtype ;
 				Ext.require(name);
 			});
-			this.fireEvent('loaded');		
+			
+			// small hack
+			setTimeout(function(ctrl){ ctrl.fireEvent('loaded'); },1000, this);
+
 		}, this);
     },
     
