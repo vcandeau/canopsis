@@ -29,6 +29,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			btns[i].on('click', this._searchRecord, this)
 		}
 		
+		//if you don't clean it the next time you use the store params still there
+		grid.store.proxy.extraParams = {};
+		
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]')
 		for (i in textfields){
@@ -322,8 +325,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				'filter': mfilter
 			};
 			store.load();
-			//if you don't clean it the next time you use the store params still there
-			store.proxy.extraParams = {};
 		}else{
 			store.proxy.extraParams = {};
 			store.load();
