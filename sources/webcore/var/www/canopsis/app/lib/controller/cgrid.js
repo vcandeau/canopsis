@@ -328,6 +328,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			store.proxy.extraParams = {};
 			store.load();
 		}
+		
+		if (this.searchRecord) {
+			this.searchRecord()
+		}
+		
 	}
 	
 });
