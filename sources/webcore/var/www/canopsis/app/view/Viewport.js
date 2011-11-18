@@ -44,6 +44,14 @@ Ext.define('canopsis.view.Viewport', {
 				})
 			}}) },
 			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
+				text: 'Clear tabs localstore',
+				handler: function () {
+					log.debug('Clear tabs localstore')
+					var store = Ext.data.StoreManager.lookup('Tabs');
+					store.proxy.clear();
+				},
+			}) },
+			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
 				text: 'Show log console',
 				handler: function () {
 					log.show_console()

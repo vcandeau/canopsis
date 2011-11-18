@@ -11,7 +11,8 @@ Ext.define('canopsis.controller.Menu', {
 			if (record.data.view){
 				var id=record.getId();
 				log.debug('itemclick: '+id);
-				add_view_tab(record.data.view, record.data.text)
+				//add_view_tab(view_id, title, closable, options, autoshow, save)
+				add_view_tab(record.data.view, record.data.text, true, {}, true, true)
 			}else{
 				log.debug('No view specified ...');
 			}
