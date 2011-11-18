@@ -16,6 +16,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_tbar_duplicate: false,
 	opt_tbar_reload:true,
 	opt_tbar_delete:true,
+	opt_tbar_search: false,
+	opt_tbar_search_field: [],
 
 	opt_menu_delete: false,
 	opt_menu_duplicate: false,
@@ -73,6 +75,20 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					text: 'Delete',
 					disabled: true,
 					action: 'delete',
+				})
+			}
+			if(this.opt_tbar_search){
+				this.tbar.push({xtype: 'tbfill'});
+				this.tbar.push({
+					xtype: 'textfield',
+					name: 'searchField',
+					hideLabel: true,
+					width: 200,
+				})
+				this.tbar.push({
+					xtype : 'button',
+					action: 'search',
+					text: 'search'
 				})
 			}
 		}
