@@ -24,8 +24,23 @@ Ext.define('widgets.list.list' ,{
 
 			opt_show_host_name: true,
 			opt_show_service_description: true,
+			
+			opt_tbar: true,
+			opt_tbar_search: true,
+			opt_tbar_search_field: ['host_name', 'service_description'],
+
+			opt_tbar_add: false,
+			opt_tbar_duplicate: false,
+			opt_tbar_reload: true,
+			opt_tbar_delete: false,
 
 		});
+
+		// Bind buttons
+		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
+		this.on('afterrender', function() {
+			this.ctrl._bindGridEvents(this.grid)
+		}, this);
 
 		this.callParent(arguments);
 

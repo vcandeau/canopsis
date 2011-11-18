@@ -36,7 +36,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]')
 		for (i in textfields){
 				var textfield = textfields[i];
-				log.debug(textfield.id);
 				Ext.create('Ext.util.KeyNav', textfield.id, {
 					scope: this,
 					enter: this._searchRecord
@@ -67,7 +66,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			btns[i].on('click', this._reloadButton, this)
 		}
 
-		this._reloadButton(grid)
+		//this._reloadButton(grid)
 		
 	},
 
