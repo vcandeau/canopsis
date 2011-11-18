@@ -13,7 +13,7 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	opt_menu_duplicate: true,
 	
 	opt_tbar_search: true,
-	opt_tbar_search_field: ['crecord_name'],
+	opt_tbar_search_field: ['crecord_name','_id'],
    
 	columns: [{
 			header: 'name',

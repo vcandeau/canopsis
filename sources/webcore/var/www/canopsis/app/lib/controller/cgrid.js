@@ -305,12 +305,17 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		
 		if(search){
 			//creating filter
-			mfilter = '{';
-			for (i in grid.opt_tbar_search_field){
-				if(i != 0){	mfilter += ',';	}
-				mfilter += '"'+ grid.opt_tbar_search_field[i]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}';
+			console.log(grid.opt_tbar_search_field.length);
+			if (grid.opt_tbar_search_field.length == 1){
+				var mfilter = '{"'+ grid.opt_tbar_search_field[0]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
+			} else {
+				var mfilter = '{"$or": [';
+				for (i in grid.opt_tbar_search_field){
+					if(i != 0){	mfilter += ',';	}
+					mfilter += '{"'+ grid.opt_tbar_search_field[i]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
+				}
+				mfilter += ']}';
 			}
-			mfilter += '}';
 			log.debug(mfilter);
 			
 			//adding option to store
