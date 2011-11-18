@@ -323,6 +323,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				'filter': mfilter
 			};
 			store.load();
+			//if you don't clean it the next time you use the store params still there
+			store.proxy.extraParams = {};
 		}else{
 			store.proxy.extraParams = {};
 			store.load();
