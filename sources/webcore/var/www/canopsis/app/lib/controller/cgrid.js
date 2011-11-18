@@ -6,7 +6,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		var control = {}
 		control[this.listXtype] = {
-		                render: this._bindGridEvents
+		                afterrender: this._bindGridEvents
 		}
 		this.control(control);
 
@@ -23,10 +23,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		grid.on('selectionchange',	this._selectionchange,	this)
 		grid.on('itemdblclick', 	this._editRecord,	this)
 		
-		//Delete buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' menuitem[text=Delete]')
+		//search buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
 		for (i in btns){
-			btns[i].on('click', this._duplicateRecord, this)
+			btns[i].on('click', this._searchRecord, this)
+		}
+		
+		//bind keynav
+		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]')
+		for (i in textfields){
+				var textfield = textfields[i];
+				log.debug(textfield.id);
+				Ext.create('Ext.util.KeyNav', textfield.id, {
+					scope: this,
+					enter: this._searchRecord
+				});
 		}
 		
 		//Duplicate buttons
@@ -124,7 +135,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			this._bindFormEvents(form)
 				
 		}
-		
 
 		if (this.addButton) {
 			this.addButton(button)
@@ -286,5 +296,32 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}
 		}
 	},
+	
+	_searchRecord : function(){
+		log.debug('[controller][cgrid] - clicked on searchButton');
+		var grid = this.grid;
+		var store = grid.getStore();
+		var search = grid.down('textfield[name=searchField]').getValue();
+		
+		if(search){
+			//creating filter
+			mfilter = '{';
+			for (i in grid.opt_tbar_search_field){
+				if(i != 0){	mfilter += ',';	}
+				mfilter += '"'+ grid.opt_tbar_search_field[i]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}';
+			}
+			mfilter += '}';
+			log.debug(mfilter);
+			
+			//adding option to store
+			store.proxy.extraParams = {
+				'filter': mfilter
+			};
+			store.load();
+		}else{
+			store.proxy.extraParams = {};
+			store.load();
+		}
+	}
 	
 });
