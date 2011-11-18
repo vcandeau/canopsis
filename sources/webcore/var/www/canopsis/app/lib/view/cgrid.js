@@ -27,13 +27,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	
 
 	title : '',
-	//iconCls: 'icon-grid',
-	//frame: true,
-
 	border: false,
-	//selType: 'rowmodel',
-	//plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
- 
+
 	initComponent: function() {
 		/*if (this.opt_grouping){
 			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
