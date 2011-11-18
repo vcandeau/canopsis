@@ -10,9 +10,12 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	// Options
 	opt_grouping: false,
 	opt_paging: true,
+	
 	opt_tbar: true,
-
-	opt_duplicate: false,
+	opt_tbar_add:true,
+	opt_tbar_duplicate: false,
+	opt_tbar_reload:true,
+	opt_tbar_delete:true,
 
 	opt_menu_delete: false,
 	opt_menu_duplicate: false,
@@ -41,27 +44,36 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 		//------------------Option docked bar--------------
 		if (this.opt_tbar){
-			this.tbar = [{
-                 	iconCls: 'icon-add',
-				    text: 'Add',
-				    action: 'add',
-				},{
-                 	iconCls: 'icon-copy', 
-				    text: 'Duplicate',
-				    action: 'duplicate',
-				},{
-				    iconCls: 'icon-reload',
-				    text: 'Reload',
-				    action: 'reload',
-				},'-',{
-				    iconCls: 'icon-delete',
-				    text: 'Delete',
-				    disabled: true,
-				    action: 'delete',
-				}
-			];
-			if (!this.opt_duplicate){
-				this.tbar.splice(1,1);
+			this.tbar = []
+			
+			if(this.opt_tbar_add){
+				this.tbar.push({
+					iconCls: 'icon-add',
+					text: 'Add',
+					action: 'add',
+				})
+			}
+			if(this.opt_tbar_duplicate){
+				this.tbar.push({
+					iconCls: 'icon-copy', 
+					text: 'Duplicate',
+					action: 'duplicate',
+				})
+			}
+			if(this.opt_tbar_reload){
+				this.tbar.push({
+					iconCls: 'icon-reload',
+					text: 'Reload',
+					action: 'reload',
+				})
+			}
+			if(this.opt_tbar_delete){
+				this.tbar.push({
+					iconCls: 'icon-delete',
+					text: 'Delete',
+					disabled: true,
+					action: 'delete',
+				})
 			}
 		}
 		
