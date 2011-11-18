@@ -3,10 +3,12 @@
 //]);
 
 Ext.define('canopsis.view.Tabs.Content' ,{
-    extend: 'Ext.Panel',
-    alias : 'widget.TabsContent', 
+	extend: 'Ext.Panel',
+	alias : 'widget.TabsContent',
+
+	logAuthor: '[view][tabs][content]',
     
-    style: {borderWidth:'0px'},
+	style: {borderWidth:'0px'},
 
 	autoScroll: true,
 
@@ -30,28 +32,41 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 	border: false,
 
+	displayed: false,
+
 	items: [],
     
-    initComponent: function() {
+	initComponent: function() {
 		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
-		log.dump("Get view '"+this.view_id+"' ...")
+		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		Ext.Ajax.request({
 			url: '/rest/object/view/'+this.view_id,
 			scope: this,
 			success: function(response){
 				data = Ext.JSON.decode(response.responseText)
 				this.view = data.data[0]
-				this.setContent()
+
+				if (this.autoshow){
+					this.setContent();
+				}else{
+					this.on('show', function (){
+						if (! this.displayed) {
+							this.setContent();
+							this.displayed = true;
+						}
+					}, this)
+				}
+
 			},
 			failure: function (result, request) {
-					log.error("Ajax request failed ... ("+request.url+")")
+					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 			} 
 		});		
-    },
+	},
 
-    setContent: function(){
-		
+	setContent: function(){
+
 		var items = this.view.items
 		var totalWidth = this.getWidth() - 20
 
@@ -67,14 +82,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		this.layout.columns = nbColumns
 
-		log.debug('Create '+nbColumns+' column(s)..')
+		log.debug('Create '+nbColumns+' column(s)..', this.logAuthor)
 
 		if (items.length == 1 && nbColumns == 1) {
-			log.debug(' + Use full mode ...')
+			log.debug(' + Use full mode ...', this.logAuthor)
 			this.layout = 'fit'
 			item = items[0]
 
-			log.debug('   + Add: '+item.xtype)
+			log.debug('   + Add: '+item.xtype, this.logAuthor)
 
 			//item['height'] = '10'
 			item['width'] = '100%'
@@ -100,10 +115,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 			var ext_items = []
 			for(var i= 0; i < items.length; i++) {
-				log.debug(' - Item '+i+':')
+				log.debug(' - Item '+i+':', this.logAuthor)
 				var item = items[i]
 
-				log.debug('   + Add: '+item.xtype)
+				log.debug('   + Add: '+item.xtype, this.logAuthor)
 
 				item['mytab'] = this
 				item['fullmode'] = false
@@ -125,22 +140,30 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (item.title){ item.border = true }
 
 				this.add(item)
-	
+
 			}
 		}
-    },
+	},
     
-    beforeclose: function(tab, object){
-	console.log('[view][tabs][content] - Active previous tab');
-	old_tab = Ext.getCmp('main-tabs').old_tab;
-	if (old_tab) {
-		Ext.getCmp('main-tabs').setActiveTab(old_tab);
-	}
-    },
+	beforeclose: function(tab, object){
+		log.debug('Active previous tab', this.logAuthor);
+		old_tab = Ext.getCmp('main-tabs').old_tab;
+		if (old_tab) {
+			Ext.getCmp('main-tabs').setActiveTab(old_tab);
+		}
+		
+		if (this.localstore_record){
+			//remove from store
+			log.debug("Remove this tab from localstore ...", this.logAuthor)
+			var store = Ext.data.StoreManager.lookup('Tabs');
+			store.remove(this.localstore_record);
+			store.save();
+		}
+	},
 
-    beforeDestroy : function() {
-	log.debug("Destroy items ...")
-	canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
-        log.debug(this.id + " Destroyed.")
-    }
+ 	beforeDestroy : function() {
+		log.debug("Destroy items ...", this.logAuthor)
+		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
+ 		log.debug(this.id + " Destroyed.", this.logAuthor)
+ 	}
 });

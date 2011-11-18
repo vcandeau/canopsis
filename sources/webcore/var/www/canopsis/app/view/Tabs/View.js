@@ -15,16 +15,13 @@ Ext.define('canopsis.view.Tabs.View' ,{
 	}],*/
 
 	initComponent: function() {
-		//add_view_tab('dashboard.tab', 'Dashboard')
-
-		store = Ext.data.StoreManager.lookup('store.View')
-		show_dashboard()
-		//store.on('load', function(store, recs, opt){
-     		//	add_view_tab('view.root.dashboard', 'Dashboard', false)
-		//}, this);
-
+		this.on('afterrender', this._afterrender, this);
 		this.callParent(arguments);
 	},
+
+	_afterrender: function() {
+		show_dashboard()
+	}
 	
 	/*listeners: {
 		'tabchange': function(tp, p) {
