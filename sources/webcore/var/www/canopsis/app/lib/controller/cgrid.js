@@ -305,7 +305,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		
 		if(search){
 			//creating filter
-			console.log(grid.opt_tbar_search_field.length);
 			if (grid.opt_tbar_search_field.length == 1){
 				var mfilter = '{"'+ grid.opt_tbar_search_field[0]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
 			} else {
