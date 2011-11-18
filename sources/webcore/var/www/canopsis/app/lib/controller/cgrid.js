@@ -6,7 +6,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		var control = {}
 		control[this.listXtype] = {
-		                render: this._bindGridEvents
+		                afterrender: this._bindGridEvents
 		}
 		this.control(control);
 
@@ -23,23 +23,30 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		grid.on('selectionchange',	this._selectionchange,	this)
 		grid.on('itemdblclick', 	this._editRecord,	this)
 		
-		// context menu
-		if(grid.contextMenu){
-			grid.on('itemcontextmenu', this._contextMenu);
-			if(grid.opt_menu_delete){
-				grid.contextMenu.down('menuitem[text=Delete]').on('click', this._deleteButton, this)
-			}
-			if(grid.opt_menu_duplicate){
-				grid.contextMenu.down('menuitem[text=Duplicate]').on('click', this._duplicateRecord, this)
-			}
+		//search buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
+		for (i in btns){
+			btns[i].on('click', this._searchRecord, this)
 		}
-		// Add buttons
+		
+		//bind keynav
+		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]')
+		for (i in textfields){
+				var textfield = textfields[i];
+				log.debug(textfield.id);
+				Ext.create('Ext.util.KeyNav', textfield.id, {
+					scope: this,
+					enter: this._searchRecord
+				});
+		}
+		
+		//Duplicate buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]')
 		for (i in btns){
 			btns[i].on('click', this._duplicateRecord, this)
 		}
 
-		//Duplicate buttons
+		// Add buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]')
 		for (i in btns){
 			btns[i].on('click', this._addButton, this)
@@ -128,7 +135,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			this._bindFormEvents(form)
 				
 		}
-		
 
 		if (this.addButton) {
 			this.addButton(button)
@@ -290,5 +296,43 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}
 		}
 	},
+	
+	_searchRecord : function(){
+		log.debug('[controller][cgrid] - clicked on searchButton');
+		var grid = this.grid;
+		var store = grid.getStore();
+		var search = grid.down('textfield[name=searchField]').getValue();
+		
+		if(search){
+			//creating filter
+			if (grid.opt_tbar_search_field.length == 1){
+				var mfilter = '{"'+ grid.opt_tbar_search_field[0]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
+			} else {
+				var mfilter = '{"$or": [';
+				for (i in grid.opt_tbar_search_field){
+					if(i != 0){	mfilter += ',';	}
+					mfilter += '{"'+ grid.opt_tbar_search_field[i]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
+				}
+				mfilter += ']}';
+			}
+			//log.debug(mfilter);
+			
+			//adding option to store
+			store.proxy.extraParams = {
+				'filter': mfilter
+			};
+			store.load();
+			//if you don't clean it the next time you use the store params still there
+			store.proxy.extraParams = {};
+		}else{
+			store.proxy.extraParams = {};
+			store.load();
+		}
+		
+		if (this.searchRecord) {
+			this.searchRecord()
+		}
+		
+	}
 	
 });

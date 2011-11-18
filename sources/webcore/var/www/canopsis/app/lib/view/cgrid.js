@@ -10,9 +10,14 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	// Options
 	opt_grouping: false,
 	opt_paging: true,
+	
 	opt_tbar: true,
-
-	opt_duplicate: false,
+	opt_tbar_add:true,
+	opt_tbar_duplicate: false,
+	opt_tbar_reload:true,
+	opt_tbar_delete:true,
+	opt_tbar_search: false,
+	opt_tbar_search_field: [],
 
 	opt_menu_delete: false,
 	opt_menu_duplicate: false,
@@ -22,13 +27,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	
 
 	title : '',
-	//iconCls: 'icon-grid',
-	//frame: true,
-
 	border: false,
-	//selType: 'rowmodel',
-	//plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
- 
+
 	initComponent: function() {
 		/*if (this.opt_grouping){
 			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
@@ -41,27 +41,50 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 		//------------------Option docked bar--------------
 		if (this.opt_tbar){
-			this.tbar = [{
-                 	iconCls: 'icon-add',
-				    text: 'Add',
-				    action: 'add',
-				},{
-                 	iconCls: 'icon-copy', 
-				    text: 'Duplicate',
-				    action: 'duplicate',
-				},{
-				    iconCls: 'icon-reload',
-				    text: 'Reload',
-				    action: 'reload',
-				},'-',{
-				    iconCls: 'icon-delete',
-				    text: 'Delete',
-				    disabled: true,
-				    action: 'delete',
-				}
-			];
-			if (!this.opt_duplicate){
-				this.tbar.splice(1,1);
+			this.tbar = []
+			
+			if(this.opt_tbar_add){
+				this.tbar.push({
+					iconCls: 'icon-add',
+					text: 'Add',
+					action: 'add',
+				})
+			}
+			if(this.opt_tbar_duplicate){
+				this.tbar.push({
+					iconCls: 'icon-copy', 
+					text: 'Duplicate',
+					action: 'duplicate',
+				})
+			}
+			if(this.opt_tbar_reload){
+				this.tbar.push({
+					iconCls: 'icon-reload',
+					text: 'Reload',
+					action: 'reload',
+				})
+			}
+			if(this.opt_tbar_delete){
+				this.tbar.push({
+					iconCls: 'icon-delete',
+					text: 'Delete',
+					disabled: true,
+					action: 'delete',
+				})
+			}
+			if(this.opt_tbar_search){
+				this.tbar.push({xtype: 'tbfill'});
+				this.tbar.push({
+					xtype: 'textfield',
+					name: 'searchField',
+					hideLabel: true,
+					width: 200,
+				})
+				this.tbar.push({
+					xtype : 'button',
+					action: 'search',
+					text: 'search'
+				})
 			}
 		}
 		
