@@ -2,7 +2,7 @@ Ext.onReady(function() {
 	Ext.Loader.setConfig({enabled:true});
 
 	//check Auth
-	log.debug('Check auth ...', "app");
+	log.debug('Check auth ...', "[app]");
 	Ext.Ajax.request({
 		type: 'rest',
 		url: '/account/me',
@@ -29,7 +29,7 @@ Ext.onReady(function() {
 
 
 function createApplication(){
-	log.debug("Start ExtJS application ...", "app");
+	log.debug("Start ExtJS application ...", "[app]");
 
 	var app = Ext.application({
 		name: 'canopsis',
@@ -61,6 +61,6 @@ function createApplication(){
 		}
 	});
 
-	log.debug("Application started", "app");
+	log.debug("Application started", "[app]");
 }
 
