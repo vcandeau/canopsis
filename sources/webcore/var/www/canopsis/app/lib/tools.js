@@ -17,13 +17,40 @@ function init_REST_Store(collection, selector, groupField){
 	return store
 }
 
-function add_view_tab(id, title, closable){
-	log.debug("Add view tab '"+id+"'")
+function load_tabs_from_store(){
+	var store = Ext.data.StoreManager.lookup('Tabs');
+	//store.on('load', function(){
 	
-	if (closable == undefined) { closable=true } else { closable=false }
+	log.debug('Parse tabs store ...');
+	store.each(function(record) {
+		var view_id = record.get('view_id');
+		var options = record.get('options');
+		var title = record.get('title');
+		var closable = record.get('closable');
+
+		log.debug(' + Id: '+record.id);
+		log.debug('   + Title: '+title);
+		log.debug('   + Closable: '+closable);
+		log.debug('   + View_id: '+view_id);
+		log.debug('   + Options: '+options);
+
+		var tab = add_view_tab(view_id, title, closable, options, false, false)
+		tab.localstore_record = record
+	})
+
+	//}, this);
+}
+
+function add_view_tab(view_id, title, closable, options, autoshow, save){
+	log.debug("Add view tab '"+view_id+"'")
 
 	var maintabs = Ext.getCmp('main-tabs');
-	var tab = Ext.getCmp(id+'.tab');
+	var tab_id = view_id+'.tab'
+	var tab = Ext.getCmp(tab_id);
+
+	//if (! closable) { closable = true }
+	//if (! autoshow) { autoshow = true }
+	//if (! save) { save = true }
 	
 	//log.debug(record.data)
 	if (tab) {
@@ -31,25 +58,36 @@ function add_view_tab(id, title, closable){
 		maintabs.setActiveTab(tab);
 	}else{
 		log.debug(" - Create tab ...")
-		log.debug("    - Get view config ("+id+") ...")
-	
-		//var store = Ext.data.StoreManager.lookup('store.View')
-		//var view = store.getById(id)
+		log.debug("    - Get view config ("+view_id+") ...")
 		
-		maintabs.add({
+		var localstore_record = false;
+		if (save){
+			// archive tab in store
+			log.debug("Add '"+title+"' ('"+view_id+"') in localstore ...")
+			var store = Ext.data.StoreManager.lookup('Tabs');
+			localstore_record = store.add({ title: title, closable: closable, options: options, view_id: view_id });
+			store.save();
+		}
+
+		var tab = maintabs.add({
 			title: title,
-			id: id+".tab",
+			id: tab_id,
 			iconCls: [ 'icon-bullet-orange' ],
-			view_id: id,
+			view_id: view_id,
 			//view: view,
 			xtype: 'TabsContent',
-			closable: closable
-		}).show();
-	}
-}
+			closable: closable,
+			options: options,
+			autoshow: autoshow,
+			localstore_record: localstore_record
+		});
 
-function remove_active_tab(){
-	Ext.getCmp('main-tabs').remove(Ext.getCmp('main-tabs').getActiveTab())
+		if (autoshow) {
+			tab.show();
+		}
+
+		return tab;
+	}
 }
 
 var random_id = function () { return Math.floor(Math.random()*11)}
@@ -61,7 +99,8 @@ function show_dashboard(){
 		success: function(response){
 			data = Ext.JSON.decode(response.responseText)
 			data = data.data[0]
-			add_view_tab(data._id, 'Dashboard', false)
+			add_view_tab(data._id, 'Dashboard', false, {}, true, false)
+			load_tabs_from_store()
 		},
 		failure: function (result, request) {
 				log.error("Ajax request failed ... ("+request.url+")")
