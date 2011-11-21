@@ -12,54 +12,10 @@ Ext.define('canopsis.view.Viewport', {
 	{
 		region: 'north',
 		border: false,
-		height: 65,
-		html: '<div id="div-header"><div id="title"><h1>Canopsis</h1></div><div id="logo"/></div>',
-		id: 'main-header'
-	},
-	{
-		region: 'south',
-		border: false,
-		height: 40,
-		layout: {
-			type: 'hbox',
-			align: 'top'
-		},
-		// todo: re-code positionning ...
-		defaults:{flex: 1, border: 0, baseCls: 'footer', padding: 3},
-		items: [
-			{ html: '' },
-			{ html: '' },
-			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
-				text: 'Disconnect',
-				handler: function () {
-					Ext.Ajax.request({
-					url: '/logout',
-					scope: this,
-					success: function(response){
-						window.location.href='/';
-					},
-					failure: function ( result, request) {
-						log.error("Logout impossible, maybe you're already logout")
-					}
-				})
-			}}) },
-			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
-				text: 'Clear tabs localstore',
-				handler: function () {
-					log.debug('Clear tabs localstore')
-					var store = Ext.data.StoreManager.lookup('Tabs');
-					store.proxy.clear();
-				},
-			}) },
-			{ width: 130, height: '100%', flex: 0, items: Ext.createWidget('button', {
-				text: 'Show log console',
-				handler: function () {
-					log.show_console()
-				},
-			}) },
-			],
-
-		id: 'main-footer'
+		height: 24,
+		xtype: 'Mainbar',
+		//html: '<div id="div-header"><div id="title"><h1>Canopsis</h1></div><div id="logo"/></div>',
+		//id: 'main-header',
 	},{
 		region: 'center',
 		border: false,
