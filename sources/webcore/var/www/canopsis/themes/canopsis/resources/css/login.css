@@ -1,0 +1,66 @@
+.login {
+	position: absolute;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top: 0px;
+
+	background-image: url(../images/login-background.png);
+	background-repeat:no-repeat;
+
+	-webkit-background-size: auto;
+  	-o-background-size: auto;
+  	-moz-background-size: auto;
+}
+
+.login .header{
+	position: absolute;
+	z-index: 1;
+	width: 100%;
+	height: 30px;
+	left: 0px;
+	top: 0px;
+
+	background: #ddd;
+
+	-moz-opacity:0.3;
+	opacity: 0.3;
+	filter:alpha(opacity=30);
+}
+
+.login .layout{
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top: 0px;
+
+	background-image: url(../images/login-layout.png);
+	background-color: #ddd;
+
+	-moz-opacity:0.3;
+	opacity: 0.3;
+	filter:alpha(opacity=30);
+}
+
+.login .title{
+	position: absolute;
+	z-index: 4;
+	top: 50px;
+	color: #FFFFFF;
+	font-size: 50px;
+	text-indent: 20px;
+	text-shadow: 2px 2px 2px #010C14;
+}
+
+.login .form{
+	position: absolute;
+	z-index: 4;
+
+	left: 60px;
+	top: 50%;
+
+	width: 300px;
+}
