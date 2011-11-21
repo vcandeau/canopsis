@@ -328,6 +328,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug(store.proxy.extraParams);
 		log.debug(grid.filter);
 		
+		//store.setFilter(grid.filter);
+		
 		var myArray = []
 		for (i in grid.opt_tbar_search_field){
 			var smth = {}
