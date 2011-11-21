@@ -36,6 +36,7 @@ function createApplication(){
 		appFolder: 'app',
 
 		controllers: [
+			'Mainbar',
 			'Widgets',
 			'Menu',
 			'View',
