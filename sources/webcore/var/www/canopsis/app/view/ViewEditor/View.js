@@ -15,9 +15,7 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	
 	opt_tbar_search: true,
 	opt_tbar_search_field: ['crecord_name','_id'],
-	
-	//filter : {"crecord_name":"Views"},
-   
+	   
 	columns: [{
 			header: 'name',
 			flex: 2,
