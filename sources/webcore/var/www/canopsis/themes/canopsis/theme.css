@@ -1,5 +1,6 @@
 /* Include all CSS */
 
+@import "resources/css/loading.css";
 @import "resources/css/login.css";
 @import "resources/css/icons.css"; 
 @import "resources/css/row_background.css"; 

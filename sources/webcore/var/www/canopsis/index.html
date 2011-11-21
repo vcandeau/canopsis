@@ -19,85 +19,87 @@
 
 </head>
 <body>
-	<div id="loading-mask" style=""></div>
+	<div id="loading-mask" class="login">
+		<div class='header'></div>
+		<div class='layout'></div>
+
 		<div id="loading">
 			<div class="loading-indicator">
-				<img src="themes/default/images/loading32.gif" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>Canopsis - <a href="http://www.canopsis.org">www.canopsis.org</a>
-				<br /><span id="loading-msg">Loading styles and images...</span>
+				Canopsis - <a href="http://www.canopsis.org">www.canopsis.org</a><br/>
+				<span id="loading-msg">Loading styles and images...</span>
         		</div>
         	</div>
 
-	<!-- Ext-JS -->
-	<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
+
+		<!-- Ext-JS -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
 	
-	<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
-	<!-- <script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script> -->
-	<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>
-	<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script> -->
+		<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>
+		<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
 
-	<!-- Jquery -->
-	<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery ...';</script>
-	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
-        
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jqPlot ...';</script>
-        <script type="text/javascript" src="resources/lib/jqplot/jquery.jqplot.min.js"></script>
-        <script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
-        <script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
-        <script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
-	<script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
-        
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jGauge ...';</script>
-	<!-- excanvas.min.js  jgauge-0.3.0.a3.js  jgauge-0.3.0.a3.min.js  jquery-1.4.2.min.js  jQueryRotate.min.js -->
-        <script type="text/javascript" src="resources/lib/jgauge/js/excanvas.min.js"></script>
-        <!-- <script type="text/javascript" src="resources/lib/jgauge/js/jquery-1.4.2.min.js"></script> -->
-        <script type="text/javascript" src="resources/lib/jgauge/js/jQueryRotate.min.js"></script>
-        <script type="text/javascript" src="resources/lib/jgauge/js/jgauge-0.3.0.a3.min.js"></script>
+		<!-- Jquery -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery ...';</script>
+		<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
+		
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jqPlot ...';</script>
+		<script type="text/javascript" src="resources/lib/jqplot/jquery.jqplot.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
+		
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading jGauge ...';</script>
+		<!-- excanvas.min.js  jgauge-0.3.0.a3.js  jgauge-0.3.0.a3.min.js  jquery-1.4.2.min.js  jQueryRotate.min.js -->
+		<script type="text/javascript" src="resources/lib/jgauge/js/excanvas.min.js"></script>
+		<!-- <script type="text/javascript" src="resources/lib/jgauge/js/jquery-1.4.2.min.js"></script> -->
+		<script type="text/javascript" src="resources/lib/jgauge/js/jQueryRotate.min.js"></script>
+		<script type="text/javascript" src="resources/lib/jgauge/js/jgauge-0.3.0.a3.min.js"></script>
 
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading pnotify ...';</script>
-        <script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading pnotify ...';</script>
+		<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>
 
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading gRaphael ...';</script>
-        <!-- <script type="text/javascript" src="resources/lib/gRaphael/raphael-min.js"></script> -->
-        <!-- <script type="text/javascript" src="resources/lib/gRaphael/g.raphael-min.js"></script> -->
-        <!-- <script type="text/javascript" src="resources/lib/gRaphael/g.line-min.js"></script> -->
-        <!-- <script type="text/javascript" src="resources/lib/gRaphael/g.pie-min.js"></script> -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading gRaphael ...';</script>
+		<!-- <script type="text/javascript" src="resources/lib/gRaphael/raphael-min.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/gRaphael/g.raphael-min.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/gRaphael/g.line-min.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/gRaphael/g.pie-min.js"></script> -->
 
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading RGraph ...';</script>
-        <!-- <script type="text/javascript" src="../RGraph/excanvas/excanvas.original.js"></script> -->       
-        <!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.common.core.js"></script> -->
-        <!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.common.context.js"></script> -->       
-        <!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.common.tooltips.js"></script> -->       
-        <!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.pie.js"></script> -->     
-        <!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.line.js""></script> -->       
- 
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script>
-        <script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script>
-        <script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highstock ...';</script>
-        <!-- <script type="text/javascript" src="resources/lib/Highstock/js/highstock.src.js"></script> -->
-        <!-- <script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script> -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading RGraph ...';</script>
+		<!-- <script type="text/javascript" src="../RGraph/excanvas/excanvas.original.js"></script> -->       
+		<!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.common.core.js"></script> -->
+		<!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.common.context.js"></script> -->       
+		<!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.common.tooltips.js"></script> -->       
+		<!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.pie.js"></script> -->     
+		<!-- <script type="text/javascript" src="../RGraph/libraries/RGraph.line.js""></script> -->       
+	 
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highcharts ...';</script>
+		<script type="text/javascript" src="resources/lib/Highcharts/js/highcharts.js"></script>
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Highstock ...';</script>
+		<!-- <script type="text/javascript" src="resources/lib/Highstock/js/highstock.src.js"></script> -->
+		<!-- <script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script> -->
 
-		<!-- Application -->
-		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
-		<script type="text/javascript" src="app/lib/global.js"></script>
-		<script type="text/javascript" src="app/lib/log.js"></script>
-		<script type="text/javascript" src="app/lib/tools.js"></script>
-		<script type="text/javascript" src="app/lib/renderers.js"></script>
-		<script type="text/javascript" src="app.js"></script>
+			<!-- Application -->
+			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
+			<script type="text/javascript" src="app/lib/global.js"></script>
+			<script type="text/javascript" src="app/lib/log.js"></script>
+			<script type="text/javascript" src="app/lib/tools.js"></script>
+			<script type="text/javascript" src="app/lib/renderers.js"></script>
+			<script type="text/javascript" src="app.js"></script>
 
-		<!-- <script type="text/javascript" src="classes.js"></script> -->
-		<!-- <script type="text/javascript" src="classes.js"></script> -->
-		<script type="text/javascript">
-		//	Ext.Loader.setPath('Ext.app', 'classes');
+			<!-- <script type="text/javascript" src="classes.js"></script> -->
+			<!-- <script type="text/javascript" src="classes.js"></script> -->
+			<script type="text/javascript">
+			//	Ext.Loader.setPath('Ext.app', 'classes');
 
-		/*Ext.require([
-				'Ext.layout.*',
-				'Ext.data.*',
-				'Ext.window.*',
-				'Ext.Loader'
-			]);*/
-		</script>
-
-
+			/*Ext.require([
+					'Ext.layout.*',
+					'Ext.data.*',
+					'Ext.window.*',
+					'Ext.Loader'
+				]);*/
+			</script>
 
 	</div>
 </body>

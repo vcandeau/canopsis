@@ -12,7 +12,7 @@ Ext.define('canopsis.view.Viewport', {
 	{
 		region: 'north',
 		border: false,
-		height: 24,
+		height: 30,
 		xtype: 'Mainbar',
 		//html: '<div id="div-header"><div id="title"><h1>Canopsis</h1></div><div id="logo"/></div>',
 		//id: 'main-header',
