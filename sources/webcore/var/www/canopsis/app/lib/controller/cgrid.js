@@ -324,49 +324,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var store = grid.getStore();
 		var search = grid.down('textfield[name=searchField]').getValue();
 		
+		//create an array and give it to store.search
 		var myArray = []
 		for (i in grid.opt_tbar_search_field){
-			var smth = {}
-			smth[grid.opt_tbar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
-			myArray.push(smth);
+			var tempObj = {}
+			tempObj[grid.opt_tbar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
+			myArray.push(tempObj);
 		}
 		store.search(myArray);
-		
-		/*
-		
-		if(search){
-			
-			//creating filter
-			if (grid.opt_tbar_search_field.length == 1){
-				var mfilter = '{"'+ grid.opt_tbar_search_field[0]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
-			} else {
-				var mfilter = '{"$or": [';
-				for (i in grid.opt_tbar_search_field){
-					if(i != 0){	mfilter += ',';	}
-					mfilter += '{"'+ grid.opt_tbar_search_field[i]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
-				}
-				mfilter += ']}';
-			}
-			//log.debug(mfilter);
-			
-			//adding option to store
-			store.proxy.extraParams = {
-				'filter': mfilter
-			};
-			store.load();
-		}else{
-			store.proxy.extraParams = {};
-			store.load();
-		}
-		
-		log.debug('beforesearch');
-		log.debug(store.proxy.extraParams);
-		log.debug(grid.filter);
-		
-		if (this.searchRecord) {
-			this.searchRecord()
-		}
-		*/
 	}
 	
 });
