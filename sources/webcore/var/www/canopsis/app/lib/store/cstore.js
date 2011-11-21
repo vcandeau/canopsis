@@ -3,6 +3,8 @@ Ext.define('canopsis.lib.store.cstore', {
     
     pageSize: global.pageSize,
     remoteSort : true,
+    
+    baseFilter : false,
 
     //raise an exception if server didn't accept the request
 	//and display a popup if the store is modified
@@ -16,5 +18,38 @@ Ext.define('canopsis.lib.store.cstore', {
 			});
 			log.debug(response);
 		},
-   }	
+   },
+  
+   //function for search and filter
+   setFilter : function(filter){
+	   this.baseFilter = filter;
+	   if(filter){
+		   this.proxy.extraParams.filter = Ext.JSON.encode(filter);
+		}
+   },
+
+   getFilter : function(){
+	   return this.proxy.extraParams.filter
+   },
+   
+   
+   search : function(myArray){
+	   if(this.baseFilter){
+		   log.debug('theres filter');
+		   var newObject = this.baseFilter;
+		   newObject["$or"] = myArray;
+		   //log.debug(Ext.JSON.encode(newObject));
+	   } else {
+		   log.debug('no filter');
+		   var newObject = {"$or" : myArray};
+		   //log.debug(Ext.JSON.encode(newObject));
+	   }
+	   this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
+	   this.load();
+   },
+   
+   
+   
+   
+   	
 });
