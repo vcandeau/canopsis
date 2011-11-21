@@ -9,11 +9,14 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	opt_duplicate: true,
 	opt_tbar_duplicate: true,
 
+	opt_menu : true,
 	opt_menu_delete: true,
 	opt_menu_duplicate: true,
 	
 	opt_tbar_search: true,
 	opt_tbar_search_field: ['crecord_name','_id'],
+	
+	//filter : {"crecord_name":"Views"},
    
 	columns: [{
 			header: 'name',

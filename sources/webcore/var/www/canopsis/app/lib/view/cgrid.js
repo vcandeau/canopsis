@@ -27,8 +27,13 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	
 
 	title : '',
-	border: false,
+	//iconCls: 'icon-grid',
+	//frame: true,
 
+	border: false,
+	//selType: 'rowmodel',
+	//plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
+ 
 	initComponent: function() {
 		/*if (this.opt_grouping){
 			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
@@ -104,23 +109,26 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		}
 		
 		//--------------------Context menu---------------------
-		if (this.opt_menu_delete || this.opt_menu_duplicate){
+		if (this.opt_menu){
 			this.contextMenu = Ext.create('Ext.menu.Menu');
 			
 			if(this.opt_menu_delete){
-				var deleteAction = Ext.create('Ext.Action', {
-					iconCls: 'icon-delete',
-					text: 'Delete',
-
-				});
-				this.contextMenu.add(deleteAction);
+				this.contextMenu.add(
+					Ext.create('Ext.Action', {
+						iconCls: 'icon-delete',
+						text: 'Delete',
+						action: 'delete',
+					})
+				)
 			}
 			if (this.opt_menu_duplicate){
-				var duplicateAction = Ext.create('Ext.Action', {
-					iconCls: 'icon-copy',
-					text: 'Duplicate',
-				});
-				this.contextMenu.add(duplicateAction);
+				this.contextMenu.add(
+					Ext.create('Ext.Action', {
+						iconCls: 'icon-copy',
+						text: 'Duplicate',
+						action: 'duplicate',
+					})
+				)
 			}
 		}
 

@@ -92,8 +92,8 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 		//store
 		if (! this.store){
-			this.store = Ext.create('Ext.data.Store', {
-				extend: 'canopsis.lib.store.cstore',
+			this.store = Ext.create('canopsis.lib.store.cstore', {
+				//extend: 'canopsis.lib.store.cstore',
 				model: 'canopsis.model.inventory',
 
 				pageSize: this.pageSize,
@@ -115,9 +115,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 
 			if (this.filter) {
-				this.store.proxy.extraParams = {
-					'filter': this.filter
-				};
+				this.store.setFilter(this.filter);
 			}
 
 			if (this.autoload) {
