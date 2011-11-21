@@ -26,7 +26,7 @@ class KnownValues(unittest.TestCase):
 	def test_03_Passwd(self):
 		ACCOUNT.passwd('mypassword')
 
-		shadow = hashlib.sha1(repr('mypassword')).hexdigest()
+		shadow = hashlib.sha1(str('mypassword')).hexdigest()
 
 		if not ACCOUNT.check_shadowpasswd(shadow):
 			raise Exception('Invalid shadow passwd ...')
