@@ -6,6 +6,7 @@ Ext.define('canopsis.lib.store.cstore', {
     
     baseFilter : false,
 
+	logAuthor: '[cstore]',
     //raise an exception if server didn't accept the request
 	//and display a popup if the store is modified
     listeners: {
@@ -22,12 +23,12 @@ Ext.define('canopsis.lib.store.cstore', {
   
    //function for search and filter
    setFilter : function(filter){
+		log.debug('[cstore]Setting base store filter ')
 		this.baseFilter = filter;
 		if(typeof(filter) == 'object'){
 			filter = Ext.JSON.encode(filter);
 		}
 		this.proxy.extraParams.filter = filter;
-		
    },
 
    getFilter : function(){
@@ -35,7 +36,7 @@ Ext.define('canopsis.lib.store.cstore', {
    },
    
    search : function(myArray){
-	   log.debug('click on search')
+	   log.debug('[cstore]Building filter request')
 	   if(this.baseFilter){
 		   var newObject = Ext.JSON.decode(this.baseFilter);
 		   newObject["$or"] = myArray;
