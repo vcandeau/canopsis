@@ -1,0 +1,12 @@
+#loading-mask{
+	background-color:none;
+}
+
+#loading .loading-indicator{
+	background:none;
+	color:#fff;
+}
+
+#loading a {
+	color:#ddd;
+}
