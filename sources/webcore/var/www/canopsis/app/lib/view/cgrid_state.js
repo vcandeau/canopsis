@@ -115,6 +115,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 
 			if (this.filter) {
+				log.debug(this.filter)
 				this.store.setFilter(this.filter);
 			}
 

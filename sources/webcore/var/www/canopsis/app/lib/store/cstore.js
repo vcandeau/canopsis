@@ -22,10 +22,12 @@ Ext.define('canopsis.lib.store.cstore', {
   
    //function for search and filter
    setFilter : function(filter){
-	   this.baseFilter = filter;
-	   if(filter){
-		   this.proxy.extraParams.filter = Ext.JSON.encode(filter);
+		this.baseFilter = filter;
+		if(typeof(filter) == 'object'){
+			filter = Ext.JSON.encode(filter);
 		}
+		this.proxy.extraParams.filter = filter;
+		
    },
 
    getFilter : function(){
@@ -35,14 +37,10 @@ Ext.define('canopsis.lib.store.cstore', {
    
    search : function(myArray){
 	   if(this.baseFilter){
-		   log.debug('theres filter');
 		   var newObject = this.baseFilter;
 		   newObject["$or"] = myArray;
-		   //log.debug(Ext.JSON.encode(newObject));
 	   } else {
-		   log.debug('no filter');
 		   var newObject = {"$or" : myArray};
-		   //log.debug(Ext.JSON.encode(newObject));
 	   }
 	   this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
 	   this.load();
