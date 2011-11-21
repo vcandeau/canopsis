@@ -27,7 +27,6 @@ Ext.define('canopsis.lib.store.cstore', {
 			filter = Ext.JSON.encode(filter);
 		}
 		this.proxy.extraParams.filter = filter;
-		
    },
 
    getFilter : function(){
@@ -35,7 +34,6 @@ Ext.define('canopsis.lib.store.cstore', {
    },
    
    search : function(myArray){
-	   log.debug('click on search')
 	   if(this.baseFilter){
 		   var newObject = Ext.JSON.decode(this.baseFilter);
 		   newObject["$or"] = myArray;
