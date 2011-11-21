@@ -2,15 +2,16 @@ Ext.define('widgets.list.list' ,{
 	extend: 'canopsis.lib.view.cwidget',
 	
 	alias : 'widget.list',
-
-	filter: '{"source_type":"host"}',
+	
+	//don't work
+	//filter: {"source_type":"host"},
 
 	initComponent: function() {
 	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			border: (this.title || this.fullmode) ? false : true,
 			opt_paging: true,
-			filter: this.filter,
+			filter: {"source_type":"host"},
 			autoload: true,
 			pageSize: global.pageSize,
 			remoteSort: true,
