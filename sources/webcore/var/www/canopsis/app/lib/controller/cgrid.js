@@ -23,6 +23,24 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		grid.on('selectionchange',	this._selectionchange,	this)
 		grid.on('itemdblclick', 	this._editRecord,	this)
 		
+		
+		//Binding action for contextMenu
+		if(grid.contextMenu){
+			grid.on('itemcontextmenu', this._contextMenu)
+			
+			//Duplicate button
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=duplicate]')
+			for (i in btns){
+				btns[i].on('click', this._duplicateRecord, this)
+			}
+			//DeleteButton
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=delete]')
+			for (i in btns){
+				btns[i].on('click', this._deleteButton, this)
+			}
+			
+		}
+		
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
 		for (i in btns){
