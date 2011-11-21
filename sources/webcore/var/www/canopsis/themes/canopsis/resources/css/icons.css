@@ -48,6 +48,22 @@
     background-image: url(../images/icons/bullet_orange.png) !important; 
 }
 
+.icon-logout { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/actions/system-log-out.png) !important; 
+}
+
+.icon-preferences { 
+    background-image: url(../images/icons/cog.png) !important; 
+}
+
+.icon-console { 
+    background-image: url(../images/icons/application_osx_terminal.png) !important; 
+}
+
+.icon-clear { 
+    background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
+}
+
 
 /* state */
 
