@@ -12,9 +12,11 @@ Ext.define('canopsis.view.Account.Form', {
 			},{
 				fieldLabel: 'First Name',
 				name: 'firstname',
+				allowBlank : false
 			}, {
 				fieldLabel: 'Last Name',
 				name: 'lastname',
+				allowBlank : false
 			},/*{
 				fieldLabel: 'aaa access owner',
 				name: 'aaa_access_owner'
@@ -32,9 +34,12 @@ Ext.define('canopsis.view.Account.Form', {
 				store: 'Group',
 				displayField: 'crecord_name',
 				xtype: 'combobox',
+				allowBlank : false
 			},{
 				fieldLabel: 'password',
+				inputType: 'password',
 				name: 'passwd',
+				allowBlank : false
 			}/*,{
 				fieldLabel: 'aaa owner',
 				name: 'aaa_owner'
