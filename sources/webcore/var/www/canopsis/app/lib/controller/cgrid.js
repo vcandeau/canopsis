@@ -17,6 +17,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_bindGridEvents: function(grid) {
 		var id = grid.id
 		this.grid = grid
+		
 
 		log.debug('[controller][cgrid] - Bind events "'+id+'" ...')
 
@@ -323,7 +324,22 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var store = grid.getStore();
 		var search = grid.down('textfield[name=searchField]').getValue();
 		
+		log.debug('beforesearch');
+		log.debug(store.proxy.extraParams);
+		log.debug(grid.filter);
+		
+		var myArray = []
+		for (i in grid.opt_tbar_search_field){
+			var smth = {}
+			smth[grid.opt_tbar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
+			myArray.push(smth);
+		}
+		store.search(myArray);
+		
+		/*
+		
 		if(search){
+			
 			//creating filter
 			if (grid.opt_tbar_search_field.length == 1){
 				var mfilter = '{"'+ grid.opt_tbar_search_field[0]+'":{ "$regex" : ".*'+search+'.*", "$options" : "i"}}';
@@ -347,10 +363,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			store.load();
 		}
 		
+		log.debug('beforesearch');
+		log.debug(store.proxy.extraParams);
+		log.debug(grid.filter);
+		
 		if (this.searchRecord) {
 			this.searchRecord()
 		}
-		
+		*/
 	}
 	
 });
