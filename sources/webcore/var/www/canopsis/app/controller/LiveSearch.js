@@ -3,6 +3,8 @@ Ext.define('canopsis.controller.LiveSearch', {
     
 	views: ['LiveSearch.View','LiveSearch.Grid'],
 	stores: ['Inventory'],
+
+	logAuthor: '[controller][LiveSearch]',
 	//models: [''],
 
 	//iconCls: 'icon-crecord_type-account',
@@ -33,10 +35,10 @@ Ext.define('canopsis.controller.LiveSearch', {
 	},
 	
 	addFilter : function() {
-		console.log('Search button pushed');
+		log.debug('Search button pushed', this.logAuthor);
 		var store = this.getGrid().getStore();
 		store.clearFilter();
-		//console.log(this.getLiveSearch());
+
 		search = {};
 		
 		var searchValue = this.getLiveSearch().down('#source_name').value;
@@ -63,9 +65,6 @@ Ext.define('canopsis.controller.LiveSearch', {
 			//search['host_name'] = searchValue;
 		}
 		
-
-		
-		//console.log(search);
 		store.load();
 		
 		
