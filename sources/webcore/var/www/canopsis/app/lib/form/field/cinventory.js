@@ -68,7 +68,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		this.columns = this.Win_columns
 
 		//------------------- create stores---------------
-		this.InventoryStore = Ext.create('Ext.data.Store', {
+		this.InventoryStore = Ext.create('canopsis.lib.store.cstore', {
 			
 				model: 'cinventory',
 				pageSize: 10,
@@ -387,23 +387,28 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		if (form.isValid()){
 			var values = form.getValues();
 			//clean searching values
-			search = values.search
-			mfilter = '{'
+			var search = values.search
+
+			log.debug('[cinventory] Search: '+search);
+
+			var filter = [];
+
+			if (search){
+				filter.push({ "$regex" : ".*"+search+".*", "$options" : "i"})
+			}
+
 			if (values.source_type != 'all'){
-				mfilter += '"source_type":"'+ values.source_type +'"';
+				filter.push({"source_type": values.source_type})
+			}			
+			if (values.type != 'all'){
+				filter.push({"type": values.type})
 			}
-			
-			if ((values.source_type != 'all') && (values.type != 'all')){
-				mfilter += ',"type":"'+ values.type +'"';
-			} else if (values.type != 'all'){
-				mfilter += '"type":"'+ values.type +'"';
-			}
-			
-			mfilter += "}"
-			//log.debug(mfilter);
+
+			log.debug("[cinventory] Filter:");
+			log.dump(filter);
 			
 			//request data
-			if (search == this.old_search){
+			/*if (search == this.old_search){
 				this.InventoryStore.load();
 			} else {
 				this.InventoryStore.proxy.extraParams = {
@@ -415,7 +420,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				if (this.InventoryStore.count() !=0 ){
 					this.firstGrid.pagingbar.moveFirst();
 				}
-			}
+			}*/
 		}
 	}
 
