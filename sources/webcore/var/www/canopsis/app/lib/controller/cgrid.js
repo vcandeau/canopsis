@@ -60,9 +60,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			btns[i].on('click', this._searchRecord, this)
 		}
 		
-		//if you don't clean it the next time you use the store params still there
-		grid.store.proxy.extraParams = {};
-		
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]')
 		for (i in textfields){
@@ -120,6 +117,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_reloadButton: function() {
 		log.debug('[controller][cgrid] - Reload store "'+this.grid.store.storeId+'" of '+this.grid.id);
+		log.dump(this.grid.store.proxy.extraParams.filter)
 		this.grid.store.load()
 	},
 
