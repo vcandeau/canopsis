@@ -41,10 +41,10 @@ class caccount(crecord):
 
 
 	def passwd(self, passwd):
-		self.shadowpasswd = hashlib.sha1(repr(passwd)).hexdigest()
+		self.shadowpasswd = hashlib.sha1(str(passwd)).hexdigest()
 
 	def check_passwd(self, passwd):
-		return self.check_shadowpasswd(hashlib.sha1(repr(passwd)).hexdigest())
+		return self.check_shadowpasswd(hashlib.sha1(str(passwd)).hexdigest())
 
 	def check_shadowpasswd(self, shadowpasswd):
 		if self.shadowpasswd == shadowpasswd:
