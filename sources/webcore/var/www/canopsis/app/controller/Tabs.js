@@ -10,8 +10,8 @@ Ext.define('canopsis.controller.Tabs', {
 		this.control({
 			'tabpanel': {
 				tabchange: this.on_tabchange,
-				add: this.on_add,
-				remove: this.on_remove
+				//add: this.on_add,
+				//remove: this.on_remove
 			},
 		});
 
@@ -24,12 +24,12 @@ Ext.define('canopsis.controller.Tabs', {
 		//log.debug('Tabchange', this.logAuthor);
 		tabPanel.old_tab = old_tab
 	},
-  	on_add: function(component, index, object){
+  	/*on_add: function(component, index, object){
 		log.debug('Added', this.logAuthor);	
 	},
 
 	on_remove: function(component, object){
 		log.debug('Removed', this.logAuthor);
-	}
+	}*/
 
 });

@@ -7,8 +7,10 @@ Ext.define('canopsis.controller.Group', {
 
 	iconCls: 'icon-crecord_type-group',
 
+	logAuthor: '[controller][Group]',
+
 	init: function() {
-		console.log('['+this.id+'] - Initialize ...');
+		log.debug('Initialize ...', this.logAuthor);
 
 		this.formXtype = 'GroupForm'
 		this.listXtype = 'GroupGrid'
