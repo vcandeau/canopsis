@@ -391,36 +391,28 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			log.debug('[cinventory] Search: '+search);
 
-			var filter = [];
+			var filter = {};
 
 			if (search){
-				filter.push({ "$regex" : ".*"+search+".*", "$options" : "i"})
+				if (search == '*'){
+					filter["_id"] = { "$regex" : ".*" };
+				}else{
+					filter["_id"] = { "$regex" : ".*"+search+".*", "$options" : "i"};
+				}
 			}
 
 			if (values.source_type != 'all'){
-				filter.push({"source_type": values.source_type})
+				filter["source_type"] = values.source_type;
 			}			
 			if (values.type != 'all'){
-				filter.push({"type": values.type})
+				filter["type"] = values.type;
 			}
 
 			log.debug("[cinventory] Filter:");
 			log.dump(filter);
-			
-			//request data
-			/*if (search == this.old_search){
-				this.InventoryStore.load();
-			} else {
-				this.InventoryStore.proxy.extraParams = {
-					'search' : search,
-					'filter': mfilter
-				};
-				this.InventoryStore.load();
-				//paging toolbar return to first page
-				if (this.InventoryStore.count() !=0 ){
-					this.firstGrid.pagingbar.moveFirst();
-				}
-			}*/
+
+			this.firstGrid.pagingbar.moveFirst();
+			this.InventoryStore.search(filter);
 		}
 	}
 
