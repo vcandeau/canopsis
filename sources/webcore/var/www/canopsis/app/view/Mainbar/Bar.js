@@ -16,10 +16,13 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 	initComponent: function() {
 		this.items = [
 			{
+				iconCls: 'icon-mainbar-run',
 				text: 'Run'
 			},{
+				iconCls: 'icon-mainbar-build',
 				text: 'Build'
 			},{
+				iconCls: 'icon-mainbar-report',
 				text: 'Report'
 			},'-',{
 				xtype: 'container',
