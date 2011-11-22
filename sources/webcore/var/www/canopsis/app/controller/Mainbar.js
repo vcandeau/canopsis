@@ -70,7 +70,7 @@ Ext.define('canopsis.controller.Mainbar', {
 		};
 		Ext.TaskManager.start({
 			run: refreshClock,
-			interval: 1000000
+			interval: 60000
 		});
 	}
 });
