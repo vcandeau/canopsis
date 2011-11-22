@@ -35,15 +35,20 @@ Ext.define('canopsis.lib.store.cstore', {
 	   return this.proxy.extraParams.filter
    },
    
-   search : function(myArray){
-	   log.debug('[cstore]Building filter request')
+   getOrFilter: function(filter){
+	return {"$or" : filter};
+   },
+
+   search : function(filter){
+	   log.debug('[cstore] Building filter request')
 	   if(this.baseFilter){
 		   var newObject = Ext.JSON.decode(this.baseFilter);
-		   newObject["$or"] = myArray;
+		   newObject.push(filter);
 	   } else {
-		   var newObject = {"$or" : myArray};
+		   var newObject = filter;
 	   }
 	   this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
+	   log.debug('[cstore] Filter: ' + this.proxy.extraParams.filter);
 	   this.load();
    },
    
