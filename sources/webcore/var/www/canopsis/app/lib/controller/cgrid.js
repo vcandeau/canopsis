@@ -343,7 +343,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			tempObj[grid.opt_tbar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
 			myArray.push(tempObj);
 		}
-		store.search(myArray);
+		store.search(store.getOrFilter(myArray));
 	}
 	
 });
