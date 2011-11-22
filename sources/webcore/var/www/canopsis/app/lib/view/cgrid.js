@@ -19,8 +19,6 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_tbar_search: false,
 	opt_tbar_search_field: [],
 
-	opt_menu_delete: false,
-	opt_menu_duplicate: false,
 
 	features: [],
 	
@@ -109,10 +107,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		}
 		
 		//--------------------Context menu---------------------
-		if (this.opt_menu){
+		if (this.opt_tbar){
 			this.contextMenu = Ext.create('Ext.menu.Menu');
 			
-			if(this.opt_menu_delete){
+			if(this.opt_tbar_delete){
 				this.contextMenu.add(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-delete',
@@ -121,7 +119,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					})
 				)
 			}
-			if (this.opt_menu_duplicate){
+			if (this.opt_tbar_duplicate){
 				this.contextMenu.add(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-copy',
