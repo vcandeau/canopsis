@@ -64,6 +64,18 @@
     background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
 }
 
+.icon-mainbar-run { 
+    background-image: url(../images/icons/application_home.png) !important; 
+}
+
+.icon-mainbar-build { 
+    background-image: url(../images/icons/application_form_edit.png) !important; 
+}
+
+.icon-mainbar-report { 
+    background-image: url(../images/icons/application_view_gallery.png) !important; 
+}
+
 
 /* state */
 
