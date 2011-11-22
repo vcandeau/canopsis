@@ -267,7 +267,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				items: [{
 					fieldLabel: 'Search',
 					name: 'search',
-					allowBlank: false,
+					//allowBlank: false,
 				},/*{
 					fieldLabel: 'Type',
 					name: 'type',
