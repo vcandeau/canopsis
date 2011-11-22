@@ -342,6 +342,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			myArray.push(tempObj);
 		}
 		store.search(store.getOrFilter(myArray));
+		grid.pagingbar.moveFirst();
 	}
 	
 });
