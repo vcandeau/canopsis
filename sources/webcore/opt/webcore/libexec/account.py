@@ -37,13 +37,14 @@ def account_get_me(_id=None):
 
 	storage = get_storage(namespace=namespace)
 
-	try:
-		logger.debug(" + Try to get '%s' ... " % account._id)
-		record = storage.get(account._id, account=account)
+	#try:
+	logger.debug(" + Try to get '%s' ... " % account._id)
+	record = storage.get(account._id, account=account)
 
-	except Exception, err:
-		self.logger.error("Exception !\nReason: %s" % err)
-		return HTTPError(404, _id+" Not Found")
+	logger.debug("   + Result: '%s'" % record)
+	#except Exception, err:
+	#	self.logger.error("Exception !\nReason: %s" % err)
+	#	return HTTPError(404, _id+" Not Found")
 
 	if record:
 		data = record.dump(json=True)
@@ -52,7 +53,7 @@ def account_get_me(_id=None):
 
 	output={'total': 1, 'success': True, 'data': output}
 
-	#logger.debug(" + Output: "+str(output))
+	logger.debug(" + Output: "+str(output))
 
 	return output
 
@@ -174,15 +175,26 @@ def account_post():
 			storage.put(update_account, account=account)
 
 		else:
-			raw_record = crecord(_id=_id, type='account', name=data['user']).dump()
-			for key in dict(data).keys():
-				raw_record[key] = data[key]
+			logger.debug(' + New account')
+			new_account = caccount(user=data['user'], group=data['aaa_group'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
 
-			record = crecord(raw_record=raw_record)
-			record.chown(data['user'])
-			record.chgrp(data['aaa_group'])
+			passwd = data['passwd']
+			new_account.passwd(passwd)
+			logger.debug("   + Passwd: '%s'" % passwd)
 
-			storage.put(record, account=account)
+			#del data['user']
+			#del data['aaa_group']
+			#del data['lastname']
+			#del data['firstname']
+			#del data['mail']
+
+			#logger.debug(' + Set data ...')
+			#for key in dict(data).keys():
+			#	logger.debug("   - '%s': '%s'" % (key, data[key]))
+			#	new_account.data[key] = data[key]
+
+			logger.debug(' + Save new account')
+			storage.put(new_account, account=account)
 	else:
 		logger.warning('WARNING : no user specified ...')
 
@@ -199,4 +211,4 @@ def account_delete(_id):
 		storage.remove(_id, account=account)
 		logger.debug('account removed')
 	except:
-		HTTPError(404, _id+" Not Found")
+		return HTTPError(404, _id+" Not Found")
