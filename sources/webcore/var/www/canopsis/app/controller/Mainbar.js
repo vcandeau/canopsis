@@ -15,8 +15,14 @@ Ext.define('canopsis.controller.Mainbar', {
 			},
 			'Mainbar menuitem[action="showconsole"]' : {
 				click : this.showconsole,
-			}
+			},
+			'Mainbar [name="clock"]' : {
+				afterrender : this.setClock,
+			},
 		})
+
+		//Set clock
+		//this.setClock();
 
 		this.callParent(arguments);
 	},
@@ -45,5 +51,26 @@ Ext.define('canopsis.controller.Mainbar', {
 	showconsole: function(){
 		log.debug('Show log console', this.logAuthor);
 		log.show_console();
+	},
+	
+	setClock : function(item){
+		log.debug('Set Clock', this.logAuthor);
+		var refreshClock = function(){
+			var thisTime = new Date()
+			hours = thisTime.getHours();
+			minutesRaw = thisTime.getMinutes();
+			//add 0 if needed
+			if(minutesRaw < 9){
+				var minutes = "0" + minutesRaw;
+			}else{
+				var minutes = minutesRaw
+			}
+			
+			item.update("<div class='cps-account' >" + hours + ":" + minutes + "  -  " + (thisTime.toLocaleDateString()) + "</div>");
+		};
+		Ext.TaskManager.start({
+			run: refreshClock,
+			interval: 1000000
+		});
 	}
 });
