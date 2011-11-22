@@ -16,20 +16,33 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 	initComponent: function() {
 		this.items = [
 			{
-				text: 'Run'
+				text: 'Run',
+				//flex : 0.5
 			},{
-				text: 'Build'
+				text: 'Build',
+				//flex : 0.5
 			},{
-				text: 'Report'
+				text: 'Report',
+				//flex : 0.5
 			},'-',{
 				xtype: 'container',
-				html: "<div class='cps-title' >Canopsis</div>"
+				html: "<div class='cps-title' >Canopsis</div>",
+				flex : 1
+			},/*{
+				xtype : 'container',
+				width : 300
+			},*/{
+				xtype : 'container',
+				name : 'clock',
+				align : 'strech',
+				flex : 4
 			},'->',{
 				xtype: 'container',
 				html: "<div class='cps-account' >"+global.account.firstname+" "+global.account.lastname+"</div>",
-				width: 300
+				flex:2.3
 			},'-',{
 				iconCls: 'icon-preferences',
+				flex : 0.2,
 				menu: {
 					showSeparator: true,
 					items: [

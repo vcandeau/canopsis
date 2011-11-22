@@ -41,7 +41,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}
 			
 		}
-		
+		/*
+		//clock system
+		if(grid.tbar_clock){
+			var refreshClock = function(){
+				var thisTime = new Date()
+				grid.tbar_clock.update(thisTime.getHours()+ ":" + thisTime.getMinutes() + "  -  " + (thisTime.toLocaleDateString()));
+			};
+			Ext.TaskManager.start({
+				run: refreshClock,
+				interval: 1000000
+			});
+		}
+		*/
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
 		for (i in btns){
