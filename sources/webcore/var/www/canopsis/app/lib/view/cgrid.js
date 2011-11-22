@@ -18,6 +18,9 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_tbar_delete:true,
 	opt_tbar_search: false,
 	opt_tbar_search_field: [],
+	opt_tbar_time: false,
+	
+	opt_tbar_clock: true,
 
 
 	features: [],
@@ -44,51 +47,92 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 		//------------------Option docked bar--------------
 		if (this.opt_tbar){
-			this.tbar = []
-			
+			var tbar_child = [];
+		/*	var tbar_left = Ext.create('Ext.container.Container', {
+				flex: 1.50,
+				border: 0,
+				items: []
+			});
+			var tbar_center = Ext.create('Ext.container.Container', {
+				flex: 1,
+				layout: 'hbox',
+				items: []
+			});;
+			var tbar_right = Ext.create('Ext.container.Container', {
+				flex: 1,
+				layout : {
+					type : 'hbox',
+				},
+				items: []
+			});;
+			*/
 			if(this.opt_tbar_add){
-				this.tbar.push({
+				tbar_child.push({
+					xtype: 'button',
 					iconCls: 'icon-add',
+					//cls: 'x-btn-default-toolbar-small',
 					text: 'Add',
 					action: 'add',
 				})
 			}
 			if(this.opt_tbar_duplicate){
-				this.tbar.push({
+				tbar_child.push({
+					xtype: 'button',
 					iconCls: 'icon-copy', 
 					text: 'Duplicate',
 					action: 'duplicate',
 				})
 			}
 			if(this.opt_tbar_reload){
-				this.tbar.push({
+				tbar_child.push({
+					xtype: 'button',
 					iconCls: 'icon-reload',
 					text: 'Reload',
 					action: 'reload',
 				})
 			}
 			if(this.opt_tbar_delete){
-				this.tbar.push({
+				tbar_child.push({
+					xtype: 'button',
 					iconCls: 'icon-delete',
 					text: 'Delete',
 					disabled: true,
 					action: 'delete',
 				})
 			}
+			/*
+			if(this.opt_tbar_clock){
+				this.tbar_clock = Ext.create('Ext.toolbar.TextItem', {
+					text: 'test',
+					pack : 'center',
+				})
+				tbar_child.push(this.tbar_clock)
+			}
+			*/
 			if(this.opt_tbar_search){
-				this.tbar.push({xtype: 'tbfill'});
-				this.tbar.push({
+				tbar_child.push({xtype: 'tbfill'});
+				tbar_child.push({
 					xtype: 'textfield',
 					name: 'searchField',
 					hideLabel: true,
 					width: 200,
+					pack: 'end',
 				})
-				this.tbar.push({
+				tbar_child.push({
 					xtype : 'button',
 					action: 'search',
-					text: 'search'
+					text: 'search',
+					pack: 'end',
 				})
 			}
+			
+			//var tbar_child = [tbar_left,tbar_center,tbar_right];
+			
+			//creating toolbar
+			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
+				items: tbar_child,
+			});
+			
 		}
 		
 
@@ -108,10 +152,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		
 		//--------------------Context menu---------------------
 		if (this.opt_tbar){
-			this.contextMenu = Ext.create('Ext.menu.Menu');
+			var myArray = [];
 			
 			if(this.opt_tbar_delete){
-				this.contextMenu.add(
+				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-delete',
 						text: 'Delete',
@@ -120,7 +164,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				)
 			}
 			if (this.opt_tbar_duplicate){
-				this.contextMenu.add(
+				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-copy',
 						text: 'Duplicate',
@@ -128,6 +172,14 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					})
 				)
 			}
+			
+			if (myArray.length != 0){
+				this.contextMenu = Ext.create('Ext.menu.Menu',{
+					items : myArray,
+				});
+			}
+			
+			
 		}
 
 
