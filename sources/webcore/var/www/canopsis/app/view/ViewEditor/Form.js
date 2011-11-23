@@ -4,6 +4,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	alias : 'widget.ConfigView',
 	
 	items: [],
+	border: 0,
 
 	layout: {
 		type: 'table',

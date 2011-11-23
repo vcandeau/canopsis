@@ -68,7 +68,7 @@ def get_widgets_css():
 		
 		if os.path.exists(base_path + css):
 			logger.debug(" - %s" % css)
-			output += "@import '%s'\n" % css
+			output += "@import '/static/canopsis/%s';\n" % css
 
 	response.content_type = 'text/css'
 	return output

@@ -1,0 +1,22 @@
+[{
+	"name":  "perfdata Kpi",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"perfdata_kpi",
+	"description": "Display perfdata health with icons",
+	"refreshInterval": 300,
+	"formWidth": 600,
+	"options": [{
+			"xtype": "numberfield",
+			"fieldLabel":"Icon set",
+			"name": "iconset",
+			"value": 1,
+			"minValue": 1
+		},{
+			"xtype": "textfield",
+			"fieldLabel":"metric",
+			"name": "metric"
+		}]
+	
+}]
