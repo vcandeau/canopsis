@@ -6,6 +6,5 @@
 	"xtype": "history",
 	"description": "Display states history of node",
 	"refreshInterval": 60,
-	"rowHeight": 400,
-	"formWidth": 600
+	"rowHeight": 400
 }]
