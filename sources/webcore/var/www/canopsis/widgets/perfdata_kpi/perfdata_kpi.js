@@ -38,6 +38,7 @@ Ext.define('widgets.perfdata_kpi.perfdata_kpi' ,{
 				if(data.max){
 					var health = Math.round((100 - (data.value / data.max * 100)) / 10) *10;
 				} else if(data.crit){
+					//take critical if no max value
 					var health = Math.round((100 - (data.value / data.crit * 100)) / 10) *10;
 				} else {
 					log.debug('impossible to calculate health (no max value in data)', this.logAuthor)
