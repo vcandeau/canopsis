@@ -5,5 +5,14 @@
 	"website": "http://www.canopsis.org",
 	"xtype":"weather_kpi",
 	"description": "Display service health with weather icons",
-	"refreshInterval": 300
+	"refreshInterval": 300,
+	"formWidth": 600,
+	"options": [{
+			"xtype": "numberfield",
+			"fieldLabel":"Icon set",
+			"name": "iconset",
+			"value": 1,
+			"minValue": 1
+		}]
+	
 }]
