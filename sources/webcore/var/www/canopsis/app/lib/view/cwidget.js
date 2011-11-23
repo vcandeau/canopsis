@@ -131,7 +131,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 						var health = (100 - (perf.value / perf.max * 100)) ;
 						return health;
 					} else if (this.metric_max){
-						var health = (100 - (this.metric_max / perf.max * 100)) ;
+						var health = (100 - (perf.value / this.metric_max * 100)) ;
 						return health;
 					} else {
 						log.debug('impossible to calculate health (no max value in data)', this.logAuthor);
