@@ -60,7 +60,7 @@ Ext.define('canopsis.controller.Mainbar', {
 			hours = thisTime.getHours();
 			minutesRaw = thisTime.getMinutes();
 			//add 0 if needed
-			if(minutesRaw < 9){
+			if(minutesRaw < 10){
 				var minutes = "0" + minutesRaw;
 			}else{
 				var minutes = minutesRaw
