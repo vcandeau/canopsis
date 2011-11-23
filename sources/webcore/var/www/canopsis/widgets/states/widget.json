@@ -6,6 +6,5 @@
 	"xtype": "states",
 	"description": "Display all service's states of host",
 	"refreshInterval": 60,
-	"rowHeight": 400,
-	"formWidth": 600
+	"rowHeight": 400
 }]
