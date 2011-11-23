@@ -104,4 +104,47 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		log.debug('setHtmlTpl in div '+this.divId, this.logAuthor)
 		tpl.overwrite(this.divId, data)
 	},
+	
+	getMetricUnit: function(perfArray){
+		if(perfArray[this.metric]){
+			return perfArray[this.metric].unit;
+		} else {
+			log.debug('the metric is undefined', this.logAuthor);
+			return undefined;
+		}
+	},
+	
+	getHealth: function(data){
+		//nodeId have perfdata ?
+		if (data.perf_data_array){
+			var perfArray = data.perf_data_array		
+			
+			//check the metric
+			if(perfArray[this.metric]){
+				perf = perfArray[this.metric];
+				//metric is already % ?
+				if(perf.unit == "%"){
+					return (100 - perf.value);
+				} else {
+					//calculate % from max value if exist
+					if(perf.max){
+						var health = (100 - (perf.value / perf.max * 100)) ;
+						return health;
+					} else if (this.metric_max){
+						var health = (100 - (this.metric_max / perf.max * 100)) ;
+						return health;
+					} else {
+						log.debug('impossible to calculate health (no max value in data)', this.logAuthor);
+						return undefined;
+					}
+				}
+			}else{
+				log.debug('the metric is undefined', this.logAuthor);
+				log.dump(perfArray);
+			}
+		}else{
+			log.debug('impossible to calculate health (no perf_data_array)', this.logAuthor);
+			return undefined;
+		}
+	}
 });
