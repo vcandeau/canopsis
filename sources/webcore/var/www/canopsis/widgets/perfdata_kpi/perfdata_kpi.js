@@ -33,7 +33,7 @@ Ext.define('widgets.perfdata_kpi.perfdata_kpi' ,{
 			var value = data.perf_data_array		
 			if(data.perf_data_array[this.metric]){
 				data = data.perf_data_array[this.metric];
-				log.debug(data);
+
 				//give the health , 0% very bad , 100% all clear , and rounded
 				if(data.max){
 					var health = Math.round((100 - (data.value / data.max * 100)) / 10) *10;
@@ -43,7 +43,6 @@ Ext.define('widgets.perfdata_kpi.perfdata_kpi' ,{
 					log.debug('impossible to calculate health (no max value in data)', this.logAuthor)
 					this.setHtml("<center><div>impossible to calculate health (no max value in data)</br>change it in the view editor</div></center>");
 				}
-				
 				
 				switch (health){
 					case 0:
