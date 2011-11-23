@@ -5,7 +5,7 @@ Ext.define('widgets.weather_kpi.weather_kpi' ,{
 	
 	logAuthor: '[weather_kpi]',
 	
-	iconset: 'meteo1',
+	iconset: '1',
 	
 	initComponent: function() {
 		log.debug('Init Weather kpi '+this.id, this.logAuthor)
@@ -17,7 +17,20 @@ Ext.define('widgets.weather_kpi.weather_kpi' ,{
 	},
 	
 	onRefresh: function(data){
-		this.setHtml("<center><img src='widgets/weather_kpi/icon_set/"+this.iconset+"/"+data.state+".png'/></center>");
+		
+		if(this.iconset < 10){
+			var icon = '0' + this.iconset
+		}else{
+			var icon = this.iconset
+		}
+		
+		if(data.state == 2){
+			this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_0-10'/></center>");
+		}else if(data.state == 1){
+			this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_50-60'/></center>");
+		} else {
+			this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_90-100'/></center>");
+		}
 	},
 	
 	
