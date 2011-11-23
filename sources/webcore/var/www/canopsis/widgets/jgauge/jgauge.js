@@ -29,7 +29,6 @@ Ext.define('widgets.jgauge.jgauge' ,{
 		this.setHtml("<div id='jgauge-"+this.id+"' class='jgauge'></div>");
 		this.jgauge = new jGauge()
 		this.jgauge.id = 'jgauge-'+this.id
-		log.debug(this.id);
 
 		this.jgauge.ticks.count = 5
 		this.jgauge.ticks.start = 0
