@@ -19,6 +19,7 @@ Ext.define('widgets.jgauge.jgauge' ,{
 		var health = (this.getHealth(data));
 		
 		if (health){		
+			log.debug('set_health');
 			this.jgauge.setValue(health);
 		}else{
 			this.setHtml("<center><div>Impossible to display gauge because</br>input data are invalid (check console)</div></center>");
@@ -43,8 +44,8 @@ Ext.define('widgets.jgauge.jgauge' ,{
 	
 		this.jgauge.range.radius = 50;
 		this.jgauge.range.thickness = 10;
-		this.jgauge.range.start = (( 90 * total) / 100) + orig_start ;
-		this.jgauge.range.end = (( 100 * total) / 100) + orig_start;
+		//this.jgauge.range.start = (( 90 * total) / 100) + orig_start ;
+		//this.jgauge.range.end = (( 100 * total) / 100) + orig_start;
 		this.jgauge.range.color = 'rgba(0, 255, 0, 0.5)';
 		this.jgauge.init();
 	}
