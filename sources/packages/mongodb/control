@@ -26,7 +26,7 @@ function post_install(){
 	echo "Wait mongoDB (preallocating journal file...), You can take a coffe ..."
         i=0
         while [ `ls /tmp/mongodb-*.sock 2> /dev/null| wc -l` -eq 0 ]; do
-                if [ $i -gt 600 ]; then
+                if [ $i -gt 1200 ]; then
                         echo 
                         echo "Timeout, Impossible to connect mongoDB ..."
                         exit 1
