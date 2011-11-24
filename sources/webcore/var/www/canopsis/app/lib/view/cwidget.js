@@ -124,14 +124,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				perf = perfArray[this.metric];
 				//metric is already % ?
 				if(perf.unit == "%"){
-					return (100 - perf.value);
+					return perf.value;
 				} else {
 					//calculate % from max value if exist
 					if(perf.max){
-						var health = (100 - (perf.value / perf.max * 100)) ;
+						var health = (perf.value / perf.max * 100);
 						return health;
 					} else if (this.metric_max){
-						var health = (100 - (perf.value / this.metric_max * 100)) ;
+						var health = (perf.value / this.metric_max * 100) ;
 						return health;
 					} else {
 						log.debug('impossible to calculate health (no max value in data)', this.logAuthor);
