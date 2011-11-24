@@ -19,7 +19,6 @@ Ext.define('widgets.jgauge.jgauge' ,{
 		var health = (this.getHealth(data));
 		
 		if (health){		
-			log.debug('set_health');
 			this.jgauge.setValue(health);
 		}else{
 			this.setHtml("<center><div>Impossible to display gauge because</br>input data are invalid (check console)</div></center>");
