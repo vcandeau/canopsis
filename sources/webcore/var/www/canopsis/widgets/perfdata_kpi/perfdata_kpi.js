@@ -26,9 +26,15 @@ Ext.define('widgets.perfdata_kpi.perfdata_kpi' ,{
 		}
 		
 		var health = this.getHealth(data);
+		//little tweak, because 0 = undefined ...
+		if(health == 0){
+			health = 1;
+		}
+		
 		if (health){
 			//round the result
-			var roundHealth = Math.round(health / 10) *10;
+			var roundHealth = 100 - (Math.round(health / 10) *10);
+			log.debug(roundHealth);
 			switch (roundHealth){
 				case 0:
 					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_0-10'/></center>");
