@@ -23,7 +23,7 @@ Ext.define('widgets.pie.pie' ,{
 	},
 	
 	onRefresh: function(data){		
-		if(!this.pie){
+		if(!this.chart){
 			this.setPie();
 		}
 		
