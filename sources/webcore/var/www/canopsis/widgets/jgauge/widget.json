@@ -5,7 +5,7 @@
 	"website": "http://www.canopsis.org",
 	"xtype":"jgauge",
 	"description": "Display perfdata gauge",
-	"refreshInterval": 300,
+	"refreshInterval": 60,
 	"formWidth": 600,
 	"options": [{
 			"xtype": "textfield",
