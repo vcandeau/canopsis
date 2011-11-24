@@ -23,12 +23,12 @@ function post_install(){
 	launch_cmd "service mongodb start"
 
 	## Wait mongo ready
-	echo "Wait mongoDB (preallocating a journal file) please wait ..."
+	echo "Wait mongoDB (preallocating journal file...), You can take a coffe ..."
         i=0
         while [ `ls /tmp/mongodb-*.sock 2> /dev/null| wc -l` -eq 0 ]; do
-                if [ $i -gt 240 ]; then
+                if [ $i -gt 600 ]; then
                         echo 
-                        echo "Impossible to connect mongoDB ..."
+                        echo "Timeout, Impossible to connect mongoDB ..."
                         exit 1
                 fi
                 i=$((i+1))
