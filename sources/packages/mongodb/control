@@ -17,13 +17,16 @@ function post_install(){
 	mkdir -p $PREFIX/var/lib/mongodb
 	chown $HUSER -R $PREFIX/var/log/mongodb
 	chown $HUSER -R $PREFIX/var/lib/mongodb
+	
+	rm /tmp/mongodb-*.sock &> /dev/null || true
+
 	launch_cmd "service mongodb start"
 
 	## Wait mongo ready
 	echo "Wait mongoDB (preallocating a journal file) please wait ..."
         i=0
         while [ `ls /tmp/mongodb-*.sock 2> /dev/null| wc -l` -eq 0 ]; do
-                if [ $i -gt 120 ]; then
+                if [ $i -gt 240 ]; then
                         echo 
                         echo "Impossible to connect mongoDB ..."
                         exit 1
