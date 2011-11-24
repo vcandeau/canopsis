@@ -7,6 +7,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	layout: 'fit',
 
+	first: false,
 	start: false,
 
 	logAuthor: '[line_graph]',
@@ -14,10 +15,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	options: {},
 	chart: false,
 
-	// TODO
-	shift: false,
 
-	time_window: 86400,
+	time_window: 86400, //24 hours
 
 	initComponent: function() {
 		log.debug('Init Line Graph '+this.id, this.logAuthor)
@@ -217,6 +216,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		if (! this.start){
 			log.debug('   + Set data', this.logAuthor)
+			this.first = values[0][0];
 			this.chart.series[metric_id].setData(values,true);
 		}else{
 			log.debug('   + Push data', this.logAuthor)
@@ -224,8 +224,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var i;
 			for (i in values) {
 				value = values[i]
+				shift = this.first < (this.start - this.time_window)
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
-            			this.chart.series[metric_id].addPoint(value, false, this.shift, false);
+            			this.chart.series[metric_id].addPoint(value, false, shift, false);
 			}
 		}
 
