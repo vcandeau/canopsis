@@ -9,6 +9,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	first: false,
 	start: false,
+	shift: false,
 
 	logAuthor: '[line_graph]',
 
@@ -80,7 +81,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			xAxis: {
-				min: Date.now() - (this.time_window * 1000),
+				//min: Date.now() - (this.time_window * 1000),
 				maxZoom: 60 * 60 * 1000, // 1 hour
 				labels: {
 					formatter: function() {
@@ -188,6 +189,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 					if (data[0].values.length > 0){
 						this.start = data[0].values[data[0].values.length-1][0];
+
+						this.shift = this.first < (this.start - (this.time_window*1000))
+						//log.debug('     + First: '+this.first, this.logAuthor)
+						//log.debug('     + First graph: '+(this.start - this.time_window), this.logAuthor)
+						log.debug('     + Shift: '+this.shift, this.logAuthor)
 					}
 					this.chart.redraw();
 				},
@@ -224,9 +230,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var i;
 			for (i in values) {
 				value = values[i]
-				shift = this.first < (this.start - this.time_window)
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
-            			this.chart.series[metric_id].addPoint(value, false, shift, false);
+            			this.chart.series[metric_id].addPoint(value, false, this.shift, false);
 			}
 		}
 
