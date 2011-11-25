@@ -430,16 +430,12 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			if ( item.data.options[i].xtype == "combo" ){
 				//if the field is for metric
 				if (item.data.options[i].name == "metric"){
-					log.debug('the local node')
-					log.dump(item.get('nodeId'))
 					//if nodeId already specified in widget
 					if(item.get('nodeId')){
 						var storeUrl = item.get('nodeId');
 					} else if(this.globalNodeId.getStore().getAt(0)){
 						//else check if global id is specified
 						var record = this.globalNodeId.getStore().getAt(0);
-						log.debug('global');
-						log.debug(this.globalNodeId.getStore().getAt(0));
 						if (record.get('_id')){
 							var storeUrl = record.get('_id');
 						} else if (record.get('id')){
@@ -471,7 +467,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							log.dump(this.window.widgetOptionsPanel.items.items[i]);
 						} else {*/
 							//else it not rendered so we put it in option
-						log.debug('store not existing, setting it before render window')
 						item.data.options[i].store = comboMetricStore;
 					/*	log.debug(item.data.options[i])
 						item.data.options[i].disabled = 'false';
@@ -514,7 +509,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				panelItems[i].store.proxy.url = '/perfstore/' + storeUrl;
 				panelItems[i].lastQuery = null;
 				if(panelItems[i].disabled == true){
-					log.debug('panel disabled')
 					panelItems[i].setDisabled(false);
 				}
 				//log.dump(panelItems[i].store.proxy.url)
