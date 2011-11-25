@@ -16,7 +16,6 @@
 		},{
 			"xtype": "combo",
 			"forceSelection": "true",
-			"disabled" : "true",
 			"editable": "false",
 			"fieldLabel":"metric",
 			"name": "metric",
