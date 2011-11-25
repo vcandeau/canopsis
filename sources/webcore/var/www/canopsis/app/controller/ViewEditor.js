@@ -53,8 +53,8 @@ Ext.define('canopsis.controller.ViewEditor', {
 			
 			
 			//get nodeId if defined
-			panel = form.GlobalOptions.down('gridpanel');
-			_nodeId = panel.store.getAt(0);
+			//panel = form.GlobalOptions.down('gridpanel');
+			_nodeId = form.globalNodeId.getStore().getAt(0);
 			//log.debug(_nodeId);
 			if (_nodeId){
 				log.debug('there is a nodeId :');
@@ -63,6 +63,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 			}
 			
 			log.debug('[controller][cgrid][form] - Store record in store');
+			log.debug(record);
 			output = store.add(record);
 			log.debug('this record have added to store(what add() have returned) :')
 			log.debug(output);
