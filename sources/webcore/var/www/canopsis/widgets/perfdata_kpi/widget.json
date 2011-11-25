@@ -1,5 +1,5 @@
 [{
-	"name":  "perfdata Kpi",
+	"name":  "Perfdata Kpi",
 	"verions": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
@@ -14,9 +14,14 @@
 			"value": 1,
 			"minValue": 1
 		},{
-			"xtype": "textfield",
+			"xtype": "combo",
+			"forceSelection": "true",
+			"disabled" : "true",
+			"editable": "false",
 			"fieldLabel":"metric",
-			"name": "metric"
+			"name": "metric",
+			"displayField": "metric",
+			"valueField": "metric"
 		}]
 	
 }]
