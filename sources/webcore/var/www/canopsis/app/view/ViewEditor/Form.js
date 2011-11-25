@@ -473,7 +473,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							//else it not rendered so we put it in option
 						log.debug('store not existing, setting it before render window')
 						item.data.options[i].store = comboMetricStore;
-						
+					/*	log.debug(item.data.options[i])
+						item.data.options[i].disabled = 'false';
+						log.debug(item.data.options[i])*/
 						//comboMetricStore.load();
 					} else {
 						//else if globalNodeId is not specified, set empty store
@@ -491,6 +493,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							}
 							});
 						item.data.options[i].store = comboMetricStore;
+						item.data.options[i].disabled = 'true';
 						
 					}
 				}
