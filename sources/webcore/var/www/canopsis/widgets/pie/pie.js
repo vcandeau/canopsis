@@ -35,34 +35,50 @@ Ext.define('widgets.pie.pie' ,{
 				var colors = ['#fff'];
 
 				if(value[this.metric]){
-					var ok = Math.round(value[this.metric].ok);
-					if (ok > 0){
-						values.push(['Ok', ok]);
-						this.options.seriesColors.push(this.colors['ok']);
-						//this.options.seriesColors.push(global.default_colors[15]);
-					}
+					log.debug('metric found', this.logAuthor);
+					value = value[this.metric]
+					var ok = Math.round(value['ok']);
+					var warn = Math.round(value['warn']);
+					var crit = Math.round(value['crit']);
+					var unkn = Math.round(value['unkn']);
 					
-					var warn = Math.round(value[this.metric].warn);
-					if (warn > 0){
-						values.push(['Warning', warn]);
-						this.options.seriesColors.push(this.colors['warning']);
-						//this.options.seriesColors.push(global.default_colors[12]);
-					}
-					
-					var crit = Math.round(value[this.metric].crit);
-					if (crit > 0){
-						values.push(['Critical', crit]);
-						this.options.seriesColors.push(this.colors['critical']);
-						//this.options.seriesColors.push(global.default_colors[5]);
-					}
-					
-					var unkn = Math.round(value[this.metric].unkn);
-					if (unkn > 0){
-						values.push(['Unknown', unkn]); 
-						this.options.seriesColors.push(this.colors['unknown']);
-						//this.options.seriesColors.push(global.default_colors[10]);
-					}
+				} else {
+					var ok = Math.round(value['ok'].value);
+					var warn = Math.round(value['warn'].value);
+					var crit = Math.round(value['crit'].value);
+					var unkn = Math.round(value['unkn'].value);
 				}
+				
+				
+				if (ok > 0){
+					values.push(['Ok', ok]);
+					this.options.seriesColors.push(this.colors['ok']);
+					//this.options.seriesColors.push(global.default_colors[15]);
+				}
+				
+				
+				if (warn > 0){
+					values.push(['Warning', warn]);
+					this.options.seriesColors.push(this.colors['warning']);
+					//this.options.seriesColors.push(global.default_colors[12]);
+				}
+				
+				
+				if (crit > 0){
+					values.push(['Critical', crit]);
+					this.options.seriesColors.push(this.colors['critical']);
+					//this.options.seriesColors.push(global.default_colors[5]);
+				}
+				
+				
+				if (unkn > 0){
+					values.push(['Unknown', unkn]); 
+					this.options.seriesColors.push(this.colors['unknown']);
+					//this.options.seriesColors.push(global.default_colors[10]);
+				}
+				
+				
+				
 				if(values.length != 0){
 					if (!this.chart){
 						log.debug('Create the pie '+this.id, this.logAuthor)
