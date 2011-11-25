@@ -7,17 +7,17 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	layout: 'fit',
 
+	first: false,
 	start: false,
+	shift: false,
 
 	logAuthor: '[line_graph]',
 
 	options: {},
 	chart: false,
 
-	// TODO
-	shift: false,
 
-	time_window: 86400,
+	time_window: 86400, //24 hours
 
 	initComponent: function() {
 		log.debug('Init Line Graph '+this.id, this.logAuthor)
@@ -81,7 +81,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			xAxis: {
-				min: Date.now() - (this.time_window * 1000),
+				//min: Date.now() - (this.time_window * 1000),
 				maxZoom: 60 * 60 * 1000, // 1 hour
 				labels: {
 					formatter: function() {
@@ -189,6 +189,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 					if (data[0].values.length > 0){
 						this.start = data[0].values[data[0].values.length-1][0];
+
+						this.shift = this.first < (this.start - (this.time_window*1000))
+						//log.debug('     + First: '+this.first, this.logAuthor)
+						//log.debug('     + First graph: '+(this.start - this.time_window), this.logAuthor)
+						log.debug('     + Shift: '+this.shift, this.logAuthor)
 					}
 					this.chart.redraw();
 				},
@@ -217,6 +222,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		if (! this.start){
 			log.debug('   + Set data', this.logAuthor)
+			this.first = values[0][0];
 			this.chart.series[metric_id].setData(values,true);
 		}else{
 			log.debug('   + Push data', this.logAuthor)
