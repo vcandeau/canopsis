@@ -42,7 +42,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('[controller][cgrid] - Bind events "'+id+'" ...')
 
 		grid.on('selectionchange',	this._selectionchange,	this)
-		grid.on('itemdblclick', 	this._editRecord,	this)
+		if(grid.opt_view_element){
+			grid.on('itemdblclick',this._viewElement,this)
+		}
+		else{
+			grid.on('itemdblclick',this._editRecord,this)
+		}
 		
 		
 		//Binding action for contextMenu
@@ -154,7 +159,19 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.selectionchange) {
 			this.selectionchange(view, records)
 		}
-	}, 
+	},
+	
+	_viewElement: function(view, item, index){
+		log.debug('[controller][cgrid] - clicked on element, function viewElement');
+		var main_tabs = Ext.getCmp('main-tabs')
+		main_tabs.add({
+					title: item.data.host_name,
+					xtype: 'TabsContent',
+					view_id: this.grid.opt_view_element_name,
+					autoshow: true,
+					nodeId : item.data._id,
+					closable: true,}).show();
+	},
 
 	_deleteButton: function(button) {
 		log.debug('[controller][cgrid] - clicked deleteButton');
