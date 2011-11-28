@@ -76,6 +76,11 @@ record1.chmod('o+r')
 record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"service"}'} ]
 storage.put(record1)
 
+record1 = crecord({'_id': 'view.hostDetail' }, type='view', name='Show host detail')
+record1.chmod('o+r')
+record1.data['items'] = [ { 'xtype': 'states'} ]
+storage.put(record1)
+
 ### Account
 record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
 record1.data['items'] = [ { 'xtype': 'AccountGrid'} ]

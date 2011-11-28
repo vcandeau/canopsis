@@ -86,12 +86,15 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 
 	setContent: function(){
-
 		var items = this.view.items
 		var totalWidth = this.getWidth() - 20
 
 		//General options
-		var nodeId = this.view.nodeId
+		if(this.nodeId){
+			var nodeId = this.nodeId;
+		} else {
+			var nodeId = this.view.nodeId;
+		}
 		var refreshInterval = this.view.refreshInterval
 		var nbColumns = this.view.nbColumns
 		var rowHeight = this.view.rowHeight
