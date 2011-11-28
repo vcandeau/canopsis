@@ -54,6 +54,9 @@ Ext.define('widgets.list.list' ,{
 			opt_tbar_duplicate: false,
 			opt_tbar_reload: true,
 			opt_tbar_delete: false,
+			
+			opt_view_element : true,
+			opt_view_element_name:'view.hostDetail'
 
 		});
 
