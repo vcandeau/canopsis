@@ -42,8 +42,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	
 	opt_tbar_clock: true,
 
-	opt_view_element : false,
-	opt_view_element_name : '',
+	opt_view_element : '',
 
 	features: [],
 	

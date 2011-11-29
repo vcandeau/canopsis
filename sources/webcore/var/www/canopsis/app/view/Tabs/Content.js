@@ -31,7 +31,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	style: {borderWidth:'0px'},
 
 	autoScroll: true,
-
+	
 	layout: {
 		type: 'table',
 		// The total column count must be specified here
@@ -60,6 +60,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
+				
 		Ext.Ajax.request({
 			url: '/rest/object/view/'+this.view_id,
 			scope: this,
@@ -86,12 +87,17 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 
 	setContent: function(){
-		var items = this.view.items
-		var totalWidth = this.getWidth() - 20
+		var items = this.view.items;
+		var totalWidth = this.getWidth() - 20;
+		
+		this.nodeId_refresh_values = []//tab with value request by widget, centralize them
+		this.taskList = []//tab of task launch in order to refresh ajax request
+		this.itemsReady = []//tab to buffer items before add them to page
 
 		//General options
-		if(this.nodeId){
-			var nodeId = this.nodeId;
+		if(this.options.nodeId){
+			//if id specified by cgrid (on-the-fly view)
+			var nodeId = this.options.nodeId;
 		} else {
 			var nodeId = this.view.nodeId;
 		}
@@ -108,6 +114,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug('Create '+nbColumns+' column(s)..', this.logAuthor)
 
 		if (items.length == 1 && nbColumns == 1) {
+			//one widget, so full mode
 			log.debug(' + Use full mode ...', this.logAuthor)
 			this.layout = 'fit'
 			item = items[0]
@@ -126,9 +133,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			if (! item.nodeId) { item.nodeId=nodeId}
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 
+			//Stock,manage and launch refreshed nodeId
+			if(item.nodeId){
+				this.manageNodeId(item);
+			}
+			//add item in the view
 			this.add(item)
 		}else{
-
+			//many widgets
 			this.removeAll();
 
 			//fixing layout (table goes wild without it)
@@ -161,10 +173,100 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
-
-				this.add(item)
+				
+				//Stock,manage and launch refreshed nodeId
+				if(item.nodeId){
+					this.manageNodeId(item);
+				}
+				
+				//buffer item
+				log.debug('------------push item--------------')
+				this.itemsReady.push(item);
+				//this.add(item);
 
 			}
+			//adding widgets to the page
+			var dtask = new Ext.util.DelayedTask(function(){
+				this.addReadyItem()
+			},this);
+			dtask.delay(500);
+			
+		}
+	},
+	
+	addReadyItem : function(){
+		for (i in this.itemsReady){
+			this.add(this.itemsReady[i])
+		}
+		log.debug(this);
+	},
+	
+	//Stock,manage and launch refreshed nodeId
+	manageNodeId: function(item) {
+		log.debug("start refresh task for " + item.nodeId , this.logAuthor)
+		if(item.refreshInterval > 0){
+			if(item.nodeId in this.taskList){
+				log.debug('ajax request already stored', this.logAuthor);
+				//check refresh time
+				//log.debug(item.nodeId)
+				//log.debug(this.nodeId_refresh_values)
+				if(item.refreshInterval < this.taskList[item.nodeId].refresh){
+					log.debug('set the new ajax request refresh time', this.logAuthor);
+					Ext.TaskManager.stop(this.taskList[item.nodeId].task);
+					this.taskList[item.nodeId].task.interval = item.refreshInterval * 1000
+					this.taskList[item.nodeId].refresh = item.refreshInterval * 1000
+					Ext.TaskManager.start(this.taskList[item.nodeId].task);
+				}
+			} else {
+				log.debug('nodeId not already check,start task every ' + item.refreshInterval + "second", this.logAuthor);
+				var task = {
+					run : function(){
+							log.debug(' + Get informations of ' + item.nodeId, this.logAuthor)
+							Ext.Ajax.request({
+								url: '/rest/inventory/event/' + item.nodeId,
+								scope: this,
+								//async :false,
+								success: function(response){
+									var data = Ext.JSON.decode(response.responseText)
+									data = data.data[0]
+									//pushing value
+									//log.debug('ajax request success, stocking result', this.logAuthor);
+									this.nodeId_refresh_values[item.nodeId] = data;
+									//log.dump(this.nodeId_refresh_values);
+								},
+								failure: function (result, request) {
+								log.debug('Ajax request failed', this.logAuthor)
+								} 
+							});
+						},
+					scope : this,
+					interval : item.refreshInterval * 1000
+				}
+				//start task and pushing it in tasklist
+				Ext.TaskManager.start(task);
+				this.taskList[item.nodeId] = {'task':task,'refresh':item.refreshInterval}
+			}
+		} else {
+			log.debug("refresh nodeId set to 0, one ajax request set", this.logAuthor)
+			//if already in tasklist do nothing (means someone is already refresh it, data already available
+			if(!(item.nodeId in this.taskList)){
+				log.debug("request " + item.nodeId + "without task" , this.logAuthor)
+				Ext.Ajax.request({
+					url: '/rest/inventory/event/' + item.nodeId,
+					scope: this,
+					async :false,
+					success: function(response){
+						var data = Ext.JSON.decode(response.responseText)
+						data = data.data[0]
+						//pushing value
+						this.nodeId_refresh_values[item.nodeId] = data;
+					},
+					failure: function (result, request) {
+					log.debug('Ajax request failed', this.logAuthor)
+					} 
+				});
+			}
+			
 		}
 	},
     
@@ -173,6 +275,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
+		}
+		
+		//stop all the task
+		log.debug("Stopping all task", this.logAuthor)
+		for (i in this.taskList){
+			Ext.TaskManager.stop(this.taskList[i].task);
 		}
 		
 		if (this.localstore_record){
