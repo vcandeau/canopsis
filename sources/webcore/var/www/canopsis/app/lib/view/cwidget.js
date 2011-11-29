@@ -34,7 +34,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	logAuthor: '[view][cwidget]',
 
 	initComponent: function() {
-		log.debug('InitComponent '+this.id, this.logAuthor)
+		//log.debug('InitComponent '+this.id, this.logAuthor)
 
 		if (this.title == ''){
 			this.title = false;
@@ -53,7 +53,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		if (this.refreshInterval > 0){
 
-			log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
+			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
 
 			this.task = {
 				run: this.doRefresh,
@@ -79,6 +79,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	doRefresh: function (){
 		log.debug('doRefresh', this.logAuthor)
+		/*
 		if (this.nodeId) {
 			if (this.nodeId_refresh){
 				//this.setLoading(true)
@@ -105,6 +106,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}else{
 			log.debug(" + No node ...", this.logAuthor)
 			this.onRefresh(this.nodeData)
+		}
+		*/
+		var dataArray = this.mytab.nodeId_refresh_values
+		if(dataArray[this.nodeId]){
+			this.onRefresh(dataArray[this.nodeId])
 		}
 
 	},
