@@ -34,7 +34,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	logAuthor: '[view][cwidget]',
 
 	initComponent: function() {
-		//log.debug('InitComponent '+this.id, this.logAuthor)
+		log.debug('InitComponent '+this.id, this.logAuthor)
 
 		if (this.title == ''){
 			this.title = false;
@@ -53,7 +53,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		if (this.refreshInterval > 0){
 
-			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
+			log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
 
 			this.task = {
 				run: this.doRefresh,
