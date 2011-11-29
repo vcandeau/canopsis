@@ -163,14 +163,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	
 	_viewElement: function(view, item, index){
 		log.debug('[controller][cgrid] - clicked on element, function viewElement');
-		var main_tabs = Ext.getCmp('main-tabs')
-		main_tabs.add({
-					title: item.data.host_name,
-					xtype: 'TabsContent',
-					view_id: this.grid.opt_view_element_name,
-					autoshow: true,
-					nodeId : item.data._id,
-					closable: true,}).show();
+		add_view_tab(this.grid.opt_view_element, item.data.host_name, true, {'nodeId' : item.data._id}, true, true)
 	},
 
 	_deleteButton: function(button) {
