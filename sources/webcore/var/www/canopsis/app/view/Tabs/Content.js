@@ -180,7 +180,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				}
 				
 				//buffer item
-				log.debug('------------push item--------------')
 				this.itemsReady.push(item);
 				//this.add(item);
 
@@ -190,6 +189,16 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				this.addReadyItem()
 			},this);
 			dtask.delay(500);
+			
+			//pause task if tab not shown
+			log.debug("Binding auto start/stop ajax request on tab show/hide", this.logAuthor)
+			this.on('show', function(){
+				this.startAllTask();
+			}, this);
+			this.on('hide', function(){
+				this.stopAllTask();
+			}, this);
+			
 			
 		}
 	},
@@ -222,6 +231,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				var task = {
 					run : function(){
 							log.debug(' + Get informations of ' + item.nodeId, this.logAuthor)
+							log.debug(item)
 							Ext.Ajax.request({
 								url: '/rest/inventory/event/' + item.nodeId,
 								scope: this,
@@ -270,17 +280,27 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 	},
     
+    stopAllTask: function(){
+		for (i in this.taskList){
+			Ext.TaskManager.stop(this.taskList[i].task);
+		}
+	},
+	
+	startAllTask: function(){
+		for (i in this.taskList){
+			Ext.TaskManager.start(this.taskList[i].task);
+		}
+	},
+    
 	beforeclose: function(tab, object){
+		//stop all the task
+		log.debug("Stopping all task", this.logAuthor)
+		this.stopAllTask();
+		
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
-		}
-		
-		//stop all the task
-		log.debug("Stopping all task", this.logAuthor)
-		for (i in this.taskList){
-			Ext.TaskManager.stop(this.taskList[i].task);
 		}
 		
 		if (this.localstore_record){
