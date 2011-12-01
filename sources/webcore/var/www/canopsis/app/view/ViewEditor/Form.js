@@ -469,7 +469,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							fields: ['metric'],
 							proxy: {
 									type: 'rest',
-									url: '/perfstore/' + storeUrl,
+									url: '/getMetric/' + storeUrl,
 									reader: {
 										type: 'json',
 										root: 'data',
@@ -498,7 +498,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							fields: ['metric'],
 							proxy: {
 									type: 'rest',
-									url: '/perfstore/' + storeUrl,
+									url: '/getMetric/' + storeUrl,
 									reader: {
 										type: 'json',
 										root: 'data',
@@ -526,7 +526,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var panelItems = panel.items.items
 		for (i in panelItems){
 			if(panelItems[i].xtype == 'combo'){
-				panelItems[i].store.proxy.url = '/perfstore/' + storeUrl;
+				panelItems[i].store.proxy.url = '/getMetric/' + storeUrl;
 				panelItems[i].lastQuery = null;
 				if(panelItems[i].disabled == true){
 					panelItems[i].setDisabled(false);
