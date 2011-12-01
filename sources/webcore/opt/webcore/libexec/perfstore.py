@@ -97,38 +97,36 @@ def perfstore_get(_id, metrics=None, start=None, stop=None):
 		output = []
 		values = []
 		if data:
-			records = [ data.dump(json=True) ]
+			output = [ data.dump(json=True) ]
+			"""
 			for record in records:
 				for metric in record['metrics']:
 					output.append({'metric': metric })
+			"""
 		
 		output = {'total': len(output), 'success': True, 'data': output}
  
 	return output
+
 	
-"""	
-@get('/perfstore/:_id',apply=[check_auth])
-def perfstore_get(_id):
-	
-	#get the session (security)
+@get('/getMetric/:_id',apply=[check_auth])
+def perfstore_getMetric(_id):
 	account = get_account()
-	
 	storage = get_storage(namespace='perfdata', logging_level=logging.DEBUG)
-	
-	logger.debug("GET:")
-	logger.debug(" + _id: "+str(_id))
-	
-	#data = perfstore.get(_id)
 	data = storage.get(_id, account=account)
 	
-	#data['metrics']
+	output = []
+	values = []
+	if data:
+		records = [ data.dump(json=True) ]
+		for record in records:
+			for metric in record['metrics']:
+				output.append({'metric': metric })
 	
-	#output = []
-	
-	#output.append(data['metrics'])
+	output = {'total': len(output), 'success': True, 'data': output}
 	
 	return output
-"""
+
 	
 	
 	
