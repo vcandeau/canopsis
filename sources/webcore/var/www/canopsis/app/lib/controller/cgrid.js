@@ -96,7 +96,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		if(grid.opt_keynav_del){
-			log.debug('binding delete button')
 			Ext.create('Ext.util.KeyNav', id, {
 						scope: this,
 						del: this._deleteButton
@@ -299,6 +298,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					title: 'Edit '+item.raw.crecord_name,
 					recordName: item.internalId,
 					xtype: this.formXtype,
+					editing: true,
 					id: id,
 					closable: true,}).show();
 				
