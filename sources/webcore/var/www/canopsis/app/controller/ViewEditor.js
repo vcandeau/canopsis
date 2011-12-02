@@ -40,7 +40,6 @@ Ext.define('canopsis.controller.ViewEditor', {
 	
 	_saveForm : function(form){
 		if (form.GlobalOptions.getForm().isValid()){
-		
 			var store = this.grid.store;
 			var record = Ext.create('canopsis.model.view', data);
 			
@@ -63,43 +62,62 @@ Ext.define('canopsis.controller.ViewEditor', {
 			} else {
 				record.set('id','view.'+ global.account.user + '.' + record_name);
 			}
-			//log.debug('id : ' + record.get('id'));
-			record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
-			//log.debug('refreshInterval : ' + record.get('refreshInterval'));
-			record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
-			//log.debug('nbColumns : ' + record.get('nbColumns'));
-			record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
-			//log.debug('rowHeight : ' + record.get('rowHeight'));
 			
-			
-			//get nodeId if defined
-			//panel = form.GlobalOptions.down('gridpanel');
-			_nodeId = form.globalNodeId.getStore().getAt(0);
-			//log.debug(_nodeId);
-			if (_nodeId){
-				log.debug('there is a nodeId :');
-				log.debug(_nodeId.get('id'));
-				record.set('nodeId', _nodeId.get('id'));
+			//check if view already exist
+			var already_exist = false;
+			recordname = record.get('id')
+			store.findBy(
+				function(storeRecord, id, aleady_exist){
+					log.dump(storeRecord.get('id')); log.dump(recordname)
+					if(storeRecord.get('id') == record.get('id')){
+						log.debug('['+this.id+'][validateForm] -  User already exist');
+						already_exist = true;  // a record with this data exists
+					}
+				}, this
+			);
+
+			if(!already_exist || form.editing){
+				//log.debug('id : ' + record.get('id'));
+				record.set('refreshInterval',form.down('numberfield[name=refreshInterval]').getValue());
+				//log.debug('refreshInterval : ' + record.get('refreshInterval'));
+				record.set('nbColumns',form.down('numberfield[name=nbColumns]').getValue());
+				//log.debug('nbColumns : ' + record.get('nbColumns'));
+				record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
+				//log.debug('rowHeight : ' + record.get('rowHeight'));
+
+				//get nodeId if defined
+				//panel = form.GlobalOptions.down('gridpanel');
+				_nodeId = form.globalNodeId.getStore().getAt(0);
+				//log.debug(_nodeId);
+				if (_nodeId){
+					log.debug('there is a nodeId :');
+					log.debug(_nodeId.get('id'));
+					record.set('nodeId', _nodeId.get('id'));
+				}
+				
+				log.debug('[controller][cgrid][form] - Store record in store');
+				log.debug(record);
+				output = store.add(record);
+				log.debug('this record have added to store(what add() have returned) :')
+				log.debug(output);
+				
+				var dtask = new Ext.util.DelayedTask(function(){
+					this.grid.store.load();
+				},this);
+				dtask.delay(500);
+
+				//reload menu view
+				Ext.data.StoreManager.lookup('Menu').load();
+
+				this._cancelForm(form);
+			} else {
+				Ext.MessageBox.show({
+				title: 'this view already exist !',
+				msg: 'you can\'t add the same view twice',
+				icon: Ext.MessageBox.WARNING,
+  				buttons: Ext.Msg.OK
+			});
 			}
-			
-			log.debug('[controller][cgrid][form] - Store record in store');
-			log.debug(record);
-			output = store.add(record);
-			log.debug('this record have added to store(what add() have returned) :')
-			log.debug(output);
-			
-			var dtask = new Ext.util.DelayedTask(function(){
-				this.grid.store.load();
-			},this);
-			dtask.delay(500);
-			
-			//store.load();
-			
-			//reload menu view
-			Ext.data.StoreManager.lookup('Menu').load();
-			
-			
-			this._cancelForm(form);
 		}
 	},
 

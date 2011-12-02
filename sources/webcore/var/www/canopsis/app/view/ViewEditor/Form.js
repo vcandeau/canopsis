@@ -388,6 +388,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				});
 			}
 			
+			//activate combobox if prefetch
+			if(this.widgetNodeId.prefetcg_id != undefined){
+				this.loadComboBox()
+			}
 			
 			//showing and loading the window
 			this.window.show();
@@ -398,7 +402,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			////////////////////Bind events////////////////
 			//bind action when store change
 			if (item.data.options){
-				this.widgetNodeId.store.on('datachanged', function(){this.refreshComboStore(this.window.widgetOptionsPanel,this.widgetNodeId.getStore().getAt(0))}, this);
+				this.widgetNodeId.store.on('datachanged', function(){
+					this.refreshComboStore(this.window.widgetOptionsPanel,this.widgetNodeId.getStore().getAt(0))}, this);
 			}
 			var WidgetForm = this.window.down('cform')
 			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
@@ -419,11 +424,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					{ 
 						for(var i in item.data.options)
 						{
-							record.data.options[i].value = new_values[record.data.options[i].name]
 							//cleaning combobox store
 							if(record.data.options[i].xtype == "combo"){
 								record.data.options[i].store = null;
 							}
+							record.data.options[i].value = new_values[record.data.options[i].name]
 						}	
 					}
 					
