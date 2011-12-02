@@ -94,6 +94,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					enter: this._searchRecord
 				});
 		}
+
+		Ext.create('Ext.util.KeyNav', id, {
+					scope: this,
+					del: this._deleteButton
+				});
+		
 		
 		//Duplicate buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]')
