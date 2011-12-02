@@ -25,6 +25,8 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	
 	model: 'view',
 	store: 'View',
+	
+	multiSelect: true,
 
 	opt_duplicate: true,
 	opt_tbar_duplicate: true,
