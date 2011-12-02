@@ -162,8 +162,18 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		this.ItemsStore = Ext.create('Ext.data.Store', {
 				model: 'cinventory',});
 
-		var ItemsList = Ext.create('Ext.grid.Panel', {
+		var ItemsList = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.ItemsStore,
+			
+			opt_paging: false,
+			
+			opt_tbar: false,
+			opt_tbar_add:false,	
+			
+			opt_tbar_reload:false,
+			opt_tbar_delete:false,
+			
+			opt_keynav_del: true,
 			
 			viewConfig: {
 				plugins: {
@@ -258,6 +268,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//delete row listener
 		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
 		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
+		//deleteRowKeynav
+		Ext.create('Ext.util.KeyNav', this.id, {
+						scope: ItemsList,
+						del: function(){
+							var selection = this.getSelectionModel().getSelection();
+							if (selection) {
+								log.debug("[view][form][itemList] - Remove record ...")
+								this.store.remove(selection);
+							}
+						}
+		});
 		
 		//clear all listener
 		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
@@ -266,6 +287,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//don't recognize by the event datachanged, must trigger by hand
 			this.createPreview(this.ItemsStore,Preview,GlobalOptions);
 		},this);
+		
 	},
 	
 	ModifyItem : function(view, item, index){
