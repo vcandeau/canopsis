@@ -87,7 +87,13 @@ Ext.define('canopsis.controller.ViewEditor', {
 			output = store.add(record);
 			log.debug('this record have added to store(what add() have returned) :')
 			log.debug(output);
-			store.load();
+			
+			var dtask = new Ext.util.DelayedTask(function(){
+				this.grid.store.load();
+			},this);
+			dtask.delay(500);
+			
+			//store.load();
 			
 			//reload menu view
 			Ext.data.StoreManager.lookup('Menu').load();
