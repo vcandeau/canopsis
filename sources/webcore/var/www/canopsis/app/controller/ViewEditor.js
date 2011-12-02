@@ -104,7 +104,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 				var dtask = new Ext.util.DelayedTask(function(){
 					this.grid.store.load();
 				},this);
-				dtask.delay(500);
+				dtask.delay(400);
 
 				//reload menu view
 				Ext.data.StoreManager.lookup('Menu').load();
