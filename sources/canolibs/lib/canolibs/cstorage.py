@@ -32,16 +32,11 @@ import time
 import sys, os
 import ConfigParser
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-
-
 CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 class cstorage(object):
-	def __init__(self, account, namespace='object', logging_level=logging.INFO, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
+	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
 
 
 		try:
