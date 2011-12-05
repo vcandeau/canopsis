@@ -65,7 +65,11 @@ function add_view_tab(view_id, title, closable, options, autoshow, save, tab_id)
 	log.debug("Add view tab '"+view_id+"'")
 
 	var maintabs = Ext.getCmp('main-tabs');
-	var tab_id = view_id+ tab_id +'.tab'
+	if(tab_id){
+		var tab_id = view_id+ tab_id +'.tab'
+	} else {
+		var tab_id = view_id +'.tab'
+	}
 	var tab = Ext.getCmp(tab_id);
 
 	//if (! closable) { closable = true }
