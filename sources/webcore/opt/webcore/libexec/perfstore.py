@@ -23,12 +23,6 @@ import sys, os, logging, json, time
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, response
 
-from StringIO import StringIO
-
-## Canopsis
-from cstorage import get_storage
-from cperfstore import cperfstore
-
 #import protection function
 from libexec.auth import check_auth, get_account
 
@@ -42,23 +36,38 @@ logging.basicConfig(level=logging_level,
 )
 logger = logging.getLogger("rest")
 
-## Initialisation
-perfstore = cperfstore(storage=get_storage(namespace='perfdata'), logging_level=logging_level)
+# Modules
+from pyperfstore import node
+from pyperfstore import mongostore
+from ctools import parse_perfdata
+
+perfstore = mongostore(mongo_collection='perfdata')
 
 #########################################################################
 
 #### GET@
-@get('/perfstore/:_id',apply=[check_auth])
-@get('/perfstore/:_id/:metrics',apply=[check_auth])
-@get('/perfstore/:_id/:metrics/:start',apply=[check_auth])
-@get('/perfstore/:_id/:metrics/:start/:stop',apply=[check_auth])
-def perfstore_get(_id, metrics=None, start=None, stop=None):
+@get('/perfstore/node/:_id',apply=[check_auth])
+def perfstore_node_get(_id):
+	mynode = node(_id, storage=perfstore)
+
+	output = [ mynode.dump() ]
+
+	return {'total': len(output), 'success': True, 'data': output}
+
+#### GET@
+@get('/perfstore/values/:_id',apply=[check_auth])
+@get('/perfstore/values/:_id/:metrics',apply=[check_auth])
+@get('/perfstore/values/:_id/:metrics/:start',apply=[check_auth])
+@get('/perfstore/values/:_id/:metrics/:start/:stop',apply=[check_auth])
+def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 
 	if start:
 		start = int(int(start) / 1000)
 
 	if not stop:
 		stop = int(time.time())
+	else:
+		stop = int(int(start) / 1000)
 
 	if not start:
 		start = stop - 86400
@@ -76,9 +85,15 @@ def perfstore_get(_id, metrics=None, start=None, stop=None):
 
 		output = []
 
+		mynode = node(_id, storage=perfstore)
+
 		for metric in metrics:
 			if metric:
-				data = perfstore.get(_id, metric, start, stop)
+				#data = perfstore.get(_id, metric, start, stop)
+				try:
+					data = mynode.metric_get_values(metric, start, stop)
+				except Exception, err:
+					print err
 
 				values = []
 
@@ -109,19 +124,19 @@ def perfstore_get(_id, metrics=None, start=None, stop=None):
 	return output
 
 	
-@get('/getMetric/:_id',apply=[check_auth])
+@get('/perfstore/metrics/:_id',apply=[check_auth])
 def perfstore_getMetric(_id):
-	account = get_account()
-	storage = get_storage(namespace='perfdata', logging_level=logging.DEBUG)
-	data = storage.get(_id, account=account)
+
+	logger.error("GET metrics of '%s'" % _id)
+
+	mynode = node(_id, storage=perfstore)
+
+	metrics = mynode.metric_get_all_dn()
 	
 	output = []
-	values = []
-	if data:
-		records = [ data.dump(json=True) ]
-		for record in records:
-			for metric in record['metrics']:
-				output.append({'metric': metric })
+	if metrics:
+		for metric in metrics:
+			output.append({'metric': metric })
 	
 	output = {'total': len(output), 'success': True, 'data': output}
 	
