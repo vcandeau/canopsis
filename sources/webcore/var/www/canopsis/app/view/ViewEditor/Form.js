@@ -118,6 +118,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								name: 'rowHeight',
 								value: 200,
 								minValue: 0
+							},{
+								xtype: 'checkboxfield',
+								boxLabel  : 'Template :',
+								name      : 'template',
+								boxLabelAlign : 'before'
 							},
 								this.globalNodeId
 						]
