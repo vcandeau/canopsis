@@ -61,11 +61,11 @@ function load_tabs_from_store(){
 	//}, this);
 }
 
-function add_view_tab(view_id, title, closable, options, autoshow, save){
+function add_view_tab(view_id, title, closable, options, autoshow, save, tab_id){
 	log.debug("Add view tab '"+view_id+"'")
 
 	var maintabs = Ext.getCmp('main-tabs');
-	var tab_id = view_id+'.tab'
+	var tab_id = view_id+ tab_id +'.tab'
 	var tab = Ext.getCmp(tab_id);
 
 	//if (! closable) { closable = true }
