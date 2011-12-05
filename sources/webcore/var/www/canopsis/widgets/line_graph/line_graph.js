@@ -71,7 +71,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var title = ""
 
 		if (! this.title) {
-			log.dump(this.nodeData)
 			if (this.nodeData.service_description) {
 				title = this.nodeData.service_description;
 			}else if (this.nodeData.host_name){
