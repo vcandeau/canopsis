@@ -28,7 +28,7 @@ from cstorage import get_storage
 from caccount import caccount
 
 class cconfig(crecord_ng):
-	def __init__(self, logging_level=logging.INFO, account=None, namespace=None, storage=None, *args, **kargs):
+	def __init__(self, logging_level=logging.ERROR, account=None, namespace=None, storage=None, *args, **kargs):
 
 		self.logger = logging.getLogger('config')
 		self.logger.setLevel(logging_level)

@@ -22,11 +22,7 @@ import re, logging, socket, time
 
 legend = ['ok','warning','critical','unknown']
 
-
-logging_level=logging.INFO
-
 logger = logging.getLogger('ctools')
-logger.setLevel(logging_level)
 
 def calcul_pct(data, total=None):
 	if not total:
