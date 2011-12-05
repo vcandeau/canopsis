@@ -76,6 +76,10 @@ class dca(object):
 		self.size	= data['size']
 		self.values_id	= data['values_id']
 
+		if self.size >= self.max_size:
+			self.logger.debug(" + DCA is full")
+			self.full = True
+
 	"""def save(self):
 		dump = self.dump()
 
