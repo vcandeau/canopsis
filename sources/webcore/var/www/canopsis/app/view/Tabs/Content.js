@@ -60,7 +60,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
-				
+			
 		Ext.Ajax.request({
 			url: '/rest/object/view/'+this.view_id,
 			scope: this,
@@ -90,9 +90,31 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
 		
-		this.nodeId_refresh_values = []//tab with value request by widget, centralize them
+		//store with value request by widget, centralize them
+		var model = Ext.ModelManager.getModel('canopsis.model.event');
+		if (! model){
+			Ext.define('canopsis.model.event', {
+				extend: 'Ext.data.Model',
+				fields: [
+					{name: '_id'},
+					{name: 'timestamp'},
+					{name: 'state'},
+					{name: 'state_type'},
+					{name: 'perf_data_array'},
+					{name: 'hostname'}
+				],
+
+			});
+		}
+		
+		this.nodeId_refresh_values = Ext.create('canopsis.lib.store.cstore', {
+			model: 'canopsis.model.event',
+		})
+		
+		//this.nodeId_refresh_values = []//tab with value request by widget, centralize them
 		this.taskList = []//tab of task launch in order to refresh ajax request
 		this.itemsReady = []//tab to buffer items before add them to page
+		this.metricsBuffer = [] //where you stock new metric values for fetchOldValues
 
 		//General options
 		if(this.options.nodeId){
@@ -182,11 +204,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				//buffer item
 				this.itemsReady.push(item);
 				//this.add(item);
+				
 
 			}
 			//adding widgets to the page
 			var dtask = new Ext.util.DelayedTask(function(){
 				this.addReadyItem()
+				//fetch test
+				//this.fetchOldValues();
 			},this);
 			dtask.delay(500);
 			
@@ -210,6 +235,106 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug(this);
 	},
 	
+	
+	//don't mind about this code
+/*	
+	fetchOldValues: function(time){
+		time = 1322757247
+		this.stopAllTask();
+		//for each nodeId stored
+		log.debug('fetching metrics at time' + time, this.logAuthor)
+		log.dump(this.nodeId_refresh_values)
+		for (i in this.nodeId_refresh_values){
+			//log.dump(this.nodeId_refresh_values);
+			//if there is a perf_data_array
+			var perfArray = this.nodeId_refresh_values[i].perf_data_array
+			log.debug('the nodeId is : ' + i)
+			if(perfArray){
+				log.debug(perfArray)
+				var metrics = [];
+				//get metrics of this node
+				for( y in perfArray){
+					metrics.push(y);
+				}
+				
+				log.debug('metric are ' + metrics);
+				
+				//url = '/perfstore/'+ i +'/'+ metrics +'/' + '1322665971000/1322665971',//timestamp * 1000 
+				url = '/perfstore/'+ i +'/'+ metrics +'/' + time * 1000 + '/' + time,//timestamp * 1000 
+				//log.debug('the url')
+				//log.dump(url)
+				
+				//request metrics from this store
+				Ext.Ajax.request({
+						url: url ,
+						scope: this,
+						success: function(response){
+							var data = Ext.JSON.decode(response.responseText)
+							data = data.data
+							log.debug('-------------dump ajax request-----------')
+							log.dump(data)
+							//log.dump(this.nodeId_refresh_values[i].perf_data_array)
+							this.metricsBuffer.push(data)
+							//log.debug('buffered metrics')
+							//log.dump(this.metricsBuffer)
+							
+							//count number of node, .length return 0
+							var count = 0
+							for(c in this.nodeId_refresh_values){
+								count++
+							}
+
+							//log.debug('metricsBuffer.length : ' + this.metricsBuffer.length);
+							//log.debug('this.nodeId_refresh_values : ' + count);
+							if(this.metricsBuffer.length == count){
+								this.updateMetricsFromBuffer()
+							}
+						},
+						failure: function (result, request) {
+							log.debug('Ajax request failed', this.logAuthor)
+						} 
+				});
+			} else {
+				//means that the nodeId doesn't have metrics
+				this.metricsBuffer.push(null);
+			}
+		}
+	},
+	
+	//update metrics in nodeId_refresh_values from metricsBuffer
+	updateMetricsFromBuffer : function(){
+		var metricsLength = this.metricsBuffer.length -1 
+		var counter = 0;
+		for( i in this.nodeId_refresh_values ){
+			var metrics = this.metricsBuffer[counter]//.metric;
+			if(metrics){				
+				//log.debug(metrics)
+				for(j in metrics){
+					log.debug('-----------')
+					//log.dump(metrics[j]);
+					//log.dump(metrics[j].metric);
+					if(metrics[j].values[0]){
+						log.dump(metrics[j].values[0][1]);
+						log.debug('------out-----');
+						//log.dump(this.nodeId_refresh_values[i])	
+						//log.dump(this.nodeId_refresh_values[i].perf_data_array)
+						if(this.nodeId_refresh_values[i].perf_data_array){
+							log.dump(this.nodeId_refresh_values[i].perf_data_array[metrics[j].metric])
+							log.debug('old value')
+							log.dump(this.nodeId_refresh_values[i].perf_data_array[metrics[j].metric].value)
+							this.nodeId_refresh_values[i].perf_data_array[metrics[j].metric].value = metrics[j].values[0][1]; //values[0] means the first value of an metric array, [1] is the value of array 0 is the timestamp
+							log.debug('new value')
+							log.dump(this.nodeId_refresh_values[i].perf_data_array[metrics[j].metric].value)
+						}
+					}
+				}
+			}
+			counter ++
+		}
+		//clean buffer
+		this.metricsBuffer = []
+	},
+*/	
 	//Stock,manage and launch refreshed nodeId
 	manageNodeId: function(item) {
 		log.debug("start refresh task for " + item.nodeId , this.logAuthor)
@@ -231,17 +356,21 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				var task = {
 					run : function(){
 							log.debug(' + Get informations of ' + item.nodeId, this.logAuthor)
-							log.debug(item)
 							Ext.Ajax.request({
 								url: '/rest/inventory/event/' + item.nodeId,
 								scope: this,
-								//async :false,
 								success: function(response){
 									var data = Ext.JSON.decode(response.responseText)
 									data = data.data[0]
-									//pushing value
-									//log.debug('ajax request success, stocking result', this.logAuthor);
-									this.nodeId_refresh_values[item.nodeId] = data;
+									log.debug('ajax request success, stocking result', this.logAuthor);
+									//deleting old record if exist
+									var oldRecord = this.nodeId_refresh_values.find('_id', data._id)
+									if(oldRecord != -1){
+										log.debug('old record found, remove it');
+										this.nodeId_refresh_values.removeAt(oldRecord);
+									}									
+									var record = Ext.create('canopsis.model.event', data);
+									this.nodeId_refresh_values.add(record);
 									//log.dump(this.nodeId_refresh_values);
 								},
 								failure: function (result, request) {
@@ -255,6 +384,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				//start task and pushing it in tasklist
 				Ext.TaskManager.start(task);
 				this.taskList[item.nodeId] = {'task':task,'refresh':item.refreshInterval}
+				//log.debug('--------------------task are : -------------------');
+				//log.dump(this.taskList)
 			}
 		} else {
 			log.debug("refresh nodeId set to 0, one ajax request set", this.logAuthor)
@@ -264,12 +395,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				Ext.Ajax.request({
 					url: '/rest/inventory/event/' + item.nodeId,
 					scope: this,
-					async :false,
+					//async :false,
 					success: function(response){
 						var data = Ext.JSON.decode(response.responseText)
 						data = data.data[0]
 						//pushing value
-						this.nodeId_refresh_values[item.nodeId] = data;
+						var record = Ext.create('canopsis.model.event', data);
+						this.nodeId_refresh_values.add(record);
 					},
 					failure: function (result, request) {
 					log.debug('Ajax request failed', this.logAuthor)
