@@ -120,6 +120,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		//log.debug('record  :  ');
 		//log.dump(record);
 		if(record){
+			this.nodeData = record.data
 			this.onRefresh(record.data)
 		} else {
 			log.debug("Ajax request not stored", this.logAuthor)
