@@ -27,11 +27,10 @@ from txamqp.content import Content
 from pymongo import Connection
 import json
 
-from cstorage import cstorage
-from crecord import crecord
-from caccount import caccount
+from ctools import parse_perfdata
 
-from cperfstore import cperfstore
+from pyperfstore import node
+from pyperfstore import mongostore
 
 ########################################################
 #
@@ -39,16 +38,15 @@ from cperfstore import cperfstore
 #
 ########################################################
 
-DAEMON_NAME = "amqp2perfstore"
+DAEMON_NAME = "amqp2perfstore2"
 DAEMON_TYPE = "storage"
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.ERROR,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
+
 logger = logging.getLogger(DAEMON_NAME)
 myamqp = None
-
-DEFAULT_ACCOUNT = caccount(user="root", group="root")
 
 ########################################################
 #
@@ -63,8 +61,34 @@ def on_message(msg):
 	
 	perf_data = event['perf_data']
 	if perf_data != "":
-		#perfstore.put(_id, perf_data, event['timestamp'])
-		perfstore.put(_id, perf_data)
+		try:
+			perf_data = parse_perfdata(perf_data)
+		except:
+			raise Exception("Imposible to parse: " + str(perf_data))
+
+		mynode = node(_id, storage=perfstore)
+
+		#{u'rta': {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, u'pl': {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'}}
+
+		for metric in perf_data.keys():
+			value = perf_data[metric]['value']
+			timestamp = int(event['timestamp'])
+			try:
+				unit = str(perf_data[metric]['unit'])
+			except:
+				unit = None
+	
+			if int(value) == value:
+				value = int(value)
+			else:
+				value = float(value)
+			
+			logger.debug(" + Put metric '%s' (%s %s) for ts %s ..." % (metric, value, unit, timestamp))
+
+			mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+
+		#del mynode
+			
 	
 
 ########################################################
@@ -91,17 +115,14 @@ def signal_handler(signum, frame):
 ########################################################
 
 amqp=None
-storage=None
 perfstore = None
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
 	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, storage, perfstore
+	global amqp, perfstore
 
-	storage = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
-
-	perfstore = cperfstore(storage=storage, logging_level=logging.DEBUG)
+	perfstore = mongostore(mongo_collection='perfdata')
 
 	# AMQP
 	amqp = camqp()
