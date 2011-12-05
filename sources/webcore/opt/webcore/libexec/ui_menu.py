@@ -70,7 +70,11 @@ def get_all_menu():
 				data['text'] = record.name
 				data['view'] = record._id
 				data['leaf'] = True
-				output.append(data)
+				if 'template' in data:
+					if not data['template'] == True:
+						output.append(data)
+				else:
+					output.append(data)
 				
 		output = json.dumps(output)
 		#logger.debug(" + Output: "+str(output))
