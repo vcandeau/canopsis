@@ -50,7 +50,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	get_config: function(){
 		log.debug(" + Get config "+this.id+" ...", this.logAuthor)
 		Ext.Ajax.request({
-			url: '/rest/perfdata/raw/'+this.nodeId,
+			url: '/perfstore/node/'+this.nodeId,
 			scope: this,
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
@@ -145,18 +145,19 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 
 		log.debug(" + Set Metrics Series", this.logAuthor)
-		this.metrics = config.metrics
-			
-		var i;
-		for (i in config.metrics){
-			metric = config.metrics[i]
+		this.metrics = []
+		
+		var i=0;
+		for (metric in config.metrics){
 			log.debug("   + Metric "+metric+":", this.logAuthor)
+
+			this.metrics.push(metric)
 
 			this.start[metric] = false
 
 			var name = metric
-			if ( config.perf_data[metric]['unit']){
-				name = name + " ("+config.perf_data[metric]['unit']+")"
+			if ( config.metrics[metric]['bunit']){
+				name = name + " ("+config.metrics[metric]['bunit']+")"
 			}
 			log.debug("     + Name: "+name, this.logAuthor)
 
@@ -172,6 +173,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.debug("     + Color: "+color, this.logAuthor)
 
 			this.options.series.push({name: name, data: []})
+			i = i+1;
 		}
 
 
@@ -189,7 +191,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
 
-			var url = '/perfstore/'+this.nodeId+'/'+metrics_txt
+			var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt
 
 			if (this.start){
 				// only last values
