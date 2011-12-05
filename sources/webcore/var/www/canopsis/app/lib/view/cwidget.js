@@ -69,12 +69,20 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				this.mytab.on('hide', function(){
 					Ext.TaskManager.stop(this.task);
 				}, this);
+				this.mytab.on('timeSet', function(){
+					Ext.TaskManager.stop(this.task);
+					this.timeNavigator;
+				}, this);
 			}
 
 		}else{
 			this.on('afterrender', this.doRefresh, this);
 		}
 			
+	},
+	
+	timeNavigator: function(){
+		this.doRefresh();
 	},
 
 	doRefresh: function (){
@@ -108,9 +116,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.onRefresh(this.nodeData)
 		}
 		*/
-		var dataArray = this.mytab.nodeId_refresh_values
-		if(dataArray[this.nodeId]){
-			this.onRefresh(dataArray[this.nodeId])
+		var record = this.mytab.nodeId_refresh_values.findRecord('_id', this.nodeId);
+		//log.debug('record  :  ');
+		//log.dump(record);
+		if(record){
+			this.onRefresh(record.data)
+		} else {
+			log.debug("Ajax request not stored", this.logAuthor)
+			this.onRefresh()
 		}
 
 	},
