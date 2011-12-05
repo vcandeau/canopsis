@@ -95,11 +95,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				});
 		}
 
-		Ext.create('Ext.util.KeyNav', id, {
-					scope: this,
-					del: this._deleteButton
-				});
-		
+		if(grid.opt_keynav_del){
+			Ext.create('Ext.util.KeyNav', id, {
+						scope: this,
+						del: this._deleteButton
+			});
+		}
 		
 		//Duplicate buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]')
@@ -169,7 +170,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	
 	_viewElement: function(view, item, index){
 		log.debug('[controller][cgrid] - clicked on element, function viewElement');
-		add_view_tab(this.grid.opt_view_element, item.data.host_name, true, {'nodeId' : item.data._id}, true, true)
+		add_view_tab(this.grid.opt_view_element, item.data.host_name, true, {'nodeId' : item.data._id}, true, true,item.data.host_name)
 	},
 
 	_deleteButton: function(button) {
@@ -297,6 +298,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					title: 'Edit '+item.raw.crecord_name,
 					recordName: item.internalId,
 					xtype: this.formXtype,
+					editing: true,
 					id: id,
 					closable: true,}).show();
 				

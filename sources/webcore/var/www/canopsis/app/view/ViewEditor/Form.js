@@ -118,6 +118,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								name: 'rowHeight',
 								value: 200,
 								minValue: 0
+							},{
+								xtype: 'checkboxfield',
+								boxLabel  : 'Template :',
+								name      : 'template',
+								boxLabelAlign : 'before'
 							},
 								this.globalNodeId
 						]
@@ -162,8 +167,18 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		this.ItemsStore = Ext.create('Ext.data.Store', {
 				model: 'cinventory',});
 
-		var ItemsList = Ext.create('Ext.grid.Panel', {
+		var ItemsList = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.ItemsStore,
+			
+			opt_paging: false,
+			
+			opt_tbar: false,
+			opt_tbar_add:false,	
+			
+			opt_tbar_reload:false,
+			opt_tbar_delete:false,
+			
+			opt_keynav_del: true,
 			
 			viewConfig: {
 				plugins: {
@@ -258,6 +273,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//delete row listener
 		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
 		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
+		//deleteRowKeynav
+		Ext.create('Ext.util.KeyNav', this.id, {
+						scope: ItemsList,
+						del: function(){
+							var selection = this.getSelectionModel().getSelection();
+							if (selection) {
+								log.debug("[view][form][itemList] - Remove record ...")
+								this.store.remove(selection);
+							}
+						}
+		});
 		
 		//clear all listener
 		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
@@ -266,6 +292,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//don't recognize by the event datachanged, must trigger by hand
 			this.createPreview(this.ItemsStore,Preview,GlobalOptions);
 		},this);
+		
 	},
 	
 	ModifyItem : function(view, item, index){
@@ -366,6 +393,10 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				});
 			}
 			
+			//activate combobox if prefetch
+			if(this.widgetNodeId.prefetcg_id != undefined){
+				this.loadComboBox()
+			}
 			
 			//showing and loading the window
 			this.window.show();
@@ -376,7 +407,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			////////////////////Bind events////////////////
 			//bind action when store change
 			if (item.data.options){
-				this.widgetNodeId.store.on('datachanged', function(){this.refreshComboStore(this.window.widgetOptionsPanel,this.widgetNodeId.getStore().getAt(0))}, this);
+				this.widgetNodeId.store.on('datachanged', function(){
+					this.refreshComboStore(this.window.widgetOptionsPanel,this.widgetNodeId.getStore().getAt(0))}, this);
 			}
 			var WidgetForm = this.window.down('cform')
 			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
@@ -397,11 +429,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					{ 
 						for(var i in item.data.options)
 						{
-							record.data.options[i].value = new_values[record.data.options[i].name]
 							//cleaning combobox store
 							if(record.data.options[i].xtype == "combo"){
 								record.data.options[i].store = null;
 							}
+							record.data.options[i].value = new_values[record.data.options[i].name]
 						}	
 					}
 					

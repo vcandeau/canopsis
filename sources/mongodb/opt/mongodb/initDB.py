@@ -79,6 +79,7 @@ storage.put(record1)
 record1 = crecord({'_id': 'view.hostDetail' }, type='view', name='Show host detail')
 record1.chmod('o+r')
 record1.data['items'] = [ { 'xtype': 'states'} ]
+record1.data['template'] = True
 storage.put(record1)
 
 ### Account

@@ -31,6 +31,8 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	opt_duplicate: true,
 	opt_tbar_duplicate: true,
 	
+	opt_keynav_del: true,
+	
 	opt_tbar_search: true,
 	opt_tbar_search_field: ['crecord_name','_id'],
 	   
