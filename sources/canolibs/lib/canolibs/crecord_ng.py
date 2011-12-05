@@ -25,7 +25,7 @@ from caccount import caccount
 from cstorage import get_storage
 
 class crecord_ng(crecord):
-	def __init__(self, data={}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None, type='raw', logging_level=logging.DEBUG, *args, **kargs):
+	def __init__(self, data={}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None, type='raw', logging_level=logging.ERROR, *args, **kargs):
 
 		self.write_time = None
 
