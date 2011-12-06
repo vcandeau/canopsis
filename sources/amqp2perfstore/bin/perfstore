@@ -38,9 +38,8 @@ parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
 (options, args) = parser.parse_args()
 
 if options.verbose:
-	import pyperfstore
-	pyperfstore.logging_level = logging.DEBUG
 	logger.setLevel(logging.DEBUG)
+	import pyperfstore
 
 def get_arg(args, index):
 	try:
@@ -77,8 +76,23 @@ if not node_exist(storage, node_id):
 	logger.error("Node '%s' doesn't exist ..." % node_id)
 	sys.exit(1)	
 
-if   action == "info":
+if   action == "shownode":
+	logger.debug("Dump:\n%s" % mynode.dump())
 	mynode.pretty_print()
+
+elif action == "showmetric":
+	metric_dn = get_arg(args, 2)
+	logger.debug("Show metric '%s' from '%s' ..." % (metric_dn, node_id))
+	dump = mynode.metric_get(metric_dn).dump()
+	logger.debug("Dump:\n%s" % dump)
+
+elif action == "getvalues":
+	metric_dn = get_arg(args, 2)
+	start = int(get_arg(args, 3))
+	stop = int(get_arg(args, 4))
+
+	logger.debug("Get value from metric '%s' of '%s': %s -> %s ..." % (metric_dn, node_id, start, stop))
+	print mynode.metric_get_values(metric_dn, start, stop)
 
 elif action == "delnode":
 	logger.debug("Remove node '%s' ..." % node_id)
