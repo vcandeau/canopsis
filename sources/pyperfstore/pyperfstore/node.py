@@ -161,6 +161,9 @@ class node(object):
 		if not tstop:
 			tstop = int(time.time())
 
+		tstart = int(tstart)
+		tstop = int(tstop)
+
 		self.logger.debug("Get values in '%s'" % dn)
 
 		mymetric = self.metric_get(dn)
