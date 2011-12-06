@@ -170,15 +170,17 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var ItemsList = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.ItemsStore,
 			
+			border: 1,
+			
 			opt_paging: false,
 			
-			opt_tbar: false,
+			opt_tbar: true,
 			opt_tbar_add:false,	
 			
 			opt_tbar_reload:false,
-			opt_tbar_delete:false,
+			opt_tbar_delete:true,
 			
-			opt_keynav_del: true,
+			opt_keynav_del: false,
 			
 			viewConfig: {
 				plugins: {
@@ -196,7 +198,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					}
 	 			},
 			},
-			
+			/*
 			bbar: [{
 					iconCls: 'icon-delete',
 					text : 'Delete selected row',
@@ -208,7 +210,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					text : 'Clear all',
 					action : 'reset'
 				}],
-				
+				*/
 				columns: [{
 					header: '',
 					width: 25,
@@ -254,6 +256,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				
 			html: 'Items List', colspan: 3, width: this.DefaultWidth * 3 
 		});
+		var ItemsList_ctrl = Ext.create('canopsis.lib.controller.cgrid');
+		ItemsList_ctrl._bindGridEvents(ItemsList);
+		
 
 		////////////Add panels to view////////////////
 		this.GlobalOptions = this.add(GlobalOptions);
@@ -269,7 +274,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//others listeners
 		Widgets.on('itemdblclick',this.addItem,this);
 		ItemsList.on('itemdblclick',this.ModifyItem,this);
-		
+		/*
 		//delete row listener
 		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
 		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
@@ -292,7 +297,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			//don't recognize by the event datachanged, must trigger by hand
 			this.createPreview(this.ItemsStore,Preview,GlobalOptions);
 		},this);
-		
+		*/
 	},
 	
 	ModifyItem : function(view, item, index){
