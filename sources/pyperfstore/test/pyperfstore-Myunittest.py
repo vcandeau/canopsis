@@ -31,6 +31,10 @@ from pyperfstore import node
 from pyperfstore import metric
 from pyperfstore import dca
 
+#logging.basicConfig(level=logging.DEBUG,
+#	format='%(name)s %(levelname)s %(message)s',
+#)
+
 mynode = None
 storage = None
 timestamp = None
@@ -45,7 +49,7 @@ class KnownValues(unittest.TestCase):
 		global mynode, storage, timestamp
 		#storage = filestore(base_path="/tmp/")
 		storage = memstore()
-		mynode = node('nagios.Central.check.service.localhost9', point_per_dca=300, storage=storage)
+		mynode = node('nagios.Central.check.service.localhost9', point_per_dca=100, storage=storage)
 
 		timestamp = 1
 
@@ -113,7 +117,7 @@ class KnownValues(unittest.TestCase):
 
 		print "Last: %s" % last
 
-		## Get 100 values
+		## Get first 100 values
 		start = time.time()
 		values = mynode.metric_get_values('load1', 1, 100)
 		print " + 100 Old values in %s ms" % ((time.time() - start) * 1000)
@@ -127,6 +131,8 @@ class KnownValues(unittest.TestCase):
 			print refvalues[1:100+1]
 			raise Exception('Invalid Old Data')
 
+
+		## Get last 100 values
 		start = time.time()
 		values = mynode.metric_get_values('load1', last-99, last)
 		print " + 100 Recent values in %s ms" % ((time.time() - start) * 1000)
@@ -141,12 +147,24 @@ class KnownValues(unittest.TestCase):
 			print refvalues[last-99:last+1]
 			raise Exception('Invalid Recent Data')
 
+		## Get middle 100 values
+		start = time.time()
+		values = mynode.metric_get_values('load1', last-499, last-400)
+		print " + 100 Middle values in %s ms" % ((time.time() - start) * 1000)
 
-		print mynode.metric_get_all_dn()
+		if len(values) != 100:
+			print "Count: %s" % len(values)
+			raise Exception('Invalid Middle count')
+
+		
+		if values != refvalues[last-499:last-400+1]:
+			print values
+			print refvalues[last-499:last-400+1]
+			raise Exception('Invalid Middle Data')
 
 	def test_06_MMA(self):
 		values = mynode.metric_get_values('load1', 1, 100)
-
+		print values
 		print pyperfstore.math.mma(values)
 
 

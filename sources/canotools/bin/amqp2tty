@@ -65,7 +65,7 @@ amqp = camqp()
 try:
 	exchange = int(sys.argv[1])
 except:
-	exchange = amqp.exchange_name_liveevents
+	exchange = amqp.exchange_name_events
 
 amqp.add_queue(DAEMON_NAME, '#', on_message, exchange)
 amqp.start()
