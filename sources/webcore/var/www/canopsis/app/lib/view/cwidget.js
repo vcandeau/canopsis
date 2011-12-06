@@ -50,17 +50,18 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		this.callParent(arguments);
 
+		this.mytab.requestManager.register(this,this.nodeId,this.refreshInterval);
 
 		if (this.refreshInterval > 0){
 
-			log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
-
+			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
+			/*
 			this.task = {
 				run: this.doRefresh,
 				scope: this,
 				interval: this.refreshInterval * 1000
 			}
-			Ext.TaskManager.start(this.task);
+			//Ext.TaskManager.start(this.task);
 
 			if (this.mytab){
 				this.mytab.on('show', function(){
@@ -69,11 +70,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				this.mytab.on('hide', function(){
 					Ext.TaskManager.stop(this.task);
 				}, this);
-				this.mytab.on('timeSet', function(){
+			/*	this.mytab.on('timeSet', function(){
 					Ext.TaskManager.stop(this.task);
 					this.timeNavigator;
 				}, this);
-			}
+			}*/
 
 		}else{
 			this.on('afterrender', this.doRefresh, this);
@@ -83,6 +84,13 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	
 	timeNavigator: function(){
 		this.doRefresh();
+	},
+	
+	refreshData: function(data){
+		log.debug('data receive from ajax request', this.logAuthor)
+		//log.dump(data);
+		this.nodeData = data
+		this.doRefresh()
 	},
 
 	doRefresh: function (){
@@ -116,12 +124,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.onRefresh(this.nodeData)
 		}
 		*/
-		var record = this.mytab.nodeId_refresh_values.findRecord('_id', this.nodeId);
+		
+		//var record = this.mytab.nodeId_refresh_values.findRecord('_id', this.nodeId);
+		var record = this.nodeData
 		//log.debug('record  :  ');
 		//log.dump(record);
 		if(record){
-			this.nodeData = record.data
-			this.onRefresh(record.data)
+			//this.onRefresh(record.data)
+			this.onRefresh(record);
 		} else {
 			log.debug("Ajax request not stored", this.logAuthor)
 			this.onRefresh()

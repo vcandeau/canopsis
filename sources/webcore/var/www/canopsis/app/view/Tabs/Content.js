@@ -59,6 +59,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	initComponent: function() {
 		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
+		
+		//creating ajax requestManager
+		this.requestManager = Ext.create('canopsis.lib.requestManager');
+
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 			
 		Ext.Ajax.request({
@@ -83,7 +87,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			failure: function (result, request) {
 					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 			} 
-		});		
+		});
+		
 	},
 
 	setContent: function(){
@@ -197,9 +202,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (item.title){ item.border = true }
 				
 				//Stock,manage and launch refreshed nodeId
-				if(item.nodeId){
+			/*	if(item.nodeId){
 					this.manageNodeId(item);
-				}
+				}*/
 				
 				//buffer item
 				this.itemsReady.push(item);
@@ -208,23 +213,24 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 			}
 			//adding widgets to the page
-			var dtask = new Ext.util.DelayedTask(function(){
+		/*	var dtask = new Ext.util.DelayedTask(function(){
 				this.addReadyItem()
 				//fetch test
 				//this.fetchOldValues();
 			},this);
-			dtask.delay(500);
+			dtask.delay(500);*/
+			this.addReadyItem()
 			
 			//pause task if tab not shown
 			log.debug("Binding auto start/stop ajax request on tab show/hide", this.logAuthor)
 			this.on('show', function(){
-				this.startAllTask();
+				this.requestManager.resumeTask();
 			}, this);
 			this.on('hide', function(){
-				this.stopAllTask();
+				this.requestManager.pauseTask();
 			}, this);
 			
-			
+			this.requestManager.startTask();
 		}
 	},
 	
