@@ -27,14 +27,6 @@ from bottle import route, get, put, delete, request, HTTPError
 from cstorage import get_storage
 from libexec.auth import check_auth, get_account
 
-## Logger
-if bottle.debug:
-	logging_level=logging.DEBUG
-else:
-	logging_level=logging.INFO
-logging.basicConfig(level=logging_level,
-		format='%(asctime)s %(name)s %(levelname)s %(message)s',
-)
 logger = logging.getLogger("ui-menu")
 
 #########################################################################
