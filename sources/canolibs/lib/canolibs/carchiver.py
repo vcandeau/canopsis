@@ -24,6 +24,7 @@ from caccount import caccount
 from crecord import crecord
 
 from ctools import legend
+from ctools import parse_perfdata
 
 legend_type = ['soft', 'hard']
 
@@ -84,6 +85,13 @@ class carchiver(object):
 		record.type = "event"
 		record.chmod("o+r")
 		record._id = _id
+
+		try:
+			perf_data = event['perf_data']
+			perf_data = parse_perfdata(perf_data)
+			record.data['perf_data_array'] = perf_data
+		except:
+			pass
 
 		self.storage.put(record, namespace=self.namespace, account=self.account)
 

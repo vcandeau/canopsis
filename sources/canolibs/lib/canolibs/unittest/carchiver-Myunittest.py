@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest, logging
+import unittest, logging, time
 
 from carchiver import carchiver
 
@@ -44,28 +44,32 @@ class KnownValues(unittest.TestCase):
 		if not ARCHIVER.check_event(event_id, event):
 			raise Exception('[1] Invalid check ...')
 
+		time.sleep(0.2)
 		if ARCHIVER.check_event(event_id, event):
 			raise Exception('[2] Invalid check ...')
 		
 		## Ok -> critical
 		event = { 'state': 2, 'state_type': 0 }
 
+		time.sleep(0.2)
 		if not ARCHIVER.check_event(event_id, event):
 			raise Exception('[3] Invalid check ...')
 
 		## critical -> Ok
 		event = { 'state': 0, 'state_type': 1 }
 
+		time.sleep(0.2)
 		if not ARCHIVER.check_event(event_id, event):
 			raise Exception('[4] Invalid check ...')
 
 	def test_03_Log(self):
 		records = ARCHIVER.get_logs('unit.test')
-		if len(records) != 2:
-			raise Exception('Invalid logs count ...')
+		if len(records) != 3:
+			raise Exception('Invalid logs count  (%s)...' % len(records))
 
 	def test_99_DropNamespace(self):
 		ARCHIVER.remove_all()
+		pass
 
 if __name__ == "__main__":
 	unittest.main(verbosity=2)
