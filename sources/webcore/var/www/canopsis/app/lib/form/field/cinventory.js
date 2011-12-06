@@ -94,7 +94,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				pageSize: 10,
 				proxy: {
 					type: 'rest',
-					url: '/rest/inventory/event',
+					url: '/rest/events/event',
 					reader: {
 						type: 'json',
 						root: 'data',
@@ -131,7 +131,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			if (ids_txt){
 				// request
 				Ext.Ajax.request({
-					url: '/rest/inventory/state/' + ids_txt,
+					url: '/rest/events/state/' + ids_txt,
 					scope: this,
 					success: function(response){
 						var data = Ext.JSON.decode(response.responseText)
