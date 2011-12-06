@@ -18,13 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-
-import logging
-
-#logging.basicConfig(level=logging.ERROR,
-#	format='%(asctime)s %(name)s %(levelname)s %(message)s',
-#)
-
 from pyperfstore.node import node
 from pyperfstore.metric import metric
 from pyperfstore.dca import dca

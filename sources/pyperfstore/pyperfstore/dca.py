@@ -204,18 +204,21 @@ class dca(object):
 		timestamp = self.tstart + offset
 		values[1] = [timestamp, values[1][1]]
 		
+		self.logger.debug(" + Offset: %s", offset)
+
 		#others
 		for i in range(2, len(values)):
 			point = values[i]
 			#self.logger.debug(point)
 
-			timestamp = timestamp + offset
+			
 
 			if isinstance(point ,list):
-				if point[0]:
-					offset = point[0]
-				values[i] = [ offset, point[1] ]
+				offset = point[0]
+				timestamp += offset
+				values[i] = [ timestamp, point[1] ]
 			else:
+				timestamp += offset
 				values[i] = [ timestamp, point ]
 		
 		#self.format = "PLAIN"
