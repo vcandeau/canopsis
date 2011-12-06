@@ -10,6 +10,7 @@ function build(){
 function install(){
 	cd $SRC_PATH/$NAME
 
+	$PY_BIN setup.py build 1>> $LOG 2>> $LOG
 	$PY_BIN setup.py install --prefix=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $? "Setup.py install failure"	
 }

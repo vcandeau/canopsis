@@ -29,7 +29,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
 	refreshInterval: 0,
-	baseUrl: '/rest/inventory/event/',
+	baseUrl: '/rest/events/event/',
 	
 	logAuthor: '[view][cwidget]',
 

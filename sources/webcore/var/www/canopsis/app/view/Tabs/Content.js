@@ -363,7 +363,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					run : function(){
 							log.debug(' + Get informations of ' + item.nodeId, this.logAuthor)
 							Ext.Ajax.request({
-								url: '/rest/inventory/event/' + item.nodeId,
+								url: '/rest/events/event/' + item.nodeId,
 								scope: this,
 								success: function(response){
 									var data = Ext.JSON.decode(response.responseText)
@@ -399,7 +399,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			if(!(item.nodeId in this.taskList)){
 				log.debug("request " + item.nodeId + "without task" , this.logAuthor)
 				Ext.Ajax.request({
-					url: '/rest/inventory/event/' + item.nodeId,
+					url: '/rest/events/event/' + item.nodeId,
 					scope: this,
 					//async :false,
 					success: function(response){
