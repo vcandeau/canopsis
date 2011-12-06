@@ -37,8 +37,10 @@ def dichot(x, L, comp=cmp, key=lambda c: c):
 
 def estimate_index(x, L):
 	first = L[0][0]
-	delta = float(L[len(L)-1][0] - first)
-	interval = int(round( delta / len(L), 0))
+	last = L[len(L)-1][0]
+	delta = float(last - first)
+	interval = int(delta / len(L))
+	logger.debug("   + First: %s, Last: %s, Estimated interval: %s" % (first, last, interval))
 	if interval:
 		multi = (x-first) / interval
 	else:
