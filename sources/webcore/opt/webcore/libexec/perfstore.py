@@ -141,16 +141,6 @@ def perfstore_getMetric(_id):
 	output = {'total': len(output), 'success': True, 'data': output}
 	
 	return output
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 
 #@get('/perfstore_chart/:_id')

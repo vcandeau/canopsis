@@ -30,14 +30,6 @@ from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
 
-## Logger
-if bottle.debug:
-	logging_level=logging.DEBUG
-else:
-	logging_level=logging.INFO
-logging.basicConfig(level=logging_level,
-		format='%(asctime)s %(name)s %(levelname)s %(message)s',
-)
 logger = logging.getLogger("auth")
 
 #session variable
@@ -101,6 +93,7 @@ def auth(login=None, password=None):
 @get('/logout')
 @get('/disconnect')
 def disconnect():
+	logger.error("Disconnect")
 	s = bottle.request.environ.get('beaker.session')
 	s.delete()
 	return {'total': 0, 'success': True, 'data': []}
@@ -119,8 +112,10 @@ def check_auth(callback):
 		s = bottle.request.environ.get('beaker.session')
 		#add caccount to parameters
 		if s.get('auth_on',False) or path == "canopsis/auth.html":
+			logger.debug("Session is Ok.")
 			return callback(*args, **kawrgs)
 
+		logger.error("Invalid auth")
 		return {'total': 0, 'success': False, 'data': []}
 		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
