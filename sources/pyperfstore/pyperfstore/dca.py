@@ -45,7 +45,7 @@ class dca(object):
 
 		self.logger.debug("Init DCA '%s'" % self._id)
 
-		self.values_id = self._id+"-values"
+		self.values_id = self._id
 
 	def have_timestamp(self, tstart, tstop):
 		if self.tstop:
@@ -62,7 +62,7 @@ class dca(object):
 			'format':	self.format,
 			'max_size':	self.max_size,
 			'size':		self.size,
-			'values_id':	self.values_id
+			#'values_id':	self.values_id
 		}
 		return dump
 
@@ -74,10 +74,10 @@ class dca(object):
 		self.format	= data['format']
 		self.max_size	= data['max_size']
 		self.size	= data['size']
-		self.values_id	= data['values_id']
+		#self.values_id	= data['values_id']
+		self.values_id	= self._id
 
 		if self.size >= self.max_size:
-			self.logger.debug(" + DCA is full")
 			self.full = True
 
 	"""def save(self):
@@ -162,10 +162,6 @@ class dca(object):
 			offset = timestamp
 			i += 1
 
-		self.logger.debug(" + Json encode and compress it")
-		values = json.dumps(values)
-		values = values.replace(' ', '')
-
 		asize = sys.getsizeof(values)
 
 		ratio = int(((bsize-asize)*100)/bsize)
@@ -211,8 +207,6 @@ class dca(object):
 			point = values[i]
 			#self.logger.debug(point)
 
-			
-
 			if isinstance(point ,list):
 				offset = point[0]
 				timestamp += offset
@@ -235,8 +229,13 @@ class dca(object):
 		if not values:
 			values = self.storage.get_raw(self.values_id)
 
+		self.logger.debug(" + Json encode and compress it")
+		values = json.dumps(values)
+		values = values.replace(' ', '')
+
 		bsize = self.get_values_size()
 
+		self.logger.debug(" + Zlib compression")
 		values = zlib.compress(values, 9)
 
 		asize = sys.getsizeof(values)

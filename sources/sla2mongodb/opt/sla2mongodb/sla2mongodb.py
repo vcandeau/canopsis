@@ -90,7 +90,7 @@ def calcul_all_availability():
 		# Publish availability event
 		event = availability.make_event()
 		msg = Content(json.dumps(event))
-		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
+		amqp.publish(msg, event['rk'], amqp.exchange_name_events)
 
 	logger.debug(" + End of calculs")
 		
@@ -113,7 +113,7 @@ def calcul_all_sla():
 		# Publish sla event
 		event = sla.make_event()
 		msg = Content(json.dumps(event))
-		amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
+		amqp.publish(msg, event['rk'], amqp.exchange_name_events)
 
 	logger.debug(" + End of calculs")
 			

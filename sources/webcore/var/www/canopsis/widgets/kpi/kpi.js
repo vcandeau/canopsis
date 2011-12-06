@@ -224,7 +224,7 @@ Ext.define('widgets.kpi.kpi' ,{
 	refresh: function (){
 		//log.debug("Refresh "+this.id+" ...")
 		Ext.Ajax.request({
-			url: '/rest/inventory/event/'+this.nodeId,
+			url: '/rest/events/event/'+this.nodeId,
 			scope: this,
 			success: function(response){
 				data = Ext.JSON.decode(response.responseText)

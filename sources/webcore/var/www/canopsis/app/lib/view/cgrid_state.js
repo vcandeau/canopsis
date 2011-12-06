@@ -36,7 +36,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	
 	border: true,
 
-	namespace: 'inventory',
+	namespace: 'events',
 
 	pageSize: 100,
 
@@ -114,7 +114,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		if (! this.store){
 			this.store = Ext.create('canopsis.lib.store.cstore', {
 				//extend: 'canopsis.lib.store.cstore',
-				model: 'canopsis.model.inventory',
+				model: 'canopsis.model.events',
 
 				pageSize: this.pageSize,
 

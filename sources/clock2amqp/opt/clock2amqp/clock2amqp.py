@@ -53,7 +53,7 @@ logger = logging.getLogger(DAEMON_NAME)
 def on_timer_task():
 	event = make_event(service_description="Internal Clock", source_name='clock2amqp', source_type="clock", host_name="core", state_type=1, state=0, output=str(int(time.time())))
 	msg = Content(json.dumps(event))
-	amqp.publish(msg, event['rk'], amqp.exchange_name_liveevents)
+	amqp.publish(msg, event['rk'], amqp.exchange_name_events)
 
 ########################################################
 #
