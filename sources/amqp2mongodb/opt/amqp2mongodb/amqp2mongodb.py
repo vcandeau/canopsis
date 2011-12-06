@@ -27,9 +27,7 @@ from txamqp.content import Content
 from pymongo import Connection
 import json
 
-from cstorage import cstorage
-from crecord import crecord
-from caccount import caccount
+from carchiver import carchiver
 
 from ctools import parse_perfdata
 
@@ -42,13 +40,11 @@ from ctools import parse_perfdata
 DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.ERROR,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 logger = logging.getLogger(DAEMON_NAME)
 myamqp = None
-
-DEFAULT_ACCOUNT = caccount(user="root", group="root")
 
 ########################################################
 #
@@ -57,57 +53,17 @@ DEFAULT_ACCOUNT = caccount(user="root", group="root")
 ########################################################
 	
 def on_message(msg):
-	rk = msg.routing_key
-
- 	event = json.loads(msg.content.body)
-	
-	# Create record
-	record = crecord(event)
-	record.type = "event"
-	record.chmod("o+r")
-	record._id = rk
-
-	# Check if state is change
+	event_id = msg.routing_key
 	try:
-		oldrecord = storage.get(rk, namespace='inventory')
-		
-		state = event['state']
-		state_type = event['state_type']
+	 	event = json.loads(msg.content.body)
+	except:
+		logger.error("Impossible to parse event, Dump:\n%s" % msg.content.body)
+		raise Exception('Impossible to parse event')
 
-		oldstate = oldrecord.data['state']
-		oldstate_type = oldrecord.data['state_type']
-
-		if state != oldstate or state_type != oldstate_type:
-			record.data['previous_state'] = oldstate
-			publish_changed_event(record)
-
-	except KeyError:
-		record.data['previous_state'] = record.data['state']
-		publish_changed_event(record)
-
-	except Exception, err:
-		logger.error(err)
-	
-	perf_data = event['perf_data']
-	if perf_data != "":
-		record.data['perf_data_array'] = parse_perfdata(perf_data)
-
-
-	# Put record
-	storage.put(record, namespace='inventory')
-
-def publish_changed_event(record):
-	_id = record._id
-	hrecord = crecord(raw_record=record.dump())
-
-	hrecord._id = _id+"-"+str(record.data['timestamp'])
-	hrecord.data['inventory_id'] = _id
-
-	logger.debug("State of '%s' change ..." % _id)
-	storage.put(hrecord, namespace='history')
-
-	msg = Content(json.dumps(record.data))
-	amqp.publish(msg, _id, amqp.exchange_name_events)
+	if archiver.check_event(event_id, event):
+		msg = Content(json.dumps(event))
+		## Event to Alert
+		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
 ########################################################
 #
@@ -133,19 +89,18 @@ def signal_handler(signum, frame):
 ########################################################
 
 amqp=None
-storage=None
+archiver=None
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
 	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, storage
+	global amqp, archiver
 
-	storage = cstorage(DEFAULT_ACCOUNT, namespace='inventory', logging_level=logging.INFO)
-
+	archiver = carchiver(namespace='events',  autolog=True)
 	# AMQP
 	amqp = camqp()
 
-	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_liveevents)
+	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 
 	while RUN:
