@@ -91,7 +91,7 @@ elif action == "getvalues":
 	start = int(get_arg(args, 3))
 	stop = int(get_arg(args, 4))
 
-	logger.debug("Get value from metric '%s' of '%s': %s -> %s ..." % (metric_dn, node_id, start, stop))
+	logger.debug("Get values from metric '%s' of '%s': %s -> %s ..." % (metric_dn, node_id, start, stop))
 	print mynode.metric_get_values(metric_dn, start, stop)
 
 elif action == "delnode":
