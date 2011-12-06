@@ -24,7 +24,4 @@ setup(
 	url = "http://www.canopsis.org",
 	packages=['pyperfstore'],
 	long_description=read('README'),
-	classifiers=[
-		'Development Status :: 2 - Pre-Alpha',
-	],
 )
