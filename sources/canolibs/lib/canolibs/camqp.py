@@ -56,9 +56,12 @@ class camqp(threading.Thread):
 		
 		self.read_config("amqp")
 
+		#self.exchange_name_liveevents=exchange_name+".live_events"
+		#self.exchange_name_rpc=exchange_name+".rpc"
+
 		self.exchange_name_events=exchange_name+".events"
-		self.exchange_name_liveevents=exchange_name+".live_events"
-		self.exchange_name_rpc=exchange_name+".rpc"
+		self.exchange_name_alerts=exchange_name+".alerts"
+		self.exchange_name_incidents=exchange_name+".incidents"
 		
 		self.logger.setLevel(logging_level)
 		
@@ -159,15 +162,14 @@ class camqp(threading.Thread):
 		yield self.chan.exchange_declare(exchange=self.exchange_name, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name)
 
-		yield self.chan.exchange_declare(exchange=self.exchange_name_liveevents, type='topic', durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_liveevents)
-
-		yield self.chan.exchange_declare(exchange=self.exchange_name_rpc, type='topic', durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_rpc)
-
 		yield self.chan.exchange_declare(exchange=self.exchange_name_events, type='topic', durable=True, auto_delete=False)
 		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_events)
 
+		yield self.chan.exchange_declare(exchange=self.exchange_name_alerts, type='topic', durable=True, auto_delete=False)
+		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_alerts)
+
+		yield self.chan.exchange_declare(exchange=self.exchange_name_incidents, type='topic', durable=True, auto_delete=False)
+		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_incidents)
 
 		self.connected = True
 		self.logger.debug("Channel openned. Ready to send messages")
