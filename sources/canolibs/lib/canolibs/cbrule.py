@@ -186,6 +186,6 @@ class cbrule(cselector):
 			event = make_event(service_description=self.name, source_name='amqp2brule', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=state, output=message)
 			msg = Content(json.dumps(event))
 			self.logger.debug(" + Publish with RK '%s' ..." % event['rk'])
-			self.amqp.publish(msg, event['rk'], self.amqp.exchange_name_liveevents)
+			self.amqp.publish(msg, event['rk'], self.amqp.exchange_name_events)
 			self.save()
 
