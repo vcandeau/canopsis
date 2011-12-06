@@ -66,7 +66,7 @@ def on_message(msg):
 		except:
 			raise Exception("Imposible to parse: " + str(perf_data))
 
-		mynode = node(_id, storage=perfstore, point_per_dca=60)
+		mynode = node(_id, storage=perfstore, point_per_dca=300)
 
 		#{u'rta': {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, u'pl': {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'}}
 
