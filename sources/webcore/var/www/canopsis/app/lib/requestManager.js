@@ -112,9 +112,10 @@ Ext.define('canopsis.lib.requestManager' ,{
 		//set first value of widget
 		this.initializeWidgets();
 		
-		//launching the task
-		this.start(this.task);
-		
+		//if no registred widget, no task
+		if (this.intervals.length != 0){
+			this.start(this.task);
+		}
 	},
 	
 	//send ajax request and update widgets subscribed to this node
