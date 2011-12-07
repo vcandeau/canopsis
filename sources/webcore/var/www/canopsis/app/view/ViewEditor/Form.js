@@ -387,19 +387,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			form.setWidth(item.data.formWidth);
 			form.setHeight(310);
 			form.getForm().loadRecord(item);
-			/*
-			if(this.window.widgetOptionsPanel){
-				this.refreshComboStore()
-			}
-			*/
-			//this.window.show();
-			//form.setWidth(item.data.formWidth);
-			//form.setHeight(310);
-			//form.getForm().loadRecord(item);
-			
+
 			////////////////////Bind events////////////////
 			var WidgetForm = this.window.down('cform')
-			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.close()},this);
+			WidgetForm.down('button[action=cancel]').on('click',function(){
+				this.window.close()},this);
 			/////////////////Save Button///////////////////
 			WidgetForm.down('button[action=save]').on('click',
 			function(){
