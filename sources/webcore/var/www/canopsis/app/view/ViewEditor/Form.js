@@ -182,7 +182,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			opt_tbar_reload:false,
 			opt_tbar_delete:true,
 			
-			opt_keynav_del: false,
+			//opt_keynav_del: true,
 			
 			viewConfig: {
 				plugins: {
@@ -412,11 +412,13 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			form.setHeight(310);
 			form.getForm().loadRecord(item);
 			
+			
 			////////////////////Bind events////////////////
 			//bind action when store change
 			if (item.data.options){
 				this.widgetNodeId.store.on('datachanged', function(){
-					this.refreshComboStore(this.window.widgetOptionsPanel,this.widgetNodeId.getStore().getAt(0))}, this);
+					this.refreshComboStore()
+					}, this);
 			}
 			var WidgetForm = this.window.down('cform')
 			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
@@ -447,7 +449,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					
 					this.window.destroy();
 					this.createPreview(this.ItemsStore,this.Preview,this.GlobalOptions);
-				},this);
+			},this);
 	},
 	
 	deleteButton: function(grid) {
@@ -504,52 +506,24 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					}
 					log.debug(storeUrl)
 					//if node specified
-					if(storeUrl){
-						var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
-							fields: ['metric'],
-							proxy: {
-									type: 'rest',
-									url: '/perfstore/metrics/' + storeUrl,
-									reader: {
-										type: 'json',
-										root: 'data',
-										totalProperty  : 'total',
-										successProperty: 'success',
-									}
-							}
-						});
-						//item.data.options[i].store = this.comboMetricStore;
-						//need to change the store of panel if already rendered
-					/*	if(this.window.widgetOptionsPanel){
-							this.window.widgetOptionsPanel.items.items[i].store = comboMetricStore;
-							this.window.widgetOptionsPanel.items.items[i].reset();
-							log.debug('store already existe, replace it')
-							log.dump(this.window.widgetOptionsPanel.items.items[i]);
-						} else {*/
-							//else it not rendered so we put it in option
-						item.data.options[i].store = comboMetricStore;
-					/*	log.debug(item.data.options[i])
-						item.data.options[i].disabled = 'false';
-						log.debug(item.data.options[i])*/
-						//comboMetricStore.load();
-					} else {
-						//else if globalNodeId is not specified, set empty store
-						var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
-							fields: ['metric'],
-							proxy: {
-									type: 'rest',
-									url: '/perfstore/metrics/' + storeUrl,
-									reader: {
-										type: 'json',
-										root: 'data',
-										totalProperty  : 'total',
-										successProperty: 'success',
-									}
-							}
-							});
-						item.data.options[i].store = comboMetricStore;
-						item.data.options[i].disabled = 'true';
+					var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
+						fields: ['metric'],
+						proxy: {
+								type: 'rest',
+								url: '/perfstore/metrics/' + storeUrl,
+								reader: {
+									type: 'json',
+									root: 'data',
+									totalProperty  : 'total',
+									successProperty: 'success',
+								}
+						}
+					});
+					//else it not rendered so we put it in option
+					item.data.options[i].store = comboMetricStore;
 						
+					if(!storeUrl){
+							item.data.options[i].disabled = 'true';
 					}
 				}
 			}
@@ -557,6 +531,8 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 	},
 
 	refreshComboStore : function(panel , record){
+		panel = this.window.widgetOptionsPanel
+		record = this.widgetNodeId.getStore().getAt(0)
 		log.debug('enter refreshcombo')
 		if (record.get('_id')){
 			var storeUrl = record.get('_id');

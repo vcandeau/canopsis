@@ -96,6 +96,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		if(grid.opt_keynav_del){
+			//log.debug('id of grid is : ' + id);
 			Ext.create('Ext.util.KeyNav', id, {
 						scope: this,
 						del: this._deleteButton
