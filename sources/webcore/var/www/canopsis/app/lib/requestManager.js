@@ -139,8 +139,8 @@ Ext.define('canopsis.lib.requestManager' ,{
 		var time = this.i * this.step
 		log.debug('refresh time is : ' + time);
 		for(j in this.intervals_nodes){
-			log.debug('interval' + j)
-			log.dump(time % j)
+			//log.debug('interval' + j)
+			//log.dump(time % j)
 			//if there's something to do at this time
 			if((time % j) == 0){
 				//for every nodes to refresh

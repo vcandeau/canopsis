@@ -220,7 +220,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			},this);
 			dtask.delay(500);*/
 			this.addReadyItem()
-			
+			/*
 			//pause task if tab not shown
 			log.debug("Binding auto start/stop ajax request on tab show/hide", this.logAuthor)
 			this.on('show', function(){
@@ -228,7 +228,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}, this);
 			this.on('hide', function(){
 				this.requestManager.pauseTask();
-			}, this);
+			}, this);*/
 			
 			this.requestManager.startTask();
 		}
@@ -340,7 +340,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//clean buffer
 		this.metricsBuffer = []
 	},
-*/	
+
 	//Stock,manage and launch refreshed nodeId
 	manageNodeId: function(item) {
 		log.debug("start refresh task for " + item.nodeId , this.logAuthor)
@@ -416,7 +416,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 			
 		}
-	},
+	}, */
     
     stopAllTask: function(){
 		for (i in this.taskList){
