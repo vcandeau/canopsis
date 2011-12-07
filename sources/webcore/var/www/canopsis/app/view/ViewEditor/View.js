@@ -29,12 +29,12 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	multiSelect: true,
 
 	opt_duplicate: true,
-	opt_tbar_duplicate: true,
+	opt_bar_duplicate: true,
 	
 	opt_keynav_del: true,
 	
-	opt_tbar_search: true,
-	opt_tbar_search_field: ['crecord_name','_id'],
+	opt_bar_search: true,
+	opt_bar_search_field: ['crecord_name','_id'],
 	   
 	columns: [{
 			header: 'name',
