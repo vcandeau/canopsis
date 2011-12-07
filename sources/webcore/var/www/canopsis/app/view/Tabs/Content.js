@@ -36,18 +36,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		type: 'table',
 		// The total column count must be specified here
 		columns: 1,
-		/*tableAttrs: {
-			style: {
-				width: '100%',
-            		}
-		},*/
 	},
 
 	defaults: {
 		border: false,
-		/*style: {
-	            padding: '3px',
-	        }*/
 	},
 
 	border: false,
@@ -159,13 +151,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//Set default options
 			if (! item.nodeId) { item.nodeId=nodeId}
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
-
-			//Stock,manage and launch refreshed nodeId
-			if(item.nodeId){
-				this.manageNodeId(item);
-			}
+			
 			//add item in the view
 			this.add(item)
+			
+			this.requestManager.startTask();
 		}else{
 			//many widgets
 			this.removeAll();
@@ -201,37 +191,23 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
 				
-				//Stock,manage and launch refreshed nodeId
-			/*	if(item.nodeId){
-					this.manageNodeId(item);
-				}*/
-				
-				//buffer item
 				this.itemsReady.push(item);
-				//this.add(item);
-				
-
 			}
-			//adding widgets to the page
-		/*	var dtask = new Ext.util.DelayedTask(function(){
-				this.addReadyItem()
-				//fetch test
-				//this.fetchOldValues();
-			},this);
-			dtask.delay(500);*/
 			this.addReadyItem()
-			/*
-			//pause task if tab not shown
-			log.debug("Binding auto start/stop ajax request on tab show/hide", this.logAuthor)
-			this.on('show', function(){
-				this.requestManager.resumeTask();
-			}, this);
-			this.on('hide', function(){
-				this.requestManager.pauseTask();
-			}, this);*/
 			
 			this.requestManager.startTask();
 		}
+		
+		//binding event to save ressources
+		this.on('show', function(){
+			this.requestManager.resumeTask();
+		}, this);
+		this.on('hide', function(){
+			this.requestManager.pauseTask();
+		}, this);
+		
+		
+		
 	},
 	
 	addReadyItem : function(){
