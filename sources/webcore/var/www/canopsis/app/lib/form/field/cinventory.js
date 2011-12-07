@@ -288,22 +288,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					fieldLabel: 'Search',
 					name: 'search',
 					//allowBlank: false,
-				},/*{
-					fieldLabel: 'Type',
-					name: 'type',
-				},{
-					fieldLabel: 'Source',
-					name: 'source_name',
-				},{
-					fieldLabel: 'Source Type',
-					name: 'source_type',
-				},{
-					fieldLabel: 'Node',
-					name: 'host_name',
-				},{
-					fieldLabel: 'Service',
-					name: 'service_description',
-				}*/],
+				}],
 			});
 			
 			var searchButton = Ext.create('Ext.Button', {
