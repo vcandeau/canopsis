@@ -49,10 +49,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
 
 		this.callParent(arguments);
-
-		this.mytab.requestManager.register(this,this.nodeId,this.refreshInterval);
+		
+		
 
 		if (this.refreshInterval > 0){
+			
+			log.debug('***refresh interval : ' + this.refreshInterval);
+
+			this.mytab.requestManager.register(this,this.nodeId,this.refreshInterval);
 
 			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
 			/*
@@ -87,7 +91,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 	
 	refreshData: function(data){
-		log.debug('data receive from ajax request', this.logAuthor)
+		//log.debug('data receive from ajax request', this.logAuthor)
 		//log.dump(data);
 		this.nodeData = data
 		this.doRefresh()
