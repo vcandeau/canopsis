@@ -55,7 +55,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if (this.refreshInterval > 0){
 			
 			log.debug('***refresh interval : ' + this.refreshInterval);
-
 			this.mytab.requestManager.register(this,this.nodeId,this.refreshInterval);
 
 			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
