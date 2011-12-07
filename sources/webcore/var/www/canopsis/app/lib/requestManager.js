@@ -27,6 +27,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 		this.interval_max = 0
 		
 		this.node_list = []
+		this.taskList = []
 	},
 	
 	register : function(widget,nodeId,interval){
@@ -107,6 +108,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 			interval: this.step * 1000,
 			scope: this
 		}
+		
 		//set first value of widget
 		this.initializeWidgets();
 		
@@ -135,20 +137,25 @@ Ext.define('canopsis.lib.requestManager' ,{
 	do : function(){
 		log.debug('ajax task woke up', this.logAuthor);
 		var time = this.i * this.step
-		//if there's something to do at this time
-		if(this.intervals_nodes[time]){
-			//for every nodes to refresh
-			log.debug('nodes to refresh are')
-			log.dump(this.intervals_nodes[time])
-			for (y in this.intervals_nodes[time]){
-				nodeId = this.intervals_nodes[time][y]
-				log.debug('node to refresh : ' + nodeId, this.logAuthor)
+		log.debug('refresh time is : ' + time);
+		for(j in this.intervals_nodes){
+			log.debug('interval' + j)
+			log.dump(time % j)
+			//if there's something to do at this time
+			if((time % j) == 0){
+				//for every nodes to refresh
+				//log.debug('nodes to refresh are')
+				//log.dump(this.intervals_nodes[j])
+				for (y in this.intervals_nodes[j]){
+					nodeId = this.intervals_nodes[j][y]
+					//log.debug('node to refresh : ' + nodeId, this.logAuthor)
 
-				this.sendRequest(nodeId)
+					this.sendRequest(nodeId)
 
-				//log.debug('every nodeId');
-				//log.dump(this.node_widgets)
-				//log.dump(this.node_widgets[nodeId])
+					//log.debug('every nodeId');
+					//log.dump(this.node_widgets)
+					//log.dump(this.node_widgets[nodeId])
+				}
 			}
 		}
 		this.i++;
