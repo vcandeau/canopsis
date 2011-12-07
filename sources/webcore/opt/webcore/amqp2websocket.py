@@ -147,7 +147,7 @@ def main():
 	# AMQP
 	amqp = camqp(logging_level=logging_level)
 
-	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
+	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_alerts)
 	amqp.start()
 
 	#pool = Pool(MAX_WSCLIENT)
