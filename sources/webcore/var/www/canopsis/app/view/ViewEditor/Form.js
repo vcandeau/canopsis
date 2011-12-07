@@ -200,19 +200,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					}
 	 			},
 			},
-			/*
-			bbar: [{
-					iconCls: 'icon-delete',
-					text : 'Delete selected row',
-					action : 'deleteRow'
-				},{
-					xtype: 'tbseparator'
-				},{
-					iconCls: 'icon-delete',
-					text : 'Clear all',
-					action : 'reset'
-				}],
-				*/
 				columns: [{
 					header: '',
 					width: 25,
@@ -277,30 +264,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//others listeners
 		Widgets.on('itemdblclick',this.addItem,this);
 		ItemsList.on('itemdblclick',this.ModifyItem,this);
-		/*
-		//delete row listener
-		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
-		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
-		//deleteRowKeynav
-		Ext.create('Ext.util.KeyNav', this.id, {
-						scope: ItemsList,
-						del: function(){
-							var selection = this.getSelectionModel().getSelection();
-							if (selection) {
-								log.debug("[view][form][itemList] - Remove record ...")
-								this.store.remove(selection);
-							}
-						}
-		});
-		
-		//clear all listener
-		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
-		clearAllButton[0].on('click',function(){
-			this.ItemsStore.removeAll();
-			//don't recognize by the event datachanged, must trigger by hand
-			this.createPreview(this.ItemsStore,Preview,GlobalOptions);
-		},this);
-		*/
+
 	},
 	
 	ModifyItem : function(view, item, index){
@@ -319,7 +283,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								multiSelect: false,
 							})
 			
-				
+			//Widget configuration panel
 			var form = Ext.widget('cform', {
 					model: 'widget',
 					//closeAction: 'hide',
@@ -395,34 +359,40 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 					defaults: {
 						anchor: '100%',
-						//hideEmptyLabel: false
 					},
 					items : item.data.options,
 				});
+				
+				//bind action when store change
+				this.widgetNodeId.store.on('datachanged', function(){
+					this.refreshComboStore()
+				}, this);
 			}
 			
 			//activate combobox if prefetch
-			if(this.widgetNodeId.prefetcg_id != undefined){
+			/*if(this.widgetNodeId.prefetch_id != undefined){
 				this.loadComboBox()
-			}
+			}*/
 			
-			//showing and loading the window
 			this.window.show();
+			//showing and loading the window
 			form.setWidth(item.data.formWidth);
 			form.setHeight(310);
 			form.getForm().loadRecord(item);
-			
+			/*
+			if(this.window.widgetOptionsPanel){
+				this.refreshComboStore()
+			}
+			*/
+			//this.window.show();
+			//form.setWidth(item.data.formWidth);
+			//form.setHeight(310);
+			//form.getForm().loadRecord(item);
 			
 			////////////////////Bind events////////////////
-			//bind action when store change
-			if (item.data.options){
-				this.widgetNodeId.store.on('datachanged', function(){
-					this.refreshComboStore()
-					}, this);
-			}
 			var WidgetForm = this.window.down('cform')
 			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
-			//Save Button
+			/////////////////Save Button///////////////////
 			WidgetForm.down('button[action=save]').on('click',
 			function(){
 					log.debug('[controller][cgrid][Form][WidgetForm]');
@@ -505,7 +475,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						}
 					}
 					log.debug(storeUrl)
-					//if node specified
 					var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
 						fields: ['metric'],
 						proxy: {
@@ -519,27 +488,24 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								}
 						}
 					});
-					//else it not rendered so we put it in option
+					//put store in option
 					item.data.options[i].store = comboMetricStore;
-					
-					if(!storeUrl){
-							item.data.options[i].disabled = 'true';
-					}
 				}
 			}
 		}
 	},
 
-	refreshComboStore : function(panel , record){
+	refreshComboStore : function(){
 		panel = this.window.widgetOptionsPanel
 		record = this.widgetNodeId.getStore().getAt(0)
-		log.debug('enter refreshcombo')
+		//log.debug('enter refreshcombo')
 		if (record.get('_id')){
 			var storeUrl = record.get('_id');
 		} else if (record.get('id')){
 			var storeUrl = record.get('id');
 		}
 		var panelItems = panel.items.items
+		//search all combox in widget options
 		for (i in panelItems){
 			if(panelItems[i].xtype == 'combo'){
 				panelItems[i].store.proxy.url = '/perfstore/metrics/' + storeUrl;
