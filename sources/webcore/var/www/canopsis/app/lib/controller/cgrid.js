@@ -288,7 +288,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					xtype: this.formXtype,
 					editing: true,
 					id: id,
-					closable: true,}).show();
+					closable: true,
+				}).show();
+				
+				
 				
 
 				if (this.beforeload_EditForm) {
