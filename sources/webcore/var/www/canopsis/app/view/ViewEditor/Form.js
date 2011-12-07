@@ -274,7 +274,15 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
+				closeAction: 'destroy',
 				title: 'Edit ' + item.data.xtype,
+				
+				beforeclose : function() {
+						log.debug("Destroy items ...", this.logAuthor)
+						canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
+						log.debug(this.id + " Destroyed.", this.logAuthor)
+				}
+				
 			});
 			
 			//cinventory for following panel
@@ -391,7 +399,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			////////////////////Bind events////////////////
 			var WidgetForm = this.window.down('cform')
-			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
+			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.close()},this);
 			/////////////////Save Button///////////////////
 			WidgetForm.down('button[action=save]').on('click',
 			function(){
@@ -411,6 +419,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						{
 							//cleaning combobox store
 							if(record.data.options[i].xtype == "combo"){
+								//record.data.options[i].store.destroy();
 								record.data.options[i].store = null;
 							}
 							record.data.options[i].value = new_values[record.data.options[i].name]
@@ -475,7 +484,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						}
 					}
 					log.debug(storeUrl)
-					var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
+					this.comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
 						fields: ['metric'],
 						proxy: {
 								type: 'rest',
@@ -489,7 +498,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						}
 					});
 					//put store in option
-					item.data.options[i].store = comboMetricStore;
+					item.data.options[i].store = this.comboMetricStore;
 				}
 			}
 		}
