@@ -42,22 +42,14 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_bar_time: false,
 	
 	opt_keynav_del: false,
-	
-	//opt_bar_clock: true,
 
 	opt_view_element : '',
 
 	features: [],
 	
-	
-
 	title : '',
-	//iconCls: 'icon-grid',
-	//frame: true,
 
 	border: false,
-	//selType: 'rowmodel',
-	//plugins: [Ext.create('Ext.grid.plugin.RowEditing', {clicksToEdit: 2, pluginId: 'editAccount'})],
  
 	initComponent: function() {
 		/*if (this.opt_grouping){
@@ -72,24 +64,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		//------------------Option docked bar--------------
 		if (this.opt_bar){
 			var bar_child = [];
-		/*	var bar_left = Ext.create('Ext.container.Container', {
-				flex: 1.50,
-				border: 0,
-				items: []
-			});
-			var bar_center = Ext.create('Ext.container.Container', {
-				flex: 1,
-				layout: 'hbox',
-				items: []
-			});;
-			var bar_right = Ext.create('Ext.container.Container', {
-				flex: 1,
-				layout : {
-					type : 'hbox',
-				},
-				items: []
-			});;
-			*/
+
 			if(this.opt_bar_add){
 				bar_child.push({
 					xtype: 'button',
@@ -124,15 +99,6 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					action: 'delete',
 				})
 			}
-			/*
-			if(this.opt_bar_clock){
-				this.bar_clock = Ext.create('Ext.toolbar.TextItem', {
-					text: 'test',
-					pack : 'center',
-				})
-				bar_child.push(this.bar_clock)
-			}
-			*/
 			if(this.opt_bar_search){
 				bar_child.push({xtype: 'tbfill'});
 				bar_child.push({
@@ -149,8 +115,6 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					pack: 'end',
 				})
 			}
-			
-			//var bar_child = [bar_left,bar_center,bar_right];
 			
 			//creating toolbar
 			if(this.opt_bar_bottom){
