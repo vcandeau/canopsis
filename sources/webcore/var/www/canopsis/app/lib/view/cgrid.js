@@ -32,6 +32,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_paging: true,
 	
 	opt_tbar: true,
+	opt_tbar_bottom: false,
 	opt_tbar_add:true,
 	opt_tbar_duplicate: false,
 	opt_tbar_reload:true,
@@ -152,9 +153,15 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			//var tbar_child = [tbar_left,tbar_center,tbar_right];
 			
 			//creating toolbar
-			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
-				items: tbar_child,
-			});
+			if(this.opt_tbar_bottom){
+				this.bbar = Ext.create('Ext.toolbar.Toolbar', {
+					items: tbar_child,
+				});
+			}else{
+				this.tbar = Ext.create('Ext.toolbar.Toolbar', {
+					items: tbar_child,
+				});
+			}
 			
 		}
 		
