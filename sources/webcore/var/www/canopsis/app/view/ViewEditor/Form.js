@@ -174,13 +174,13 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			opt_paging: false,
 			
-			opt_tbar_bottom: true,
+			opt_bar_bottom: true,
 			
-			opt_tbar: true,
-			opt_tbar_add:false,	
+			opt_bar: true,
+			opt_bar_add:false,	
 			
-			opt_tbar_reload:false,
-			opt_tbar_delete:true,
+			opt_bar_reload:false,
+			opt_bar_delete:true,
 			
 			//opt_keynav_del: true,
 			
@@ -521,7 +521,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					});
 					//else it not rendered so we put it in option
 					item.data.options[i].store = comboMetricStore;
-						
+					
 					if(!storeUrl){
 							item.data.options[i].disabled = 'true';
 					}

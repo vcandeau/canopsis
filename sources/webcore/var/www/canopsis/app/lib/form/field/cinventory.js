@@ -184,7 +184,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
-				opt_tbar: false,
+				opt_bar: false,
 				border: true,
 				flex : 1,
 				viewConfig: {
@@ -217,7 +217,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			var secondGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
-				opt_tbar: false,
+				opt_bar: false,
 				border: true,
 				opt_paging: false,
 				flex : 4,
