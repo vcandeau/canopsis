@@ -170,9 +170,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var ItemsList = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.ItemsStore,
 			
-			border: 1,
+			border: true,
 			
 			opt_paging: false,
+			
+			opt_tbar_bottom: true,
 			
 			opt_tbar: true,
 			opt_tbar_add:false,	
@@ -256,6 +258,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				
 			html: 'Items List', colspan: 3, width: this.DefaultWidth * 3 
 		});
+		
 		var ItemsList_ctrl = Ext.create('canopsis.lib.controller.cgrid');
 		ItemsList_ctrl._bindGridEvents(ItemsList);
 		
