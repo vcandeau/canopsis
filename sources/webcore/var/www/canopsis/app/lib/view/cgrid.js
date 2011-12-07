@@ -31,19 +31,19 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_grouping: false,
 	opt_paging: true,
 	
-	opt_tbar: true,
-	opt_tbar_bottom: false,
-	opt_tbar_add:true,
-	opt_tbar_duplicate: false,
-	opt_tbar_reload:true,
-	opt_tbar_delete:true,
-	opt_tbar_search: false,
-	opt_tbar_search_field: [],
-	opt_tbar_time: false,
+	opt_bar: true,
+	opt_bar_bottom: false,
+	opt_bar_add:true,
+	opt_bar_duplicate: false,
+	opt_bar_reload:true,
+	opt_bar_delete:true,
+	opt_bar_search: false,
+	opt_bar_search_field: [],
+	opt_bar_time: false,
 	
 	opt_keynav_del: false,
 	
-	//opt_tbar_clock: true,
+	//opt_bar_clock: true,
 
 	opt_view_element : '',
 
@@ -70,19 +70,19 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 
 		//------------------Option docked bar--------------
-		if (this.opt_tbar){
-			var tbar_child = [];
-		/*	var tbar_left = Ext.create('Ext.container.Container', {
+		if (this.opt_bar){
+			var bar_child = [];
+		/*	var bar_left = Ext.create('Ext.container.Container', {
 				flex: 1.50,
 				border: 0,
 				items: []
 			});
-			var tbar_center = Ext.create('Ext.container.Container', {
+			var bar_center = Ext.create('Ext.container.Container', {
 				flex: 1,
 				layout: 'hbox',
 				items: []
 			});;
-			var tbar_right = Ext.create('Ext.container.Container', {
+			var bar_right = Ext.create('Ext.container.Container', {
 				flex: 1,
 				layout : {
 					type : 'hbox',
@@ -90,8 +90,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				items: []
 			});;
 			*/
-			if(this.opt_tbar_add){
-				tbar_child.push({
+			if(this.opt_bar_add){
+				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-add',
 					//cls: 'x-btn-default-toolbar-small',
@@ -99,24 +99,24 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					action: 'add',
 				})
 			}
-			if(this.opt_tbar_duplicate){
-				tbar_child.push({
+			if(this.opt_bar_duplicate){
+				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-copy', 
 					text: 'Duplicate',
 					action: 'duplicate',
 				})
 			}
-			if(this.opt_tbar_reload){
-				tbar_child.push({
+			if(this.opt_bar_reload){
+				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-reload',
 					text: 'Reload',
 					action: 'reload',
 				})
 			}
-			if(this.opt_tbar_delete){
-				tbar_child.push({
+			if(this.opt_bar_delete){
+				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-delete',
 					text: 'Delete',
@@ -125,24 +125,24 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				})
 			}
 			/*
-			if(this.opt_tbar_clock){
-				this.tbar_clock = Ext.create('Ext.toolbar.TextItem', {
+			if(this.opt_bar_clock){
+				this.bar_clock = Ext.create('Ext.toolbar.TextItem', {
 					text: 'test',
 					pack : 'center',
 				})
-				tbar_child.push(this.tbar_clock)
+				bar_child.push(this.bar_clock)
 			}
 			*/
-			if(this.opt_tbar_search){
-				tbar_child.push({xtype: 'tbfill'});
-				tbar_child.push({
+			if(this.opt_bar_search){
+				bar_child.push({xtype: 'tbfill'});
+				bar_child.push({
 					xtype: 'textfield',
 					name: 'searchField',
 					hideLabel: true,
 					width: 200,
 					pack: 'end',
 				})
-				tbar_child.push({
+				bar_child.push({
 					xtype : 'button',
 					action: 'search',
 					text: 'search',
@@ -150,16 +150,16 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				})
 			}
 			
-			//var tbar_child = [tbar_left,tbar_center,tbar_right];
+			//var bar_child = [bar_left,bar_center,bar_right];
 			
 			//creating toolbar
-			if(this.opt_tbar_bottom){
+			if(this.opt_bar_bottom){
 				this.bbar = Ext.create('Ext.toolbar.Toolbar', {
-					items: tbar_child,
+					items: bar_child,
 				});
 			}else{
 				this.tbar = Ext.create('Ext.toolbar.Toolbar', {
-					items: tbar_child,
+					items: bar_child,
 				});
 			}
 			
@@ -181,10 +181,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		}
 		
 		//--------------------Context menu---------------------
-		if (this.opt_tbar){
+		if (this.opt_bar){
 			var myArray = [];
 			
-			if(this.opt_tbar_delete){
+			if(this.opt_bar_delete){
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-delete',
@@ -193,7 +193,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					})
 				)
 			}
-			if (this.opt_tbar_duplicate){
+			if (this.opt_bar_duplicate){
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-copy',
