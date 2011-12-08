@@ -86,7 +86,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 	
 	timeNavigator: function(){
-		this.doRefresh();
+		log.debug('timeNavigator launched')
 	},
 	
 	refreshData: function(data){

@@ -87,7 +87,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
 
-		this.itemsReady = []//tab to buffer items before add them to page
+		if(!this.view.reporting){
+			this.itemsReady = []//tab to buffer items before add them to page
+		} else {
+			alert('reporting')
+		}
 
 		//General options
 		if(this.options.nodeId){
@@ -175,13 +179,15 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.requestManager.startTask();
 		}
 		
-		//binding event to save ressources
-		this.on('show', function(){
-			this.requestManager.resumeTask();
-		}, this);
-		this.on('hide', function(){
-			this.requestManager.pauseTask();
-		}, this);
+		if(!this.view.reporting){
+			//binding event to save ressources
+			this.on('show', function(){
+				this.requestManager.resumeTask();
+			}, this);
+			this.on('hide', function(){
+				this.requestManager.pauseTask();
+			}, this);
+		}
 		
 		
 		
