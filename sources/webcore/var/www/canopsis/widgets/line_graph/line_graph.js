@@ -71,10 +71,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var title = ""
 
 		if (! this.title) {
-			if (this.nodeData.service_description) {
-				title = this.nodeData.service_description;
-			}else if (this.nodeData.host_name){
-				title = this.nodeData.host_name;
+			if (this.nodeData.ressource) {
+				title = this.nodeData.ressource;
+			}else if (this.nodeData.component){
+				title = this.nodeData.component;
 			}
 		}
 
