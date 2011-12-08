@@ -119,11 +119,21 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								value: 200,
 								minValue: 0
 							},{
-								xtype: 'checkboxfield',
-								boxLabel  : 'Template :',
-								name      : 'template',
-								boxLabelAlign : 'before'
-							},
+								xtype: 'panel',
+								layout: 'hbox',
+								border: false,
+								items : [{
+										xtype: 'checkboxfield',
+										boxLabel  : 'Reporting :',
+										name      : 'reporting',
+										boxLabelAlign : 'before'
+									},{ xtype: 'tbspacer', width: 50 },{
+										xtype: 'checkboxfield',
+										boxLabel  : 'Template :',
+										name      : 'template',
+										boxLabelAlign : 'before'
+									},
+							]},
 								this.globalNodeId
 						]
 					}]
