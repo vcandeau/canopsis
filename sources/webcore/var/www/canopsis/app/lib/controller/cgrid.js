@@ -66,19 +66,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}
 			
 		}
-		/*
-		//clock system
-		if(grid.tbar_clock){
-			var refreshClock = function(){
-				var thisTime = new Date()
-				grid.tbar_clock.update(thisTime.getHours()+ ":" + thisTime.getMinutes() + "  -  " + (thisTime.toLocaleDateString()));
-			};
-			Ext.TaskManager.start({
-				run: refreshClock,
-				interval: 1000000
-			});
-		}
-		*/
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
 		for (i in btns){
@@ -96,6 +83,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 		if(grid.opt_keynav_del){
+			//log.debug('id of grid is : ' + id);
 			Ext.create('Ext.util.KeyNav', id, {
 						scope: this,
 						del: this._deleteButton
@@ -300,7 +288,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					xtype: this.formXtype,
 					editing: true,
 					id: id,
-					closable: true,}).show();
+					closable: true,
+				}).show();
+				
+				
 				
 
 				if (this.beforeload_EditForm) {
