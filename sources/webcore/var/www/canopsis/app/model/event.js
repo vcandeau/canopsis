@@ -18,20 +18,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.events', {
+Ext.define('canopsis.model.event', {
     extend: 'Ext.data.Model',
 
 	fields: [
 		{name: '_id'},
-		{name: 'host_name'},
-		{name: 'service_description'},
+		{name: 'connector'},
+		{name: 'connector_name'},
+		{name: 'event_type'},
 		{name: 'source_type'},
-		{name: 'type'},
-		{name: 'source_name'},
+		{name: 'component'},
+		{name: 'ressource'},	
+		{name: 'timestamp'},
 		{name: 'state'},
 		{name: 'state_type'},
-		{name: 'timestamp'},
-		{name: 'output'}
+		{name: 'output'},
+		{name: 'long_output'},
+		{name: 'perf_data'},
 	],
 
 });
