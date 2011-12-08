@@ -153,8 +153,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				fields: ['name'],
 				data : [
 					{"name":"all"},
-					{"name":"host"},
-					{"name":"service"}
+					{"name":"component"},
+					{"name":"ressource"}
 				]
 			});
 

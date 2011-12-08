@@ -27,12 +27,15 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	remoteSort: false,
 
 	opt_paging: false,
-	opt_tbar: false,
+	opt_bar: false,
 
 	opt_show_state_type: true,
 	opt_show_component: false,
 	opt_show_ressource: true,
 	opt_show_row_background: true,
+
+	opt_bar_delete: false,
+	opt_bar_add: false,
 	
 	border: true,
 
