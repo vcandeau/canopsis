@@ -23,7 +23,7 @@ Ext.define('widgets.host_header.host_header' ,{
 
 	alias : 'widget.host_header',
 	
-	tpl: '<h1>{source_name} > {type} > {source_type} > {host_name}</h1>',
+	tpl: '<h1>{connector_name} > {source_type} > {component}</h1>',
 
 	htmlTpl: false,
 
