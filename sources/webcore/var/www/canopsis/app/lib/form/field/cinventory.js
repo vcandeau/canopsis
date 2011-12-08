@@ -47,21 +47,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			this.grow = false
 		}
 
-		var model = Ext.ModelManager.getModel('cinventory');
-		if (! model){
-			Ext.define('cinventory', {
-				extend: 'Ext.data.Model',
-				fields: [
-					{name : 'id'},
-					{name : 'type'},
-					{name : 'source_name'},
-					{name : 'source_type'},
-					{name : 'service_description'},
-					{name : 'host_name'},
-					{name : 'perf_data'},
-				],
-			});
-		}
+		//var model = Ext.ModelManager.getModel('event');
+		var model = 'canopsis.model.event';
 
 		this.Win_columns = [{
 				header: '',
@@ -76,13 +63,13 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				dataIndex: 'perf_data',
 				renderer: rdr_havePerfdata
 	       		},{
-				header: 'Node Name',
+				header: 'Component',
 				flex: 1,
-				dataIndex: 'host_name',
+				dataIndex: 'component',
 	       		},{
-        		        header: 'Service',
+        		        header: 'Ressource',
 				flex: 2,
-				dataIndex: 'service_description',
+				dataIndex: 'ressource',
 		}];
 
 		this.columns = this.Win_columns
@@ -90,7 +77,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		//------------------- create stores---------------
 		this.InventoryStore = Ext.create('canopsis.lib.store.cstore', {
 			
-				model: 'cinventory',
+				model: model,
 				pageSize: 10,
 				proxy: {
 					type: 'rest',
@@ -109,7 +96,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		})
 		
 		this.store = Ext.create('Ext.data.Store', {
-				model: 'cinventory',
+				model: model,
 		});
 
 		this.LoadStore(this.ids)

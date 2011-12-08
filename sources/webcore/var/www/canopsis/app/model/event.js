@@ -18,29 +18,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.Widgets', {
-    extend: 'Ext.app.Controller',
+Ext.define('canopsis.model.event', {
+    extend: 'Ext.data.Model',
 
-    //views: ['Widgets.kpi', 'Widgets.host_header'],
-    stores: ['Widget'],
-    models: ['event'],
+	fields: [
+		{name: '_id'},
+		{name: 'connector'},
+		{name: 'connector_name'},
+		{name: 'event_type'},
+		{name: 'source_type'},
+		{name: 'component'},
+		{name: 'ressource'},	
+		{name: 'timestamp'},
+		{name: 'state'},
+		{name: 'state_type'},
+		{name: 'output'},
+		{name: 'long_output'},
+		{name: 'perf_data'},
+	],
 
-    init: function() {
-		Ext.Loader.setPath('widgets', './widgets');
-		this.store = this.getStore('Widget');
-		log.debug('[controller][Widgets] : parsing Widget store');
-		this.store.on('load',function(){
-			this.store.each(function(record){
-				log.debug('[controller][Widgets] : loading ' + record.data.xtype);
-				var name ='widgets.' + record.data.xtype + '.' + record.data.xtype ;
-				Ext.require(name);
-			});
-			
-			// small hack
-			setTimeout(function(ctrl){ ctrl.fireEvent('loaded'); },1000, this);
-
-		}, this);
-    },
-    
-	
 });

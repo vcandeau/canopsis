@@ -34,6 +34,8 @@ from caccount import caccount
 from cavailability import cavailability
 from csla import csla
 
+import cevent
+
 from twisted.internet import reactor, task
 
 ########################################################
@@ -89,8 +91,10 @@ def calcul_all_availability():
 
 		# Publish availability event
 		event = availability.make_event()
+		rk = cevent.get_routingkey(event)
+		
 		msg = Content(json.dumps(event))
-		amqp.publish(msg, event['rk'], amqp.exchange_name_events)
+		amqp.publish(msg, rk, amqp.exchange_name_events)
 
 	logger.debug(" + End of calculs")
 		
@@ -112,8 +116,10 @@ def calcul_all_sla():
 		
 		# Publish sla event
 		event = sla.make_event()
-		msg = Content(json.dumps(event))
-		amqp.publish(msg, event['rk'], amqp.exchange_name_events)
+		rk = cevent.get_routingkey(event)
+
+		msg = Content(json.dumps(event))	
+		amqp.publish(msg, rk, amqp.exchange_name_events)
 
 	logger.debug(" + End of calculs")
 			
