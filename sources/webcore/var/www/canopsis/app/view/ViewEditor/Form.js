@@ -175,7 +175,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		});
 		
 		this.ItemsStore = Ext.create('Ext.data.Store', {
-				model: 'cinventory',});
+				model: 'canopsis.model.event',});
 
 		var ItemsList = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.ItemsStore,
