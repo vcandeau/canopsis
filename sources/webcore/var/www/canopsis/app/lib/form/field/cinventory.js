@@ -48,7 +48,6 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		}
 
 		var model = Ext.ModelManager.getModel('canopsis.model.event');
-		log.dump(model)
 		//var model = 'canopsis.model.event';
 
 		this.Win_columns = [{
