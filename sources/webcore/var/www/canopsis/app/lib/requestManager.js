@@ -138,7 +138,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 	do : function(){
 		log.debug('ajax task woke up', this.logAuthor);
 		var time = this.i * this.step
-		log.debug('refresh time is : ' + time);
+		//log.debug('refresh time is : ' + time);
 		for(j in this.intervals_nodes){
 			//log.debug('interval' + j)
 			//log.dump(time % j)
