@@ -51,9 +51,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	initComponent: function() {
 		this.on('beforeclose', this.beforeclose)
 		this.callParent(arguments);
-		
-		//creating ajax requestManager
-		this.requestManager = Ext.create('canopsis.lib.requestManager');
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 			
@@ -86,14 +83,17 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	setContent: function(){
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
-
-		if(!this.view.reporting){
-			this.itemsReady = []//tab to buffer items before add them to page
-		} else {
-			alert('reporting')
+		
+		this.itemsReady = []//tab to buffer items before add them to page
+		
+		//------------creating ajax requestManager or reportWidgetList-------------
+		if(this.view.reporting){
+			this.reportWidgetList = []
+		}else{
+			this.requestManager = Ext.create('canopsis.lib.requestManager');
 		}
 
-		//General options
+		//---------------General options---------------------
 		if(this.options.nodeId){
 			//if id specified by cgrid (on-the-fly view)
 			var nodeId = this.options.nodeId;
@@ -111,7 +111,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.layout.columns = nbColumns
 
 		log.debug('Create '+nbColumns+' column(s)..', this.logAuthor)
-
+		
+		//-----------------populating with widgets--------------
 		if (items.length == 1 && nbColumns == 1) {
 			//one widget, so full mode
 			log.debug(' + Use full mode ...', this.logAuthor)
@@ -134,12 +135,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			
 			//add item in the view
 			this.add(item)
-			
-			//Start managing request
-			this.requestManager.startTask();
+
 		}else{
 			//many widgets
-			this.removeAll();
+			//this.removeAll();
 
 			//fixing layout (table goes wild without it)
 			for (i; i<nbColumns; i++){
@@ -175,11 +174,48 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				this.itemsReady.push(item);
 			}
 			this.addReadyItem()
-			
-			this.requestManager.startTask();
 		}
 		
-		if(!this.view.reporting){
+		//add docked bar with listeners if reporting mode, else launch task manager
+		if(this.view.reporting){
+			//------------create and adding tbar-----------
+			this.reportFrom = Ext.create('Ext.form.field.Date',{
+				xtype: 'datefield',
+				name: 'from',
+				fieldLabel: 'From',
+				value: new Date(),
+				maxValue: new Date(),
+			})
+			
+			this.reportTo = Ext.create('Ext.form.field.Date',{
+				xtype: 'datefield',
+				name: 'to',
+				fieldLabel: 'To',
+				value: new Date(),
+			})
+			
+			this.reportButton = Ext.create('Ext.button.Button',{
+				xtype: 'button', // default for Toolbars
+				text: 'fetch',
+			})
+			
+			this.bar = Ext.create('Ext.toolbar.Toolbar', {
+				dock: 'top',
+				items: [this.reportFrom,this.reportTo,this.reportButton]
+			});
+			this.addDocked(this.bar);
+			
+			//---------------binding actions to button-----------
+			this.reportButton.on('click',function(){
+					var fromValue = Ext.Date.format(this.reportFrom.getValue(), 'U');
+					var toValue = Ext.Date.format(this.reportTo.getValue(), 'U');
+					this.doReport(fromValue,toValue)
+				}, this
+			);
+			
+		} else {
+			//Start managing request
+			this.requestManager.startTask();
 			//binding event to save ressources
 			this.on('show', function(){
 				this.requestManager.resumeTask();
@@ -188,18 +224,31 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				this.requestManager.pauseTask();
 			}, this);
 		}
-		
-		
-		
 	},
 	
 	addReadyItem : function(){
 		for (i in this.itemsReady){
 			this.add(this.itemsReady[i])
 		}
-		//log.debug(this);
 	},
 	
+	//widget subscribe with this
+	register : function(widget,nodeId,interval){
+		if(this.view.reporting){
+			this.reportWidgetList.push(widget);
+		} else {
+			if(interval != 0){
+				this.requestManager.register(widget,nodeId,interval);
+			}
+		}
+	},
+	
+	//request widgets to switch to report mode
+	doReport : function(from, to){
+		for (i in this.reportWidgetList){
+			this.reportWidgetList[i].reporting(from,to);
+		}
+	},
 	
 	//don't mind about this code
 /*	

@@ -50,13 +50,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		this.callParent(arguments);
 		
+		//the widget register himself to his view
+		this.mytab.register(this,this.nodeId,this.refreshInterval);
 		
-
 		if (this.refreshInterval > 0){
 			
-			log.debug('***refresh interval : ' + this.refreshInterval);
-			this.mytab.requestManager.register(this,this.nodeId,this.refreshInterval);
-
 			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
 			/*
 			this.task = {
@@ -85,8 +83,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			
 	},
 	
-	timeNavigator: function(){
-		log.debug('timeNavigator launched')
+	reporting: function(from, to){
+		this.setHtml('widget in reporting from date ' + from + ' to ' + to)
 	},
 	
 	refreshData: function(data){
@@ -130,10 +128,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		
 		//var record = this.mytab.nodeId_refresh_values.findRecord('_id', this.nodeId);
 		var record = this.nodeData
-		//log.debug('record  :  ');
-		//log.dump(record);
 		if(record){
-			//this.onRefresh(record.data)
 			this.onRefresh(record);
 		} else {
 			log.debug("Ajax request not stored", this.logAuthor)
