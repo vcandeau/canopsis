@@ -64,25 +64,21 @@ Ext.define('canopsis.controller.LiveSearch', {
 		var searchValue = this.getLiveSearch().down('#source_name').value;
 		if (searchValue){
 			store.load().filter('source_name',searchValue);
-			//search['source_name'] = searchValue;
 		}
 		
 		searchValue = this.getLiveSearch().down('#type').value;
 		if (searchValue){
 			store.load().filter('type',searchValue);
-			//search['type'] = searchValue;
 		}
 		
 		searchValue = this.getLiveSearch().down('#source_type').value;
 		if (searchValue){
 			store.load().filter('source_type',searchValue);
-			//search['source_type'] = searchValue;
 		}
 		
-		searchValue = this.getLiveSearch().down('#host_name').value;
+		searchValue = this.getLiveSearch().down('#component').value;
 		if (searchValue){
-			store.load().filter('host_name',searchValue);
-			//search['host_name'] = searchValue;
+			store.load().filter('component',searchValue);
 		}
 		
 		store.load();

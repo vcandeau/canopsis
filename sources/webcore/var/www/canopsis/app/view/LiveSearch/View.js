@@ -71,8 +71,8 @@ Ext.define('canopsis.view.LiveSearch.View', {
 			},{
 				flex: 1,
 				//name: 'lastName',
-				itemId : 'host_name',
-				fieldLabel: 'Host name',
+				itemId : 'component',
+				fieldLabel: 'Component',
 				margins: '0 0 0 5'
 			},{
 				xtype : 'button',
