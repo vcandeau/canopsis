@@ -21,7 +21,7 @@
 import time, os, sys, logging, json
 
 from ctools import dynmodloads
-from ctools import make_event
+import cevent
 
 from cselector import cselector
 
@@ -183,9 +183,11 @@ class cbrule(cselector):
 
 
 		if self.amqp:
-			event = make_event(service_description=self.name, source_name='amqp2brule', source_type=self.type, host_name=self.storage.account.user, state_type=1, state=state, output=message)
+			event = cevent.forger(connector='brule', connector_name='canopsis', event_type='brule', state=state, output=message )
+			rk = cevent.get_routingkey(event)
+			
 			msg = Content(json.dumps(event))
 			self.logger.debug(" + Publish with RK '%s' ..." % event['rk'])
-			self.amqp.publish(msg, event['rk'], self.amqp.exchange_name_events)
+			self.amqp.publish(msg, rk, self.amqp.exchange_name_events)
 			self.save()
 
