@@ -179,12 +179,12 @@ Ext.define('canopsis.lib.requestManager' ,{
 	},
 	
 	pauseTask : function(){
-		log.debug('pause task', this.logAuthor)
+		//log.debug('pause task', this.logAuthor)
 		this.stop(this.task);
 	},
 	
 	resumeTask : function(){
-		log.debug('resume task', this.logAuthor)
+		//log.debug('resume task', this.logAuthor)
 		this.start(this.task);
 	},
 	
