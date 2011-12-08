@@ -31,8 +31,9 @@ int event_program_status(int event_type __attribute__ ((__unused__)), void *data
 	//Send program_status every 10sec min
 	if ((int)ps->timestamp.tv_sec >= (g_last_event_program_status+10)){
 		char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
-		nebstruct_program_status_data_to_json(buffer, ps);
-		write_unix_socket(buffer);
+		//TODO
+		//nebstruct_program_status_data_to_json(buffer, ps);
+		//write_unix_socket(buffer);
 		g_last_event_program_status = (int)ps->timestamp.tv_sec;
 	}
 	
@@ -80,8 +81,9 @@ int event_acknowledgement(int event_type __attribute__ ((__unused__)), void *dat
 		//logger(LG_DEBUG, "Event: event_acknowledgement ADD");
 		
 		char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
-		nebstruct_acknowledgement_data_to_json(buffer, c);
-		write_unix_socket(buffer);
+		//TODO
+		//nebstruct_acknowledgement_data_to_json(buffer, c);
+		//write_unix_socket(buffer);
 		
 	}else if (c->type == NEBTYPE_ACKNOWLEDGEMENT_REMOVE){			/* NOT IMPLEMENTED IN NAGIOS :( */
 		//logger(LG_DEBUG, "Event: event_acknowledgement REMOVE");
@@ -103,8 +105,9 @@ int event_downtime(int event_type __attribute__ ((__unused__)), void *data)
 	
 	if (c->type == NEBTYPE_DOWNTIME_START || c->type == NEBTYPE_DOWNTIME_STOP){
 		char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
-		nebstruct_downtime_data_to_json(buffer, c);
-		write_unix_socket(buffer);	
+		//TODO
+		//nebstruct_downtime_data_to_json(buffer, c);
+		//write_unix_socket(buffer);	
 	}
 
 	return 0;
@@ -123,8 +126,9 @@ int event_comment(int event_type __attribute__ ((__unused__)), void *data)
 	
 	if (c->type == NEBTYPE_COMMENT_ADD || c->type == NEBTYPE_COMMENT_DELETE){
 		char buffer[UNIX_SOCKET_MSG_SIZE_MAX];
-		nebstruct_comment_data_to_json(buffer, c);
-		write_unix_socket(buffer);	
+		//TODO
+		//nebstruct_comment_data_to_json(buffer, c);
+		//write_unix_socket(buffer);	
 	}
 
 	return 0;
