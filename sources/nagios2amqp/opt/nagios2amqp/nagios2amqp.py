@@ -28,6 +28,8 @@ from txamqp.content import Content
 sys.path.append(os.path.expanduser("~/opt/event-brokers/nagios/api"))
 from neb2socket import *
 
+import cevent
+
 ########################################################
 #
 #   Configuration
@@ -82,16 +84,12 @@ class thread_listen_queue(threading.Thread):
 	
 		while self.RUN:
 			try:
+				
+
 				event = to_amqp_queue.get(True, timeout=1)
 				#logger.debug("Send event to AMQP ...")
-				key = "nagios."+event["source_name"]+"."+event["type"]+"."+event["source_type"]
-				
-				if event["type"] == "check":
-					key = key +"."+ event["host_name"]
-					if event["source_type"] == "service":
-						key = key +"."+ event["service_description"]
-						
-				
+				key = cevent.get_routingkey(event)						
+
 				msg = Content(json.dumps(event))
 				myamqp.publish(msg, key, myamqp.exchange_name_events)
 			except Exception, err:
