@@ -30,8 +30,8 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	opt_tbar: false,
 
 	opt_show_state_type: true,
-	opt_show_host_name: false,
-	opt_show_service_description: true,
+	opt_show_component: false,
+	opt_show_ressource: true,
 	opt_show_row_background: true,
 	
 	border: true,
@@ -85,21 +85,21 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			renderer: rdr_tstodate
 		});
 
-		if(this.opt_show_host_name){
+		if(this.opt_show_component){
 			this.columns.push({
-				header: 'Host name',
+				header: 'Component',
 				flex: 1,
 				sortable: false,
-				dataIndex: 'host_name',
+				dataIndex: 'component',
 			});
 		}
 
-		if(this.opt_show_service_description){
+		if(this.opt_show_ressource){
 			this.columns.push({
-				header: 'Service description',
+				header: 'Ressource',
 				flex: 1,
 				sortable: false,
-				dataIndex: 'service_description',
+				dataIndex: 'ressource',
 			});
 		}
 
@@ -114,7 +114,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		if (! this.store){
 			this.store = Ext.create('canopsis.lib.store.cstore', {
 				//extend: 'canopsis.lib.store.cstore',
-				model: 'canopsis.model.events',
+				model: 'canopsis.model.event',
 
 				pageSize: this.pageSize,
 
@@ -166,12 +166,12 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	},
 
 	load_services_of_host: function(hostname){
-		this.store.proxy.extraParams = {"filter": '{"host_name":"'+ hostname +'", "source_type": "service"}'};
+		this.store.proxy.extraParams = {"filter": '{"component":"'+ hostname +'", "source_type": "ressource"}'};
 		this.store.load();
 	},
 
 	load_host: function(hostname){
-		this.store.proxy.extraParams = {"filter": '{"host_name":"'+ hostname +'"}'};
+		this.store.proxy.extraParams = {"filter": '{"component":"'+ hostname +'"}'};
 		this.store.load();
 	}
 

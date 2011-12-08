@@ -29,8 +29,6 @@ from pymongo import objectid
 from caccount import caccount
 from cstorage import get_storage
 
-from ctools import make_event
-
 import time
 import json
 import logging
