@@ -23,7 +23,7 @@ from cselector import cselector
 
 from ctools import calcul_pct
 from ctools import legend
-from ctools import make_event
+import cevent
 
 from datetime import datetime
 
@@ -307,7 +307,5 @@ class csla(cselector):
 		unkn = "'unkn'=%s%%;0;0;0;100" % (self.sla_pct['unknown'])
 
 		perf_data = ok + " " + warn + " " + crit + " " + unkn
-
-		dump = make_event(service_description=self.name, source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
-
-		return dump
+	
+		return cevent.forger(connector='sla', connector_name='canopsis', event_type='sla', state=self.state,  perf_data=perf_data)

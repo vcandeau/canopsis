@@ -23,7 +23,7 @@ from cselector import cselector
 
 from ctools import calcul_pct
 from ctools import legend
-from ctools import make_event
+import cevent
 
 from datetime import datetime
 
@@ -157,7 +157,6 @@ class cavailability(cselector):
 		return state
 
 	def make_event(self):
-
 		#'label'=value[UOM];[warn];[crit];[min];[max]
 		ok = "'ok'=%s%%;%s;%s;0;100" % (self.availability_pct['ok'], self.threshold_warn, self.threshold_crit)
 		warn = "'warn'=%s%%;0;0;0;100" % (self.availability_pct['warning'])
@@ -166,7 +165,6 @@ class cavailability(cselector):
 
 		perf_data = ok + " " + warn + " " + crit + " " + unkn
 
-		dump = make_event(service_description=self.name, source_type=self.type, host_name=self.storage.account.user, state_type=1, state=self.state, output='', perf_data=perf_data)
+		return cevent.forger(connector='availability', connector_name='canopsis', event_type='availability', state=self.state,  perf_data=perf_data)
 
-		return dump
 
