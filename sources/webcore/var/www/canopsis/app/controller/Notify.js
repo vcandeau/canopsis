@@ -30,11 +30,11 @@ Ext.define('canopsis.controller.Notify', {
 		
 		var type = undefined;
 		var icon = undefined;
-		var title = data['source_name'] + " > " + data['source_type']  + " > " +  data['host_name'];
+		var title = data['connector_name'] + " > " +  data['component'];
 		var message = data['output'];
 
-		if (data['service_description']) {
-			title = title + " > " + data['service_description']
+		if (data['source_type'] == 'ressource') {
+			title = title + " > " + data['ressource']
 		}
 
 		if (data['state'] == 0){

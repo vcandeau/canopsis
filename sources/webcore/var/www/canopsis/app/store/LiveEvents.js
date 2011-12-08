@@ -21,7 +21,7 @@
 Ext.define('canopsis.store.LiveEvents', {
 	extend: 'canopsis.lib.store.cstore',
 
-	model: 'canopsis.model.events',
+	model: 'canopsis.model.event',
 	
 	storeId: 'store.LiveEvents',
 

@@ -297,7 +297,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			//cinventory for following panel
 			this.widgetNodeId = Ext.create('canopsis.lib.form.field.cinventory', {
-								prefetch_id: (this.globalNodeId.getStore().count()) ? this.globalNodeId.getStore().getAt(0).get('host_name') : undefined,
+								prefetch_id: (this.globalNodeId.getStore().count()) ? this.globalNodeId.getStore().getAt(0).get('component') : undefined,
 								multiSelect: false,
 							})
 			

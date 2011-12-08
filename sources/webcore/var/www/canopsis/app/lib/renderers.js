@@ -43,17 +43,6 @@ var rdr_source_type = function (val, metadata, record, rowIndex, colIndex, store
 	return "<span class='icon icon-crecord_type-"+val+"' />"
 }
 
-/*var HOST_NAME=""
-var rdr_host_name = function(val){
-        if (val == HOST_NAME){
-                return ""
-        }else{
-                HOST_NAME = val
-                return val
-        }
-    }
-*/
-
 var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, store) {
 	if (val != ''){
 		return "<span class='icon icon-crecord_type-"+val+"' />"
