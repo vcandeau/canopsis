@@ -1,4 +1,4 @@
-/*
+#!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,21 +17,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-*/
-Ext.define('canopsis.model.events', {
-    extend: 'Ext.data.Model',
 
-	fields: [
-		{name: '_id'},
-		{name: 'host_name'},
-		{name: 'service_description'},
-		{name: 'source_type'},
-		{name: 'type'},
-		{name: 'source_name'},
-		{name: 'state'},
-		{name: 'state_type'},
-		{name: 'timestamp'},
-		{name: 'output'}
-	],
+import unittest
 
-});
+import cevent
+
+
+class KnownValues(unittest.TestCase): 
+	def setUp(self):
+		pass
+
+	def test_01(self):
+		event = cevent.forger(connector='unittest', connector_name='test1', event_type='log')
+		rk = cevent.get_routingkey(event)
+
+		print rk
+		print event
+		
+if __name__ == "__main__":
+	unittest.main(verbosity=1)
+	
+
+
