@@ -184,7 +184,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
-				opt_tbar: false,
+				opt_bar: false,
 				border: true,
 				flex : 1,
 				viewConfig: {
@@ -217,7 +217,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			var secondGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
-				opt_tbar: false,
+				opt_bar: false,
 				border: true,
 				opt_paging: false,
 				flex : 4,
@@ -288,22 +288,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					fieldLabel: 'Search',
 					name: 'search',
 					//allowBlank: false,
-				},/*{
-					fieldLabel: 'Type',
-					name: 'type',
-				},{
-					fieldLabel: 'Source',
-					name: 'source_name',
-				},{
-					fieldLabel: 'Source Type',
-					name: 'source_type',
-				},{
-					fieldLabel: 'Node',
-					name: 'host_name',
-				},{
-					fieldLabel: 'Service',
-					name: 'service_description',
-				}*/],
+				}],
 			});
 			
 			var searchButton = Ext.create('Ext.Button', {

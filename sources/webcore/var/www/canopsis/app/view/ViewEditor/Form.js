@@ -119,11 +119,21 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								value: 200,
 								minValue: 0
 							},{
-								xtype: 'checkboxfield',
-								boxLabel  : 'Template :',
-								name      : 'template',
-								boxLabelAlign : 'before'
-							},
+								xtype: 'panel',
+								layout: 'hbox',
+								border: false,
+								items : [{
+										xtype: 'checkboxfield',
+										boxLabel  : 'Reporting :',
+										name      : 'reporting',
+										boxLabelAlign : 'before'
+									},{ xtype: 'tbspacer', width: 50 },{
+										xtype: 'checkboxfield',
+										boxLabel  : 'Template :',
+										name      : 'template',
+										boxLabelAlign : 'before'
+									},
+							]},
 								this.globalNodeId
 						]
 					}]
@@ -170,17 +180,19 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		var ItemsList = Ext.create('canopsis.lib.view.cgrid', {
 			store: this.ItemsStore,
 			
-			border: 1,
+			border: true,
 			
 			opt_paging: false,
 			
-			opt_tbar: true,
-			opt_tbar_add:false,	
+			opt_bar_bottom: true,
 			
-			opt_tbar_reload:false,
-			opt_tbar_delete:true,
+			opt_bar: true,
+			opt_bar_add:false,	
 			
-			opt_keynav_del: false,
+			opt_bar_reload:false,
+			opt_bar_delete:true,
+			
+			//opt_keynav_del: true,
 			
 			viewConfig: {
 				plugins: {
@@ -198,19 +210,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					}
 	 			},
 			},
-			/*
-			bbar: [{
-					iconCls: 'icon-delete',
-					text : 'Delete selected row',
-					action : 'deleteRow'
-				},{
-					xtype: 'tbseparator'
-				},{
-					iconCls: 'icon-delete',
-					text : 'Clear all',
-					action : 'reset'
-				}],
-				*/
 				columns: [{
 					header: '',
 					width: 25,
@@ -256,6 +255,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				
 			html: 'Items List', colspan: 3, width: this.DefaultWidth * 3 
 		});
+		
 		var ItemsList_ctrl = Ext.create('canopsis.lib.controller.cgrid');
 		ItemsList_ctrl._bindGridEvents(ItemsList);
 		
@@ -274,30 +274,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 		//others listeners
 		Widgets.on('itemdblclick',this.addItem,this);
 		ItemsList.on('itemdblclick',this.ModifyItem,this);
-		/*
-		//delete row listener
-		var deleteRowButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=deleteRow]');
-		deleteRowButton[0].on('click',function(){this.deleteButton(ItemsList)}, this);
-		//deleteRowKeynav
-		Ext.create('Ext.util.KeyNav', this.id, {
-						scope: ItemsList,
-						del: function(){
-							var selection = this.getSelectionModel().getSelection();
-							if (selection) {
-								log.debug("[view][form][itemList] - Remove record ...")
-								this.store.remove(selection);
-							}
-						}
-		});
-		
-		//clear all listener
-		var clearAllButton = Ext.ComponentQuery.query('#' + ItemsList.id + ' button[action=reset]');
-		clearAllButton[0].on('click',function(){
-			this.ItemsStore.removeAll();
-			//don't recognize by the event datachanged, must trigger by hand
-			this.createPreview(this.ItemsStore,Preview,GlobalOptions);
-		},this);
-		*/
+
 	},
 	
 	ModifyItem : function(view, item, index){
@@ -307,7 +284,15 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
+				closeAction: 'destroy',
 				title: 'Edit ' + item.data.xtype,
+				
+				beforeclose : function() {
+						log.debug("Destroy items ...", this.logAuthor)
+						canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
+						log.debug(this.id + " Destroyed.", this.logAuthor)
+				}
+				
 			});
 			
 			//cinventory for following panel
@@ -316,7 +301,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 								multiSelect: false,
 							})
 			
-				
+			//Widget configuration panel
 			var form = Ext.widget('cform', {
 					model: 'widget',
 					//closeAction: 'hide',
@@ -392,32 +377,27 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 					defaults: {
 						anchor: '100%',
-						//hideEmptyLabel: false
 					},
 					items : item.data.options,
 				});
+				
+				//bind action when store change
+				this.widgetNodeId.store.on('datachanged', function(){
+					this.refreshComboStore()
+				}, this);
 			}
 			
-			//activate combobox if prefetch
-			if(this.widgetNodeId.prefetcg_id != undefined){
-				this.loadComboBox()
-			}
-			
-			//showing and loading the window
 			this.window.show();
+			//showing and loading the window
 			form.setWidth(item.data.formWidth);
 			form.setHeight(310);
 			form.getForm().loadRecord(item);
-			
+
 			////////////////////Bind events////////////////
-			//bind action when store change
-			if (item.data.options){
-				this.widgetNodeId.store.on('datachanged', function(){
-					this.refreshComboStore(this.window.widgetOptionsPanel,this.widgetNodeId.getStore().getAt(0))}, this);
-			}
 			var WidgetForm = this.window.down('cform')
-			WidgetForm.down('button[action=cancel]').on('click',function(){this.window.hide()},this);
-			//Save Button
+			WidgetForm.down('button[action=cancel]').on('click',function(){
+				this.window.close()},this);
+			/////////////////Save Button///////////////////
 			WidgetForm.down('button[action=save]').on('click',
 			function(){
 					log.debug('[controller][cgrid][Form][WidgetForm]');
@@ -436,6 +416,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						{
 							//cleaning combobox store
 							if(record.data.options[i].xtype == "combo"){
+								//record.data.options[i].store.destroy();
 								record.data.options[i].store = null;
 							}
 							record.data.options[i].value = new_values[record.data.options[i].name]
@@ -444,7 +425,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					
 					this.window.destroy();
 					this.createPreview(this.ItemsStore,this.Preview,this.GlobalOptions);
-				},this);
+			},this);
 	},
 	
 	deleteButton: function(grid) {
@@ -500,67 +481,37 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						}
 					}
 					log.debug(storeUrl)
-					//if node specified
-					if(storeUrl){
-						var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
-							fields: ['metric'],
-							proxy: {
-									type: 'rest',
-									url: '/perfstore/metrics/' + storeUrl,
-									reader: {
-										type: 'json',
-										root: 'data',
-										totalProperty  : 'total',
-										successProperty: 'success',
-									}
-							}
-						});
-						//item.data.options[i].store = this.comboMetricStore;
-						//need to change the store of panel if already rendered
-					/*	if(this.window.widgetOptionsPanel){
-							this.window.widgetOptionsPanel.items.items[i].store = comboMetricStore;
-							this.window.widgetOptionsPanel.items.items[i].reset();
-							log.debug('store already existe, replace it')
-							log.dump(this.window.widgetOptionsPanel.items.items[i]);
-						} else {*/
-							//else it not rendered so we put it in option
-						item.data.options[i].store = comboMetricStore;
-					/*	log.debug(item.data.options[i])
-						item.data.options[i].disabled = 'false';
-						log.debug(item.data.options[i])*/
-						//comboMetricStore.load();
-					} else {
-						//else if globalNodeId is not specified, set empty store
-						var comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
-							fields: ['metric'],
-							proxy: {
-									type: 'rest',
-									url: '/perfstore/metrics/' + storeUrl,
-									reader: {
-										type: 'json',
-										root: 'data',
-										totalProperty  : 'total',
-										successProperty: 'success',
-									}
-							}
-							});
-						item.data.options[i].store = comboMetricStore;
-						item.data.options[i].disabled = 'true';
-						
-					}
+					this.comboMetricStore = Ext.create('canopsis.lib.store.cstore', {
+						fields: ['metric'],
+						proxy: {
+								type: 'rest',
+								url: '/perfstore/metrics/' + storeUrl,
+								reader: {
+									type: 'json',
+									root: 'data',
+									totalProperty  : 'total',
+									successProperty: 'success',
+								}
+						}
+					});
+					//put store in option
+					item.data.options[i].store = this.comboMetricStore;
 				}
 			}
 		}
 	},
 
-	refreshComboStore : function(panel , record){
-		log.debug('enter refreshcombo')
+	refreshComboStore : function(){
+		panel = this.window.widgetOptionsPanel
+		record = this.widgetNodeId.getStore().getAt(0)
+		//log.debug('enter refreshcombo')
 		if (record.get('_id')){
 			var storeUrl = record.get('_id');
 		} else if (record.get('id')){
 			var storeUrl = record.get('id');
 		}
 		var panelItems = panel.items.items
+		//search all combox in widget options
 		for (i in panelItems){
 			if(panelItems[i].xtype == 'combo'){
 				panelItems[i].store.proxy.url = '/perfstore/metrics/' + storeUrl;

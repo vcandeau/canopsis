@@ -85,6 +85,8 @@ Ext.define('canopsis.controller.ViewEditor', {
 				record.set('rowHeight',form.down('numberfield[name=rowHeight]').getValue());
 				//log.debug('rowHeight : ' + record.get('rowHeight'));
 				record.set('template', form.down('checkboxfield[name=template]').getValue());
+				log.debug(' set reporting to ' + form.down('checkboxfield[name=reporting]').getValue());
+				record.set('reporting', form.down('checkboxfield[name=reporting]').getValue());
 
 				//get nodeId if defined
 				//panel = form.GlobalOptions.down('gridpanel');
