@@ -86,32 +86,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	setContent: function(){
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
-		
-		//store with value request by widget, centralize them
-		var model = Ext.ModelManager.getModel('canopsis.model.event');
-		if (! model){
-			Ext.define('canopsis.model.event', {
-				extend: 'Ext.data.Model',
-				fields: [
-					{name: '_id'},
-					{name: 'timestamp'},
-					{name: 'state'},
-					{name: 'state_type'},
-					{name: 'perf_data_array'},
-					{name: 'hostname'}
-				],
 
-			});
-		}
-		
-		this.nodeId_refresh_values = Ext.create('canopsis.lib.store.cstore', {
-			model: 'canopsis.model.event',
-		})
-		
-		//this.nodeId_refresh_values = []//tab with value request by widget, centralize them
-		this.taskList = []//tab of task launch in order to refresh ajax request
 		this.itemsReady = []//tab to buffer items before add them to page
-		this.metricsBuffer = [] //where you stock new metric values for fetchOldValues
 
 		//General options
 		if(this.options.nodeId){
@@ -155,6 +131,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//add item in the view
 			this.add(item)
 			
+			//Start managing request
 			this.requestManager.startTask();
 		}else{
 			//many widgets
@@ -214,7 +191,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		for (i in this.itemsReady){
 			this.add(this.itemsReady[i])
 		}
-		log.debug(this);
+		//log.debug(this);
 	},
 	
 	

@@ -377,11 +377,6 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				}, this);
 			}
 			
-			//activate combobox if prefetch
-			/*if(this.widgetNodeId.prefetch_id != undefined){
-				this.loadComboBox()
-			}*/
-			
 			this.window.show();
 			//showing and loading the window
 			form.setWidth(item.data.formWidth);
