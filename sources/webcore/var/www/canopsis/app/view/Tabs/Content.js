@@ -113,7 +113,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug('Create '+nbColumns+' column(s)..', this.logAuthor)
 		
 		//-----------------populating with widgets--------------
-		if (items.length == 1 && nbColumns == 1) {
+		if (items.length == 1 ) {
 			//one widget, so full mode
 			log.debug(' + Use full mode ...', this.logAuthor)
 			this.layout = 'fit'
@@ -255,9 +255,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
     
 	beforeclose: function(tab, object){
 		//stop all the task
-		log.debug("Stopping all task", this.logAuthor)
-		this.requestManager.stopTask();
-		
+		if(!this.view.reporting){
+			log.debug("Stopping all task", this.logAuthor)
+			this.requestManager.stopTask();
+		}
+	
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
