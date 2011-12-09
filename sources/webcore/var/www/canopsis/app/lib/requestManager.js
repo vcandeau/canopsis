@@ -48,29 +48,19 @@ Ext.define('canopsis.lib.requestManager' ,{
 	register : function(widget,nodeId,interval){
 		log.debug('Widget added to requestManager list', this.logAuthor);
 		interval = Math.round(interval/10) * 10
+
 		//search if interval already exist
-		for (i in this.intervals){
-			if(this.intervals[i] == interval){
-				var exist = true;
-			}
-		}
-		if(!exist){
+		if (this.intervals.indexOf(interval) < 0){
 			this.intervals.push(interval)
 		}
 		
 		//add node id to interval
 		if(this.intervals_nodes[interval]){
 			//check if node already push in the interval
-			var already_pushed = false;
-			for (i in this.intervals_nodes[interval]){
-				if(this.intervals_nodes[interval][i] == nodeId){
-					already_pushed = true
-				}
-			}
-			
-			if(!already_pushed){
+			if (this.intervals_nodes[interval].indexOf(nodeId) < 0){
 				this.intervals_nodes[interval].push(nodeId);
 			}
+
 		}else{
 			this.intervals_nodes[interval] = [nodeId];
 		}
