@@ -118,9 +118,9 @@ Ext.define('canopsis.lib.requestManager' ,{
 			//if no registred widget, no task
 			this.start(this.task);
 			
-			return 1
+			return true
 		}else{
-			return 0
+			return false
 		}
 	},
 	
