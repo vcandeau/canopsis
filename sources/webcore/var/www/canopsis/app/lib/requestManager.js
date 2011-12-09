@@ -1,37 +1,26 @@
 Ext.define('canopsis.lib.requestManager' ,{
 	extend: 'Ext.util.TaskRunner',
 	
-	i : 0,
-	step: 10,
-	
 	logAuthor : '[requestManager]',
-	
-	/* it's not a component
-	initComponent: function() {
-		this.callParent(arguments);
-		
-		this.node_widgets = {}
-		this.intervals_nodes = []
-		this.intervals = []
-		this.interval_max = 0
-	},
-	*/
 	
 	//constructor, because it's not a component
 	constructor : function(){
 		this.callParent(arguments);
 		
-		this.node_widgets = {}
-		this.intervals_nodes = []
-		this.intervals = []
-		this.interval_max = 0
+		this.i = 0;
+		this.step = 10;
 		
-		this.node_list = []
-		this.taskList = []
+		this.node_widgets = {};
+		this.intervals_nodes = [];
+		this.intervals = [];
+		this.interval_max = 0;
+		
+		this.node_list = [];
+		this.taskList = [];
 	},
 	
 	register : function(widget,nodeId,interval){
-		interval = Math.round(interval/this.step) * this.step
+		interval = Math.round(interval/10) * 10
 		//log.debug('new interval : ' + interval, this.logAuthor)
 		
 		//search if interval already exist
@@ -93,14 +82,22 @@ Ext.define('canopsis.lib.requestManager' ,{
 	
 	startTask : function(){
 		this.i = 0;
+		var gcd_values = [];
+		
 		//get max value
 		for(i in this.intervals){
+			gcd_values.push(this.intervals[i]);
 			if(this.intervals[i] > this.interval_max){
 				this.interval_max = this.intervals[i]
 			}
 		}
 		//log.debug('--------StartTask max value----------', this.logAuthor)
 		//log.dump(this.interval_max)
+		
+		//find the greatest common divisor
+		this.step = find_gcd(gcd_values)
+		//log.debug('the gcd is : ' + gcd)
+		
 		
 		//building the task
 		this.task = {
