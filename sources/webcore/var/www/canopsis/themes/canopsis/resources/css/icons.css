@@ -154,11 +154,11 @@
     background-image: url(../images/Tango-Blue-Materia/16x16/status/image-loading.png) !important; 
 }
 
-.icon-crecord_type-host { 
+.icon-crecord_type-component { 
     background-image: url(../images/Tango-Blue-Materia/16x16/places/server.png) !important; 
 }
 
-.icon-crecord_type-service { 
+.icon-crecord_type-ressource { 
     background-image: url(../images/Tango-Blue-Materia/16x16/categories/applications-system.png) !important; 
 }
 

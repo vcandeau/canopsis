@@ -24,7 +24,7 @@ Ext.define('widgets.list.list' ,{
 	alias : 'widget.list',
 	
 	//don't work
-	filter: {"source_type":"host"},
+	filter: {"source_type":"component"},
 
 	initComponent: function() {
 	
@@ -36,26 +36,26 @@ Ext.define('widgets.list.list' ,{
 			pageSize: global.pageSize,
 			remoteSort: true,
 			sorters: [{
-				property : 'host_name',
+				property : 'component',
 				direction: 'ASC'
 			},{
-				property : 'service_description',
+				property : 'ressource',
 				direction: 'ASC'
 			}],
 
-			opt_show_host_name: true,
-			opt_show_service_description: true,
-			
-			opt_tbar: true,
-			opt_tbar_search: true,
-			opt_tbar_search_field: ['host_name', 'service_description'],
+			opt_show_component: true,
+			opt_show_ressource: true,
+		
+			opt_bar: true,
+			opt_bar_search: true,
+			opt_bar_search_field: ['component', 'ressource'],
 
-			opt_tbar_add: false,
-			opt_tbar_duplicate: false,
-			opt_tbar_reload: true,
-			opt_tbar_delete: false,
+			opt_bar_add: false,
+			opt_bar_duplicate: false,
+			opt_bar_reload: true,
+			opt_bar_delete: false,
 			
-			opt_view_element:'view.hostDetail'
+			opt_view_element:'view.ComponentDetails'
 
 		});
 

@@ -365,9 +365,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		
 		//create an array and give it to store.search
 		var myArray = []
-		for (i in grid.opt_tbar_search_field){
+		for (i in grid.opt_bar_search_field){
 			var tempObj = {}
-			tempObj[grid.opt_tbar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
+			tempObj[grid.opt_bar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
 			myArray.push(tempObj);
 		}
 		store.search(store.getOrFilter(myArray));

@@ -37,6 +37,6 @@ Ext.define('widgets.states.states' ,{
 	},
 	
 	onRefresh: function(data){
-		this.grid.load_services_of_host(data.host_name)
+		this.grid.load_services_of_host(data.component)
 	},
 });
