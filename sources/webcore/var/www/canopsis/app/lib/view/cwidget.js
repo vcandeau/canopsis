@@ -52,18 +52,21 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		this.callParent(arguments);
 		
-		//the widget register himself to his view
-		if(this.addToRequestManager){
-			this.mytab.register(this,this.nodeId,this.refreshInterval);
-		}
-		
 		if (this.refreshInterval > 0){
-
-
+			//the widget register himself to his view
+			if(this.addToRequestManager){
+				this.register_to_RequestManager();
+			}else{
+				this.on('afterrender', this.doRefresh, this);
+			}
 		}else{
 			this.on('afterrender', this.doRefresh, this);
 		}
 			
+	},
+
+	register_to_RequestManager: function(){
+		this.mytab.register(this,this.nodeId,this.refreshInterval);
 	},
 	
 	reporting: function(from, to){
