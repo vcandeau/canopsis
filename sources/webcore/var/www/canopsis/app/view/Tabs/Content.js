@@ -255,9 +255,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
     
 	beforeclose: function(tab, object){
 		//stop all the task
-		log.debug("Stopping all task", this.logAuthor)
-		this.requestManager.stopTask();
-		
+		if(!this.view.reporting){
+			log.debug("Stopping all task", this.logAuthor)
+			this.requestManager.stopTask();
+		}
+	
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
