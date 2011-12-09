@@ -192,6 +192,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				name: 'to',
 				fieldLabel: 'To',
 				value: new Date(),
+				maxValue: new Date(),
 			})
 			
 			this.reportButton = Ext.create('Ext.button.Button',{
@@ -209,7 +210,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportButton.on('click',function(){
 					var fromValue = Ext.Date.format(this.reportFrom.getValue(), 'U');
 					var toValue = Ext.Date.format(this.reportTo.getValue(), 'U');
-					this.doReport(fromValue,toValue)
+					log.debug('ts start : ' + fromValue +' ts stop : ' + toValue);
+					this.doReport(fromValue*1000,toValue*1000)
 				}, this
 			);
 			
