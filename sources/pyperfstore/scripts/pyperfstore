@@ -20,15 +20,15 @@
 
 import logging, sys
 
-logging.basicConfig(level=logging.ERROR,
+logging.basicConfig(level=logging.DEBUG,
 	format='%(name)s %(levelname)s %(message)s',
 )
-logger = logging.getLogger('perfstore')
+logger = logging.getLogger('pyperfstore')
 
 ## Options parsing
 from optparse import OptionParser
 
-usage = "usage: %prog [options] list"
+usage = "usage: %prog [options] shownode|showmetric|getvalues|delnode|delmetric"
 
 parser = OptionParser(usage=usage)
 
