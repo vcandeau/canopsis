@@ -25,6 +25,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	layout : 'fit',
 	nodeId_refresh: true,
 	nodeData: {},
+	
+	addToRequestManager: true,
 
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
@@ -51,31 +53,12 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.callParent(arguments);
 		
 		//the widget register himself to his view
-		this.mytab.register(this,this.nodeId,this.refreshInterval);
+		if(this.addToRequestManager){
+			this.mytab.register(this,this.nodeId,this.refreshInterval);
+		}
 		
 		if (this.refreshInterval > 0){
-			
-			//log.debug('Set refresh Interval to ' + this.refreshInterval + ' seconds', this.logAuthor)
-			/*
-			this.task = {
-				run: this.doRefresh,
-				scope: this,
-				interval: this.refreshInterval * 1000
-			}
-			//Ext.TaskManager.start(this.task);
 
-			if (this.mytab){
-				this.mytab.on('show', function(){
-					Ext.TaskManager.start(this.task);
-				}, this);
-				this.mytab.on('hide', function(){
-					Ext.TaskManager.stop(this.task);
-				}, this);
-			/*	this.mytab.on('timeSet', function(){
-					Ext.TaskManager.stop(this.task);
-					this.timeNavigator;
-				}, this);
-			}*/
 
 		}else{
 			this.on('afterrender', this.doRefresh, this);
@@ -96,37 +79,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	doRefresh: function (){
 		log.debug('doRefresh', this.logAuthor)
-		/*
-		if (this.nodeId) {
-			if (this.nodeId_refresh){
-				//this.setLoading(true)
-				log.debug(' + Get informations of ' + this.nodeId, this.logAuthor)
-				Ext.Ajax.request({
-					url: this.baseUrl + this.nodeId,
-					scope: this,
-					success: function(response){
-						var data = Ext.JSON.decode(response.responseText)
-						data = data.data[0]
-						//this.setLoading(false)
-						this.nodeData = data
-						this.onRefresh(data)
-					},
-					failure: function ( result, request) {
-						log.debug('Ajax request failed', this.logAuthor)
-						//this.setLoading(false)
-					} 
-				})
-			}else{
-				log.debug(' + nodeId_refresh is false', this.logAuthor)
-				this.onRefresh(this.nodeData)
-			}
-		}else{
-			log.debug(" + No node ...", this.logAuthor)
-			this.onRefresh(this.nodeData)
-		}
-		*/
-		
-		//var record = this.mytab.nodeId_refresh_values.findRecord('_id', this.nodeId);
 		var record = this.nodeData
 		if(record){
 			this.onRefresh(record);
