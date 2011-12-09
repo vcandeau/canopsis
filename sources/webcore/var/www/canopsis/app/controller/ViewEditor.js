@@ -93,9 +93,9 @@ Ext.define('canopsis.controller.ViewEditor', {
 				_nodeId = form.globalNodeId.getStore().getAt(0);
 				//log.debug(_nodeId);
 				if (_nodeId){
-					log.debug('there is a nodeId :');
-					log.debug(_nodeId.get('id'));
-					record.set('nodeId', _nodeId.get('id'));
+					//log.debug('there is a nodeId :');
+					//log.debug(_nodeId.get('_id'));
+					record.set('nodeId', _nodeId.get('_id'));
 				}
 				
 				log.debug('[controller][cgrid][form] - Store record in store');
@@ -138,10 +138,10 @@ Ext.define('canopsis.controller.ViewEditor', {
 
 	afterload_EditForm: function(form){
 		if (form.nodeId){
-			var cinventory = form.GlobalOptions.down('panel');
+			var cinventory = form.globalNodeId;
 			tab = []
 			tab.push(form.nodeId);
-			cinventory.LoadStore(tab);
+			form.globalNodeId.LoadStore(tab);
 		}
 		
 	},
