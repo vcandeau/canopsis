@@ -72,8 +72,11 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		start = stop - 86400
 
 	if metrics:
-		metrics = metrics.split(',')
+		#small hack
+		metrics = metrics.replace("<slash>", '/')
 
+		metrics = metrics.split(',')
+		
 		logger.debug("GET:")
 		logger.debug(" + _id:     %s" % _id)
 		logger.debug(" + metrics: %s" % metrics)
@@ -87,7 +90,6 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 
 		for metric in metrics:
 			if metric:
-				#data = perfstore.get(_id, metric, start, stop)
 				try:
 					data = mynode.metric_get_values(metric, start, stop)
 				except Exception, err:
