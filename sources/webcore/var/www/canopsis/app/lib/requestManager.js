@@ -12,13 +12,10 @@ Ext.define('canopsis.lib.requestManager' ,{
 	constructor : function(){
 		this.callParent(arguments);
 		
-		this.i = 0;
-		this.step = 10;
-		
 		this.nb_widgets_registred = 0;
 		
 		this.node_widgets = {};
-		this.intervals_nodes = [];
+		this.intervals_nodes = {};
 		this.intervals = [];
 		this.interval_max = 0;
 		
@@ -53,20 +50,21 @@ Ext.define('canopsis.lib.requestManager' ,{
 		if (this.intervals.indexOf(interval) < 0){
 			this.intervals.push(interval)
 		}
-		
+
 		//add node id to interval
 		if(this.intervals_nodes[interval]){
 			//check if node already push in the interval
 			if (this.intervals_nodes[interval].indexOf(nodeId) < 0){
 				this.intervals_nodes[interval].push(nodeId);
 			}
-
 		}else{
 			this.intervals_nodes[interval] = [nodeId];
 		}
 		
 		//add nodeId to nodeList
-		this.node_list.push(nodeId);
+		if (this.node_list.indexOf(nodeId) < 0){
+			this.node_list.push(nodeId);
+		}
 		
 		//add widget to node list
 		if(this.node_widgets[nodeId]){
@@ -81,7 +79,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 	
 	//return 1 if task, 0 if no task
 	startTask : function(){
-		this.i = 0;
+		this.i = 1;
 		var gcd_values = [];
 		
 		if(this.nb_widgets_registred != 0){
@@ -104,6 +102,12 @@ Ext.define('canopsis.lib.requestManager' ,{
 			
 			//set first value of widget
 			//this.initializeWidgets();
+
+			log.debug("Refresh "+this.nb_widgets_registred+" widget(s) with step of "+this.step+" seconds", this.logAuthor)
+			//log.dump(this.intervals)
+			//log.dump(this.intervals_nodes)
+			//log.dump(this.node_list)
+			//log.dump(this.node_widgets)
 			
 			//if no registred widget, no task
 			this.start(this.task);
@@ -116,37 +120,46 @@ Ext.define('canopsis.lib.requestManager' ,{
 	
 	//send ajax request and update widgets subscribed to this node
 	sendRequest: function(nodeId){
+		//log.debug('sendRequest for '+nodeId, this.logAuthor);
 		Ext.Ajax.request({
 			url: this.baseUri + nodeId,
 			scope: this,
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
 				data = data.data[0]
-				
+				var nodeId = data._id
+
 				//give data to widgets
-				for(index in this.node_widgets[data._id]){
-					this.node_widgets[data._id][index].refreshData(data)
+				for(index in this.node_widgets[nodeId]){
+					var widget = this.node_widgets[nodeId][index]
+					log.debug('     + refreshData ->' + widget.id, this.logAuthor);
+					widget.refreshData(data)
 				}
 			},
 		});
 	},
 	
 	ExecuteTask : function(){
-		log.debug('ajax task woke up', this.logAuthor);
 		var time = this.i * this.step
+		log.debug('ajax task woke up ' + time, this.logAuthor);
+
 		for(j in this.intervals_nodes){
 			//if there's something to do at this time
+			///// TODO BUGGG
 			if((time % j) == 0){
 				//for every nodes to refresh
 				for (y in this.intervals_nodes[j]){
 					nodeId = this.intervals_nodes[j][y]
+					log.debug('   + ['+j+'] Refresh ' + nodeId, this.logAuthor);
 					this.sendRequest(nodeId)
 				}
 			}
 		}
-		this.i++;
-		if( time > this.interval_max){
-			this.i = 0
+		
+		if( time >= this.interval_max){
+			this.i = 1
+		}else{
+			this.i++;
 		}
 	},
 	
