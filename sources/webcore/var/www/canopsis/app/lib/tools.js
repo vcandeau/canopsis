@@ -132,7 +132,8 @@ function show_dashboard(){
 	});
 }
 
-function PGCD(nums)
+//find the greatest common divisor
+function find_gcd(nums)
 {
         if(!nums.length)
                 return 0;
