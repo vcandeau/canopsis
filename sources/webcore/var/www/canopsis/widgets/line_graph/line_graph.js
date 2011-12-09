@@ -20,6 +20,8 @@
 */
 
 // initComponent -> doRefresh -> get_config -> createHighchartConfig -> doRefresh -> addDataOnChart
+//						-> setOptions
+//						-> createChart
 
 Ext.define('widgets.line_graph.line_graph' ,{
 	extend: 'canopsis.lib.view.cwidget',
@@ -32,6 +34,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	start: false,
 	shift: false,
 
+	//addToRequestManager: false,
+
 	logAuthor: '[line_graph]',
 
 	options: {},
@@ -41,11 +45,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	time_window: 86400, //24 hours
 
 	initComponent: function() {
-		log.debug('Init Line Graph '+this.id, this.logAuthor)
+		log.debug('Init Graph '+this.id, this.logAuthor)
 		log.debug(' + NodeId: '+ this.nodeId, this.logAuthor)
 
 		this.callParent(arguments);
-		this.get_config();
 	},
 
 	get_config: function(){
@@ -65,20 +68,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		})
 	},
 
-	createHighchartConfig: function(config){
 
-		log.debug(" + Set config", this.logAuthor)
-
-		var title = ""
-
-		if (! this.title) {
-			if (this.nodeData.ressource) {
-				title = this.nodeData.ressource;
-			}else if (this.nodeData.component){
-				title = this.nodeData.component;
-			}
-		}
-
+	setOptions: function(){
 		this.options = {
 			chart: {
 				renderTo: this.divId,
@@ -92,7 +83,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			},
 			colors: [],
 			title: {
-				text: title,
+				text: this.chartTitle,
 				floating: true
 			},
 			tooltip: {
@@ -143,6 +134,29 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			      },*/
 			series: []
 		}
+	},
+
+	createChart: function(){
+		this.chart = new Highcharts.Chart(this.options);
+	},
+
+	createHighchartConfig: function(config){
+
+		log.debug(" + Set config", this.logAuthor)
+
+		var title = ""
+
+		if (! this.title) {
+			if (this.nodeData.ressource) {
+				title = this.nodeData.ressource;
+			}else if (this.nodeData.component){
+				title = this.nodeData.component;
+			}
+		}
+
+		this.chartTitle = title
+
+		this.setOptions()
 
 		log.debug(" + Set Metrics Series", this.logAuthor)
 		this.metrics = []
@@ -176,8 +190,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			i = i+1;
 		}
 
-
-		this.chart = new Highcharts.Chart(this.options);
+		this.createChart()
+	
+		// For futur requestManager
 		//this.doRefresh();
 	},
 
