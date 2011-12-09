@@ -39,22 +39,28 @@ def estimate_index(x, L):
 	first = L[0][0]
 	last = L[len(L)-1][0]
 	delta = float(last - first)
-	interval = int(delta / len(L))
+	interval = int(round(delta / len(L), 0))
 	logger.debug("   + First: %s, Last: %s, Estimated interval: %s" % (first, last, interval))
 	if interval:
 		multi = (x-first) / interval
 	else:
 		multi = 0
 	
-	if multi < len(L):
-		return multi
+	if multi >= len(L):
+		return len(L)-1
 	else:
-		return 0
+		return multi
 
 
 def search_index(x, L):
+	last_index = len(L)-1
+
+	if x >= L[last_index][0]:
+		logger.debug("   + %s is after last timestamp's point, index: %s" % (x, last_index))
+		return last_index
+
 	estimated = estimate_index(x, L)
-	logger.debug("   + Estimated start index: %s" % estimated)	
+	logger.debug("   + Estimated index: %s" % estimated)	
 	
 	## Ok if interval is regular
 	margin = 3
@@ -63,25 +69,27 @@ def search_index(x, L):
 		vstart = 0
 
 	vstop = estimated + margin
-	if vstop > len(L):
-		vstop = len(L)
+	if vstop > last_index:
+		vstop = last_index
 
-	if x >= L[vstart][0] and x <= L[vstop-1][0]:
+	if x >= L[vstart][0] and x <= L[vstop][0]:
 
 		#logger.debug("   + Use estimated index for reduce search time")
 		#logger.debug("     + Search %s -> %s" % (vstart, vstop))
 		#(r, index) = dichot(x, L[vstart:vstop])
 		#index += r + vstart
 		#logger.debug("     + r: %s, index: %s " % (r, index))
-	
+
+		logger.debug("   + Search %s between index %s -> %s" % (x, vstart,vstop))
 		index = vstart
-		for value in L[vstart:vstop]:
-			if x < L[index][0]:
-				return index - 1
+		for value in L[vstart:vstop+1]:
+			logger.debug("     + %s: %s" % (index, L[index][0]))
+			if x <= L[index][0]:
+				return index
 			index += 1
 
 	else:
-		logger.debug("   + Search by dichotomie on all values")
+		logger.debug("   + Search %s by dichotomie on all values" % x)
 		(r, index) = dichot(x, L)
 		index += r
 		logger.debug("     + r: %s, index: %s " % (r, index))

@@ -220,33 +220,39 @@ class metric(object):
 			dca_values = item.get_values()
 
 			if dca_values:
-				self.logger.debug(" + Parse values of %s (%s -> %s)" % (item._id, item.tstart, item.tstop))
+				self.logger.debug(" + Parse values of %s (%s -> %s (%s points))" % (item._id, item.tstart, item.tstop, len(dca_values)))
 
 				parse_values = True
 
 				# if all values are in range
 				if item.tstart and item.tstop:
 					if item.tstart in range(tstart, tstop+1) and item.tstop in range(tstart, tstop+1):
-						self.logger.debug("   + Append All values")
+						self.logger.debug(" + Append All values")
 						values += dca_values
 						parse_values = False			
 		
 				if parse_values:
 					if tstart <= dca_values[0][0]:
 						itstart = 0
-						self.logger.debug("   + Start index at 0")
 					else:
 						itstart =  search_index(tstart, dca_values)
 
+					self.logger.debug(" + Start index at %s" % itstart )
+
 					if tstop >= dca_values[len(dca_values)-1][0]:
 						itstop = len(dca_values)-1
-						self.logger.debug("   + Stop index at %s", itstop)
 					else:
 						itstop =  search_index(tstop, dca_values)
 
+					self.logger.debug(" + Stop index at %s", itstop)
 
-					self.logger.debug("   + Append between index %s -> %s " % (itstart, itstop))
-					values += dca_values[itstart:itstop+1]
+
+					self.logger.debug(" + Append between index %s -> %s " % (itstart, itstop))
+
+					if itstart == itstop:
+						values += [ dca_values[itstart] ]
+					else:
+						values += dca_values[itstart:itstop+1]
 
 		return sorted(values, key=itemgetter(0))
 
