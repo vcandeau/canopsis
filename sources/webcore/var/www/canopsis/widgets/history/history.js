@@ -27,7 +27,7 @@ Ext.define('widgets.history.history' ,{
 	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			border: (this.title || this.fullmode) ? false : true,
-			namespace: 'history',
+			namespace: 'event_log',
 			opt_paging: true,
 			pageSize: global.pageSize,
 			sorters: [{
