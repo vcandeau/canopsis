@@ -188,6 +188,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			for (i in this.metrics){
 				metrics_txt += this.metrics[i] + ","
 			}
+			
+			//small hack
+			metrics_txt = metrics_txt.replace('/', "<slash>")
 
 			log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
 
