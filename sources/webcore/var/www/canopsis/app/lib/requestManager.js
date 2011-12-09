@@ -3,6 +3,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 	
 	logAuthor : '[requestManager]',
 	
+	
 	//constructor, because it's not a component
 	constructor : function(){
 		this.callParent(arguments);
@@ -100,7 +101,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 			
 			//building the task
 			this.task = {
-				run: this.do,
+				run: this.ExecuteTask,
 				interval: this.step * 1000,
 				scope: this
 			}
@@ -134,7 +135,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 		});
 	},
 	
-	do : function(){
+	ExecuteTask : function(){
 		log.debug('ajax task woke up', this.logAuthor);
 		var time = this.i * this.step
 		for(j in this.intervals_nodes){
