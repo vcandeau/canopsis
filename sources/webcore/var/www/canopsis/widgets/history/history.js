@@ -44,6 +44,6 @@ Ext.define('widgets.history.history' ,{
 	},
 	
 	onRefresh: function(data){
-		this.grid.load_host(data.host_name)
+		this.grid.load_host(data.component)
 	},
 });
