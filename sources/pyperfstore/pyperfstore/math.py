@@ -45,8 +45,11 @@ def estimate_index(x, L):
 		multi = (x-first) / interval
 	else:
 		multi = 0
-
-	return multi
+	
+	if multi < len(L):
+		return multi
+	else:
+		return 0
 
 
 def search_index(x, L):
