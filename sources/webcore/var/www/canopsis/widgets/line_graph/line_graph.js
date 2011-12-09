@@ -45,6 +45,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		log.debug(' + NodeId: '+ this.nodeId, this.logAuthor)
 
 		this.callParent(arguments);
+		this.get_config();
 	},
 
 	get_config: function(){
@@ -177,7 +178,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 
 		this.chart = new Highcharts.Chart(this.options);
-		this.doRefresh();
+		//this.doRefresh();
 	},
 
 	onRefresh: function (data){
@@ -258,6 +259,49 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 
 		return true		
+	},
+	
+	//add data on chart
+	reporting: function(from, to){
+		//this.setHtml('widget reporting from date ' + from + ' to ' + to)
+		//this.doRefresh()
+		
+		var metrics_txt = ""
+		var i;
+		for (i in this.metrics){
+			metrics_txt += this.metrics[i] + ","
+		}
+		//log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
+		
+		//var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt
+		var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt+ '/' + from// + '/' + to
+
+		Ext.Ajax.request({
+			url: url,
+			scope: this,
+			success: function(response){
+				var data = Ext.JSON.decode(response.responseText)
+				data = data.data
+
+				var i;
+				for (i in data){
+					this.addDataOnChart(data[i])
+				}
+
+				if (data[0].values.length > 0){
+					this.start = data[0].values[data[0].values.length-1][0];
+
+					this.shift = this.first < (this.start - (this.time_window*1000))
+					//log.debug('     + First: '+this.first, this.logAuthor)
+					//log.debug('     + First graph: '+(this.start - this.time_window), this.logAuthor)
+					log.debug('     + Shift: '+this.shift, this.logAuthor)
+				}
+				this.chart.redraw();
+			},
+			failure: function ( result, request) {
+				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+			} 
+		})
 	},
 
 });
