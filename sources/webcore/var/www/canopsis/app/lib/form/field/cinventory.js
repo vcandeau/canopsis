@@ -127,10 +127,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 							if (this.multiSelect){
 								var i;
 								for (i in data){
-									this.store.add(Ext.create('cinventory', data[i]))
+									this.store.add(Ext.create('canopsis.model.event', data[i]))
 								}
 							}else{
-								this.store.add(Ext.create('cinventory', data[0]))
+								this.store.add(Ext.create('canopsis.model.event', data[0]))
 							}
 						}
 					},
