@@ -25,6 +25,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	layout : 'fit',
 	nodeId_refresh: true,
 	nodeData: {},
+	
+	register: true,
 
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
@@ -51,7 +53,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.callParent(arguments);
 		
 		//the widget register himself to his view
-		this.mytab.register(this,this.nodeId,this.refreshInterval);
+		if(this.register){
+			this.mytab.register(this,this.nodeId,this.refreshInterval);
+		}
 		
 		if (this.refreshInterval > 0){
 			
