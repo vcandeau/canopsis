@@ -137,21 +137,31 @@ Ext.define('canopsis.controller.ViewEditor', {
 	},
 
 	afterload_EditForm: function(form){
+		log.debug('-------------------------')
+		log.dump(form.record)
 		if (form.nodeId){
 			var cinventory = form.globalNodeId;
 			tab = []
 			tab.push(form.nodeId);
 			form.globalNodeId.LoadStore(tab);
 		}
+		if(form.record.reporting){
+			log.debug(form.GlobalOptions.down('checkboxfield[name=reporting]'))
+			form.GlobalOptions.down('checkboxfield[name=reporting]').setValue('true');
+		}
+		if(form.record.template){
+			log.debug(form.GlobalOptions.down('checkboxfield[name=template]'))
+			form.GlobalOptions.down('checkboxfield[name=template]').setValue('true');
+		}
 		
 	},
 	
 	afterload_DuplicateForm: function(form){
 		if (form.nodeId){
-			var cinventory = form.GlobalOptions.down('panel');
+			var cinventory = form.globalNodeId;
 			tab = []
 			tab.push(form.nodeId);
-			cinventory.LoadStore(tab);
+			form.globalNodeId.LoadStore(tab);
 			form.GlobalOptions.down('textfield[name=crecord_name]').setValue('');
 		}
 		
