@@ -103,7 +103,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 			}
 			
 			//set first value of widget
-			this.initializeWidgets();
+			//this.initializeWidgets();
 			
 			//if no registred widget, no task
 			this.start(this.task);
