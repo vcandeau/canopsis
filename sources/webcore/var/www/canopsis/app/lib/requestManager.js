@@ -10,6 +10,8 @@ Ext.define('canopsis.lib.requestManager' ,{
 		this.i = 0;
 		this.step = 10;
 		
+		this.nb_widgets_registred = 0;
+		
 		this.node_widgets = {};
 		this.intervals_nodes = [];
 		this.intervals = [];
@@ -69,6 +71,8 @@ Ext.define('canopsis.lib.requestManager' ,{
 		} else {
 			this.node_widgets[nodeId] = [widget];
 		}
+		
+		this.nb_widgets_registred++
 		//log.debug('the widget list', this.logAuthor);
 		//log.dump(this.node_widgets)
 		
@@ -80,38 +84,39 @@ Ext.define('canopsis.lib.requestManager' ,{
 
 	},
 	
+	
+	//return 1 if task, 0 if no task
 	startTask : function(){
 		this.i = 0;
 		var gcd_values = [];
 		
-		//get max value
-		for(i in this.intervals){
-			gcd_values.push(this.intervals[i]);
-			if(this.intervals[i] > this.interval_max){
-				this.interval_max = this.intervals[i]
+		if(this.nb_widgets_registred != 0){
+			//get max value
+			for(i in this.intervals){
+				gcd_values.push(this.intervals[i]);
+				if(this.intervals[i] > this.interval_max){
+					this.interval_max = this.intervals[i]
+				}
+			}			
+			//find the greatest common divisor
+			this.step = find_gcd(gcd_values)
+			
+			//building the task
+			this.task = {
+				run: this.do,
+				interval: this.step * 1000,
+				scope: this
 			}
-		}
-		//log.debug('--------StartTask max value----------', this.logAuthor)
-		//log.dump(this.interval_max)
-		
-		//find the greatest common divisor
-		this.step = find_gcd(gcd_values)
-		//log.debug('the gcd is : ' + gcd)
-		
-		
-		//building the task
-		this.task = {
-			run: this.do,
-			interval: this.step * 1000,
-			scope: this
-		}
-		
-		//set first value of widget
-		this.initializeWidgets();
-		
-		//if no registred widget, no task
-		if (this.intervals.length != 0){
+			
+			//set first value of widget
+			this.initializeWidgets();
+			
+			//if no registred widget, no task
 			this.start(this.task);
+			
+			return 1
+		}else{
+			return 0
 		}
 	},
 	
@@ -170,19 +175,25 @@ Ext.define('canopsis.lib.requestManager' ,{
 	},
 	
 	stopTask : function(){
-		log.debug('stop task', this.logAuthor)
-		this.stop(this.task);
-		this.i = 0;
+		if(this.nb_widgets_registred != 0){
+			log.debug('stop task', this.logAuthor)
+			this.stop(this.task);
+			this.i = 0;
+		}
 	},
 	
 	pauseTask : function(){
-		//log.debug('pause task', this.logAuthor)
-		this.stop(this.task);
+		if(this.nb_widgets_registred != 0){
+			//log.debug('pause task', this.logAuthor)
+			this.stop(this.task);
+		}
 	},
 	
 	resumeTask : function(){
-		//log.debug('resume task', this.logAuthor)
-		this.start(this.task);
+		if(this.nb_widgets_registred != 0){
+			//log.debug('resume task', this.logAuthor)
+			this.start(this.task);
+		}
 	},
 	
 });
