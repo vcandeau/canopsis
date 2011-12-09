@@ -82,11 +82,13 @@ logger = logging.getLogger("amqp2websocket")
 
 def on_message(msg):
 	rk = msg.routing_key
- 	#event = json.loads(msg.content.body)
+ 	event = json.loads(msg.content.body)
 
 	for wsclient in wsclients:
 		try:
-			wsclient.send(msg.content.body)
+			event['_id'] = rk
+			event['id'] = rk
+			wsclient.send(json.dumps(event))
 		except:
 			pass
 
