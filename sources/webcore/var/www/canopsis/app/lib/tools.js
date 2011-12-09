@@ -132,3 +132,12 @@ function show_dashboard(){
 	});
 }
 
+//find the greatest common divisor
+function find_gcd(nums)
+{
+        if(!nums.length)
+                return 0;
+        for(var r, a, i = nums.length - 1, GCDNum = nums[i]; i;)
+                for(a = nums[--i]; r = a % GCDNum; a = GCDNum, GCDNum = r);
+        return GCDNum;
+}

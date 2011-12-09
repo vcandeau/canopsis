@@ -1,54 +1,37 @@
 Ext.define('canopsis.lib.requestManager' ,{
 	extend: 'Ext.util.TaskRunner',
 	
-	i : 0,
-	step: 10,
-	
 	logAuthor : '[requestManager]',
-	
-	/* it's not a component
-	initComponent: function() {
-		this.callParent(arguments);
-		
-		this.node_widgets = {}
-		this.intervals_nodes = []
-		this.intervals = []
-		this.interval_max = 0
-	},
-	*/
 	
 	//constructor, because it's not a component
 	constructor : function(){
 		this.callParent(arguments);
 		
-		this.node_widgets = {}
-		this.intervals_nodes = []
-		this.intervals = []
-		this.interval_max = 0
+		this.i = 0;
+		this.step = 10;
 		
-		this.node_list = []
-		this.taskList = []
+		this.nb_widgets_registred = 0;
+		
+		this.node_widgets = {};
+		this.intervals_nodes = [];
+		this.intervals = [];
+		this.interval_max = 0;
+		
+		this.node_list = [];
+		this.taskList = [];
 	},
 	
 	register : function(widget,nodeId,interval){
-		interval = Math.round(interval/this.step) * this.step
-		//log.debug('new interval : ' + interval, this.logAuthor)
-		
+		log.debug('Widget added to requestManager list', this.logAuthor);
+		interval = Math.round(interval/10) * 10
 		//search if interval already exist
 		for (i in this.intervals){
-			//log.debug('values in array', this.logAuthor)
-			//log.dump(this.intervals[i])
-			//log.dump(interval)
-			//var exist = false
 			if(this.intervals[i] == interval){
 				var exist = true;
 			}
 		}
 		if(!exist){
 			this.intervals.push(interval)
-			//this.intervals.sort()
-			//log.debug('added new interval', this.logAuthor)
-			//log.dump(this.intervals)
 		}
 		
 		//add node id to interval
@@ -71,50 +54,49 @@ Ext.define('canopsis.lib.requestManager' ,{
 		//add nodeId to nodeList
 		this.node_list.push(nodeId);
 		
-		//log.debug('the intervals node', this.logAuthor);
-		//log.dump(this.intervals_nodes);
-		
 		//add widget to node list
 		if(this.node_widgets[nodeId]){
 			this.node_widgets[nodeId].push(widget);
 		} else {
 			this.node_widgets[nodeId] = [widget];
 		}
-		//log.debug('the widget list', this.logAuthor);
-		//log.dump(this.node_widgets)
 		
-		//log.debug('------------dump variables-----------', this.logAuthor)
-		//log.dump(this.node_widgets)
-		//log.dump(this.intervals_nodes)
-		//log.dump(this.intervals)
-		//log.debug('-------------end dump ---------------', this.logAuthor)
-
+		this.nb_widgets_registred++
 	},
 	
+	
+	//return 1 if task, 0 if no task
 	startTask : function(){
 		this.i = 0;
-		//get max value
-		for(i in this.intervals){
-			if(this.intervals[i] > this.interval_max){
-				this.interval_max = this.intervals[i]
+		var gcd_values = [];
+		
+		if(this.nb_widgets_registred != 0){
+			//get max value
+			for(i in this.intervals){
+				gcd_values.push(this.intervals[i]);
+				if(this.intervals[i] > this.interval_max){
+					this.interval_max = this.intervals[i]
+				}
+			}			
+			//find the greatest common divisor
+			this.step = find_gcd(gcd_values)
+			
+			//building the task
+			this.task = {
+				run: this.do,
+				interval: this.step * 1000,
+				scope: this
 			}
-		}
-		//log.debug('--------StartTask max value----------', this.logAuthor)
-		//log.dump(this.interval_max)
-		
-		//building the task
-		this.task = {
-			run: this.do,
-			interval: this.step * 1000,
-			scope: this
-		}
-		
-		//set first value of widget
-		this.initializeWidgets();
-		
-		//if no registred widget, no task
-		if (this.intervals.length != 0){
+			
+			//set first value of widget
+			this.initializeWidgets();
+			
+			//if no registred widget, no task
 			this.start(this.task);
+			
+			return 1
+		}else{
+			return 0
 		}
 	},
 	
@@ -138,24 +120,13 @@ Ext.define('canopsis.lib.requestManager' ,{
 	do : function(){
 		log.debug('ajax task woke up', this.logAuthor);
 		var time = this.i * this.step
-		//log.debug('refresh time is : ' + time);
 		for(j in this.intervals_nodes){
-			//log.debug('interval' + j)
-			//log.dump(time % j)
 			//if there's something to do at this time
 			if((time % j) == 0){
 				//for every nodes to refresh
-				//log.debug('nodes to refresh are')
-				//log.dump(this.intervals_nodes[j])
 				for (y in this.intervals_nodes[j]){
 					nodeId = this.intervals_nodes[j][y]
-					//log.debug('node to refresh : ' + nodeId, this.logAuthor)
-
 					this.sendRequest(nodeId)
-
-					//log.debug('every nodeId');
-					//log.dump(this.node_widgets)
-					//log.dump(this.node_widgets[nodeId])
 				}
 			}
 		}
@@ -173,19 +144,25 @@ Ext.define('canopsis.lib.requestManager' ,{
 	},
 	
 	stopTask : function(){
-		log.debug('stop task', this.logAuthor)
-		this.stop(this.task);
-		this.i = 0;
+		if(this.nb_widgets_registred != 0){
+			log.debug('stop task', this.logAuthor)
+			this.stop(this.task);
+			this.i = 0;
+		}
 	},
 	
 	pauseTask : function(){
-		//log.debug('pause task', this.logAuthor)
-		this.stop(this.task);
+		if(this.nb_widgets_registred != 0){
+			//log.debug('pause task', this.logAuthor)
+			this.stop(this.task);
+		}
 	},
 	
 	resumeTask : function(){
-		//log.debug('resume task', this.logAuthor)
-		this.start(this.task);
+		if(this.nb_widgets_registred != 0){
+			//log.debug('resume task', this.logAuthor)
+			this.start(this.task);
+		}
 	},
 	
 });
