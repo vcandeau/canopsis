@@ -193,7 +193,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.createChart()
 	
 		// For futur requestManager
-		//this.doRefresh();
+		this.doRefresh();
 	},
 
 	onRefresh: function (data){
