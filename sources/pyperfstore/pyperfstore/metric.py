@@ -162,42 +162,54 @@ class metric(object):
 			item = self.dca_get(item)
 			self.storage.rm(item.values_id)
 			del item
-		
+
+	def dca_have_timestamp(self, item, tstart, tstop):
+		if isinstance(item ,dca):
+			return item.have_timestamp(tstart, tstop)
+
+		## Not load dca for 'have_timestamp' ...
+		## Todo use same code of DCA ....
+		if item['tstop']:
+			return tstart in range(item['tstart'], item['tstop']+1) or tstop in range(item['tstart'], item['tstop']+1) or item['tstart'] in range(tstart, tstop+1) or item['tstop'] in range(tstart, tstop+1)
+		else:
+			return tstart >= item['tstart'] or tstop >= item['tstart']	
 
 	def get_values(self, tstart, tstop=None):
 		## TODO: Improve search performance !
 
 		if not tstop:
 			tstop = int(time.time())
-
+		
+		self.logger.debug("get_value:")
 		self.logger.debug(" + %s -> %s" % (tstart, tstop))
 
 		dcas = []
 
 		# check current dca
-		current_dca = self.dca_get(self.current_dca)
-		if current_dca.have_timestamp(tstart, tstop):
-			self.logger.debug("   + Add current DCA\t(%s)" % current_dca._id)
-			dcas.append(current_dca)
+		item = self.current_dca
+		if self.dca_have_timestamp(item, tstart, tstop):
+			item = self.dca_get(item)
+			self.logger.debug("   + Add current DCA\t(%s)" % item._id)
+			dcas.append(item)
 
 		#check plain
 		for item in self.dca_PLAIN:
-			item = self.dca_get(item)
-			if item.have_timestamp(tstart, tstop):
+			if self.dca_have_timestamp(item, tstart, tstop):
+				item = self.dca_get(item)
 				self.logger.debug("   + Add PLAIN DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		#check tsc
 		for item in self.dca_TSC:
-			item = self.dca_get(item)
-			if item.have_timestamp(tstart, tstop):
+			if self.dca_have_timestamp(item, tstart, tstop):
+				item = self.dca_get(item)
 				self.logger.debug("   + Add TSC DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		#check ztsc
 		for item in self.dca_ZTSC:
-			item = self.dca_get(item)
-			if item.have_timestamp(tstart, tstop):
+			if  self.dca_have_timestamp(item, tstart, tstop):
+				item = self.dca_get(item)
 				self.logger.debug("   + Add ZTSC DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
