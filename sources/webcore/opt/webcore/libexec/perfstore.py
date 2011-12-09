@@ -61,17 +61,15 @@ def perfstore_node_get(_id):
 @get('/perfstore/values/:_id/:metrics/:start/:stop',apply=[check_auth])
 def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 
+	if stop:
+		stop = int(int(start) / 1000)
+	else:
+		stop = int(time.time())
+		
 	if start:
 		start = int(int(start) / 1000)
-
-	if not stop:
-		stop = int(time.time())
 	else:
-		stop = int(int(start) / 1000)
-
-	if not start:
 		start = stop - 86400
-		#start = stop - 300
 
 	if metrics:
 		metrics = metrics.split(',')
