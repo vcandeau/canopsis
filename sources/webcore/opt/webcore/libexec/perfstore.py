@@ -62,7 +62,7 @@ def perfstore_node_get(_id):
 def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 
 	if stop:
-		stop = int(int(start) / 1000)
+		stop = int(int(stop) / 1000)
 	else:
 		stop = int(time.time())
 		
@@ -75,10 +75,10 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		metrics = metrics.split(',')
 
 		logger.debug("GET:")
-		logger.debug(" + _id: "+str(_id))
-		logger.debug(" + metrics: "+str(metrics))
-		logger.debug(" + start: "+str(start))
-		logger.debug(" + stop: "+str(stop))
+		logger.debug(" + _id:     %s" % _id)
+		logger.debug(" + metrics: %s" % metrics)
+		logger.debug(" + start:   %s" % start)
+		logger.debug(" + stop:    %s" % stop)
 
 
 		output = []
