@@ -22,24 +22,16 @@ Ext.define('canopsis.lib.requestManager' ,{
 	},
 	
 	register : function(widget,nodeId,interval){
+		log.debug('Widget added to requestManager list', this.logAuthor);
 		interval = Math.round(interval/10) * 10
-		//log.debug('new interval : ' + interval, this.logAuthor)
-		
 		//search if interval already exist
 		for (i in this.intervals){
-			//log.debug('values in array', this.logAuthor)
-			//log.dump(this.intervals[i])
-			//log.dump(interval)
-			//var exist = false
 			if(this.intervals[i] == interval){
 				var exist = true;
 			}
 		}
 		if(!exist){
 			this.intervals.push(interval)
-			//this.intervals.sort()
-			//log.debug('added new interval', this.logAuthor)
-			//log.dump(this.intervals)
 		}
 		
 		//add node id to interval
@@ -62,9 +54,6 @@ Ext.define('canopsis.lib.requestManager' ,{
 		//add nodeId to nodeList
 		this.node_list.push(nodeId);
 		
-		//log.debug('the intervals node', this.logAuthor);
-		//log.dump(this.intervals_nodes);
-		
 		//add widget to node list
 		if(this.node_widgets[nodeId]){
 			this.node_widgets[nodeId].push(widget);
@@ -73,15 +62,6 @@ Ext.define('canopsis.lib.requestManager' ,{
 		}
 		
 		this.nb_widgets_registred++
-		//log.debug('the widget list', this.logAuthor);
-		//log.dump(this.node_widgets)
-		
-		//log.debug('------------dump variables-----------', this.logAuthor)
-		//log.dump(this.node_widgets)
-		//log.dump(this.intervals_nodes)
-		//log.dump(this.intervals)
-		//log.debug('-------------end dump ---------------', this.logAuthor)
-
 	},
 	
 	
@@ -140,24 +120,13 @@ Ext.define('canopsis.lib.requestManager' ,{
 	do : function(){
 		log.debug('ajax task woke up', this.logAuthor);
 		var time = this.i * this.step
-		//log.debug('refresh time is : ' + time);
 		for(j in this.intervals_nodes){
-			//log.debug('interval' + j)
-			//log.dump(time % j)
 			//if there's something to do at this time
 			if((time % j) == 0){
 				//for every nodes to refresh
-				//log.debug('nodes to refresh are')
-				//log.dump(this.intervals_nodes[j])
 				for (y in this.intervals_nodes[j]){
 					nodeId = this.intervals_nodes[j][y]
-					//log.debug('node to refresh : ' + nodeId, this.logAuthor)
-
 					this.sendRequest(nodeId)
-
-					//log.debug('every nodeId');
-					//log.dump(this.node_widgets)
-					//log.dump(this.node_widgets[nodeId])
 				}
 			}
 		}
