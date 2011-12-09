@@ -163,6 +163,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid Middle Data')
 
 	def test_06_MMA(self):
+		##### DRAFT !
 		values = mynode.metric_get_values('load1', 1, 100)
 		print values
 		print pyperfstore.math.mma(values)

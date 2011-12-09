@@ -23,5 +23,6 @@ setup(
 	install_requires=install_requires,
 	url = "http://www.canopsis.org",
 	packages=['pyperfstore'],
+	scripts=['scripts/pyperfstore'],
 	long_description=read('README'),
 )
