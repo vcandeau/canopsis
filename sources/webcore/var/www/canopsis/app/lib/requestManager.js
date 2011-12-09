@@ -19,6 +19,23 @@ Ext.define('canopsis.lib.requestManager' ,{
 		
 		this.node_list = [];
 		this.taskList = [];
+		
+		this.liveEventStore = Ext.getStore('LiveEvents')
+		//bind to notification
+		this.liveEventStore.on('add', function(){this.RefreshFromLiveEvent()},this)
+	
+	},
+	
+	RefreshFromLiveEvent: function(){
+		var newEventNode = this.liveEventStore.getAt(0).get('id');
+		for(i in this.node_list){
+			//log.debug(this.node_list[i] + ' and ' + newEventNode);
+			if(this.node_list[i] == newEventNode){
+				//if a widget have subscribed this node, refresh
+				log.debug('state change, force widget refresh', this.logAuthor);
+				this.sendRequest(newEventNode)
+			}
+		}
 	},
 	
 	register : function(widget,nodeId,interval){
