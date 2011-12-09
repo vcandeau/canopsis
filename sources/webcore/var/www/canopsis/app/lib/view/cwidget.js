@@ -84,7 +84,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 	
 	reporting: function(from, to){
-		this.setHtml('widget in reporting from date ' + from + ' to ' + to)
+		this.setHtml('widget reporting from date ' + from + ' to ' + to)
 	},
 	
 	refreshData: function(data){
