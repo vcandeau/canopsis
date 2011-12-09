@@ -407,7 +407,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					//if nodeId is defined
 					var nodeId = this.widgetNodeId.store.getAt(0);
 					if (nodeId){
-						record.set('nodeId', nodeId.get('id'));
+						record.set('nodeId', nodeId.get('_id'));
 					}
 					//processing options
 					if (item.data.options)
