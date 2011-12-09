@@ -66,17 +66,17 @@ record1.data['rowHeight'] =  300
 record1.data['items'] = [{'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'}]
 storage.put(record1)
 
-record1 = crecord({'_id': 'view.hosts' }, type='view', name='Hosts')
+record1 = crecord({'_id': 'view.components' }, type='view', name='Components')
 record1.chmod('o+r')
-record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"host"}'} ]
+record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"component"}'} ]
 storage.put(record1)
 
-record1 = crecord({'_id': 'view.services' }, type='view', name='Services')
+record1 = crecord({'_id': 'view.ressources' }, type='view', name='Ressources')
 record1.chmod('o+r')
-record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"service"}'} ]
+record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"ressource"}'} ]
 storage.put(record1)
 
-record1 = crecord({'_id': 'view.hostDetail' }, type='view', name='Show host detail')
+record1 = crecord({'_id': 'view.ComponentDetails' }, type='view', name='Component Details')
 record1.chmod('o+r')
 record1.data['items'] = [ { 'xtype': 'states'} ]
 record1.data['template'] = True
