@@ -287,6 +287,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					recordName: item.internalId,
 					xtype: this.formXtype,
 					editing: true,
+					record : item.data,
 					id: id,
 					closable: true,
 				}).show();
