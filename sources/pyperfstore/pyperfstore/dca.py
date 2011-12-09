@@ -88,6 +88,7 @@ class dca(object):
 	"""
 
 	def get_values(self):
+		self.logger.debug("Get values")
 		values =  self.storage.get(self.values_id)
 
 		if not values:

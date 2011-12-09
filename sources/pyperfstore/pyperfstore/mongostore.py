@@ -61,7 +61,10 @@ class mongostore(storage):
 		if record:
 			return record['d']
 		else:
-			return None
+			if self.grid.exists(key):
+				return self.grid.get(key).read()
+			else:
+				return None
 		
 	def get(self, key):
 		self.logger.debug("Get '%s'" % key)
