@@ -2,6 +2,10 @@ Ext.define('canopsis.lib.requestManager' ,{
 	extend: 'Ext.util.TaskRunner',
 	
 	logAuthor : '[requestManager]',
+
+	baseUri: '/rest/events/event/',
+	
+	use_liveEventStore: true,
 	
 	//constructor, because it's not a component
 	constructor : function(){
@@ -20,9 +24,11 @@ Ext.define('canopsis.lib.requestManager' ,{
 		this.node_list = [];
 		this.taskList = [];
 		
-		this.liveEventStore = Ext.getStore('LiveEvents')
-		//bind to notification
-		this.liveEventStore.on('add', function(){this.RefreshFromLiveEvent()},this)
+		if (this.use_liveEventStore){
+			this.liveEventStore = Ext.getStore('LiveEvents')
+			//bind to notification
+			this.liveEventStore.on('add', function(){this.RefreshFromLiveEvent()},this)
+		}
 	
 	},
 	
@@ -120,7 +126,7 @@ Ext.define('canopsis.lib.requestManager' ,{
 	//send ajax request and update widgets subscribed to this node
 	sendRequest: function(nodeId){
 		Ext.Ajax.request({
-			url: '/rest/events/event/' + nodeId,
+			url: this.baseUri + nodeId,
 			scope: this,
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
