@@ -31,7 +31,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 	opt_show_state_type: true,
 	opt_show_component: false,
-	opt_show_ressource: true,
+	opt_show_resource: true,
 	opt_show_row_background: true,
 
 	opt_bar_delete: false,
@@ -97,12 +97,12 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		if(this.opt_show_ressource){
+		if(this.opt_show_resource){
 			this.columns.push({
 				header: 'Ressource',
 				flex: 1,
 				sortable: false,
-				dataIndex: 'ressource',
+				dataIndex: 'resource',
 			});
 		}
 
@@ -169,7 +169,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	},
 
 	load_services_of_host: function(hostname){
-		this.store.proxy.extraParams = {"filter": '{"component":"'+ hostname +'", "source_type": "ressource"}'};
+		this.store.proxy.extraParams = {"filter": '{"component":"'+ hostname +'", "source_type": "resource"}'};
 		this.store.load();
 	},
 

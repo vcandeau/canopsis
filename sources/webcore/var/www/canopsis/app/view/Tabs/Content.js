@@ -106,7 +106,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		if (! rowHeight) { rowHeight = 200 }
 		if (! refreshInterval) { refreshInterval = 0 }
-		if (! nbColumns) { nbColumns = 1 }
+		if (! nbColumns || items.length == 1) { nbColumns = 1 }
 
 		this.layout.columns = nbColumns
 
@@ -134,7 +134,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 			
 			//add item in the view
-			this.add(item)
+			//this.register(item,item.nodeId,item.refreshInterval);
+			widget = this.add(item)
+			this.register(widget);
 
 		}else{
 			//many widgets
@@ -170,7 +172,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
-				
+
 				this.itemsReady.push(item);
 			}
 			this.addReadyItem()
@@ -217,32 +219,34 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			
 		} else {
 			//Start managing request
-			if(this.requestManager.startTask()){
-				//binding event to save ressources
-				this.on('show', function(){
-					this.requestManager.resumeTask();
-				}, this);
-				this.on('hide', function(){
-					this.requestManager.pauseTask();
-				}, this);
-			}
+			this.requestManager.startManager()
+
+			//binding event to save resources
+			this.on('show', function(){
+				this.requestManager.startAllTasks();
+			}, this);
+			this.on('hide', function(){
+				this.requestManager.stopAllTasks();
+			}, this);
+			this.on('close', function(){
+				this.requestManager.stopAllTasks();
+			}, this);
 		}
 	},
 	
 	addReadyItem : function(){
 		for (i in this.itemsReady){
-			this.add(this.itemsReady[i])
+			widget = this.add(this.itemsReady[i])
+			this.register(widget);
 		}
 	},
 	
 	//widget subscribe with this
-	register : function(widget,nodeId,interval){
+	register : function(widget){
 		if(this.view.reporting){
 			this.reportWidgetList.push(widget);
 		} else {
-			if(interval != 0){
-				this.requestManager.register(widget,nodeId,interval);
-			}
+			this.requestManager.register(widget);
 		}
 	},
 	
@@ -255,10 +259,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
     
 	beforeclose: function(tab, object){
 		//stop all the task
-		if(!this.view.reporting){
+		/*if(!this.view.reporting){
 			log.debug("Stopping all task", this.logAuthor)
-			this.requestManager.stopTask();
-		}
+			this.requestManager.stopAllTasks();
+		}*/
 	
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
