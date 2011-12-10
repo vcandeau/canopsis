@@ -15,9 +15,9 @@ void nebstruct_service_check_data_to_json(char * buffer, nebstruct_service_check
 \"connector\":		 \"nagios\",\
 \"connector_name\":	 \"%s\",\
 \"event_type\":		 \"check\",\
-\"source_type\":	 \"ressource\",\
+\"source_type\":	 \"resource\",\
 \"component\":		 \"%s\",\
-\"ressource\":		 \"%s\",\
+\"resource\":		 \"%s\",\
 \"timestamp\":		 %i,\
 \"state\":		 %i,\
 \"state_type\":		 %i,\
@@ -89,7 +89,7 @@ void nebstruct_host_check_data_to_json(char * buffer, nebstruct_host_check_data 
 \"event_type\":		 \"check\",\
 \"source_type\":	 \"component\",\
 \"component\":		 \"%s\",\
-\"ressource\":		 \"\",\
+\"resource\":		 \"\",\
 \"timestamp\":		 %i,\
 \"state\":		 %i,\
 \"state_type\":		 %i,\

@@ -33,8 +33,8 @@ Ext.define('canopsis.controller.Notify', {
 		var title = data['connector_name'] + " > " +  data['component'];
 		var message = data['output'];
 
-		if (data['source_type'] == 'ressource') {
-			title = title + " > " + data['ressource']
+		if (data['source_type'] == 'resource') {
+			title = title + " > " + data['resource']
 		}
 
 		if (data['state'] == 0){

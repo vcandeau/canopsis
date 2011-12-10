@@ -39,16 +39,16 @@ Ext.define('widgets.list.list' ,{
 				property : 'component',
 				direction: 'ASC'
 			},{
-				property : 'ressource',
+				property : 'resource',
 				direction: 'ASC'
 			}],
 
 			opt_show_component: true,
-			opt_show_ressource: true,
+			opt_show_resource: true,
 		
 			opt_bar: true,
 			opt_bar_search: true,
-			opt_bar_search_field: ['component', 'ressource'],
+			opt_bar_search_field: ['component', 'resource'],
 
 			opt_bar_add: false,
 			opt_bar_duplicate: false,
