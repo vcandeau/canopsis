@@ -69,7 +69,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	       		},{
         		        header: 'Ressource',
 				flex: 2,
-				dataIndex: 'ressource',
+				dataIndex: 'resource',
 		}];
 
 		this.columns = this.Win_columns
@@ -153,7 +153,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				data : [
 					{"name":"all"},
 					{"name":"component"},
-					{"name":"ressource"}
+					{"name":"resource"}
 				]
 			});
 

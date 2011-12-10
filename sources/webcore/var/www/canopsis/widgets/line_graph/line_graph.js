@@ -147,8 +147,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var title = ""
 
 		if (! this.title) {
-			if (this.nodeData.ressource) {
-				title = this.nodeData.ressource;
+			if (this.nodeData.resource) {
+				title = this.nodeData.resource;
 			}else if (this.nodeData.component){
 				title = this.nodeData.component;
 			}

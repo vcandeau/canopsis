@@ -25,7 +25,7 @@ def forger(		connector,
 			event_type,
 			source_type='component',
 			component=None,
-			ressource=None,	
+			resource=None,	
 			timestamp=int(time.time()),
 			state=0,
 			state_type=1,
@@ -44,7 +44,7 @@ def forger(		connector,
 		'event_type':		event_type,
 		'source_type':		source_type,
 		'component':		component,
-		'ressource':		ressource,	
+		'resource':		resource,	
 		'timestamp':		timestamp,
 		'state':		state,
 		'state_type':		state_type,
@@ -58,7 +58,7 @@ def forger(		connector,
 def get_routingkey(event):
 	rk = "%s.%s.%s.%s.%s" % (event['connector'], event['connector_name'], event['event_type'], event['source_type'], event['component'])
 
-	if event['ressource']:
-		rk += ".%s" % event['ressource']
+	if event['resource']:
+		rk += ".%s" % event['resource']
 
 	return rk
