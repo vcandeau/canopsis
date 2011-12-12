@@ -49,11 +49,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	items: [],
     
 	initComponent: function() {
-		this.on('beforeclose', this.beforeclose)
-		this.callParent(arguments);
+
+		this.widgets = []
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
-			
+		
+		//Get view options
 		Ext.Ajax.request({
 			url: '/rest/object/view/'+this.view_id,
 			scope: this,
@@ -75,24 +76,19 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			},
 			failure: function (result, request) {
 					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+					log.error("Close tab, maybe not exist ...", this.logAuthor)
+					this.close();
 			} 
 		});
-		
+
+		this.on('beforeclose', this.beforeclose)
+		this.callParent(arguments);	
 	},
 
 	setContent: function(){
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
 		
-		this.itemsReady = []//tab to buffer items before add them to page
-		
-		//------------creating ajax requestManager or reportWidgetList-------------
-		if(this.view.reporting){
-			this.reportWidgetList = []
-		}else{
-			this.requestManager = Ext.create('canopsis.lib.requestManager');
-		}
-
 		//---------------General options---------------------
 		if(this.options.nodeId){
 			//if id specified by cgrid (on-the-fly view)
@@ -135,8 +131,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			
 			//add item in the view
 			//this.register(item,item.nodeId,item.refreshInterval);
-			widget = this.add(item)
-			this.register(widget);
+
+			var widget = this.add(item);
+			this.widgets.push(widget)
 
 		}else{
 			//many widgets
@@ -173,99 +170,42 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
 
-				this.itemsReady.push(item);
+				var widget = this.add(item);
+				this.widgets.push(widget)
 			}
-			this.addReadyItem()
 		}
-		
-		//add docked bar with listeners if reporting mode, else launch task manager
-		if(this.view.reporting){
-			/*//------------create and adding tbar-----------
-			this.reportFrom = Ext.create('Ext.form.field.Date',{
-				xtype: 'datefield',
-				name: 'from',
-				fieldLabel: 'From',
-				value: new Date(),
-				maxValue: new Date(),
-			})
-			
-			this.reportTo = Ext.create('Ext.form.field.Date',{
-				xtype: 'datefield',
-				name: 'to',
-				fieldLabel: 'To',
-				value: new Date(),
-				maxValue: new Date(),
-			})
-			
-			this.reportButton = Ext.create('Ext.button.Button',{
-				xtype: 'button', // default for Toolbars
-				text: 'fetch',
-			})
-			
-			this.bar = Ext.create('Ext.toolbar.Toolbar', {
-				dock: 'top',
-				items: [this.reportFrom,this.reportTo,this.reportButton]
-			});
-			this.addDocked(this.bar);
-			
-			//---------------binding actions to button-----------
-			this.reportButton.on('click',function(){
-					var fromValue = Ext.Date.format(this.reportFrom.getValue(), 'U');
-					var toValue = Ext.Date.format(this.reportTo.getValue(), 'U');
-					log.debug('ts start : ' + fromValue +' ts stop : ' + toValue);
-					this.doReport(fromValue*1000,toValue*1000)
-				}, this
-			);*/
-			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
-			this.addDocked(this.reportBar);
-			
-		} else {
-			//Start managing request
-			this.requestManager.startManager()
 
-			//binding event to save resources
-			this.on('show', function(){
-				this.requestManager.startAllTasks();
-			}, this);
-			this.on('hide', function(){
-				this.requestManager.stopAllTasks();
-			}, this);
-			this.on('close', function(){
-				this.requestManager.stopAllTasks();
-			}, this);
+		//binding event to save resources
+		this.on('show', function(){
+			this._onShow();
+		}, this);
+		this.on('hide', function(){
+			this._onHide();
+		}, this);
+
+	},
+
+	_onShow: function(){
+		log.debug('Show tab '+this.id, this.logAuthor)
+		if (this.widgets){
+			var i;
+			for (i in this.widgets){
+				this.widgets[i].onShow()
+			}
+		}
+	},
+
+	_onHide: function(){
+		log.debug('Hide tab '+this.id, this.logAuthor)
+		if (this.widgets){
+			var i;
+			for (i in this.widgets){
+				this.widgets[i].onHide()
+			}
 		}
 	},
 	
-	addReadyItem : function(){
-		for (i in this.itemsReady){
-			widget = this.add(this.itemsReady[i])
-			this.register(widget);
-		}
-	},
-	
-	//widget subscribe with this
-	register : function(widget){
-		if(this.view.reporting){
-			this.reportWidgetList.push(widget);
-		} else {
-			this.requestManager.register(widget);
-		}
-	},
-	
-	//request widgets to switch to report mode
-	doReport : function(from, to){
-		for (i in this.reportWidgetList){
-			this.reportWidgetList[i].reporting(from,to);
-		}
-	},
-    
 	beforeclose: function(tab, object){
-		//stop all the task
-		/*if(!this.view.reporting){
-			log.debug("Stopping all task", this.logAuthor)
-			this.requestManager.stopAllTasks();
-		}*/
-	
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {

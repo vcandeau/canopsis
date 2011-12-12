@@ -20,10 +20,7 @@
 
 import logging, sys
 
-logging.basicConfig(level=logging.DEBUG,
-	format='%(name)s %(levelname)s %(message)s',
-)
-logger = logging.getLogger('pyperfstore')
+logging_level = logging.ERROR
 
 ## Options parsing
 from optparse import OptionParser
@@ -38,8 +35,12 @@ parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
 (options, args) = parser.parse_args()
 
 if options.verbose:
-	logger.setLevel(logging.DEBUG)
-	import pyperfstore
+	logging_level = logging.DEBUG
+
+logging.basicConfig(level=logging_level,
+	format='%(name)s %(levelname)s %(message)s',
+)
+logger = logging.getLogger('pyperfstore')
 
 def get_arg(args, index):
 	try:
