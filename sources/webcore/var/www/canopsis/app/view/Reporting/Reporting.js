@@ -32,11 +32,12 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 		
 		this.combo.setValue(86400)
 		
-		this.add('-');
+		this.add({ xtype: 'tbspacer', width: 400 });
 		
 		this.beforeButton = this.add({
 			xtype: 'button', // default for Toolbars
-			text: '<',
+			//text: '<',
+			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
 		})
 		
@@ -51,14 +52,16 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 		
 		this.afterButton = this.add({
 			xtype: 'button', // default for Toolbars
-			text: '>',
+			cls: 'x-btn-icon x-tbar-page-next',
+			//text: '>',
 			action: 'next'
 		})
 		
-		this.add('-');
+		this.add('->');
 		
 		this.requestButton = this.add({
 			xtype: 'button', // default for Toolbars
+			iconCls: 'icon-reload',
 			text: 'request',
 			action: 'request'
 		})
