@@ -19,26 +19,21 @@ Ext.define('canopsis.controller.Reporting', {
 			},
 			'Reporting button[action="next"]' : {
 				click : this.nextButton,
-			},
-			'Reporting button[action="request"]' : {
-				click : this.launchReport,
-			},
-		
+			},		
 		})
 		
 		this.callParent(arguments);
 	},
 	
-	launchReport: function(){
+/*	launchReport: function(){
 		var toolbar = this.getToolbar()
 		var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 		var endReport =	startReport - toolbar.combo.getValue();
 		log.debug('from : ' + startReport + 'To : ' + endReport)
 		toolbar.fireEvent('reporting', {start : startReport, stop : endReport})
-	},
+	},*/
 	
 	nextButton: function(){
-		log.debug('next time')
 		//get toolbar elements
 		var inputField = this.getToolbar().currentDate;
 		var selectedTime = parseInt(Ext.Date.format(inputField.getValue(), "U"))
@@ -51,7 +46,6 @@ Ext.define('canopsis.controller.Reporting', {
 	},
 	
 	previousButton: function(){
-		log.debug('previous time')
 		//get toolbar elements
 		var inputField = this.getToolbar().currentDate;
 		var selectedTime = parseInt(Ext.Date.format(inputField.getValue(), "U"))
