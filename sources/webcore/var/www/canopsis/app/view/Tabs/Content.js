@@ -180,7 +180,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		//add docked bar with listeners if reporting mode, else launch task manager
 		if(this.view.reporting){
-			//------------create and adding tbar-----------
+			/*//------------create and adding tbar-----------
 			this.reportFrom = Ext.create('Ext.form.field.Date',{
 				xtype: 'datefield',
 				name: 'from',
@@ -215,7 +215,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					log.debug('ts start : ' + fromValue +' ts stop : ' + toValue);
 					this.doReport(fromValue*1000,toValue*1000)
 				}, this
-			);
+			);*/
+			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
+			this.addDocked(this.reportBar);
 			
 		} else {
 			//Start managing request
