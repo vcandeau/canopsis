@@ -25,17 +25,27 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	layout : 'fit',
 	nodeId_refresh: true,
 	nodeData: {},
-	
+
+	data: {},
+
+	displayed: false,
+
 	addToRequestManager: true,
 
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
 	refreshInterval: 0,
+
 	baseUrl: '/rest/events/event/',
 	
-	logAuthor: '[view][cwidget]',
+	logAuthor: '[widget]',
+
+	task: false,
 
 	initComponent: function() {
+
+		this.logAuthor = "["+this.id+"]"
+
 		log.debug('InitComponent '+this.id, this.logAuthor)
 
 		if (this.title == ''){
@@ -50,46 +60,70 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.divId = this.id+"-content"
 		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
 
-		this.callParent(arguments);
-		
-		if (this.refreshInterval > 0){
-			//the widget register himself to his view
-			if(this.addToRequestManager){
-				this.register_to_RequestManager();
-			}else{
-				this.on('afterrender', this.doRefresh, this);
-			}
-		}else{
-			this.on('afterrender', this.doRefresh, this);
-		}
-			
-	},
+		this.uri = '/rest/events/event/' + this.nodeId;
 
-	register_to_RequestManager: function(){
-		this.mytab.register(this,this.nodeId,this.refreshInterval);
+
+		if (this.intervals && this.nodeId){
+			this.task = {
+				run: this.doRefresh,
+				interval: this.intervals * 1000,
+			}
+		}
+
+		this.on('afterrender', this.startTask, this);
+
+		this.callParent(arguments);
 	},
 	
 	reporting: function(from, to){
 		this.setHtml('widget reporting from date ' + from + ' to ' + to)
 	},
-	
-	refreshData: function(data){
-		//log.debug('data receive from ajax request', this.logAuthor)
-		//log.dump(data);
-		this.nodeData = data
-		this.doRefresh()
+
+	startTask: function(){
+		if (this.task){
+			log.debug('Start task, interval:  '+this.interval+' seconds', this.logAuthor)
+			Ext.TaskManager.start(this.task)
+		}else{
+			if (this.nodeId){
+				this.doRefresh()
+			}else{
+				if (! this.displayed){
+					this.displayed = true
+					this.doRefresh()
+				}
+			}
+		}
 	},
 
-	doRefresh: function (){
-		log.debug('doRefresh', this.logAuthor)
-		var record = this.nodeData
-		if(record){
-			this.onRefresh(record);
-		} else {
-			log.debug("Ajax request not stored", this.logAuthor)
-			this.onRefresh()
+	stopTask: function(){
+		if (this.task){
+			log.debug('Stop task', this.logAuthor)
+			Ext.TaskManager.stop(this.task)
 		}
+	},
 
+	onShow: function(){
+		log.debug('Show', this.logAuthor)
+		this.startTask()
+	},
+
+	onHide: function(){
+		log.debug('Hide', this.logAuthor)
+		this.stopTask()
+	},
+
+	doRefresh: function(){
+		Ext.Ajax.request({
+			url: this.uri,
+			scope: this,
+			success: function(response){
+				var data = Ext.JSON.decode(response.responseText)
+				data = data.data[0]
+				this.data = data
+				this.onRefresh(data)
+				this.displayed = true
+			},
+		});
 	},
 
 	onRefresh: function(data){
@@ -149,5 +183,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			log.debug('impossible to calculate health (no perf_data_array)', this.logAuthor);
 			return undefined;
 		}
-	}
+	},
+
 });
