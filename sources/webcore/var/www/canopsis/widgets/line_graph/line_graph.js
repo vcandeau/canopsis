@@ -281,7 +281,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	//add data on chart
 	reporting: function(from, to){
-		//this.setHtml('widget reporting from date ' + from + ' to ' + to)
+		this.setHtml('widget reporting from date ' + from + ' to ' + to)
+		/*
 		//this.doRefresh()
 		
 		var metrics_txt = ""
@@ -319,7 +320,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			failure: function ( result, request) {
 				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 			} 
-		})
+		})*/
 	},
 
 });

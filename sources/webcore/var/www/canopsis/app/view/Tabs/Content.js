@@ -174,8 +174,19 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				this.widgets.push(widget)
 			}
 		}
+		
+		if(this.view.reporting){
+			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
+			this.addDocked(this.reportBar);
+			this.reportBar.requestButton.on('click',this.onReport,this);
+			
+			
+			
+		}
 
 		//binding event to save resources
+		
+		
 		this.on('show', function(){
 			this._onShow();
 		}, this);
@@ -183,6 +194,16 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this._onHide();
 		}, this);
 
+	},
+	
+	onReport: function(){
+		log.debug('Request reporting on a time', this.logAuthor)
+		var toolbar = this.reportBar
+		var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+		var endReport =	startReport - toolbar.combo.getValue();
+		for (i in this.widgets){
+			this.widgets[i].reporting(startReport,endReport)
+		}
 	},
 
 	_onShow: function(){
