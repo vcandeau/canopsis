@@ -60,13 +60,19 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.divId = this.id+"-content"
 		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
 
-		this.uri = '/rest/events/event/' + this.nodeId;
+		this.uri = '/rest/events/event'
 
+		if (this.nodeId){
+			this.uri += '/' + this.nodeId;
+			log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
 
-		if (this.intervals && this.nodeId){
-			this.task = {
-				run: this.doRefresh,
-				interval: this.intervals * 1000,
+			if (this.refreshInterval){				
+				log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
+				this.task = {
+					run: this.doRefresh,
+					interval: this.refreshInterval * 1000,
+					scope: this
+				}
 			}
 		}
 
@@ -81,7 +87,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	startTask: function(){
 		if (this.task){
-			log.debug('Start task, interval:  '+this.interval+' seconds', this.logAuthor)
+			log.debug('Start task, interval:  '+this.refreshInterval+' seconds', this.logAuthor)
 			Ext.TaskManager.start(this.task)
 		}else{
 			if (this.nodeId){
@@ -113,17 +119,21 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 
 	doRefresh: function(){
-		Ext.Ajax.request({
-			url: this.uri,
-			scope: this,
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				data = data.data[0]
-				this.data = data
-				this.onRefresh(data)
-				this.displayed = true
-			},
-		});
+		if (this.nodeId){
+			Ext.Ajax.request({
+				url: this.uri,
+				scope: this,
+				success: function(response){
+					var data = Ext.JSON.decode(response.responseText)
+					data = data.data[0]
+					this.data = data
+					this.onRefresh(data)
+					this.displayed = true
+				},
+			});
+		}else{
+			this.onRefresh(data)
+		}
 	},
 
 	onRefresh: function(data){
