@@ -179,9 +179,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
 			this.addDocked(this.reportBar);
 			this.reportBar.requestButton.on('click',this.onReport,this);
-			
-			
-			
 		}
 
 		//binding event to save resources
