@@ -174,15 +174,30 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				this.widgets.push(widget)
 			}
 		}
-
-		//binding event to save resources
-		this.on('show', function(){
-			this._onShow();
-		}, this);
-		this.on('hide', function(){
-			this._onHide();
-		}, this);
-
+		
+		if(this.view.reporting){
+			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
+			this.addDocked(this.reportBar);
+			this.reportBar.requestButton.on('click',this.onReport,this);
+		}else{
+			//binding event to save resources
+			this.on('show', function(){
+				this._onShow();
+			}, this);
+			this.on('hide', function(){
+				this._onHide();
+			}, this);
+		}
+	},
+	
+	onReport: function(){
+		log.debug('Request reporting on a time', this.logAuthor)
+		var toolbar = this.reportBar
+		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+		var startReport =	endReport - toolbar.combo.getValue();
+		for (i in this.widgets){
+			this.widgets[i].reporting(startReport * 1000,endReport * 1000)
+		}
 	},
 
 	_onShow: function(){
