@@ -53,7 +53,7 @@ class KnownValues(unittest.TestCase):
 		print "Start:", start, "Stop:", stop, "Elapsed:", elaps
 
 		if elaps != 2.7:
-			raise Exception('Invalid elapsed time ...')
+			raise Exception('Invalid elapsed time ... (%s != 2.7)' % elaps)
 
 		
 if __name__ == "__main__":
