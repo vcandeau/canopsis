@@ -16,14 +16,14 @@
 # Short-Description: Enable AMQP service provided by RabbitMQ broker
 ### END INIT INFO
 
-PATH=/sbin:/usr/sbin:/bin:/usr/bin:@PREFIX@/bin:@PREFIX@/sbin
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/opt/canopsis/bin:/opt/canopsis/sbin
 NAME=rabbitmq-server
-DAEMON=@PREFIX@/bin/${NAME}
-CONTROL=@PREFIX@/bin/rabbitmqctl
+DAEMON=/opt/canopsis/bin/${NAME}
+CONTROL=/opt/canopsis/bin/rabbitmqctl
 DESC=rabbitmq-server
-USER=@HUSER@
+USER=canopsis
 ROTATE_SUFFIX=
-INIT_LOG_DIR=@PREFIX@/var/log/rabbitmq
+INIT_LOG_DIR=/opt/canopsis/var/log/rabbitmq
 
 LOCK_FILE= # This is filled in when building packages
 
