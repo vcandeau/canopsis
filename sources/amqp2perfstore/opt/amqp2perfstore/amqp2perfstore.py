@@ -38,7 +38,7 @@ from pyperfstore import mongostore
 #
 ########################################################
 
-DAEMON_NAME = "amqp2perfstore2"
+DAEMON_NAME = "amqp2perfstore"
 DAEMON_TYPE = "storage"
 
 logging.basicConfig(level=logging.ERROR,
