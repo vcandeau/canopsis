@@ -29,7 +29,7 @@ import cevent
 DAEMON_NAME='gelf2amqp'
 RUN = False
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 logger = logging.getLogger(DAEMON_NAME)
@@ -79,6 +79,7 @@ def gelf_uncompress(data):
 		GELFCompressType = "NONE"
 		gelf = "none"
 
+	logger.debug(" + Gelf: %s" % gelf)
 	return gelf
 
 def gelf_level_to_state(gelf_level):
@@ -117,8 +118,8 @@ def wait_gelf_udp(on_log):
 			data, peer = s.recvfrom(1024)
 			gelf = gelf_uncompress(data)
 			on_log(gelf)
-	except:
-		pass
+	except Exception, err:
+		logger.info("Exception: '%s'" % err)
 
 	logger.info("Close socket")
 
@@ -157,6 +158,11 @@ def on_log(gelf):
 
 	state = gelf_level_to_state(gelf['level'])
 
+	try:
+		timestamp = int(gelf['timestamp'])
+	except:
+		timestamp = None
+
 	output   = message['output']
 	resource = message['resource']
 
@@ -170,6 +176,7 @@ def on_log(gelf):
 			connector_name=DAEMON_NAME,
 			component=component,
 			resource=resource,
+			timestamp=timestamp,
 			source_type=source_type,
 			event_type='log',
 			state=state,
