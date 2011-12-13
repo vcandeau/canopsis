@@ -40,7 +40,8 @@ from ctools import parse_perfdata
 DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
-logging.basicConfig(level=logging.ERROR,
+logging_level = logging.INFO
+logging.basicConfig(level=logging_level,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 logger = logging.getLogger(DAEMON_NAME)
@@ -54,32 +55,33 @@ myamqp = None
 	
 def on_message(msg):
 	event_id = msg.routing_key
+	logger.debug("Check event: %s" % event_id)
 	try:
 	 	event = json.loads(msg.content.body)
 	except:
 		logger.error("Impossible to parse event, Dump:\n%s" % msg.content.body)
 		raise Exception('Impossible to parse event')
 
-	if archiver.check_event(event_id, event):
-		msg = Content(json.dumps(event))
-		## Event to Alert
-		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
 
-def on_log_message(msg):
-	event_id = msg.routing_key
-	try:
-	 	event = json.loads(msg.content.body)
-	except:
-		logger.error("Impossible to parse event, Dump:\n%s" % msg.content.body)
-		raise Exception('Impossible to parse event')
+		if archiver.check_event(event_id, event):
+			msg = Content(json.dumps(event))
+			## Event to Alert
+			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
-	## Alert only non-ok state
-	if event['state'] != 0:
-		archiver.log_event(event_id, event)
+	elif event['event_type'] == 'log':
 
-		msg = Content(json.dumps(event))
-		## Event to Alert
-		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+		## Alert only non-ok state
+		if event['state'] != 0:
+			archiver.log_event(event_id, event)
+
+			msg = Content(json.dumps(event))
+			## Event to Alert
+			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+
+	else:
+		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
+
 
 ########################################################
 #
@@ -114,10 +116,11 @@ def main():
 
 	archiver = carchiver(namespace='events',  autolog=True)
 	# AMQP
-	amqp = camqp()
+	amqp = camqp(logging_level=logging_level)
 
-	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
-	amqp.add_queue(DAEMON_NAME, ['#.log.#'], on_log_message, amqp.exchange_name_events)
+	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events)
+
+	logger.info("Wait events ...")
 	amqp.start()
 
 	while RUN:
