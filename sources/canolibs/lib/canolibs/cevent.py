@@ -26,7 +26,7 @@ def forger(		connector,
 			source_type='component',
 			component=None,
 			resource=None,	
-			timestamp=int(time.time()),
+			timestamp=None,
 			state=0,
 			state_type=1,
 			output=None,
@@ -34,6 +34,8 @@ def forger(		connector,
 			perf_data=None
 		):
 
+	if not timestamp:
+		timestamp=int(time.time())
 
 	if not component:
 		component = socket.gethostname()
