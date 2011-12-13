@@ -65,6 +65,22 @@ def on_message(msg):
 		## Event to Alert
 		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
+def on_log_message(msg):
+	event_id = msg.routing_key
+	try:
+	 	event = json.loads(msg.content.body)
+	except:
+		logger.error("Impossible to parse event, Dump:\n%s" % msg.content.body)
+		raise Exception('Impossible to parse event')
+
+	## Alert only non-ok state
+	if event['state'] != 0:
+		archiver.log_event(event_id, event)
+
+		msg = Content(json.dumps(event))
+		## Event to Alert
+		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+
 ########################################################
 #
 #   Functions
@@ -101,6 +117,7 @@ def main():
 	amqp = camqp()
 
 	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
+	amqp.add_queue(DAEMON_NAME, ['#.log.#'], on_log_message, amqp.exchange_name_events)
 	amqp.start()
 
 	while RUN:
