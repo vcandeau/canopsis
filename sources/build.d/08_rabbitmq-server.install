@@ -13,33 +13,27 @@ function build(){
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tar.gz"
 	fi
-	cd  $BASE
-	echo "   + Clean ..."
-	make clean 1>> $LOG 2>> $LOG
-	#check_code $?
-
-	#echo "   + Configure ..."
-	#./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
-	#check_code $?
-
-	echo "   + Build ..."
-	make all 1>> $LOG 2>> $LOG
-	check_code $?
+	cd $BASE
 }
 
 function install(){
+
+	install_basic_source $NAME
+
+	mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq $PREFIX/opt/rabbitmq-server
+	chown $HUSER:$HGROUP -R $PREFIX/var/lib/rabbitmq
+	chown $HUSER:$HGROUP -R $PREFIX/var/log/rabbitmq
+	chown $HUSER:$HGROUP -R $PREFIX/opt/rabbitmq-server
+
 	cd $SRC_PATH/externals/$BASE
 
-	make install 1>> $LOG 2>> $LOG
+	cp -R ebin $PREFIX/
 	check_code $?
 
-	echo " + Post install configurations ..."
-	cp $SRC_PATH/externals/rabbitmq-plugins/* $PREFIX/opt/rabbitmq-server/plugins
-	sed -i s#/etc/rabbitmq#$PREFIX/etc#g $PREFIX/bin/rabbitmq-env
+	cp -R include $PREFIX/
 	check_code $?
 
-	install_init "rabbitmq-server"
-	install_bin "rabbitmqadmin"
-	install_conf "rabbitmq.conf"
-	install_conf "rabbitmq-env.conf"
+	cp -R plugins $PREFIX/opt/rabbitmq-server/
+	check_code $?
+
 }
