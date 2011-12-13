@@ -81,8 +81,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.callParent(arguments);
 	},
 	
-	reporting: function(from, to){
+	_reporting: function(from, to){
 		this.setHtml('widget reporting from date ' + from + ' to ' + to)
+		if(this.reporting){
+			this.reporting
+		}
 	},
 
 	startTask: function(){
