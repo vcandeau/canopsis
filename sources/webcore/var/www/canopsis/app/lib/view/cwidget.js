@@ -111,12 +111,12 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 	},
 
-	onShow: function(){
+	TabOnShow: function(){
 		log.debug('Show', this.logAuthor)
 		this.startTask()
 	},
 
-	onHide: function(){
+	TabOnHide: function(){
 		log.debug('Hide', this.logAuthor)
 		this.stopTask()
 	},
@@ -133,6 +133,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 					this.onRefresh(data)
 					this.displayed = true
 				},
+				failure: function (result, request) {
+					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+				} 
 			});
 		}else{
 			this.onRefresh(data)
