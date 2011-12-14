@@ -205,7 +205,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		if (this.widgets){
 			var i;
 			for (i in this.widgets){
-				this.widgets[i].onShow()
+				if (this.widgets[i].TabOnShow){
+					this.widgets[i].TabOnShow()
+				}
 			}
 		}
 	},
@@ -215,7 +217,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		if (this.widgets){
 			var i;
 			for (i in this.widgets){
-				this.widgets[i].onHide()
+				if (this.widgets[i].TabOnHide){
+					this.widgets[i].TabOnHide()
+				}
 			}
 		}
 	},
