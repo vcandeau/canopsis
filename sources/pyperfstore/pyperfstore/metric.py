@@ -254,7 +254,13 @@ class metric(object):
 					else:
 						values += dca_values[itstart:itstop+1]
 
-		return sorted(values, key=itemgetter(0))
+		if values:
+			values = sorted(values, key=itemgetter(0))
+			if values[0][0] < tstart - 300:
+				## set first value with old data
+				values[0][0] = tstart
+
+		return values
 
 
 	def dca_get(self, mydca):
