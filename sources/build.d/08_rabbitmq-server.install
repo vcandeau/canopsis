@@ -8,15 +8,16 @@ rm -f $LOG &> /dev/null
 
 
 function build(){
+	true
+}
+
+function install(){
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tar.gz"
 	fi
 	cd $BASE
-}
-
-function install(){
 
 	install_basic_source $NAME
 
