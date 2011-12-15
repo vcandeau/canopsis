@@ -67,6 +67,9 @@
 		createApplication()
 	});
 
+	var reporting_view_id = 'view.root.test';
+	var reportingStart = 1323730800000;
+	var reportingStop = 1323817200000;
 
 	function createApplication(){
 		log.debug("Start ExtJS application ...", "[app]");
@@ -77,12 +80,21 @@
 				'Widgets',
 				'View',
 				'ViewEditor',
+				'Tabs',
 			],
 			launch: function() {
 				this.getController('Widgets').on('loaded', this.createViewport);
 			},
 			createViewport: function(){
-				Ext.create('canopsis.view.ReportingViewport');
+				reportViewport = Ext.create('Ext.container.Viewport');
+				//pass reporting parameters
+				var content = Ext.create('canopsis.view.ReportView',{
+					view_id : reporting_view_id,
+					reportStartTs : reportingStart,
+					reportStopTs : reportingStop,
+					autoshow : true,
+					options : []});
+				reportViewport.add(content);
 			}
 		});
 		log.debug("Application started", "[app]");
