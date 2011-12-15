@@ -279,6 +279,46 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		return true		
 	},
 	
+	displayFromTs : function(from, to){
+		this.start = null;
+		
+		var metrics_txt = ""
+		var i;
+		for (i in this.metrics){
+			metrics_txt += this.metrics[i] + ","
+		}
+		//small hack
+		metrics_txt = metrics_txt.replace('/', "<slash>")
+
+		var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt+ '/' + from + '/' + to
+
+		Ext.Ajax.request({
+			url: url,
+			scope: this,
+			success: function(response){
+				var data = Ext.JSON.decode(response.responseText)
+				data = data.data
+
+				var i;
+				//for each metric
+				for (i in data){
+					var metric = data[i]['metric']
+					var values = data[i]['values']
+					
+					var metric_id = this.metrics.indexOf(metric)
+			
+					if (values.length != 0){
+						this.chart.series[metric_id].setData(values,true);
+					}
+				}
+				this.chart.redraw();
+			},
+			failure: function ( result, request) {
+				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+			} 
+		})
+	},
+	
 	//add data on chart
 	reporting: function(from, to){
 		this.setHtml('widget reporting from date ' + from + ' to ' + to)
