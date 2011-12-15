@@ -77,21 +77,22 @@
 			name: 'canopsis',
 			appFolder: 'app',
 			controllers: [
-				'Widgets',
 				'View',
 				'ViewEditor',
-				'Tabs',
+				//'Tabs',
+				'Widgets',
 			],
 			launch: function() {
 				this.getController('Widgets').on('loaded', this.createViewport);
 			},
 			createViewport: function(){
+				log.debug('----------------------------')
 				reportViewport = Ext.create('Ext.container.Viewport');
 				//pass reporting parameters
 				var content = Ext.create('canopsis.view.ReportView',{
 					view_id : reporting_view_id,
-					reportStart : reportStart,
-					reportStop : reportStop,
+					//reportStart : reportStart,
+					//reportStop : reportStop,
 					autoshow : true,
 					options : []});
 				reportViewport.add(content);
