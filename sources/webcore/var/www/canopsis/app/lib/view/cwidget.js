@@ -68,7 +68,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		
 		//if reporting
 		if(this.reportMode){
-			this._reporting(this.reportStartTs,this.reportStopTs)
+			//this._reporting(this.reportStartTs,this.reportStopTs)
+			this._reporting(reportStart,reportStop)
 		}else{
 			if (this.nodeId){
 				this.uri += '/' + this.nodeId;
