@@ -1,72 +1,7 @@
-Ext.define('canopsis.view.ReportingViewport', {
-	extend: 'Ext.container.Viewport',
-
-	requires: [
-		'Ext.layout.container.Border',
-		'Ext.tab.Panel'
-	],
-
-	layout: 'fit',
+Ext.define('canopsis.view.ReportView', {
+	extend:'canopsis.view.Tabs.Content',
 	
-	id : 'Reporting',
-
-	items: [],
-	
-	width : 500,
-	
-	initComponent: function() {
-		
-		log.debug("Render reporting viewport ...", 'Reporting Viewport');
-		this.on('afterrender', this.afterrender, this)
-		this.callParent(arguments);
-		
-		//Ext.getCmp('Reporting').on('afterrender',this.doReport('view.root.test'))
-		
-		this.logAuthor = 'Reporting Viewport'
-		
-		//---------set content of Reporting-------
-		this.content = this.add({
-			style: {borderWidth:'0px'},
-			layout: {
-				type: 'table',
-				columns: 1,
-			},
-			defaults: {
-				border: false,
-			},
-			border: false,
-			displayed: false,
-			items: [],
-			
-		})
-		
-		this.widgets = []
-		
-		//this.view_id = parseUri(window.location).viewName
-		
-		if(reporting_view_id){
-			this.view_id = reporting_view_id
-		
-		
-			//-------------------get view---------------
-			Ext.Ajax.request({
-				url: '/rest/object/view/'+this.view_id,
-				scope: this,
-				success: function(response){
-					data = Ext.JSON.decode(response.responseText)
-					this.view = data.data[0]
-					this.setContent()
-				},
-				failure: function (result, request) {
-						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-				}
-			})
-		} else {
-			log.debug('no view id for reporting specified (set variable reporting_view_id with wkhtmltopdf)', this.logAuthor)
-		}
-	},
-	
-	setContent : function(content){
+	setContent : function(){
 		//----------------Setting globals options----------------
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
@@ -79,7 +14,7 @@ Ext.define('canopsis.view.ReportingViewport', {
 		if (! refreshInterval) { refreshInterval = 0 }
 		if (! nbColumns || items.length == 1) { nbColumns = 1 }
 		
-		this.content.layout.columns = nbColumns
+		this.layout.columns = nbColumns
 
 		//-----------------populating with widgets--------------
 		if (items.length == 1 ) {
@@ -104,7 +39,11 @@ Ext.define('canopsis.view.ReportingViewport', {
 			if (! item.nodeId) { item.nodeId=nodeId}
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 			
-			var widget = this.content.add(item);
+			item.reportStartTs = this.reportingStart
+			item.reportStopTs = this.reportingStop
+			item.reportMode = true
+
+			var widget = this.add(item);
 			this.widgets.push(widget)
 
 		}else{
@@ -137,6 +76,13 @@ Ext.define('canopsis.view.ReportingViewport', {
 				item['style'] = {padding: '3px'}
 				
 				item['reportMode'] = true;
+				
+				log.debug('start timestamp is : ' + reportingStart, this.logAuthor)
+				log.debug('stop timestamp is : ' + reportingStop, this.logAuthor)
+				
+				item.reportStartTs = this.reportingStart
+				item.reportStopTs = this.reportingStop
+				item.reportMode = true
 
 				//Set default options
 				if (! item.nodeId) { item.nodeId=nodeId}
@@ -144,32 +90,11 @@ Ext.define('canopsis.view.ReportingViewport', {
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
 
-				var widget = this.content.add(item);
+				var widget = this.add(item);
 				this.widgets.push(widget)
 			}
 		}
 		log.debug('------------------------------all is done----------------------')
 	},
-
-	doReport : function(view_id){
-		//-------------------get view---------------
-		Ext.Ajax.request({
-			url: '/rest/object/view/'+view_id,
-			scope: this,
-			success: function(response){
-				data = Ext.JSON.decode(response.responseText)
-				this.view = data.data[0]
-				this.setContent()
-			},
-			failure: function (result, request) {
-					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-			}
-		})
-	},
-
-	afterrender: function(){
-		log.debug("Reporting Viewport rendered", this.author);
-		//this.doReport('view.root.test')
-	}
 		
 });
