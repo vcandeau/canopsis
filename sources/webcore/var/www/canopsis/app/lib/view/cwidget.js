@@ -61,15 +61,17 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		this.divId = this.id+"-content"
 		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
+		
+		this.uri = '/rest/events/event'
+		
+		this.callParent(arguments);
 
-		//if we don't request reporting from widget
-		if(!this.reportMode){
-			this.uri = '/rest/events/event'
-
-			if (this.nodeId){
-				this.uri += '/' + this.nodeId;
-				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
-
+		if (this.nodeId){
+			this.uri += '/' + this.nodeId;
+			log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
+			
+			//check if reporting mode
+			if(!this.reportMode){
 				if (this.refreshInterval){				
 					log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
 					this.task = {
@@ -77,13 +79,13 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 						interval: this.refreshInterval * 1000,
 						scope: this
 					}
+					this.on('afterrender', this.startTask, this);
 				}
+			}else{
+				this._reporting(this.reportStartTs,this.reportStopTs)
 			}
-
-			this.on('afterrender', this.startTask, this);
 		}
-
-		this.callParent(arguments);
+		
 	},
 	
 	//display data from timestamp
@@ -97,7 +99,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	
 	_reporting: function(from, to){
 		if(this.reporting){
-			this.reporting
+			this.reporting(from,to)
 		} else {
 			this.setHtml('widget reporting from date ' + from + ' to ' + to)
 		}
@@ -163,6 +165,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	setHtml: function(html){
 		log.debug('setHtml in widget', this.logAuthor)
+		log.dump(this)
 		this.removeAll()
 		this.add({html: html, border: false})
 		this.doLayout();
