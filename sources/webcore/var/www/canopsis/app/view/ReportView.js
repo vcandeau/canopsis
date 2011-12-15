@@ -41,8 +41,8 @@ Ext.define('canopsis.view.ReportView', {
 			if (! item.nodeId) { item.nodeId=nodeId}
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 			
-			item.reportStartTs = this.reportStart
-			item.reportStopTs = this.reportStop
+			//item.reportStartTs = this.reportStart
+			//item.reportStopTs = this.reportStop
 			item.reportMode = true
 
 			var widget = this.add(item);
@@ -82,8 +82,8 @@ Ext.define('canopsis.view.ReportView', {
 				log.debug('start timestamp is : ' + reportStart, this.logAuthor)
 				log.debug('stop timestamp is : ' + reportStop, this.logAuthor)
 				
-				item.reportStartTs = this.reportStart
-				item.reportStopTs = this.reportStop
+				//item.reportStartTs = this.reportStart
+				//item.reportStopTs = this.reportStop
 				item.reportMode = true
 
 				//Set default options
