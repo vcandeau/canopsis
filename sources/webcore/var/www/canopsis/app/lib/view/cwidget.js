@@ -30,7 +30,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	displayed: false,
 
-	addToRequestManager: true,
+	//addToRequestManager: true,
 
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
@@ -41,6 +41,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	logAuthor: '[widget]',
 
 	task: false,
+	
+	reportMode : false,
 
 	initComponent: function() {
 
@@ -60,31 +62,44 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.divId = this.id+"-content"
 		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
 
-		this.uri = '/rest/events/event'
+		//if we don't request reporting from widget
+		if(!this.reportMode){
+			this.uri = '/rest/events/event'
 
-		if (this.nodeId){
-			this.uri += '/' + this.nodeId;
-			log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
+			if (this.nodeId){
+				this.uri += '/' + this.nodeId;
+				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
 
-			if (this.refreshInterval){				
-				log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
-				this.task = {
-					run: this.doRefresh,
-					interval: this.refreshInterval * 1000,
-					scope: this
+				if (this.refreshInterval){				
+					log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
+					this.task = {
+						run: this.doRefresh,
+						interval: this.refreshInterval * 1000,
+						scope: this
+					}
 				}
 			}
-		}
 
-		this.on('afterrender', this.startTask, this);
+			this.on('afterrender', this.startTask, this);
+		}
 
 		this.callParent(arguments);
 	},
 	
+	//display data from timestamp
+	_displayFromTs: function(from, to){
+		if(this.displayFromTs){
+			this.displayFromTs(from, to)
+		} else {
+			this.setHtml('widget display data from timestamp ' + from + ' to ' + to)
+		}
+	},
+	
 	_reporting: function(from, to){
-		this.setHtml('widget reporting from date ' + from + ' to ' + to)
 		if(this.reporting){
 			this.reporting
+		} else {
+			this.setHtml('widget reporting from date ' + from + ' to ' + to)
 		}
 	},
 

@@ -34,7 +34,7 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 		
 		this.add({ xtype: 'tbspacer', width: 400 });
 		
-		this.beforeButton = this.add({
+		this.previousButton = this.add({
 			xtype: 'button', // default for Toolbars
 			//text: '<',
 			cls: 'x-btn-icon x-tbar-page-prev',
@@ -50,7 +50,7 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 			//format: 'd m Y',
 		})
 		
-		this.afterButton = this.add({
+		this.nextButton = this.add({
 			xtype: 'button', // default for Toolbars
 			cls: 'x-btn-icon x-tbar-page-next',
 			//text: '>',
@@ -65,30 +65,6 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 			text: 'request',
 			action: 'request'
 		})
-		
-
-		
-		/*
-		this.reportFrom = this.add({
-			xtype: 'datefield',
-			name: 'from',
-			fieldLabel: 'From',
-			value: new Date(),
-			maxValue: new Date(),
-		})
-
-		this.reportTo = this.add({
-			xtype: 'datefield',
-			name: 'to',
-			fieldLabel: 'To',
-			value: new Date(),
-			maxValue: new Date(),
-		})
-		
-		this.reportButton = this.add({
-			xtype: 'button', // default for Toolbars
-			text: 'fetch',
-		})*/
 	}
 	
 });
