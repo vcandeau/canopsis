@@ -3,6 +3,8 @@ Ext.define('canopsis.view.ReportView', {
 	
 	setContent : function(){
 		//----------------Setting globals options----------------
+		log.dump(this)
+		
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
 		var nodeId = this.view.nodeId;
@@ -39,8 +41,8 @@ Ext.define('canopsis.view.ReportView', {
 			if (! item.nodeId) { item.nodeId=nodeId}
 			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
 			
-			item.reportStartTs = this.reportingStart
-			item.reportStopTs = this.reportingStop
+			item.reportStartTs = this.reportStart
+			item.reportStopTs = this.reportStop
 			item.reportMode = true
 
 			var widget = this.add(item);
@@ -77,11 +79,11 @@ Ext.define('canopsis.view.ReportView', {
 				
 				item['reportMode'] = true;
 				
-				log.debug('start timestamp is : ' + reportingStart, this.logAuthor)
-				log.debug('stop timestamp is : ' + reportingStop, this.logAuthor)
+				log.debug('start timestamp is : ' + reportStart, this.logAuthor)
+				log.debug('stop timestamp is : ' + reportStop, this.logAuthor)
 				
-				item.reportStartTs = this.reportingStart
-				item.reportStopTs = this.reportingStop
+				item.reportStartTs = this.reportStart
+				item.reportStopTs = this.reportStop
 				item.reportMode = true
 
 				//Set default options
