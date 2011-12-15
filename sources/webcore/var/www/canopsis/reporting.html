@@ -1,0 +1,95 @@
+<!--
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+-->
+
+<html>
+<head>
+    <title>Canopsis</title>
+	<!-- Theme -->
+	<link rel="stylesheet" type="text/css" href= "resources/lib/extjs/resources/css/ext-all.css">
+	<!-- <link rel="stylesheet" type="text/css" href= "../RGraph/css/common.css"> -->
+	<link rel="stylesheet" type="text/css" href="resources/lib/jqplot/jquery.jqplot.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="resources/css/ext-all.css"> -->
+	<link rel="stylesheet" type="text/css" href="themes/default/theme.css">
+	<link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
+	
+	<link rel="stylesheet" type="text/css" href="resources/lib/jgauge/css/jgauge.css">
+
+	<link rel="stylesheet" type="text/css" href="resources/lib/jquery-ui/themes/base/jquery.ui.all.css">
+	<link rel="stylesheet" type="text/css" href="resources/lib/pnotify/jquery.pnotify.default.css">
+	<link rel="stylesheet" type="text/css" href="resources/lib/pnotify/icons/jquery.pnotify.default.icons.css">
+
+	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
+
+</head>
+<body style="width:930px;height:1000px;">
+
+	<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>
+
+	<!-- Jquery -->
+	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
+	
+	<script type="text/javascript" src="resources/lib/jgauge/js/excanvas.min.js"></script>
+	<script type="text/javascript" src="resources/lib/jgauge/js/jQueryRotate.min.js"></script>
+	<script type="text/javascript" src="resources/lib/jgauge/js/jgauge-0.3.0.a3.min.js"></script>
+
+	<script type="text/javascript" src="resources/lib/pnotify/jquery.pnotify.min.js"></script>
+	<script type="text/javascript" src="resources/lib/Highstock/js/highstock.src.js"></script>
+
+	<!-- Application -->
+	<script type="text/javascript" src="app/lib/global.js"></script>
+	<script type="text/javascript" src="app/lib/log.js"></script>
+	<script type="text/javascript" src="app/lib/tools.js"></script>
+	<script type="text/javascript" src="app/lib/renderers.js"></script>
+	<!--<script type="text/javascript" src="buildReport.js"></script> -->
+	
+	<script type="text/javascript">
+	Ext.onReady(function() {
+		Ext.Loader.setConfig({enabled:true});
+		global.account = 'root'
+		createApplication()
+	});
+
+
+	function createApplication(){
+		log.debug("Start ExtJS application ...", "[app]");
+		var app = Ext.application({
+			name: 'canopsis',
+			appFolder: 'app',
+			controllers: [
+				'Widgets',
+				'View',
+				'ViewEditor',
+			],
+			launch: function() {
+				this.getController('Widgets').on('loaded', this.createViewport);
+			},
+			createViewport: function(){
+				Ext.create('canopsis.view.ReportingViewport');
+			}
+		});
+		log.debug("Application started", "[app]");
+	}
+	</script>
+	
+
+
+</body>
+</html>
