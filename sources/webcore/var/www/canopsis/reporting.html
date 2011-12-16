@@ -68,8 +68,8 @@
 	});
 
 	var reporting_view_id = 'view.root.test';
-	var reportStart = 1323730800000;
-	var reportStop = 1323817200000;
+	var reportStart = 1323903600000;
+	var reportStop = 1323990000000;
 
 	function createApplication(){
 		log.debug("Start ExtJS application ...", "[app]");
@@ -86,7 +86,6 @@
 				this.getController('Widgets').on('loaded', this.createViewport);
 			},
 			createViewport: function(){
-				log.debug('----------------------------')
 				reportViewport = Ext.create('Ext.container.Viewport');
 				//pass reporting parameters
 				var content = Ext.create('canopsis.view.ReportView',{
