@@ -11,10 +11,10 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
 			data : [
-				{"name":"Day", "value":86400},
-				{"name":"Week", "value":604800},
-				{"name":"Month", "value":2629800},
-				{"name":"Year", "value":31557600}
+				{"name":"Day", "value":global.commonTs.day},
+				{"name":"Week", "value":global.commonTs.week},
+				{"name":"Month", "value":global.commonTs.month},
+				{"name":"Year", "value":global.commonTs.year}
 			]
 		});
 		
