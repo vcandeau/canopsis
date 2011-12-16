@@ -59,7 +59,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
 				var config = data.data[0]
-				
+				this.config = config
 				this.createHighchartConfig(config)
 			},
 			failure: function ( result, request) {
@@ -70,6 +70,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 
 	setOptions: function(){
+		//-------------find the right scale fo xAxis----------------
+		if (this.reportStop && this.reportStart){
+			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
+			var tsFormat = this.findScaleAxe(timestampInterval)
+		} else {
+			var tsFormat = 'H:i'
+		}
+		//---------------------------------------------------------
 		this.options = {
 			chart: {
 				renderTo: this.divId,
@@ -95,9 +103,19 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			xAxis: {
 				//min: Date.now() - (this.time_window * 1000),
 				maxZoom: 60 * 60 * 1000, // 1 hour
+			/*	type: 'datetime',
+				dateTimeLabelFormats:{
+					second: '%H:%M:%S',
+					minute: '%H:%M',
+					hour: '%H:%M',
+					day: '%e. %b',
+					week: '%e. %b',
+					month: '%b %y',
+					year: '%Y'
+				}*/
 				labels: {
 					formatter: function() {
-						return Ext.Date.format(new Date(this.value), 'H:i');
+						return Ext.Date.format(new Date(this.value), tsFormat);
 					}
 				}
 			},
@@ -134,6 +152,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			      },*/
 			series: []
 		}
+		
+		
 		if(this.reportMode){
 			this.options.plotOptions.series['enableMouseTracking'] = false;
 		}
@@ -176,7 +196,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			this.metrics.push(metric)
 
-			this.start[metric] = false
+			//this.start[metric] = false
 
 			var name = metric
 			if ( config.metrics[metric]['bunit']){
@@ -202,7 +222,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.createChart()
 	
 		// For futur requestManager
-		this.doRefresh();
+		this.onRefresh();
 	},
 
 	onRefresh: function (data){
@@ -220,8 +240,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			var url = '/perfstore/values/'+this.nodeId + '/' + metrics_txt
 
-			if(this.reportMode){
-				url += '/' + reportStart + '/' + reportStop
+			if(this.reportStart && this.reportStop){
+				url += '/' + this.reportStart + '/' + this.reportStop
 			}else{
 				if (this.start){
 					// only last values
@@ -293,48 +313,34 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	},
 	
 	displayFromTs : function(from, to){
-		this.start = null;
-		
-		var metrics_txt = ""
-		var i;
-		for (i in this.metrics){
-			metrics_txt += this.metrics[i] + ","
-		}
-		//small hack
-		metrics_txt = metrics_txt.replace('/', "<slash>")
 
-		var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt+ '/' + from + '/' + to
+		this.chart.destroy()
+		this.reportStart = from
+		this.reportStop = to
+		log.dump(this.start)
+		this.start = false
 
-		Ext.Ajax.request({
-			url: url,
-			scope: this,
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				data = data.data
+		this.createHighchartConfig(this.config)
 
-				var i;
-				//for each metric
-				for (i in data){
-					var metric = data[i]['metric']
-					var values = data[i]['values']
-					
-					var metric_id = this.metrics.indexOf(metric)
-			
-					if (values.length != 0){
-						this.chart.series[metric_id].setData(values,true);
-					}
-				}
-				this.chart.redraw();
-			},
-			failure: function ( result, request) {
-				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-			} 
-		})
 	},
 	
 	//add data on chart
 	reporting: function(from, to){
 		this.onRefresh();
 	},
+	
+	findScaleAxe : function(interval){
+		if (interval <= global.commonTs.day){
+			return 'H:i'
+		}else if (interval <= global.commonTs.week){
+			return 'D'
+		}else if (interval <= global.commonTs.month){
+			return 'W'
+		}else if (interval <= global.commonTs.year){
+			return 'M'
+		} else {
+			return 'Y'
+		}
+	}
 
 });
