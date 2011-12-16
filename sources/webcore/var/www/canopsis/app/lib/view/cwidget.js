@@ -105,7 +105,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if(this.reporting){
 			this.reporting(from,to)
 		} else {
-			this.setHtml('widget reporting from date ' + from + ' to ' + to)
+			this.setHtml('<br/><br/>widget reporting from date ' + from + ' to ' + to)
 		}
 	},
 

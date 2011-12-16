@@ -59,7 +59,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
 				var config = data.data[0]
-
+				
 				this.createHighchartConfig(config)
 			},
 			failure: function ( result, request) {
@@ -134,6 +134,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			      },*/
 			series: []
 		}
+		if(this.reportMode){
+			this.options.plotOptions.series['enableMouseTracking'] = false;
+		}
 	},
 
 	createChart: function(){
@@ -146,13 +149,19 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		var title = ""
 
+		if(!this.title && config.id){
+			var nodeName = config.id.split('.')
+			title += nodeName[5] + ' on ' + nodeName[4]
+		}
+		
+		/*
 		if (! this.title) {
 			if (this.nodeData.resource) {
 				title = this.nodeData.resource;
 			}else if (this.nodeData.component){
 				title = this.nodeData.component;
 			}
-		}
+		}*/
 
 		this.chartTitle = title
 
@@ -209,11 +218,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
 
-			var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt
+			var url = '/perfstore/values/'+this.nodeId + '/' + metrics_txt
 
-			if (this.start){
-				// only last values
-				url = url + '/' + (this.start+1000)
+			if(this.reportMode){
+				url += '/' + reportStart + '/' + reportStop
+			}else{
+				if (this.start){
+					// only last values
+					url = url + '/' + (this.start+1000)
+				}
 			}
 
 			Ext.Ajax.request({
@@ -321,46 +334,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	//add data on chart
 	reporting: function(from, to){
-		this.setHtml('widget reporting from date ' + from + ' to ' + to)
-		/*
-		//this.doRefresh()
-		
-		var metrics_txt = ""
-		var i;
-		for (i in this.metrics){
-			metrics_txt += this.metrics[i] + ","
-		}
-		//log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
-		
-		//var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt
-		var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt+ '/' + from// + '/' + to
-
-		Ext.Ajax.request({
-			url: url,
-			scope: this,
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				data = data.data
-
-				var i;
-				for (i in data){
-					this.addDataOnChart(data[i])
-				}
-
-				if (data[0].values.length > 0){
-					this.start = data[0].values[data[0].values.length-1][0];
-
-					this.shift = this.first < (this.start - (this.time_window*1000))
-					//log.debug('     + First: '+this.first, this.logAuthor)
-					//log.debug('     + First graph: '+(this.start - this.time_window), this.logAuthor)
-					log.debug('     + Shift: '+this.shift, this.logAuthor)
-				}
-				this.chart.redraw();
-			},
-			failure: function ( result, request) {
-				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-			} 
-		})*/
+		this.onRefresh();
 	},
 
 });
