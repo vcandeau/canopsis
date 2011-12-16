@@ -17,6 +17,18 @@ Ext.define('canopsis.view.ReportView', {
 		if (! nbColumns || items.length == 1) { nbColumns = 1 }
 		
 		this.layout.columns = nbColumns
+		
+		//---------------Adding presentation widget-------------------
+		//var startDate = new Date((parseInt(reportStart) / 1000))
+		//var stopDate = new Date((parseInt(reportStart) / 1000))
+		var startDate = new Date(reportStart)
+		var stopDate = new Date(reportStop)
+		var presentationText = '<font size="9" face="verdana">      ​Canopsis reporting</font><br><br><center>From ' + Ext.Date.format(startDate, 'Y/m/d') + ' to ' + Ext.Date.format(stopDate, 'Y/m/d') + '</center><br/><br/><br/>'
+		this.add({
+			xtype : 'text',
+			text : presentationText,
+			colspan : nbColumns
+		})
 
 		//-----------------populating with widgets--------------
 		if (items.length == 1 ) {
