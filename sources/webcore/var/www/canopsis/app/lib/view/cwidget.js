@@ -95,7 +95,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	//display data from timestamp
 	_displayFromTs: function(from, to){
 		if(this.displayFromTs){
+			this.stopTask()
 			this.displayFromTs(from, to)
+
 		} else {
 			this.setHtml('widget display data from timestamp ' + from + ' to ' + to)
 		}
