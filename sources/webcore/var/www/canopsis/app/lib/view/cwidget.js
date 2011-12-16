@@ -101,10 +101,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 	},
 	
+	
+	//launch by reporting.html (reporting dedicated page)
 	_reporting: function(from, to){
 		if(this.reporting){
+			log.debug('Starting the report', this.logAuthor)
 			this.reporting(from,to)
 		} else {
+			log.debug('Warning, no reporting function for '+this.id, this.logAuthor)
 			this.setHtml('<br/><br/>widget reporting from date ' + from + ' to ' + to)
 		}
 	},
