@@ -85,7 +85,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.options = {
 			chart: {
 				renderTo: this.divId,
-				zoomType: 'x',
+				//zoomType: 'x',
 				defaultSeriesType: 'area',
 				height: this.divHeight,
 				animation: false,
@@ -157,8 +157,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			      },*/
 			series: []
 		}
-		
-		
+		//specifique options to add
 		if(this.reportMode){
 			this.options.plotOptions.series['enableMouseTracking'] = false;
 		}else{
