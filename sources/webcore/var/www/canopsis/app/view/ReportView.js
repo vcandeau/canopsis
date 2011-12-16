@@ -3,8 +3,6 @@ Ext.define('canopsis.view.ReportView', {
 	
 	setContent : function(){
 		//----------------Setting globals options----------------
-		log.dump(this)
-		
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
 		var nodeId = this.view.nodeId;
@@ -94,8 +92,8 @@ Ext.define('canopsis.view.ReportView', {
 				log.debug('start timestamp is : ' + reportStart, this.logAuthor)
 				log.debug('stop timestamp is : ' + reportStop, this.logAuthor)
 				
-				//item.reportStartTs = this.reportStart
-				//item.reportStopTs = this.reportStop
+				item.reportStart = reportStart
+				item.reportStop = reportStop
 				item.reportMode = true
 
 				//Set default options
