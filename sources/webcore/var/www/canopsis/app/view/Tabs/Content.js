@@ -181,6 +181,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.requestButton.on('click',this.onReport,this);
 			this.reportBar.nextButton.on('click',this.nextReportButton,this);
 			this.reportBar.previousButton.on('click',this.previousReportButton,this);
+			this.reportBar.saveButton.on('click',this.saveButton,this);
 		}else{
 			//binding event to save resources
 			this.on('show', function(){
@@ -230,6 +231,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		inputField.setValue(newDate)
 		//ask widget to go on reporting
 		this.onReport()
+	},
+	
+	saveButton: function(){
+		log.debug('Report generation', this.logAuthor);
+		Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
 	},
 	//------------------------------------------------------------
 

@@ -65,6 +65,14 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 			text: 'request',
 			action: 'request'
 		})
+		
+		this.saveButton = this.add({
+			xtype: 'button', // default for Toolbars
+			iconCls: 'icon-save',
+			//text: 'request',
+			action: 'save',
+			tooltip: 'export this view to pdf'
+		})
 	}
 	
 });
