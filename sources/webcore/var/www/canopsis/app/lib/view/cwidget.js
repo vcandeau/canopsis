@@ -169,7 +169,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	setHtml: function(html){
 		log.debug('setHtml in widget', this.logAuthor)
-		log.dump(this)
 		this.removeAll()
 		this.add({html: html, border: false})
 		this.doLayout();
