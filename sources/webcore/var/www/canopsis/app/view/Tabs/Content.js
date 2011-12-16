@@ -196,10 +196,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	onReport: function(){
 		log.debug('Request reporting on a time', this.logAuthor)
 		var toolbar = this.reportBar
-		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-		var startReport =	endReport - toolbar.combo.getValue();
-		for (i in this.widgets){
-			this.widgets[i]._displayFromTs(startReport * 1000,endReport * 1000)
+
+		if (toolbar.currentDate.isValid()){
+			var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var startReport =	endReport - toolbar.combo.getValue();
+			for (i in this.widgets){
+				this.widgets[i]._displayFromTs(startReport * 1000,endReport * 1000)
+			}
 		}
 	},
 	
