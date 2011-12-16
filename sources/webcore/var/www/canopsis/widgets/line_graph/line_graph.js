@@ -70,12 +70,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 
 	setOptions: function(){
-		//-------------find the right scale fo xAxis----------------
+		//----------find the right scale and tickinterval for xAxis------------
 		if (this.reportStop && this.reportStart){
 			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
 			var tsFormat = this.findScaleAxe(timestampInterval)
+			var tickInterval = this.findTickInterval(timestampInterval)
+			log.debug(tickInterval)
 		} else {
 			var tsFormat = 'H:i'
+			var tickInterval = global.commonTs.threeHours * 1000
+			log.debug(tickInterval)
 		}
 		//---------------------------------------------------------
 		this.options = {
@@ -103,6 +107,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			xAxis: {
 				//min: Date.now() - (this.time_window * 1000),
 				maxZoom: 60 * 60 * 1000, // 1 hour
+				tickInterval: tickInterval,
 			/*	type: 'datetime',
 				dateTimeLabelFormats:{
 					second: '%H:%M:%S',
@@ -156,6 +161,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		if(this.reportMode){
 			this.options.plotOptions.series['enableMouseTracking'] = false;
+		}else{
+			this.options.chart.zoomType = "x"
 		}
 	},
 
@@ -313,11 +320,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	},
 	
 	displayFromTs : function(from, to){
-
+		
 		this.chart.destroy()
 		this.reportStart = from
 		this.reportStop = to
-		log.dump(this.start)
+		//log.dump(this.start)
 		this.start = false
 
 		this.createHighchartConfig(this.config)
@@ -335,11 +342,25 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}else if (interval <= global.commonTs.week){
 			return 'D'
 		}else if (interval <= global.commonTs.month){
-			return 'W'
+			return 'j M'
 		}else if (interval <= global.commonTs.year){
 			return 'M'
 		} else {
 			return 'Y'
+		}
+	},
+	
+	findTickInterval : function(interval){
+		if (interval <= global.commonTs.day){
+			return global.commonTs.threeHours * 1000
+		}else if (interval <= global.commonTs.week){
+			return global.commonTs.day * 1000
+		}else if (interval <= global.commonTs.month){
+			return global.commonTs.week * 1000
+		}else if (interval <= global.commonTs.year){
+			return global.commonTs.month * 1000
+		} else {
+			return global.commonTs.year * 1000
 		}
 	}
 

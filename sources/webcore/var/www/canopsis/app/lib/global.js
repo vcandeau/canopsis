@@ -71,6 +71,8 @@ var global = {
 	],
 	
 	commonTs:{
+		hours: 3600,
+		threeHours: 10800,
 		day: 86400,
 		week: 604800,
 		month : 2629800,
