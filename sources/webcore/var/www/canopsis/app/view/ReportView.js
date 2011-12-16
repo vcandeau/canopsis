@@ -96,7 +96,6 @@ Ext.define('canopsis.view.ReportView', {
 				this.widgets.push(widget)
 			}
 		}
-		log.debug('------------------------------all is done----------------------')
 	},
 		
 });
