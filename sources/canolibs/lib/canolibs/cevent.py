@@ -40,6 +40,9 @@ def forger(		connector,
 	if not component:
 		component = socket.gethostname()
 
+	if not state:
+		state = 0
+
 	dump = {
 		'connector':		connector,
 		'connector_name':	connector_name,
