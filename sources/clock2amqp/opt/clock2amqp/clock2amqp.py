@@ -51,7 +51,7 @@ logger = logging.getLogger(DAEMON_NAME)
 ########################################################
 
 def on_timer_task():
-	event = cevent.forger(connector='clock', connector_name=DAEMON_NAME, event_type='clock', output=str(int(time.time())) )
+	event = cevent.forger(connector='clock', source_type = 'resource', resource='clock', connector_name=DAEMON_NAME, event_type='clock', output=str(int(time.time())) )
 	rk = cevent.get_routingkey(event)
 
 	msg = Content(json.dumps(event))
