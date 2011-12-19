@@ -17,21 +17,24 @@ Ext.define('canopsis.view.ReportView', {
 		this.layout.columns = nbColumns
 		
 		//---------------Adding presentation widget-------------------
-		//var startDate = new Date((parseInt(reportStart) / 1000))
-		//var stopDate = new Date((parseInt(reportStart) / 1000))
-		var startDate = new Date(reportStart)
-		var stopDate = new Date(reportStop)
+		//get information
+		var presentationData = [];
+		presentationData['name'] = 'Canopsis';
+		presentationData['startDate'] = Ext.Date.format(new Date(reportStart),'Y/m/d');
+		presentationData['stopDate'] = Ext.Date.format(new Date(reportStop),'Y/m/d');
 		
-		var presentationText = '<font size="9" face="verdana">      ​Canopsis reporting</font><br><br><center>From ' + Ext.Date.format(startDate, 'Y/m/d') + ' to ' + Ext.Date.format(stopDate, 'Y/m/d') + '</center><br/><br/><br/>'
+		//create tpl
+		var presentationText = '<font size="9" face="verdana">      {name} reporting</font><br><br><center>From {startDate} to {stopDate}</center><br/><br/><br/>'
 		var presentationTemplate = new Ext.Template(presentationText, {compiled: true})
 		
+		//create widget
 		var presentationWidget = Ext.create('canopsis.lib.view.cwidget',{
 			colspan : nbColumns,
 		})
-		
 		this.add(presentationWidget);
 		
-		presentationWidget.setHtmlTpl(presentationTemplate);
+		//setHtml
+		presentationWidget.setHtmlTpl(presentationTemplate,presentationData);
 
 		//-----------------populating with widgets--------------
 		if (items.length == 1 ) {
@@ -60,9 +63,7 @@ Ext.define('canopsis.view.ReportView', {
 			//item.reportStopTs = this.reportStop
 			item.reportMode = true
 
-			var widget = this.add(item);
-			this.widgets.push(widget)
-
+			this.add(item);
 		}else{
 			//many widgets
 			//this.removeAll();
@@ -89,9 +90,8 @@ Ext.define('canopsis.view.ReportView', {
 				if (item['rowspan']) { rowspan = item['rowspan'] }
 				
 				item['width'] = (totalWidth / nbColumns) * colspan
-
 				item['style'] = {padding: '3px'}
-				
+
 				item['reportMode'] = true;
 				
 				log.debug('start timestamp is : ' + reportStart, this.logAuthor)
@@ -107,8 +107,7 @@ Ext.define('canopsis.view.ReportView', {
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
 
-				var widget = this.add(item);
-				this.widgets.push(widget)
+				this.add(item);
 			}
 		}
 	},
