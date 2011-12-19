@@ -68,5 +68,14 @@ var global = {
 		'Grey',
 		'Navy',
 		'Peru'
-	]
+	],
+	
+	commonTs:{
+		hours: 3600,
+		threeHours: 10800,
+		day: 86400,
+		week: 604800,
+		month : 2629800,
+		year : 31557600
+	}
 }

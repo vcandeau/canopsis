@@ -51,25 +51,25 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		//var model = 'canopsis.model.event';
 
 		this.Win_columns = [{
-				header: '',
-				width: 25,
-				sortable: false,
-				dataIndex: 'source_type',
-				renderer: rdr_source_type
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'source_type',
+					renderer: rdr_source_type
 	       		},{
-				header: '',
-				width: 25,
-				sortable: false,
-				dataIndex: 'perf_data',
-				renderer: rdr_havePerfdata
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'perf_data',
+					renderer: rdr_havePerfdata
 	       		},{
-				header: 'Component',
-				flex: 1,
-				dataIndex: 'component',
+					header: 'Component',
+					flex: 1,
+					dataIndex: 'component',
 	       		},{
-        		        header: 'Ressource',
-				flex: 2,
-				dataIndex: 'resource',
+					header: 'Resource',
+					flex: 2,
+					dataIndex: 'resource',
 		}];
 
 		this.columns = this.Win_columns
