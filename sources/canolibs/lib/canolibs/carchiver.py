@@ -81,6 +81,14 @@ class carchiver(object):
 			self.logger.debug(" + New event")
 			changed = True
 		
+		self.store_event(_id, event)
+
+		if changed and self.autolog:
+			self.log_event(_id, event)			
+
+		return changed
+
+	def store_event(self, _id, event):
 		record = crecord(event)
 		record.type = "event"
 		record.chmod("o+r")
@@ -94,11 +102,7 @@ class carchiver(object):
 			pass
 
 		self.storage.put(record, namespace=self.namespace, account=self.account)
-
-		if changed and self.autolog:
-			self.log_event(_id, event)			
-
-		return changed
+	
 
 	def log_event(self, _id, event):
 		self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))
