@@ -11,10 +11,10 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
 			data : [
-				{"name":"Day", "value":86400},
-				{"name":"Week", "value":604800},
-				{"name":"Month", "value":2629800},
-				{"name":"Year", "value":31557600}
+				{"name":"Day", "value":global.commonTs.day},
+				{"name":"Week", "value":global.commonTs.week},
+				{"name":"Month", "value":global.commonTs.month},
+				{"name":"Year", "value":global.commonTs.year}
 			]
 		});
 		
@@ -34,7 +34,7 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 		
 		this.add({ xtype: 'tbspacer', width: 400 });
 		
-		this.beforeButton = this.add({
+		this.previousButton = this.add({
 			xtype: 'button', // default for Toolbars
 			//text: '<',
 			cls: 'x-btn-icon x-tbar-page-prev',
@@ -50,7 +50,7 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 			//format: 'd m Y',
 		})
 		
-		this.afterButton = this.add({
+		this.nextButton = this.add({
 			xtype: 'button', // default for Toolbars
 			cls: 'x-btn-icon x-tbar-page-next',
 			//text: '>',
@@ -66,29 +66,13 @@ Ext.define('canopsis.view.Reporting.Reporting' ,{
 			action: 'request'
 		})
 		
-
-		
-		/*
-		this.reportFrom = this.add({
-			xtype: 'datefield',
-			name: 'from',
-			fieldLabel: 'From',
-			value: new Date(),
-			maxValue: new Date(),
-		})
-
-		this.reportTo = this.add({
-			xtype: 'datefield',
-			name: 'to',
-			fieldLabel: 'To',
-			value: new Date(),
-			maxValue: new Date(),
-		})
-		
-		this.reportButton = this.add({
+		this.saveButton = this.add({
 			xtype: 'button', // default for Toolbars
-			text: 'fetch',
-		})*/
+			iconCls: 'icon-save',
+			//text: 'request',
+			action: 'save',
+			tooltip: 'export this view to pdf'
+		})
 	}
 	
 });

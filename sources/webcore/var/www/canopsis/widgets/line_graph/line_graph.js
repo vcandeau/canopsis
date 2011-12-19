@@ -59,7 +59,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
 				var config = data.data[0]
-
+				this.config = config
 				this.createHighchartConfig(config)
 			},
 			failure: function ( result, request) {
@@ -70,10 +70,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 
 	setOptions: function(){
+		//----------find the right scale and tickinterval for xAxis------------
+		if (this.reportStop && this.reportStart){
+			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
+			var tsFormat = this.findScaleAxe(timestampInterval)
+			var tickInterval = this.findTickInterval(timestampInterval)
+		} else {
+			var tsFormat = 'H:i'
+			var tickInterval = global.commonTs.threeHours * 1000
+		}
+		//---------------------------------------------------------
 		this.options = {
 			chart: {
 				renderTo: this.divId,
-				zoomType: 'x',
+				//zoomType: 'x',
 				defaultSeriesType: 'area',
 				height: this.divHeight,
 				animation: false,
@@ -95,9 +105,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			xAxis: {
 				//min: Date.now() - (this.time_window * 1000),
 				maxZoom: 60 * 60 * 1000, // 1 hour
+				tickInterval: tickInterval,
+			/*	type: 'datetime',
+				dateTimeLabelFormats:{
+					second: '%H:%M:%S',
+					minute: '%H:%M',
+					hour: '%H:%M',
+					day: '%e. %b',
+					week: '%e. %b',
+					month: '%b %y',
+					year: '%Y'
+				}*/
 				labels: {
 					formatter: function() {
-						return Ext.Date.format(new Date(this.value), 'H:i');
+						return Ext.Date.format(new Date(this.value), tsFormat);
 					}
 				}
 			},
@@ -134,6 +155,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			      },*/
 			series: []
 		}
+		//specifique options to add
+		if(this.reportMode){
+			this.options.plotOptions.series['enableMouseTracking'] = false;
+		}else{
+			this.options.chart.zoomType = "x"
+		}
 	},
 
 	createChart: function(){
@@ -146,13 +173,19 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		var title = ""
 
+		if(!this.title && config.id){
+			var nodeName = config.id.split('.')
+			title += nodeName[5] + ' on ' + nodeName[4]
+		}
+		
+		/*
 		if (! this.title) {
 			if (this.nodeData.resource) {
 				title = this.nodeData.resource;
 			}else if (this.nodeData.component){
 				title = this.nodeData.component;
 			}
-		}
+		}*/
 
 		this.chartTitle = title
 
@@ -167,7 +200,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			this.metrics.push(metric)
 
-			this.start[metric] = false
+			//this.start[metric] = false
 
 			var name = metric
 			if ( config.metrics[metric]['bunit']){
@@ -193,7 +226,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.createChart()
 	
 		// For futur requestManager
-		this.doRefresh();
+		this.onRefresh();
 	},
 
 	onRefresh: function (data){
@@ -209,11 +242,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
 
-			var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt
+			var url = '/perfstore/values/'+this.nodeId + '/' + metrics_txt
 
-			if (this.start){
-				// only last values
-				url = url + '/' + (this.start+1000)
+			if(this.reportStart && this.reportStop){
+				url += '/' + this.reportStart + '/' + this.reportStop
+			}else{
+				if (this.start){
+					// only last values
+					url = url + '/' + (this.start+1000)
+				}
 			}
 
 			Ext.Ajax.request({
@@ -279,48 +316,49 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		return true		
 	},
 	
+	displayFromTs : function(from, to){
+		
+		this.chart.destroy()
+		this.reportStart = from
+		this.reportStop = to
+		//log.dump(this.start)
+		this.start = false
+
+		this.createHighchartConfig(this.config)
+
+	},
+	
 	//add data on chart
 	reporting: function(from, to){
-		this.setHtml('widget reporting from date ' + from + ' to ' + to)
-		/*
-		//this.doRefresh()
-		
-		var metrics_txt = ""
-		var i;
-		for (i in this.metrics){
-			metrics_txt += this.metrics[i] + ","
-		}
-		//log.debug(" + Refresh metrics '"+metrics_txt+"' ...", this.logAuthor)
-		
-		//var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt
-		var url = '/perfstore/values/'+this.nodeId+'/'+metrics_txt+ '/' + from// + '/' + to
-
-		Ext.Ajax.request({
-			url: url,
-			scope: this,
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				data = data.data
-
-				var i;
-				for (i in data){
-					this.addDataOnChart(data[i])
-				}
-
-				if (data[0].values.length > 0){
-					this.start = data[0].values[data[0].values.length-1][0];
-
-					this.shift = this.first < (this.start - (this.time_window*1000))
-					//log.debug('     + First: '+this.first, this.logAuthor)
-					//log.debug('     + First graph: '+(this.start - this.time_window), this.logAuthor)
-					log.debug('     + Shift: '+this.shift, this.logAuthor)
-				}
-				this.chart.redraw();
-			},
-			failure: function ( result, request) {
-				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-			} 
-		})*/
+		this.onRefresh();
 	},
+	
+	findScaleAxe : function(interval){
+		if (interval <= global.commonTs.day){
+			return 'H:i'
+		}else if (interval <= global.commonTs.week){
+			return 'D'
+		}else if (interval <= global.commonTs.month){
+			return 'j M'
+		}else if (interval <= global.commonTs.year){
+			return 'M'
+		} else {
+			return 'Y'
+		}
+	},
+	
+	findTickInterval : function(interval){
+		if (interval <= global.commonTs.day){
+			return global.commonTs.threeHours * 1000
+		}else if (interval <= global.commonTs.week){
+			return global.commonTs.day * 1000
+		}else if (interval <= global.commonTs.month){
+			return global.commonTs.week * 1000
+		}else if (interval <= global.commonTs.year){
+			return global.commonTs.month * 1000
+		} else {
+			return global.commonTs.year * 1000
+		}
+	}
 
 });

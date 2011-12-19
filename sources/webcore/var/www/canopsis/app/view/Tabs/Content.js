@@ -179,6 +179,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
 			this.addDocked(this.reportBar);
 			this.reportBar.requestButton.on('click',this.onReport,this);
+			this.reportBar.nextButton.on('click',this.nextReportButton,this);
+			this.reportBar.previousButton.on('click',this.previousReportButton,this);
+			this.reportBar.saveButton.on('click',this.saveButton,this);
 		}else{
 			//binding event to save resources
 			this.on('show', function(){
@@ -190,15 +193,51 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 	},
 	
+	//---------------------Reporting functions--------------------
 	onReport: function(){
 		log.debug('Request reporting on a time', this.logAuthor)
 		var toolbar = this.reportBar
-		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-		var startReport =	endReport - toolbar.combo.getValue();
-		for (i in this.widgets){
-			this.widgets[i].reporting(startReport * 1000,endReport * 1000)
+
+		if (toolbar.currentDate.isValid()){
+			var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var startReport =	endReport - toolbar.combo.getValue();
+			for (i in this.widgets){
+				this.widgets[i]._displayFromTs(startReport * 1000,endReport * 1000)
+			}
 		}
 	},
+	
+	nextReportButton: function(){
+		var inputField = this.reportBar.currentDate;
+		var startReport = parseInt(Ext.Date.format(inputField.getValue(), "U"))
+		var timeUnit = this.reportBar.combo.getValue()
+		//add the time and build a date
+		var endReport = startReport + timeUnit
+		var newDate = new Date(endReport * 1000)
+		//set the time
+		inputField.setValue(newDate)
+		//ask widget to go on reporting
+		this.onReport()
+	},
+	
+	previousReportButton: function(){
+		var inputField = this.reportBar.currentDate;
+		var startReport = parseInt(Ext.Date.format(inputField.getValue(), "U"))
+		var timeUnit = this.reportBar.combo.getValue()
+		//substract the time and build a date
+		var endReport = startReport - timeUnit
+		var newDate = new Date(endReport * 1000)
+		//set the time
+		inputField.setValue(newDate)
+		//ask widget to go on reporting
+		this.onReport()
+	},
+	
+	saveButton: function(){
+		log.debug('Report generation', this.logAuthor);
+		Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
+	},
+	//------------------------------------------------------------
 
 	_onShow: function(){
 		log.debug('Show tab '+this.id, this.logAuthor)
