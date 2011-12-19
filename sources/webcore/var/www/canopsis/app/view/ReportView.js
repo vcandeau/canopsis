@@ -21,12 +21,17 @@ Ext.define('canopsis.view.ReportView', {
 		//var stopDate = new Date((parseInt(reportStart) / 1000))
 		var startDate = new Date(reportStart)
 		var stopDate = new Date(reportStop)
+		
 		var presentationText = '<font size="9" face="verdana">      ​Canopsis reporting</font><br><br><center>From ' + Ext.Date.format(startDate, 'Y/m/d') + ' to ' + Ext.Date.format(stopDate, 'Y/m/d') + '</center><br/><br/><br/>'
-		this.add({
-			xtype : 'text',
-			text : presentationText,
-			colspan : nbColumns
+		var presentationTemplate = new Ext.Template(presentationText, {compiled: true})
+		
+		var presentationWidget = Ext.create('canopsis.lib.view.cwidget',{
+			colspan : nbColumns,
 		})
+		
+		this.add(presentationWidget);
+		
+		presentationWidget.setHtmlTpl(presentationTemplate);
 
 		//-----------------populating with widgets--------------
 		if (items.length == 1 ) {

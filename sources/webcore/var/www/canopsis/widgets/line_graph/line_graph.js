@@ -75,11 +75,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
 			var tsFormat = this.findScaleAxe(timestampInterval)
 			var tickInterval = this.findTickInterval(timestampInterval)
-			log.debug(tickInterval)
 		} else {
 			var tsFormat = 'H:i'
 			var tickInterval = global.commonTs.threeHours * 1000
-			log.debug(tickInterval)
 		}
 		//---------------------------------------------------------
 		this.options = {
