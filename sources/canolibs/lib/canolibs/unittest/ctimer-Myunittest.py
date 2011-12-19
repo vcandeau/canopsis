@@ -49,7 +49,7 @@ class KnownValues(unittest.TestCase):
 		start = time.time()
 		mytimer.start_task(task=task, interval=1, count=3, _id='myid', name='myname')
 		stop = time.time()
-		elaps = round(stop - start, 2)
+		elaps = round(stop - start, 1)
 		print "Start:", start, "Stop:", stop, "Elapsed:", elaps
 
 		if elaps != 2.7:
