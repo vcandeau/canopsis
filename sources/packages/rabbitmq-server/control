@@ -22,17 +22,17 @@ function post_install(){
 	CODE=0
 
 	echo " + Declare Admin user ..."
-	$PREFIX/bin/rabbitmqadmin declare user name=admin password=admin tags=administrator
+	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare user name=admin password=admin tags=administrator
 	RCODE=$?
 	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
 	echo " + Declare vhost ..."
-	$PREFIX/bin/rabbitmqadmin declare vhost name=canopsis
+	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare vhost name=canopsis
 	RCODE=$?
 	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
 	echo " + Declare permissions for guest user ..."
-	$PREFIX/bin/rabbitmqadmin -V canopsis declare permission vhost=canopsis user=guest configure=".*" write=".*" read=".*"
+	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 -V canopsis declare permission vhost=canopsis user=guest configure=".*" write=".*" read=".*"
 	RCODE=$?
 	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
