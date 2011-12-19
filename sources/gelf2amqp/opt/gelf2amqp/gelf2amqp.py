@@ -55,12 +55,12 @@ syslog_parser = serverDateTime + hostname + daemon + output
 ########################################################
 
 #### Connect signals
-RUN = 1
+RUN = True
 def signal_handler(signum, frame):
 	#logger.warning("Receive signal to stop daemon...")
 	print("Receive signal to stop daemon...")
 	global RUN
-	RUN = 0
+	RUN = False
 
 def gelf_uncompress(data):
 	logger.debug("Uncompress GELF data ...")
@@ -182,8 +182,6 @@ def on_log(gelf):
 			state=state,
 			output=output,
 			long_output=long_output)
-
-	rk = cevent.get_routingkey(event)
 
 	event['level'] = gelf['level']
 	event['facility'] = gelf['facility']
