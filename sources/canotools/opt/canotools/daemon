@@ -40,6 +40,7 @@ fi
 
 if [ "x$START" == "x" ]; then START=0; fi
 if [ "x$NB_PROC" == "x" ]; then  NB_PROC=1; fi
+if [ "x$SUDO" == "x" ]; then  SUDO=0; fi
 
 if [ $START -eq 0 ]; then
 	echo "This Daemon are disable ... Set START=1 in configuration's file for start it."
@@ -118,8 +119,21 @@ function start(){
 		if [ $NB_PROC -ne 1 ]; then
 			echo " + Start process $NB ..."
 		fi
-		nohup python $APP_BIN $NB 1>> $LOG 2>> $LOG &
-		PID=$!
+
+		CMD="$HOME/bin/python $APP_BIN $NB"
+
+		if [ $SUDO -eq 1 ]; then
+			CMD="sudo $CMD"
+			nohup $CMD 1>> $LOG 2>> $LOG &
+			## get child process
+			sleep 0.5
+			PID=$(awk '$4 == '${!}' {pid = substr(FILENAME, 7) + 0; print pid}' /proc/[0-9]*/stat)
+		else
+			nohup $CMD 1>> $LOG 2>> $LOG &
+			PID=$!
+		fi
+
+		echo " + $PID"
 		set_pid $PID
 	done
 }
