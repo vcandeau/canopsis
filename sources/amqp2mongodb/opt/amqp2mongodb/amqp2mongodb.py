@@ -69,7 +69,9 @@ def on_message(msg):
 			## Event to Alert
 			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
-	elif event['event_type'] == 'log':
+	elif event['event_type'] == 'log' or event['event_type'] == 'trap':
+
+		archiver.store_event(event_id, event)
 
 		## Alert only non-ok state
 		if event['state'] != 0:
