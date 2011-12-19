@@ -29,12 +29,13 @@ import cevent
 DAEMON_NAME='gelf2amqp'
 RUN = False
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 logger = logging.getLogger(DAEMON_NAME)
 
-GELF_PORT = 5555
+gelf_port = 5555
+gelf_interface = "127.0.0.1"
 
 myamqp = None
 
@@ -57,8 +58,7 @@ syslog_parser = serverDateTime + hostname + daemon + output
 #### Connect signals
 RUN = True
 def signal_handler(signum, frame):
-	#logger.warning("Receive signal to stop daemon...")
-	print("Receive signal to stop daemon...")
+	logger.warning("Receive signal to stop daemon...")
 	global RUN
 	RUN = False
 
@@ -110,18 +110,18 @@ def wait_gelf_udp(on_log):
 				type=socket.SOCK_DGRAM,
 				proto=socket.IPPROTO_UDP)
 
-	s.bind(('', GELF_PORT))
+	s.bind((gelf_interface, gelf_port))
 
-	logger.info("Wait GELF data from UDP (%s)" % GELF_PORT)
+	logger.info("Wait GELF data from UDP (%s:%s)" % (gelf_interface, gelf_port))
 	try:
 		while RUN:
 			data, peer = s.recvfrom(1024)
 			gelf = gelf_uncompress(data)
 			on_log(gelf)
 	except Exception, err:
-		logger.info("Exception: '%s'" % err)
+		logger.error("Exception: '%s'" % err)
 
-	logger.info("Close socket")
+	logger.info("Close UDP socket")
 
 
 def parse_syslog(message):
