@@ -20,9 +20,9 @@
 
 function clean_cache(){
     echo " :: Clean cache"
-    echo "   + Remove Remote Db"
+    echo "    + Remove Remote Db"
     rm -Rf $REMOTE_DB_PATH
-	echo "   + Remove old packages"
+	echo "    + Remove old packages"
 	for file in $PACKAGES_PATH/* ; do
 		keep_it="False"
 		while read line; do
@@ -38,10 +38,10 @@ function clean_cache(){
 		fi
 	done
     check_code $? "Failure during remove old database"
-    echo "   + Update Pkgmgr info file"
+    echo "    + Update Pkgmgr info file"
     sed "/LAST_UPDATE/d" -i $VARLIB_PATH/info
-	echo "   + Remove tmp.file"
+	echo "    + Remove tmp.file"
 	rm -Rf $TMP_FILE
-    echo "   + Done"
+    echo "    + Done"
     exit 1
 }
