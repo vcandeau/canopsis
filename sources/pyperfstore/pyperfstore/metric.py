@@ -23,10 +23,10 @@ import random
 from operator import itemgetter
 
 from pyperfstore.dca import dca
-from pyperfstore.math import dichot, estimate_index, search_index
+from pyperfstore.math import dichot, estimate_index, search_index, get_timestamp_interval
 
 class metric(object):
-	def __init__(self, _id, storage, node, dn=None, bunit=None, retention=None, point_per_dca=300, rotate_plan=None):
+	def __init__(self, _id, storage, node, dn=None, bunit=None, retention=None, point_per_dca=None, rotate_plan=None):
 		self.logger = logging.getLogger('metric')
 
 		self.logger.debug("Init metric '%s'", _id)
@@ -38,8 +38,14 @@ class metric(object):
 		self.node_id = node._id
 		self.dn = dn
 		self.bunit = bunit
-		self.point_per_dca = point_per_dca
 
+		self.point_per_dca = point_per_dca
+		self.auto_point_per_dca = True
+		self.min_point_per_dca = 300 #points
+		self.max_point_per_dca = 1500 #points
+		self.dca_time_window = 86400 #seconds
+		self.interval = 300 #seconds
+		
 		self.storage = storage
 
 		self.dca_PLAIN = []
@@ -67,6 +73,9 @@ class metric(object):
 			else:
 				raise Exception('Invalid arguments or Invalid data ...')
 
+		if self.point_per_dca:
+			self.auto_point_per_dca = False
+
 	#def __del__(self):
 	#	#self.save()
 	#	pass
@@ -83,6 +92,7 @@ class metric(object):
 			'bunit':	self.bunit,
 			'retention':	self.retention,
 			'point_per_dca':self.point_per_dca,
+			'interval':	self.interval,
 			'rotate_plan':	self.rotate_plan,
 			'current_dca':	current_dca,
 			'writetime':	time.time()
@@ -123,6 +133,8 @@ class metric(object):
 		self.node_id		= data['node_id']
 		self.bunit		= data['bunit']
 		self.rotate_plan	= data['rotate_plan']
+
+		self.interval		= data['interval']
 	
 		if data['current_dca']:
 			self.current_dca	= self.dca_get(data['current_dca'])
@@ -165,10 +177,8 @@ class metric(object):
 
 	def dca_have_timestamp(self, item, tstart, tstop):
 		if isinstance(item ,dca):
-			return item.have_timestamp(tstart, tstop)
+			item = item.dump()
 
-		## Not load dca for 'have_timestamp' ...
-		## Todo use same code of DCA ....
 		if item['tstop']:
 			return tstart in range(item['tstart'], item['tstop']+1) or tstop in range(item['tstart'], item['tstop']+1) or item['tstart'] in range(tstart, tstop+1) or item['tstop'] in range(tstart, tstop+1)
 		else:
@@ -301,6 +311,19 @@ class metric(object):
 				del self.dca_ZTSC[0]
 		
 
+	def dca_get_max_size(self):
+		if not self.auto_point_per_dca and self.point_per_dca:
+			return self.point_per_dca
+
+		max_size = ((self.dca_time_window + 3000) / self.interval)
+
+		if max_size > self.max_point_per_dca:
+			max_size = self.max_point_per_dca
+		elif max_size < self.min_point_per_dca:
+			max_size = self.min_point_per_dca
+
+		return max_size
+
 	def dca_add(self):
 		self.logger.debug("Add DCA")
 		dca_id = "%s-%s-%s" % (self._id, str(int(time.time())), str(int(random.random() * 10000)) )
@@ -308,8 +331,13 @@ class metric(object):
 		if self.current_dca:
 			self.dca_PLAIN.append(self.current_dca)
 
-		self.current_dca = dca(_id=dca_id ,metric_id=self._id, storage=self.storage)
-		self.current_dca.max_size = self.point_per_dca
+
+		max_size = self.dca_get_max_size()
+		self.logger.debug(" + Max size %s" % max_size)
+		self.current_dca = dca(	_id=dca_id,
+					metric_id=self._id,
+					storage=self.storage,
+					max_size=max_size)
 
 		self.dca_rotate()
 
@@ -329,6 +357,8 @@ class metric(object):
 			self.dca_add()
 
 		if self.current_dca.full:
+			self.interval = get_timestamp_interval(self.current_dca.get_values())
+			self.logger.debug(" + Current DCA interval: %s " % self.interval)
 			self.dca_add()
 
 		self.current_dca.push(value, timestamp)

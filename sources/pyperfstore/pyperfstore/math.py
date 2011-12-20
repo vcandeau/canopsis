@@ -98,6 +98,29 @@ def search_index(x, L):
 	
 		return index
 
+def median(values):
+    values = sorted(values)
+    count = len(values)
+
+    if count % 2 == 1:
+        return values[(count+1)/2-1]
+    else:
+        lower = values[count/2-1]
+        upper = values[count/2]
+
+    return (float(lower + upper)) / 2
+
+def get_timestamp_interval(values):
+	timestamp = 0
+	timestamps=[]
+	for x in values:
+		timestamps.append(x[0] - timestamp)
+		timestamp = x[0]
+
+	if len(timestamps) > 1:
+		del timestamps[0]
+
+	return int(median(timestamps))
 
 def get_values(values):
 	return [x[1] for x in values]
