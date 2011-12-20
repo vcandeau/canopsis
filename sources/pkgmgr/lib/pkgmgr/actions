@@ -97,7 +97,7 @@ function download_package() {
 ###################
 # Install package #
 ###################
-function install_package() {
+function install_package () {
 	xforce=""
 	# Check if force option in enable
 	if [ "${@: -1}" == "_force" ]; then xforce="True"; lst="${@:1:($#-1)}"; else lst="$@"; fi
@@ -176,21 +176,23 @@ function install_package() {
 	    check_code $? "Pre-install step failure"
 	    echo "    + Install"
 	    cd $PREFIX
-	    tar xfz $PPATH/files.tgz
-	    check_code $? "Untar files.tgz ($PNAME) failure"
+		install_bin $PPATH
+	    check_code $? "Untar bin from files.tgz ($PNAME) failure"
+		install_conf $PPATH
+	    check_code $? "Untar conf from files.tgz ($PNAME) failure"
     	echo "    + Post-install"
 	    post_install | while read line ; do echo "      | $line"; done
     	check_code $? "Post-install function ($PNAME) failure"
 	    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
     	echo "    + Remove package folder"
-	    rm -Rf $PPATH
+	    #rm -Rf $PPATH
     	check_code $? "Post installation package folder remove failure"
-	    echo "   + Done"
+	    echo "    + Done"
 		off_lock
 	done
 }
 
-function install_local_package(){
+function install_local_package () {
 	xforce=""
 	if [ "${@: -1}" == "_force" ]; then xforce="True"; lst="${@:1:($#-1)}"; else lst="$@"; fi
 	for ARG in $lst; do
@@ -232,8 +234,10 @@ function install_local_package(){
 		check_code $? "Pre-install step failure"
 		echo "    + Install"
 	    cd $PREFIX
-	    tar xfz $PPATH/files.tgz
-	    check_code $? "Untar files.tgz ($PNAME) failure"
+		install_bin $PPATH
+        check_code $? "Untar bin from files.tgz ($PNAME) failure"
+        install_conf $PPATH
+        check_code $? "Untar conf from files.tgz ($PNAME) failure"
 		echo "    + Post-install"
 	    post_install | while read line ; do echo "      | $line"; done
 	    check_code $? "Post-install step ($PNAME) failure"
@@ -282,7 +286,7 @@ function remove_package(){
 			check_code $? "Pre-remove step failure"
 			echo "    + Remove files"
 			while read line; do
-				rm -Rf $(echo $line | cut -b 1-2 --complement)
+				rm -Rf $PREFIX/$(echo $line | cut -b 1-2 --complement)
 			done < $PPATH/files.lst
 	        check_code $? "Remove files in files.lst ($PNAME) failure"
 			echo "    + Post-remove"
@@ -345,8 +349,10 @@ function upgrade_package(){
 			check_code $? "Pre-update function ($PNAME) failure"
 			echo "     + Update"
 	    	cd $PREFIX
-		    tar xfz $PPATH/files.tgz
-	    	check_code $? "Untar package ($PNAME.tgz) failure"
+			install_bin $PPATH
+        	check_code $? "Untar bin from files.tgz ($PNAME) failure"
+        	install_conf $PPATH
+        	check_code $? "Untar conf from files.tgz ($PNAME) failure"
 			echo "     + Post-update"
 	    	post_update | while read line ; do echo "      | $line"; done
 		    check_code $? "Post-update function ($PNAME) failure"
