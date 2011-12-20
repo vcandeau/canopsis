@@ -26,6 +26,9 @@ Ext.define('widgets.list.list' ,{
 	//don't work
 	filter: {"source_type":"component"},
 
+	show_component: true,
+	show_resource: true,
+
 	initComponent: function() {
 	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
@@ -43,8 +46,8 @@ Ext.define('widgets.list.list' ,{
 				direction: 'ASC'
 			}],
 
-			opt_show_component: true,
-			opt_show_resource: true,
+			opt_show_component: this.show_component,
+			opt_show_resource: this.show_resource,
 		
 			opt_bar: true,
 			opt_bar_search: true,

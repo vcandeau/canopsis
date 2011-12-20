@@ -23,6 +23,7 @@ import time
 
 from pyperfstore.metric import metric
 from pyperfstore.dca import dca
+from pyperfstore.math import aggregate
 
 class node(object):
 	def __init__(self, dn, storage, point_per_dca=300, retention=None, rotate_plan=None):
@@ -157,7 +158,7 @@ class node(object):
 			self.logger.debug(" + Metric allready exist")
 
 
-	def metric_get_values(self, dn, tstart, tstop=None):
+	def metric_get_values(self, dn, tstart, tstop=None, auto_aggregate=True):
 		if not tstop:
 			tstop = int(time.time())
 
@@ -169,7 +170,11 @@ class node(object):
 		mymetric = self.metric_get(dn)
 
 		if mymetric:
-			return mymetric.get_values(tstart, tstop)
+			values = mymetric.get_values(tstart, tstop)
+			if auto_aggregate:
+				return aggregate(values)
+			else:
+				return values
 		else:
 			return []
 	

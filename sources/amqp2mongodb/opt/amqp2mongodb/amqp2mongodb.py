@@ -69,7 +69,7 @@ def on_message(msg):
 			## Event to Alert
 			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
-	elif event['event_type'] == 'log' or event['event_type'] == 'trap':
+	elif event['event_type'] == 'log':
 
 		archiver.store_event(event_id, event)
 
@@ -80,6 +80,15 @@ def on_message(msg):
 			msg = Content(json.dumps(event))
 			## Event to Alert
 			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+
+	elif event['event_type'] == 'trap':
+		## passthrough
+		archiver.store_event(event_id, event)
+		archiver.log_event(event_id, event)
+
+		msg = Content(json.dumps(event))
+		## Event to Alert
+		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
 	else:
 		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))

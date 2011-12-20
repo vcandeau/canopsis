@@ -29,7 +29,7 @@ from cconfig import cconfig
 import logging
 import time
 
-namespaces = ['cache', 'inventory', 'history', 'sla', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
+namespaces = ['cache', 'events', 'events_log', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
 
 ## Create accounts and groups
 group1 = crecord({'_id': 'group.root' }, type='group', name='root')
@@ -68,7 +68,7 @@ storage.put(record1)
 
 record1 = crecord({'_id': 'view.components' }, type='view', name='Components')
 record1.chmod('o+r')
-record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"component"}'} ]
+record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"component"}', 'show_resource': False} ]
 storage.put(record1)
 
 record1 = crecord({'_id': 'view.resources' }, type='view', name='Ressources')

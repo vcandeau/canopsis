@@ -74,13 +74,15 @@ function check_repo(){
 	cd $HOME/var/log
     response=$(wget --server-response $REPO_URL --delete-after 2>&1 | awk '/^  HTTP/{print $2}') 
 	if [ "$response" != "200" ]; then
-        echo -e "\033[91mError\033[0m: $REPO_URL is not joinable ($response) !"
+        echo " :: Error: $REPO_URL is not joinable ($response) !"
         exit 1
     fi
 }
 
 function update_db(){
+	echo " :: Download Packages.list ..."
     check_repo
+	# Create Repo URL
     if [ -z "$REPO_BASE" ]; then
         FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
     else
@@ -88,13 +90,12 @@ function update_db(){
     fi
 
     rm -Rf $REMOTE_DB_PATH
-    check_code $? "Failure during remove old database"
+    check_code $? "    + Error: Failure during remove old database"
 
-    echo " :: Download Packages.list ..."
     wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
-    check_code $? "Packages.list not accessible"
+    check_code $? "    + Error: Packages.list not accessible (wget failure)"
 
     echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
-    check_code $? "Pkgmgr info file insertion error"
-    echo "   + Done"
+    check_code $? "    + Error: Pkgmgr info file insertion error"
+    echo "    + Done"
 }
