@@ -26,6 +26,8 @@
 . $HOME/lib/pkgmgr/actions
 . $HOME/lib/pkgmgr/deps
 . $HOME/lib/pkgmgr/lock
+. $HOME/lib/pkgmgr/conffiles
+. $HOME/lib/pkgmgr/extract
 
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH
@@ -70,7 +72,11 @@ function show_help(){
 	echo "   pkgmgr install python erlang"
 	echo "   pkgmgr remove --force-yes ccli"
 	echo "   pkgmgr install-local /root/mypkg.tgz mypkg2.tgz"
+	echo 
+	echo " :: Informations"
+	echo "   Remove feature have no dependencies tracking"
 	echo
+	echo "   More informations on http://canopsis.com/"
     exit 1
 }
 
@@ -86,14 +92,24 @@ function ask_confirmation() {
 	fi
 }
 
-function pkg_list_deps() {
+function pkg_list_install_deps() {
 	if [ "$OPT" == "--force-yes" ]; then
 		offset=${@:3}
-		pkg_list_deps=$(build_deps_tree "$offset")
+		pkg_list_deps=$(build_install_deps_tree "$offset")
     else
 		offset=${@:2}
-		pkg_list_deps=$(build_deps_tree "$offset") 
+		pkg_list_deps=$(build_install_deps_tree "$offset") 
 	fi
+}
+
+function pkg_list_remove_deps() {
+	if [ "$OPT" == "--force-yes" ]; then
+        offset=${@:3}
+        pkg_list_deps=$(build_remove_deps_tree "$offset")
+    else
+        offset=${@:2}
+        pkg_list_deps=$(build_remove_deps_tree "$offset")
+    fi
 }
 
 function pkg_list() {
@@ -129,7 +145,7 @@ OPT=$2
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
-		update_db && pkg_list_deps "$@"
+		update_db && pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
 		echo "    + Following dependencies will be installed" && print_deps "$pkg_list_deps"
 		ask_confirmation
@@ -152,11 +168,15 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 		upgrade_package $pkg_list && exit $?; fi
 	if [ "x$ACTION" = "xremove" ]; then
 		check_args $@
-		pkg_list_deps "$@"
-		echo " :: Resolve dependencies"
-        echo "    + Following dependencies will be removed" && print_deps "$pkg_list_deps"
+		pkg_list "$@"
+		echo " :: Following packages will be removed"
+		print_deps "$pkg_list"
+		#echo " :: Resolve dependencies"
+        #echo "    + Following packages will be removed (dependencies inclued)" && print_deps "$pkg_list_deps"
+        #echo "    + Dependencies conflicts"
+		#send_removal_conflicts | while read line ; do echo "      - $line"; done
         ask_confirmation
-		remove_package $pkg_list_deps && exit $?; fi
+		remove_package $pkg_list && exit $?; fi
 	if [ "x$ACTION" = "xupdate" ]; then 
 		update_db && exit $?; fi
 	if [ "x$ACTION" = "xlist" ]; then 
