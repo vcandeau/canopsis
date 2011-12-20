@@ -17,7 +17,7 @@ function post_install(){
 	launch_cmd "service rabbitmq-server start"
 
 	echo "Safe wait ..."
-	sleep 3
+	sleep 5
 
 	CODE=0
 
