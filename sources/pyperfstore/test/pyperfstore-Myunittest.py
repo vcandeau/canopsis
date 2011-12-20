@@ -31,7 +31,7 @@ from pyperfstore import node
 from pyperfstore import metric
 from pyperfstore import dca
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
 	format='%(name)s %(levelname)s %(message)s',
 )
 
@@ -56,8 +56,9 @@ class KnownValues(unittest.TestCase):
 	def test_02_PushValue(self):
 		global timestamp, refvalues
 		# 1 value / 5 min = 8928 values/month = 107136 values/year
-	
-		for i in range(1,1000):
+		interval = 1
+		nb = 1000
+		for i in range(1,nb):
 			
 			value = random.random()
 			mynode.metric_push_value(dn='load1', value=value, timestamp=timestamp)
@@ -66,7 +67,7 @@ class KnownValues(unittest.TestCase):
 			mynode.metric_push_value(dn='load5', value=random.random(), timestamp=timestamp)
 			mynode.metric_push_value(dn='load15', value=random.random(), timestamp=timestamp)
 
-			timestamp += 1
+			timestamp += interval
 
 		mynode.pretty_print()
 
