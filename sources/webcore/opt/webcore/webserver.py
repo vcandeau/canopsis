@@ -18,13 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+from gevent import monkey; monkey.patch_all()
+
 import sys, os, logging, time
 
 import bottle
 from bottle import route, run, static_file, redirect
 from beaker.middleware import SessionMiddleware
-
-from gevent import monkey; monkey.patch_all()
 
 from cconfig import cconfig
 

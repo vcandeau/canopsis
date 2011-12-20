@@ -35,6 +35,8 @@ def dichot(x, L, comp=cmp, key=lambda c: c):
 
 	return [comp(x,key(L[i][0])), i]
 
+
+
 def estimate_index(x, L):
 	first = L[0][0]
 	last = L[len(L)-1][0]
@@ -96,29 +98,69 @@ def search_index(x, L):
 	
 		return index
 
+def median(values):
+    values = sorted(values)
+    count = len(values)
 
-def drop_timestamp(values):
-	return [values[i][1] for i in range(0, len(values))]
+    if count % 2 == 1:
+        return values[(count+1)/2-1]
+    else:
+        lower = values[count/2-1]
+        upper = values[count/2]
 
-def mean(vlist):
-	if vlist:
-		return sum(vlist) / len(vlist)
+    return (float(lower + upper)) / 2
+
+def get_timestamp_interval(values):
+	timestamp = 0
+	timestamps=[]
+	for x in values:
+		timestamps.append(x[0] - timestamp)
+		timestamp = x[0]
+
+	if len(timestamps) > 1:
+		del timestamps[0]
+
+	return int(median(timestamps))
+
+def get_values(values):
+	return [x[1] for x in values]
+
+def mean(values):
+	if len(values):
+		return float( sum(values) / float(len(values)))
 	else:
-		return 0
+		return 0.0
+
+def vmean(values):
+	values = get_values(values)
+	return mean(values)
+
 
 def derivs(vlist):
-  return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
+	return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
 
 
-def mma(values):
-	mma_values = []
-	i=1
-	for value in values:
-		ts = value[0]
-		nvalues = drop_timestamp(values[0:i])
 
-		mma_values.append([ts, mean(nvalues) ])
-		i+=1
-	
-	#print derivs(drop_timestamp(values))
-	#print mma_values
+def aggregate(values, max_points=1440, agfn=None):
+	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
+
+	if len(values) > max_points:
+		interval = int(round(len(values) / max_points))
+	else:
+		logger.debug(" + Useless")
+		return values
+
+	if not agfn:
+		agfn = vmean
+
+	logger.debug(" + Interval: %s" % interval)
+
+	rvalues=[]
+	for x in range(0, len(values), interval):
+		value = agfn(values[x:x+interval])
+		timestamp = values[x][0]
+ 		rvalues.append([timestamp, value])
+
+	logger.debug(" + Nb points: %s" % len(rvalues))
+	return rvalues
+
