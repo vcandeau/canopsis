@@ -41,7 +41,7 @@ from pyperfstore import mongostore
 DAEMON_NAME = "amqp2perfstore"
 DAEMON_TYPE = "storage"
 
-logging.basicConfig(level=logging.ERROR,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
@@ -54,7 +54,8 @@ rotate_plan = {
 	'TSC': 0,
 }
 
-point_per_dca = 300
+# Auto
+point_per_dca = None
 
 ########################################################
 #

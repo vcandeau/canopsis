@@ -31,9 +31,9 @@ from pyperfstore import node
 from pyperfstore import metric
 from pyperfstore import dca
 
-#logging.basicConfig(level=logging.DEBUG,
-#	format='%(name)s %(levelname)s %(message)s',
-#)
+logging.basicConfig(level=logging.INFO,
+	format='%(name)s %(levelname)s %(message)s',
+)
 
 mynode = None
 storage = None
@@ -56,8 +56,9 @@ class KnownValues(unittest.TestCase):
 	def test_02_PushValue(self):
 		global timestamp, refvalues
 		# 1 value / 5 min = 8928 values/month = 107136 values/year
-	
-		for i in range(1,1000):
+		interval = 1
+		nb = 1000
+		for i in range(1,nb):
 			
 			value = random.random()
 			mynode.metric_push_value(dn='load1', value=value, timestamp=timestamp)
@@ -66,7 +67,7 @@ class KnownValues(unittest.TestCase):
 			mynode.metric_push_value(dn='load5', value=random.random(), timestamp=timestamp)
 			mynode.metric_push_value(dn='load15', value=random.random(), timestamp=timestamp)
 
-			timestamp += 1
+			timestamp += interval
 
 		mynode.pretty_print()
 
@@ -162,11 +163,13 @@ class KnownValues(unittest.TestCase):
 			print refvalues[last-499:last-400+1]
 			raise Exception('Invalid Middle Data')
 
-	def test_06_MMA(self):
+	def test_06_aggregate(self):
 		##### DRAFT !
 		values = mynode.metric_get_values('load1', 1, 100)
-		print values
-		print pyperfstore.math.mma(values)
+		values = pyperfstore.math.aggregate(values, max_points=50)
+
+		if len(values) != 50:
+			raise Exception('Invalid aggregate (len: %s)' % len(values))
 
 
 
