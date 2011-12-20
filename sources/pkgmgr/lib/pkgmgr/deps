@@ -18,22 +18,33 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-function build_deps_tree(){
+# Build install dependencies tree
+function build_install_deps_tree() {
 	init_tmp
-	parse_deps $@
+	parse_install_deps $@
 	clean_tree
 }
 
-function init_tmp(){
+# Build remove dependencies tree
+function build_remove_deps_tree() {
+	init_tmp
+	parse_remove_deps $@
+	rm -Rf $TMP_FILE	
+}
+
+# Init file where tree is written
+function init_tmp() {
 	rm -Rf $TMP_FILE
 	touch $TMP_FILE
 }
 
-function clean_tree(){
+# Clean double entries in dependencies tree
+function clean_tree() {
 	sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++'
 }
 
-function parse_deps(){
+# Recursive dependencies parsing
+function parse_install_deps() {
 	D_TREE="$@ $D_TREE"
     for dep in $@; do
 		local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
@@ -43,9 +54,57 @@ function parse_deps(){
         else NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l); fi
 
         if [ $NB_DEPS -gt 0 ]; then
-            parse_deps $L_DEPS
+            parse_install_deps $L_DEPS
         else
 			echo "$L_DEPS" "$D_TREE" > $TMP_FILE
         fi
     done
+}
+
+function parse_remove_deps() {
+    D_TREE="$@"
+	# Check if packages pending to be removed are not used by other
+	# For each package in argument
+	for dep in $D_TREE; do
+		DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
+        L_DEPS=$(db_parse "deps" "$DBINFO")
+		D_TREE="$D_TREE $L_DEPS"
+	done
+	# For each package in full list
+	for dep in $D_TREE; do
+		DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
+        L_DEPS=$(db_parse "deps" "$DBINFO")
+		# For each dependencies of this package
+		for s_dep in $L_DEPS; do
+			T_LINE="$s_dep needed by:"
+            T_LIST=""
+			stat="false"
+			# Read each line of installed list package
+			while read line; do
+				T_PNAME=$(echo "$line" | cut -d '|' -f1)
+				T_DEPS=$(db_parse "deps" "$line")
+				# For each dependencies of this installed package	
+				for t_dep in $T_DEPS; do
+					# If it's initial package itself, continue
+					if [ "$T_PNAME" == "$dep" ]; then
+						break
+					fi
+					if [ "$s_dep" == "$t_dep" ]; then
+						D_TREE=$(echo "$D_TREE" | sed 's/'$s_dep//)
+						stat="true"
+						T_LIST="$T_LIST $s_dep"
+					fi
+				done
+			done < "$LOCAL_DB_PATH"
+			if [ "$stat" == "true" ]; then
+            	echo "$T_LINE $T_LIST" >> $TMP_FILE
+            fi
+		done 
+	done
+	echo $D_TREE
+}
+
+function send_removal_conflicts() {
+	awk '!x[$0]++' $TMP_FILE
+	rm -Rf $TMP_FILE	
 }
