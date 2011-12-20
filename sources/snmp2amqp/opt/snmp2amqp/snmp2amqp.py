@@ -73,7 +73,7 @@ def parse_trap(mib, trap_oid, agent, varBinds):
 	## Parse trap
 	if notification:
 		try:
-			logger.info("[%s][%s] %s: %s (%s)" % (agent, notification['SEVERITY'], notification['STATE'], notification['TYPE'], trap_oid))
+			logger.info("[%s][%s] %s-%s: %s (%s)" % (agent, mib.name, notification['SEVERITY'], notification['STATE'], notification['TYPE'], trap_oid))
 		except Exception, err:
 			logger.error("Impossible to parse notification, check mib conversion ...")
 			return None
@@ -122,6 +122,11 @@ def parse_trap(mib, trap_oid, agent, varBinds):
 				state=state,
 				output=output,
 				long_output=long_output)
+
+		#own fields
+		event['snmp_severity'] = notification['SEVERITY']
+		event['snmp_state'] = notification['STATE']
+		event['snmp_oid'] = trap_oid
 
 		logger.debug("Event: %s" % event)
 		## send event on amqp
