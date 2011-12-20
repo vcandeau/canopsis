@@ -21,13 +21,13 @@
 import sys, zlib, json, logging
 
 class dca(object):
-	def __init__(self, storage, _id=None, metric_id=None, raw=None):
+	def __init__(self, storage, _id=None, metric_id=None, raw=None, max_size=300):
 		self.logger = logging.getLogger('dca')
 
 		self._id = _id
 		self.metric_id = metric_id
 		self.format = "PLAIN"
-		self.max_size = 300
+		self.max_size = max_size
 		self.size = 0
 
 		self.full = False
@@ -46,12 +46,6 @@ class dca(object):
 		self.logger.debug("Init DCA '%s'" % self._id)
 
 		self.values_id = self._id
-
-	def have_timestamp(self, tstart, tstop):
-		if self.tstop:
-			return tstart in range(self.tstart, self.tstop+1) or tstop in range(self.tstart, self.tstop+1) or self.tstart in range(tstart, tstop+1) or self.tstop in range(tstart, tstop+1)
-		else:
-			return tstart >= self.tstart or tstop >= self.tstart
 
 	def dump(self):
 		dump = {
