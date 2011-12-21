@@ -58,8 +58,8 @@
 	<script type="text/javascript" src="app/lib/log.js"></script>
 	<script type="text/javascript" src="app/lib/tools.js"></script>
 	<script type="text/javascript" src="app/lib/renderers.js"></script>
-	<!--<script type="text/javascript" src="buildReport.js"></script> -->
-	
+
+	<!-- starting the reporting here -->
 	<script type="text/javascript">
 	Ext.onReady(function() {
 		Ext.Loader.setConfig({enabled:true});
@@ -67,6 +67,7 @@
 		createApplication()
 	});
 
+	//these are onlyfor testing purpose
 	//var reporting_view_id = 'view.root.test';
 	//var reportStart = 1323990000000;
 	//var reportStop = 1324076400000;
@@ -79,7 +80,6 @@
 			controllers: [
 				'View',
 				'ViewEditor',
-				//'Tabs',
 				'Widgets',
 			],
 			launch: function() {
