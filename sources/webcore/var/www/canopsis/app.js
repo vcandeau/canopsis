@@ -71,7 +71,7 @@ function createApplication(){
 			'Group',
 			'ViewEditor',
 			'Tabs',
-			'Reporting',
+			'ReportingBar',
 		],
 	
 		//autoCreateViewport: true,
