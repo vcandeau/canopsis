@@ -41,6 +41,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	options: {},
 	chart: false,
 
+	params: {},
 
 	time_window: 86400, //24 hours
 
@@ -175,7 +176,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		if(!this.title && config.id){
 			var nodeName = config.id.split('.')
-			title += nodeName[5] + ' on ' + nodeName[4]
+			if(nodeName[5]){
+				title += nodeName[5] + ' on ' 
+			}
+			title += nodeName[4]
 		}
 		
 		/*
@@ -256,6 +260,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			Ext.Ajax.request({
 				url: url,
 				scope: this,
+				params: this.params,
+				method: 'GET',
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data
