@@ -280,6 +280,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 						log.debug('     + Shift: '+this.shift, this.logAuthor)
 					}
 					this.chart.redraw();
+					if(this.mytab.mask){
+						//log.dump(this.mytab.mask);
+						//if(this.mytab.mask.isVisible()){
+							this.mytab.mask.hide();
+						//}
+					}
 				},
 				failure: function ( result, request) {
 					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
@@ -331,7 +337,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.start = false
 
 		this.createHighchartConfig(this.config)
-
+		
+		if(this.mytab.mask){
+			this.mytab.mask.show();
+		}
 	},
 	
 	//add data on chart
