@@ -184,6 +184,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.nextButton.on('click',this.nextReportButton,this);
 			this.reportBar.previousButton.on('click',this.previousReportButton,this);
 			this.reportBar.saveButton.on('click',this.saveButton,this);
+			this.reportBar.currentDate.on('change',this.onReport,this);
+			this.reportBar.combo.on('change',this.onReport,this);
 		}else{
 			//binding event to save resources
 			this.on('show', function(){
