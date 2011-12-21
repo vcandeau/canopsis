@@ -176,7 +176,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		if(!this.title && config.id){
 			var nodeName = config.id.split('.')
-			title += nodeName[5] + ' on ' + nodeName[4]
+			if(nodeName[5]){
+				title += nodeName[5] + ' on ' 
+			}
+			title += nodeName[4]
 		}
 		
 		/*

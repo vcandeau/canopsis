@@ -51,6 +51,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	initComponent: function() {
 
 		this.widgets = []
+		
+		this.callParent(arguments);
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		
@@ -82,7 +84,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		});
 
 		this.on('beforeclose', this.beforeclose)
-		this.callParent(arguments);	
+		//this.callParent(arguments);	
 	},
 
 	setContent: function(){
@@ -182,6 +184,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.nextButton.on('click',this.nextReportButton,this);
 			this.reportBar.previousButton.on('click',this.previousReportButton,this);
 			this.reportBar.saveButton.on('click',this.saveButton,this);
+			this.reportBar.currentDate.on('change',this.onReport,this);
+			this.reportBar.combo.on('change',this.onReport,this);
 		}else{
 			//binding event to save resources
 			this.on('show', function(){
@@ -199,10 +203,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var toolbar = this.reportBar
 
 		if (toolbar.currentDate.isValid()){
-			var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var startReport =	endReport - toolbar.combo.getValue();
+			var stopReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var startReport = stopReport - toolbar.combo.getValue();
 			for (i in this.widgets){
-				this.widgets[i]._displayFromTs(startReport * 1000,endReport * 1000)
+				this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
 			}
 		}
 	},
@@ -212,8 +216,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var startReport = parseInt(Ext.Date.format(inputField.getValue(), "U"))
 		var timeUnit = this.reportBar.combo.getValue()
 		//add the time and build a date
-		var endReport = startReport + timeUnit
-		var newDate = new Date(endReport * 1000)
+		var stopReport = startReport + timeUnit
+		var newDate = new Date(stopReport * 1000)
 		//set the time
 		inputField.setValue(newDate)
 		//ask widget to go on reporting
@@ -225,8 +229,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var startReport = parseInt(Ext.Date.format(inputField.getValue(), "U"))
 		var timeUnit = this.reportBar.combo.getValue()
 		//substract the time and build a date
-		var endReport = startReport - timeUnit
-		var newDate = new Date(endReport * 1000)
+		var stopReport = startReport - timeUnit
+		var newDate = new Date(stopReport * 1000)
 		//set the time
 		inputField.setValue(newDate)
 		//ask widget to go on reporting
@@ -235,7 +239,35 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	saveButton: function(){
 		log.debug('Report generation', this.logAuthor);
-		Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
+		var toolbar = this.reportBar
+		if (toolbar.currentDate.isValid()){
+			var stopReport = (parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U')));
+			var startReport =	(stopReport - toolbar.combo.getValue());
+			
+			log.debug(stopReport)
+			log.debug(startReport)
+		
+			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
+			$.pnotify({
+				pnotify_title: 'Please Wait',
+				pnotify_text: 'Your document is rendering, a popup will ask you where to save in few seconds',
+				pnotify_history: false,
+				pnotify_opacity: 0.8,
+			});
+			Ext.Ajax.request({
+				url: '/reporting/'+ startReport * 1000 + '/' + stopReport * 1000 + '/' + this.view_id,
+				scope: this,
+				success: function(response){
+					var data = Ext.JSON.decode(response.responseText)
+					data = data.data.url
+					log.dump(data);
+					window.open(data)
+				},
+				failure: function (result, request) {
+					log.error("Report generation have failed", this.logAuthor)
+				} 
+			});
+		}
 	},
 	//------------------------------------------------------------
 
