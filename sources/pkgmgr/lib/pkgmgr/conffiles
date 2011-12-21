@@ -21,5 +21,5 @@
 # List conf files
 function list_conf_files () {
 	PPATH=$1
-	tar tf $PPATH/files.tgz | grep '^./etc*'
+	tar tf $PPATH/files.bz2 | grep '^./etc*'
 }

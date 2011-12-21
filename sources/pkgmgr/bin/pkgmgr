@@ -21,6 +21,7 @@
 . $HOME/etc/pkgmgr.conf
 . $HOME/lib/common.sh
 . $HOME/lib/pkgmgr/db
+. $HOME/lib/pkgmgr/manual
 . $HOME/lib/pkgmgr/list
 . $HOME/lib/pkgmgr/clean
 . $HOME/lib/pkgmgr/actions
@@ -48,37 +49,6 @@ exit_pending="False"
 detect_os > /dev/null
 
 trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
-
-function show_help(){
-	echo
-    echo " :: Usage : pkgmgr [ACTION] [OPTIONS] <package>"
-	echo
-	echo " :: Actions"
-    echo "   install [OPT] [PKG]            ->  Install package(s)"
-    echo "   install-local [OPT] [PKGPATH]  ->  Install local package(s)"
-    echo "   reinstall [PKG]                ->  Reinstall package(s)"
-    echo "   reinstall-local [PKGPATH]      ->  Reinstall local package(s)"
-    echo "   upgrade [PKG]                  ->  Upgrade package(s)"
-    echo "   remove [OPT] [PKG]             ->  Remove package(s)"
-    echo "   update                         ->  Update local database"
-    echo "   list                           ->  List packages"
-    echo "   clean                          ->  Clean cache"
-    echo "   help                           ->  Print this help"
-	echo
-	echo " :: Options"
-	echo "   --force-yes                    -> Force yes answer"
-	echo
-	echo " :: Examples"
-	echo "   pkgmgr install python erlang"
-	echo "   pkgmgr remove --force-yes ccli"
-	echo "   pkgmgr install-local /root/mypkg.tgz mypkg2.tgz"
-	echo 
-	echo " :: Informations"
-	echo "   Remove feature have no dependencies tracking"
-	echo
-	echo "   More informations on http://canopsis.com/"
-    exit 1
-}
 
 function ask_confirmation() {
 	if [ "$OPT" != "--force-yes" ]; then

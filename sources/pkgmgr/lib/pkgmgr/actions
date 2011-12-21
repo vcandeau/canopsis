@@ -26,29 +26,6 @@ function load_control_tpl(){
 	check_code $? "Source control default template failure"
 }
 
-progressbar ()
-{
-    local flag=false c count cr=$'\r' nl=$'\n'
-    while IFS='' read -d '' -rn 1 c
-    do
-        if $flag
-        then
-            printf '%c' "$c"
-        else
-            if [[ $c != $cr && $c != $nl ]]
-            then
-                count=0
-            else
-                ((count++))
-                if ((count > 1))
-                then
-                    flag=true
-                fi
-            fi
-        fi
-    done
-}
-
 ###############################
 # Search package and untar it #
 ###############################
@@ -56,13 +33,13 @@ function get_ppath(){
     PNAME=$1
     PPATH="$PACKAGES_PATH/$PNAME"
     if [ ! -e $PPATH ]; then
-        if [ ! -e $PPATH.tgz ]; then
-            check_code $? "Package $PNAME not found ($PPATH.tgz)" >&2
+        if [ ! -e $PPATH.tar ]; then
+            check_code $? "Package $PNAME not found ($PPATH.tar)" >&2
             exit 1
         else
             cd $PACKAGES_PATH
-            tar xf $PNAME.tgz
-            check_code $? "Untar package ($PNAME.tgz) failure"
+            tar xf $PNAME.tar
+            check_code $? "Untar package ($PNAME.tar) failure"
         fi
     fi
     echo $PPATH
@@ -90,8 +67,9 @@ function download_package() {
 
 	# Download it
 	echo "    + Download $PNAME"
-    wget --progress=bar:force $FINAL_URL/$PNAME.tgz 2>&1 | progressbar
-    check_code $? "Failure during download package"
+    #wget --progress=bar:force $FINAL_URL/$PNAME.tar 2>&1 | progressbar
+    curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
+	check_code $? "Failure during download package"
 }
 
 ###################
@@ -132,12 +110,12 @@ function install_package () {
 		
 		res="True"
 	    # LOCAL ARCHIVE
-	    if [[ -e $PACKAGES_PATH/$PNAME.tgz ]]; then
+	    if [[ -e $PACKAGES_PATH/$PNAME.tar ]]; then
 	        echo "    + Package archive already in cache"
 			PPATH="$PACKAGES_PATH/$PNAME"
     	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 	        R_MD5=$(db_parse "md5" "$R_INFO")
-	        L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
+	        L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
     	    if [ "$L_MD5" != "$R_MD5" ]; then
 	        	echo "      + Check MD5: [Fail]"
 	    	else
@@ -158,7 +136,7 @@ function install_package () {
 	        PPATH=$(get_ppath "$PNAME")
     	    check_code $?
 			off_lock
-        	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
+        	L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
     	    if [ "$L_MD5" != "$R_MD5" ]; then
 	        	echo "    + Check MD5: [Fail]"
 				exit 1
@@ -177,15 +155,15 @@ function install_package () {
 	    echo "    + Install"
 	    cd $PREFIX
 		install_bin $PPATH
-	    check_code $? "Untar bin from files.tgz ($PNAME) failure"
+	    check_code $? "Untar bin from files.bz2 ($PNAME) failure"
 		install_conf $PPATH
-	    check_code $? "Untar conf from files.tgz ($PNAME) failure"
+	    check_code $? "Untar conf from files.bz2 ($PNAME) failure"
     	echo "    + Post-install"
 	    post_install | while read line ; do echo "      | $line"; done
     	check_code $? "Post-install function ($PNAME) failure"
 	    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
     	echo "    + Remove package folder"
-	    #rm -Rf $PPATH
+	    rm -Rf $PPATH
     	check_code $? "Post installation package folder remove failure"
 	    echo "    + Done"
 		off_lock
@@ -198,8 +176,8 @@ function install_local_package () {
 	for ARG in $lst; do
 	    FULLPATH=$ARG
     	FILENAME="${FULLPATH##*/}"
-	    if ! [[ ${FILENAME: -4} == ".tgz" || $(exit $?) == 1 ]]; then
-    	    echo " :: Package format must be packagename.tgz"
+	    if ! [[ ${FILENAME: -4} == ".tar" || $(exit $?) == 1 ]]; then
+    	    echo " :: Package format must be packagename.tar"
 			echo "    | $FILENAME"
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
     	fi
@@ -222,8 +200,8 @@ function install_local_package () {
 		on_lock
     	cp $FULLPATH $PACKAGES_PATH
 	    cd $PACKAGES_PATH
-	    tar xfz $PNAME.tgz
-	    check_code $? "Untar package ($PNAME.tgz) failure"
+	    tar xfz $PNAME.tar
+	    check_code $? "Untar package ($PNAME.tar) failure"
 	    PPATH=$PACKAGES_PATH/$PNAME
 		
 		load_control_tpl
@@ -235,9 +213,9 @@ function install_local_package () {
 		echo "    + Install"
 	    cd $PREFIX
 		install_bin $PPATH
-        check_code $? "Untar bin from files.tgz ($PNAME) failure"
+        check_code $? "Untar bin from files.bz2 ($PNAME) failure"
         install_conf $PPATH
-        check_code $? "Untar conf from files.tgz ($PNAME) failure"
+        check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 		echo "    + Post-install"
 	    post_install | while read line ; do echo "      | $line"; done
 	    check_code $? "Post-install step ($PNAME) failure"
@@ -273,6 +251,9 @@ function remove_package(){
 		on_lock
 	    DBINFO=$(db_get "$PNAME")
 	    PSTATUS=$(db_parse "status" "$DBINFO")
+		L_VERS=$(db_parse "version" "$DBINFO")
+        L_REL=$(db_parse "release" "$DBINFO")
+        L_MD5=$(db_parse "md5" "$DBINFO")
 	
 	    if [ "x$PSTATUS" == "xinstalled" ]; then
 	        echo " :: Remove package $PNAME"
@@ -332,7 +313,7 @@ function upgrade_package(){
 		    PPATH=$(get_ppath "$PNAME")
 		    check_code $?
 			off_lock
-	    	L_MD5=$(md5sum $PPATH.tgz | awk '{ print $1 }')
+	    	L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 	
 	    	if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "     + Checking Md5Sum: [Fail]"
@@ -350,9 +331,9 @@ function upgrade_package(){
 			echo "     + Update"
 	    	cd $PREFIX
 			install_bin $PPATH
-        	check_code $? "Untar bin from files.tgz ($PNAME) failure"
+        	check_code $? "Untar bin from files.bz2 ($PNAME) failure"
         	install_conf $PPATH
-        	check_code $? "Untar conf from files.tgz ($PNAME) failure"
+        	check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 			echo "     + Post-update"
 	    	post_update | while read line ; do echo "      | $line"; done
 		    check_code $? "Post-update function ($PNAME) failure"
