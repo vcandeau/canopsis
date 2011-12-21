@@ -85,6 +85,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		this.on('beforeclose', this.beforeclose)
 		//this.callParent(arguments);	
+		
+		//create mask
+		this.mask = new Ext.LoadMask(this, {msg:"Please wait..."});
 	},
 
 	setContent: function(){
