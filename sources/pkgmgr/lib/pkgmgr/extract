@@ -21,7 +21,7 @@
 # Install all files except conf files
 function install_bin () {
 	PPATH=$1
-	tar xf $PPATH/files.tgz --exclude='^./etc*'
+	tar xf $PPATH/files.bz2 --exclude='^./etc*'
 }
 
 # Install conf files
@@ -30,7 +30,7 @@ function install_conf () {
 	mkdir -p $PPATH/.extract
 	list_conf_files $PPATH | 
 		while read line ; do
-			tar xf $PPATH/files.tgz -C $PPATH/.extract --wildcards './etc*'
+			tar xf $PPATH/files.bz2 -C $PPATH/.extract --wildcards './etc*'
 			old_md5=$(md5sum $PREFIX/$line)
 			new_md5=$(md5sum $PPATH/.extract/$line)
 			if [ "$old_md5" != "$new_md5" ]; then
@@ -39,6 +39,6 @@ function install_conf () {
 			fi
 			#echo "  _old-md5: $old_md5"
 			#echo "  _new-md5: $new_md5"
-			#tar xf $PPATH/files.tgz --wildcards './etc*'
+			#tar xf $PPATH/files.bz2 --wildcards './etc*'
 		done 
 }
