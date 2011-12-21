@@ -12,16 +12,20 @@ function pre_install(){
 	path_file="$PREFIX/lib/python2.7/site-packages/easy-install.pth"
 	tmp_file="$PREFIX/tmp/easy-install.pth.$tmp_nb"
 	patch="$PREFIX/tmp/easy-install.pth.patch.$tmp_nb"
-	launch_cmd "cp $path_file $tmp_file"
-	check_code $? "Error during backup easy-install.pt file"
+	if [ -e "$path_file" ]; then
+		launch_cmd "cp $path_file $tmp_file"
+		check_code $? "Error during backup easy-install.pt file"
+	fi
 }
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	launch_cmd "diff $path_file $tmp_file > $patch"
-	check_code $? "Error during diff command"
-	launch_cmd "patch $path_file $path"
-	check_code $? "Error during patch command"
+	if [[ -e "$path_file" && "$tmp_file" ]]; then
+		launch_cmd "diff $path_file $tmp_file > $patch"
+		check_code $? "Error during diff command"
+		launch_cmd "patch $path_file $path"
+		check_code $? "Error during patch command"
+	fi
 }
 
 function pre_remove(){
