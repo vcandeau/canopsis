@@ -8,12 +8,20 @@ REQUIRES="canohome pkgmgr"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	tmp_nb=$(date +%N)
+	path_file="$PREFIX/lib/python2.7/site-packages/easy-install.pth"
+	tmp_file="$PREFIX/tmp/easy-install.pth.$tmp_nb"
+	patch="$PREFIX/tmp/easy-install.pth.patch.$tmp_nb"
+	launch_cmd "cp $path_file $tmp_file"
+	check_code $? "Error during backup easy-install.pt file"
 }
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	launch_cmd "diff $path_file $tmp_file > $patch"
+	check_code $? "Error during diff command"
+	launch_cmd "patch $path_file $path"
+	check_code $? "Error during patch command"
 }
 
 function pre_remove(){
