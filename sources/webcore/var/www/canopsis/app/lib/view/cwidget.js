@@ -111,7 +111,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.reporting(from,to)
 		} else {
 			log.debug('Warning, no reporting function for '+this.id, this.logAuthor)
-			this.setHtml('<br/><br/>widget reporting from date ' + from + ' to ' + to)
+			this.setHtml('No reporting mode for this widget')
 		}
 	},
 
