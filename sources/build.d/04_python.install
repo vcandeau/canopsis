@@ -82,4 +82,6 @@ function install(){
 		check_code $?
 		cd - &> /dev/null
 	fi
+
+	chown $HUSER:$HGROUP -R $PREFIX/lib/python2.7
 }
