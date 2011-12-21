@@ -32,16 +32,17 @@ function load_control_tpl(){
 function get_ppath(){
     PNAME=$1
     PPATH="$PACKAGES_PATH/$PNAME"
-    if [ ! -e $PPATH ]; then
+    #if [ ! -e $PPATH ]; then
         if [ ! -e $PPATH.tar ]; then
             check_code $? "Package $PNAME not found ($PPATH.tar)" >&2
             exit 1
         else
             cd $PACKAGES_PATH
+			rm -Rf $PNAME
             tar xf $PNAME.tar
             check_code $? "Untar package ($PNAME.tar) failure"
         fi
-    fi
+    #fi
     echo $PPATH
 }
 
@@ -150,7 +151,9 @@ function install_package () {
 	    . $PPATH/control
 	    check_code $? "Source control file from $PNAME failure"
 	    echo "    + Pre-install"
-	    pre_install | while read line ; do echo "      | $line"; done
+		echo "-----"
+	    pre_install
+		echo "-----"
 	    check_code $? "Pre-install step failure"
 	    echo "    + Install"
 	    cd $PREFIX
@@ -159,7 +162,9 @@ function install_package () {
 		install_conf $PPATH
 	    check_code $? "Untar conf from files.bz2 ($PNAME) failure"
     	echo "    + Post-install"
-	    post_install | while read line ; do echo "      | $line"; done
+		echo "-----"
+	    post_install 
+		echo "-----"
     	check_code $? "Post-install function ($PNAME) failure"
 	    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
     	echo "    + Remove package folder"
@@ -176,6 +181,11 @@ function install_local_package () {
 	for ARG in $lst; do
 	    FULLPATH=$ARG
     	FILENAME="${FULLPATH##*/}"
+	    if ! [ -e $FULLPATH ]; then
+			echo " :: Package not found"
+			echo "    | $FULLPATH"
+			exit 1
+		fi
 	    if ! [[ ${FILENAME: -4} == ".tar" || $(exit $?) == 1 ]]; then
     	    echo " :: Package format must be packagename.tar"
 			echo "    | $FILENAME"
@@ -200,24 +210,25 @@ function install_local_package () {
 		on_lock
     	cp $FULLPATH $PACKAGES_PATH
 	    cd $PACKAGES_PATH
-	    tar xfz $PNAME.tar
-	    check_code $? "Untar package ($PNAME.tar) failure"
-	    PPATH=$PACKAGES_PATH/$PNAME
-		
+		PPATH=$(get_ppath "$PNAME")
 		load_control_tpl
 		. $PPATH/control	
-	    check_code $? "Source control file from $PNAME failure"
+	    check_code $? "Source control file from $NAME failure"
 		echo "    + Pre-install"
-	    pre_install | while read line ; do echo "      | $line"; done
+		echo "-----"
+	    pre_install 
+		echo "-----"
 		check_code $? "Pre-install step failure"
 		echo "    + Install"
 	    cd $PREFIX
 		install_bin $PPATH
-        check_code $? "Untar bin from files.bz2 ($PNAME) failure"
+        check_code $? "Untar bin from files.bz2 ($NAME) failure"
         install_conf $PPATH
-        check_code $? "Untar conf from files.bz2 ($PNAME) failure"
+        check_code $? "Untar conf from files.bz2 ($NAME) failure"
 		echo "    + Post-install"
-	    post_install | while read line ; do echo "      | $line"; done
+		echo "-----"
+	    post_install 
+		echo "-----"
 	    check_code $? "Post-install step ($PNAME) failure"
 	
 	    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
@@ -263,7 +274,9 @@ function remove_package(){
 	        . $PPATH/control
 	        check_code $? "Source control file from $PNAME failure"
 			echo "    + Pre-remove"
-	        pre_remove | while read line ; do echo "      | $line"; done
+			echo "-----"
+	        pre_remove 
+			echo "-----"
 			check_code $? "Pre-remove step failure"
 			echo "    + Remove files"
 			while read line; do
@@ -271,7 +284,9 @@ function remove_package(){
 			done < $PPATH/files.lst
 	        check_code $? "Remove files in files.lst ($PNAME) failure"
 			echo "    + Post-remove"
-			post_remove | while read line ; do echo "      | $line"; done
+			echo "-----"
+			post_remove 
+			echo "-----"
 			check_code $? "Post-remove step failure"
 			echo "    + Remove package folder"
 		    rm -Rf $PPATH
@@ -326,7 +341,9 @@ function upgrade_package(){
 		    . $PPATH/control
 		    check_code $? "Source control file from $PNAME failure"
 			echo "     + Pre-update"
-			pre_update | while read line ; do echo "      | $line"; done
+			echo "-----"
+			pre_update 
+			echo "-----"
 			check_code $? "Pre-update function ($PNAME) failure"
 			echo "     + Update"
 	    	cd $PREFIX
@@ -335,7 +352,9 @@ function upgrade_package(){
         	install_conf $PPATH
         	check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 			echo "     + Post-update"
-	    	post_update | while read line ; do echo "      | $line"; done
+			echo "-----"
+	    	post_update 
+			echo "-----"
 		    check_code $? "Post-update function ($PNAME) failure"
 	
 	    	db_set "$PNAME" "$VERSION-$RELEASE" "installed"
