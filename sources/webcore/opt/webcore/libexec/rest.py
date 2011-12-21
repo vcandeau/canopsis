@@ -85,7 +85,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + Search: "+str(search))
 	logger.debug(" + filter: "+str(filter))
 
-	storage = get_storage(namespace=namespace, logging_level=logging.DEBUG)
+	storage = get_storage(namespace=namespace)
 
 	total = 0
 	mfilter = {}
