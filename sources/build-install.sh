@@ -157,7 +157,7 @@ function make_package_archive(){
 
 	echo "    + Make Package archive ..."
 	cd $PREFIX &> /dev/null
-	tar cfz $PPATH/files.tgz -T $PPATH/files.lst
+	tar cfj $PPATH/files.bz2 -T $PPATH/files.lst
 	check_code $? "Files archive creation failure"
 	cd - &> /dev/null
 	
@@ -167,7 +167,7 @@ function make_package_archive(){
 
 	echo "    + Make final archive ..."
 	cd $SRC_PATH/packages/
-	tar cfz $PNAME.tgz $PNAME
+	tar cf $PNAME.tar $PNAME
 	check_code $? "Package archive creation failure"
 
 	echo "    + Move to binaries directory ..."
@@ -175,11 +175,11 @@ function make_package_archive(){
 	mkdir -p $BPATH
 	check_code $? "Create Build folder failure"
 	cat /proc/version > $BPATH/build.info
-	mv $PNAME.tgz $BPATH/
+	mv $PNAME.tar $BPATH/
 	check_code $? "Move binaries into build folder failure"
 
 	echo "    + Clean ..."
-	rm -f $PPATH/files.tgz
+	rm -f $PPATH/files.bz2
 	check_code $? "Remove files archive failure"
 }
 
@@ -194,7 +194,7 @@ function update_packages_list() {
 	. $PPATH/control
 	check_code $? "Source control file failure"
 	
-	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tgz | awk '{ print $1 }')
+	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tar | awk '{ print $1 }')
 
 	sed "/^$PNAME/d" -i $PKGLIST
     echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
@@ -226,7 +226,7 @@ function make_package(){
 	mkdir -p $PPATH
 
 	echo "    + Purge old build ..."
-	rm -f $PPATH.tgz &> /dev/null
+	rm -f $PPATH.tar &> /dev/null
 
 	#if [ ! -f $PPATH/files.lst ]; then
 		echo "    + Make files listing ..."
@@ -523,7 +523,7 @@ if [ $OPT_MPKG -eq 1 ]; then
 	echo "  + Copy install script"
 	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
 	echo "  + Copy packages ..."
-	cp $PKGS_PATH/{canohome.tgz,canolibs.tgz,canotools.tgz,pkgmgr.tgz} $BSTRAP_PATH
+	cp $PKGS_PATH/{canohome.tar,canolibs.tar,canotools.tar,pkgmgr.tar} $BSTRAP_PATH
 	echo "  + Make archive"
 	cd $SRC_PATH/../binaries
 	tar cfz canopsis_installer.tgz canopsis_installer
