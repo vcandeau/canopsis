@@ -41,6 +41,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	options: {},
 	chart: false,
 
+	params: {},
 
 	time_window: 86400, //24 hours
 
@@ -256,6 +257,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			Ext.Ajax.request({
 				url: url,
 				scope: this,
+				params: this.params,
+				method: 'GET',
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data
