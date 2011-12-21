@@ -93,7 +93,7 @@ function update_db(){
     check_code $? "    + Error: Failure during remove old database"
 
     wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
-    check_code $? "    + Error: Packages.list not accessible (wget failure)"
+    check_code $? "    + Error: Packages.list not accessible (wget failure) ($FINAL_URL/Packages.list"
 
     echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
     check_code $? "    + Error: Pkgmgr info file insertion error"
