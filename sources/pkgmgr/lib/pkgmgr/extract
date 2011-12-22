@@ -29,13 +29,13 @@ function install_conf () {
 	PPATH=$1
 	mkdir -p $PPATH/.extract
 	list_conf_files $PPATH | 
-		while read line ; do
+		while read t_line ; do
 			tar xf $PPATH/files.bz2 -C $PPATH/.extract --wildcards './etc*'
-			old_md5=$(md5sum $PREFIX/$line)
-			new_md5=$(md5sum $PPATH/.extract/$line)
+			old_md5=$(md5sum $PREFIX/$t_line)
+			new_md5=$(md5sum $PPATH/.extract/$t_line)
 			if [ "$old_md5" != "$new_md5" ]; then
-				echo "      | New config file ($line) named *.new"
-				mv $PPATH/.extract/$line $PREFIX/$line.new
+				echo "      | New config file ($t_line) named *.new"
+				mv $PPATH/.extract/$t_line $PREFIX/$t_line.new
 			fi
 			#echo "  _old-md5: $old_md5"
 			#echo "  _new-md5: $new_md5"

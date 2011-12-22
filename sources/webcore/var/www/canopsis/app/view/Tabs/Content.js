@@ -85,6 +85,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		this.on('beforeclose', this.beforeclose)
 		//this.callParent(arguments);	
+		
+		//create mask
+		this.mask = new Ext.LoadMask(this, {msg:"Please wait..."});
 	},
 
 	setContent: function(){
@@ -178,14 +181,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 		
 		if(this.view.reporting){
-			this.reportBar = Ext.create('canopsis.view.Reporting.Reporting');
+			this.reportBar = Ext.create('canopsis.view.ReportingBar.ReportingBar');
 			this.addDocked(this.reportBar);
 			this.reportBar.requestButton.on('click',this.onReport,this);
 			this.reportBar.nextButton.on('click',this.nextReportButton,this);
 			this.reportBar.previousButton.on('click',this.previousReportButton,this);
 			this.reportBar.saveButton.on('click',this.saveButton,this);
-			this.reportBar.currentDate.on('change',this.onReport,this);
-			this.reportBar.combo.on('change',this.onReport,this);
+			this.reportBar.currentDate.on('select',this.onReport,this);
+			this.reportBar.combo.on('select',this.onReport,this);
 		}else{
 			//binding event to save resources
 			this.on('show', function(){
