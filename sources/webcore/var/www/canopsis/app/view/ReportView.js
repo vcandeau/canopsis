@@ -49,6 +49,7 @@ Ext.define('canopsis.view.ReportView', {
 			item['width'] = '100%'
 			item['title'] = ''
 			item['fullmode'] = true
+			item['border'] = false
 			
 			//item['baseCls'] = 'x-plain'
 			item['mytab'] = this
@@ -91,6 +92,7 @@ Ext.define('canopsis.view.ReportView', {
 				
 				item['width'] = (totalWidth / nbColumns) * colspan
 				item['style'] = {padding: '3px'}
+				item['border'] = false
 
 				item['reportMode'] = true;
 				
@@ -108,6 +110,7 @@ Ext.define('canopsis.view.ReportView', {
 				if (item.title){ item.border = true }
 
 				this.add(item);
+				log.debug(item);
 			}
 		}
 	},
