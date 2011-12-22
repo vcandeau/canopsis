@@ -27,6 +27,12 @@ else
 		echo "$DISPLAY"
 	fi
 	
+	#create report directory if didn't exist
+	if [ ! -d "/opt/canopsis/tmp/report/" ]
+	then
+		mkdir "/opt/canopsis/tmp/report"
+	fi
+	
 	#Get Cookie
 	
 	if [ -e "/opt/canopsis/tmp/cookies.wkhtmltopdf.txt" ]
@@ -42,7 +48,7 @@ else
 	js_delay="--javascript-delay $1"
 	#js_script="--run-script \"$2\""
 	server_url="http://127.0.0.1:8082/static/canopsis/reporting.html"
-	file_path="/opt/canopsis/tmp/$2"
+	file_path="/opt/canopsis/tmp/report/$2"
 	
 	js_script="var reporting_view_id='$3';var reportStart=$4;var reportStop=$5;"
 	js_command="--run-script"
