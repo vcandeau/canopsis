@@ -497,7 +497,7 @@ if [ $OPT_WUT -eq 1 ]; then
 	echo
 	echo "Unit tests ..."
 	LOG=$PREFIX/var/log/unittest.log
-	launch_cmd "$PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG" 0
+	launch_cmd 0 $PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG
 	EXCODE=$?
 	cp $LOG $SRC_PATH/log
 	if [ $EXCODE -ne 0 ]; then
