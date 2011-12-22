@@ -1,7 +1,7 @@
-Ext.define('canopsis.view.Reporting.Reporting' ,{
+Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 	extend: 'Ext.toolbar.Toolbar',
 
-	alias: 'widget.Reporting',
+	alias: 'widget.ReportingBar',
 	
 	dock: 'top',
 	

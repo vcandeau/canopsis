@@ -1,9 +1,9 @@
-Ext.define('canopsis.controller.Reporting', {
+Ext.define('canopsis.controller.ReportingBar', {
 	extend: 'Ext.app.Controller',
 	
-	views: ['Reporting.Reporting'],
+	views: ['ReportingBar.ReportingBar'],
 	
-	logAuthor : 'Reporting',
+	logAuthor : 'ReportingBar',
 	
 	refs : [{
 		ref : 'toolbar',
