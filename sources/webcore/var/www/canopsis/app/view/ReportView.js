@@ -110,6 +110,7 @@ Ext.define('canopsis.view.ReportView', {
 				if (item.title){ item.border = true }
 
 				this.add(item);
+				log.debug(item);
 			}
 		}
 	},
