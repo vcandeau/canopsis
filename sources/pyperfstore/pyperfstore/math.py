@@ -35,11 +35,24 @@ def dichot(x, L, comp=cmp, key=lambda c: c):
 
 	return [comp(x,key(L[i][0])), i]
 
+def in_range(value, start, stop):
+	return value >= start and value <= stop
 
+def get_first_value(values):
+	if len(values):
+		return values[0]
+	else:
+		return None
+
+def get_last_value(values):
+	if len(values):
+		return values[len(values)-1]
+	else:
+		return None
 
 def estimate_index(x, L):
-	first = L[0][0]
-	last = L[len(L)-1][0]
+	first = get_first_value(L)[0]
+	last = 	get_last_value(L)[0]
 	delta = float(last - first)
 	interval = int(round(delta / len(L), 0))
 	logger.debug("   + First: %s, Last: %s, Estimated interval: %s" % (first, last, interval))
@@ -135,13 +148,21 @@ def vmean(values):
 	values = get_values(values)
 	return mean(values)
 
+def vmin(values):
+	values = get_values(values)
+	return min(values)
+
+def vmax(values):
+	values = get_values(values)
+	return max(values)
+
 
 def derivs(vlist):
 	return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
 
 
 
-def aggregate(values, max_points=1440, agfn=None):
+def aggregate(values, max_points=1440, atype='MEAN', agfn=None):
 	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
 
 	if len(values) > max_points:
@@ -151,7 +172,18 @@ def aggregate(values, max_points=1440, agfn=None):
 		return values
 
 	if not agfn:
-		agfn = vmean
+		if   atype == 'MEAN':
+			agfn = vmean
+		elif atype == 'FIRST':
+			agfn = get_first_value
+		elif atype == 'LAST':
+			agfn = get_last_value
+		elif atype == 'MIN':
+			agfn = vmin
+		elif atype == 'MAX':
+			agfn = vmax
+		else:
+			agfn = vmean
 
 	logger.debug(" + Interval: %s" % interval)
 
@@ -163,4 +195,49 @@ def aggregate(values, max_points=1440, agfn=None):
 
 	logger.debug(" + Nb points: %s" % len(rvalues))
 	return rvalues
+
+def candlestick(values, window=86400):
+	logger.debug("Candlestick")
+
+	logger.debug(" + Window: %s" % window)
+
+	"""first = get_first_value(values)[0]
+	last  = get_last_value(values)[0]
+
+	first = int(first/window)*window
+	last = 	(int(last/window)+1)*window
+
+	
+	logger.debug(" + First: %s" % first)
+	logger.debug(" + Last: %s" % last)
+	
+	rvalues = []
+	index = 0
+	for x in range(first, last-window, window):
+		logger.debug("   + %s -> %s" % (x, x+window))
+		data = values[index:]
+		vdata = []
+		for v in data:
+			if v[0] in range(x, x+window+1):
+				vdata.append(v)
+				index += 1
+			else:
+				break
+
+		rvalues.append(vdata)
+
+	values = []
+	for v in rvalues:
+	"""
+	vopen = get_first_value(values)[1]
+	vclose = get_last_value(values)[1]
+	vhight = vmax(values)
+	vlow = vmin(values)
+	timestamp = values[len(values)-1][0]
+	#values.append([x, vopen, vclose, vlow, vhight])
+	return [timestamp, vopen, vclose, vlow, vhight]
+
+
+	#return values
+		
 

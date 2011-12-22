@@ -23,7 +23,7 @@ import random
 from operator import itemgetter
 
 from pyperfstore.dca import dca
-from pyperfstore.math import dichot, estimate_index, search_index, get_timestamp_interval
+from pyperfstore.math import dichot, estimate_index, search_index, get_timestamp_interval, in_range
 
 class metric(object):
 	def __init__(self, _id, storage, node, dn=None, bunit=None, retention=None, point_per_dca=None, rotate_plan=None):
@@ -180,7 +180,9 @@ class metric(object):
 			item = item.dump()
 
 		if item['tstop']:
-			return tstart in range(item['tstart'], item['tstop']+1) or tstop in range(item['tstart'], item['tstop']+1) or item['tstart'] in range(tstart, tstop+1) or item['tstop'] in range(tstart, tstop+1)
+			t1 = in_range(tstart, item['tstart'], item['tstop']) or in_range(tstop, item['tstart'], item['tstop'])
+			t2 = in_range(item['tstart'], tstart, tstop) or in_range(item['tstop'], tstart, tstop)
+			return t1 or t2
 		else:
 			return tstart >= item['tstart'] or tstop >= item['tstart']	
 
@@ -227,8 +229,9 @@ class metric(object):
 
 		values = []
 		for item in dcas:
+			item = self.dca_get(item)
 			dca_values = item.get_values()
-
+	
 			if dca_values:
 				self.logger.debug(" + Parse values of %s (%s -> %s (%s points))" % (item._id, item.tstart, item.tstop, len(dca_values)))
 
@@ -236,7 +239,7 @@ class metric(object):
 
 				# if all values are in range
 				if item.tstart and item.tstop:
-					if item.tstart in range(tstart, tstop+1) and item.tstop in range(tstart, tstop+1):
+					if in_range(item.tstart, tstart, tstop) and in_range(item.tstop, tstart, tstop):
 						self.logger.debug(" + Append All values")
 						values += dca_values
 						parse_values = False			
@@ -263,6 +266,7 @@ class metric(object):
 						values += [ dca_values[itstart] ]
 					else:
 						values += dca_values[itstart:itstop+1]
+
 
 		if values:
 			values = sorted(values, key=itemgetter(0))
