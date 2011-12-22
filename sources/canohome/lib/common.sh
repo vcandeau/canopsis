@@ -56,7 +56,7 @@ function launch_cmd() {
     MYCMD=$*
     if [ "x$MYCMD" != "x" ]; then
         if [ "x`id -un`" == "x$HUSER" ]; then
-            $MYCMD
+            bash -c "$MYCMD"
             EXCODE=$?
             if [ $CHECK -eq 1 ]; then
                 check_code $EXCODE "Error in command '$MYCMD'..."
