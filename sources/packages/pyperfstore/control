@@ -16,11 +16,8 @@ function post_install(){
 
 	mkdir -p $PREFIX/tmp
 
-	launch_cmd "cd $PREFIX/tmp; tar xfz $NAME.tgz"
-        check_code $? "Impossible to extract archive"
-
-        launch_cmd "cd $PREFIX/tmp/$NAME; python setup.py install"
-        check_code $? "Setup.py install failure"
+	launch_cmd 1 cd $PREFIX/tmp; tar xfz $NAME.tgz
+        launch_cmd 1 cd $PREFIX/tmp/$NAME; python setup.py install
 }
 
 function pre_remove(){
