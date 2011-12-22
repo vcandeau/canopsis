@@ -7,25 +7,25 @@ DESCRIPTION=""
 REQUIRES="canohome pkgmgr"
 
 function pre_install(){
-	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	path_file="$PREFIX/lib/python2.7/site-packages/easy-install.pth"
-	if [ -e "$path_file" ]; then
-		tmp_file=$(mktemp --tmpdir="$PREFIX/tmp")
-		launch_cmd "cp $path_file $tmp_file"
-		check_code $? "Error during backup easy-install.pt file"
-		patch="$tmp_file.patch"
-	fi
+    echo "Pre-install $NAME $VERSION-$RELEASE ..."
+    path_file="$PREFIX/lib/python2.7/site-packages/easy-install.pth"
+    if [ -e "$path_file" ]; then
+        launch_cmd 1 tmp_file=$(mktemp --tmpdir="$PREFIX/tmp")
+        echo "Backup easy-install.pth file"
+        launch_cmd 1 cp $path_file $tmp_file
+        patch="$tmp_file.patch"
+    fi
 }
 
 function post_install(){
-	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	if [[ -e "$path_file" && -e "$tmp_file" ]]; then
-		launch_cmd "diff $path_file $tmp_file > $patch"
-		check_code $? "Error during diff command"
-		launch_cmd "patch $path_file $path"
-		check_code $? "Error during patch command"
-		launch_cmd "rm -Rf $tmp_file"	
-	fi
+    echo "Post-install $NAME $VERSION-$RELEASE ..."
+    if [[ -e "$path_file" && -e "$tmp_file" ]]; then
+        echo "Diff new easy-install.pth file with backup"
+        launch_cmd 0 diff $path_file $tmp_file > $patch
+        echo "Patch the new file with easy-install.pth file"
+        launch_cmd 1 patch $path_file $patch
+        launch_cmd 1 rm -Rf $tmp_file*
+    fi
 }
 
 function pre_remove(){
