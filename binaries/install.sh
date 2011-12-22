@@ -68,6 +68,9 @@ function install_package(){
 	cd $SRC_PATH
 }
 
+echo "Kill all $HUSER process ..."
+pkill -9 -u $HUSER
+
 echo "Install Bootstrap in $PREFIX"
 install_package "canohome"
 install_package "canotools"
