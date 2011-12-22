@@ -14,7 +14,7 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-	launch_cmd "service rabbitmq-server start"
+	launch_cmd 1 service rabbitmq-server start
 
 	echo "Safe wait ..."
 	sleep 5
@@ -36,7 +36,7 @@ function post_install(){
 	RCODE=$?
 	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
 
-	launch_cmd "service rabbitmq-server stop"
+	launch_cmd 1 service rabbitmq-server stop
 
 	check_code $CODE "Error in rabbitMQ configurations ..."
 }
