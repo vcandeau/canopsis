@@ -20,7 +20,7 @@ function post_install(){
 	
 	rm /tmp/mongodb-*.sock &> /dev/null || true
 
-	launch_cmd "service mongodb start"
+	launch_cmd "true" service mongodb start
 
 	## Wait mongo ready
 	echo "Wait mongoDB (preallocating journal file...), You can take a coffe ..."
@@ -37,8 +37,8 @@ function post_install(){
         done
         echo
 
-	launch_cmd "python $PREFIX/opt/mongodb/initDB.py"
-	launch_cmd "service mongodb stop"
+	launch_cmd "true" python $PREFIX/opt/mongodb/initDB.py
+	launch_cmd "true" service mongodb stop
 
 	check_code $? "Impossible to init mongoDB ..."
 }
