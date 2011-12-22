@@ -33,7 +33,7 @@ function install_conf () {
 			tar xf $PPATH/files.bz2 -C $PPATH/.extract --wildcards './etc'
 
 			if [ ! -e $PREFIX/$t_line ]; then
-				mv $PPATH/.extract/$t_line $PREFIX
+				mv $PPATH/.extract/$t_line $PREFIX/$t_line
 			else	
 				old_md5=$(md5sum $PREFIX/$t_line | awk '{ print $1 }')
 				new_md5=$(md5sum $PPATH/.extract/$t_line | awk '{ print $1 }')
@@ -41,7 +41,7 @@ function install_conf () {
 					echo "      | New config file ($t_line) named *.new"
 					mv $PPATH/.extract/$t_line $PREFIX/$t_line.new
 				else
-					mv $PPATH/.extract/$t_line $PREFIX
+					mv $PPATH/.extract/$t_line $PREFIX/$t_line
 				fi
 			fi
 			#echo "  _old-md5: $old_md5"
