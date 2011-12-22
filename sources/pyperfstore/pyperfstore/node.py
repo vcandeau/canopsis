@@ -26,7 +26,7 @@ from pyperfstore.dca import dca
 from pyperfstore.math import aggregate
 
 class node(object):
-	def __init__(self, dn, storage, point_per_dca=300, retention=None, rotate_plan=None):
+	def __init__(self, dn, storage, point_per_dca=None, retention=None, rotate_plan=None):
 		self.logger = logging.getLogger('node')
 
 		self.logger.debug("Init node '%s'" % dn)
