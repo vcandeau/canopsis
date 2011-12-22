@@ -18,6 +18,8 @@ function post_install(){
 	chown $HUSER -R $PREFIX/var/log/mongodb
 	chown $HUSER -R $PREFIX/var/lib/mongodb
 	
+	launch_cmd 0 service mongodb stop
+	
 	rm /tmp/mongodb-*.sock &> /dev/null || true
 
 	launch_cmd 1 service mongodb start
