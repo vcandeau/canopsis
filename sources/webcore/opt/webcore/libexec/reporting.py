@@ -50,7 +50,7 @@ def generate_report(startTime, stopTime,view_name,):
 	file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
 	
 	#create path
-	file_path = '/opt/canopsis/tmp/' + file_name
+	file_path = '/opt/canopsis/tmp/report/' + file_name
 	
 	#parameters are : javascript delay | javascript script |  file name
 	logger.debug('serveur output')
@@ -75,4 +75,4 @@ def generate_report(startTime, stopTime,view_name,):
 #@get('/getReport/',apply=[check_auth])
 @get('/getReport/:fileName',apply=[check_auth])
 def get_report(fileName=None):
-	return static_file(fileName, root='/opt/canopsis/tmp/', mimetype='application/pdf')
+	return static_file(fileName, root='/opt/canopsis/tmp/report', mimetype='application/pdf')

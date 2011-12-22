@@ -88,6 +88,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				defaultSeriesType: 'area',
 				height: this.divHeight,
 				animation: false,
+				borderColor: "#FFFFFF"
 			},
 			exporting: {
 				enabled: false
