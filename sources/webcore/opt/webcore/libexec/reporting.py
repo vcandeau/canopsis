@@ -53,11 +53,11 @@ def generate_report(startTime, stopTime,view_name,):
 	file_path = '/opt/canopsis/tmp/report/' + file_name
 	
 	#parameters are : javascript delay | javascript script |  file name
-	logger.debug('serveur output')
-	logger.debug('wkhtml2pdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime)
+	#logger.debug('serveur output')
+	#logger.debug('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime)
 	
 	#launching subprocess
-	report_cmd = subprocess.Popen('wkhtml2pdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime, shell=True)
+	report_cmd = subprocess.Popen('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime, shell=True)
 	
 	#wait the end of the process
 	while(report_cmd.poll() == None):
