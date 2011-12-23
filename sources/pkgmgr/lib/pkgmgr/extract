@@ -18,27 +18,41 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+function extract_all () {
+	PPATH=$1
+	mkdir -p $PPATH/.extract
+	tar xf $PPATH/files.bz2 -C $PPATH/.extract
+}
+
 # Install all files except conf files
 function install_bin () {
 	PPATH=$1
-	tar xf $PPATH/files.bz2 --exclude='^./etc*'
+	list_bin_files $PPATH |
+		while read t_line ; do
+			dir_name=$(echo $t_line | sed -e 's_/[^/]*$__')
+			mkdir -p $PREFIX/$dir_name
+			mv $PPATH/.extract/$t_line $PREFIX/$t_line
+		done
 }
 
 # Install conf files
 function install_conf () {
 	PPATH=$1
-	mkdir -p $PPATH/.extract
 	list_conf_files $PPATH | 
 		while read t_line ; do
-			tar xf $PPATH/files.bz2 -C $PPATH/.extract --wildcards './etc*'
-			old_md5=$(md5sum $PREFIX/$t_line)
-			new_md5=$(md5sum $PPATH/.extract/$t_line)
-			if [ "$old_md5" != "$new_md5" ]; then
-				echo "      | New config file ($t_line) named *.new"
-				mv $PPATH/.extract/$t_line $PREFIX/$t_line.new
+			dir_name=$(echo $t_line | sed -e 's_/[^/]*$__')
+			mkdir -p $PREFIX/$dir_name
+			if [ ! -e $PREFIX/$t_line ]; then
+				mv $PPATH/.extract/$t_line $PREFIX/$t_line
+			else	
+				old_md5=$(md5sum $PREFIX/$t_line | awk '{ print $1 }')
+				new_md5=$(md5sum $PPATH/.extract/$t_line | awk '{ print $1 }')
+				if [ "$old_md5" != "$new_md5" ]; then
+					echo "      | New config file ($t_line) named *.new"
+					mv $PPATH/.extract/$t_line $PREFIX/$t_line.new
+				else
+					mv $PPATH/.extract/$t_line $PREFIX/$t_line
+				fi
 			fi
-			#echo "  _old-md5: $old_md5"
-			#echo "  _new-md5: $new_md5"
-			#tar xf $PPATH/files.bz2 --wildcards './etc*'
 		done 
 }

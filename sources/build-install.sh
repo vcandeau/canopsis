@@ -289,12 +289,7 @@ function run_clean(){
         su - $HUSER -c ". .bash_profile; hypcontrol stop"
         check_code $? "Run hypcontrol stop failure"
     fi
-    PIDS=`ps h -eo pid:1,command | grep "$PREFIX" | grep -v grep | cut -d ' ' -f1`
-    for PID in $PIDS; do
-        echo "  + Kill $PID"
-        kill -9 $PID || true
-        check_code $? "Kill user pid failure"
-    done
+    pkill -9 -u $HUSER
     sleep 1
 
     . $SRC_PATH/packages/canohome/control
@@ -523,7 +518,7 @@ if [ $OPT_MPKG -eq 1 ]; then
 	echo "  + Copy install script"
 	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
 	echo "  + Copy packages ..."
-	cp $PKGS_PATH/{canohome.tar,canolibs.tar,canotools.tar,pkgmgr.tar} $BSTRAP_PATH
+	cp $PKGS_PATH/{canohome.tar,canotools.tar,pkgmgr.tar} $BSTRAP_PATH
 	echo "  + Make archive"
 	cd $SRC_PATH/../binaries
 	tar cfz canopsis_installer.tgz canopsis_installer

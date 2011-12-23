@@ -27,8 +27,9 @@
 . $HOME/lib/pkgmgr/actions
 . $HOME/lib/pkgmgr/deps
 . $HOME/lib/pkgmgr/lock
-. $HOME/lib/pkgmgr/conffiles
+. $HOME/lib/pkgmgr/listfiles
 . $HOME/lib/pkgmgr/extract
+. $HOME/lib/pkgmgr/completion
 
 touch $LOCAL_DB_PATH
 touch $REMOTE_DB_PATH

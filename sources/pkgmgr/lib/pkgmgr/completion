@@ -1,0 +1,62 @@
+#!/bin/bash
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+. $HOME/etc/pkgmgr.conf
+
+_pkgmgr()
+{
+	local cur prev actions
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	actions="install install-local reinstall reinstall-local upgrade remove update list clean help"
+	local_pkgs=`cat $LOCAL_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1`
+	remote_pkgs=`cat $REMOTE_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1`
+
+	#echo -e "\nCurrent : $cur"
+	#echo -e "\nPrevious: $prev"
+
+	#if [[ ${prev} != "pkgmgr" ]] && [[ ${cur} == '' ]]; then	
+	#    COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
+	#    return 0
+	#fi
+
+	if [[ ${prev} == "pkgmgr" ]]; then
+		COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
+		return 0
+	fi
+
+	if [[ ${prev} == "install" ]]; then
+		COMPREPLY=( $(compgen -W "${remote_pkgs}" -- ${cur}) )
+		return 0
+	fi
+
+	if [[ ${prev} == "reinstall" ]] || [[ ${prev} == "upgrade" ]] || [[ ${prev} == "remove" ]]; then
+		COMPREPLY=( $(compgen -W "${local_pkgs}" -- ${cur}) )
+		return 0
+	fi
+
+	#if [[ ${cur} == * ]] ; then
+	#   echo "jambon"
+	#    COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
+	#    return 0
+	#fi
+}
+complete -F _pkgmgr pkgmgr

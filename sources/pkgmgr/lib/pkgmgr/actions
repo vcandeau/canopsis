@@ -23,27 +23,27 @@
 #####################
 function load_control_tpl(){
 	. $HOME/lib/pkgmgr/control.tpl
-	check_code $? "Source control default template failure"
+	check_code $? " # Source control default template failure\n \
+ # There is a problem when sourcing '$HOME/lib/pkgmgr/control.tpl"
 }
 
 ###############################
 # Search package and untar it #
 ###############################
 function get_ppath(){
-    PNAME=$1
-    PPATH="$PACKAGES_PATH/$PNAME"
-    #if [ ! -e $PPATH ]; then
-        if [ ! -e $PPATH.tar ]; then
-            check_code $? "Package $PNAME not found ($PPATH.tar)" >&2
-            exit 1
-        else
-            cd $PACKAGES_PATH
-			rm -Rf $PNAME
-            tar xf $PNAME.tar
-            check_code $? "Untar package ($PNAME.tar) failure"
-        fi
-    #fi
-    echo $PPATH
+	PNAME=$1
+	PPATH="$PACKAGES_PATH/$PNAME"
+	if [ ! -e $PPATH.tar ]; then
+		check_code $? " # Package $PNAME not found ($PPATH.tar)"
+		exit 1
+	else
+		cd $PACKAGES_PATH
+		rm -Rf $PNAME
+		tar xf $PNAME.tar
+		check_code $? " # Untar package ($PNAME.tar) failure\n \
+ # Try to untar $PNAME.tar in $PACKAGES_PATH"
+	fi
+	echo $PPATH
 }
 
 ####################
@@ -61,16 +61,27 @@ function download_package() {
 	# Remove old packages
     echo "    + Remove old packages"
     rm -Rf $PACKAGES_PATH/$PNAME*
-    check_code $? "Removing old packages failure"
+    check_code $? " # Removing old packages failure\n \
+ # Try to remove $PACKAGES_PATH/$PNAME*"
 
 	# Go to packages folder
 	cd $PACKAGES_PATH
 
 	# Download it
 	echo "    + Download $PNAME"
-    #wget --progress=bar:force $FINAL_URL/$PNAME.tar 2>&1 | progressbar
-    curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
-	check_code $? "Failure during download package"
+		
+	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $FINAL_URL/$PNAME.tar)
+	if [ "$response" != "200" ]; then
+		echo " # Failure during download package"
+		echo " # Url    : $FINAL_URL/$PNAME.tar"
+		echo " # Return : Http response ($response)"
+		exit 1
+	else
+		curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
+		check_code $? " # Failure during download package ($FINAL_URL/$PNAME.tar)\n \
+ # Try to download $FINAL_URL/$PNAME.tar\n \
+ # Command : curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
+	fi
 }
 
 ###################
@@ -110,7 +121,7 @@ function install_package () {
     	fi
 		
 		res="True"
-	    # LOCAL ARCHIVE
+			# LOCAL ARCHIVE
 	    if [[ -e $PACKAGES_PATH/$PNAME.tar ]]; then
 	        echo "    + Package archive already in cache"
 			PPATH="$PACKAGES_PATH/$PNAME"
@@ -133,9 +144,9 @@ function install_package () {
     	    download_package "$PNAME"
     	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
         	R_MD5=$(db_parse "md5" "$R_INFO")
-			on_lock
+					on_lock
 	        PPATH=$(get_ppath "$PNAME")
-    	    check_code $?
+    	    check_code $? " # Error during untar package with get_ppath function"
 			off_lock
         	L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
     	    if [ "$L_MD5" != "$R_MD5" ]; then
@@ -149,18 +160,22 @@ function install_package () {
 		on_lock
 		load_control_tpl
 	    . $PPATH/control
-	    check_code $? "Source control file from $PNAME failure"
+	    check_code $? " # Source control file from $PNAME failure\n \
+ # Try to source $PPATH/control"
 	    echo "    + Pre-install"
 		echo "-----"
 	    pre_install
 		echo "-----"
-	    check_code $? "Pre-install step failure"
+	    check_code $? " # Pre-install step failure\n \
+ # See control file of $PNAME\n \
+ # Path: $PPATH/control"
 	    echo "    + Install"
 	    cd $PREFIX
+		extract_all $PPATH
+		install_conf $PPATH
+        check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 		install_bin $PPATH
 	    check_code $? "Untar bin from files.bz2 ($PNAME) failure"
-		install_conf $PPATH
-	    check_code $? "Untar conf from files.bz2 ($PNAME) failure"
     	echo "    + Post-install"
 		echo "-----"
 	    post_install 
@@ -221,10 +236,11 @@ function install_local_package () {
 		check_code $? "Pre-install step failure"
 		echo "    + Install"
 	    cd $PREFIX
+		extract_all $PPATH
+		install_conf $PPATH
+        check_code $? "Untar conf from files.bz2 ($NAME) failure"
 		install_bin $PPATH
         check_code $? "Untar bin from files.bz2 ($NAME) failure"
-        install_conf $PPATH
-        check_code $? "Untar conf from files.bz2 ($NAME) failure"
 		echo "    + Post-install"
 		echo "-----"
 	    post_install 
@@ -347,6 +363,7 @@ function upgrade_package(){
 			check_code $? "Pre-update function ($PNAME) failure"
 			echo "     + Update"
 	    	cd $PREFIX
+			extract_all $PPATH
 			install_bin $PPATH
         	check_code $? "Untar bin from files.bz2 ($PNAME) failure"
         	install_conf $PPATH
