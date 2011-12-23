@@ -36,7 +36,7 @@ def dichot(x, L, comp=cmp, key=lambda c: c):
 	return [comp(x,key(L[i][0])), i]
 
 def in_range(value, start, stop):
-	return value >= start and value <= stop
+	return value >= start and value < stop
 
 def get_first_value(values):
 	if len(values):
@@ -87,7 +87,7 @@ def search_index(x, L):
 	if vstop > last_index:
 		vstop = last_index
 
-	if x >= L[vstart][0] and x <= L[vstop][0]:
+	if in_range(x, L[vstart][0], L[vstop][0]):
 
 		#logger.debug("   + Use estimated index for reduce search time")
 		#logger.debug("     + Search %s -> %s" % (vstart, vstop))
@@ -162,7 +162,7 @@ def derivs(vlist):
 
 
 
-def aggregate(values, max_points=1440, atype='MEAN', agfn=None):
+def aggregate(values, max_points=1450, atype='MEAN', agfn=None):
 	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
 
 	if len(values) > max_points:

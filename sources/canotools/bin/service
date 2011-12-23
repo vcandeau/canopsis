@@ -12,4 +12,5 @@ if [ -e ~/etc/init.d/$1 ]; then
 	~/etc/init.d/$1 $2
 else
 	echo "Startup script not found ..."
+	exit 1
 fi

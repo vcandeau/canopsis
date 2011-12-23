@@ -50,7 +50,7 @@ myamqp = None
 
 ## Pyperfstore
 rotate_plan = {
-	'PLAIN': 3,
+	'PLAIN': 1,
 	'TSC': 0,
 }
 
