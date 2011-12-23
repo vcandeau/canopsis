@@ -28,8 +28,6 @@ import txamqp.spec
 
 import time, logging, threading, os
 
-from cconfig import cconfig
-
 files_preserve = [reactor.waker.o, reactor.waker.i]
 
 class camqp(threading.Thread):
@@ -317,11 +315,23 @@ class camqp(threading.Thread):
 
 	def read_config(self, name):
 
-		self.config = cconfig(name=name)
+		filename = '~/etc/' + name + '.conf'
+		filename = os.path.expanduser(filename)
 
-		self.host = self.config.getstring("host", self.host)
-		self.port = self.config.getint("port", self.port)
-		self.userid = self.config.getstring("userid", self.userid)
-		self.password = self.config.getstring("password", self.password)
-		self.virtual_host = self.config.getstring("virtual_host", self.virtual_host)
-		self.exchange_name = self.config.getstring("exchange_name", self.exchange_name)
+		import ConfigParser
+		self.config = ConfigParser.RawConfigParser()
+
+		try:
+			self.config.read(filename)
+
+			section = 'master'
+
+			self.host = self.config.get(section, "host")
+			self.port = self.config.getint(section, "port")
+			self.userid = self.config.get(section, "userid")
+			self.password = self.config.get(section, "password")
+			self.virtual_host = self.config.get(section, "virtual_host")
+			self.exchange_name = self.config.get(section, "exchange_name")
+
+		except Exception, err:
+			self.logger.error("Impossible to load configurations (%s), use default ..." % err)
