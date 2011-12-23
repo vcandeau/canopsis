@@ -157,10 +157,11 @@ function install_package () {
 	    check_code $? "Pre-install step failure"
 	    echo "    + Install"
 	    cd $PREFIX
+		extract_all $PPATH
+		install_conf $PPATH
+        check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 		install_bin $PPATH
 	    check_code $? "Untar bin from files.bz2 ($PNAME) failure"
-		install_conf $PPATH
-	    check_code $? "Untar conf from files.bz2 ($PNAME) failure"
     	echo "    + Post-install"
 		echo "-----"
 	    post_install 
@@ -221,10 +222,11 @@ function install_local_package () {
 		check_code $? "Pre-install step failure"
 		echo "    + Install"
 	    cd $PREFIX
+		extract_all $PPATH
+		install_conf $PPATH
+        check_code $? "Untar conf from files.bz2 ($NAME) failure"
 		install_bin $PPATH
         check_code $? "Untar bin from files.bz2 ($NAME) failure"
-        install_conf $PPATH
-        check_code $? "Untar conf from files.bz2 ($NAME) failure"
 		echo "    + Post-install"
 		echo "-----"
 	    post_install 
@@ -347,6 +349,7 @@ function upgrade_package(){
 			check_code $? "Pre-update function ($PNAME) failure"
 			echo "     + Update"
 	    	cd $PREFIX
+			extract_all $PPATH
 			install_bin $PPATH
         	check_code $? "Untar bin from files.bz2 ($PNAME) failure"
         	install_conf $PPATH
