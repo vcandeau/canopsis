@@ -21,7 +21,7 @@
 #####################
 # Load control file #
 #####################
-function load_control_tpl(){
+function load_control_tpl () {
 	. $HOME/lib/pkgmgr/control.tpl
 	check_code $? " # Source control default template failure\n \
  # There is a problem when sourcing '$HOME/lib/pkgmgr/control.tpl"
@@ -50,18 +50,18 @@ function get_ppath(){
 # Download Package #
 ####################
 function download_package() {
-    PNAME=$1
+	PNAME=$1
 	# Create URL
 	# Check if there is a repo base url
 	if [ -z "$REPO_BASE" ]; then
-        FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
-    else
-        FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
-    fi
+		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	else
+		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	fi
 	# Remove old packages
-    echo "    + Remove old packages"
-    rm -Rf $PACKAGES_PATH/$PNAME*
-    check_code $? " # Removing old packages failure\n \
+	echo "    + Remove old packages"
+	rm -Rf $PACKAGES_PATH/$PNAME*
+	check_code $? " # Removing old packages failure\n \
  # Try to remove $PACKAGES_PATH/$PNAME*"
 
 	# Go to packages folder
@@ -95,67 +95,67 @@ function install_package () {
 	for ARG in $lst; do
 		PNAME=$ARG
 		# Get local informations
-	    DBINFO=$(db_get "$PNAME")
+		DBINFO=$(db_get "$PNAME")
 		# Get local status
-    	L_STATUS=$(db_parse "status" "$DBINFO")
+		L_STATUS=$(db_parse "status" "$DBINFO")
 		# If already installed and force option so reinstall it
-	    if [[ "$L_STATUS" == "installed" && "$xforce" == "True" ]]; then
-    	    echo " :: Reinstall package $PNAME"
-		# If already install and no force, exit
-	    elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
-	        echo " :: Package $PNAME already installed"
+		if [[ "$L_STATUS" == "installed" && "$xforce" == "True" ]]; then
+			echo " :: Reinstall package $PNAME"
+			# If already install and no force, exit
+		elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
+			echo " :: Package $PNAME already installed"
 			# If it's not the last package continue
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 		# Else (not already installed)
 		else
 			# Get remote informations
-        	R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
+			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			# If no remote informations, package is not available
-	        if [ -z "$R_INFO" ]; then
-    	        echo " :: Package $PNAME not available"
-				if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
-			# Else, install package
-	        else
-    		    echo " :: Install package $PNAME"
-	        fi
-    	fi
-		
+				if [ -z "$R_INFO" ]; then
+					echo " :: Package $PNAME not available"
+					if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+				# Else, install package
+				else
+					echo " :: Install package $PNAME"
+				fi
+		fi
+
 		res="True"
-			# LOCAL ARCHIVE
-	    if [[ -e $PACKAGES_PATH/$PNAME.tar ]]; then
-	        echo "    + Package archive already in cache"
+		# LOCAL ARCHIVE
+		if [[ -e $PACKAGES_PATH/$PNAME.tar ]]; then
+			echo "    + Package archive already in cache"
 			PPATH="$PACKAGES_PATH/$PNAME"
-    	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
-	        R_MD5=$(db_parse "md5" "$R_INFO")
-	        L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
-    	    if [ "$L_MD5" != "$R_MD5" ]; then
-	        	echo "      + Check MD5: [Fail]"
-	    	else
+			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
+			R_MD5=$(db_parse "md5" "$R_INFO")
+			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
+			if [ "$L_MD5" != "$R_MD5" ]; then
+				echo "      + Check MD5: [Fail]"
+			else
 				echo "      + Check MD5: [Success]"
 				on_lock
-            	PPATH=$(get_ppath "$PNAME")
-            	off_lock
+				PPATH=$(get_ppath "$PNAME")
+				off_lock
 				res="False"
 			fi
 		fi
 		
-    	# DOWNLOAD PACKAGE
-	    if [[ "$res" == "True" ]]; then
-    	    download_package "$PNAME"
-    	    R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
-        	R_MD5=$(db_parse "md5" "$R_INFO")
-					on_lock
-	        PPATH=$(get_ppath "$PNAME")
-    	    check_code $? " # Error during untar package with get_ppath function"
+		# DOWNLOAD PACKAGE
+		if [[ "$res" == "True" ]]; then
+			download_package "$PNAME"
+			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
+			R_MD5=$(db_parse "md5" "$R_INFO")
+			on_lock
+			PPATH=$(get_ppath "$PNAME")
+			check_code $? " # Error during untar package with get_ppath function"
 			off_lock
-        	L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
-    	    if [ "$L_MD5" != "$R_MD5" ]; then
-	        	echo "    + Check MD5: [Fail]"
+			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
+			if [ "$L_MD5" != "$R_MD5" ]; then
+				echo "    + Check MD5: [Fail]"
 				exit 1
 			else
 				echo "    + Check MD5: [Success]"
 			fi
-	    fi	
+		fi	
 
 		on_lock
 		load_control_tpl

@@ -20,8 +20,7 @@
 
 . $HOME/etc/pkgmgr.conf
 
-_pkgmgr()
-{
+_pkgmgr () {
 	local cur prev actions
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
@@ -29,14 +28,6 @@ _pkgmgr()
 	actions="install install-local reinstall reinstall-local upgrade remove update list clean help"
 	local_pkgs=`cat $LOCAL_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1`
 	remote_pkgs=`cat $REMOTE_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1`
-
-	#echo -e "\nCurrent : $cur"
-	#echo -e "\nPrevious: $prev"
-
-	#if [[ ${prev} != "pkgmgr" ]] && [[ ${cur} == '' ]]; then	
-	#    COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
-	#    return 0
-	#fi
 
 	if [[ ${prev} == "pkgmgr" ]]; then
 		COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
@@ -52,11 +43,5 @@ _pkgmgr()
 		COMPREPLY=( $(compgen -W "${local_pkgs}" -- ${cur}) )
 		return 0
 	fi
-
-	#if [[ ${cur} == * ]] ; then
-	#   echo "jambon"
-	#    COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
-	#    return 0
-	#fi
 }
 complete -F _pkgmgr pkgmgr

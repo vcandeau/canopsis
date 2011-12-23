@@ -18,6 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+# List binaries files
+function list_bin_files () {
+	PPATH=$1
+	cat $PPATH/files.lst | grep -v '^./etc/' | while read bin_line; do echo $bin_line; done
+ }
+
+# List conf files
+function list_conf_files () {
+	PPATH=$1
+	cat $PPATH/files.lst | grep '^./etc/' | while read conf_line; do echo $conf_line; done
+}
+
 function extract_all () {
 	PPATH=$1
 	mkdir -p $PPATH/.extract
