@@ -18,84 +18,85 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-###############
-# LOCAL #######
-###############
-function db_get(){
-    PNAME=$1
-    touch $LOCAL_DB_PATH
-    echo `cat $LOCAL_DB_PATH | grep "^$PNAME|" | tail -n1`
+# Get a local package line
+function db_get () {
+	PNAME=$1
+	touch $LOCAL_DB_PATH
+	echo `cat $LOCAL_DB_PATH | grep "^$PNAME|" | tail -n1`
 }
 
-function db_set(){
-    PNAME=$1
-    VERS=$2
-    STATUS=$3
-    MD5=$4
-    DEPS=$5
-    sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
-    echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> $LOCAL_DB_PATH
-    check_code $? "Database insertion ($PNAME)"
+# Insert new package installed
+function db_set () {
+	PNAME=$1
+	VERS=$2
+	STATUS=$3
+	MD5=$4
+	DEPS=$5
+	sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
+	echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> $LOCAL_DB_PATH
+	check_code $? "Database insertion ($PNAME)"
 }
 
-function db_del(){
-    PNAME=$1
-    sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
-    check_code $? "Database deletion ($PNAME)"
+# Delete package entri
+function db_del () {
+	PNAME=$1
+	sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
+	check_code $? "Database deletion ($PNAME)"
 }
 
-function db_parse(){
-    INFO=$1
-    DATA=$2
-    if [ "x$INFO" = "xversion" ]; then
-        VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
-        echo "$VERS_INFO" | cut -d '-' -f1
-    elif [ "x$INFO" = "xrelease" ]; then
-        VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
-        echo "$VERS_INFO" | cut -d '-' -f2
-    else
-        if [ "x$INFO" = "xname" ]; then
-            FIELD=1
-        elif [ "x$INFO" = "xstatus" ]; then
-            FIELD=3
-        elif [ "x$INFO" = "xmd5" ]; then
-            FIELD=4
-        elif [ "x$INFO" = "xdeps" ]; then
-            FIELD=5
-        fi
-        echo "$DATA" | cut -d '|' -f$FIELD
-    fi
+# Parse package information
+function db_parse () {
+	INFO=$1
+	DATA=$2
+	if [ "x$INFO" = "xversion" ]; then
+		VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
+		echo "$VERS_INFO" | cut -d '-' -f1
+	elif [ "x$INFO" = "xrelease" ]; then
+		VERS_INFO=$(echo "$DATA" | cut -d '|' -f2)
+		echo "$VERS_INFO" | cut -d '-' -f2
+	else
+		if [ "x$INFO" = "xname" ]; then
+			FIELD=1
+		elif [ "x$INFO" = "xstatus" ]; then
+			FIELD=3
+		elif [ "x$INFO" = "xmd5" ]; then
+			FIELD=4
+		elif [ "x$INFO" = "xdeps" ]; then
+			FIELD=5
+		fi
+		echo "$DATA" | cut -d '|' -f$FIELD
+	fi
 }
 
-##############
-# REMOTE #####
-##############
-function check_repo(){
+# Check if repo is available
+function check_repo () {
 	cd $HOME/var/log
-    response=$(wget --server-response $REPO_URL --delete-after 2>&1 | awk '/^  HTTP/{print $2}') 
+	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $REPO_URL)
 	if [ "$response" != "200" ]; then
-        echo " :: Error: $REPO_URL is not joinable ($response) !"
-        exit 1
-    fi
+		echo " :: Error: $REPO_URL is not joinable ($response) !"
+		exit 1
+	fi
 }
 
-function update_db(){
+# Download Package list
+function update_db () {
 	echo " :: Download Packages.list ..."
-    check_repo
+	check_repo
 	# Create Repo URL
-    if [ -z "$REPO_BASE" ]; then
-        FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
-    else
-        FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
-    fi
+	if [ -z "$REPO_BASE" ]; then
+		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	else
+		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+	fi
 
-    rm -Rf $REMOTE_DB_PATH
-    check_code $? "    + Error: Failure during remove old database"
+	# Remove old db
+	rm -Rf $REMOTE_DB_PATH
+	check_code $? " # Failure during remove old database"
 
-    wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
-    check_code $? "    + Error: Packages.list not accessible (wget failure) ($FINAL_URL/Packages.list"
+	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
+	check_code $? " # Packages.list not accessible (wget failure) ($FINAL_URL/Packages.list"
 
-    echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
-    check_code $? "    + Error: Pkgmgr info file insertion error"
-    echo "    + Done"
+	echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
+	check_code $? " # Pkgmgr info file insertion error"
+	echo "    + Done"
 }
