@@ -18,37 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-function extract_all () {
+# List binaries files
+function list_bin_files () {
 	PPATH=$1
-	mkdir -p $PPATH/.extract
-	tar xf $PPATH/files.bz2 -C $PPATH/.extract
+	cat $PPATH/files.lst | grep -v '^./etc/' | while read bin_line; do echo $bin_line; done
 }
 
-# Install all files except conf files
-function install_bin () {
+# List conf files
+function list_conf_files () {
 	PPATH=$1
-	list_bin_files $PPATH |
-		while read t_line ; do
-			mv $PPATH/.extract/$t_line $PREFIX/$t_line
-		done
-}
-
-# Install conf files
-function install_conf () {
-	PPATH=$1
-	list_conf_files $PPATH | 
-		while read t_line ; do
-			if [ ! -e $PREFIX/$t_line ]; then
-				mv $PPATH/.extract/$t_line $PREFIX/$t_line
-			else	
-				old_md5=$(md5sum $PREFIX/$t_line | awk '{ print $1 }')
-				new_md5=$(md5sum $PPATH/.extract/$t_line | awk '{ print $1 }')
-				if [ "$old_md5" != "$new_md5" ]; then
-					echo "      | New config file ($t_line) named *.new"
-					mv $PPATH/.extract/$t_line $PREFIX/$t_line.new
-				else
-					mv $PPATH/.extract/$t_line $PREFIX/$t_line
-				fi
-			fi
-		done 
+	cat $PPATH/files.lst | grep '^./etc/' | while read conf_line; do echo $conf_line; done
 }
