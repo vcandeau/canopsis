@@ -4,7 +4,7 @@ NAME="snmp2amqp"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES=""
+REQUIRES="canohome pkgmgr python canolibs"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
