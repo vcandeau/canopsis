@@ -119,7 +119,6 @@ function install_package () {
 					echo " :: Install package $PNAME"
 				fi
 		fi
-
 		res="True"
 		# LOCAL ARCHIVE
 		if [[ -e $PACKAGES_PATH/$PNAME.tar ]]; then
@@ -146,7 +145,6 @@ function install_package () {
 			R_MD5=$(db_parse "md5" "$R_INFO")
 			on_lock
 			PPATH=$(get_ppath "$PNAME")
-			check_code $? " # Error during untar package with get_ppath function"
 			off_lock
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 			if [ "$L_MD5" != "$R_MD5" ]; then
@@ -159,33 +157,33 @@ function install_package () {
 
 		on_lock
 		load_control_tpl
-	    . $PPATH/control
-	    check_code $? " # Source control file from $PNAME failure\n \
+		. $PPATH/control
+		check_code $? " # Source control file from $PNAME failure\n \
  # Try to source $PPATH/control"
-	    echo "    + Pre-install"
+		echo "    + Pre-install"
 		echo "-----"
-	    pre_install
+		pre_install
 		echo "-----"
-	    check_code $? " # Pre-install step failure\n \
+		check_code $? " # Pre-install step failure\n \
  # See control file of $PNAME\n \
  # Path: $PPATH/control"
-	    echo "    + Install"
-	    cd $PREFIX
+		echo "    + Install"
+		cd $PREFIX
 		extract_all $PPATH
 		install_conf $PPATH
-        check_code $? "Untar conf from files.bz2 ($PNAME) failure"
+		check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 		install_bin $PPATH
-	    check_code $? "Untar bin from files.bz2 ($PNAME) failure"
-    	echo "    + Post-install"
+		check_code $? "Untar bin from files.bz2 ($PNAME) failure"
+		echo "    + Post-install"
 		echo "-----"
-	    post_install 
+		post_install 
 		echo "-----"
-    	check_code $? "Post-install function ($PNAME) failure"
-	    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
-    	echo "    + Remove package folder"
-	    rm -Rf $PPATH
-    	check_code $? "Post installation package folder remove failure"
-	    echo "    + Done"
+		check_code $? "Post-install function ($PNAME) failure"
+		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+		echo "    + Remove package folder"
+		rm -Rf $PPATH
+		check_code $? "Post installation package folder remove failure"
+		echo "    + Done"
 		off_lock
 	done
 }
@@ -194,66 +192,63 @@ function install_local_package () {
 	xforce=""
 	if [ "${@: -1}" == "_force" ]; then xforce="True"; lst="${@:1:($#-1)}"; else lst="$@"; fi
 	for ARG in $lst; do
-	    FULLPATH=$ARG
-    	FILENAME="${FULLPATH##*/}"
-	    if ! [ -e $FULLPATH ]; then
+		FULLPATH=$ARG
+		FILENAME="${FULLPATH##*/}"
+		if ! [ -e $FULLPATH ]; then
 			echo " :: Package not found"
 			echo "    | $FULLPATH"
 			exit 1
 		fi
-	    if ! [[ ${FILENAME: -4} == ".tar" || $(exit $?) == 1 ]]; then
-    	    echo " :: Package format must be packagename.tar"
+		if ! [[ ${FILENAME: -4} == ".tar" || $(exit $?) == 1 ]]; then
+			echo " :: Package format must be packagename.tar"
 			echo "    | $FILENAME"
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
-    	fi
-	    PNAME="${FILENAME%.[^.]*}"
-    	if [ -z "$PNAME" ]; then
-	        echo " :: There is an error in the path"
+		fi
+		PNAME="${FILENAME%.[^.]*}"
+		if [ -z "$PNAME" ]; then
+			echo " :: There is an error in the path"
 			echo "    | $FILENAME"
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
-	    fi
-    	DBINFO=$(db_get "$PNAME")
-	    L_STATUS=$(db_parse "status" "$DBINFO")
-    	if [[ "$L_STATUS" == "installed"  && "$xforce" == "True" ]]; then
-        	echo " :: Reinstall $PNAME"
-    	elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
+		fi
+		DBINFO=$(db_get "$PNAME")
+		L_STATUS=$(db_parse "status" "$DBINFO")
+		if [[ "$L_STATUS" == "installed"  && "$xforce" == "True" ]]; then
+			echo " :: Reinstall $PNAME"
+		elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
 			echo " :: Package $PNAME already installed"
 			if [ $PNAME == ${@: -1} ]; then exit 1; else continue; fi
 		else
-	        echo " :: Install package $PNAME"
-	    fi
+			echo " :: Install package $PNAME"
+		fi
 		on_lock
-    	cp $FULLPATH $PACKAGES_PATH
-	    cd $PACKAGES_PATH
+		cp $FULLPATH $PACKAGES_PATH
+		cd $PACKAGES_PATH
 		PPATH=$(get_ppath "$PNAME")
 		load_control_tpl
 		. $PPATH/control	
-	    check_code $? "Source control file from $NAME failure"
+		check_code $? "Source control file from $NAME failure"
 		echo "    + Pre-install"
 		echo "-----"
-	    pre_install 
+		pre_install 
 		echo "-----"
 		check_code $? "Pre-install step failure"
 		echo "    + Install"
-	    cd $PREFIX
+		cd $PREFIX
 		extract_all $PPATH
 		install_conf $PPATH
-        check_code $? "Untar conf from files.bz2 ($NAME) failure"
+		check_code $? "Untar conf from files.bz2 ($NAME) failure"
 		install_bin $PPATH
-        check_code $? "Untar bin from files.bz2 ($NAME) failure"
+		check_code $? "Untar bin from files.bz2 ($NAME) failure"
 		echo "    + Post-install"
 		echo "-----"
-	    post_install 
+		post_install 
 		echo "-----"
-	    check_code $? "Post-install step ($PNAME) failure"
-	
-	    db_set "$PNAME" "$VERSION-$RELEASE" "installed"
-		
+		check_code $? "Post-install step ($PNAME) failure"
+		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
 		echo "    + Remove package folder"
-	    rm -Rf $PPATH
-	    check_code $? "Post install-local package folder remove failure"
-	
-	    echo "    + Done"  
+		rm -Rf $PPATH
+		check_code $? "Post install-local package folder remove failure"
+		echo "    + Done"  
 		off_lock
 	done
 }
@@ -261,71 +256,69 @@ function install_local_package () {
 function remove_package(){
 	for ARG in "$@";   do
 		PNAME=$ARG
-
 		pbl="False"
-	    for pkg in $PKG_BLACKLIST; do
-	        if [ "$PNAME" == "$pkg" ]; then
+		for pkg in $PKG_BLACKLIST; do
+			if [ "$PNAME" == "$pkg" ]; then
 				pbl="True"
 				break
 			fi
 		done
-		
+
 		if [ "$pbl" == "True" ]; then
 			echo " :: Package $PNAME blacklisted"
 			continue
 		fi
 
 		on_lock
-	    DBINFO=$(db_get "$PNAME")
-	    PSTATUS=$(db_parse "status" "$DBINFO")
+		DBINFO=$(db_get "$PNAME")
+		PSTATUS=$(db_parse "status" "$DBINFO")
 		L_VERS=$(db_parse "version" "$DBINFO")
-        L_REL=$(db_parse "release" "$DBINFO")
-        L_MD5=$(db_parse "md5" "$DBINFO")
+		L_REL=$(db_parse "release" "$DBINFO")
+		L_MD5=$(db_parse "md5" "$DBINFO")
 	
-	    if [ "x$PSTATUS" == "xinstalled" ]; then
-	        echo " :: Remove package $PNAME"
-		    PPATH=$(get_ppath "$PNAME")
-			check_code $? "Package manipulation failure (Untar..)"
+		if [ "x$PSTATUS" == "xinstalled" ]; then
+			echo " :: Remove package $PNAME"
+			PPATH=$(get_ppath "$PNAME")
 			load_control_tpl
-	        . $PPATH/control
-	        check_code $? "Source control file from $PNAME failure"
+			. $PPATH/control
+			check_code $? "Source control file from $PNAME failure"
 			echo "    + Pre-remove"
 			echo "-----"
-	        pre_remove 
+			pre_remove 
 			echo "-----"
 			check_code $? "Pre-remove step failure"
 			echo "    + Remove files"
 			while read line; do
 				rm -Rf $PREFIX/$(echo $line | cut -b 1-2 --complement)
 			done < $PPATH/files.lst
-	        check_code $? "Remove files in files.lst ($PNAME) failure"
+			check_code $? "Remove files in files.lst ($PNAME) failure"
 			echo "    + Post-remove"
 			echo "-----"
 			post_remove 
 			echo "-----"
 			check_code $? "Post-remove step failure"
 			echo "    + Remove package folder"
-		    rm -Rf $PPATH
-	    	check_code $? "Post remove package folder remove failure"
-	        db_del "$PNAME"
-	    else
-	        echo " :: Package $PNAME is not installed"
-	        if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
-	    fi
-	    echo "    + Done"
+			rm -Rf $PPATH
+			check_code $? "Post remove package folder remove failure"
+			db_del "$PNAME"
+			else
+				echo " :: Package $PNAME is not installed"
+				if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+		fi
+		echo "    + Done"
 		off_lock
 	done
 }
 
-function upgrade_package(){
+function upgrade_package () {
 	for ARG in "$@";   do
 		PNAME=$ARG
-    	DBINFO=$(db_get "$PNAME")
+		DBINFO=$(db_get "$PNAME")
 		L_STATUS=$(db_parse "status" "$DBINFO")
 	
 		if [ "$L_STATUS" == "installed" ]; then
 			L_VERS=$(db_parse "version" "$DBINFO")
-	    	L_REL=$(db_parse "release" "$DBINFO")
+			L_REL=$(db_parse "release" "$DBINFO")
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_VERS=$(db_parse "version" "$R_INFO")
 			R_REL=$(db_parse "release" "$R_INFO")
@@ -335,55 +328,58 @@ function upgrade_package(){
 				if [ "$R_REL" == "$L_REL" ]; then
 					echo " :: No new version or release for $PNAME"
 					continue
-				else echo -e "\n :: Upgrade package release $PNAME";	fi
-			else echo -e "\n :: Upgrade package version $PNAME"; fi
-	
-		    download_package "$PNAME"
+				else 
+					echo -e "\n :: Upgrade package release $PNAME"
+				fi
+			else 
+				echo -e "\n :: Upgrade package version $PNAME"
+			fi
+		
+			download_package "$PNAME"
 		
 			on_lock
-		    PPATH=$(get_ppath "$PNAME")
-		    check_code $?
+			PPATH=$(get_ppath "$PNAME")
 			off_lock
-	    	L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
+			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 	
-	    	if [ "$L_MD5" != "$R_MD5" ]; then
+			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "     + Checking Md5Sum: [Fail]"
 				exit 1
-			else
+				else
 				echo "     + Checking Md5Sum: [Success]"
 			fi
 			on_lock
 			load_control_tpl
-		    . $PPATH/control
-		    check_code $? "Source control file from $PNAME failure"
+			. $PPATH/control
+			check_code $? "Source control file from $PNAME failure"
 			echo "     + Pre-update"
 			echo "-----"
 			pre_update 
 			echo "-----"
 			check_code $? "Pre-update function ($PNAME) failure"
 			echo "     + Update"
-	    	cd $PREFIX
+			cd $PREFIX
 			extract_all $PPATH
 			install_bin $PPATH
-        	check_code $? "Untar bin from files.bz2 ($PNAME) failure"
-        	install_conf $PPATH
-        	check_code $? "Untar conf from files.bz2 ($PNAME) failure"
+			check_code $? "Untar bin from files.bz2 ($PNAME) failure"
+			install_conf $PPATH
+			check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 			echo "     + Post-update"
 			echo "-----"
-	    	post_update 
+			post_update 
 			echo "-----"
-		    check_code $? "Post-update function ($PNAME) failure"
+			check_code $? "Post-update function ($PNAME) failure"
 	
-	    	db_set "$PNAME" "$VERSION-$RELEASE" "installed"
+			db_set "$PNAME" "$VERSION-$RELEASE" "installed"
 	
 			echo "     + Remove package folder"
-	    	rm -Rf $PPATH
-		    check_code $? "Post upgrade package folder remove failure"
+			rm -Rf $PPATH
+			check_code $? "Post upgrade package folder remove failure"
 			off_lock
 		else 
 			echo " :: Package $PNAME is not installed"
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
-	    fi
-	    echo "     + Done"
+		fi
+		echo "     + Done"
 	done
 }
