@@ -18,36 +18,36 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-function show_help(){
-    echo
-    echo " :: Usage : pkgmgr [ACTION] [OPTIONS] <package>"
-    echo
-    echo " :: Actions"
-    echo "   install [OPT] [PKG]            ->  Install package(s)"
-    echo "   install-local [OPT] [PKGPATH]  ->  Install local package(s)"
-    echo "   reinstall [PKG]                ->  Reinstall package(s)"
-    echo "   reinstall-local [PKGPATH]      ->  Reinstall local package(s)"
-    echo "   upgrade [PKG]                  ->  Upgrade package(s)"
-    echo "   remove [OPT] [PKG]             ->  Remove package(s)"
-    echo "   update                         ->  Update local database"
-    echo "   list                           ->  List packages"
-    echo "   clean                          ->  Clean cache"
-    echo "   help                           ->  Print this help"
-    echo
-    echo " :: Options"
-    echo "   --force-yes                    -> Force yes answer"
-    echo
-    echo " :: Examples"
-    echo "   pkgmgr install python erlang"
-    echo "   pkgmgr remove --force-yes ccli"
-    echo "   pkgmgr reinstall --force-yes pyperfstore"
-    echo "   pkgmgr install-local /root/mypkg.tar mypkg2.tar"
-    echo "   pkgmgr upgrade webcore"
-    echo 
-    echo " :: Informations"
-    echo "    - Remove feature have no dependencies tracking, be careful"
-    echo "    - (*) after package name mean that your repositorie doesn't have it"
+function show_help () {
 	echo
-    echo "   More informations on http://canopsis.com/"
-    exit 1
+	echo " :: Usage : pkgmgr [ACTION] [OPTIONS] <package>"
+	echo
+	echo " :: Actions"
+	echo "   install [OPT] [PKG]            ->  Install package(s)"
+	echo "   install-local [OPT] [PKGPATH]  ->  Install local package(s)"
+	echo "   reinstall [PKG]                ->  Reinstall package(s)"
+	echo "   reinstall-local [PKGPATH]      ->  Reinstall local package(s)"
+	echo "   upgrade [PKG]                  ->  Upgrade package(s)"
+	echo "   remove [OPT] [PKG]             ->  Remove package(s)"
+	echo "   update                         ->  Update local database"
+	echo "   list                           ->  List packages"
+	echo "   clean                          ->  Clean cache"
+	echo "   help                           ->  Print this help"
+	echo
+	echo " :: Options"
+	echo "   --force-yes                    -> Force yes answer"
+	echo
+	echo " :: Examples"
+	echo "   pkgmgr install python erlang"
+	echo "   pkgmgr remove --force-yes ccli"
+	echo "   pkgmgr reinstall --force-yes pyperfstore"
+	echo "   pkgmgr install-local /root/mypkg.tar mypkg2.tar"
+	echo "   pkgmgr upgrade webcore"
+	echo 
+	echo " :: Informations"
+	echo "    - Remove feature have no dependencies tracking, be careful"
+	echo "    - (*) after package name mean that your repositorie doesn't have it"
+	echo
+	echo "   More informations on http://canopsis.com/"
+	exit 1
 }
