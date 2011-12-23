@@ -227,6 +227,9 @@ class metric(object):
 
 		self.logger.debug(" + Found %s DCAs" % len(dcas))
 
+		if len(dcas) == 0:
+			return []
+
 		values = []
 		for item in dcas:
 			item = self.dca_get(item)
