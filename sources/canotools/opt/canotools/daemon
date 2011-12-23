@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-CONF_PATH=~/etc/daemon.d/
+CONF_PATH=$HOME/etc/daemon.d/
 APP_NAME=`basename $0`
 
 if [ "x$APP_NAME" == "xdaemon" ]; then
@@ -47,8 +47,8 @@ if [ $START -eq 0 ]; then
 	exit 1
 fi
 
-PID_FILE=~/var/run/$APP_NAME.pid
-LOG=~/var/log/$APP_NAME.log
+PID_FILE=$HOME/var/run/$APP_NAME.pid
+LOG=$HOME/var/log/$APP_NAME.log
 
 function check_pid(){
 	PID=$1
