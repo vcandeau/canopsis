@@ -68,9 +68,17 @@ function download_package() {
 
 	# Download it
 	echo "    + Download $PNAME"
-    #wget --progress=bar:force $FINAL_URL/$PNAME.tar 2>&1 | progressbar
-    curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
-	check_code $? "Failure during download package"
+		
+	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $FINAL_URL/$PNAME.tar)
+	if [ "$reponse" != "200" ]; then
+		echo "Failure during download package"
+		echo "Url    : $FINAL_URL/$PNAME.tar"
+		echo "Return : Http reponse ($response)"
+		exit 1
+	else
+		curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
+		check_code $? "Failure during download package ($FINAL_URL/$PNAME.tar)"
+	fi
 }
 
 ###################
