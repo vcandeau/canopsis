@@ -27,7 +27,6 @@
 . $HOME/lib/pkgmgr/actions
 . $HOME/lib/pkgmgr/deps
 . $HOME/lib/pkgmgr/lock
-. $HOME/lib/pkgmgr/listfiles
 . $HOME/lib/pkgmgr/extract
 . $HOME/lib/pkgmgr/completion
 

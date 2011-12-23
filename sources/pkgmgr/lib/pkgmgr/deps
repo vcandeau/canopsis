@@ -19,46 +19,49 @@
 # ---------------------------------
 
 # Build install dependencies tree
-function build_install_deps_tree() {
+function build_install_deps_tree () {
 	init_tmp
 	parse_install_deps $@
 	clean_tree
 }
 
 # Build remove dependencies tree
-function build_remove_deps_tree() {
+function build_remove_deps_tree () {
 	init_tmp
 	parse_remove_deps $@
 	rm -Rf $TMP_FILE	
 }
 
 # Init file where tree is written
-function init_tmp() {
+function init_tmp () {
 	rm -Rf $TMP_FILE
 	touch $TMP_FILE
 }
 
 # Clean double entries in dependencies tree
-function clean_tree() {
+function clean_tree () {
 	sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++'
 }
 
 # Recursive dependencies parsing
-function parse_install_deps() {
+function parse_install_deps () {
 	D_TREE="$@ $D_TREE"
-    for dep in $@; do
+	for dep in $@; do
 		local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
-        local L_DEPS=$(db_parse "deps" "$DBINFO")
+		local L_DEPS=$(db_parse "deps" "$DBINFO")
 
-        if [ -z "$L_DEPS" ]; then NB_DEPS=0;
-        else NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l); fi
+		if [ -z "$L_DEPS" ]; then 
+			NB_DEPS=0
+		else 
+			NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l)
+		fi
 
-        if [ $NB_DEPS -gt 0 ]; then
-            parse_install_deps $L_DEPS
-        else
+		if [ $NB_DEPS -gt 0 ]; then
+			parse_install_deps $L_DEPS
+		else
 			echo "$L_DEPS" "$D_TREE" > $TMP_FILE
-        fi
-    done
+		fi
+	done
 }
 
 function parse_remove_deps() {

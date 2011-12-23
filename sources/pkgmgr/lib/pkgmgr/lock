@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-function on_die(){
+function on_die () {
 	exit_pending="True"
 	if ! [ -a "$LOCK_FILE" ]; then 
 		echo
@@ -28,16 +28,17 @@ function on_die(){
 	fi
 }
 
-function on_lock (){
+function on_lock () {
 	touch $LOCK_FILE
 }
 
-function off_lock (){
+function off_lock () {
 	rm -Rf $LOCK_FILE
 	check_lock
 }
 
-function check_lock (){
+function check_lock () {
 	if [[ ! -a "$LOCK_FILE" && "$exit_pending" == "True" ]]; then
-		exit 1; fi
+		exit 1
+	fi
 }
