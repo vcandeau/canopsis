@@ -29,6 +29,8 @@ function install_bin () {
 	PPATH=$1
 	list_bin_files $PPATH |
 		while read t_line ; do
+			dir_name=$(echo $t_line | sed -e 's_/[^/]*$__')
+			mkdir -p $PREFIX/$dir_name
 			mv $PPATH/.extract/$t_line $PREFIX/$t_line
 		done
 }
@@ -38,6 +40,8 @@ function install_conf () {
 	PPATH=$1
 	list_conf_files $PPATH | 
 		while read t_line ; do
+			dir_name=$(echo $t_line | sed -e 's_/[^/]*$__')
+			mkdir -p $PREFIX/$dir_name
 			if [ ! -e $PREFIX/$t_line ]; then
 				mv $PPATH/.extract/$t_line $PREFIX/$t_line
 			else	
