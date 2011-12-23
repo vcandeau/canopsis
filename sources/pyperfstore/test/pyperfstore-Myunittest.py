@@ -171,6 +171,14 @@ class KnownValues(unittest.TestCase):
 		if len(values) != 50:
 			raise Exception('Invalid aggregate (len: %s)' % len(values))
 
+	def test_07_candlestick(self):
+		##### DRAFT !
+		values = mynode.metric_get_values('load1', 1, 1000, auto_aggregate=False)
+
+		values = pyperfstore.math.candlestick(values, window=100)
+
+		#if len(values) != 10:
+		#	raise Exception('Invalid candlestick (len: %s)' % len(values))
 
 
 	def test_99_Remove(self):

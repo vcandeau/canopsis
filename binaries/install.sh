@@ -31,7 +31,7 @@ echo
 
 function get_ppath(){
 	PNAME=$1
-	PPATH="$SRC_PATH/bootstrap/$PNAME.tgz"
+	PPATH="$SRC_PATH/bootstrap/$PNAME.tar"
 	if [ -e $CPPATH ]; then
 		echo $PPATH
 	else
@@ -46,7 +46,7 @@ function install_package(){
 
 	echo "Install package $PNAME ..."
 	cd $SRC_PATH && mkdir -p tmp && cd tmp
-	tar xfz $PPATH
+	tar xf $PPATH
 	check_code $? "Untar package failure"
 	
 	cd $PREFIX
@@ -55,8 +55,8 @@ function install_package(){
 	pre_install
 	check_code $? "Pre-install step failure"
 	echo "  + Copy files"
-	tar xfz $SRC_PATH/tmp/$PNAME/files.tgz
-	check_code $? "Untar files.tgz failure"
+	tar xf $SRC_PATH/tmp/$PNAME/files.bz2
+	check_code $? "Untar files.bz2 failure"
 	echo "  + Post-install"
 	post_install
 	check_code $? "Post-install step failure"
@@ -68,10 +68,12 @@ function install_package(){
 	cd $SRC_PATH
 }
 
+echo "Kill all $HUSER process ..."
+pkill -9 -u $HUSER
+
 echo "Install Bootstrap in $PREFIX"
 install_package "canohome"
 install_package "canotools"
-install_package "canolibs"
 install_package "pkgmgr"
 
 cd $SRC_PATH
