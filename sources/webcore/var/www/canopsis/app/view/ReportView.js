@@ -41,8 +41,14 @@ Ext.define('canopsis.view.ReportView', {
 		*/
 		
 		//-------------------page height-----------------------
+		
 		var docHeight = Math.ceil(items.length / nbColumns) * 200 
-		document.body.style.height = docHeight
+		if(docHeight < 600){
+			document.body.style.height = 600
+		}else{
+			document.body.style.height = docHeight
+		}
+		
 		//this.height = docHeight
 		//this.width = 840
 		
@@ -67,13 +73,14 @@ Ext.define('canopsis.view.ReportView', {
 		
 		//-----------------populating with widgets--------------
 		//fixing layout (table goes wild without it)
-		for (i; i<nbColumns; i++){
+	/*	for (i; i<nbColumns; i++){
 			this.add({ html: '', border: 0, height: 0, padding:0})
-		}
+		}*/
+		
 
 		var ext_items = []
 		for(var i= 0; i < items.length; i++) {
-	
+				
 			log.debug(' - Item '+i+':', this.logAuthor)
 			var item = items[i]
 
