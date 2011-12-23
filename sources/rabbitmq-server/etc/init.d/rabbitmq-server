@@ -39,14 +39,10 @@ start_rabbitmq () {
     else
         RETVAL=0
         set +e
-        #setsid sh -c "$DAEMON > ${INIT_LOG_DIR}/startup_log \
-        #    2> ${INIT_LOG_DIR}/startup_err" &
-        #$CONTROL wait >/dev/null 2>&1
-        #RETVAL=$?
-				$DAEMON -detached > ${INIT_LOG_DIR}/startup_log 2> ${INIT_LOG_DIR}/startup_err
-        status_rabbitmq quiet
+	$DAEMON -detached > ${INIT_LOG_DIR}/startup_log 2> ${INIT_LOG_DIR}/startup_err
         sleep 2
-				set -e
+        status_rabbitmq quiet
+	set -e
         case "$RETVAL" in
             0)
                 echo SUCCESS
