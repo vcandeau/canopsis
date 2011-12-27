@@ -37,7 +37,7 @@ function db_set () {
 	check_code $? "Database insertion ($PNAME)"
 }
 
-# Delete package entri
+# Delete package entrie
 function db_del () {
 	PNAME=$1
 	sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
@@ -63,6 +63,12 @@ function db_parse () {
 			FIELD=4
 		elif [ "x$INFO" = "xdeps" ]; then
 			FIELD=5
+		elif [ "x$INFO" = "xarch" ]; then
+			FIELD=6
+		elif [ "x$INFO" = "xdist" ]; then
+			FIELD=7
+		elif [ "x$INFO" = "xdistvers" ]; then
+			FIELD=8
 		fi
 		echo "$DATA" | cut -d '|' -f$FIELD
 	fi
@@ -78,15 +84,45 @@ function check_repo () {
 	fi
 }
 
+# Clean Packages.list
+function clean_packages_list () {
+	LIST_PATH=$1
+	FIELD_NAME=1
+	# Remove useless ARCH
+	while read line; do
+		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
+		C_ARCH=$(db_parse arch "$line")
+		if [ "$C_ARCH" != "$ARCH" ] && [ "$C_ARCH" != "noarch" ]; then
+			sed -i /^"$line"$/d $LIST_PATH
+		fi	
+	done < "$LIST_PATH"
+	# Remove useless DISTRO
+	while read line; do
+		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
+		C_DIST=$(db_parse "dist" "$line")	
+		if [ "$C_DIST" != "$DIST" ] && [ "$C_DIST" != "nodist" ]; then
+			sed -i /^"$line"$/d $LIST_PATH
+		fi
+	done < "$LIST_PATH"
+	# Remove useless DISTRO VERSIONS
+	while read line; do
+		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
+		C_DISTVERS=$(db_parse "distvers" "$line")	
+		if [ "$C_DISTVERS" != "$DIST_VERS" ] && [ "$C_DISTVERS" != "novers" ]; then
+			sed -i /^"$line"$/d $LIST_PATH
+		fi	
+	done < "$LIST_PATH"
+}
+
 # Download Package list
 function update_db () {
 	echo " :: Download Packages.list ..."
 	check_repo
 	# Create Repo URL
 	if [ -z "$REPO_BASE" ]; then
-		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+		FINAL_URL=$REPO_URL/$REPO_VERS
 	else
-		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS
 	fi
 
 	# Remove old db
@@ -96,7 +132,9 @@ function update_db () {
 	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
 	check_code $? " # Packages.list not accessible (wget failure) ($FINAL_URL/Packages.list"
 
-	echo "LAST_UPDATE|`date`" > $VARLIB_PATH/info
+	clean_packages_list "$REMOTE_DB_PATH"
+	sed -i /^"LAST_UPDATE|"/d $VARLIB_PATH/info
+	echo "LAST_UPDATE|`date`" >> $VARLIB_PATH/info
 	check_code $? " # Pkgmgr info file insertion error"
 	echo "    + Done"
 }

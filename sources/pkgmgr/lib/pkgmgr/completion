@@ -26,8 +26,8 @@ _pkgmgr () {
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	actions="install install-local reinstall reinstall-local upgrade remove update list clean help"
-	local_pkgs=`cat $LOCAL_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1`
-	remote_pkgs=`cat $REMOTE_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1`
+	local_pkgs=$(if [ -f $LOCAL_DB_PATH ];then cat $LOCAL_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1; fi)
+	remote_pkgs=$(if [ -f $REMOTE_DB_PATH ];then cat $REMOTE_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1; fi)
 
 	if [[ ${prev} == "pkgmgr" ]]; then
 		COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
