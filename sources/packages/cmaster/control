@@ -6,6 +6,10 @@ RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr amqp2brule amqp2mongodb amqp2perfstore canolibs canotools ccli clock2amqp erlang mongodb python rabbitmq-server sla2mongodb webcore"
 
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
+
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 
