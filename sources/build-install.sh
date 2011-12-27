@@ -28,16 +28,17 @@ function pkg_options () {
 	if [ $NO_ARCH == true ]; then
 		P_ARCH="noarch"
 	fi
-	if [ $NO_DIST == true ]; then
-		P_DIST="nodist"
-	fi
 	if [ $NO_DISTVERS == true ]; then
+		P_DIST="nodist"
 		P_DISTVERS="novers"
+	else
+		if [ $NO_DIST == true ]; then
+			P_DIST="nodist"
+		fi
 	fi
-
 }
 
-function extract_archive(){
+function extract_archive () {
 	if [ ! -e $1 ]; then
 		echo "Error: Impossible to find '$1' ..."
 		exit 1
