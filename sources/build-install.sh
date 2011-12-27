@@ -24,6 +24,16 @@ INST_CONF="$SRC_PATH/build.d/"
 ######################################
 #  functions
 ######################################
+function pkg_options () {
+	if [ $NO_ARCH == true ]; then
+		P_ARCH="noarch"
+	fi
+	if [ $NO_DIST == true ]; then
+		P_DIST="nodist"
+		P_DISTVERS="novers"
+	fi
+}
+
 function extract_archive(){
 	if [ ! -e $1 ]; then
 		echo "Error: Impossible to find '$1' ..."
@@ -171,7 +181,7 @@ function make_package_archive(){
 	check_code $? "Package archive creation failure"
 
 	echo "    + Move to binaries directory ..."
-	BPATH=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS
+	BPATH=$SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS
 	mkdir -p $BPATH
 	check_code $? "Create Build folder failure"
 	cat /proc/version > $BPATH/build.info
@@ -188,16 +198,16 @@ function update_packages_list() {
 	PPATH=$SRC_PATH/packages/$PNAME
 	echo "    + Update Packages list Db ..."
 	
-	PKGLIST=$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/Packages.list
+	PKGLIST=$SRC_PATH/../binaries/Packages.list
 	touch $PKGLIST
 
 	. $PPATH/control
 	check_code $? "Source control file failure"
 	
-	PKGMD5=$(md5sum $SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS/$PNAME.tar | awk '{ print $1 }')
+	PKGMD5=$(md5sum $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PNAME.tar | awk '{ print $1 }')
 
 	sed "/^$PNAME/d" -i $PKGLIST
-    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES" >> $PKGLIST
+    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
 }
 
 function files_listing(){
@@ -408,7 +418,14 @@ for ITEM in $ITEMS; do
 
 	NAME="x"
 	VERSION="0.1"
+	RELEASE="0"
 	FCHECK="/tmp/notexist"
+	P_ARCH=$ARCH
+	P_DIST=$DIST
+	P_DISTVERS=$DIST_VERS
+
+	NO_ARCH=false
+	NO_DIST=false
 
 	function pre_install(){	true; }
 	function post_install(){ true; }
@@ -423,8 +440,11 @@ for ITEM in $ITEMS; do
 			cp pkgmgr/lib/pkgmgr/control.tpl packages/$NAME/control
 			sed "s#@NAME@#$NAME#g" -i packages/$NAME/control
 			sed "s#@VERSION@#$VERSION#g" -i packages/$NAME/control
+			sed "s#@RELEASE@#$RELEASE#g" -i packages/$NAME/control
 			. packages/$NAME/control
 		fi
+
+		pkg_options
 
 		function install(){ true; }
 		function build(){ true; }
@@ -458,7 +478,7 @@ for ITEM in $ITEMS; do
 			echo " + Update local pkgmgr database"
 			PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
 			sed "/^$NAME/d" -i $PKGLIST
-		    echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES" >> $PKGLIST
+			echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
 			check_code $? "Package entrie insertion in local pkgmgr database failure"
 
 			echo " + Post-install ..."
@@ -508,8 +528,9 @@ if [ $OPT_MPKG -eq 1 ]; then
 	echo "################################"
 	INSTALLER_PATH="$SRC_PATH/../binaries/canopsis_installer"
 	BSTRAP_PATH="$INSTALLER_PATH/bootstrap"
-	PKGS_PATH="$SRC_PATH/../binaries/$ARCH/$DIST/$DIST_VERS"
 
+	INSTALLER_PKGS="canohome canotools pkgmgr"	
+	
 	cp $SRC_PATH/canohome/lib/common.sh $SRC_PATH/../binaries
 
 	echo "Create tarball installer ..."
@@ -518,7 +539,15 @@ if [ $OPT_MPKG -eq 1 ]; then
 	echo "  + Copy install script"
 	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
 	echo "  + Copy packages ..."
-	cp $PKGS_PATH/{canohome.tar,canotools.tar,pkgmgr.tar} $BSTRAP_PATH
+	for PKG in $INSTALLER_PKGS; do
+		if [ -e $SRC_PATH/packages/$PKG/control ]; then
+			. $SRC_PATH/packages/$PKG/control
+			pkg_options
+			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
+		else
+			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
+		fi	
+	done
 	echo "  + Make archive"
 	cd $SRC_PATH/../binaries
 	tar cfz canopsis_installer.tgz canopsis_installer

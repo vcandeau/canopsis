@@ -2,9 +2,13 @@
 
 NAME="@NAME@"
 VERSION=@VERSION@
-RELEASE=0
+RELEASE=@RELEASE@
 DESCRIPTION=""
 REQUIRES=""
+
+P_ARCH="@P_ARCH@"
+P_DIST="@P_DIST@"
+P_DISTVERS="@P_DISTVERS@"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
