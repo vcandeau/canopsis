@@ -68,9 +68,9 @@
 	});
 
 	//these are only for testing purpose
-	//var reporting_view_id = 'view.root.test3';
-	//var reportStart = 1323990000000;
-	//var reportStop = 1324076400000;
+	//var export_view_id = 'view.root.test3';
+	//var export_from = 1323990000000;
+	//var export_to = 1324076400000;
 
 	function createApplication(){
 		log.debug("Start ExtJS application ...", "[app]");
@@ -89,9 +89,9 @@
 				reportViewport = Ext.create('Ext.container.Viewport');
 				//pass reporting parameters
 				var content = Ext.create('canopsis.view.ReportView',{
-					view_id : reporting_view_id,
-					//reportStart : reportStart,
-					//reportStop : reportStop,
+					view_id : export_view_id,
+					//export_from : export_from,
+					//export_to : export_to,
 					autoshow : true,
 					options : []});
 				reportViewport.add(content);
