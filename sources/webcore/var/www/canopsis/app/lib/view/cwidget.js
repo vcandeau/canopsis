@@ -28,8 +28,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	data: {},
 
-	displayed: false,
-
 	//addToRequestManager: true,
 
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
@@ -43,12 +41,17 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	task: false,
 	
 	reportMode : false,
+	exportMode : false,
+
+	//rendered: false,
+
+	PollNodeInfo: true,
 
 	initComponent: function() {
 
 		this.logAuthor = "["+this.id+"]"
 
-		log.debug('InitComponent '+this.id, this.logAuthor)
+		log.debug('InitComponent '+this.id+' (reportMode: '+this.reportMode+', exportMode: '+this.exportMode+')', this.logAuthor)
 
 		if (this.title == ''){
 			this.title = false;
@@ -67,9 +70,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.callParent(arguments);
 		
 		//if reporting
-		if(this.reportMode){
+		if(this.exportMode){
 			//this._reporting(this.reportStartTs,this.reportStopTs)
-			this._reporting(reportStart,reportStop)
+			//this._reporting(reportStart,reportStop)
+			this.on('afterrender', this.doRefresh, this);
 		}else{
 			if (this.nodeId){
 				this.uri += '/' + this.nodeId;
@@ -78,22 +82,26 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				if (this.refreshInterval){				
 					log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
 					this.task = {
-						run: this.doRefresh,
+						run: this._doRefresh,
 						interval: this.refreshInterval * 1000,
 						scope: this
 					}
+					//this.on('afterrender', function(){ this.rendered = true;}, this);
+					//this.startTask()
 					this.on('afterrender', this.startTask, this);
+				}else{
+					this.on('afterrender', this._doRefresh, this);		
 				}
 
 			} else {
-				this.doRefresh()
+				this.on('afterrender', this._doRefresh, this);
 			}
 		}
 		
 	},
 	
 	//display data from timestamp
-	_displayFromTs: function(from, to){
+	/*_displayFromTs: function(from, to){
 		if(this.displayFromTs){
 			this.stopTask()
 			this.displayFromTs(from, to)
@@ -101,11 +109,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		} else {
 			this.setHtml('widget display data from timestamp ' + from + ' to ' + to)
 		}
-	},
+	},*/
 	
 	
 	//launch by reporting.html (reporting dedicated page)
-	_reporting: function(from, to){
+	/*_reporting: function(from, to){
 		if(this.reporting){
 			log.debug('Starting the report', this.logAuthor)
 			this.reporting(from,to)
@@ -113,26 +121,19 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			log.debug('Warning, no reporting function for '+this.id, this.logAuthor)
 			this.setHtml('No reporting mode for this widget')
 		}
-	},
+	},*/
 
 	startTask: function(){
-		if (this.task){
+		if (this.task && ! this.reportMode){
 			log.debug('Start task, interval:  '+this.refreshInterval+' seconds', this.logAuthor)
 			Ext.TaskManager.start(this.task)
 		}else{
-			if (this.nodeId){
-				this.doRefresh()
-			}else{
-				if (! this.displayed){
-					this.displayed = true
-					this.doRefresh()
-				}
-			}
+			this._doRefresh()
 		}
 	},
 
 	stopTask: function(){
-		if (this.task){
+		if (this.task && ! this.reportMode){
 			log.debug('Stop task', this.logAuthor)
 			Ext.TaskManager.stop(this.task)
 		}
@@ -148,7 +149,26 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.stopTask()
 	},
 
-	doRefresh: function(){
+	_doRefresh: function(from, to){
+		if (this.PollNodeInfo){
+			this.getNodeInfo()
+		}
+
+		if (this.doRefresh){
+			this.doRefresh(from, to)
+		}
+	},
+
+	_onRefresh: function(data){
+		this.data = data
+		this.onRefresh(data)
+	},
+
+	onRefresh: function(data){
+		log.debug("onRefresh", this.logAuthor)
+	},
+
+	getNodeInfo: function(){
 		if (this.nodeId){
 			Ext.Ajax.request({
 				url: this.uri,
@@ -156,21 +176,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data[0]
-					this.data = data
-					this.onRefresh(data)
-					this.displayed = true
+					this._onRefresh(data)
 				},
 				failure: function (result, request) {
-					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+					log.error("Impossible to get Node informations, Ajax request failed ... ("+request.url+")", this.logAuthor)
 				} 
 			});
-		}else{
-			this.onRefresh(data)
 		}
-	},
-
-	onRefresh: function(data){
-		log.debug("onRefresh", this.logAuthor)
+		
 	},
 
 	setHtml: function(html){
