@@ -31,7 +31,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	layout: 'fit',
 
 	first: false,
-	start: false,
+	from: false,
 	shift: false,
 
 	//addToRequestManager: false,
@@ -49,17 +49,21 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	doRefresh: function(from, to){
 		if (this.chart){
-			
-			if (! to && ! from){
-				if (this.start){
-					from = this.start;
-					to = Date.now();
-				}else{
-					to = Date.now();
-					from = to - (this.time_window * 1000);
-				}
+			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
+
+			if (! to || to < 10000000) {
+				to = Date.now();
 			}
 
+			if (! from || from < 10000000) {
+				from = to - (this.time_window * 1000);
+			}
+
+			if (this.from && ! this.reportMode){
+				from = this.from;
+				to = Date.now();
+			}
+			
 			if (this.exportMode){
 				from = this.export_from;
 				to = this.export_to;
@@ -120,11 +124,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 
 			if (data[0].values.length > 0){
-				this.start = data[0].values[data[0].values.length-1][0];
+				this.from = data[0].values[data[0].values.length-1][0];
 
-				this.shift = this.first < (this.start - (this.time_window*1000))
+				this.shift = this.first < (this.from - (this.time_window*1000))
 				//log.debug('     + First: '+this.first, this.logAuthor)
-				//log.debug('     + First graph: '+(this.start - this.time_window), this.logAuthor)
+				//log.debug('     + First graph: '+(this.from - this.time_window), this.logAuthor)
 				log.debug('     + Shift: '+this.shift, this.logAuthor)
 			}
 				
@@ -328,15 +332,23 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if (values.length <= 0){
 			log.debug('   + No data', this.logAuthor)
 			if (this.reportMode){
-				this.chart.series[metric_id].setData([], false);
+				if (this.chart.series[metric_id].visible){
+					this.chart.series[metric_id].setData([], false);
+					this.chart.series[metric_id].hide()
+				}
 				return true
 			}else{
 				return false
 			}
 		}
 
+		if (this.reportMode){
+			if (! this.chart.series[metric_id].visible){
+				this.chart.series[metric_id].show()
+			}
+		}
 
-		if (! this.start || this.reportMode){
+		if (! this.from || this.reportMode){
 			log.debug('   + Set data', this.logAuthor)
 			this.first = values[0][0];
 
@@ -360,8 +372,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.chart.destroy()
 		this.reportStart = from
 		this.reportStop = to
-		//log.dump(this.start)
-		this.start = false
+		//log.dump(this.from)
+		this.from = false
 
 		this.createHighchartConfig(this.perfnode)
 		
