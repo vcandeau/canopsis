@@ -6,6 +6,9 @@ RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome"
 
+NO_ARCH=true
+NO_DIST=true
+
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 
