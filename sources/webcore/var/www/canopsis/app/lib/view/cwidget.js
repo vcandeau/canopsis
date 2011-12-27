@@ -68,6 +68,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.uri = '/rest/events/event'
 		
 		this.callParent(arguments);
+
+		if (this.reportMode) {
+			this.refreshInterval = false
+		}
 		
 		//if reporting
 		if(this.exportMode){
@@ -124,16 +128,18 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},*/
 
 	startTask: function(){
-		if (this.task && ! this.reportMode){
-			log.debug('Start task, interval:  '+this.refreshInterval+' seconds', this.logAuthor)
-			Ext.TaskManager.start(this.task)
-		}else{
-			this._doRefresh()
+		if (! this.reportMode) {
+			if (this.task){
+				log.debug('Start task, interval:  '+this.refreshInterval+' seconds', this.logAuthor)
+				Ext.TaskManager.start(this.task)
+			}else{
+				this._doRefresh()
+			}
 		}
 	},
 
 	stopTask: function(){
-		if (this.task && ! this.reportMode){
+		if (this.task){
 			log.debug('Stop task', this.logAuthor)
 			Ext.TaskManager.stop(this.task)
 		}
