@@ -20,9 +20,13 @@
 
 function create_view () {
 	LAST_UPDATE=$(cat $VARLIB_PATH/info | grep "^LAST_UPDATE|" | tail -n1 | cut -d '|' -f2)
+	INFO_ARCH=$(cat $VARLIB_PATH/info | grep "^ARCH|" | tail -n1 | cut -d '|' -f2)
+	INFO_DIST=$(cat $VARLIB_PATH/info | grep "^DIST|" | tail -n1 | cut -d '|' -f2)
+	INFO_DIST_VERS=$(cat $VARLIB_PATH/info | grep "^DIST_VERS|" | tail -n1 | cut -d '|' -f2)
 	if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
 		echo
-		echo "Last update : `echo $LAST_UPDATE`"
+		echo "System     : `echo $INFO_DIST $INFO_DIST_VERS $INFO_ARCH`"
+		echo "Last update: `echo $LAST_UPDATE`"
 		echo
 		echo -e "#=============================================================#"
 		echo -e "| Package                 Version             Status          |"

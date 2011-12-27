@@ -23,6 +23,7 @@ function build_install_deps_tree () {
 	init_tmp
 	parse_install_deps $@
 	clean_tree
+	rm -Rf $TMP_FILE	
 }
 
 # Build remove dependencies tree
