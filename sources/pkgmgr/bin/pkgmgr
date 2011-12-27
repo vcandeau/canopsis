@@ -50,6 +50,15 @@ detect_os > /dev/null
 
 trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
 
+function update_info () {
+	sed -i /^"ARCH|"/d $VARLIB_PATH/info
+	echo "ARCH|$ARCH" >> $VARLIB_PATH/info
+	sed -i /^"DIST|"/d $VARLIB_PATH/info
+	echo "DIST|$DIST" >> $VARLIB_PATH/info
+	sed -i /^"DIST_VERS|"/d $VARLIB_PATH/info
+	echo "DIST_VERS|$DIST_VERS" >> $VARLIB_PATH/info
+}
+
 function ask_confirmation() {
 	if [ "$OPT" != "--force-yes" ]; then
 		read -p "Do you want to continue [y/N]? " -n 1
@@ -111,6 +120,8 @@ function check_args() {
 ###############
 ACTION=$1
 OPT=$2
+
+update_info
 
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
 	if [ "x$ACTION" = "xinstall" ]; then
