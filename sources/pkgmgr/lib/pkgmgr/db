@@ -91,7 +91,7 @@ function clean_packages_list () {
 	# Remove useless ARCH
 	while read line; do
 		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
-		C_ARCH=$(db_parse arch "$line")
+		C_ARCH=$(db_parse "arch" "$line")
 		if [ "$C_ARCH" != "$ARCH" ] && [ "$C_ARCH" != "noarch" ]; then
 			sed -i /^"$line"$/d $LIST_PATH
 		fi	
