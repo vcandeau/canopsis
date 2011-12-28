@@ -54,9 +54,9 @@ function download_package() {
 	# Create URL
 	# Check if there is a repo base url
 	if [ -z "$REPO_BASE" ]; then
-		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+		FINAL_URL=$REPO_URL/$REPO_VERS/$R_ARCH/$R_DIST/$R_DIST_VERS
 	else
-		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$R_ARCH/$R_DIST/$R_DIST_VERS
 	fi
 	# Remove old packages
 	echo "    + Remove old packages"
@@ -140,6 +140,10 @@ function install_package () {
 		
 		# DOWNLOAD PACKAGE
 		if [[ "$res" == "True" ]]; then
+			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
+			R_ARCH=$(db_parse "arch" "$R_INFO")
+			R_DIST=$(db_parse "dist" "$R_INFO")
+			R_DIST_VERS=$(db_parse "distver" "$R_INFO")
 			download_package "$PNAME"
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_MD5=$(db_parse "md5" "$R_INFO")
@@ -149,7 +153,7 @@ function install_package () {
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "    + Check MD5: [Fail]"
-				exit 1
+				check_code 1 "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
 			else
 				echo "    + Check MD5: [Success]"
 			fi
@@ -344,7 +348,7 @@ function upgrade_package () {
 	
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "     + Checking Md5Sum: [Fail]"
-				exit 1
+				check_code 1 "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
 				else
 				echo "     + Checking Md5Sum: [Success]"
 			fi
