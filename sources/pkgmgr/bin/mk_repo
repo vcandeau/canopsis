@@ -1,0 +1,127 @@
+#!/bin/bash
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+usage() {
+	echo " :: Usage : mk_repo [PATH]"
+	echo
+	echo " :: Examples"
+	echo "   mk_repo /var/pkgmgr/binaries"
+	echo "   More informations on http://canopsis.com/"
+	exit 1
+}
+
+check_args() {
+	if [ -z "${arg1}" ]; then
+		usage
+	fi
+}
+
+check_valid_path() {
+	if [ ! -d "${arg1}" ]; then
+		echo " :: You must give me a path to folder"
+		usage
+	fi
+}
+
+source_package() {
+	local packagename="${1}"
+	. $packagename/control
+	NO_ARCH=false
+	NO_DIST=false
+	NO_DISTVERS=false
+}
+
+untar_package() {
+	local filename="${1}"
+	tar xf "${filename}"
+}
+
+remove_tar() {
+	local packagename="${1}"
+	rm -Rf "${packagename}"
+}
+
+add_to_packages_list() {
+	local packagename="${1}"
+	local MD5=$(md5sum $packagename.tar | awk '{ print $1 }')
+	local PKG_ARCH="${2}"
+	local PKG_DIST="${3}"
+	local PKG_DISTVERS="${4}"
+	if [ $NO_ARCH == true ]; then
+		PKG_ARCH="noarch"
+	fi
+	if [ $NO_DISTVERS == true ]; then
+		PKG_DIST="nodist"
+		PKG_DISTVERS="novers"
+	else
+		if [ $NO_DIST == true ]; then
+			PKG_DIST="nodist"
+		fi
+	fi	
+	echo "$packagename|$VERSION-$RELEASE||$MD5|$REQUIRES|$PKG_ARCH|$PKG_DIST|$PKG_DISTVERS" >> "${REPO_PATH}"/Packages.list
+}
+
+list_packages() {
+	local ARCH="${1}"
+	local DIST="${2}"
+	local DIST_VERS="${3}"
+	for package in "${REPO_PATH}""${ARCH}"/"${DIST}"/"${DIST_VERS}"/*; do
+		filename=$(echo $package | sed "s,${REPO_PATH}${ARCH}/${DIST}/${DIST_VERS}/,,")
+		if [ $(echo $filename|awk -F . '{print $NF}') == "tar" ]; then
+			packagename=$(basename $package .tar)
+			untar_package "${filename}"
+			source_package "${packagename}"
+			add_to_packages_list "${packagename}" "${ARCH}" "${DIST}" "${DIST_VERS}"
+			echo "         | "${packagename}""
+			remove_tar "${packagename}"
+		fi
+	done
+}
+
+list_folder() {
+	REPO_PATH="${arg1}"
+	archs=$(ls -d1 "${REPO_PATH}"/*/ | sed "s|^${REPO_PATH}/||")
+	for arch in ${archs}; do
+		arch=$(echo "${arch}" | sed '$s/.$//')
+		echo " :: Arch: "${arch}""
+		distribs=$(ls -d1 "${REPO_PATH}"/"${arch}"/*/ | sed "s|^${REPO_PATH}/${arch}/||")
+		for distrib in ${distribs}; do
+			distrib=$(echo "${distrib}" | sed '$s/.$//')
+			echo "    + Distrib: "${distrib}""
+			versions=$(ls -d1 "${REPO_PATH}"/"${arch}"/"${distrib}"/*/ | sed "s|^${REPO_PATH}/${arch}/${distrib}/||")
+			for version in ${versions}; do
+				version=$(echo "${version}" | sed '$s/.$//')
+				echo "       + Version: "${version}""
+				cd "${REPO_PATH}""${arch}"/"${distrib}"/"${version}"
+				list_packages "${arch}" "${distrib}" "${version}"
+			done
+		done
+	done 
+}
+
+#######
+# Run #
+#######
+arg1="${1}"
+
+check_args
+check_valid_path
+rm -Rf $arg1/Packages.list
+list_folder

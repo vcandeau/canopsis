@@ -19,7 +19,6 @@
 # ---------------------------------
 
 function show_help () {
-	echo
 	echo " :: Usage : pkgmgr [ACTION] [OPTIONS] <package>"
 	echo
 	echo " :: Actions"
