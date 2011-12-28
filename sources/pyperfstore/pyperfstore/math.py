@@ -73,8 +73,9 @@ def search_index(x, L):
 	if x >= L[last_index][0]:
 		logger.debug("   + %s is after last timestamp's point, index: %s" % (x, last_index))
 		return last_index
-
-	estimated = estimate_index(x, L)
+	
+	#estimated = estimate_index(x, L)
+	estimated = get_timestamp_interval(L)
 	logger.debug("   + Estimated index: %s" % estimated)	
 	
 	## Ok if interval is regular

@@ -28,13 +28,17 @@ function pkg_options () {
 	if [ $NO_ARCH == true ]; then
 		P_ARCH="noarch"
 	fi
-	if [ $NO_DIST == true ]; then
+	if [ $NO_DISTVERS == true ]; then
 		P_DIST="nodist"
 		P_DISTVERS="novers"
+	else
+		if [ $NO_DIST == true ]; then
+			P_DIST="nodist"
+		fi
 	fi
 }
 
-function extract_archive(){
+function extract_archive () {
 	if [ ! -e $1 ]; then
 		echo "Error: Impossible to find '$1' ..."
 		exit 1
@@ -207,7 +211,7 @@ function update_packages_list() {
 	PKGMD5=$(md5sum $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PNAME.tar | awk '{ print $1 }')
 
 	sed "/^$PNAME/d" -i $PKGLIST
-    echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
+	echo "$PNAME|$VERSION-$RELEASE||$PKGMD5|$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
 }
 
 function files_listing(){
@@ -426,6 +430,7 @@ for ITEM in $ITEMS; do
 
 	NO_ARCH=false
 	NO_DIST=false
+	NO_DISTVERS=false
 
 	function pre_install(){	true; }
 	function post_install(){ true; }

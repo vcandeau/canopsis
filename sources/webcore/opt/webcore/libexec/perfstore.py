@@ -37,6 +37,7 @@ logging.basicConfig(level=logging_level,
 logger = logging.getLogger("rest")
 
 # Modules
+from pyperfstore import math
 from pyperfstore import node
 from pyperfstore import mongostore
 from ctools import parse_perfdata
@@ -71,6 +72,8 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 	else:
 		start = stop - 86400
 
+	data_type = request.params.get('data_type', default='line')
+
 	if metrics:
 		#small hack
 		metrics = metrics.replace("<slash>", '/')
@@ -78,10 +81,11 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		metrics = metrics.split(',')
 		
 		logger.debug("GET:")
-		logger.debug(" + _id:     %s" % _id)
-		logger.debug(" + metrics: %s" % metrics)
-		logger.debug(" + start:   %s" % start)
-		logger.debug(" + stop:    %s" % stop)
+		logger.debug(" + _id:       %s" % _id)
+		logger.debug(" + metrics:   %s" % metrics)
+		logger.debug(" + start:     %s" % start)
+		logger.debug(" + stop:      %s" % stop)
+		logger.debug(" + data_type: %s" % data_type)
 
 
 		output = []
@@ -91,14 +95,30 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		for metric in metrics:
 			if metric:
 				try:
-					data = mynode.metric_get_values(metric, start, stop)
+					if data_type == 'candlestick':
+						window = 86400
+						stop = 1324425600
+						nb = 180
+						data = []
+						for i in range(nb):
+							stop = stop - window
+							values = mynode.metric_get_values(metric, stop-window, stop, auto_aggregate=False)
+							if values:
+								cdl = math.candlestick(values, window=window)
+								cdl[0] = stop
+								data.append(cdl)
+					else:
+						data = mynode.metric_get_values(metric, start, stop)
+
 				except Exception, err:
-					print err
+					logger.error(err)
 
 				values = []
 
-				for value in data:
-					values.append([value[0] * 1000, value[1]])
+				if len(data) > 1:
+					for value in data:
+						value[0] = value[0] * 1000
+						values.append(value)
 
 				output.append({'metric': metric, 'values': values })
 
@@ -106,7 +126,7 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		
 	else:
 		account = get_account()
-		storage = get_storage(namespace='perfdata', logging_level=logging.DEBUG)
+		storage = get_storage(namespace='perfdata')
 		data = storage.get(_id, account=account)
 		
 		output = []

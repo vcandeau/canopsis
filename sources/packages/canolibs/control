@@ -6,6 +6,10 @@ RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python"
 
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
+
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
 	check_code $? 

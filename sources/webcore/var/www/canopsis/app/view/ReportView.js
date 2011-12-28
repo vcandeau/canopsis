@@ -100,13 +100,13 @@ Ext.define('canopsis.view.ReportView', {
 			item['border'] = false
 
 			item['reportMode'] = true;
+			item['exportMode'] = true;
 			
-			//log.debug('start timestamp is : ' + reportStart, this.logAuthor)
-			//log.debug('stop timestamp is : ' + reportStop, this.logAuthor)
+			//log.debug('start timestamp is : ' + export_from, this.logAuthor)
+			//log.debug('stop timestamp is : ' + export_to, this.logAuthor)
 			
-			item.reportStart = reportStart
-			item.reportStop = reportStop
-			item.reportMode = true
+			item.export_from = export_from
+			item.export_to = export_to
 
 			//Set default options
 			if (! item.nodeId) { item.nodeId=nodeId}

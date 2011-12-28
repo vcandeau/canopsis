@@ -8,6 +8,7 @@ REQUIRES="canohome pkgmgr python canolibs"
 
 NO_ARCH=true
 NO_DIST=true
+NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
