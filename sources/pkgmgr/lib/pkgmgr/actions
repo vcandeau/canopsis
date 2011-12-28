@@ -143,7 +143,7 @@ function install_package () {
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_ARCH=$(db_parse "arch" "$R_INFO")
 			R_DIST=$(db_parse "dist" "$R_INFO")
-			R_DIST_VERS=$(db_parse "distver" "$R_INFO")
+			R_DIST_VERS=$(db_parse "distvers" "$R_INFO")
 			download_package "$PNAME"
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_MD5=$(db_parse "md5" "$R_INFO")
