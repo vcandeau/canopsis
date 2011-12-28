@@ -263,7 +263,7 @@ function make_package(){
 	#fi
 		
 	make_package_archive "$PNAME"	
-	update_packages_list "$PNAME"	
+	#update_packages_list "$PNAME"	
 }
 
 function install_basic_source(){
