@@ -113,7 +113,7 @@ function install_package () {
 			# If no remote informations, package is not available
 				if [ -z "$R_INFO" ]; then
 					echo " :: Package $PNAME not available"
-					if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+					exit 1
 				# Else, install package
 				else
 					echo " :: Install package $PNAME"
