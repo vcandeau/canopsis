@@ -82,9 +82,9 @@ list_packages() {
 	local ARCH="${1}"
 	local DIST="${2}"
 	local DIST_VERS="${3}"
-	for package in "${REPO_PATH}""${ARCH}"/"${DIST}"/"${DIST_VERS}"/*; do
-		filename=$(echo $package | sed "s,${REPO_PATH}${ARCH}/${DIST}/${DIST_VERS}/,,")
-		if [ $(echo $filename|awk -F . '{print $NF}') == "tar" ]; then
+	for package in "${REPO_PATH}"/"${ARCH}"/"${DIST}"/"${DIST_VERS}"/*; do
+		filename=$(echo $package | sed "s,${REPO_PATH}/${ARCH}/${DIST}/${DIST_VERS}/,,")
+		if [ $(echo $filename | awk -F . '{print $NF}') == "tar" ]; then
 			packagename=$(basename $package .tar)
 			untar_package "${filename}"
 			source_package "${packagename}"
@@ -96,8 +96,12 @@ list_packages() {
 }
 
 list_folder() {
-	REPO_PATH="${arg1}"
-	archs=$(ls -d1 "${REPO_PATH}"/*/ | sed "s|^${REPO_PATH}/||")
+	REPO_PATH=$(pwd "${arg1}")
+	echo " :: Repo path: "${REPO_PATH}""
+	if [ $(echo ${REPO_PATH} | sed 's/^.*\(..\)$/\1/') == "/" ]; then
+		REPO_PATH=$(echo "${REPO_PATH}"*/ | sed '$s/.$///')
+	fi
+		archs=$(ls -d1 "${REPO_PATH}"/*/ | sed "s|^${REPO_PATH}/||")
 	for arch in ${archs}; do
 		arch=$(echo "${arch}" | sed '$s/.$//')
 		echo " :: Arch: "${arch}""
@@ -109,7 +113,7 @@ list_folder() {
 			for version in ${versions}; do
 				version=$(echo "${version}" | sed '$s/.$//')
 				echo "       + Version: "${version}""
-				cd "${REPO_PATH}""${arch}"/"${distrib}"/"${version}"
+				cd "${REPO_PATH}"/"${arch}"/"${distrib}"/"${version}"
 				list_packages "${arch}" "${distrib}" "${version}"
 			done
 		done
