@@ -188,7 +188,7 @@ function make_package_archive(){
 	BPATH=$SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS
 	mkdir -p $BPATH
 	check_code $? "Create Build folder failure"
-	cat /proc/version > $BPATH/build.info
+	cat /proc/version > $SRC_PATH/../binaries/build.info
 	mv $PNAME.tar $BPATH/
 	check_code $? "Move binaries into build folder failure"
 
