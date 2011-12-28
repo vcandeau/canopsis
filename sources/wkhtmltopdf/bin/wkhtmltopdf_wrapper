@@ -56,7 +56,7 @@ else
 	footer="--footer-html /opt/canopsis/var/wkhtmltopdf/footer.html"
 	#footer_command="'Page [page] of [toPage]'
 		
-	js_script="var reporting_view_id='$3';var reportStart=$4;var reportStop=$5"
+	js_script="var export_view_id='$3';var export_from=$4;var export_to=$5"
 	js_command="--run-script"
 
 	base_command="wkhtmltopdf --use-xserver --debug-javascript --load-error-handling ignore --disable-smart-shrinking "

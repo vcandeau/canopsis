@@ -137,8 +137,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//add item in the view
 			//this.register(item,item.nodeId,item.refreshInterval);
 
-			var widget = this.add(item);
-			this.widgets.push(widget)
+			if(this.view.reporting){
+				item.reportMode = true;
+			}
+
+			//var widget = this.add(item);
+			this.widgets.push(item)
 
 		}else{
 			//many widgets
@@ -175,11 +179,21 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
 				if (item.title){ item.border = true }
 
-				var widget = this.add(item);
-				this.widgets.push(widget)
+				if(this.view.reporting){
+					item.reportMode = true;
+				}
+
+				//var widget = this.add(item);
+				this.widgets.push(item)
 			}
 		}
+
+		//Add items on layout
+		if (this.widgets){
+			this.widgets = this.add(this.widgets)
+		}
 		
+		//if report mode
 		if(this.view.reporting){
 			this.reportBar = Ext.create('canopsis.view.ReportingBar.ReportingBar');
 			this.addDocked(this.reportBar);
@@ -189,15 +203,16 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.saveButton.on('click',this.saveButton,this);
 			this.reportBar.currentDate.on('select',this.onReport,this);
 			this.reportBar.combo.on('select',this.onReport,this);
-		}else{
-			//binding event to save resources
-			this.on('show', function(){
-				this._onShow();
-			}, this);
-			this.on('hide', function(){
-				this._onHide();
-			}, this);
 		}
+
+		//binding event to save resources
+		this.on('show', function(){
+			this._onShow();
+		}, this);
+		this.on('hide', function(){
+			this._onHide();
+		}, this);
+		
 	},
 	
 	//---------------------Reporting functions--------------------
@@ -206,10 +221,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var toolbar = this.reportBar
 
 		if (toolbar.currentDate.isValid()){
-			var stopReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var startReport = stopReport - toolbar.combo.getValue();
+			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var stopReport = startReport + toolbar.combo.getValue();
+
+			this.mask.show();
+
 			for (i in this.widgets){
-				this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
+				//this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
+				this.widgets[i]._doRefresh(startReport * 1000, stopReport * 1000)
 			}
 		}
 	},
@@ -244,8 +263,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug('Report generation', this.logAuthor);
 		var toolbar = this.reportBar
 		if (toolbar.currentDate.isValid()){
-			var stopReport = (parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U')));
-			var startReport =	(stopReport - toolbar.combo.getValue());
+			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var stopReport = startReport + toolbar.combo.getValue();
 			
 			log.debug(stopReport)
 			log.debug(startReport)
