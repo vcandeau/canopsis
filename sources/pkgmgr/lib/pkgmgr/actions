@@ -149,7 +149,7 @@ function install_package () {
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "    + Check MD5: [Fail]"
-				exit 1
+				check_code 1 "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
 			else
 				echo "    + Check MD5: [Success]"
 			fi
@@ -344,7 +344,7 @@ function upgrade_package () {
 	
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "     + Checking Md5Sum: [Fail]"
-				exit 1
+				check_code 1 "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
 				else
 				echo "     + Checking Md5Sum: [Success]"
 			fi
