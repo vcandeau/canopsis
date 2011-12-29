@@ -163,6 +163,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if (this.doRefresh){
 			this.doRefresh(from, to)
 		}
+
+		if(this.mytab.mask){
+			this.mytab.mask.hide();
+		}
 	},
 
 	_onRefresh: function(data){

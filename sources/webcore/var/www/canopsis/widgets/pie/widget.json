@@ -15,5 +15,9 @@
 			"name": "metric",
 			"displayField": "metric",
 			"valueField": "metric"
-		}]
+		},{
+                        "xtype": "textfield",
+                        "fieldLabel":"Metric Max",
+                        "name": "metric_max"
+                }]
 }]

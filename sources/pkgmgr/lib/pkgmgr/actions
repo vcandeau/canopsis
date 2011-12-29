@@ -54,9 +54,9 @@ function download_package() {
 	# Create URL
 	# Check if there is a repo base url
 	if [ -z "$REPO_BASE" ]; then
-		FINAL_URL=$REPO_URL/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+		FINAL_URL=$REPO_URL/$REPO_VERS/$R_ARCH/$R_DIST/$R_DIST_VERS
 	else
-		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$ARCH/$DIST/$DIST_VERS
+		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$R_ARCH/$R_DIST/$R_DIST_VERS
 	fi
 	# Remove old packages
 	echo "    + Remove old packages"
@@ -113,7 +113,7 @@ function install_package () {
 			# If no remote informations, package is not available
 				if [ -z "$R_INFO" ]; then
 					echo " :: Package $PNAME not available"
-					if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+					exit 1
 				# Else, install package
 				else
 					echo " :: Install package $PNAME"
@@ -140,6 +140,10 @@ function install_package () {
 		
 		# DOWNLOAD PACKAGE
 		if [[ "$res" == "True" ]]; then
+			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
+			R_ARCH=$(db_parse "arch" "$R_INFO")
+			R_DIST=$(db_parse "dist" "$R_INFO")
+			R_DIST_VERS=$(db_parse "distvers" "$R_INFO")
 			download_package "$PNAME"
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_MD5=$(db_parse "md5" "$R_INFO")
