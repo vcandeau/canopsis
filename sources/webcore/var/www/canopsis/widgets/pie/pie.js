@@ -25,121 +25,121 @@ Ext.define('widgets.pie.pie' ,{
 	
 	logAuthor: '[pie]',
 	
-	//the pie does note support css color name, so must use the following
-	colors: {
-		up: '#50b432',
-		down: '#ed241b',
-		unreachable: '#f0f0ff',
-		ok : '#50b432',
-		warning: '#ed941b',
-		critical: '#ed241b',
-		unknown: '#f0f0ff' 
-	},
-	
 	initComponent: function() {
-		log.debug('Init pie kpi '+this.id, this.logAuthor)
-		log.debug(' + NodeId: '+ this.nodeId, this.logAuthor)
 		this.callParent(arguments);
 	},
 	
-	onRefresh: function(data){		
-		if(!this.chart){
-			this.setPie();
-		}
-		
-		var value = data.perf_data_array
-		
-		if (value){
-				var values = [];
-				var legend = [];
-				var colors = ['#fff'];
-
-				if(value[this.metric]){
-					log.debug('metric found', this.logAuthor);
-					value = value[this.metric]
-					var ok = Math.round(value['ok']);
-					var warn = Math.round(value['warn']);
-					var crit = Math.round(value['crit']);
-					var unkn = Math.round(value['unkn']);
-					
-				} else {
-					var ok = Math.round(value['ok'].value);
-					var warn = Math.round(value['warn'].value);
-					var crit = Math.round(value['crit'].value);
-					var unkn = Math.round(value['unkn'].value);
-				}
-				
-				
-				if (ok > 0){
-					values.push(['Ok', ok]);
-					this.options.seriesColors.push(this.colors['ok']);
-					//this.options.seriesColors.push(global.default_colors[15]);
-				}
-				
-				
-				if (warn > 0){
-					values.push(['Warning', warn]);
-					this.options.seriesColors.push(this.colors['warning']);
-					//this.options.seriesColors.push(global.default_colors[12]);
-				}
-				
-				
-				if (crit > 0){
-					values.push(['Critical', crit]);
-					this.options.seriesColors.push(this.colors['critical']);
-					//this.options.seriesColors.push(global.default_colors[5]);
-				}
-				
-				
-				if (unkn > 0){
-					values.push(['Unknown', unkn]); 
-					this.options.seriesColors.push(this.colors['unknown']);
-					//this.options.seriesColors.push(global.default_colors[10]);
-				}
-				
-				
-				
-				if(values.length != 0){
-					if (!this.chart){
-						log.debug('Create the pie '+this.id, this.logAuthor)
-						this.chart = jQuery.jqplot("pie-"+this.id, [values], this.options);
-					}else{
-						log.debug('update the pie '+this.id, this.logAuthor)
-						this.chart.series[0].data = values
-						//this.chart.series[0].color = "#FF0000"
-						this.chart.replot(this.options)
-					}
-				}else{
-					log.debug('Pie cannot be built,no crit/warn/unkn/ok found', this.logAuthor)
-					this.setHtml("<center><div>There is no data to display</br>check if you set the right metric in view editor.</div></center>");
-				}			
-		}else{
-			this.setHtml("<center><div>Impossible to display pie because</br>input data are invalid (check console)</div></center>");
+	onRefresh: function(data){
+		if (! this.chart){
+			this.createHighchart(data);
 		}
 	},
 	
-	setPie : function(){
-		this.setHtml("<div id='pie-"+this.id+"' style=height:100%></div>");
+	createHighchart: function(data){
+		this.setOptions();
+
+		var title = "";
+		if (data.resource){
+			title = data.resource + ' on ';
+		}
+		if (data.component){
+			title += data.component;
+		}
+		this.options.title.text = title;
 		
+		log.debug(" + set title: '"+title+"'", this.logAuthor)
+		
+		if (data.perf_data_array){
+			var perf_data = data.perf_data_array;			
+
+			var serie = {
+				type: 'pie',
+				data: []
+			};
+
+			if (this.metric){
+				log.debug(" + Use one metric: '"+this.metric+"'", this.logAuthor)
+				metric = perf_data[this.metric]
+	
+				var metric_max = metric.max;
+				if (this.metric_max){
+					log.debug(" + Set max to: "+this.metric_max, this.logAuthor)
+					metric_max = this.metric_max;
+				}
+
+				serie.data.push(['Free', metric_max-metric.value])
+				serie.data.push([metric.metric, metric.value])
+			}else{
+				log.debug(" + Use Multiple metrics", this.logAuthor)
+				var index;
+				var total = 0;
+				for (index in perf_data){
+					metric = perf_data[index]
+					total += metric.value			
+				}
+				if (total == 0){ total = 1 }
+				log.debug("   + Total: "+total, this.logAuthor)
+
+				for (index in perf_data){
+					log.debug("   + Push metric: '"+index+"'", this.logAuthor)
+					metric = perf_data[index]
+					serie.data.push([metric.metric, Math.round(metric.value / total) ])
+				}
+			}
+
+			this.options.series.push(serie)
+		}
+
+		this.chart = new Highcharts.Chart(this.options);
+		//this.doRefresh();
+	},
+
+	setOptions: function(){
 		this.options = {
-						defaultHeight: 100,
-						grid: {
-							borderWidth: 0,
-							shadow: false,
-							background: 'transparent'
-						},
-						seriesDefaults: {
-							renderer: jQuery.jqplot.PieRenderer,
-							rendererOptions: {
-								showDataLabels: true
-							}
-						},
-						legend: {
-							show:true,
-							location: 'e',
-						}
+			chart: {
+				renderTo: this.divId,
+				defaultSeriesType: 'pie',
+				height: this.divHeight,
+				animation: false,
+				borderColor: "#FFFFFF"
+			},
+			exporting: {
+				enabled: false
+			},
+			colors: [],
+			plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						enabled: false
+					},
+					showInLegend: true,
+					animation: false,
+				}
+			},
+			tooltip: {
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';
 					}
-		this.options.seriesColors = [];
+			},
+			title: {
+				text: '',
+				floating: true
+			},
+			symbols: [],
+			credits: {	
+				enabled: false
+			},
+			series: []
+		}
+
+		//specifique options to add
+		if(this.exportMode){
+			this.options.plotOptions.pie.enableMouseTracking = false;
+			this.options.plotOptions.tooltip = {}
+		}
+
 	}
 	
 	
