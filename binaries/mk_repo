@@ -1,0 +1,162 @@
+#!/bin/bash
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+usage() {
+	echo " :: Usage : mk_repo [PATH]"
+	echo
+	echo " :: Examples"
+	echo "   mk_repo /var/pkgmgr/binaries"
+	echo "   More informations on http://canopsis.com/"
+	exit 1
+}
+
+check_code() {
+  if [ $1 -ne 0 ]; then
+    echo -e "Error: Code: $1"
+    echo -e "Output:\n$2"
+    exit $1
+  fi
+}
+
+check_args() {
+	if [ -z "${arg1}" ]; then
+		usage
+	fi
+}
+
+check_valid_path() {
+	if [ ! -d "${arg1}" ]; then
+		echo " :: You must give me a path to folder"
+		usage
+	fi
+}
+
+source_package() {
+	local packagename="${1}"
+	. $tmp_folder/$packagename/control
+	check_code $? "Error during source control file (. $tmp_folder/$packagename/control)"
+	NO_ARCH=false
+	NO_DIST=false
+	NO_DISTVERS=false
+}
+
+create_tmp() {
+	tmp_folder=$(mktemp -d)
+}
+
+untar_package() {
+	local fullpath="${1}"
+	local filename="${2}"
+	tar xf "$fullpath"/"${filename}" -C $tmp_folder
+	check_code $? "Error during untar package (tar xf $tmp_folder/${filename} -C $tmp_folder)"
+}
+
+remove_tar() {
+	local packagename="${1}"
+	rm -Rf $tmp_folder/"${packagename}"*
+	check_code $? "Error during remove package (rm -Rf $tmp_folder/${packagename}*)"
+}
+
+add_to_packages_list() {
+	local fullpath="${1}"
+	local packagename="${2}"
+	local MD5=$(md5sum $fullpath/$packagename.tar | awk '{ print $1 }')
+	local PKG_ARCH="${3}"
+	local PKG_DIST="${4}"
+	local PKG_DISTVERS="${5}"
+	if [ $NO_ARCH == true ]; then
+		PKG_ARCH="noarch"
+	fi
+	if [ $NO_DISTVERS == true ]; then
+		PKG_DIST="nodist"
+		PKG_DISTVERS="novers"
+	else
+		if [ $NO_DIST == true ]; then
+			PKG_DIST="nodist"
+		fi
+	fi	
+	echo "$packagename|$VERSION-$RELEASE||$MD5|$REQUIRES|$PKG_ARCH|$PKG_DIST|$PKG_DISTVERS" >> "${REPO_PATH}"/Packages.list
+}
+
+list_packages() {
+	local ARCH="${1}"
+	local DIST="${2}"
+	local DIST_VERS="${3}"
+	local FULL_PATH="${REPO_PATH}"/"${ARCH}"/"${DIST}"/"${DIST_VERS}"
+	for package in "${FULL_PATH}"/*; do
+		filename=$(echo $package | sed "s,${FULL_PATH}/,,")
+		if [ $(echo $filename | awk -F . '{print $NF}') == "tar" ]; then
+			packagename=$(basename $package .tar)
+			echo "       | $packagename"
+			untar_package "${FULL_PATH}" "${filename}"
+			source_package "${packagename}"
+			add_to_packages_list "${FULL_PATH}" "${packagename}" "${ARCH}" "${DIST}" "${DIST_VERS}"
+			remove_tar "${FULL_PATH}""${packagename}"
+			cd $REPO_PATH
+		fi
+	done
+}
+
+list_folder() {
+	REPO_PATH="${arg1}"
+	if [ -z "$(ls -l $REPO_PATH | grep "^d")" ]; then
+		echo "    + Error: Repo is empty"
+		exit 1
+	fi
+	if [ "$REPO_PATH" == "." ]; then
+		REPO_PATH=$(pwd .)
+	fi
+	if [ $(echo ${REPO_PATH} | sed 's/^.*\(..\)$/\1/') == "/" ]; then
+		REPO_PATH=$(echo "${REPO_PATH}"*/ | sed '$s/.$///')
+	fi
+	echo " :: Repo path: "${REPO_PATH}""
+	archs=$(ls -d1 "${REPO_PATH}"/*/ | sed "s|^${REPO_PATH}/||")
+	for arch in ${archs}; do
+		check_code $? "Error during ls ${REPO_PATH}"
+		arch=$(echo "${arch}" | sed '$s/.$//')
+		echo " :: Arch: "${arch}""
+		distribs=$(ls -d1 "${REPO_PATH}"/"${arch}"/*/ | sed "s|^${REPO_PATH}/${arch}/||")
+		check_code $? "Error during ls ${REPO_PATH}/${arch}"
+		for distrib in ${distribs}; do
+			check_code $? "Error during ls ${REPO_PATH}/${arch}/${distrib}"
+			distrib=$(echo "${distrib}" | sed '$s/.$//')
+			echo "    + Distrib: "${distrib}""
+			versions=$(ls -d1 "${REPO_PATH}"/"${arch}"/"${distrib}"/*/ | sed "s|^${REPO_PATH}/${arch}/${distrib}/||")
+			for version in ${versions}; do
+				check_code $? "Error during ls ${REPO_PATH}/${archs}/${distribs}/${versions}"
+				version=$(echo "${version}" | sed '$s/.$//')
+				echo "       + Version: "${version}""
+				cd "${REPO_PATH}"/"${arch}"/"${distrib}"/"${version}"
+				list_packages "${arch}" "${distrib}" "${version}"
+			done
+		done
+	done 
+}
+
+#######
+# Run #
+#######
+arg1="${1}"
+check_args
+check_valid_path
+rm -Rf $arg1/Packages.list
+create_tmp
+list_folder
+rm -Rf $tmp_folder

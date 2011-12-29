@@ -45,7 +45,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	params: {},
 
-	time_window: 86400, //24 hours
+	time_window: global.commonTs.day, //24 hours
 
 	doRefresh: function(from, to){
 		if (this.chart){
@@ -118,6 +118,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	onRefresh: function (data){
 		if (this.chart){
 			log.debug(" + On refresh "+this.id+" ...", this.logAuthor)
+
+			/*if (this.reportMode){
+				this.chart.showLoading();
+			}*/
+
 			var i;
 			for (i in data){
 				this.addDataOnChart(data[i])
@@ -133,9 +138,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 				
 			this.chart.redraw();
-			if(this.mytab.mask){
-				this.mytab.mask.hide();
-			}
+
+			/*if (this.reportMode){
+				this.chart.hideLoading();
+			}*/
 		}
 	},
 
@@ -164,14 +170,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if(!this.title && perfnode.id){
 			var nodeName = perfnode.id.split('.')
 			
-			//component
-			if(nodeName[5]){
-				title += nodeName[5]
-			}
-	
 			// resource
-			if (nodeName[4]){
-				title += ' on ' + nodeName[4]
+			if (nodeName[5]){
+				title += nodeName[5] + ' on '
+			}
+
+			//component
+			if(nodeName[4]){
+				title += nodeName[4]
 			}
 			
 		}
@@ -231,6 +237,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		//---------------------------------------------------------
 
 		this.options = {
+			reportMode: this.reportMode,
 			chart: {
 				renderTo: this.divId,
 				//zoomType: 'x',
