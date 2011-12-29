@@ -44,4 +44,5 @@ _pkgmgr () {
 		return 0
 	fi
 }
+
 complete -F _pkgmgr pkgmgr
