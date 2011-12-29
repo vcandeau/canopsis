@@ -166,7 +166,7 @@ class KnownValues(unittest.TestCase):
 	def test_06_aggregate(self):
 		##### DRAFT !
 		values = mynode.metric_get_values('load1', 1, 100)
-		values = pyperfstore.math.aggregate(values, max_points=50)
+		values = pyperfstore.pmath.aggregate(values, max_points=50)
 
 		if len(values) != 50:
 			raise Exception('Invalid aggregate (len: %s)' % len(values))
@@ -175,7 +175,7 @@ class KnownValues(unittest.TestCase):
 		##### DRAFT !
 		values = mynode.metric_get_values('load1', 1, 1000, auto_aggregate=False)
 
-		values = pyperfstore.math.candlestick(values, window=100)
+		values = pyperfstore.pmath.candlestick(values, window=100)
 
 		#if len(values) != 10:
 		#	raise Exception('Invalid candlestick (len: %s)' % len(values))

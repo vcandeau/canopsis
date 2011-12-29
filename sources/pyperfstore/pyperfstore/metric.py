@@ -23,7 +23,7 @@ import random
 from operator import itemgetter
 
 from pyperfstore.dca import dca
-from pyperfstore.math import dichot, estimate_index, search_index, get_timestamp_interval, in_range
+from pyperfstore.pmath import dichot, estimate_index, search_index, get_timestamp_interval, in_range
 
 class metric(object):
 	def __init__(self, _id, storage, node, dn=None, bunit=None, retention=None, point_per_dca=None, rotate_plan=None):
