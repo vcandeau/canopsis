@@ -19,9 +19,10 @@
 # ---------------------------------
 */
 
-// initComponent -> doRefresh -> get_perfnode -> createHighchartConfig -> doRefresh -> onRefresh -> addDataOnChart
-//						  -> setOptions                                  -> addDataOnChart ...
-//						  -> createChart
+// initComponent -> doRefresh -> -> createHighchart -> doRefresh -> onRefresh -> addDataOnChart
+//                                -> setchartTitle                                -> getSerie
+//				  -> setOptions
+//				  -> createChart
 
 Ext.define('widgets.line_graph.line_graph' ,{
 	extend: 'canopsis.lib.view.cwidget',
@@ -45,7 +46,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	params: {},
 
+	//metrics: [],
+
 	time_window: global.commonTs.day, //24 hours
+
+	initComponent: function() {
+		this.callParent(arguments);
+		this.metrics = []
+	},
 
 	doRefresh: function(from, to){
 		if (this.chart){
@@ -86,23 +94,31 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				} 
 			})
 		}else{
-			this.get_perfnode();
+			this.createHighchart();
 		}
 	},
 
 	makeUrl: function(from, to){
-		var metrics_txt = ""
-		var i;
-		for (i in this.metrics){
-			metrics_txt += this.metrics[i] + ","
+		var metrics_txt
+
+		if (this.metrics.lenght > 0){
+			var i;
+			for (i in this.metrics){
+				metrics_txt += this.metrics[i] + ","
+			}
+			//small hack
+			metrics_txt = metrics_txt.replace('/', "<slash>")
 		}
-			
-		//small hack
-		metrics_txt = metrics_txt.replace('/', "<slash>")
+		
+		if (metrics_txt){
+			log.debug(" + Refresh metrics '"+metrics_txt+"', "+from+" -> "+to, this.logAuthor)
 
-		log.debug(" + Refresh metrics '"+metrics_txt+"', "+from+" -> "+to, this.logAuthor)
-
-		var url = '/perfstore/values/'+this.nodeId + '/' + metrics_txt
+			var url = '/perfstore/values/'+this.nodeId + '/' + metrics_txt
+		}else{
+			log.debug(" + Refresh All metrics, "+from+" -> "+to, this.logAuthor)
+			//small hack
+			var url = '/perfstore/values/'+this.nodeId+'/<all>'
+		}
 
 		if (! to){
 			url += '/' + from
@@ -145,30 +161,22 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	},
 
-	get_perfnode: function(){
-		log.debug(" + Get perfnode "+this.id+" ...", this.logAuthor)
-		Ext.Ajax.request({
-			url: '/perfstore/node/'+this.nodeId,
-			scope: this,
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				var perfnode = data.data[0]
-				this.perfnode = perfnode
-				this.createHighchartConfig(perfnode)
-			},
-			failure: function ( result, request) {
-				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-			} 
-		})
-	},
-
-	createHighchartConfig: function(perfnode){
+	createHighchart: function(){
 		log.debug(" + Set config", this.logAuthor)
 
-		var title = ""
+		this.setchartTitle();
 
-		if(!this.title && perfnode.id){
-			var nodeName = perfnode.id.split('.')
+		this.setOptions();
+
+		this.createChart();
+	
+		this.doRefresh();
+	},
+
+	setchartTitle: function(){
+		var title = ""
+		if(!this.title && this.nodeId){
+			var nodeName = this.nodeId.split('.')
 			
 			// resource
 			if (nodeName[5]){
@@ -181,48 +189,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 			
 		}
-
-		this.chartTitle = title
-
-		this.setOptions()
-
-		log.debug(" + Set Metrics Series", this.logAuthor)
-		this.metrics = []
-		
-		var i=0;
-		for (metric in perfnode.metrics){
-			log.debug("   + Metric "+metric+":", this.logAuthor)
-
-			this.metrics.push(metric)
-
-			//this.start[metric] = false
-
-			var name = metric
-			if ( perfnode.metrics[metric]['bunit']){
-				name = name + " ("+perfnode.metrics[metric]['bunit']+")"
-			}
-			log.debug("     + Name: "+name, this.logAuthor)
-
-			var color
-			/*if (this.colors[metric]){
-				this.options.colors.push(this.colors[metric])
-			}else{
-				this.options.colors.push(this.default_colors[i])
-			}*/
-			color = global.default_colors[i]
-			this.options.colors.push(color)
-
-			log.debug("     + Color: "+color, this.logAuthor)
-
-			this.options.series.push({name: name, data: []})
-			i = i+1;
-		}
-
-		this.createChart()
-	
-		this.doRefresh();
+		this.chartTitle = title	
 	},
-
 
 	setOptions: function(){
 		//----------find the right scale and tickinterval for xAxis------------
@@ -327,21 +295,50 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.chart = new Highcharts.Chart(this.options);
 	},
 
+	getSerie: function(metric_name, bunit){
+		var metric_index = this.metrics.indexOf(metric_name)
+		if (metric_index >= 0){
+			return this.chart.get(metric_name)
+		}
+
+		log.debug('  + Create Metric '+metric_name+' '+bunit, this.logAuthor)
+		metric_index = this.metrics.push(metric_name)
+		log.debug('    + metric_index: '+metric_index, this.logAuthor)
+
+		var metric_long_name = metric_name
+		if (bunit){
+			metric_long_name += " ("+bunit+")"
+		}
+
+		color = global.default_colors[metric_index]
+
+		var serie = {id: metric_name, name: metric_long_name, data: [], color: color}
+		//log.dump(serie)
+
+		log.debug('    + metric_id: '+metric_name, this.logAuthor)
+		
+		this.chart.addSeries(serie, false, false)
+	
+		return this.chart.get(metric_name)
+	},
+
 	addDataOnChart: function(data){
-		var metric = data['metric']
+		var metric_name = data['metric']
 		var values = data['values']
+		var bunit = data['bunit']
 		
 		//log.dump(data)
 
-		metric_id = this.metrics.indexOf(metric)
-		log.debug('  + Add data on metric '+metric+' ('+metric_id+')...', this.logAuthor)
+		var serie = this.getSerie(metric_name, bunit)
+	
+		log.debug('  + Add data on metric '+metric_name+' ...', this.logAuthor)
 
 		if (values.length <= 0){
 			log.debug('   + No data', this.logAuthor)
 			if (this.reportMode){
-				if (this.chart.series[metric_id].visible){
-					this.chart.series[metric_id].setData([], false);
-					this.chart.series[metric_id].hide()
+				if (serie.visible){
+					serie.setData([], true);
+					serie.hide()
 				}
 				return true
 			}else{
@@ -350,8 +347,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 
 		if (this.reportMode){
-			if (! this.chart.series[metric_id].visible){
-				this.chart.series[metric_id].show()
+			if (! serie.visible){
+				serie.show()
 			}
 		}
 
@@ -359,7 +356,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.debug('   + Set data', this.logAuthor)
 			this.first = values[0][0];
 
-			this.chart.series[metric_id].setData(values, false);
+			serie.setData(values, false);
 		}else{
 			log.debug('   + Push data', this.logAuthor)
 
@@ -367,7 +364,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			for (i in values) {
 				value = values[i]
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
-            			this.chart.series[metric_id].addPoint(value, false, this.shift, false);
+            			serie.addPoint(value, false, this.shift, false);
 			}
 		}
 
@@ -382,7 +379,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		//log.dump(this.from)
 		this.from = false
 
-		this.createHighchartConfig(this.perfnode)
+		this.createHighchart(this.perfnode)
 		
 		if(this.mytab.mask){
 			this.mytab.mask.show();
