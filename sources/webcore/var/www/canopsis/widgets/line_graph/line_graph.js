@@ -139,6 +139,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.chart.showLoading();
 			}*/
 
+			if (this.reportMode){
+				log.debug(' + Clean series', this.logAuthor)
+				var i;
+				for (i in this.metrics){
+					metric = this.metrics[i]
+					this.addDataOnChart({'metric': metric, 'values': [] })
+				}
+			}
+
 			if(data.length > 0){
 				if (data[0].values.length > 0){
 					this.from = data[0].values[data[0].values.length-1][0];
