@@ -137,8 +137,11 @@ def get_timestamp_interval(values):
 
 	return int(median(timestamps))
 
-def get_values(values):
-	return [x[1] for x in values]
+def get_timestamps(points):
+	return [x[0] for x in points]
+
+def get_values(points):
+	return [x[1] for x in points]
 
 def mean(values):
 	if len(values):
