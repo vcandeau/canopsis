@@ -9,20 +9,20 @@ then
 else
 
 	#Test if serv X launch and variable exported
-	if [ -e "/tmp/.X1-lock" ]
+	if [ -e "/tmp/.X3-lock" ]
 	then
 		echo "X server already started (if not, delete /tmp/.X1-lock)"
 	else
 		echo "X server not already started"
-		Xvfb :1 -screen 0 1024x768x24 &
+		Xvfb :3 -screen 0 1024x768x24 &
 	fi
 
 	#Exporting env variable
 	
-	if [ "$DISPLAY" != "localhost:1" ]
+	if [ "$DISPLAY" != "localhost:3" ]
 	then
 		echo "$DISPLAY"
-		DISPLAY="127.0.0.1:1"
+		DISPLAY="127.0.0.1:3"
 		export DISPLAY
 		echo "$DISPLAY"
 	fi

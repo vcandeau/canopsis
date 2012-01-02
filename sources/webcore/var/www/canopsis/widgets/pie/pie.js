@@ -27,9 +27,11 @@ Ext.define('widgets.pie.pie' ,{
 	
 	initComponent: function() {
 		this.callParent(arguments);
+		
 	},
 	
 	onRefresh: function(data){
+		this.uri += '/' + this.nodeId;
 		if (! this.chart){
 			this.createHighchart(data);
 		}
