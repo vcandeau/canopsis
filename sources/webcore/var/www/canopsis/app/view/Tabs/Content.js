@@ -51,6 +51,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	initComponent: function() {
 
 		this.widgets = []
+		this.mask_cpt = 0
 		
 		this.callParent(arguments);
 
@@ -224,7 +225,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
 
-			this.mask.show();
+			//enable mask
+			this._maskInit()
 
 			for (i in this.widgets){
 				//this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
@@ -292,6 +294,23 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 	},
 	//------------------------------------------------------------
+	_maskInit: function(){
+		this.mask.show();
+		this.mask_cpt = 0;
+	},
+	
+	_maskCheck: function(){
+		if(this.mask_cpt == (this.widgets.length -1)){
+			this.mask.hide()
+			this.mask_cpt = 0
+			//log.debug('hide the mask')
+		}else{
+			this.mask_cpt++
+			//log.debug('adding new mask')
+			//log.dump(this.mask_cpt)
+			//log.dump(this.widgets.length)
+		}
+	},
 
 	_onShow: function(){
 		log.debug('Show tab '+this.id, this.logAuthor)
