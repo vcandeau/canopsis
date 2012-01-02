@@ -268,9 +268,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
 			
-			log.debug(stopReport)
-			log.debug(startReport)
-			log.debug(this.view_id)
+			//log.debug(stopReport)
+			//log.debug(startReport)
+			//log.debug(this.view_id)
 		
 			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
 			$.pnotify({
