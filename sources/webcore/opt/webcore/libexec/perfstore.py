@@ -95,58 +95,19 @@ def perfstore_metric_get_values(_id, metrics="<all>", start=None, stop=None):
 			logger.debug(" + metrics:   %s" % metrics)
 
 		for metric in metrics:
+			
 			if metric:
 				try:
-					if data_type == 'candlestick':
-						window = 86400
-						stop = 1324425600
-						nb = 180
-						data = []
-						for i in range(nb):
-							stop = stop - window
-							values = mynode.metric_get_values(metric, stop-window, stop, auto_aggregate=False)
-							if values:
-								cdl = math.candlestick(values, window=window)
-								cdl[0] = stop
-								data.append(cdl)
-					else:
-						data = mynode.metric_get_values(metric, start, stop)
+					values = mynode.metric_get_values(metric, start, stop)
 
-				
-						logger.debug(" + Calcul Trend")
-						y = pmath.get_values(data)
-						x = pmath.get_timestamps(data)
-
-						#y = ax + b
-						(a, b, rr) = pmath.linreg(x, y)
-						logger.debug("   + y = ax + b")
-						logger.debug("   +   a: %s" % a)
-						logger.debug("   +   b: %s" % b)
-						logger.debug("   +  rr: %s" % rr)
-						trend = []
-						#if (len(x) >= 2):
-						#	time = x[0]
-						#	trend.append([time * 1000, (a*time+b)])
-						#	time = x[len(x)-1]
-						#	trend.append([time * 1000, (a*time+b)])
-						
-						if (trend):
-							output.append({'metric': metric+'_trend', 'values': trend, 'bunit': None })	
+					values = [[x[0] * 1000, x[1]] for x in values]
+					if len(values) > 1:
+						bunit = mynode.metric_get(metric).bunit
+						output.append({'metric': metric, 'values': values, 'bunit': bunit })
 
 				except Exception, err:
 					logger.error(err)
 
-				values = []
-
-				if len(data) > 1:
-					for value in data:
-						value[0] = value[0] * 1000
-						values.append(value)
-
-
-				bunit = mynode.metric_get(metric).bunit
-
-				output.append({'metric': metric, 'values': values, 'bunit': bunit })
 
 		output = {'total': len(output), 'success': True, 'data': output}
 		
