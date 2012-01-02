@@ -317,7 +317,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		log.debug('    + metric_id: '+metric_name, this.logAuthor)
 		
-		this.chart.addSeries(serie, false, false)
+		this.chart.addSeries(serie, true, false)
 	
 		return this.chart.get(metric_name)
 	},
@@ -337,7 +337,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.debug('   + No data', this.logAuthor)
 			if (this.reportMode){
 				if (serie.visible){
-					serie.setData([], true);
+					serie.setData([], false);
 					serie.hide()
 				}
 				return true
