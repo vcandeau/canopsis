@@ -317,7 +317,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			metric_long_name += " ("+bunit+")"
 		}
 
-		color = global.default_colors[metric_index]
+		var color = global.default_colors[metric_index]
 
 		var serie = {id: metric_name, name: metric_long_name, data: [], color: color}
 		//log.dump(serie)
