@@ -144,13 +144,17 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.addDataOnChart(data[i])
 			}
 
-			if (data[0].values.length > 0){
-				this.from = data[0].values[data[0].values.length-1][0];
+			if(data[0].values){
+				if (data[0].values.length > 0){
+					this.from = data[0].values[data[0].values.length-1][0];
 
-				this.shift = this.first < (this.from - (this.time_window*1000))
-				//log.debug('     + First: '+this.first, this.logAuthor)
-				//log.debug('     + First graph: '+(this.from - this.time_window), this.logAuthor)
-				log.debug('     + Shift: '+this.shift, this.logAuthor)
+					this.shift = this.first < (this.from - (this.time_window*1000))
+					//log.debug('     + First: '+this.first, this.logAuthor)
+					//log.debug('     + First graph: '+(this.from - this.time_window), this.logAuthor)
+					log.debug('     + Shift: '+this.shift, this.logAuthor)
+				}
+			} else {
+				log.debug(' + On refresh : no metric data', this.logAuthor)
 			}
 				
 			this.chart.redraw();
@@ -213,6 +217,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				height: this.divHeight,
 				animation: false,
 				borderColor: "#FFFFFF"
+			},
+			global: {
+				useUTC: false
 			},
 			exporting: {
 				enabled: false
