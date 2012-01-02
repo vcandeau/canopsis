@@ -162,6 +162,7 @@ Ext.define('widgets.pie.pie' ,{
 		if(this.exportMode){
 			this.options.plotOptions.pie.enableMouseTracking = false;
 			this.options.plotOptions.tooltip = {}
+			this.options.plotOptions.pie.shadow = false;
 		}
 
 	}
