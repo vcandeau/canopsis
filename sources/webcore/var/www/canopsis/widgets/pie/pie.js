@@ -30,7 +30,11 @@ Ext.define('widgets.pie.pie' ,{
 	},
 	
 	onRefresh: function(data){
-		if (! this.chart){
+		if (this.chart){
+			if (data.perf_data_array){
+				this.parseData(data.perf_data_array)
+			}
+		}else{
 			this.createHighchart(data);
 		}
 	},
@@ -50,48 +54,66 @@ Ext.define('widgets.pie.pie' ,{
 		log.debug(" + set title: '"+title+"'", this.logAuthor)
 		
 		if (data.perf_data_array){
-			var perf_data = data.perf_data_array;			
-
-			var serie = {
-				type: 'pie',
-				data: []
-			};
-
-			if (this.metric){
-				log.debug(" + Use one metric: '"+this.metric+"'", this.logAuthor)
-				metric = perf_data[this.metric]
-	
-				var metric_max = metric.max;
-				if (this.metric_max){
-					log.debug(" + Set max to: "+this.metric_max, this.logAuthor)
-					metric_max = this.metric_max;
-				}
-
-				serie.data.push(['Free', metric_max-metric.value])
-				serie.data.push([metric.metric, metric.value])
-			}else{
-				log.debug(" + Use Multiple metrics", this.logAuthor)
-				var index;
-				var total = 0;
-				for (index in perf_data){
-					metric = perf_data[index]
-					total += metric.value			
-				}
-				if (total == 0){ total = 1 }
-				log.debug("   + Total: "+total, this.logAuthor)
-
-				for (index in perf_data){
-					log.debug("   + Push metric: '"+index+"'", this.logAuthor)
-					metric = perf_data[index]
-					serie.data.push([metric.metric, Math.round(metric.value / total) ])
-				}
-			}
-
-			this.options.series.push(serie)
+			this.parseData(data.perf_data_array)
 		}
 
 		this.chart = new Highcharts.Chart(this.options);
 		//this.doRefresh();
+	},
+
+	parseData: function(perf_data) {
+		//log.dump(perf_data)
+	
+		if (this.chart){
+			var serie = this.chart.get('pie');
+			serie.remove()
+		}
+
+		this.options.series = []
+
+		var serie = {
+			id: 'pie',
+			type: 'pie',
+			data: []
+		};
+
+		if (this.metric){
+			log.debug(" + Use one metric: '"+this.metric+"'", this.logAuthor)
+			metric = perf_data[this.metric]
+
+			var metric_max = metric.max;
+			if (this.metric_max){
+				log.debug(" + Set max to: "+this.metric_max, this.logAuthor)
+				metric_max = this.metric_max;
+			}
+
+			serie.data.push({ name: 'Free', y: metric_max-metric.value, color: global.default_colors[0] })
+			serie.data.push({ name: metric.metric, y: metric.value, color: global.default_colors[1]})
+		}else{
+			log.debug(" + Use Multiple metrics", this.logAuthor)
+			var index;
+			var total = 0;
+			for (index in perf_data){
+				metric = perf_data[index]
+				total += metric.value			
+			}
+			if (total == 0){ total = 1 }
+			log.debug("   + Total: "+total, this.logAuthor)
+
+			var i = 0;
+			for (index in perf_data){
+				log.debug("   + Push metric: '"+index+"'", this.logAuthor)
+				var metric = perf_data[index]
+				var color = global.default_colors[i]
+				serie.data.push({ name: metric.metric, y: Math.round(metric.value / total), color: color })
+				i+=1;
+			}
+		}
+
+		this.options.series.push(serie)
+		if (this.chart){
+			this.chart.addSeries(serie)
+		}
 	},
 
 	setOptions: function(){
