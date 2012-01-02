@@ -218,6 +218,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				animation: false,
 				borderColor: "#FFFFFF"
 			},
+			global: {
+				useUTC: false
+			},
 			exporting: {
 				enabled: false
 			},
