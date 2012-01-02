@@ -112,6 +112,15 @@ function clean_packages_list () {
 			sed -i /^"$line"$/d $LIST_PATH
 		fi	
 	done < "$LIST_PATH"
+	# Remove useless arch if specific arch is available
+	while read line; do
+		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
+		T_NB=$(cat "$LIST_PATH" | grep ^$C_PNAME | wc -l)
+		if [ $T_NB -gt 1 ]; then
+			T_LINE=$(grep ^$C_PNAME "$LIST_PATH" | grep "noarch")
+			sed -i /^"$T_LINE"/d "$LIST_PATH"
+		fi
+	done < "$LIST_PATH"
 }
 
 # Download Package list
