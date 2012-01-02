@@ -23,7 +23,7 @@ import time
 
 from pyperfstore.metric import metric
 from pyperfstore.dca import dca
-from pyperfstore.math import aggregate
+from pyperfstore.pmath import aggregate
 
 class node(object):
 	def __init__(self, dn, storage, point_per_dca=None, retention=None, rotate_plan=None):
