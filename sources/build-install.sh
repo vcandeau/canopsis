@@ -58,47 +58,6 @@ function extract_archive () {
 	fi
 }
 
-
-function install_pylib(){
-	cd $SRC_PATH/externals/
-	BASE=$1-$2
-	VERS=$2
-	echo "Install Python Library: $BASE ..."
-	LOG="$LOG_PATH/$BASE.log"
-
-	rm -f $LOG &> /dev/null
-
-	#remplace '-' by '.'
-	FBASE=`echo "$BASE" | sed s#-#\.#g`
-
-	FCHECK=`ls $PREFIX/lib/python2.7/site-packages/ | grep "$FBASE-py2.7" | wc -l`
-	#echo " + Check $FCHEK ..."
-	if [ $FCHECK -eq 0 ]; then
-		cd pylibs
-		if [ ! -e $BASE ]; then
-			if [ -e "$BASE.tar.gz" ]; then
-				extract_archive "$BASE.tar.gz"
-			elif [ -e "$BASE.tgz" ]; then
-				extract_archive "$BASE.tgz"
-			elif [ -e "$BASE.tar.bz2" ]; then
-				extract_archive "$BASE.tar.bz2"
-			else
-				echo "Impossible to find archive ..."
-				exit 1
-			fi
-		fi
-		cd $BASE
-		echo " + Install $BASE ..."
-		$PY_BIN setup.py install --prefix=$PREFIX 1>> $LOG 2>> $LOG
-		check_code $? "Setup.py install failure"
-		cd ../
-		rm -Rf $BASE  &> /dev/null
-		cd $SRC_PATH
-	else
-		echo " + Allready install"
-	fi
-}
-
 function install_init(){
 	if [ -e "$SRC_PATH/extra/init/$1.$DIST" ]; then
 		IFILE="$SRC_PATH/extra/init/$1.$DIST"

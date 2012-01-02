@@ -37,7 +37,7 @@ logging.basicConfig(level=logging_level,
 logger = logging.getLogger("rest")
 
 # Modules
-from pyperfstore import math
+from pyperfstore import pmath
 from pyperfstore import node
 from pyperfstore import mongostore
 from ctools import parse_perfdata
@@ -60,7 +60,7 @@ def perfstore_node_get(_id):
 @get('/perfstore/values/:_id/:metrics',apply=[check_auth])
 @get('/perfstore/values/:_id/:metrics/:start',apply=[check_auth])
 @get('/perfstore/values/:_id/:metrics/:start/:stop',apply=[check_auth])
-def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
+def perfstore_metric_get_values(_id, metrics="<all>", start=None, stop=None):
 
 	if stop:
 		stop = int(int(stop) / 1000)
@@ -79,7 +79,6 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		metrics = metrics.replace("<slash>", '/')
 
 		metrics = metrics.split(',')
-		
 		logger.debug("GET:")
 		logger.debug(" + _id:       %s" % _id)
 		logger.debug(" + metrics:   %s" % metrics)
@@ -87,10 +86,13 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 		logger.debug(" + stop:      %s" % stop)
 		logger.debug(" + data_type: %s" % data_type)
 
-
 		output = []
 
 		mynode = node(_id, storage=perfstore)
+
+		if (metrics[0] == "<all>"):
+			metrics = mynode.metric_get_all_dn()
+			logger.debug(" + metrics:   %s" % metrics)
 
 		for metric in metrics:
 			if metric:
@@ -120,26 +122,15 @@ def perfstore_metric_get_values(_id, metrics=None, start=None, stop=None):
 						value[0] = value[0] * 1000
 						values.append(value)
 
-				output.append({'metric': metric, 'values': values })
+
+				bunit = mynode.metric_get(metric).bunit
+
+				output.append({'metric': metric, 'values': values, 'bunit': bunit })
 
 		output = {'total': len(output), 'success': True, 'data': output}
 		
 	else:
-		account = get_account()
-		storage = get_storage(namespace='perfdata')
-		data = storage.get(_id, account=account)
-		
-		output = []
-		values = []
-		if data:
-			output = [ data.dump(json=True) ]
-			"""
-			for record in records:
-				for metric in record['metrics']:
-					output.append({'metric': metric })
-			"""
-		
-		output = {'total': len(output), 'success': True, 'data': output}
+		output = {'total': 0, 'success': False, 'data': []}
  
 	return output
 
