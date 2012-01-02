@@ -165,7 +165,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 
 		if(this.mytab.mask){
-			this.mytab.mask.hide();
+			this.mytab._maskCheck()
 		}
 	},
 
