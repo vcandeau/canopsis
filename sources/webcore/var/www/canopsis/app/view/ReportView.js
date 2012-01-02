@@ -42,15 +42,12 @@ Ext.define('canopsis.view.ReportView', {
 		
 		//-------------------page height-----------------------
 		
-		var docHeight = Math.ceil(items.length / nbColumns) * 200 
-		if(docHeight < 800){
-			document.body.style.height = 800
-		}else{
+		var docHeight = Math.ceil(items.length / nbColumns) * 200 +100
+	/*	if(docHeight < 1200){
+			document.body.style.height = 1200
+		}else{*/
 			document.body.style.height = docHeight
-		}
-		log.debug('------------------------------------------------------------------------------------------------------------')
-		log.dump(docHeight)
-		log.debug('-----------------------------------------------------------------------------------------------------------------------------------------------')
+		//}
 		//this.height = docHeight
 		//this.width = 840
 		
