@@ -112,6 +112,27 @@ def perfstore_metric_get_values(_id, metrics="<all>", start=None, stop=None):
 					else:
 						data = mynode.metric_get_values(metric, start, stop)
 
+				
+						logger.debug(" + Calcul Trend")
+						y = pmath.get_values(data)
+						x = pmath.get_timestamps(data)
+
+						#y = ax + b
+						(a, b, rr) = pmath.linreg(x, y)
+						logger.debug("   + y = ax + b")
+						logger.debug("   +   a: %s" % a)
+						logger.debug("   +   b: %s" % b)
+						logger.debug("   +  rr: %s" % rr)
+						trend = []
+						#if (len(x) >= 2):
+						#	time = x[0]
+						#	trend.append([time * 1000, (a*time+b)])
+						#	time = x[len(x)-1]
+						#	trend.append([time * 1000, (a*time+b)])
+						
+						if (trend):
+							output.append({'metric': metric+'_trend', 'values': trend, 'bunit': None })	
+
 				except Exception, err:
 					logger.error(err)
 
