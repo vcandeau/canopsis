@@ -41,12 +41,47 @@ Ext.define('canopsis.view.ReportView', {
 		*/
 		
 		//-------------------page height-----------------------
+	/*	var column_cpt = 1
+		var widget_height = 0
+		var docHeight = 0
 		
-		var docHeight = Math.ceil(items.length / nbColumns) * 200 +100
+		//for each widget
+		for(var i= 0; i < items.length; i++) {
+			var item = items[i]
+			if (! item.rowHeight) { item.rowHeight=rowHeight }
+			
+			log.debug('looping into the loop')
+			//if first widget, just set the Height
+			if(column_cpt == 1){
+				log.debug('first widget')
+				widget_height = item.rowHeight
+				log.debug('widgetrowheight is:' + item.rowHeight)
+			} else {
+				//else compare widget Height with Height of previous widget
+				if(widget_height < items[i].rowHeight){
+					log.debug('comparing rowHeight')
+					widget_height = item.rowHeight
+				}
+			}
+			
+			//if end of column, add height to docHeight
+			if(column_cpt == nbColumns){
+				docHeight += widget_height;
+				widget_height = 0
+				column_cpt = 1
+				log.debug('new doHeight')
+				log.dump(docHeight)
+			} else {
+				log.debug('column cpt + 1')
+				column_cpt++
+			}
+		}
+		*/
+		//var docHeight = Math.ceil(items.length / nbColumns) * 200 +100
 	/*	if(docHeight < 1200){
 			document.body.style.height = 1200
 		}else{*/
-			document.body.style.height = docHeight
+			//document.body.style.height = docHeight + 100
 		//}
 		//this.height = docHeight
 		//this.width = 840
@@ -116,6 +151,7 @@ Ext.define('canopsis.view.ReportView', {
 			this.add(item);
 			//log.debug(item);
 		}
+		document.body.style.height = this.getHeight() + 100
 	},
 		
 });
