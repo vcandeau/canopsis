@@ -70,6 +70,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			if (this.from && ! this.reportMode){
 				from = this.from;
 				to = Date.now();
+				this.from = to;
 			}
 			
 			if (this.exportMode){
@@ -149,21 +150,23 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 
 			if(data.length > 0){
-				if (data[0].values.length > 0){
-					this.from = data[0].values[data[0].values.length-1][0];
-
-					this.shift = this.first < (this.from - (this.time_window*1000))
-					//log.debug('     + First: '+this.first, this.logAuthor)
-					//log.debug('     + First graph: '+(this.from - this.time_window), this.logAuthor)
-					log.debug('     + Shift: '+this.shift, this.logAuthor)
-				}
-
 				var i;
 				for (i in data){
 					this.addDataOnChart(data[i])
 				}
+
 				this.chart.redraw();
-				
+
+				if (data[0].values.length > 0){
+					//this.from = data[0].values[data[0].values.length-1][0];
+
+					var extremes = this.chart.series[0].xAxis.getExtremes()
+					var data_window = extremes.max - extremes.min
+					this.shift = data_window > (this.time_window*1000)
+
+					log.debug('     + Data window: '+data_window, this.logAuthor)
+					log.debug('      + Shift: '+this.shift, this.logAuthor)
+				}
 
 			} else {
 				log.debug(' + On refresh : no metric data', this.logAuthor)
