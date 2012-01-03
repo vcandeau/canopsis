@@ -139,12 +139,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.chart.showLoading();
 			}*/
 
-			var i;
-			for (i in data){
-				this.addDataOnChart(data[i])
+			if (this.reportMode){
+				log.debug(' + Clean series', this.logAuthor)
+				var i;
+				for (i in this.metrics){
+					metric = this.metrics[i]
+					this.addDataOnChart({'metric': metric, 'values': [] })
+				}
 			}
 
-			if(data[0].values){
+			if(data.length > 0){
 				if (data[0].values.length > 0){
 					this.from = data[0].values[data[0].values.length-1][0];
 
@@ -153,11 +157,17 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					//log.debug('     + First graph: '+(this.from - this.time_window), this.logAuthor)
 					log.debug('     + Shift: '+this.shift, this.logAuthor)
 				}
+
+				var i;
+				for (i in data){
+					this.addDataOnChart(data[i])
+				}
+				this.chart.redraw();
+				
+
 			} else {
 				log.debug(' + On refresh : no metric data', this.logAuthor)
 			}
-				
-			this.chart.redraw();
 
 			/*if (this.reportMode){
 				this.chart.hideLoading();
