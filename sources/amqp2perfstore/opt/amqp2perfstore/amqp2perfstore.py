@@ -139,11 +139,14 @@ def main():
 	amqp.add_queue(DAEMON_NAME, ['#.check.#'], on_message, amqp.exchange_name_events)
 	amqp.start()
 
+	logger.info("Daemon started.")
 	while RUN:
 		time.sleep(1)
 
 	amqp.stop()
 	amqp.join()
+
+	logger.info("Daemon stopped.")
 
 if __name__ == "__main__":
 	main()
