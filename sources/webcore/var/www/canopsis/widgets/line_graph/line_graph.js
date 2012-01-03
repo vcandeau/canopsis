@@ -32,8 +32,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	layout: 'fit',
 
 	first: false,
-	from: false,
+	
 	shift: false,
+
+	last_from: false,
+	pushPoints: false,
 
 	//addToRequestManager: false,
 
@@ -67,10 +70,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				from = to - (this.time_window * 1000);
 			}
 
-			if (this.from && ! this.reportMode){
-				from = this.from;
+			if (! this.reportMode && this.last_from){
+				from = this.last_from;
 				to = Date.now();
-				this.from = to;
 			}
 			
 			if (this.exportMode){
@@ -79,6 +81,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 
 			url = this.makeUrl(from, to)
+			this.last_from = to
 
 			Ext.Ajax.request({
 				url: url,
@@ -158,8 +161,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.chart.redraw();
 
 				if (data[0].values.length > 0){
-					//this.from = data[0].values[data[0].values.length-1][0];
-
 					var extremes = this.chart.series[0].xAxis.getExtremes()
 					var data_window = extremes.max - extremes.min
 					this.shift = data_window > (this.time_window*1000)
@@ -371,12 +372,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				serie.show()
 			}
 		}
-
-		if (! this.from || this.reportMode){
+	
+		if (! this.pushPoints || this.reportMode){
 			log.debug('   + Set data', this.logAuthor)
 			this.first = values[0][0];
 
 			serie.setData(values, false);
+			this.pushPoints = true;
 		}else{
 			log.debug('   + Push data', this.logAuthor)
 
