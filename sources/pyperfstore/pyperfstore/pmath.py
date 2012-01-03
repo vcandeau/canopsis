@@ -170,7 +170,11 @@ def linreg(X, Y):
 	"""
 	logger.debug("Linear regression")
 	if not len(X):
-		logger.warning(" + Empty list")
+		logger.error(" + Empty list")
+		return None
+
+	if len(X) < 2:
+		logger.error(" + You must have more than 2 points in your list")
 		return None
 
 	if len(X) != len(Y):  raise ValueError, 'unequal length'
@@ -200,11 +204,12 @@ def linreg(X, Y):
 	return a, b, RR
 
 
-def aggregate(values, max_points=1450, atype='MEAN', agfn=None):
+def aggregate(values, max_points=1450, interval=None, atype='MEAN', agfn=None):
 	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
 
 	if len(values) > max_points:
-		interval = int(round(len(values) / max_points))
+		if not interval:
+			interval = int(round(len(values) / max_points))
 	else:
 		logger.debug(" + Useless")
 		return values
@@ -227,8 +232,9 @@ def aggregate(values, max_points=1450, atype='MEAN', agfn=None):
 
 	rvalues=[]
 	for x in range(0, len(values), interval):
-		value = agfn(values[x:x+interval])
-		timestamp = values[x][0]
+		sample = values[x:x+interval]
+		value = agfn(sample)
+		timestamp = sample[len(sample)-1][0]
  		rvalues.append([timestamp, value])
 
 	logger.debug(" + Nb points: %s" % len(rvalues))
