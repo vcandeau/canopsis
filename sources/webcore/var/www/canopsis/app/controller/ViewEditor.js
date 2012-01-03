@@ -60,7 +60,7 @@ Ext.define('canopsis.controller.ViewEditor', {
 			if (form.recordName){
 				record.set('id',form.recordName);
 			} else {
-				record.set('id','view.'+ global.account.user + '.' + record_name.replace(" ","_"));
+				record.set('id','view.'+ global.account.user + '.' + record_name.replace(/ /g,"_"))
 			}
 			
 			//check if view already exist
