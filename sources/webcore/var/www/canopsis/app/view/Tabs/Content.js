@@ -273,11 +273,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//log.debug(this.view_id)
 		
 			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
-			$.pnotify({
+			var report_popup = $.pnotify({
 				pnotify_title: 'Please Wait',
 				pnotify_text: 'Your document is rendering, a popup will ask you where to save in few seconds',
 				pnotify_history: false,
 				pnotify_opacity: 0.8,
+				pnotify_hide: false,
+				pnotify_closer: false,
+				pnotify_sticker: false
 			});
 			Ext.Ajax.request({
 				url: '/reporting/'+ startReport * 1000 + '/' + stopReport * 1000 + '/' + this.view_id,
@@ -285,8 +288,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data.url
-					log.dump(data);
-					window.open(data)
+					//log.dump(data);
+					//window.open(data)
+					report_popup.pnotify({
+						pnotify_title: 'Export ready !',
+						pnotify_text: 'You can get your document <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">here</a>',
+						pnotify_closer: true,
+					});
 				},
 				failure: function (result, request) {
 					log.error("Report generation have failed", this.logAuthor)
