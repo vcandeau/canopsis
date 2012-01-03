@@ -200,29 +200,29 @@ class metric(object):
 		# check current dca
 		item = self.current_dca
 		if self.dca_have_timestamp(item, tstart, tstop):
-			item = self.dca_get(item)
-			self.logger.debug("   + Add current DCA\t(%s)" % item._id)
+			#item = self.dca_get(item)
+			#self.logger.debug("   + Add current DCA\t(%s)" % item._id)
 			dcas.append(item)
 
 		#check plain
 		for item in self.dca_PLAIN:
 			if self.dca_have_timestamp(item, tstart, tstop):
-				item = self.dca_get(item)
-				self.logger.debug("   + Add PLAIN DCA\t\t(%s)" % item._id)
+				#item = self.dca_get(item)
+				#self.logger.debug("   + Add PLAIN DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		#check tsc
 		for item in self.dca_TSC:
 			if self.dca_have_timestamp(item, tstart, tstop):
-				item = self.dca_get(item)
-				self.logger.debug("   + Add TSC DCA\t\t(%s)" % item._id)
+				#item = self.dca_get(item)
+				#self.logger.debug("   + Add TSC DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		#check ztsc
 		for item in self.dca_ZTSC:
 			if  self.dca_have_timestamp(item, tstart, tstop):
-				item = self.dca_get(item)
-				self.logger.debug("   + Add ZTSC DCA\t\t(%s)" % item._id)
+				#item = self.dca_get(item)
+				#self.logger.debug("   + Add ZTSC DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		self.logger.debug(" + Found %s DCAs" % len(dcas))
@@ -233,20 +233,20 @@ class metric(object):
 		values = []
 		for item in dcas:
 			item = self.dca_get(item)
-			dca_values = item.get_values()
+			values += item.get_values()
 	
-			if dca_values:
-				self.logger.debug(" + Parse values of %s (%s -> %s (%s points))" % (item._id, item.tstart, item.tstop, len(dca_values)))
-
-				values += timesplit(dca_values, tstart, tstop)
-
-
 		if values:
+			self.logger.debug(" + Sort points")
 			values = sorted(values, key=itemgetter(0))
+
+			self.logger.debug(" + Split")
+			values = timesplit(values, tstart, tstop)
+
 			if values[0][0] < tstart - 300:
 				## set first value with old data
 				values[0][0] = tstart
 
+		self.logger.debug(" + Return %s points" % len(values))
 		return values
 
 
