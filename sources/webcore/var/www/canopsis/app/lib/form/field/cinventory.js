@@ -189,7 +189,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				store: this.InventoryStore,
 				columns: this.Win_columns,
 				stripeRows: true,
-				title: 'Inventory',
+				title: _('Inventory'),
    			});
    			
    			//needed to move page in paging from function searchFunction
@@ -229,7 +229,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				store: this.store,
 				columns: this.Win_columns,
 				stripeRows: true,
-				//title: 'Selection',
+				//title: _('Selection'),
    			});
 
 			secondGrid.on('itemdblclick',function(grid, record, item, index){
@@ -243,7 +243,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			//------------------Search Options-------------------
 
 			comboSourceType = Ext.create('Ext.form.ComboBox', {
-				fieldLabel: 'Source type',
+				fieldLabel: _('Source type'),
 				store: comboSourceTypeStore,
 				queryMode: 'local',
 				displayField: 'name',
@@ -254,7 +254,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			});
 
 			comboType = Ext.create('Ext.form.ComboBox', {
-				fieldLabel: 'Type',
+				fieldLabel: _('Type'),
 				store: comboTypeStore,
 				queryMode: 'local',
 				displayField: 'name',
@@ -272,7 +272,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				//height: 100,
 				flex : 3,
 				items: [{
-					fieldLabel: 'Search',
+					fieldLabel: _('Search'),
 					name: 'search',
 					//allowBlank: false,
 				}],
@@ -294,7 +294,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					align: 'stretch',
 					padding: 5
 				},
-				title: 'Search',
+				title: _('Search'),
 				border: 1,
 				flex : 1,
 				items: [this.searchForm, secondGrid],
@@ -306,7 +306,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 						iconCls: 'icon-delete',
 						action: 'empty-selection'
             				},'->',{
-						text: _('Set Selection'),
+						text: _('Use Selection'),
 						iconCls: 'icon-save',
 						action: 'set-selection'
             				}]
@@ -315,7 +315,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			log.debug('[cinventory] Create window')
 			this.window = Ext.create('widget.window', {
-				title: 'Inventory selection',
+				title: _('Inventory selection'),
 				closable: true,
 				closeAction: 'hide',
 				width: 700,

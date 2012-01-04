@@ -42,7 +42,7 @@ Ext.define('canopsis.view.LiveSearch.View', {
 
 		items: [{
 			xtype: 'fieldcontainer',
-			fieldLabel: 'Search Option',
+			fieldLabel: _('Search Option'),
 			labelStyle: 'font-weight:bold;padding:0',
 			layout: 'hbox',
 			defaultType: 'textfield',
@@ -55,24 +55,24 @@ Ext.define('canopsis.view.LiveSearch.View', {
 				flex: 1,
 				//name: 'firstName',
 				itemId : 'source_name',
-				fieldLabel: 'Source Name',
+				fieldLabel: _('Source Name'),
 			},{
 				flex: 1,
 				//name: 'lastName',
 				itemId : 'type',
-				fieldLabel: 'Type',
+				fieldLabel: _('Type'),
 				margins: '0 0 0 5'
 			},{
 				flex: 1,
 				//name: 'lastName',
 				itemId : 'source_type',
-				fieldLabel: 'Source type',
+				fieldLabel: _('Source type'),
 				margins: '0 0 0 5'
 			},{
 				flex: 1,
 				//name: 'lastName',
 				itemId : 'component',
-				fieldLabel: 'Component',
+				fieldLabel: _('Component'),
 				margins: '0 0 0 5'
 			},{
 				xtype : 'button',

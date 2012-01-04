@@ -20,4 +20,7 @@
 */
 
 var i18n={
+	'ITIL-Report':			'Report',
+	'ITIL-Build':			'Build',
+	'ITIL-Run':			'Run',
 }
