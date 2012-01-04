@@ -89,6 +89,7 @@ var i18n={
 	'Inventory selection':		"Sélection dans l'inventaire",
 	'New':				'Nouveau',
 	"Please wait":			'Veuillez patienter',
+	"Please Wait":			'Veuillez patienter',
 	'Preview':			'Prévisualisation',
 	'REMOTE EXCEPTION':		'EXCEPTION DISTANTE',
 	'request failed':		'La requête a échoué',
@@ -113,4 +114,5 @@ var i18n={
 	'Select Items':			'Sélection',
 	'Account':			'Compte utilisateur',
 	'Accounts':			'Comptes utilisateurs',
+	'You can get your document':	'Vous pouvez télécharger votre document',
 }
