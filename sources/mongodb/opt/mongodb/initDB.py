@@ -71,7 +71,7 @@ record1.chmod('o+r')
 record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"component"}', 'show_resource': False} ]
 storage.put(record1)
 
-record1 = crecord({'_id': 'view.resources' }, type='view', name='Ressources')
+record1 = crecord({'_id': 'view.resources' }, type='view', name='Resources')
 record1.chmod('o+r')
 record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"resource"}'} ]
 storage.put(record1)
