@@ -121,11 +121,11 @@ class KnownValues(unittest.TestCase):
 		## Get first 100 values
 		start = time.time()
 		values = mynode.metric_get_values('load1', 1, 100)
-		print " + 100 Old values in %s ms" % ((time.time() - start) * 1000)
+		print " + %s Old values in %s ms" % (len(values), ((time.time() - start) * 1000))
 
 		if len(values) != 100:
 			print "Count: %s" % len(values)
-			raise Exception('Invalid Old count')
+			raise Exception('Invalid Old count (len: %s)' % len(values))
 
 		if values != refvalues[1:100+1]:
 			print values
@@ -136,11 +136,11 @@ class KnownValues(unittest.TestCase):
 		## Get last 100 values
 		start = time.time()
 		values = mynode.metric_get_values('load1', last-99, last)
-		print " + 100 Recent values in %s ms" % ((time.time() - start) * 1000)
+		print " + %s Recent values in %s ms" % (len(values), ((time.time() - start) * 1000))
 
 		if len(values) != 100:
 			print "Count: %s" % len(values)
-			raise Exception('Invalid Recent count')
+			raise Exception('Invalid Recent count (len: %s)' % len(values))
 
 		
 		if values != refvalues[last-99:last+1]:
@@ -151,17 +151,18 @@ class KnownValues(unittest.TestCase):
 		## Get middle 100 values
 		start = time.time()
 		values = mynode.metric_get_values('load1', last-499, last-400)
-		print " + 100 Middle values in %s ms" % ((time.time() - start) * 1000)
+		print " + %s Middle values in %s ms" % (len(values), ((time.time() - start) * 1000))
 
 		if len(values) != 100:
 			print "Count: %s" % len(values)
-			raise Exception('Invalid Middle count')
+			raise Exception('Invalid Middle count (len: %s)' % len(values))
 
 		
 		if values != refvalues[last-499:last-400+1]:
 			print values
 			print refvalues[last-499:last-400+1]
 			raise Exception('Invalid Middle Data')
+
 
 	def test_06_aggregate(self):
 		##### DRAFT !
@@ -180,14 +181,22 @@ class KnownValues(unittest.TestCase):
 		#if len(values) != 10:
 		#	raise Exception('Invalid candlestick (len: %s)' % len(values))
 
+	def test_08_timesplit(self):
+		##### DRAFT !
+		values = mynode.metric_get_values('load1', 1, 1000, auto_aggregate=False)
+
+		start = time.time()
+		pyperfstore.pmath.timesplit(values, 35, 632)
+		print " + Split %s points %s ms" % ( len(values), ((time.time() - start) * 1000))
+
 
 	def test_99_Remove(self):
 		global mynode
 
-		mynode.metric_remove('load1')
-		mynode.metric_remove_all()
+		#mynode.metric_remove('load1')
+		#mynode.metric_remove_all()
 
-		mynode.remove()
+		#mynode.remove()
 		del mynode
 
 

@@ -51,6 +51,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	initComponent: function() {
 
 		this.widgets = []
+		this.mask_cpt = 0
 		
 		this.callParent(arguments);
 
@@ -201,6 +202,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.nextButton.on('click',this.nextReportButton,this);
 			this.reportBar.previousButton.on('click',this.previousReportButton,this);
 			this.reportBar.saveButton.on('click',this.saveButton,this);
+			this.reportBar.linkButton.on('click',this.linkButton,this);
 			this.reportBar.currentDate.on('select',this.onReport,this);
 			this.reportBar.combo.on('select',this.onReport,this);
 		}
@@ -224,7 +226,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
 
-			this.mask.show();
+			//enable mask
+			this._maskInit()
 
 			for (i in this.widgets){
 				//this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
@@ -259,6 +262,21 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.onReport()
 	},
 	
+	linkButton : function(){
+		var toolbar = this.reportBar
+		if (toolbar.currentDate.isValid()){
+			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var stopReport = startReport + toolbar.combo.getValue();
+			var url = window.location.origin + '/static/canopsis/reporting.html?'
+			
+			url += 'view=' + this.view_id + '&'
+			url += 'from=' + startReport + '&'
+			url += 'to' + stopReport
+			
+			window.open(url,'_newtab')
+		}
+	},
+	
 	saveButton: function(){
 		log.debug('Report generation', this.logAuthor);
 		var toolbar = this.reportBar
@@ -266,15 +284,19 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
 			
-			log.debug(stopReport)
-			log.debug(startReport)
+			//log.debug(stopReport)
+			//log.debug(startReport)
+			//log.debug(this.view_id)
 		
 			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
-			$.pnotify({
+			var report_popup = $.pnotify({
 				pnotify_title: 'Please Wait',
-				pnotify_text: 'Your document is rendering, a popup will ask you where to save in few seconds',
+				pnotify_text: _('Your document is rendering, a popup will ask you where to save in few seconds'),
 				pnotify_history: false,
 				pnotify_opacity: 0.8,
+				pnotify_hide: false,
+				pnotify_closer: false,
+				pnotify_sticker: false
 			});
 			Ext.Ajax.request({
 				url: '/reporting/'+ startReport * 1000 + '/' + stopReport * 1000 + '/' + this.view_id,
@@ -282,8 +304,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data.url
-					log.dump(data);
-					window.open(data)
+					//log.dump(data);
+					//window.open(data)
+					report_popup.pnotify({
+						pnotify_title: 'Export ready !',
+						pnotify_text: 'You can get your document <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">here</a>',
+						pnotify_closer: true,
+					});
 				},
 				failure: function (result, request) {
 					log.error("Report generation have failed", this.logAuthor)
@@ -292,6 +319,23 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 	},
 	//------------------------------------------------------------
+	_maskInit: function(){
+		this.mask.show();
+		this.mask_cpt = 0;
+	},
+	
+	_maskCheck: function(){
+		if(this.mask_cpt == (this.widgets.length -1)){
+			this.mask.hide()
+			this.mask_cpt = 0
+			//log.debug('hide the mask')
+		}else{
+			this.mask_cpt++
+			//log.debug('adding new mask')
+			//log.dump(this.mask_cpt)
+			//log.dump(this.widgets.length)
+		}
+	},
 
 	_onShow: function(){
 		log.debug('Show tab '+this.id, this.logAuthor)

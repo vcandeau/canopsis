@@ -32,8 +32,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	layout: 'fit',
 
 	first: false,
-	from: false,
+	
 	shift: false,
+
+	last_from: false,
+	pushPoints: false,
 
 	//addToRequestManager: false,
 
@@ -67,8 +70,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				from = to - (this.time_window * 1000);
 			}
 
-			if (this.from && ! this.reportMode){
-				from = this.from;
+			if (! this.reportMode && this.last_from){
+				from = this.last_from;
 				to = Date.now();
 			}
 			
@@ -78,6 +81,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 
 			url = this.makeUrl(from, to)
+			this.last_from = to
 
 			Ext.Ajax.request({
 				url: url,
@@ -139,25 +143,35 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.chart.showLoading();
 			}*/
 
-			var i;
-			for (i in data){
-				this.addDataOnChart(data[i])
+			if (this.reportMode){
+				log.debug(' + Clean series', this.logAuthor)
+				var i;
+				for (i in this.metrics){
+					metric = this.metrics[i]
+					this.addDataOnChart({'metric': metric, 'values': [] })
+				}
 			}
 
-			if(data[0].values){
-				if (data[0].values.length > 0){
-					this.from = data[0].values[data[0].values.length-1][0];
-
-					this.shift = this.first < (this.from - (this.time_window*1000))
-					//log.debug('     + First: '+this.first, this.logAuthor)
-					//log.debug('     + First graph: '+(this.from - this.time_window), this.logAuthor)
-					log.debug('     + Shift: '+this.shift, this.logAuthor)
+			if(data.length > 0){
+				var i;
+				for (i in data){
+					this.addDataOnChart(data[i])
 				}
+
+				this.chart.redraw();
+
+				if (data[0].values.length > 0){
+					var extremes = this.chart.series[0].xAxis.getExtremes()
+					var data_window = extremes.max - extremes.min
+					this.shift = data_window > (this.time_window*1000)
+
+					log.debug('     + Data window: '+data_window, this.logAuthor)
+					log.debug('      + Shift: '+this.shift, this.logAuthor)
+				}
+
 			} else {
 				log.debug(' + On refresh : no metric data', this.logAuthor)
 			}
-				
-			this.chart.redraw();
 
 			/*if (this.reportMode){
 				this.chart.hideLoading();
@@ -217,6 +231,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				height: this.divHeight,
 				animation: false,
 				borderColor: "#FFFFFF"
+			},
+			global: {
+				useUTC: false
 			},
 			exporting: {
 				enabled: false
@@ -314,7 +331,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			metric_long_name += " ("+bunit+")"
 		}
 
-		color = global.default_colors[metric_index]
+		var color = global.default_colors[metric_index]
 
 		var serie = {id: metric_name, name: metric_long_name, data: [], color: color}
 		//log.dump(serie)
@@ -355,12 +372,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				serie.show()
 			}
 		}
-
-		if (! this.from || this.reportMode){
+	
+		if (! this.pushPoints || this.reportMode){
 			log.debug('   + Set data', this.logAuthor)
 			this.first = values[0][0];
 
 			serie.setData(values, false);
+			this.pushPoints = true;
 		}else{
 			log.debug('   + Push data', this.logAuthor)
 

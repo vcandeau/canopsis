@@ -39,82 +39,20 @@ def dichot(x, L, comp=cmp, key=lambda c: c):
 def in_range(value, start, stop):
 	return value >= start and value < stop
 
-def get_first_value(values):
-	if len(values):
-		return values[0]
+def get_first_value(points):
+	if len(points):
+		return points[0]
 	else:
 		return None
 
-def get_last_value(values):
-	if len(values):
-		return values[len(values)-1]
+def get_last_value(points):
+	if len(points):
+		return points[len(points)-1]
 	else:
 		return None
 
-def estimate_index(x, L):
-	first = get_first_value(L)[0]
-	last = 	get_last_value(L)[0]
-	delta = float(last - first)
-	interval = int(round(delta / len(L), 0))
-	logger.debug("   + First: %s, Last: %s, Estimated interval: %s" % (first, last, interval))
-	if interval:
-		multi = (x-first) / interval
-	else:
-		multi = 0
-	
-	if multi >= len(L):
-		return len(L)-1
-	else:
-		return multi
-
-
-def search_index(x, L):
-	last_index = len(L)-1
-
-	if x >= L[last_index][0]:
-		logger.debug("   + %s is after last timestamp's point, index: %s" % (x, last_index))
-		return last_index
-	
-	#estimated = estimate_index(x, L)
-	estimated = get_timestamp_interval(L)
-	logger.debug("   + Estimated index: %s" % estimated)	
-	
-	## Ok if interval is regular
-	margin = 3
-	vstart = estimated - margin
-	if not vstart or vstart < 0:
-		vstart = 0
-
-	vstop = estimated + margin
-	if vstop > last_index:
-		vstop = last_index
-
-	if in_range(x, L[vstart][0], L[vstop][0]):
-
-		#logger.debug("   + Use estimated index for reduce search time")
-		#logger.debug("     + Search %s -> %s" % (vstart, vstop))
-		#(r, index) = dichot(x, L[vstart:vstop])
-		#index += r + vstart
-		#logger.debug("     + r: %s, index: %s " % (r, index))
-
-		logger.debug("   + Search %s between index %s -> %s" % (x, vstart,vstop))
-		index = vstart
-		for value in L[vstart:vstop+1]:
-			logger.debug("     + %s: %s" % (index, L[index][0]))
-			if x <= L[index][0]:
-				return index
-			index += 1
-
-	else:
-		logger.debug("   + Search %s by dichotomie on all values" % x)
-		(r, index) = dichot(x, L)
-		index += r
-		logger.debug("     + r: %s, index: %s " % (r, index))
-	
-		return index
-
-def median(values):
-    values = sorted(values)
+def median(vlist):
+    values = sorted(vlist)
     count = len(values)
 
     if count % 2 == 1:
@@ -125,12 +63,12 @@ def median(values):
 
     return (float(lower + upper)) / 2
 
-def get_timestamp_interval(values):
+def get_timestamp_interval(points):
 	timestamp = 0
 	timestamps=[]
-	for x in values:
-		timestamps.append(x[0] - timestamp)
-		timestamp = x[0]
+	for point in points:
+		timestamps.append(point[0] - timestamp)
+		timestamp = point[0]
 
 	if len(timestamps) > 1:
 		del timestamps[0]
@@ -143,28 +81,83 @@ def get_timestamps(points):
 def get_values(points):
 	return [x[1] for x in points]
 
-def mean(values):
-	if len(values):
-		return float( sum(values) / float(len(values)))
+def mean(vlist):
+	if len(vlist):
+		return float( sum(vlist) / float(len(vlist)))
 	else:
 		return 0.0
 
-def vmean(values):
-	values = get_values(values)
-	return mean(values)
+def vmean(vlist):
+	vlist = get_values(vlist)
+	return mean(vlist)
 
-def vmin(values):
-	values = get_values(values)
-	return min(values)
+def vmin(vlist):
+	vlist = get_values(vlist)
+	return min(vlist)
 
-def vmax(values):
-	values = get_values(values)
-	return max(values)
+def vmax(vlist):
+	vlist = get_values(vlist)
+	return max(vlist)
 
 
 def derivs(vlist):
 	return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
 
+def timesplit(points, tsfrom, tsto=None):
+	logger.debug("Time split %s -> %s (%s points)" % (tsfrom, tsto, len(points)))
+
+	first_point = get_first_value(points)
+	last_point  = get_last_value(points)
+
+	logger.debug("  + Data: %s -> %s (%s points)" % (first_point[0], last_point[0], len(points)))
+
+	index_from = None
+	index_to = None
+
+	if tsto and tsfrom != tsto:
+		if tsfrom >= tsto:
+			raise ValueError, "'to' time must be superior to 'From' time"
+
+		if tsfrom <= first_point[0] and tsto >= last_point[0]:
+			logger.debug("  + No split, use all points")
+			return points
+
+		if tsfrom <= first_point[0]:
+			logger.debug("  + %s is before first timestamp's point (%s)" % (tsto, first_point[0]))
+			index_from = 0
+
+		if tsto >= last_point[0]:
+			logger.debug("  + %s is after last timestamp's point (%s)" % (tsfrom, last_point[0]))
+			index_to = len(points)-1
+
+
+		if index_from == None:
+			(r_from, index_from) = dichot(tsfrom, points)
+			if index_from and index_from + r_from < len(points):
+				index_from += r_from
+
+		if index_to == None:
+			(r_to, index_to) = dichot(tsto, points)
+			if index_to and index_to + r_to < len(points):
+				index_to += r_to
+
+		logger.debug("  + From: index=%s" % index_from)
+		logger.debug("     + Points: %s" % points[index_from])
+		logger.debug("  + To:   index=%s" % index_to)
+		logger.debug("     + Points: %s" % points[index_to])
+
+		return points[index_from:index_to+1]
+
+	else:
+		logger.debug("   + Return only one point")
+		(r, index) = dichot(tsfrom, points)
+		if index and index + r < len(points):
+			index += r
+
+		logger.debug("  + Index=%s" % index)
+		logger.debug("     + Point: %s" % points[index])
+
+		return [points[index]]
 
 ## http://www.answermysearches.com/how-to-do-a-simple-linear-regression-in-python/124/
 def linreg(X, Y):
@@ -175,6 +168,15 @@ def linreg(X, Y):
 		real, real, real = linreg(list, list)
 	Returns coefficients to the regression line "y=ax+b" from x[] and y[], and R^2 Value
 	"""
+	logger.debug("Linear regression")
+	if not len(X):
+		logger.error(" + Empty list")
+		return None
+
+	if len(X) < 2:
+		logger.error(" + You must have more than 2 points in your list")
+		return None
+
 	if len(X) != len(Y):  raise ValueError, 'unequal length'
 	N = len(X)
 	Sx = Sy = Sxx = Syy = Sxy = 0.0
@@ -202,11 +204,12 @@ def linreg(X, Y):
 	return a, b, RR
 
 
-def aggregate(values, max_points=1450, atype='MEAN', agfn=None):
+def aggregate(values, max_points=1450, interval=None, atype='MEAN', agfn=None):
 	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
 
 	if len(values) > max_points:
-		interval = int(round(len(values) / max_points))
+		if not interval:
+			interval = int(round(len(values) / max_points))
 	else:
 		logger.debug(" + Useless")
 		return values
@@ -229,8 +232,9 @@ def aggregate(values, max_points=1450, atype='MEAN', agfn=None):
 
 	rvalues=[]
 	for x in range(0, len(values), interval):
-		value = agfn(values[x:x+interval])
-		timestamp = values[x][0]
+		sample = values[x:x+interval]
+		value = agfn(sample)
+		timestamp = sample[len(sample)-1][0]
  		rvalues.append([timestamp, value])
 
 	logger.debug(" + Nb points: %s" % len(rvalues))
