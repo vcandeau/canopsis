@@ -18,27 +18,39 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-function on_die () {
-	exit_pending="True"
-	if ! [ -a "$LOCK_FILE" ]; then 
-		echo
-		exit 1
-	else
-		echo "Wait..."
-	fi
-}
+#on_die () {
+#	log_info "Exit pending..."
+#	exit_pending=true
+#	if ! [ -e "$LOCK_FILE" ]; then 
+#		echo
+#		echo "Abort."
+#		exit 1
+#	else
+#		echo "Wait..."
+#	fi
+#}
 
-function on_lock () {
+on_lock () {
+	log_info "Create lock file"
+	stty intr undef
+	trap 'error ${LINENO} "Try to create lock file ($LOCK_FILE)"' ERR
 	touch $LOCK_FILE
 }
 
-function off_lock () {
+off_lock () {
+	stty intr "^C"
+	log_info "Remove lock file"
+	trap 'error ${LINENO} "Try to remove lock file ($LOCK_FILE)"' ERR
 	rm -Rf $LOCK_FILE
-	check_lock
+	#check_lock
 }
 
-function check_lock () {
-	if [[ ! -a "$LOCK_FILE" && "$exit_pending" == "True" ]]; then
-		exit 1
+check_lock () {
+	if [[ ! -e "$LOCK_FILE" ]]; then
+		if $exit_pending ; then
+			echo
+			echo "Abort."
+			exit 1
+		fi
 	fi
 }

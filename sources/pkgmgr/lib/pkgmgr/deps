@@ -18,34 +18,34 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# Build install dependencies tree
-function build_install_deps_tree () {
+build_install_deps_tree () {
 	init_tmp
+	log_info "Create deps tree"
 	parse_install_deps $@
 	clean_tree
+	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
 	rm -Rf $TMP_FILE	
 }
 
-# Build remove dependencies tree
-function build_remove_deps_tree () {
+build_remove_deps_tree () {
 	init_tmp
 	parse_remove_deps $@
+	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
 	rm -Rf $TMP_FILE	
 }
 
-# Init file where tree is written
-function init_tmp () {
+init_tmp () {
+	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
 	rm -Rf $TMP_FILE
+	trap 'error ${LINENO} "Touch tmp file ($TMP_FILE)"' ERR
 	touch $TMP_FILE
 }
 
-# Clean double entries in dependencies tree
-function clean_tree () {
+clean_tree () {
 	sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++'
 }
 
-# Recursive dependencies parsing
-function parse_install_deps () {
+parse_install_deps () {
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
 		local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
@@ -65,7 +65,7 @@ function parse_install_deps () {
 	done
 }
 
-function parse_remove_deps() {
+parse_remove_deps () {
     D_TREE="$@"
 	# Check if packages pending to be removed are not used by other
 	# For each package in argument
@@ -108,7 +108,8 @@ function parse_remove_deps() {
 	echo $D_TREE
 }
 
-function send_removal_conflicts() {
+send_removal_conflicts () {
 	awk '!x[$0]++' $TMP_FILE
-	rm -Rf $TMP_FILE	
+	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
+	rm -Rf $TMP_FILE
 }

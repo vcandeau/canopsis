@@ -18,39 +18,95 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+set -E -o pipefail
+
+# Log levels
+#   - INFO      (1)
+#   - ERR       (2)
+#   - VERBOSE   (3)
+#   - DEBUG     (4)
+LOG=2
+
+############################
+######  Logging Trap  ######
+############################
+log_info () {
+	local MESSAGE="$1"
+	if [ $LOG -ge 1 ]; then
+		echo -e "[`date +'%T %x'`][INF] ${MESSAGE}" >> "$LOG_FILE"
+	fi
+}
+error () {
+	local PARENT_LINENO="$1"
+	local MESSAGE="$2"
+	local CODE="${3:-1}"
+	if [ $LOG == 4 ];then
+	if [ -n "$MESSAGE" ]; then
+			echo -e "[`date +'%T %x'`][ERR][${PARENT_LINENO}] ${MESSAGE} (${CODE})" >> "$LOG_FILE"
+			echo -e "[ERR] ${MESSAGE} (${CODE})"
+		fi
+		if [ -n "$_VER" ]; then
+			echo -e "[`date +'%T %x'`][VER][${PARENT_LINENO}] ${_VER}" >> "$LOG_FILE"
+		fi
+		if [ -n "$_DEB" ]; then
+			echo -e "[`date +'%T %x'`][DEB][${PARENT_LINENO}] ${_DEB}" >> "$LOG_FILE"
+		fi
+		echo
+		echo "-------------------- LOG (5 last lines)"
+		tail -n 6 $LOG_FILE
+		echo "-------------------- END"
+	elif [ $LOG == 3 ];then
+		if [ -n "$MESSAGE" ]; then
+			echo -e "[`date +'%T %x'`][ERR][${PARENT_LINENO}] ${MESSAGE} (${CODE})" >> "$LOG_FILE"
+			echo -e "[ERR] ${MESSAGE} (${CODE})"
+		fi
+		if [ -n "$_VER" ]; then
+			echo -e "[`date +'%T %x'`][VER][${PARENT_LINENO}] ${_VER}" >> "$LOG_FILE"
+		fi
+		echo
+		echo "-------------------- LOG (5 last lines)"
+		tail -n 6 $LOG_FILE
+		echo "-------------------- END"
+	elif [ $LOG == 2 ];then
+		if [ -n "$MESSAGE" ]; then
+			echo -e "[`date +'%T %x'`][ERR][${PARENT_LINENO}] ${MESSAGE} (${CODE})" >> "$LOG_FILE"
+			echo -e "[ERR] ${MESSAGE} (${CODE})"
+		fi
+	fi
+	_VER=""
+	_DEB=""
+	off_lock
+	rm -Rf $TMP_FILE
+	exit "${CODE}"
+}
+##########################
+##########################
+
 . $HOME/etc/pkgmgr.conf
-. $HOME/lib/common.sh
-. $HOME/lib/pkgmgr/db
-. $HOME/lib/pkgmgr/manual
-. $HOME/lib/pkgmgr/list
-. $HOME/lib/pkgmgr/clean
-. $HOME/lib/pkgmgr/actions
-. $HOME/lib/pkgmgr/deps
-. $HOME/lib/pkgmgr/lock
-. $HOME/lib/pkgmgr/extract
+. $HOME/lib/common.sh 
+. $HOME/lib/pkgmgr/db 
+. $HOME/lib/pkgmgr/manual 
+. $HOME/lib/pkgmgr/list 
+. $HOME/lib/pkgmgr/clean 
+. $HOME/lib/pkgmgr/actions 
+. $HOME/lib/pkgmgr/deps 
+. $HOME/lib/pkgmgr/lock 
+. $HOME/lib/pkgmgr/extract 
 . $HOME/lib/pkgmgr/completion
 
-touch $LOCAL_DB_PATH
-touch $REMOTE_DB_PATH
-touch $VARLIB_PATH/info
 mkdir -p $HOME/var/log
-touch $LOG_PATH
+touch $LOG_FILE
 
-exit_pending="False"
+exit_pending=false
 
-#================#
-# VARLIB_PATH    #
-# PACKAGES_PATH  #
-# LOCAL_DB_PATH  #
-# REMOTE_DB_PATH #
-# LOG_PATH       #
-#================#
-
+set +E
 detect_os > /dev/null
+set -E
 
-trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
+trap '' 2 
+#trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
 
-function update_info () {
+update_info () {
 	sed -i /^"ARCH|"/d $VARLIB_PATH/info
 	echo "ARCH|$ARCH" >> $VARLIB_PATH/info
 	sed -i /^"DIST|"/d $VARLIB_PATH/info
@@ -59,7 +115,7 @@ function update_info () {
 	echo "DIST_VERS|$DIST_VERS" >> $VARLIB_PATH/info
 }
 
-function ask_confirmation() {
+ask_confirmation () {
 	if [ "$OPT" != "--force-yes" ]; then
 		read -p "Do you want to continue [y/N]? " -n 1
 		if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -68,10 +124,12 @@ function ask_confirmation() {
 		else
 			echo
 		fi
+	else
+		log_info "Detect --force-yes option"
 	fi
 }
 
-function pkg_list_install_deps() {
+pkg_list_install_deps () {
 	if [ "$OPT" == "--force-yes" ]; then
 		offset=${@:3}
 		pkg_list_deps=$(build_install_deps_tree "$offset")
@@ -81,7 +139,7 @@ function pkg_list_install_deps() {
 	fi
 }
 
-function pkg_list_remove_deps() {
+pkg_list_remove_deps () {
 	if [ "$OPT" == "--force-yes" ]; then
         offset=${@:3}
         pkg_list_deps=$(build_remove_deps_tree "$offset")
@@ -91,7 +149,7 @@ function pkg_list_remove_deps() {
     fi
 }
 
-function pkg_list() {
+pkg_list () {
 	if [ "$OPT" == "--force-yes" ]; then 
 		offset=${@:3}
         pkg_list=$offset
@@ -101,13 +159,13 @@ function pkg_list() {
     fi
 }
 
-function print_deps() {
+print_deps () {
 	for dep in $1; do
 		echo "      - $dep"
 	done
 }
 
-function check_args() {
+check_args () {
 	if [[ $# -le 1 && "$OPT" != "--force-yes" ]]; then
 		show_help
 	elif [[ $# -le 2 && "$OPT" == "--force-yes" ]]; then
@@ -121,9 +179,22 @@ function check_args() {
 ACTION=$1
 OPT=$2
 
-update_info
-
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
+
+	log_info "Create local db file"
+	#trap 'error ${LINENO} "Try to touch local db file ($LOCAL_DB_PATH)"' ERR
+	touch $LOCAL_DB_PATH 2>&1 | tee -a $LOG_FILE
+
+	log_info "Create remote db file"
+	#trap 'error ${LINENO} "Try to touch remote db file ($REMOTE_DB_PATH)"' ERR
+	touch $REMOTE_DB_PATH 2>&1 | tee -a $LOG_FILE
+
+	log_info "Create info file"
+	#trap 'error ${LINENO} "Try to touch info file ($VARLIB_PATH/info)"' ERR
+	touch $VARLIB_PATH/info 2>&1 | tee -a $LOG_FILE	
+	
+	update_info
+	
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
 		update_db && pkg_list_install_deps "$@"
