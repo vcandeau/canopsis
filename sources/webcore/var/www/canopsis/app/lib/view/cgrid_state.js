@@ -99,7 +99,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 		if(this.opt_show_resource){
 			this.columns.push({
-				header: _('Ressource'),
+				header: _('Resource'),
 				flex: 1,
 				sortable: false,
 				dataIndex: 'resource',

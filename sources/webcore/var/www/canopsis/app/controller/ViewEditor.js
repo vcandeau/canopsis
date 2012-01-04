@@ -115,8 +115,8 @@ Ext.define('canopsis.controller.ViewEditor', {
 				this._cancelForm(form);
 			} else {
 				Ext.MessageBox.show({
-				title: 'this view already exist !',
-				msg: 'you can\'t add the same view twice',
+				title: _('this view already exist'),
+				msg: _("you can't add the same view twice"),
 				icon: Ext.MessageBox.WARNING,
   				buttons: Ext.Msg.OK
 			});

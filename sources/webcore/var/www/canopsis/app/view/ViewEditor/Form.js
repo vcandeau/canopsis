@@ -83,7 +83,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			items:[{
 						xtype: 'fieldset',
 						flex: 3,
-						title: 'Global options',
+						title: _('Global options'),
 						layout: 'anchor',
 						defaults: {
 							anchor: '100%',
@@ -92,20 +92,20 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 						
 						items : [{
 								xtype : 'textfield',
-								fieldLabel: 'Name',
+								fieldLabel: _('Name'),
 								//itemId: 'crecord_name',
 								name: 'crecord_name',
 								allowBlank: false,
 							},{
 								xtype: 'numberfield',
-								fieldLabel: 'Refresh interval',
+								fieldLabel: _('Refresh interval'),
 								//itemId : 'refreshInterval',
 								name: 'refreshInterval',
 								value: 0,
 								minValue: 0
 							},{
 								xtype: 'numberfield',
-								fieldLabel: 'Nb column',
+								fieldLabel: _('Nb column'),
 								//itemId: 'nbColumns',
 								name: 'nbColumns',
 								value: 1,
@@ -113,7 +113,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 							},
 							{
 								xtype: 'numberfield',
-								fieldLabel: 'Row height',
+								fieldLabel: _('Row height'),
 								//itemId: 'nbColumns',
 								name: 'rowHeight',
 								value: 200,
@@ -146,7 +146,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 
 		var Preview = Ext.create('Ext.panel.Panel', { 
-			title : 'Preview',
+			title : _('Preview'),
 			colspan: 2,
 			width: this.DefaultWidth * 2,
 			layout : 'fit',
@@ -285,7 +285,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			this.window = Ext.create('Ext.window.Window', {
 				closable: true,
 				closeAction: 'destroy',
-				title: 'Edit ' + item.data.xtype,
+				title: _('Edit') + ' ' + item.data.xtype,
 				
 				beforeclose : function() {
 						log.debug("Destroy items ...", this.logAuthor)
@@ -315,7 +315,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					{
 						xtype: 'fieldset',
 						flex: 1,
-						title: 'Widget Configuration',
+						title: _('Widget Configuration'),
 						layout: 'anchor',
 						defaults: {
 							anchor: '100%',
@@ -324,23 +324,23 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					
 						items : [{
 									xtype : 'textfield',
-									fieldLabel: 'title',
+									fieldLabel: _('title'),
 									name: 'title',
 								},{
 									xtype: 'numberfield',
-									fieldLabel: 'Colspan',
+									fieldLabel: _('Colspan'),
 									name: 'colspan',
 								},{
 									xtype: 'numberfield',
-									fieldLabel: 'Rowspan',
+									fieldLabel: _('Rowspan'),
 									name: 'rowspan',
 								},{
 									xtype: 'numberfield',
-									fieldLabel: 'Refresh interval',
+									fieldLabel: _('Refresh interval'),
 									name: 'refreshInterval',
 								},{
 									xtype: 'numberfield',
-									fieldLabel: 'RowHeight',
+									fieldLabel: _('RowHeight'),
 									name: 'rowHeight',
 								},
 								this.widgetNodeId
@@ -372,7 +372,7 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 				this.window.widgetOptionsPanel = form.add({
 					xtype: 'fieldset',
 					flex: 1,
-					title: 'Widget options',
+					title: _('Widget options'),
 					layout: 'anchor',
 
 					defaults: {

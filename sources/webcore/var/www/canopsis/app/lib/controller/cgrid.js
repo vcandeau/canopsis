@@ -184,7 +184,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			log.debug("[controller][cgrid] - Create tab '"+this.formXtype+"'")
 			var form = main_tabs.add({
-				title: '* New '+this.modelId,
+				title: '*'+ _('New') +' '+this.modelId,
 				xtype: this.formXtype,
 				closable: true,}).show();
 			
@@ -283,7 +283,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}else{
 				log.debug("[controller][cgrid] - Create tab '"+id+"'")
 				var form = main_tabs.add({
-					title: 'Edit '+item.raw.crecord_name,
+					title: _('Edit')+' '+item.raw.crecord_name,
 					recordName: item.internalId,
 					xtype: this.formXtype,
 					editing: true,
@@ -336,7 +336,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			}else{
 				log.debug("[controller][cgrid] - Create tab '"+id+"'")
 				var form = main_tabs.add({
-					title: 'Edit '+item.raw.crecord_name,
+					title: _('Edit')+' '+item.raw.crecord_name,
 					xtype: this.formXtype,
 					id: id,
 					closable: true,}).show();

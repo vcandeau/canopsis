@@ -26,8 +26,8 @@ Ext.define('canopsis.lib.store.ctreeStore', {
     listeners: {
 		exception: function(proxy, response, operation){
 			Ext.MessageBox.show({
-				title: 'REMOTE EXCEPTION',
-				msg: this.storeId + ': request failed',
+				title: _('REMOTE EXCEPTION'),
+				msg: this.storeId + ': ' + _('request failed'),
 				icon: Ext.MessageBox.ERROR,
 				buttons: Ext.Msg.OK
 			});
