@@ -70,7 +70,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					xtype: 'button',
 					iconCls: 'icon-add',
 					//cls: 'x-btn-default-toolbar-small',
-					text: 'Add',
+					text: _('Add'),
 					action: 'add',
 				})
 			}
@@ -78,7 +78,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-copy', 
-					text: 'Duplicate',
+					text: _('Duplicate'),
 					action: 'duplicate',
 				})
 			}
@@ -86,7 +86,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-reload',
-					text: 'Reload',
+					text: _('Reload'),
 					action: 'reload',
 				})
 			}
@@ -94,7 +94,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				bar_child.push({
 					xtype: 'button',
 					iconCls: 'icon-delete',
-					text: 'Delete',
+					text: _('Delete'),
 					disabled: true,
 					action: 'delete',
 				})
@@ -111,7 +111,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				bar_child.push({
 					xtype : 'button',
 					action: 'search',
-					text: 'search',
+					text: _('search'),
 					pack: 'end',
 				})
 			}
@@ -152,7 +152,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-delete',
-						text: 'Delete',
+						text: _('Delete'),
 						action: 'delete',
 					})
 				)
@@ -161,7 +161,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				myArray.push(
 					Ext.create('Ext.Action', {
 						iconCls: 'icon-copy',
-						text: 'Duplicate',
+						text: _('Duplicate'),
 						action: 'duplicate',
 					})
 				)
