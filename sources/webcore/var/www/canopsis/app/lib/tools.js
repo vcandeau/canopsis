@@ -94,7 +94,7 @@ function add_view_tab(view_id, title, closable, options, autoshow, save, tab_id)
 		}
 
 		var tab = maintabs.add({
-			title: title,
+			title: _(title),
 			id: tab_id,
 			iconCls: [ 'icon-bullet-orange' ],
 			view_id: view_id,
