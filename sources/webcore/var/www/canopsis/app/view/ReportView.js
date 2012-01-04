@@ -152,6 +152,11 @@ Ext.define('canopsis.view.ReportView', {
 			//log.debug(item);
 		}
 		document.body.style.height = this.getHeight() + 100
+		
+		var task = new Ext.util.DelayedTask(function(){
+			window.status = 'ready'
+		});
+		task.delay(3000)
 	},
 		
 });

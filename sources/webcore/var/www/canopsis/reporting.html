@@ -61,6 +61,16 @@
 
 	<!-- starting the reporting here -->
 	<script type="text/javascript">
+	if(!export_view_id){
+		var decoded_url = Ext.urlDecode(window.location.search)
+		var export_from = decoded_url.from
+		var export_to = decoded_url.to
+		var export_view_id = decoded_url.view
+		//log.debug('decoded_url.view : ' + decoded_url.view)
+		//log.debug('export_view_id : '+ export_view_id)
+	}
+		
+		
 	Ext.onReady(function() {
 		Ext.Loader.setConfig({enabled:true});
 		global.account = 'root'
@@ -71,7 +81,9 @@
 	//var export_view_id = 'view.root.test3';
 	//var export_from = 1323990000000;
 	//var export_to = 1324076400000;
-
+	
+	
+	
 	function createApplication(){
 		log.debug("Start ExtJS application ...", "[app]");
 		var app = Ext.application({
@@ -87,6 +99,7 @@
 			},
 			createViewport: function(){
 				reportViewport = Ext.create('Ext.container.Viewport');
+
 				//pass reporting parameters
 				var content = Ext.create('canopsis.view.ReportView',{
 					view_id : export_view_id,
