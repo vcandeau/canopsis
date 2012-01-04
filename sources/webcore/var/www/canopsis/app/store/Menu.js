@@ -39,7 +39,7 @@ Ext.define('canopsis.store.Menu', {
 	},
 	
 	root: {
-		text: 'Menu',
+		text: _('Menu'),
 		id: 'root',
 		expanded: true
 	}

@@ -99,9 +99,9 @@ Ext.define('canopsis.view.LiveSearch.View', {
 		}],
 /*
 		buttons: [{
-			text: 'Cancel',
+			text: _('Cancel'),
 		}, {
-			text: 'Send',
+			text: _('Send'),
 			}
 		}]
 		*/

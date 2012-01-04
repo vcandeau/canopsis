@@ -53,6 +53,19 @@ Ext.onReady(function() {
 
 
 function createApplication(){
+	log.debug("Loading locale ...", "[app]");
+	
+	var locale = global.account['locale']
+	if (! locale){
+		locale = global.default_locale;
+	}
+	log.debug(" + User locale: "+locale, "[app]");
+
+	Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + locale + '.js'});
+	Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
+
+	//set_Ext_locale(lang)
+
 	log.debug("Start ExtJS application ...", "[app]");
 
 	var app = Ext.application({

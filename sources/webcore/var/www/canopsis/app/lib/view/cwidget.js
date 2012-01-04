@@ -77,7 +77,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if(this.exportMode){
 			//this._reporting(this.reportStartTs,this.reportStopTs)
 			//this._reporting(reportStart,reportStop)
-			this.on('afterrender', this.doRefresh, this);
+			this.uri += '/' + this.nodeId;
+			if (this.nodeId){
+				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
+				this.on('afterrender', this._doRefresh, this);
+			}
 		}else{
 			if (this.nodeId){
 				this.uri += '/' + this.nodeId;
@@ -157,7 +161,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	_doRefresh: function(from, to){
 		if (this.PollNodeInfo){
-			this.getNodeInfo()
+			this.getNodeInfo() //after onRefresh()
 		}
 
 		if (this.doRefresh){
@@ -165,7 +169,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 
 		if(this.mytab.mask){
-			this.mytab.mask.hide();
+			this.mytab._maskCheck()
 		}
 	},
 

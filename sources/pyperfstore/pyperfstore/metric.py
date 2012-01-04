@@ -23,7 +23,7 @@ import random
 from operator import itemgetter
 
 from pyperfstore.dca import dca
-from pyperfstore.pmath import dichot, estimate_index, search_index, get_timestamp_interval, in_range
+from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit
 
 class metric(object):
 	def __init__(self, _id, storage, node, dn=None, bunit=None, retention=None, point_per_dca=None, rotate_plan=None):
@@ -200,29 +200,29 @@ class metric(object):
 		# check current dca
 		item = self.current_dca
 		if self.dca_have_timestamp(item, tstart, tstop):
-			item = self.dca_get(item)
-			self.logger.debug("   + Add current DCA\t(%s)" % item._id)
+			#item = self.dca_get(item)
+			#self.logger.debug("   + Add current DCA\t(%s)" % item._id)
 			dcas.append(item)
 
 		#check plain
 		for item in self.dca_PLAIN:
 			if self.dca_have_timestamp(item, tstart, tstop):
-				item = self.dca_get(item)
-				self.logger.debug("   + Add PLAIN DCA\t\t(%s)" % item._id)
+				#item = self.dca_get(item)
+				#self.logger.debug("   + Add PLAIN DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		#check tsc
 		for item in self.dca_TSC:
 			if self.dca_have_timestamp(item, tstart, tstop):
-				item = self.dca_get(item)
-				self.logger.debug("   + Add TSC DCA\t\t(%s)" % item._id)
+				#item = self.dca_get(item)
+				#self.logger.debug("   + Add TSC DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		#check ztsc
 		for item in self.dca_ZTSC:
 			if  self.dca_have_timestamp(item, tstart, tstop):
-				item = self.dca_get(item)
-				self.logger.debug("   + Add ZTSC DCA\t\t(%s)" % item._id)
+				#item = self.dca_get(item)
+				#self.logger.debug("   + Add ZTSC DCA\t\t(%s)" % item._id)
 				dcas.append(item)
 
 		self.logger.debug(" + Found %s DCAs" % len(dcas))
@@ -233,50 +233,20 @@ class metric(object):
 		values = []
 		for item in dcas:
 			item = self.dca_get(item)
-			dca_values = item.get_values()
+			values += item.get_values()
 	
-			if dca_values:
-				self.logger.debug(" + Parse values of %s (%s -> %s (%s points))" % (item._id, item.tstart, item.tstop, len(dca_values)))
-
-				parse_values = True
-
-				# if all values are in range
-				if item.tstart and item.tstop:
-					if in_range(item.tstart, tstart, tstop) and in_range(item.tstop, tstart, tstop):
-						self.logger.debug(" + Append All values")
-						values += dca_values
-						parse_values = False			
-		
-				if parse_values:
-					if tstart <= dca_values[0][0]:
-						itstart = 0
-					else:
-						itstart =  search_index(tstart, dca_values)
-
-					self.logger.debug(" + Start index at %s" % itstart )
-
-					if tstop >= dca_values[len(dca_values)-1][0]:
-						itstop = len(dca_values)-1
-					else:
-						itstop =  search_index(tstop, dca_values)
-
-					self.logger.debug(" + Stop index at %s", itstop)
-
-
-					self.logger.debug(" + Append between index %s -> %s " % (itstart, itstop))
-
-					if itstart == itstop:
-						values += [ dca_values[itstart] ]
-					else:
-						values += dca_values[itstart:itstop+1]
-
-
 		if values:
+			self.logger.debug(" + Sort points")
 			values = sorted(values, key=itemgetter(0))
+
+			self.logger.debug(" + Split")
+			values = timesplit(values, tstart, tstop)
+
 			if values[0][0] < tstart - 300:
 				## set first value with old data
 				values[0][0] = tstart
 
+		self.logger.debug(" + Return %s points" % len(values))
 		return values
 
 

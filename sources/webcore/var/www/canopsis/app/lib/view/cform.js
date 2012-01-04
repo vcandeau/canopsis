@@ -33,11 +33,11 @@ Ext.define('canopsis.lib.view.cform', {
 	
 	tbar: [{
 			iconCls: 'icon-save',
-			text: 'Save',
+			text: _('Save'),
 			action: 'save',
 		},{
 			iconCls: 'icon-cancel',
-			text: 'Cancel',
+			text: _('Cancel'),
 			action: 'cancel',
 		}
 	],

@@ -62,16 +62,23 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		this.requestButton = this.add({
 			xtype: 'button', // default for Toolbars
 			iconCls: 'icon-reload',
-			text: 'request',
+			text: _('request'),
 			action: 'request'
 		})
 		
 		this.saveButton = this.add({
 			xtype: 'button', // default for Toolbars
 			iconCls: 'icon-save',
-			//text: 'request',
+			//text: _('request'),
 			action: 'save',
-			tooltip: 'export this view to pdf'
+			tooltip: _('export this view to pdf')
+		})
+		
+		this.linkButton = this.add({
+			xtype: 'button', // default for Toolbars
+			text: 'link',
+			//iconCls: '',
+			action: 'link',
 		})
 	}
 	

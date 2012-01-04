@@ -73,7 +73,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		}
 
 		this.columns.push({
-			header: 'State',
+			header: _('State'),
 			sortable: false,
 			width: 50,
 			dataIndex: 'state',
@@ -81,7 +81,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		});
 
 		this.columns.push({
-			header: 'Last check',
+			header: _('Last check'),
 			sortable: false,
 			width: 130,
 			dataIndex: 'timestamp',
@@ -90,7 +90,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 		if(this.opt_show_component){
 			this.columns.push({
-				header: 'Component',
+				header: _('Component'),
 				flex: 1,
 				sortable: false,
 				dataIndex: 'component',
@@ -99,7 +99,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 		if(this.opt_show_resource){
 			this.columns.push({
-				header: 'Ressource',
+				header: _('Ressource'),
 				flex: 1,
 				sortable: false,
 				dataIndex: 'resource',
@@ -107,7 +107,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		}
 
 		this.columns.push({
-			header: 'Output',
+			header: _('Output'),
 			flex: 4,
 			sortable: false,
 			dataIndex: 'output',
