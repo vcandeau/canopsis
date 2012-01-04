@@ -37,12 +37,12 @@ Ext.define('canopsis.view.ViewEditor.View' ,{
 	opt_bar_search_field: ['crecord_name','_id'],
 	   
 	columns: [{
-			header: 'name',
+			header: _('name'),
 			flex: 2,
 			sortable: true,
 			dataIndex: 'crecord_name',
 		},{
-			header: 'id',
+			header: _('id'),
 			flex: 2,
 			sortable: true,
 			dataIndex: 'id',
