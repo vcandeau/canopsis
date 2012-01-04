@@ -308,7 +308,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					//window.open(data)
 					report_popup.pnotify({
 						pnotify_title: _('Export ready') + ' !',
-						pnotify_text: _('You can get your document') + '<a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
+						pnotify_text: _('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
 						pnotify_closer: true,
 					});
 				},
