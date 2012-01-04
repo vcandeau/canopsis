@@ -36,7 +36,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	initComponent: function() {
 		log.debug('[cinventory] - Initialize ...')
 
-		this.tbar = [ 'Select Items','->',{
+		this.tbar = [ _('Select Items'),'->',{
 			iconCls: 'icon-add',
 			text: _('Add'),
 			scope: this,
