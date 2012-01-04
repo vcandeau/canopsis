@@ -23,7 +23,11 @@ import sys, os, logging, json, subprocess
 import gevent
 
 import bottle
-from bottle import route, get, request, HTTPError, post, static_file
+from bottle import route, get, request, HTTPError, post, static_file, response
+
+#gridfs
+from pymongo import Connection
+import gridfs
 
 import time
 from datetime import date
@@ -43,7 +47,7 @@ logger = logging.getLogger('Reporting')
 
 #@get('/reporting/',apply=[check_auth])
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
-def generate_report(startTime, stopTime,view_name,):
+def generate_report(startTime, stopTime,view_name):
 	#build file name	
 	name_array = view_name.split('.')
 	file_name = name_array[len(name_array)-1]
@@ -63,9 +67,11 @@ def generate_report(startTime, stopTime,view_name,):
 	while(report_cmd.poll() == None):
 		gevent.sleep(1)
 
-	
+	#if file has been rendered
 	if os.path.exists(file_path):
 		logger.debug('file found, send it')
+		put_in_grid_fs(file_path)
+		os.remove(file_path)
 		return {'total': 1, 'success': True, 'data': { 'url' : '/getReport/' + file_name }}
 	else:
 		logger.debug('file not found, error while generating pdf')
@@ -73,6 +79,41 @@ def generate_report(startTime, stopTime,view_name,):
 	
 	
 #@get('/getReport/',apply=[check_auth])
+#@get('/getReport/:fileName',apply=[check_auth])
+#def get_report(fileName=None):
+	#return static_file(fileName, root='/opt/canopsis/tmp/report', mimetype='application/pdf')
+
 @get('/getReport/:fileName',apply=[check_auth])
 def get_report(fileName=None):
-	return static_file(fileName, root='/opt/canopsis/tmp/report', mimetype='application/pdf')
+	conn=Connection("127.0.0.1",27017)
+	db=conn['canopsis']
+	fs = gridfs.GridFS(db) #may add this collection='your collection'
+	
+	try:
+		#try to find the latest version of the file
+		report_file = fs.get_version(filename=fileName, version=-1)
+	except Exception, err:
+			self.logger.error("Exception !\nReason: %s" % err)
+			return HTTPError(404, _id+" Not Found")
+	
+	if report_file:
+		#fix mime-type
+		response.content_type = 'application/pdf'
+		return report_file
+	else:
+		return HTTPError(404, fileName+" Not Found")
+
+def put_in_grid_fs(file_path):
+	conn=Connection("127.0.0.1",27017)
+	db=conn['canopsis']
+	fs = gridfs.GridFS(db) #may add this collection='your collection'
+	
+	#just take the name not the whole path
+	report_name = file_path.split('/')
+	report_name = report_name[len(report_name)-1]
+
+	#open the file and put it in mongo gridFS
+	with open(file_path, "r") as report_file:
+		returned_id = fs.put(report_file, content_type="application/pdf", filename=report_name)
+	
+	return returned_id

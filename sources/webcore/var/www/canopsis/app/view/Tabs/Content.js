@@ -202,6 +202,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.nextButton.on('click',this.nextReportButton,this);
 			this.reportBar.previousButton.on('click',this.previousReportButton,this);
 			this.reportBar.saveButton.on('click',this.saveButton,this);
+			this.reportBar.linkButton.on('click',this.linkButton,this);
 			this.reportBar.currentDate.on('select',this.onReport,this);
 			this.reportBar.combo.on('select',this.onReport,this);
 		}
@@ -259,6 +260,21 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		inputField.setValue(newDate)
 		//ask widget to go on reporting
 		this.onReport()
+	},
+	
+	linkButton : function(){
+		var toolbar = this.reportBar
+		if (toolbar.currentDate.isValid()){
+			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var stopReport = startReport + toolbar.combo.getValue();
+			var url = window.location.origin + '/static/canopsis/reporting.html?'
+			
+			url += 'view=' + this.view_id + '&'
+			url += 'from=' + startReport + '&'
+			url += 'to' + stopReport
+			
+			window.open(url,'_newtab')
+		}
 	},
 	
 	saveButton: function(){
