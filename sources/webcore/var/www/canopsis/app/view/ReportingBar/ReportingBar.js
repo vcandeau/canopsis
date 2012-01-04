@@ -76,7 +76,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		this.linkButton = this.add({
 			xtype: 'button', // default for Toolbars
-			text: 'link',
+			text: _('Link'),
 			//iconCls: '',
 			action: 'link',
 		})
