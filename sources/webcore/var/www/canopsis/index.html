@@ -58,9 +58,13 @@
 		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading ExtJS Core ...';</script>
 	
 		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-debug.js"></script> -->
-		<!-- <script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script> -->
-		<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>
+		<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
+		<!-- <script type="text/javascript" src="resources/lib/extjs/ext.js"></script> -->
 		<!-- <script type="text/javascript" src="resources/lib/extjs/bootstrap.js"></script> -->
+
+		<!-- Ext localization javascript -->
+		<script type="text/javascript" id="extlocale"></script>
+		<script type="text/javascript" id="canopsislocale"></script>
 
 		<!-- Jquery -->
 		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading JQuery ...';</script>
@@ -95,26 +99,28 @@
 		<script type="text/javascript" src="resources/lib/Highstock/js/highstock.src.js"></script>
 		<!-- <script type="text/javascript" src="resources/lib/Highstock/js/modules/exporting.js"></script> -->
 
-			<!-- Application -->
-			<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
-			<script type="text/javascript" src="app/lib/global.js"></script>
-			<script type="text/javascript" src="app/lib/log.js"></script>
-			<script type="text/javascript" src="app/lib/tools.js"></script>
-			<script type="text/javascript" src="app/lib/renderers.js"></script>
-			<script type="text/javascript" src="app.js"></script>
+		<!-- Application -->
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = 'Loading Canopsis ...';</script>
+		<script type="text/javascript" src="app/lib/global.js"></script>
+		<script type="text/javascript" src="app/lib/log.js"></script>
+		<script type="text/javascript" src="app/lib/tools.js"></script>
+		<script type="text/javascript" src="app/lib/renderers.js"></script>
+		<script type="text/javascript" src="app/lib/locale.js"></script>
 
-			<!-- <script type="text/javascript" src="classes.js"></script> -->
-			<!-- <script type="text/javascript" src="classes.js"></script> -->
-			<script type="text/javascript">
-			//	Ext.Loader.setPath('Ext.app', 'classes');
+		<script type="text/javascript" src="app.js"></script>
 
-			/*Ext.require([
+		<!-- <script type="text/javascript" src="classes.js"></script> -->
+		<!-- <script type="text/javascript" src="classes.js"></script> -->
+		<!-- <script type="text/javascript">
+			Ext.Loader.setPath('Ext.app', 'classes');
+
+		Ext.require([
 					'Ext.layout.*',
 					'Ext.data.*',
 					'Ext.window.*',
 					'Ext.Loader'
-				]);*/
-			</script>
+				]);
+		</script>-->
 
 	</div>
 </body>

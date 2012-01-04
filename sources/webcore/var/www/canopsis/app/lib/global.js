@@ -29,6 +29,7 @@ var global = {
 		unknown: '#f0f0ff' 
 	},
 	log: {
+		/* 0: none, 1: info, 2: error, 3: error + warning, 4: error + warning + debug, 5: error + warning + debug + dump */
 		level: 5,
 		buffer: 50
 	},
@@ -36,6 +37,8 @@ var global = {
 	notify: false,
 
 	pageSize: 20,
+
+	default_locale: 'fr',
 
 	default_colors:[
 		'#4572A7',
