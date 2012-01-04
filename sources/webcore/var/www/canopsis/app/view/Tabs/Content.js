@@ -267,7 +267,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		if (toolbar.currentDate.isValid()){
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
-			var url = window.location.origin + '/static/canopsis/reporting.html?'
+			var url = 'http://' + window.location.host + '/static/canopsis/reporting.html?'
+			
+			log.dump(window.location)
 			
 			url += 'view=' + this.view_id + '&'
 			url += 'from=' + startReport + '&'
