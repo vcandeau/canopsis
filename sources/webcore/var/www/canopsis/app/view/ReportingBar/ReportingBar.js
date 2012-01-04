@@ -73,6 +73,13 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			action: 'save',
 			tooltip: _('export this view to pdf')
 		})
+		
+		this.linkButton = this.add({
+			xtype: 'button', // default for Toolbars
+			text: 'link',
+			//iconCls: '',
+			action: 'link',
+		})
 	}
 	
 });
