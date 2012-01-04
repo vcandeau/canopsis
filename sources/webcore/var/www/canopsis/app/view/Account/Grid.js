@@ -40,32 +40,32 @@ Ext.define('canopsis.view.Account.Grid' ,{
 			renderer: rdr_crecord_type,
 	                dataIndex: 'crecord_type',
         	},{
-        	        header: 'Login',
+        	        header: _('Login'),
 	                flex: 2,
 	                sortable: true,
                 	dataIndex: 'user',
 		},{
-	                header: 'First name',
+	                header: _('First name'),
 	                flex: 2,
 	                sortable: false,
                 	dataIndex: 'firstname',
 		},{
-	                text: 'Last name',
+	                header: _('Last name'),
 	                flex : 2,
 	                sortable: false,
 	                dataIndex: 'lastname',
 		},{
-                	header: 'email',
+                	header: _('email'),
 	                flex: 2,
 	                sortable: false,
                 	dataIndex: 'mail',
 		},{
-	                header: 'group',
+	                header: _('group'),
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'aaa_group',
         	},/*{
-                	header: 'groups',
+                	header: _('groups'),
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'groups',

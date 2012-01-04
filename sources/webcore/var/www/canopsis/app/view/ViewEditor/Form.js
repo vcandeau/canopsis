@@ -39,11 +39,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 
 	tbar: [{
 		iconCls: 'icon-save',
-		text: 'Save',
+		text: _('Save'),
 		action : 'save',
 	},{
 		iconCls: 'icon-cancel',
-		text: 'Cancel',
+		text: _('Cancel'),
 		action: 'cancel',
 	}
 	],
@@ -164,11 +164,11 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 			},
 
 			columns: [{
-				header: 'Name',
+				header: _('Name'),
 				dataIndex: 'name',
 				flex: 1
        			 },{
-				header: 'Description',
+				header: _('Description'),
 				dataIndex: 'description',
 				flex: 2
        			 }],
@@ -217,37 +217,37 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 					dataIndex: 'xtype',
 					renderer: rdr_widget_preview
 	       		},{
-					text: 'Option name',
+					text: _('Option name'),
 					flex: 1,
 					dataIndex: 'name',
 					sortable: false,
 				},{
-					text: 'Title',
+					text: _('Title'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'title',
 				},{
-					text: 'Colspan',
+					text: _('Colspan'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'colspan',
 				},{
-					text: 'Rowspan',
+					text: _('Rowspan'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'rowspan',
 				},{
-					text: 'Row height',
+					text: _('Row height'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'rowHeight',
 				},{
-					text: 'NodeId',
+					text: _('NodeId'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'nodeId',
 				},{
-					text: 'Refresh interval',
+					text: _('Refresh interval'),
 					flex: 1,
 					sortable: false,
 					dataIndex: 'refreshInterval',

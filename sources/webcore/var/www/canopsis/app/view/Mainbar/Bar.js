@@ -36,14 +36,14 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 	initComponent: function() {
 		this.items = [
 			{
-				iconCls: 'icon-mainbar-run',
-				text: 'Run'
-			},{
 				iconCls: 'icon-mainbar-build',
-				text: 'Build'
+				text: _('Build')
+			},{
+				iconCls: 'icon-mainbar-run',
+				text: _('Run')
 			},{
 				iconCls: 'icon-mainbar-report',
-				text: 'Report'
+				text: _('Report')
 			},'-',{
 				xtype: 'container',
 				html: "<div class='cps-title' >Canopsis</div>",
@@ -68,15 +68,15 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					items: [
 							{
 								iconCls: 'icon-console',
-								text: 'Show log console',
+								text: _('Show log console'),
 								action: 'showconsole'
 							},{
 								iconCls: 'icon-clear',
-								text: 'Clear tabs cache',
+								text: _('Clear tabs cache'),
 								action: 'cleartabscache'
 							},'-',{
 								iconCls: 'icon-logout',
-								text: 'Logout',
+								text: _('Logout'),
 								action: 'logout'
 							},
 						],

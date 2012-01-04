@@ -38,7 +38,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.tbar = [ 'Select Items','->',{
 			iconCls: 'icon-add',
-			text: 'Add',
+			text: _('Add'),
 			scope: this,
  			handler: this.DisplaySelWindow
                 }]
@@ -63,11 +63,11 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					dataIndex: 'perf_data',
 					renderer: rdr_havePerfdata
 	       		},{
-					header: 'Component',
+					header: _('Component'),
 					flex: 1,
 					dataIndex: 'component',
 	       		},{
-					header: 'Resource',
+					header: _('Resource'),
 					flex: 2,
 					dataIndex: 'resource',
 		}];
@@ -279,7 +279,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			});
 			
 			var searchButton = Ext.create('Ext.Button', {
-				text: 'Search',
+				text: _('Search'),
 			});
 
 			this.searchForm.add(comboSourceType);
@@ -302,11 +302,11 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					xtype: 'toolbar',
 					dock: 'bottom',
 					items: [{
-						text: 'Empty selection',
+						text: _('Empty selection'),
 						iconCls: 'icon-delete',
 						action: 'empty-selection'
             				},'->',{
-						text: 'Set Selection',
+						text: _('Set Selection'),
 						iconCls: 'icon-save',
 						action: 'set-selection'
             				}]

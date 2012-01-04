@@ -275,7 +275,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
 			var report_popup = $.pnotify({
 				pnotify_title: 'Please Wait',
-				pnotify_text: 'Your document is rendering, a popup will ask you where to save in few seconds',
+				pnotify_text: _('Your document is rendering, a popup will ask you where to save in few seconds'),
 				pnotify_history: false,
 				pnotify_opacity: 0.8,
 				pnotify_hide: false,
