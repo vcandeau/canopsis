@@ -18,11 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-function clean_cache () {
+clean_cache () {
 	echo " :: Clean cache"
 	echo "    + Remove Remote Db"
-	rm -Rf $REMOTE_DB_PATH
+	log_info "Remove remote db"
+	trap 'error ${LINENO} "Try to remove remote db ($REMOTE_DB_PATH)"' ERR
+	rm -Rf $REMOTE_DB_PATH 
 	echo "    + Remove old packages"
+	log_info "Remove old packages"
 	for file in $PACKAGES_PATH/* ; do
 		keep_it="False"
 		while read line; do
@@ -34,14 +37,23 @@ function clean_cache () {
 			fi
     	done < "$LOCAL_DB_PATH"
 		if [ "$keep_it" == "False" ]; then
+			log_info "Remove $file package"
+			trap 'error ${LINENO} "Try to remove package archive ($file)"' ERR
 			rm -Rf $file
 		fi
 	done
-	check_code $? "Failure during remove old database"
-	echo "    + Update Pkgmgr info file"
+	echo "    + Reset Pkgmgr info file"
+	log_info "Reset info file"
+	trap 'error ${LINENO} "Error during remove last update info ($VARLIB_PATH/info)"' ERR
 	sed "/LAST_UPDATE/d" -i $VARLIB_PATH/info
-	echo "    + Remove tmp.file"
+	echo "    + Remove tmp file"
+	log_info "Remove tmp file"
+	trap 'error ${LINENO} "Try to remove tmp file ($TMP_FILE)"' ERR
 	rm -Rf $TMP_FILE
+	echo "    + Remove lock file"
+	log_info "Remove lock if already here (why?)"
+	trap 'error ${LINENO} "Try to remove lock ($LOCK_FILE)"' ERR
 	echo "    + Done"
+	log_info "Finished"
 	exit 1
 }

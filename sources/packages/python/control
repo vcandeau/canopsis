@@ -10,7 +10,7 @@ function pre_install(){
     echo "Pre-install $NAME $VERSION-$RELEASE ..."
     path_file="$PREFIX/lib/python2.7/site-packages/easy-install.pth"
     if [ -e "$path_file" ]; then
-        launch_cmd 1 tmp_file=$(mktemp --tmpdir="$PREFIX/tmp")
+        tmp_file=$(launch_cmd 1 mktemp --tmpdir="$PREFIX/tmp")
         echo "Backup easy-install.pth file"
         launch_cmd 1 cp $path_file $tmp_file
         patch="$tmp_file.patch"
