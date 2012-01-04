@@ -18,34 +18,35 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# Get a local package line
-function db_get () {
-	PNAME=$1
-	touch $LOCAL_DB_PATH
+db_get () {
+	PNAME="${1}"
+	log_info "Get package ($PNAME) informations"
+	trap 'error ${LINENO} "Error during get package informations in local db ($PNAME/$LOCAL_DB_PATH)"' ERR
 	echo `cat $LOCAL_DB_PATH | grep "^$PNAME|" | tail -n1`
 }
 
-# Insert new package installed
-function db_set () {
+db_set () {
 	PNAME=$1
 	VERS=$2
 	STATUS=$3
 	MD5=$4
 	DEPS=$5
-	sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
-	echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> $LOCAL_DB_PATH
-	check_code $? "Database insertion ($PNAME)"
+	log_info "Remove package informations from local db ($PNAME)"
+	trap 'error ${LINENO} "Remove old package entrie in local db ($PNAME)"' ERR
+	sed "/^$PNAME|/d" -i "$LOCAL_DB_PATH"
+	log_info "Insert package informations in db ($PNAME)"
+	trap 'error ${LINENO} "Insert package informations in database ($PNAME)"' ERR
+	echo "$PNAME|$VERS|$STATUS|$MD5|$DEPS" >> "$LOCAL_DB_PATH"
 }
 
-# Delete package entrie
-function db_del () {
+db_del () {
 	PNAME=$1
-	sed "/^$PNAME|/d" -i $LOCAL_DB_PATH
-	check_code $? "Database deletion ($PNAME)"
+	log_info "Remove package informations from local db ($PNAME)"
+	trap 'error ${LINENO} "Delete package informations in database ($PNAME)"' ERR
+	sed "/^$PNAME|/d" -i "$LOCAL_DB_PATH"
 }
 
-# Parse package information
-function db_parse () {
+db_parse () {
 	INFO=$1
 	DATA=$2
 	if [ "x$INFO" = "xversion" ]; then
@@ -70,24 +71,23 @@ function db_parse () {
 		elif [ "x$INFO" = "xdistvers" ]; then
 			FIELD=8
 		fi
-		echo "$DATA" | cut -d '|' -f$FIELD
+		trap 'error ${LINENO} "Get specific package information ($PNAME/$INFO)\nIN: $DATA"' ERR
+		echo "$DATA" | cut -d '|' -f$FIELD 
 	fi
 }
 
-# Check if repo is available
-function check_repo () {
-	cd $HOME/var/log
+check_repo () {
+	log_info "Check if repositorie is available ($REPO_URL)"
 	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $REPO_URL)
 	if [ "$response" != "200" ]; then
-		echo " :: Error: $REPO_URL is not joinable ($response) !"
-		exit 1
+		error ${LINENO} "Check repositorie\nCurl return $response code in http header of $REPO_URL" 1
 	fi
 }
 
-# Clean Packages.list
-function clean_packages_list () {
+clean_packages_list () {
 	LIST_PATH=$1
 	FIELD_NAME=1
+	log_info "Clean useless arch and sitro from Packages.list"
 	# Remove useless ARCH
 	while read line; do
 		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
@@ -123,27 +123,28 @@ function clean_packages_list () {
 	done < "$LIST_PATH"
 }
 
-# Download Package list
-function update_db () {
+update_db () {
+	log_info "Download Packages.list"
 	echo " :: Download Packages.list ..."
 	check_repo
-	# Create Repo URL
 	if [ -z "$REPO_BASE" ]; then
 		FINAL_URL=$REPO_URL/$REPO_VERS
 	else
 		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS
 	fi
-
-	# Remove old db
-	rm -Rf $REMOTE_DB_PATH
-	check_code $? " # Failure during remove old database"
-
-	wget "$FINAL_URL/Packages.list" -O $REMOTE_DB_PATH -a $LOG_PATH
-	check_code $? " # Packages.list not accessible (wget failure) ($FINAL_URL/Packages.list"
-
+	log_info "Url: $REPO_URL/$REPO_BASE/$REPO_VERS"
+	log_info "Remove old database"
+	trap 'error ${LINENO} "Remove old database ($REMOTE_DB_PATH)"' ERR
+	rm -Rf "$REMOTE_DB_PATH"
+	log_info "Download Packages.list"
+	trap 'error ${LINENO} "Error Packages.list not accessible ($FINAL_URL/Packages.list)"' ERR
+	curl --silent -o "$REMOTE_DB_PATH" "$FINAL_URL/Packages.list"
 	clean_packages_list "$REMOTE_DB_PATH"
+	log_info "Update Last Update in info file"
+	trap 'error ${LINENO} "Remove Last Update time in info file"' ERR
 	sed -i /^"LAST_UPDATE|"/d $VARLIB_PATH/info
+	trap 'error ${LINENO} "Insert Last Update time in info file"' ERR
 	echo "LAST_UPDATE|`date`" >> $VARLIB_PATH/info
-	check_code $? " # Pkgmgr info file insertion error"
 	echo "    + Done"
+	log_info "Finished"
 }

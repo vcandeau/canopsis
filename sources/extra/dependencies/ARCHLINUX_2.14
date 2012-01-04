@@ -5,4 +5,4 @@ pacman --noconfirm -Sy
 pacman --noconfirm -S base-devel
 pacman --noconfirm -S curl
 # RabbitMQ
-pacman --noconfirm -S xmlto docbook-xml docbook-xsl
+pacman --noconfirm -S xmlto docbook-xml docbook-xsl xorg-server-xvfb
