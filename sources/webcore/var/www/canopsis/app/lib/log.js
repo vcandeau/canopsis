@@ -46,23 +46,23 @@ var log = {
 				autoScroll: true,
 				store: this.store,
 				columns: [{
-						text: 'Level',
+						text: _('Level'),
 						dataIndex: 'level_msg',
 						align: 'center',
 						sortable: false
 					},{
-						text: 'Date',
+						text: _('Date'),
 						xtype: 'datecolumn',
 						format: 'H:i:s',
 						dataIndex: 'date',
 						align: 'center',
 						sortable: false
 					},{
-						text: 'Source',
+						text: _('Source'),
 						dataIndex: 'source',
 						sortable: false
 					},{
-						text: 'Message',
+						text: _('Message'),
 						flex: 1,
 						dataIndex: 'message',
 						sortable: false

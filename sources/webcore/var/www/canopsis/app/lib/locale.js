@@ -18,34 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.ViewEditor.View' ,{
-	extend: 'canopsis.lib.view.cgrid',
 
-	alias : 'widget.ViewEditor',
-	
-	model: 'view',
-	store: 'View',
-	
-	multiSelect: true,
-
-	opt_duplicate: true,
-	opt_bar_duplicate: true,
-	
-	opt_keynav_del: true,
-	
-	opt_bar_search: true,
-	opt_bar_search_field: ['crecord_name','_id'],
-	   
-	columns: [{
-			header: _('name'),
-			flex: 2,
-			sortable: true,
-			dataIndex: 'crecord_name',
-		},{
-			header: _('id'),
-			flex: 2,
-			sortable: true,
-			dataIndex: 'id',
-		}],	
-			
-});
+function _(text) {
+	if (typeof(i18n)!='undefined' && i18n[text]) {
+		return i18n[text]
+	}
+	return text
+}
