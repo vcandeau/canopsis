@@ -21,73 +21,65 @@
 #####################
 # Load control file #
 #####################
-function load_control_tpl () {
+load_control_tpl () {
+	log_info "Source control file template"
+	trap 'error ${LINENO} "Try to source $HOME/lib/pkgmgr/control.tpl)"' ERR
 	. $HOME/lib/pkgmgr/control.tpl
-	check_code $? " # Source control default template failure\n \
- # There is a problem when sourcing '$HOME/lib/pkgmgr/control.tpl"
 }
 
 ###############################
 # Search package and untar it #
 ###############################
-function get_ppath(){
+get_ppath(){
 	PNAME=$1
 	PPATH="$PACKAGES_PATH/$PNAME"
-	if [ ! -e $PPATH.tar ]; then
-		check_code $? " # Package $PNAME not found ($PPATH.tar)"
-		exit 1
-	else
-		cd $PACKAGES_PATH
-		rm -Rf $PNAME
-		tar xf $PNAME.tar
-		check_code $? " # Untar package ($PNAME.tar) failure\n \
- # Try to untar $PNAME.tar in $PACKAGES_PATH"
-	fi
+	log_info "Remove old package folder if already here"
+	trap 'error ${LINENO} "Try to remove old package folder ($PACKAGES_PATH/$PNAME)"' ERR
+	rm -Rf $PACKAGES_PATH/$PNAME
+	log_info "Untar $PNAME package"
+	trap 'error ${LINENO} "Try to untar $PACKAGES_PATH/$PNAME.tar"' ERR
+	tar xf $PACKAGES_PATH/$PNAME.tar -C $PACKAGES_PATH
 	echo $PPATH
 }
 
 ####################
 # Download Package #
 ####################
-function download_package() {
+download_package() {
 	PNAME=$1
 	# Create URL
 	# Check if there is a repo base url
+	log_info "Create repo url"
 	if [ -z "$REPO_BASE" ]; then
 		FINAL_URL=$REPO_URL/$REPO_VERS/$R_ARCH/$R_DIST/$R_DIST_VERS
 	else
 		FINAL_URL=$REPO_URL/$REPO_BASE/$REPO_VERS/$R_ARCH/$R_DIST/$R_DIST_VERS
 	fi
+	log_info "Url : $FINAL_URL"
 	# Remove old packages
 	echo "    + Remove old packages"
+	log_info "Remove old $PNAME packages"
+	trap 'error ${LINENO} "Try to remove $PACKAGES_PATH/$PNAME*"' ERR
 	rm -Rf $PACKAGES_PATH/$PNAME*
-	check_code $? " # Removing old packages failure\n \
- # Try to remove $PACKAGES_PATH/$PNAME*"
-
 	# Go to packages folder
+	log_info "Go to $PACKAGES_PATH"
 	cd $PACKAGES_PATH
-
 	# Download it
 	echo "    + Download $PNAME"
-		
+	log_info "Download $PNAME package"
 	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $FINAL_URL/$PNAME.tar)
 	if [ "$response" != "200" ]; then
-		echo " # Failure during download package"
-		echo " # Url    : $FINAL_URL/$PNAME.tar"
-		echo " # Return : Http response ($response)"
-		exit 1
+		error ${LINENO} "Failure during download package ($FINAL_URL/$PNAME.tar | $response)" 1
 	else
+		trap 'error ${LINENO} "Failure during download package ($FINAL_URL/$PNAME.tar)"' ERR
 		curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
-		check_code $? " # Failure during download package ($FINAL_URL/$PNAME.tar)\n \
- # Try to download $FINAL_URL/$PNAME.tar\n \
- # Command : curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
 	fi
 }
 
 ###################
 # Install package #
 ###################
-function install_package () {
+install_package () {
 	xforce=""
 	# Check if force option in enable
 	if [ "${@: -1}" == "_force" ]; then xforce="True"; lst="${@:1:($#-1)}"; else lst="$@"; fi
@@ -100,35 +92,43 @@ function install_package () {
 		L_STATUS=$(db_parse "status" "$DBINFO")
 		# If already installed and force option so reinstall it
 		if [[ "$L_STATUS" == "installed" && "$xforce" == "True" ]]; then
+			log_info "Package ($PNAME) already installed, reinstall mode"
 			echo " :: Reinstall package $PNAME"
 			# If already install and no force, exit
 		elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
+			log_info "Package ($PNAME) already installed and no reinstall mode"
 			echo " :: Package $PNAME already installed"
 			# If it's not the last package continue
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 		# Else (not already installed)
 		else
+			log_info "Package ($PNAME) not already installed"
 			# Get remote informations
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			# If no remote informations, package is not available
 				if [ -z "$R_INFO" ]; then
+					log_info "Package ($PNAME) not available on repo"
 					echo " :: Package $PNAME not available"
 					exit 1
 				# Else, install package
 				else
+					log_info "Install $PNAME package"
 					echo " :: Install package $PNAME"
 				fi
 		fi
 		res="True"
 		# LOCAL ARCHIVE
 		if [[ -e $PACKAGES_PATH/$PNAME.tar ]]; then
+			log_info "Package ($PNAME) already in archive"
 			echo "    + Package archive already in cache"
 			PPATH="$PACKAGES_PATH/$PNAME"
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
+			log_info "Check archive md5"
 			R_MD5=$(db_parse "md5" "$R_INFO")
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "      + Check MD5: [Fail]"
+				log_info "Md5 Nok"
 			else
 				echo "      + Check MD5: [Success]"
 				on_lock
@@ -144,6 +144,7 @@ function install_package () {
 			R_ARCH=$(db_parse "arch" "$R_INFO")
 			R_DIST=$(db_parse "dist" "$R_INFO")
 			R_DIST_VERS=$(db_parse "distvers" "$R_INFO")
+			log_info "Download $PNAME package"
 			download_package "$PNAME"
 			R_INFO=$(echo `cat $REMOTE_DB_PATH | grep "^$PNAME|" | tail -n1`)
 			R_MD5=$(db_parse "md5" "$R_INFO")
@@ -151,9 +152,10 @@ function install_package () {
 			PPATH=$(get_ppath "$PNAME")
 			off_lock
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
+			log_info "Check downloaded $PNAME package md5"
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "    + Check MD5: [Fail]"
-				check_code 1 "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
+				error ${LINENO} "Local Md5: $L_MD5 | Remote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
 			else
 				echo "    + Check MD5: [Success]"
 			fi
@@ -161,106 +163,142 @@ function install_package () {
 
 		on_lock
 		load_control_tpl
+		log_info "Source $PNAME control file"
+		trap 'error ${LINENO} "Try to source $PPATH/control"' ERR
 		. $PPATH/control
-		check_code $? " # Source control file from $PNAME failure\n \
- # Try to source $PPATH/control"
 		echo "    + Pre-install"
 		echo "-----"
+		log_info "Pre-install ($PNAME)"
+		trap 'error ${LINENO} "See control file of $PNAME\nPath: $PPATH/control"' ERR
 		pre_install
 		echo "-----"
-		check_code $? " # Pre-install step failure\n \
- # See control file of $PNAME\n \
- # Path: $PPATH/control"
+		log_info "Install ($PNAME)"
 		echo "    + Install"
-		cd $PREFIX
+		log_info "Extract $PNAME package files"
+		trap 'error ${LINENO} "Untar files.bz2 ($PNAME) failure"' ERR
 		extract_all $PPATH
+		log_info "Copy conf files"
+		trap 'error ${LINENO} "Copy conf from files.bz2 ($PNAME) failure"' ERR
 		install_conf $PPATH
-		check_code $? "Untar conf from files.bz2 ($PNAME) failure"
+		log_info "Copy binaries"
+		trap 'error ${LINENO} "Copy binaries from files.bz2 ($PNAME) failure"' ERR
 		install_bin $PPATH
-		check_code $? "Untar bin from files.bz2 ($PNAME) failure"
 		echo "    + Post-install"
 		echo "-----"
+		log_info "Post-install ($PNAME)"
+		trap 'error ${LINENO} "Post-install function ($PNAME) failure"' ERR
 		post_install 
 		echo "-----"
-		check_code $? "Post-install function ($PNAME) failure"
+		log_info "Update local db with new installed package ($PNAME)"
 		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
-		echo "    + Remove package folder"
+		echo "    + Remove $PNAME package folder"
+		log_info "Remove package folder ($PNAME)"
+		trap 'error ${LINENO} "Package ($PNAME) folder remove failure ($PPATH)"' ERR
 		rm -Rf $PPATH
-		check_code $? "Post installation package folder remove failure"
+		log_info "Finised"
 		echo "    + Done"
 		off_lock
 	done
 }
 
-function install_local_package () {
+install_local_package () {
 	xforce=""
 	if [ "${@: -1}" == "_force" ]; then xforce="True"; lst="${@:1:($#-1)}"; else lst="$@"; fi
 	for ARG in $lst; do
 		FULLPATH=$ARG
 		FILENAME="${FULLPATH##*/}"
 		if ! [ -e $FULLPATH ]; then
+			log_info "Package not found ($FULLPATH)"
 			echo " :: Package not found"
 			echo "    | $FULLPATH"
-			exit 1
+			error ${LINENO} "Package not found ($FULLPATH)" 1
 		fi
 		if ! [[ ${FILENAME: -4} == ".tar" || $(exit $?) == 1 ]]; then
 			echo " :: Package format must be packagename.tar"
+			error ${LINENO} "Wrong format, must be .tar ($FULLPATH)" 0
 			echo "    | $FILENAME"
-			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+			if [ "$PNAME" == "${@: -1}" ]; then
+				exit 1
+			else
+				continue
+			fi
 		fi
 		PNAME="${FILENAME%.[^.]*}"
 		if [ -z "$PNAME" ]; then
-			echo " :: There is an error in the path"
+			echo " :: There is an error with $PNAME archive name"
+			_VER="Command: '\${FILENAME%.[^.]*}"
+			error ${LINENO} "There is an error with $PNAME archive name" 0
 			echo "    | $FILENAME"
-			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+			if [ "$PNAME" == "${@: -1}" ]; then
+				exit 1
+			else
+				continue
+			fi
 		fi
 		DBINFO=$(db_get "$PNAME")
 		L_STATUS=$(db_parse "status" "$DBINFO")
+		log_info "Check $PNAME status on system"
 		if [[ "$L_STATUS" == "installed"  && "$xforce" == "True" ]]; then
 			echo " :: Reinstall $PNAME"
+			log_info "Package ($PNAME) already installed, reinstall mode"
 		elif [[ "$L_STATUS" == "installed" && -z "$xforce" ]]; then
 			echo " :: Package $PNAME already installed"
+			log_info "Package ($PNAME) already installed and no reinstall mode"
 			if [ $PNAME == ${@: -1} ]; then exit 1; else continue; fi
 		else
 			echo " :: Install package $PNAME"
+			log_info "Install $PNAME"
 		fi
 		on_lock
+		log_info "Copy archive packages folder"
+		_VER="Command: cp $FULLPATH $PACKAGES_PATH"
+		trap 'error ${LINENO} "Try to copy archive to packages folder"' ERR
 		cp $FULLPATH $PACKAGES_PATH
-		cd $PACKAGES_PATH
 		PPATH=$(get_ppath "$PNAME")
 		load_control_tpl
+		log_info "Source $PNAME control file"
+		trap 'error ${LINENO} "Try to source $PPATH/control"' ERR
 		. $PPATH/control	
-		check_code $? "Source control file from $NAME failure"
 		echo "    + Pre-install"
 		echo "-----"
+		log_info "Pre-install ($PNAME)"
+		trap 'error ${LINENO} "See control file of $PNAME\nPath: $PPATH/control"' ERR
 		pre_install 
 		echo "-----"
-		check_code $? "Pre-install step failure"
 		echo "    + Install"
-		cd $PREFIX
+		log_info "Install $PNAME"
+		log_info "Extract $PNAME package files"
+		trap 'error ${LINENO} "Untar files.bz2 ($PNAME) failure"' ERR
 		extract_all $PPATH
+		log_info "Copy conf files"
+        trap 'error ${LINENO} "Copy conf from files.bz2 ($PNAME) failure"' ERR
 		install_conf $PPATH
-		check_code $? "Untar conf from files.bz2 ($NAME) failure"
+		log_info "Copy binaries"
+        trap 'error ${LINENO} "Copy binaries from files.bz2 ($PNAME) failure"' ERR
 		install_bin $PPATH
-		check_code $? "Untar bin from files.bz2 ($NAME) failure"
 		echo "    + Post-install"
 		echo "-----"
+		log_info "Post-install ($PNAME)"
+		trap 'error ${LINENO} "Post-install step ($PNAME) failure"' ERR
 		post_install 
 		echo "-----"
-		check_code $? "Post-install step ($PNAME) failure"
+		log_info "Update local db with new installed package ($PNAME)"
 		db_set "$PNAME" "$VERSION-$RELEASE" "installed"
 		echo "    + Remove package folder"
+		log_info "Remove package folder ($PNAME)"
+		trap 'error ${LINENO} "Post install-local package folder remove failure"' ERR
 		rm -Rf $PPATH
-		check_code $? "Post install-local package folder remove failure"
+		log_info "Finised"
 		echo "    + Done"  
 		off_lock
 	done
 }
 
-function remove_package(){
+remove_package () {
 	for ARG in "$@";   do
 		PNAME=$ARG
 		pbl="False"
+		log_info "Check if package $PNAME is blacklisted"
 		for pkg in $PKG_BLACKLIST; do
 			if [ "$PNAME" == "$pkg" ]; then
 				pbl="True"
@@ -269,6 +307,7 @@ function remove_package(){
 		done
 
 		if [ "$pbl" == "True" ]; then
+			log_info "Package $PNAME is blacklisted"
 			echo " :: Package $PNAME blacklisted"
 			continue
 		fi
@@ -284,37 +323,45 @@ function remove_package(){
 			echo " :: Remove package $PNAME"
 			PPATH=$(get_ppath "$PNAME")
 			load_control_tpl
+			log_info "Source $PNAME control file ($PPATH/control)"
+			trap 'error ${LINENO} "Source control file from $PNAME failure ($PPATH/control)"' ERR
 			. $PPATH/control
-			check_code $? "Source control file from $PNAME failure"
 			echo "    + Pre-remove"
 			echo "-----"
+			log_info "Pre-remove ($PNAME)"
+        	trap 'error ${LINENO} "See control file of $PNAME\nPath: $PPATH/control"' ERR
 			pre_remove 
 			echo "-----"
-			check_code $? "Pre-remove step failure"
 			echo "    + Remove files"
+			log_info "Remove $PNAME files"
+			trap 'error ${LINENO} "Remove files in files.lst ($PNAME) failure"' ERR
 			while read line; do
 				rm -Rf $PREFIX/$(echo $line | cut -b 1-2 --complement)
 			done < $PPATH/files.lst
-			check_code $? "Remove files in files.lst ($PNAME) failure"
 			echo "    + Post-remove"
 			echo "-----"
-			post_remove 
+			log_info "Post-remove ($PNAME)"
+			trap 'error ${LINENO} "Post-remove step failure"' ERR
+			post_remove
 			echo "-----"
-			check_code $? "Post-remove step failure"
 			echo "    + Remove package folder"
+			log_info "Remove package ($PNAME) folder"
+			trap 'error ${LINENO} "Post remove package ($PNAME) folder remove failure"' ERR
 			rm -Rf $PPATH
-			check_code $? "Post remove package folder remove failure"
+			log_info "Update $PNAME package status in db"
 			db_del "$PNAME"
 			else
 				echo " :: Package $PNAME is not installed"
+				log_info "Package ($PNAME) already installed"
 				if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 		fi
+		log_info "Finised"
 		echo "    + Done"
 		off_lock
 	done
 }
 
-function upgrade_package () {
+upgrade_package () {
 	for ARG in "$@";   do
 		PNAME=$ARG
 		DBINFO=$(db_get "$PNAME")
@@ -327,63 +374,82 @@ function upgrade_package () {
 			R_VERS=$(db_parse "version" "$R_INFO")
 			R_REL=$(db_parse "release" "$R_INFO")
 			R_MD5=$(db_parse "md5" "$R_INFO")
-	
+
+			log_info "Check if new release or version is available for $PNAME"
 			if [ "$R_VERS" == "$L_VERS" ]; then	
 				if [ "$R_REL" == "$L_REL" ]; then
 					echo " :: No new version or release for $PNAME"
+					log_info "No new version or release ($PNAME)"
 					continue
-				else 
+				else
+					log_info "New package release available ($PNAME)"
 					echo -e "\n :: Upgrade package release $PNAME"
 				fi
-			else 
+			else
+				log_info "New package version available ($PNAME)"
 				echo -e "\n :: Upgrade package version $PNAME"
 			fi
 		
 			download_package "$PNAME"
 		
-			on_lock
-			PPATH=$(get_ppath "$PNAME")
-			off_lock
+			log_info "Check downloaded $PNAME package md5"
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
-	
+
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "     + Checking Md5Sum: [Fail]"
-				check_code 1 "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar"
+				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
 				else
 				echo "     + Checking Md5Sum: [Success]"
 			fi
+
 			on_lock
+			PPATH=$(get_ppath "$PNAME")
+			on_lock
+
 			load_control_tpl
+			log_info "Source $PNAME control file"
+			trap 'error ${LINENO} "Try to source $PPATH/control"' ERR
 			. $PPATH/control
-			check_code $? "Source control file from $PNAME failure"
 			echo "     + Pre-update"
 			echo "-----"
-			pre_update 
+			log_info "Pre-update ($PNAME)"
+        	trap 'error ${LINENO} "See control file of $PNAME\nPath: $PPATH/control"' ERR
+			pre_update
 			echo "-----"
-			check_code $? "Pre-update function ($PNAME) failure"
 			echo "     + Update"
+			log_info "Update"
+			log_info "Go to $PREFIX"
 			cd $PREFIX
+			log_info "Extract $PNAME package files"
+        	trap 'error ${LINENO} "Untar files.bz2 ($PNAME) failure"' ERR
 			extract_all $PPATH
+			log_info "Copy conf files"
+        	trap 'error ${LINENO} "Copy binaries from files.bz2 ($PNAME) failure"' ERR
 			install_bin $PPATH
-			check_code $? "Untar bin from files.bz2 ($PNAME) failure"
+			log_info "Copy binaries"
+        	trap 'error ${LINENO} "Copy conf from files.bz2 ($PNAME) failure"' ERR
 			install_conf $PPATH
-			check_code $? "Untar conf from files.bz2 ($PNAME) failure"
 			echo "     + Post-update"
 			echo "-----"
-			post_update 
+			log_info "Post-update ($PNAME)"
+			trap 'error ${LINENO} "Post-update function ($PNAME) failure"' ERR
+			post_update
 			echo "-----"
-			check_code $? "Post-update function ($PNAME) failure"
-	
+			
+			log_info "Update local db with new installed package ($PNAME)"
 			db_set "$PNAME" "$VERSION-$RELEASE" "installed"
 	
 			echo "     + Remove package folder"
+			log_info "Remove package ($PNAME) folder"
+			trap 'error ${LINENO} "Post upgrade package folder remove failure ($PPATH)"' ERR
 			rm -Rf $PPATH
-			check_code $? "Post upgrade package folder remove failure"
 			off_lock
 		else 
 			echo " :: Package $PNAME is not installed"
+			log_info "Package $PNAME not installed"
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 		fi
 		echo "     + Done"
+		log_info "Finised"
 	done
 }

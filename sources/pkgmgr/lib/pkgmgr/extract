@@ -18,26 +18,27 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-# List binaries files
-function list_bin_files () {
+list_bin_files () {
 	PPATH=$1
 	cat $PPATH/files.lst | grep -v '^./etc/' | while read bin_line; do echo $bin_line; done
  }
 
-# List conf files
-function list_conf_files () {
+list_conf_files () {
 	PPATH=$1
 	cat $PPATH/files.lst | grep '^./etc/' | while read conf_line; do echo $conf_line; done
 }
 
-function extract_all () {
+extract_all () {
 	PPATH=$1
+	log_info "Create extract folder"
+	trap 'error ${LINENO} "Try to mkdir .extract folder ($PPATH/.extract)"' ERR
 	mkdir -p $PPATH/.extract
+	log_info "Untar files.bz2 into extract folder"
+	trap 'error ${LINENO} "Untar files.bz2 into extract ($PPATH/files.bz2 to $PPATH/.extract)"' ERR
 	tar xf $PPATH/files.bz2 -C $PPATH/.extract
 }
 
-# Install all files except conf files
-function install_bin () {
+install_bin () {
 	PPATH=$1
 	list_bin_files $PPATH |
 		while read t_line ; do
@@ -47,8 +48,7 @@ function install_bin () {
 		done
 }
 
-# Install conf files
-function install_conf () {
+install_conf () {
 	PPATH=$1
 	list_conf_files $PPATH | 
 		while read t_line ; do
