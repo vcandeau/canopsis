@@ -21,13 +21,14 @@
 . $HOME/etc/pkgmgr.conf
 
 _pkgmgr () {
-	local cur prev actions
+	local cur prev actions list_files
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	actions="install install-local reinstall reinstall-local upgrade remove update list clean help"
 	local_pkgs=$(if [ -f $LOCAL_DB_PATH ];then cat $LOCAL_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1; fi)
 	remote_pkgs=$(if [ -f $REMOTE_DB_PATH ];then cat $REMOTE_DB_PATH | grep "^${cur}" | while read line; do echo $line; done | cut -d '|' -f1; fi)
+	list_files=`ls -1 | grep "^${cur}"`
 
 	if [[ ${prev} == "pkgmgr" ]]; then
 		COMPREPLY=( $(compgen -W "${actions}" -- ${cur}) )
@@ -41,6 +42,16 @@ _pkgmgr () {
 
 	if [[ ${prev} == "reinstall" ]] || [[ ${prev} == "upgrade" ]] || [[ ${prev} == "remove" ]]; then
 		COMPREPLY=( $(compgen -W "${local_pkgs}" -- ${cur}) )
+		return 0
+	fi
+	
+	if [[ ${prev} == "reinstall-local" ]]; then
+		COMPREPLY=( $(compgen -W "${local_pkgs}" -- ${cur}) )
+		return 0
+	fi
+
+	if [[ ${prev} == "install-local" ]];then
+		COMPREPLY=( $(compgen -W "${list_files}" -- ${cur}) )
 		return 0
 	fi
 }
