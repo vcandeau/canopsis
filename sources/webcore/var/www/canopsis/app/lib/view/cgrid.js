@@ -66,7 +66,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		//------------------Option docked bar--------------
 		if(this.exportMode){
 			this.border = false
-			this.hideHeaders = true
+			//this.hideHeaders = true
 		}else{
 			if (this.opt_bar){
 				var bar_child = [];
