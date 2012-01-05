@@ -88,7 +88,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//this.callParent(arguments);	
 		
 		//create mask
-		this.mask = new Ext.LoadMask(this, {msg:"Please wait..."});
+		this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
 	},
 
 	setContent: function(){
@@ -290,7 +290,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
 			var report_popup = $.pnotify({
-				pnotify_title: 'Please Wait',
+				pnotify_title: _('Please Wait'),
 				pnotify_text: _('Your document is rendering, a popup will ask you where to save in few seconds'),
 				pnotify_history: false,
 				pnotify_opacity: 0.8,
@@ -307,8 +307,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					//log.dump(data);
 					//window.open(data)
 					report_popup.pnotify({
-						pnotify_title: 'Export ready !',
-						pnotify_text: 'You can get your document <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">here</a>',
+						pnotify_title: _('Export ready') + ' !',
+						pnotify_text: _('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
 						pnotify_closer: true,
 					});
 				},

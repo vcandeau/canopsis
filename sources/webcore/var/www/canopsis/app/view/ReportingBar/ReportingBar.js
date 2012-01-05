@@ -44,7 +44,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		this.currentDate = this.add({
 			xtype: 'datefield',
 			name: 'from',
-			//fieldLabel: 'From',
+			//fieldLabel: _('From'),
 			value: new Date(),
 			maxValue: new Date(),
 			//format: 'd m Y',
@@ -76,7 +76,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		this.linkButton = this.add({
 			xtype: 'button', // default for Toolbars
-			text: 'link',
+			text: _('Link'),
 			//iconCls: '',
 			action: 'link',
 		})

@@ -27,7 +27,7 @@ Ext.define('canopsis.view.Menu.View' ,{
 
 	hideHeaders: true,
 	rootVisible: false,
-	title: 'Menu',
+	title: _('Menu'),
 	animCollapse: false,
 	collapsible: true,
 	//collapsed: false,

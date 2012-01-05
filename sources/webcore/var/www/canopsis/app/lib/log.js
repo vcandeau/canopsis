@@ -70,7 +70,7 @@ var log = {
     		});
 
 		this.window = Ext.create('widget.window', {
-			title: 'Console',
+			title: _('Console'),
 			closable: true,
 			closeAction: 'hide',
 			width: 800,
