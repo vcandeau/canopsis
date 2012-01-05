@@ -269,11 +269,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var stopReport = startReport + toolbar.combo.getValue();
 			var url = 'http://' + window.location.host + '/static/canopsis/reporting.html?'
 			
-			log.dump(window.location)
-			
 			url += 'view=' + this.view_id + '&'
 			url += 'from=' + startReport + '&'
-			url += 'to' + stopReport
+			url += 'to=' + stopReport
 			
 			window.open(url,'_newtab')
 		}
