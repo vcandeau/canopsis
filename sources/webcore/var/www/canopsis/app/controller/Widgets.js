@@ -25,16 +25,25 @@ Ext.define('canopsis.controller.Widgets', {
     stores: ['Widget'],
     models: ['event'],
 
+    logAuthor: "[controller][Widgets]",
+
     init: function() {
 		Ext.Loader.setPath('widgets', './widgets');
 		this.store = this.getStore('Widget');
-		log.debug('[controller][Widgets] : parsing Widget store');
+		log.debug('parsing Widget store', this.logAuthor);
 		this.store.on('load',function(){
 			this.store.each(function(record){
-				log.debug('[controller][Widgets] : loading ' + record.data.xtype);
+				log.debug('loading ' + record.data.xtype, this.logAuthor);
 				var name ='widgets.' + record.data.xtype + '.' + record.data.xtype ;
 				Ext.require(name);
-			});
+				if (record.data.locales){
+					if (record.data.locales.indexOf(global.locale)){
+						log.debug(' + loading locale '+global.locale+' ...', this.logAuthor);
+						var name ='widgets.' + record.data.xtype + '.locales.lang-' +  global.locale;
+						Ext.require(name);
+					}
+				}
+			}, this);
 			
 			// small hack
 			setTimeout(function(ctrl){ ctrl.fireEvent('loaded'); },1000, this);
