@@ -125,4 +125,8 @@ var i18n={
 	'Please correct form errors.':	'Veuillez corriger le formulaire',
 	'Username':			"Nom d'utilisateur",
 	'Connect':			"Connecter",
+	'Day':				'Jour',
+	'Week':				'Semaine',
+	'Month':			'Mois',
+	'Year':				'Année',
 }

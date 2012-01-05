@@ -32,6 +32,7 @@ Ext.define('widgets.list.list' ,{
 	initComponent: function() {
 	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
+			exportMode : this.exportMode,
 			border: (this.title || this.fullmode) ? false : true,
 			opt_paging: true,
 			filter: this.filter,

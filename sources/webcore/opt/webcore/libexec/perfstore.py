@@ -99,6 +99,42 @@ def perfstore_metric_get_values(_id, metrics="<all>", start=None, stop=None):
 			if metric:
 				try:
 					values = mynode.metric_get_values(metric, start, stop)
+					full_values = mynode.metric_get_values(metric, start, stop, auto_aggregate=False)
+					## test
+					### def aggregate(values, max_points=1450, atype='MEAN', agfn=None):
+					if values:
+						""""
+						values_1h =  pmath.timesplit(values, values[len(values)-1][0] - 3600, values[len(values)-1][0])
+						values_6h =  pmath.timesplit(values, values[len(values)-1][0] - 6 * 3600, values[len(values)-1][0])
+						values_12h=  pmath.timesplit(values, values[len(values)-1][0] - 12 *3600, values[len(values)-1][0])
+						values_week=  pmath.timesplit(values, values[len(values)-1][0] - 7 * 24 * 3600, values[len(values)-1][0])
+
+						def trend(values):
+							(a, b, RR) = pmath.linreg(pmath.get_timestamps(values), pmath.get_values(values))
+
+							p1 = [values[0][0] * 1000, 				a * values[0][0] + b]
+							p2 = [values[(len(values)-1)/2][0] * 1000,		a * values[(len(values)-1)/2][0] + b]
+							p3 = [values[len(values)-1][0] * 1000,		a * values[len(values)-1][0] + b]
+							return [p1, p2, p3]
+
+						output.append({'metric': metric+'-trend-1h', 'values': trend(values_1h) })
+						output.append({'metric': metric+'-trend-6h', 'values': trend(values_6h) })
+						output.append({'metric': metric+'-trend-12h', 'values': trend(values_12h) })
+						output.append({'metric': metric+'-trend-week', 'values': trend(values_week) })
+						"""
+						
+
+						"""def agfn(values):
+							(a, b, RR) = pmath.linreg(pmath.get_timestamps(values), pmath.get_values(values))
+							if a != None:
+								return (a * values[len(values)-1][0]) + b
+							else:
+								return 0
+
+						trend = pmath.aggregate(full_values, agfn=agfn, interval=60)
+						trend = [[x[0] * 1000, x[1]] for x in trend]
+						output.append({'metric': metric+'-trend', 'values': trend })
+						"""
 
 					values = [[x[0] * 1000, x[1]] for x in values]
 					if len(values) > 1:
