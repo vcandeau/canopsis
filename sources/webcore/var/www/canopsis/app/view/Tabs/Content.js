@@ -298,7 +298,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					data = data.data.url
 					//log.dump(data);
 					//window.open(data)
-					global.notify(
+					global.notify.notify(
 						_('Export ready'),
 						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
 						undefined,
