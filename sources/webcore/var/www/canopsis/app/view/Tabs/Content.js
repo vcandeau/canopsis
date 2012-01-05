@@ -267,11 +267,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		if (toolbar.currentDate.isValid()){
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
-			var url = window.location.origin + '/static/canopsis/reporting.html?'
+			var url = 'http://' + window.location.host + '/static/canopsis/reporting.html?'
 			
 			url += 'view=' + this.view_id + '&'
-			url += 'from=' + startReport + '&'
-			url += 'to' + stopReport
+			url += 'from=' + startReport * 1000 + '&'
+			url += 'to=' + stopReport * 1000
 			
 			window.open(url,'_newtab')
 		}
@@ -295,7 +295,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				pnotify_history: false,
 				pnotify_opacity: 0.8,
 				pnotify_hide: false,
-				pnotify_closer: false,
+				pnotify_closer: true,
 				pnotify_sticker: false
 			});
 			Ext.Ajax.request({
@@ -306,10 +306,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					data = data.data.url
 					//log.dump(data);
 					//window.open(data)
-					report_popup.pnotify({
+					$.pnotify({
 						pnotify_title: _('Export ready') + ' !',
 						pnotify_text: _('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
+						pnotify_history: false,
+						pnotify_opacity: 0.8,
+						pnotify_hide: false,
 						pnotify_closer: true,
+						pnotify_sticker: false
 					});
 				},
 				failure: function (result, request) {
