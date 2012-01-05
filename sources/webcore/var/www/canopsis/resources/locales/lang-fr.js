@@ -37,6 +37,7 @@ var i18n={
 	'E-mail':			'E-mail',
 	'Empty selection':		'Effacer la sélection',
 	'export this view to pdf':	'Exporter au format PDF',
+	'view page in html' :	'Voir cette page en html',
 	'First name':			'Prénom',
 	'First Name':			'Prénom',
 	'group':			'groupe',
