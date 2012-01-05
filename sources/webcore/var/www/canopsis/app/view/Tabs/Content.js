@@ -225,7 +225,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		if (toolbar.currentDate.isValid()){
 			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 			var stopReport = startReport + toolbar.combo.getValue();
-
+			
+			log.debug('--------------------------------------------')
+			log.debug('start date report :' + new Date(startReport * 1000), this.logAuthor)
+			log.debug('stop date report :' + new Date(stopReport * 1000), this.logAuthor)
+			log.debug('--------------------------------------------')
+			
 			//enable mask
 			this._maskInit()
 
