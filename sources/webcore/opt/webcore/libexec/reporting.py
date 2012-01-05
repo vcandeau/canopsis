@@ -61,7 +61,16 @@ def generate_report(startTime, stopTime,view_name):
 	#logger.debug('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime)
 	
 	#launching subprocess
-	report_cmd = subprocess.Popen('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime, shell=True)
+	libwkhtml_dir=os.path.expanduser("~/lib")
+	sys.path.append(libwkhtml_dir)
+	try:
+		import wkhtmltopdf.wrapper
+		wrapper_settings = wkhtmltopdf.wrapper.config(filename=file_name, viewname=view_name, starttime=startTime, stoptime=stopTime)
+		report_cmd = wkhtmltopdf.wrapper.run(wrapper_settings)
+	except Exception, err:
+		logger.debug(err)
+
+	#report_cmd = subprocess.Popen('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime, shell=True)
 	
 	#wait the end of the process
 	while(report_cmd.poll() == None):
