@@ -50,6 +50,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	title : '',
 
 	border: false,
+	
+	exportMode : false,
  
 	initComponent: function() {
 		/*if (this.opt_grouping){
@@ -62,120 +64,122 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 
 
 		//------------------Option docked bar--------------
-		if (this.opt_bar){
-			var bar_child = [];
+		if(this.exportMode){
+			this.border = false
+			this.hideHeaders = true
+		}else{
+			if (this.opt_bar){
+				var bar_child = [];
 
-			if(this.opt_bar_add){
-				bar_child.push({
-					xtype: 'button',
-					iconCls: 'icon-add',
-					//cls: 'x-btn-default-toolbar-small',
-					text: _('Add'),
-					action: 'add',
-				})
-			}
-			if(this.opt_bar_duplicate){
-				bar_child.push({
-					xtype: 'button',
-					iconCls: 'icon-copy', 
-					text: _('Duplicate'),
-					action: 'duplicate',
-				})
-			}
-			if(this.opt_bar_reload){
-				bar_child.push({
-					xtype: 'button',
-					iconCls: 'icon-reload',
-					text: _('Reload'),
-					action: 'reload',
-				})
-			}
-			if(this.opt_bar_delete){
-				bar_child.push({
-					xtype: 'button',
-					iconCls: 'icon-delete',
-					text: _('Delete'),
-					disabled: true,
-					action: 'delete',
-				})
-			}
-			if(this.opt_bar_search){
-				bar_child.push({xtype: 'tbfill'});
-				bar_child.push({
-					xtype: 'textfield',
-					name: 'searchField',
-					hideLabel: true,
-					width: 200,
-					pack: 'end',
-				})
-				bar_child.push({
-					xtype : 'button',
-					action: 'search',
-					text: _('search'),
-					pack: 'end',
-				})
-			}
-			
-			//creating toolbar
-			if(this.opt_bar_bottom){
-				this.bbar = Ext.create('Ext.toolbar.Toolbar', {
-					items: bar_child,
-				});
-			}else{
-				this.tbar = Ext.create('Ext.toolbar.Toolbar', {
-					items: bar_child,
-				});
-			}
-			
-		}
-		
-
-		
-		//--------------------Paging toolbar -----------------
-		if (this.opt_paging){
-			this.pagingbar = Ext.create('Ext.PagingToolbar', {
-				store: this.store,
-				displayInfo: false,
-				emptyMsg: "No topics to display",
-			});
-        
-			this.bbar = this.pagingbar;
-			this.bbar.items.items[10].hide();
-			
-		}
-		
-		//--------------------Context menu---------------------
-		if (this.opt_bar){
-			var myArray = [];
-			
-			if(this.opt_bar_delete){
-				myArray.push(
-					Ext.create('Ext.Action', {
-						iconCls: 'icon-delete',
-						text: _('Delete'),
-						action: 'delete',
+				if(this.opt_bar_add){
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-add',
+						//cls: 'x-btn-default-toolbar-small',
+						text: _('Add'),
+						action: 'add',
 					})
-				)
-			}
-			if (this.opt_bar_duplicate){
-				myArray.push(
-					Ext.create('Ext.Action', {
-						iconCls: 'icon-copy',
+				}
+				if(this.opt_bar_duplicate){
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-copy', 
 						text: _('Duplicate'),
 						action: 'duplicate',
 					})
-				)
+				}
+				if(this.opt_bar_reload){
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-reload',
+						text: _('Reload'),
+						action: 'reload',
+					})
+				}
+				if(this.opt_bar_delete){
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-delete',
+						text: _('Delete'),
+						disabled: true,
+						action: 'delete',
+					})
+				}
+				if(this.opt_bar_search){
+					bar_child.push({xtype: 'tbfill'});
+					bar_child.push({
+						xtype: 'textfield',
+						name: 'searchField',
+						hideLabel: true,
+						width: 200,
+						pack: 'end',
+					})
+					bar_child.push({
+						xtype : 'button',
+						action: 'search',
+						text: _('search'),
+						pack: 'end',
+					})
+				}
+				
+				//creating toolbar
+				if(this.opt_bar_bottom){
+					this.bbar = Ext.create('Ext.toolbar.Toolbar', {
+						items: bar_child,
+					});
+				}else{
+					this.tbar = Ext.create('Ext.toolbar.Toolbar', {
+						items: bar_child,
+					});
+				}
+				
 			}
 			
-			if (myArray.length != 0){
-				this.contextMenu = Ext.create('Ext.menu.Menu',{
-					items : myArray,
+			//--------------------Paging toolbar -----------------
+			if (this.opt_paging){
+				this.pagingbar = Ext.create('Ext.PagingToolbar', {
+					store: this.store,
+					displayInfo: false,
+					emptyMsg: "No topics to display",
 				});
+			
+				this.bbar = this.pagingbar;
+				this.bbar.items.items[10].hide();
+				
 			}
 			
-			
+			//--------------------Context menu---------------------
+			if (this.opt_bar){
+				var myArray = [];
+				
+				if(this.opt_bar_delete){
+					myArray.push(
+						Ext.create('Ext.Action', {
+							iconCls: 'icon-delete',
+							text: _('Delete'),
+							action: 'delete',
+						})
+					)
+				}
+				if (this.opt_bar_duplicate){
+					myArray.push(
+						Ext.create('Ext.Action', {
+							iconCls: 'icon-copy',
+							text: _('Duplicate'),
+							action: 'duplicate',
+						})
+					)
+				}
+				
+				if (myArray.length != 0){
+					this.contextMenu = Ext.create('Ext.menu.Menu',{
+						items : myArray,
+					});
+				}
+				
+				
+			}
 		}
-
 
 		this.callParent(arguments);
 	}
