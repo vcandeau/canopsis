@@ -270,8 +270,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var url = 'http://' + window.location.host + '/static/canopsis/reporting.html?'
 			
 			url += 'view=' + this.view_id + '&'
-			url += 'from=' + startReport + '&'
-			url += 'to=' + stopReport
+			url += 'from=' + startReport * 1000 + '&'
+			url += 'to=' + stopReport * 1000
 			
 			window.open(url,'_newtab')
 		}
