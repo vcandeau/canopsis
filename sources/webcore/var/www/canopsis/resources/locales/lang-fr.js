@@ -106,6 +106,7 @@ var i18n={
 	'From':				'De',
 	'Nb column':			'Nb colonne',
 	'password':			'Mot de passe',
+	'Password':			'Mot de passe',
 	'Search Option':		'Option de recherche',
 	'Source Name':			'Nom de la source',
 	'Source type':			'Type de la source',
@@ -118,4 +119,10 @@ var i18n={
 	'You can get your document':	'Vous pouvez télécharger votre document',
 	'View':				'Vue',
 	'Views':			'Vues',
+	'authentification failed':	"L'authentification a échouée",
+	'login or password incorrect':	"Nom d'utilisateur ou mot de passe incorrecte",
+	'Invalid Data':			"Données invalide",
+	'Please correct form errors.':	'Veuillez corriger le formulaire',
+	'Username':			"Nom d'utilisateur",
+	'Connect':			"Connecter",
 }
