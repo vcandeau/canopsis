@@ -23,35 +23,19 @@ Ext.define('canopsis.controller.Notify', {
 
     opacity: 0.8,
     history: false,
-    views: [],
 
     init: function() {
-	this.getController('WebSocket').on('message', function(ws, evt, data) {
-		
-		var type = undefined;
-		var icon = undefined;
-		var title = data['connector_name'] + " > " +  data['component'];
-		var message = data['output'];
-
-		if (data['source_type'] == 'resource') {
-			title = title + " > " + data['resource']
-		}
-
-		if (data['state'] == 0){
-			icon = 'ui-icon ui-icon-check'
-		}else if (data['state'] == 1) {
-			icon = 'ui-icon ui-icon-alert'
-		}else if (data['state'] == 2){
-			type = 'error'
-		}
-
-		this.notify(title, message, type, icon);
-	}, this);
-
+		global.notify = this
+		log.debug('[controller][cnotify] - Initialize ...');
+		this.callParent(arguments);
     },
 
-    notify: function(title, text, type, icon){
-	if (global.notify){
+    notify: function(title, text, type, icon,hide,closer,sticker){
+		if(type == undefined){var type=undefined}
+		if(icon == undefined){var icon=undefined}
+		if(hide == undefined){var hide=true}
+		if(closer == undefined){var closer=true}
+		if(sticker == undefined){var sticker=false}
 		$.pnotify({
 			pnotify_title: title,
 			pnotify_text: text,
@@ -59,7 +43,10 @@ Ext.define('canopsis.controller.Notify', {
 			pnotify_history: this.history,
 			pnotify_notice_icon: icon,
 			pnotify_opacity: this.opacity,
-		});
+			pnotify_hide: hide,
+			pnotify_closer: closer,
+			pnotify_sticker: sticker
+		})
+		log.debug('[controller][cnotify] - Display notify');
 	}
-   }
 });
