@@ -198,7 +198,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			
 			// resource
 			if (nodeName[5]){
-				title += nodeName[5] + ' on '
+				title += nodeName[5] + ' ' + _('line_graph.on') + ' '
 			}
 
 			//component

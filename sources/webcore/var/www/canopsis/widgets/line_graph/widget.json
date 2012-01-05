@@ -5,5 +5,6 @@
 	"website": "http://www.canopsis.org",
 	"xtype":"line_graph",
 	"description": "Display perfdata on line's graph",
-	"refreshInterval": 300
+	"refreshInterval": 300,
+	"locales": ["en", "fr"]
 }]

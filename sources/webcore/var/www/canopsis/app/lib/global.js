@@ -39,6 +39,7 @@ var global = {
 	pageSize: 20,
 
 	default_locale: 'en',
+	locale: 'en',
 
 	default_colors:[
 		'#4572A7',
