@@ -26,6 +26,7 @@ Ext.define('widgets.states.states' ,{
 	initComponent: function() {
 		
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
+			exportMode : this.exportMode,
 			border: (this.title || this.fullmode) ? false : true,
 		});
 
