@@ -23,6 +23,8 @@ Ext.define('canopsis.store.Menu', {
 	
 	storeId: 'store.Menu',
 	
+	autoLocalization: true,
+
 	fields: [
 		{name: 'id'},
 		{name: 'leaf'},

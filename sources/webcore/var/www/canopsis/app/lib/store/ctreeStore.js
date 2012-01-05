@@ -20,10 +20,12 @@
 */
 Ext.define('canopsis.lib.store.ctreeStore', {
 	extend: 'Ext.data.TreeStore',
-    
-    //raise an exception if server didn't accept the request
+
+	autoLocalization: false,
+
+	//raise an exception if server didn't accept the request
 	//and display a popup if the store is modified
-    listeners: {
+	listeners: {
 		exception: function(proxy, response, operation){
 			Ext.MessageBox.show({
 				title: _('REMOTE EXCEPTION'),
@@ -33,5 +35,15 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 			});
 			log.debug(response);
 		},
+		load: function(store, node, records){
+			if (this.autoLocalization){
+				var i;
+				for (i in records){
+					record = records[i]
+					record.set('text', _(record.get('text')));
+					record.modified = false;
+				}
+			}
+		}
    }	
 });
