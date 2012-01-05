@@ -5,8 +5,8 @@ Ext.define('canopsis.view.ReportView', {
 	setContent : function(){
 		//----------------Setting globals options----------------
 		var items = this.view.items;
-		var totalWidth = this.getWidth() - 20;
-		var nodeId = this.view.nodeId;
+		var totalWidth = this.getWidth() - 20
+		var nodeId = this.view.nodeId
 		var refreshInterval = this.view.refreshInterval
 		var nbColumns = this.view.nbColumns
 		var rowHeight = this.view.rowHeight
@@ -16,7 +16,13 @@ Ext.define('canopsis.view.ReportView', {
 		if (! nbColumns || items.length == 1) { nbColumns = 1 }
 		
 		this.layout.columns = nbColumns
-		
+		/*
+		log.debug('---------------------------------------')
+		log.dump(export_to)
+		log.dump(export_from)
+		log.dump(export_view_id)
+		log.debug('---------------------------------------')
+		*/
 		//---------------Adding presentation widget-------------------
 		//get information
 		/*
