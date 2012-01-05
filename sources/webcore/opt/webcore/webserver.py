@@ -54,7 +54,8 @@ def main():
 	if debug:
 		logging_level=logging.DEBUG
 	else:
-		logging_level=logging.INFO
+		logging_level=logging.DEBUG
+
 	logging.basicConfig(level=logging_level,
 			format='%(asctime)s %(name)s %(levelname)s %(message)s',
 	)
