@@ -85,10 +85,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		});
 
 		this.on('beforeclose', this.beforeclose)
-		//this.callParent(arguments);	
 		
 		//create mask
 		this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
+		
 	},
 
 	setContent: function(){
@@ -288,16 +288,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			//log.debug(startReport)
 			//log.debug(this.view_id)
 		
-			//Ext.Msg.alert('Exporting in progress', "don't close your browser, the file will be downloaded in 10 seconds");
-			var report_popup = $.pnotify({
-				pnotify_title: _('Please Wait'),
-				pnotify_text: _('Your document is rendering, a popup will ask you where to save in few seconds'),
-				pnotify_history: false,
-				pnotify_opacity: 0.8,
-				pnotify_hide: false,
-				pnotify_closer: true,
-				pnotify_sticker: false
-			});
+			global.notify.notify(_('Please Wait'),_('Your document is rendering, a popup will ask you where to save in few seconds'))
+
 			Ext.Ajax.request({
 				url: '/reporting/'+ startReport * 1000 + '/' + stopReport * 1000 + '/' + this.view_id,
 				scope: this,
@@ -306,15 +298,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					data = data.data.url
 					//log.dump(data);
 					//window.open(data)
-					$.pnotify({
-						pnotify_title: _('Export ready') + ' !',
-						pnotify_text: _('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
-						pnotify_history: false,
-						pnotify_opacity: 0.8,
-						pnotify_hide: false,
-						pnotify_closer: true,
-						pnotify_sticker: false
-					});
+					global.notify(
+						_('Export ready'),
+						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
+						undefined,
+						undefined,
+						false
+					)
 				},
 				failure: function (result, request) {
 					log.error("Report generation have failed", this.logAuthor)
