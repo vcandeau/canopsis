@@ -37,7 +37,7 @@ Ext.define('canopsis.controller.Widgets', {
 				var name ='widgets.' + record.data.xtype + '.' + record.data.xtype ;
 				Ext.require(name);
 				if (record.data.locales){
-					if (record.data.locales.indexOf(global.locale)){
+					if (record.data.locales.indexOf(global.locale) >= 0){
 						log.debug(' + loading locale '+global.locale+' ...', this.logAuthor);
 						var name ='widgets.' + record.data.xtype + '.locales.lang-' +  global.locale;
 						Ext.require(name);
