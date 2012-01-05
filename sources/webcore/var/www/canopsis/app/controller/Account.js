@@ -62,8 +62,8 @@ Ext.define('canopsis.controller.Account', {
 
 		if (already_exist){
 			Ext.MessageBox.show({
-				title: data['user'] + ' already exist !',
-				msg: 'you can\'t add the same user twice',
+				title: data['user'] + ' ' + _('already exist'),
+				msg: _("you can't add the same user twice"),
 				icon: Ext.MessageBox.WARNING,
   				buttons: Ext.Msg.OK
 			});

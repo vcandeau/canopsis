@@ -28,7 +28,7 @@ Ext.define('canopsis.view.Tabs.View' ,{
 	plain: false,
 
 /*	items:[{
-    		title: 'Dashboard',
+    		title: _('Dashboard'),
     		id: 'dashboard.tab',
     		view: 'anonymous-default-dashboard',
 		xtype: 'TabsContent',
