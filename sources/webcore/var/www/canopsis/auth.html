@@ -20,12 +20,24 @@
 -->
 <html>
 <head>
-    	<title>Authentification</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    	<title>Canopsis</title>
+
 	<link rel="stylesheet" type="text/css" href= "resources/lib/extjs/resources/css/ext-all.css">
 	<link rel="stylesheet" type="text/css" href="themes/default/theme.css">
         <link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
 
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
+
+	
+	<script type="text/javascript" src="app/lib/global.js"></script>
+	<script type="text/javascript" src="app/lib/log.js"></script>
+	<script type="text/javascript" src="app/lib/locale.js"></script>
+
+	<!-- Ext localization javascript -->
+	<script type="text/javascript" id="extlocale"></script>
+	<script type="text/javascript" id="canopsislocale"></script>
 </head>
 <body>
 
@@ -36,26 +48,33 @@
 	<div id='form' class='form'>
 
 	<script type="text/javascript">
-		
-		//function to return parameters in the url
-		function getURLParameter(name) {
-			return decodeURI(
-				(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
-			);
-		}
-		
 		Ext.require([
 			'Ext.form.Panel',
 			'Ext.util.KeyNav',
 		]);
 
 		Ext.onReady(function(){
+			Ext.fly('canopsislocale').on('load', function(){ build_form(); })
+
+			Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + global.default_locale + '.js'});
+			Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + global.default_locale + '.js'});
+		});
+	
+		//function to return parameters in the url
+		function getURLParameter(name) {
+			return decodeURI(
+				(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+			);
+		}
+
+		function build_form(){
+			
 			var winform = Ext.create('Ext.form.Panel', {
 				url:'/auth',
 				frame:true,
 				id: 'my_form',
 				submitOnEnter : true,
-				title: 'Authentification',
+				title: _('Authentification'),
 				renderTo: 'form',
 				fieldDefaults: {
 					msgTarget: 'side',
@@ -67,17 +86,17 @@
 				},
 		
 				items: [{
-					fieldLabel: 'Login',
+					fieldLabel: _('Username'),
 					name: 'login',
 					allowBlank:false
 				},{
-					fieldLabel: 'Password',
+					fieldLabel: _('Password'),
 					name: 'password',
 					inputType: 'password',
 					allowBlank:false
 				}],
 				buttons: [{
-					text: 'Login',
+					text: _('Connect'),
 					id: 'submitbutton',
 					submitOnEnter : true,
 					handler: function() {
@@ -94,42 +113,42 @@
 								}
 							},
 							failure: function(form, action) {
-								Ext.MessageBox.alert('authentification failed', 'login or password incorrect');
+								Ext.MessageBox.alert(_('authentification failed'), _('login or password incorrect'));
 							}
 						});
 					} else { // display error alert if the data is invalid
-						Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
+						Ext.Msg.alert(_('Invalid Data'), _('Please correct form errors.'))
 					}
 				}
 				}],			
 			});
 		
-		var nav = Ext.create('Ext.util.KeyNav', Ext.getDoc(), {
-			scope: 'my_form',
-			enter: function(){
-					if (winform.getForm().isValid()) { // make sure the form contains valid data before submitting
-						winform.getForm().submit({
-							method: 'GET',
-							success: function(form, action) {
-								var param = getURLParameter('url');	
-								if(param != 'null'){
-									window.location.href=param;
-								} else {
-									window.location.href='/';
+			var nav = Ext.create('Ext.util.KeyNav', Ext.getDoc(), {
+				scope: 'my_form',
+				enter: function(){
+						if (winform.getForm().isValid()) { // make sure the form contains valid data before submitting
+							winform.getForm().submit({
+								method: 'GET',
+								success: function(form, action) {
+									var param = getURLParameter('url');	
+									if(param != 'null'){
+										window.location.href=param;
+									} else {
+										window.location.href='/';
+									}
+								},
+								failure: function(form, action) {
+									Ext.MessageBox.alert('authentification failed', 'login or password incorrect');
 								}
-							},
-							failure: function(form, action) {
-								Ext.MessageBox.alert('authentification failed', 'login or password incorrect');
-							}
-						});
-					} else { // display error alert if the data is invalid
-						Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
-					}
-			}
-		})
+							});
+						} else { // display error alert if the data is invalid
+							Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
+						}
+				}
+			})
 		
 
-		});
+		};
 
 	</script>
 
