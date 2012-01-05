@@ -11,10 +11,10 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
 			data : [
-				{"name":"Day", "value":global.commonTs.day},
-				{"name":"Week", "value":global.commonTs.week},
-				{"name":"Month", "value":global.commonTs.month},
-				{"name":"Year", "value":global.commonTs.year}
+				{"name":_("Day"), "value":global.commonTs.day},
+				{"name":_("Week"), "value":global.commonTs.week},
+				{"name":_("Month"), "value":global.commonTs.month},
+				{"name":_("Year"), "value":global.commonTs.year}
 			]
 		});
 		
@@ -27,7 +27,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			displayField: 'name',
 			valueField: 'value',
 			forceSelection : true,
-			value : 'Day'
+			value : _('Day')
 		});
 		
 		this.combo.setValue(86400)
