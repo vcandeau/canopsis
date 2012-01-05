@@ -118,4 +118,9 @@ var i18n={
 	'You can get your document':	'Vous pouvez télécharger votre document',
 	'View':				'Vue',
 	'Views':			'Vues',
+	
+	'Day':			'Jour',
+	'Week':			'Semaine',
+	'Month':			'Mois',
+	'Year':			'Année',
 }
