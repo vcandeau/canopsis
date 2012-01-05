@@ -26,42 +26,42 @@ Ext.define('canopsis.view.Account.Form', {
 	iconCls: 'icon-crecord_type-account',
 
 	items: [{
-				fieldLabel: 'Login',
+				fieldLabel: _('Login'),
 				name: 'user',
 				allowBlank: false,
 			},{
-				fieldLabel: 'First Name',
+				fieldLabel: _('First Name'),
 				name: 'firstname',
 				allowBlank : false
 			}, {
-				fieldLabel: 'Last Name',
+				fieldLabel: _('Last Name'),
 				name: 'lastname',
 				allowBlank : false
 			},/*{
-				fieldLabel: 'aaa access owner',
+				fieldLabel: _('aaa access owner'),
 				name: 'aaa_access_owner'
 			},*/{
-				fieldLabel: 'E-mail',
+				fieldLabel: _('E-mail'),
 				name: 'mail',
 				vtype: 'email',
 				allowBlank : true
 			},/*{
-				fieldLabel: 'groups',
+				fieldLabel: _('groups'),
 				name: 'groups'
 			},*/{
-				fieldLabel: 'group',
+				fieldLabel: _('group'),
 				name: 'aaa_group',
 				store: 'Group',
 				displayField: 'crecord_name',
 				xtype: 'combobox',
 				allowBlank : false
 			},{
-				fieldLabel: 'password',
+				fieldLabel: _('password'),
 				inputType: 'password',
 				name: 'passwd',
 				allowBlank : false
 			}/*,{
-				fieldLabel: 'aaa owner',
+				fieldLabel: _('aaa owner'),
 				name: 'aaa_owner'
 			}*/],
     

@@ -26,7 +26,7 @@ Ext.define('canopsis.view.Group.Form', {
 	iconCls: 'icon-crecord_type-group',
 
 	items: [{
-			fieldLabel: 'Name',
+			fieldLabel: _('Name'),
 			name: 'crecord_name',
 			allowBlank: false,
 		}],

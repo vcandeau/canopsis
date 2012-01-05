@@ -37,13 +37,13 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
-				text: _('Build')
+				text: _('ITIL-Build')
 			},{
 				iconCls: 'icon-mainbar-run',
-				text: _('Run')
+				text: _('ITIL-Run')
 			},{
 				iconCls: 'icon-mainbar-report',
-				text: _('Report')
+				text: _('ITIL-Report')
 			},'-',{
 				xtype: 'container',
 				html: "<div class='cps-title' >Canopsis</div>",
