@@ -32,13 +32,13 @@
 
 on_lock () {
 	log_info "Create lock file"
-	stty intr undef
+	stty intr undef 2>/dev/null
 	trap 'error ${LINENO} "Try to create lock file ($LOCK_FILE)"' ERR
 	touch $LOCK_FILE
 }
 
 off_lock () {
-	stty intr "^C"
+	stty intr "^C" 2>/dev/null
 	log_info "Remove lock file"
 	trap 'error ${LINENO} "Try to remove lock file ($LOCK_FILE)"' ERR
 	rm -Rf $LOCK_FILE
