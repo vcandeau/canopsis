@@ -41,7 +41,8 @@
 </head>
 <body style="width:940px;height:10px;">
 
-	<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>
+	<!--<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>-->
+	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
 	
 	<!-- Ext localization javascript -->
 	<script type="text/javascript" id="extlocale"></script>
@@ -71,15 +72,42 @@
 		var export_from = decoded_url.from
 		var export_to = decoded_url.to
 		var export_view_id = decoded_url.view
-		//log.debug('decoded_url.view : ' + decoded_url.view)
-		//log.debug('export_view_id : '+ export_view_id)
+		log.debug('decoded_url.view : ' + decoded_url.view)
+		log.debug('export_view_id : '+ export_view_id)
+		log.debug('decoded_url.from : ' + decoded_url.from)
+		log.debug('decoded_url.to : ' + decoded_url.to)
 	}
 		
 		
 	Ext.onReady(function() {
 		Ext.Loader.setConfig({enabled:true});
-		global.account = 'root'
-		createApplication()
+		//global.account = 'root'
+		
+		//check authentification
+		log.debug('Check auth ...', "[app]");
+		Ext.Ajax.request({
+			type: 'rest',
+			url: '/account/me',
+			reader: {
+				type: 'json',
+				root: 'data',
+				totalProperty  : 'total',
+				successProperty: 'success'
+			},
+			success: function(response){
+				request_state = Ext.JSON.decode(response.responseText).success
+				if (request_state){
+					global.account = Ext.JSON.decode(response.responseText).data[0];
+					createApplication()
+				} else {
+					log.debug('unauthorized')
+				}
+			},
+			failure: function() {
+				log.debug('unauthorized')
+			}
+		});
+		//createApplication()
 	});
 
 	//these are only for testing purpose
@@ -90,6 +118,17 @@
 	
 	
 	function createApplication(){
+		log.debug("Loading locale ...", "[app]");
+	
+		var locale = global.account['locale']
+		if (! locale){
+			locale = global.default_locale;
+		}
+		log.debug(" + User locale: "+locale, "[app]");
+
+		Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + locale + '.js'});
+		Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
+		
 		log.debug("Start ExtJS application ...", "[app]");
 		var app = Ext.application({
 			name: 'canopsis',

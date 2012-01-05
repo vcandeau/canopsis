@@ -87,7 +87,7 @@ def generate_report(startTime, stopTime,view_name):
 def get_report(fileName=None):
 	conn=Connection("127.0.0.1",27017)
 	db=conn['canopsis']
-	fs = gridfs.GridFS(db) #may add this collection='your collection'
+	fs = gridfs.GridFS(db, collection='report') #may add this collection='your collection'
 	
 	try:
 		#try to find the latest version of the file
@@ -106,7 +106,7 @@ def get_report(fileName=None):
 def put_in_grid_fs(file_path):
 	conn=Connection("127.0.0.1",27017)
 	db=conn['canopsis']
-	fs = gridfs.GridFS(db) #may add this collection='your collection'
+	fs = gridfs.GridFS(db, collection='report') #may add this collection='your collection'
 	
 	#just take the name not the whole path
 	report_name = file_path.split('/')
