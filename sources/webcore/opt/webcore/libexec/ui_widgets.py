@@ -60,8 +60,8 @@ def get_all_widgets():
 
 			FH.close()
 			logger.debug("     + Success")
-		except:
-			logger.debug("     + Failed")
+		except Exception, err:
+			logger.debug("     + Failed (%s)" % err)
 		
 	output={'total': len(output), 'success': True, 'data': output}
 	return output

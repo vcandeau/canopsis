@@ -59,6 +59,7 @@ function createApplication(){
 	if (! locale){
 		locale = global.default_locale;
 	}
+	global.locale = locale
 	log.debug(" + User locale: "+locale, "[app]");
 
 	Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + locale + '.js'});
