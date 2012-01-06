@@ -120,7 +120,11 @@ function start(){
 			echo " + Start process $NB ..."
 		fi
 
-		CMD="$HOME/bin/python $APP_BIN $NB"
+		if [ $NB_PROC -eq 1 ]; then
+			CMD="$HOME/bin/python $APP_BIN"
+		else
+			CMD="$HOME/bin/python $APP_BIN $NB"
+		fi
 
 		if [ $SUDO -eq 1 ]; then
 			CMD="sudo $CMD"
