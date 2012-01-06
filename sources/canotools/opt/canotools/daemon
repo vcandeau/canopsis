@@ -52,7 +52,7 @@ LOG=~/var/log/$APP_NAME.log
 
 function check_pid(){
 	PID=$1
-	echo `ps a | grep "^\s*$PID " | grep -v grep | wc -l`
+	echo `ps ax | grep "^\s*$PID " | grep -v grep | wc -l`
 }
 
 function set_pid(){
