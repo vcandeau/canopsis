@@ -2,7 +2,7 @@
 
 NAME="canotools"
 VERSION=0.1
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python canolibs"
 
