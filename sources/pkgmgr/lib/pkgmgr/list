@@ -85,4 +85,5 @@ function create_view () {
 			fi
 		done < "$REMOTE_DB_PATH"
 	echo
+	log_info "Finished"
 }

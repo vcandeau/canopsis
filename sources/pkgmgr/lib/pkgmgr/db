@@ -137,8 +137,13 @@ update_db () {
 	trap 'error ${LINENO} "Remove old database ($REMOTE_DB_PATH)"' ERR
 	rm -Rf "$REMOTE_DB_PATH"
 	log_info "Download Packages.list"
-	trap 'error ${LINENO} "Error Packages.list not accessible ($FINAL_URL/Packages.list)"' ERR
-	curl --silent -o "$REMOTE_DB_PATH" "$FINAL_URL/Packages.list"
+	response=$(curl -I --write-out %{http_code} --silent --output /dev/null "$FINAL_URL/Packages.list")
+    if [ "$response" != "200" ]; then
+        error ${LINENO} "Failure during download Packages.list ($FINAL_URL/Packages.list | $response)" 1
+    else
+        trap 'error ${LINENO} "Failure during download Packages.list ($FINAL_URL/Packages.list)"' ERR
+		curl --silent -o "$REMOTE_DB_PATH" "$FINAL_URL/Packages.list"
+    fi
 	clean_packages_list "$REMOTE_DB_PATH"
 	log_info "Update Last Update in info file"
 	trap 'error ${LINENO} "Remove Last Update time in info file"' ERR

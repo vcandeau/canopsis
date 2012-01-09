@@ -60,13 +60,19 @@ def generate_report(startTime, stopTime,view_name):
 	#logger.debug('serveur output')
 	#logger.debug('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime)
 	
-	#launching subprocess
-	libwkhtml_dir=os.path.expanduser("~/lib")
-	sys.path.append(libwkhtml_dir)
+	# Launch Reporting Celery Task
 	try:
-		import wkhtmltopdf.wrapper
-		wrapper_settings = wkhtmltopdf.wrapper.config(filename=file_name, viewname=view_name, starttime=startTime, stoptime=stopTime)
-		report_cmd = wkhtmltopdf.wrapper.run(wrapper_settings)
+		import reporting_task
+	except Exception, err:
+		logger.debug("Check your celeryconfig.py, if you have reporting task imported")
+		logger.debug(err)
+	try:
+		reporting_task.render_pdf.delay(file_name,
+										view_name,
+										startTime,
+										stopTime,
+										"/opt/canopsis/etc/wkhtmltopdf_wrapper.json")
+		report_cmd = reporting_task.get()
 	except Exception, err:
 		logger.debug(err)
 

@@ -20,13 +20,6 @@
 
 set -E -o pipefail
 
-# Log levels
-#   - INFO      (1)
-#   - ERR       (2)
-#   - VERBOSE   (3)
-#   - DEBUG     (4)
-LOG=2
-
 ############################
 ######  Logging Trap  ######
 ############################
@@ -77,7 +70,7 @@ error () {
 	_DEB=""
 	off_lock
 	rm -Rf $TMP_FILE
-	exit "${CODE}"
+	exit ${CODE}
 }
 ##########################
 ##########################
@@ -182,22 +175,21 @@ OPT=$2
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
 
 	log_info "Create local db file"
-	#trap 'error ${LINENO} "Try to touch local db file ($LOCAL_DB_PATH)"' ERR
 	touch $LOCAL_DB_PATH 2>&1 | tee -a $LOG_FILE
 
 	log_info "Create remote db file"
-	#trap 'error ${LINENO} "Try to touch remote db file ($REMOTE_DB_PATH)"' ERR
 	touch $REMOTE_DB_PATH 2>&1 | tee -a $LOG_FILE
 
 	log_info "Create info file"
-	#trap 'error ${LINENO} "Try to touch info file ($VARLIB_PATH/info)"' ERR
 	touch $VARLIB_PATH/info 2>&1 | tee -a $LOG_FILE	
 	
 	update_info
 	
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
-		update_db && pkg_list_install_deps "$@"
+		update_db
+		trap 'error ${LINENO} "Package dependencie failure, loot at: ($LOG_FILE)"' ERR
+		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
 		echo "    + Following dependencies will be installed" && print_deps "$pkg_list_deps"
 		ask_confirmation
