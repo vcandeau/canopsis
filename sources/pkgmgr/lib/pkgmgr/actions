@@ -152,7 +152,7 @@ install_package () {
 			log_info "Check downloaded $PNAME package md5"
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "    + Check MD5: [Fail]"
-				error ${LINENO} "\nLocal Md5: $L_MD5 | Remote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
+				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
 			else
 				echo "    + Check MD5: [Success]"
 			fi
