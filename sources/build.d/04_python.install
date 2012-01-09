@@ -102,7 +102,6 @@ function install(){
 	easy_install_pylib "bottle"
 	easy_install_pylib "Beaker"
 	easy_install_pylib "ws4py"
-	easy_install_pylib "celery"
 	easy_install_pylib "pysnmp"
 	
 	if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
