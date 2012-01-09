@@ -121,9 +121,9 @@ function start(){
 		fi
 
 		if [ $NB_PROC -eq 1 ]; then
-			CMD="$HOME/bin/python $APP_BIN"
+			CMD="$HOME/bin/python $APP_BIN $APP_ARGS"
 		else
-			CMD="$HOME/bin/python $APP_BIN $NB"
+			CMD="$HOME/bin/python $APP_BIN $APP_ARGS $NB"
 		fi
 
 		if [ $SUDO -eq 1 ]; then
