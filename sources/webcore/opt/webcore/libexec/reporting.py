@@ -56,10 +56,6 @@ def generate_report(startTime, stopTime,view_name):
 	#create path
 	file_path = '/opt/canopsis/tmp/report/' + file_name
 	
-	#parameters are : javascript delay | javascript script |  file name
-	#logger.debug('serveur output')
-	#logger.debug('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime)
-	
 	# Launch Reporting Celery Task
 	try:
 		import reporting_task
@@ -67,21 +63,17 @@ def generate_report(startTime, stopTime,view_name):
 		logger.debug("Check your celeryconfig.py, if you have reporting task imported")
 		logger.debug(err)
 	try:
-		reporting_task.render_pdf.delay(file_name,
+		result = reporting_task.render_pdf.delay(file_name,
 										view_name,
 										startTime,
 										stopTime,
 										"/opt/canopsis/etc/wkhtmltopdf_wrapper.json")
-		report_cmd = reporting_task.get()
 	except Exception, err:
 		logger.debug(err)
 
-	#report_cmd = subprocess.Popen('wkhtmltopdf_wrapper 10000 ' + file_name +' '+view_name+' '+startTime+' '+stopTime, shell=True)
-	
 	#wait the end of the process
-	while(report_cmd.poll() == None):
+	while not result.ready():
 		gevent.sleep(1)
-
 	#if file has been rendered
 	if os.path.exists(file_path):
 		logger.debug('file found, send it')
