@@ -20,38 +20,15 @@
 import os, logging
 from subprocess import Popen
 
-class config(object):
-	def __init__(	self,
-						filename,
-        				viewname,
-        				starttime,
-        				stoptime,
-        				cookiejar     = '/opt/canopsis/tmp/cookies.wkhtmltopdf.txt',
-        				windowstatus  = 'ready',
-        				opts          = [	'--use-xserver',
-											'--debug-javascript',
-                  	  	      				'--load-error-handling ignore',
-                    	      				'--disable-smart-shrinking'],
-						xlock 			= "/tmp/.X3-lock",
-						xvfb_cmd		= "Xvfb :3 -screen 0 1024x768x24 &",
-						display_int		= "127.0.0.1:3",
-						report_dir		= "/opt/canopsis/tmp/report",
-						header			= "--header-html /opt/canopsis/var/wkhtmltopdf/header.html",
-						footer			= "--footer-html /opt/canopsis/var/wkhtmltopdf/footer.html"):
-
-		self.filename 		= filename
-		self.viewname 		= viewname
-		self.starttime		= starttime
-		self.stoptime		= stoptime
-		self.cookiejar		= cookiejar
-		self.windowstatus	=	windowstatus
-		self.opts			=	opts
-		self.xlock			=	xlock
-		self.xvfb_cmd		=	xvfb_cmd
-		self.display_int	=	display_int
-		self.report_dir		=	report_dir
-		self.header			=	header
-		self.footer			=	footer
+def load_conf(filename, viewname, starttime, stoptime, wrapper_conf_file):
+	import json
+	conf = open(wrapper_conf_file, "r").read()
+	settings = json.loads(conf)
+	settings['filename'] = filename
+	settings['viewname'] = viewname
+	settings['starttime'] = starttime
+	settings['stoptime'] = stoptime
+	return settings 
 
 def check_xorg(lock, xvfb_cmd):
 	if os.path.isfile(lock):
@@ -81,20 +58,19 @@ def	get_cookie(cookiejar):
 def run(settings):
 	global logger
 	logger = logging.getLogger('Reporting')
-	
-	filename 		= settings.filename
-	viewname 		= settings.viewname
-	starttime 		= settings.starttime
-	stoptime		= settings.stoptime
-	cookiejar		= settings.cookiejar
-	windowstatus	= settings.windowstatus
-	opts			= settings.opts
-	xlock			= settings.xlock
-	xvfb_cmd		= settings.xvfb_cmd
-	display_int		= settings.display_int
-	report_dir		= settings.report_dir
-	header			= settings.header
-	footer			= settings.footer
+	filename 		= settings['filename']
+	viewname 		= settings['viewname']
+	starttime 		= settings['starttime']
+	stoptime		= settings['stoptime']
+	cookiejar		= settings['cookiejar']
+	windowstatus	= settings['windowstatus']
+	opts			= settings['opts']
+	xlock			= settings['xlock']
+	xvfb_cmd		= settings['xvfb_cmd']
+	display_int		= settings['display_int']
+	report_dir		= settings['report_dir']
+	header			= settings['header']
+	footer			= settings['footer']
 
 	check_xorg(xlock, xvfb_cmd)
 	export_env(display_int)
