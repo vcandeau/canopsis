@@ -57,13 +57,10 @@ download_package() {
 	fi
 	log_info "Url : $FINAL_URL"
 	# Remove old packages
-	echo "    + Remove old packages"
-	log_info "Remove old $PNAME packages"
-	trap 'error ${LINENO} "Try to remove $PACKAGES_PATH/$PNAME*"' ERR
+	echo "    + Remove old packages archive"
+	log_info "Remove old $PNAME packages archive"
+	trap 'error ${LINENO} "Try to remove $PACKAGES_PATH/$PNAME* archive"' ERR
 	rm -Rf $PACKAGES_PATH/$PNAME*
-	# Go to packages folder
-	log_info "Go to $PACKAGES_PATH"
-	cd $PACKAGES_PATH
 	# Download it
 	echo "    + Download $PNAME"
 	log_info "Download $PNAME package"
@@ -72,7 +69,7 @@ download_package() {
 		error ${LINENO} "Failure during download package ($FINAL_URL/$PNAME.tar | $response)" 1
 	else
 		trap 'error ${LINENO} "Failure during download package ($FINAL_URL/$PNAME.tar)"' ERR
-		curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar 
+		curl -# -o $PACKAGES_PATH/$PNAME.tar $FINAL_URL/$PNAME.tar 
 	fi
 }
 
@@ -155,7 +152,7 @@ install_package () {
 			log_info "Check downloaded $PNAME package md5"
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "    + Check MD5: [Fail]"
-				error ${LINENO} "Local Md5: $L_MD5 | Remote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
+				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
 			else
 				echo "    + Check MD5: [Success]"
 			fi
@@ -374,6 +371,9 @@ upgrade_package () {
 			R_VERS=$(db_parse "version" "$R_INFO")
 			R_REL=$(db_parse "release" "$R_INFO")
 			R_MD5=$(db_parse "md5" "$R_INFO")
+			R_ARCH=$(db_parse "arch" "$R_INFO")
+            R_DIST=$(db_parse "dist" "$R_INFO")
+            R_DIST_VERS=$(db_parse "distvers" "$R_INFO")
 
 			log_info "Check if new release or version is available for $PNAME"
 			if [ "$R_VERS" == "$L_VERS" ]; then	
@@ -391,7 +391,7 @@ upgrade_package () {
 			fi
 		
 			download_package "$PNAME"
-		
+			PPATH=$(get_ppath "$PNAME")
 			log_info "Check downloaded $PNAME package md5"
 			L_MD5=$(md5sum $PPATH.tar | awk '{ print $1 }')
 
