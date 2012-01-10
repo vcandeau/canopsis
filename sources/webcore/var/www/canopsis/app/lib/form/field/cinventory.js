@@ -335,7 +335,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 			this.window.show();
 			this.prefetch();
-			this.window.down('textfield[fieldLabel="Search"]').focus('', 700); 
+			this.window.down('textfield[name="search"]').focus('', 700); 
 
 			//------------------------binding------------------------------
 
@@ -369,7 +369,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 	prefetch : function(){
 		if (this.prefetch_id != ''){
-			this.searchForm.down('textfield[fieldLabel="Search"]').setValue(this.prefetch_id);
+			this.searchForm.down('textfield[name="search"]').setValue(this.prefetch_id);
 			this.searchFunction();
 		}
 	},
