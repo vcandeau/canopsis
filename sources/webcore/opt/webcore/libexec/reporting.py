@@ -48,14 +48,13 @@ logger = logging.getLogger('Reporting')
 #@get('/reporting/',apply=[check_auth])
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
 def generate_report(startTime, stopTime,view_name):
+
 	#build file name	
 	name_array = view_name.split('.')
 	file_name = name_array[len(name_array)-1]
 	file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
-	
-	#create path
 	file_path = '/opt/canopsis/tmp/report/' + file_name
-	
+
 	# Launch Reporting Celery Task
 	try:
 		import reporting_task
@@ -71,13 +70,19 @@ def generate_report(startTime, stopTime,view_name):
 	except Exception, err:
 		logger.debug(err)
 
-	#wait the end of the process
+	# Wait the end of the process
 	while not result.ready():
 		gevent.sleep(1)
-	#if file has been rendered
+	# If file has been rendered
 	if os.path.exists(file_path):
 		logger.debug('file found, send it')
-		put_in_grid_fs(file_path)
+		try:
+			logger.debug("Put report in grid FS")
+			result = reporting_task.put_in_grid_fs(file_path,"127.0.0.1",27017,"canopsis","report")  
+		except Exception, err:
+			logger.debug(err)
+		
+		#put_in_grid_fs(file_path)
 		os.remove(file_path)
 		return {'total': 1, 'success': True, 'data': { 'url' : '/getReport/' + file_name }}
 	else:
@@ -92,10 +97,10 @@ def generate_report(startTime, stopTime,view_name):
 
 @get('/getReport/:fileName',apply=[check_auth])
 def get_report(fileName=None):
-	conn=Connection("127.0.0.1",27017)
+	conn=Connection("127.0.0.1", 27017)
 	db=conn['canopsis']
-	fs = gridfs.GridFS(db, collection='report') #may add this collection='your collection'
-	
+	fs = gridfs.GridFS(db, collection='report')
+
 	try:
 		#try to find the latest version of the file
 		report_file = fs.get_version(filename=fileName, version=-1)
@@ -109,18 +114,3 @@ def get_report(fileName=None):
 		return report_file
 	else:
 		return HTTPError(404, fileName+" Not Found")
-
-def put_in_grid_fs(file_path):
-	conn=Connection("127.0.0.1",27017)
-	db=conn['canopsis']
-	fs = gridfs.GridFS(db, collection='report') #may add this collection='your collection'
-	
-	#just take the name not the whole path
-	report_name = file_path.split('/')
-	report_name = report_name[len(report_name)-1]
-
-	#open the file and put it in mongo gridFS
-	with open(file_path, "r") as report_file:
-		returned_id = fs.put(report_file, content_type="application/pdf", filename=report_name)
-	
-	return returned_id
