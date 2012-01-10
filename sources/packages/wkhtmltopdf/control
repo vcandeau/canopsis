@@ -4,7 +4,7 @@ NAME="wkhtmltopdf"
 VERSION="0.11.0_rc1"
 RELEASE=0
 DESCRIPTION=""
-REQUIRES=""
+REQUIRES="celery"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."

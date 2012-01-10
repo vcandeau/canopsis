@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-CONF_PATH=$HOME/etc/daemon.d/
+CONF_PATH=~/etc/daemon.d/
 APP_NAME=`basename $0`
 
 if [ "x$APP_NAME" == "xdaemon" ]; then
@@ -47,12 +47,12 @@ if [ $START -eq 0 ]; then
 	exit 1
 fi
 
-PID_FILE=$HOME/var/run/$APP_NAME.pid
-LOG=$HOME/var/log/$APP_NAME.log
+PID_FILE=~/var/run/$APP_NAME.pid
+LOG=~/var/log/$APP_NAME.log
 
 function check_pid(){
 	PID=$1
-	echo `ps a | grep "$PID" | grep -v grep | wc -l`
+	echo `ps ax | grep "^\s*$PID " | grep -v grep | wc -l`
 }
 
 function set_pid(){
@@ -120,7 +120,11 @@ function start(){
 			echo " + Start process $NB ..."
 		fi
 
-		CMD="$HOME/bin/python $APP_BIN $NB"
+		if [ $NB_PROC -eq 1 ]; then
+			CMD="$HOME/bin/python $APP_BIN $APP_ARGS"
+		else
+			CMD="$HOME/bin/python $APP_BIN $APP_ARGS $NB"
+		fi
 
 		if [ $SUDO -eq 1 ]; then
 			CMD="sudo $CMD"
@@ -133,23 +137,48 @@ function start(){
 			PID=$!
 		fi
 
-		echo " + $PID"
-		set_pid $PID
+		check=0
+		while [ 1 ]; do
+			sleep 0.5
+			if [[ `check_pid $PID` -ne 0 || $check -ge 5 ]]; then
+				break
+			fi
+			check=$((check + 1))
+		done
+
+		if [ $check -ge 5 ]; then
+			echo "Failed."
+		else
+			echo " + $PID"
+			set_pid $PID
+		fi
 	done
 }
 
 function stop(){
 	PIDS=`get_pid`
-	for PID in $PIDS; do
-		echo -n " + $PID"
-		stop_pid $PID
-	done	
+	if [ "x$PIDS" != "x" ]; then
+		for PID in $PIDS; do
+			echo -n " + $PID"
+			stop_pid $PID
+		done
+	else
+		echo " + Not running"
+	fi
 }
 
 function status(){
-	for PID in `get_pid`; do
-		echo " + $PID run"
-	done
+	PIDS=`get_pid`
+	I=1
+	if [ "x$PIDS" != "x" ]; then
+		for PID in $PIDS; do
+			echo " + $PID Run"
+			I=0
+		done
+	else
+		echo " + Not running"
+	fi
+	exit $I
 }
 
 clean_pid
