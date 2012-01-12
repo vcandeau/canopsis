@@ -8,10 +8,11 @@ function build(){
 }
 
 function install(){
-	rm -R $PREFIX/lib/python2.7/site-packages/pyperfstore* 1>> $LOG 2>> $LOG
+	cd $SRC_PATH/$NAME
+	python setup.py install
 
-	mkdir -p $PREFIX/tmp/
-
-	cd $SRC_PATH
-	tar cfz $PREFIX/tmp/$NAME.tgz $NAME 1>> $LOG 2>> $LOG
+	#rm -R $PREFIX/lib/python2.7/site-packages/pyperfstore* 1>> $LOG 2>> $LOG
+	#mkdir -p $PREFIX/tmp/
+	#cd $SRC_PATH
+	#tar cfz $PREFIX/tmp/$NAME.tgz $NAME 1>> $LOG 2>> $LOG
 }

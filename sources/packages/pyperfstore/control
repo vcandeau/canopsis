@@ -18,10 +18,11 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-	mkdir -p $PREFIX/tmp
+	#mkdir -p $PREFIX/tmp
 
-	launch_cmd 1 tar xfz $PREFIX/tmp/$NAME.tgz -C /opt/canopsis/tmp/
-        launch_cmd 1 "cd $PREFIX/tmp/$NAME && python setup.py install"
+	#launch_cmd 1 tar xfz $PREFIX/tmp/$NAME.tgz -C /opt/canopsis/tmp/
+	#launch_cmd 1 "cd $PREFIX/tmp/$NAME && python setup.py install"
+	update_pylibs
 }
 
 function pre_remove(){

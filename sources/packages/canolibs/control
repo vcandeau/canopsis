@@ -4,7 +4,7 @@ NAME="canolibs"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python"
+REQUIRES="canohome pkgmgr python python-libs"
 
 NO_ARCH=true
 NO_DIST=true
