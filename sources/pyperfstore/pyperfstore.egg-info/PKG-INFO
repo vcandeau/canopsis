@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: pyperfstore
+Version: 0.0.1
+Summary: Store performance data
+Home-page: http://www.canopsis.org
+Author: Capensis
+Author-email: canopsis@capensis.fr
+License: AGPL v3
+Description: UNKNOWN
+Keywords: nagios perfdata storage store performance canopsis
+Platform: UNKNOWN

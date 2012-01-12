@@ -8,14 +8,14 @@ function build(){
 }
 
 function easy_install_pylib(){
-  echo "Easy install Python Library: $1 ..."
-  $PREFIX/bin/easy_install -H None -f $PREFIX/share/pylibs/ $1 1>> $LOG 2>> $LOG
+	echo "Easy install Python Library: $1 ..."
+	$PREFIX/bin/easy_install --prefix=$PREFIX -H None -f $SRC_PATH/externals $1 1>> $LOG 2>> $LOG
   check_code $? "Easy install failed ..."
 }
 
 function install(){
   install_basic_source $NAME
-	install_python_daemon "$PREFIX/bin/celeryd"
 	cd $PREFIX
 	easy_install_pylib "celery"
+	install_python_daemon "$PREFIX/bin/celeryd"
 }

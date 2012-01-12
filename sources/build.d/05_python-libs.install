@@ -1,8 +1,5 @@
-NAME="python"
+NAME="python-libs"
 
-FCHECK=$PREFIX/bin/python
-
-BASE="Python-$VERSION"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
@@ -44,50 +41,26 @@ function install_pylib(){
 
 function easy_install_pylib(){
 	echo "Easy install Python Library: $1 ..."
-	$PREFIX/bin/easy_install -H None -f $PREFIX/share/pylibs/ $1 1>> $LOG 2>> $LOG
+	$PREFIX/bin/easy_install --prefix=$PREFIX -H None -f $SRC_PATH/externals $1 1>> $LOG 2>> $LOG
 	check_code $? "Easy install failed ..."
 }
 
 function build(){
-	cd $SRC_PATH/externals
-	
-	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tar.bz2"
-	fi
-	cd $BASE
-
-	echo " + Fix env vars"
-	DEB_HOST_MULTIARCH=`dpkg-architecture -qDEB_HOST_MULTIARCH 2>> /dev/null`
-	if [ $? -eq 0 ]; then
-		export LDFLAGS="$LDFLAGS -L/usr/lib/$DEB_HOST_MULTIARCH"
-		check_code $?
-	fi
-
-	if [ -e Makefile ]; then
-		echo " + Clean ..."
-		make clean 1>> $LOG 2>> $LOG
-		#check_code $?
-	fi
-	
-	echo " + Configure ..."
-	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
-	check_code $?
-
-	echo " + Build ..."
-	make 1>> $LOG 2>> $LOG
-	check_code $?
+	true
 }
 
 function install(){
-
-	cd $SRC_PATH
-	install_basic_source $NAME
-
-	cd $SRC_PATH/externals/$BASE
-
-	make install 1>> $LOG 2>> $LOG
-	check_code $?
-	cd $SRC_PATH
-	install_pylib "setuptools" "0.6c11"
-	chown $HUSER:$HGROUP -R $PREFIX/lib/python2.7
+	easy_install_pylib simplejson
+	easy_install_pylib pymongo
+	easy_install_pylib pycurl
+	easy_install_pylib tornado
+	easy_install_pylib python-daemon
+	easy_install_pylib Twisted
+	easy_install_pylib txAMQP
+	easy_install_pylib gevent
+	easy_install_pylib bottle
+	easy_install_pylib Beaker
+	easy_install_pylib ws4py
+	easy_install_pylib pysnmp
+	easy_install_pylib xmlrpclib
 }
