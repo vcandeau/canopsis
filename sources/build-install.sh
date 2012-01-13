@@ -356,8 +356,8 @@ fi
 
 if [ $OPT_MPKG -eq 1 ]; then
 	echo "Purge old binaries ..."
-	rm -R $SRC_PATH/binaries/$P_ARCH || true
-	rm -R $SRC_PATH/binaries/noarch || true
+	rm -R $SRC_PATH/../binaries/$P_ARCH || true
+	rm -R $SRC_PATH/../binaries/noarch || true
 fi
 
 ######################################
