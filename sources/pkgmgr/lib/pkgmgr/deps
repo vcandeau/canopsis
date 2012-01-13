@@ -53,7 +53,9 @@ clean_tree () {
 parse_install_deps () {
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
-		if [ `cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l` -le 0 ]; then
+		local tmp
+		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
+		if [ $tmp -le 0 ]; then
 			echo "[`date +'%T %x'`][ERR][${LINENO}] Package $dep is a dependencie package needed but it is unknown on repositorie" >> $LOG_FILE
 			exit 1 && exit 1
 		fi
