@@ -179,7 +179,7 @@ function files_listing(){
 		echo "You must specify destination ..."
 		exit 1
 	fi
-	echo "    + Files listing in $DST ..."
+	echo " + Files listing in $DST ..."
 	mkdir -p $PREFIX
 	cd $PREFIX &> /dev/null
 	find ./ -type f > $DST

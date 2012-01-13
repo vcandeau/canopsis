@@ -35,22 +35,23 @@ _pkgmgr () {
 		return 0
 	fi
 
-	if [[ ${prev} == "install" ]]; then
+	#if [[ ${prev} == "install" ]]; then
+	if [[ ${COMP_WORDS[1]} == "install" ]]; then
 		COMPREPLY=( $(compgen -W "${remote_pkgs}" -- ${cur}) )
 		return 0
 	fi
 
-	if [[ ${prev} == "reinstall" ]] || [[ ${prev} == "upgrade" ]] || [[ ${prev} == "remove" ]]; then
+	if [[ ${COMP_WORDS[1]} == "reinstall" ]] || [[ ${COMP_WORDS[1]} == "upgrade" ]] || [[ ${COMP_WORDS[1]} == "remove" ]]; then
 		COMPREPLY=( $(compgen -W "${local_pkgs}" -- ${cur}) )
 		return 0
 	fi
 	
-	if [[ ${prev} == "reinstall-local" ]]; then
+	if [[ ${COMP_WORDS[1]} == "reinstall-local" ]]; then
 		COMPREPLY=( $(compgen -W "${local_pkgs}" -- ${cur}) )
 		return 0
 	fi
 
-	if [[ ${prev} == "install-local" ]];then
+	if [[ ${COMP_WORDS[1]} == "install-local" ]];then
 		COMPREPLY=( $(compgen -W "${list_files}" -- ${cur}) )
 		return 0
 	fi

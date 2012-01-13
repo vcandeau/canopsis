@@ -57,12 +57,12 @@ def generate_report(startTime, stopTime,view_name):
 
 	# Launch Reporting Celery Task
 	try:
-		import reporting_task
+		import task_reporting
 	except Exception, err:
 		logger.debug("Check your celeryconfig.py, if you have reporting task imported")
 		logger.debug(err)
 	try:
-		result = reporting_task.render_pdf.delay(file_name,
+		result = task_reporting.render_pdf.delay(file_name,
 										view_name,
 										startTime,
 										stopTime,
@@ -78,7 +78,7 @@ def generate_report(startTime, stopTime,view_name):
 		logger.debug('file found, send it')
 		try:
 			logger.debug("Put report in grid FS")
-			result = reporting_task.put_in_grid_fs(file_path,"127.0.0.1",27017,"canopsis","report")  
+			result = task_reporting.put_in_grid_fs(file_path,"127.0.0.1",27017,"canopsis","report")  
 		except Exception, err:
 			logger.debug(err)
 		
