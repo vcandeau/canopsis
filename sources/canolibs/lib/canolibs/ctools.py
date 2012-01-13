@@ -116,8 +116,8 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 						logger.error("\t%s" % err)
 			except:
 				pass
-	except:
-		pass
+	except Exception, err:
+		logger.error(err)
 
 	return loaded
 
