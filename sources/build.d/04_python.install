@@ -87,33 +87,7 @@ function install(){
 
 	make install 1>> $LOG 2>> $LOG
 	check_code $?
-
 	cd $SRC_PATH
 	install_pylib "setuptools" "0.6c11"
-
-	easy_install_pylib "simplejson"
-	easy_install_pylib "pymongo"
-	#easy_install_pylib "pycurl"
-	easy_install_pylib "tornado"
-	easy_install_pylib "python-daemon"
-	easy_install_pylib "Twisted"
-	easy_install_pylib "txAMQP"
-	easy_install_pylib "gevent"
-	easy_install_pylib "bottle"
-	easy_install_pylib "Beaker"
-	easy_install_pylib "ws4py"
-	easy_install_pylib "pysnmp"
-	easy_install_pylib "xmlrpclib"
-	
-	if [ ! -e $PREFIX/lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.py.orig ]; then
-		echo "Patch python-txamqp ..."
-		# https://bugs.launchpad.net/txamqp/+bug/741147
-		cd $PREFIX
-		rm lib/python2.7/site-packages/txAMQP-0.4-py2.7.egg/txamqp/codec.pyc &> /dev/null
-		patch -b -p0 < $SRC_PATH/extra/patch/txamqp_codec-py.patch
-		check_code $?
-		cd - &> /dev/null
-	fi
-
 	chown $HUSER:$HGROUP -R $PREFIX/lib/python2.7
 }
