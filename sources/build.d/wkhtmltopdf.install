@@ -15,7 +15,6 @@ function install(){
 
 	cd $PREFIX/bin
 	tar xfj $SRC_PATH/externals/$BASE.tar.bz2
-	echo $ARCH	
 	if [ "$ARCH" == "i386" ]; then
 		ln -s wkhtmltopdf-i386 wkhtmltopdf &> /dev/null
 	elif [ "$ARCH" == "x86_64" ]; then
