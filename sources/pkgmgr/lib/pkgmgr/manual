@@ -47,6 +47,6 @@ show_help () {
 	echo "    - Remove feature have no dependencies tracking, be careful"
 	echo "    - (*) after package name mean that your repositorie doesn't have it"
 	echo
-	echo "   More informations on http://canopsis.com/"
+	echo "   More informations at http://canopsis.com/"
 	exit 1
 }
