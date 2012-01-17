@@ -90,16 +90,28 @@ function stop_pid(){
 		#echo " + Try to kill $PID ..."
 		kill $PID
 		check=1
+		sleep 1
 
 		while [ 1 ]; do
-			sleep 1
 			echo -n '.'
-			if [[ `check_pid $PID` -eq 0 || $check -ge 5 ]]; then
+			sleep 0.5
+			if [[ `check_pid $PID` -eq 0 || $check -ge 10 ]]; then
 				break
 			fi
-			kill -2 $PID
 			check=$((check + 1))
 		done
+
+		if [ `check_pid $PID` -ne 0 ]; then
+			echo -n " INT ..."
+			kill -2 $PID
+			sleep 1
+		fi
+
+		if [ `check_pid $PID` -ne 0 ]; then
+			echo -n " KILL ..."
+			kill -9 $PID
+			sleep 1
+		fi
 
 		if [ `check_pid $PID` -eq 0 ]; then
 			echo " Ok"
