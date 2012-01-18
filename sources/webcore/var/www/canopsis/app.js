@@ -86,6 +86,7 @@ function createApplication(){
 			'ViewEditor',
 			'Tabs',
 			'ReportingBar',
+			'ViewBuilder'
 		],
 	
 		//autoCreateViewport: true,
