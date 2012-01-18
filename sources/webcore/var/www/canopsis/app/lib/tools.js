@@ -61,7 +61,7 @@ function load_tabs_from_store(){
 	//}, this);
 }
 
-function add_view_tab(view_id, title, closable, options, autoshow, save, tab_id){
+function add_view_tab(view_id, title, closable, options, autoshow, save,from_db, tab_id){
 	log.debug("Add view tab '"+view_id+"'")
 
 	var maintabs = Ext.getCmp('main-tabs');
@@ -93,18 +93,33 @@ function add_view_tab(view_id, title, closable, options, autoshow, save, tab_id)
 			store.save();
 		}
 
-		var tab = maintabs.add({
-			title: _(title),
-			id: tab_id,
-			iconCls: [ 'icon-bullet-orange' ],
-			view_id: view_id,
-			//view: view,
-			xtype: 'TabsContent',
-			closable: closable,
-			options: options,
-			autoshow: autoshow,
-			localstore_record: localstore_record
-		});
+		if(from_db == false){
+			var tab = maintabs.add({
+				title: _(title),
+				id: tab_id,
+				iconCls: [ 'icon-bullet-orange' ],
+				view_id: view_id,
+				//view: view,
+				xtype: view_id,
+				closable: closable,
+				options: options,
+				autoshow: autoshow,
+				localstore_record: localstore_record
+			});
+		} else {
+			var tab = maintabs.add({
+				title: _(title),
+				id: tab_id,
+				iconCls: [ 'icon-bullet-orange' ],
+				view_id: view_id,
+				//view: view,
+				xtype: 'TabsContent',
+				closable: closable,
+				options: options,
+				autoshow: autoshow,
+				localstore_record: localstore_record
+			});
+		}
 
 		if (autoshow) {
 			tab.show();
