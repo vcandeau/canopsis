@@ -75,8 +75,8 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	_bindFormEvents: function(form){
 		log.debug('Binding WYSIWYG editor',this.logAuthor);
 	
-		form.saveButton.on('click', this._saveForm,this)
-		form.addWidgetButton.on('click', this.addWidget,this)
+		//form.saveButton.on('click', this._saveForm,this)
+		//form.addWidgetButton.on('click', this.addWidget,this)
 	},
 	
 	addWidget : function(){
