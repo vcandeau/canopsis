@@ -21,11 +21,10 @@ all: clean neb2amqp.o
 	echo "Build librabbitmq first!" && exit 1
 
 neb2amqp.o: ../lib/rabbitmq-c/librabbitmq/librabbitmq.la
-	$(CC) $(MOD_LDFLAGS) $(MOD_CFLAGS) $(CFLAGS) -o $@ module.c logger.c broker.c events.c json.c amqp.c strutil.cc $(LDFLAGS) $(LIBS) $(INCLUDES)
+	$(CC) $(MOD_LDFLAGS) $(MOD_CFLAGS) $(CFLAGS) -o $@ module.c logger.c broker.c events.c json.c neb2amqp.c strutil.cc $(LDFLAGS) $(LIBS) $(INCLUDES)
 
 clean:
 	rm -f *.o
-	#rm -f *~ *.*~
 
 install:
 
