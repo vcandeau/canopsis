@@ -81,7 +81,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		//log.debug('clicked');
 		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard',{title : 'Widget Wizard',
 		step_list: [{
-			title: 'step 1',
+			//title: 'step 1',
 			description : 'blablabla',
 			items : [{
 				xtype: "numberfield",
@@ -97,8 +97,17 @@ Ext.define('canopsis.controller.ViewBuilder', {
 				minValue: 1
 			}]
 		}, {
-			title: 'step 2',
-			//html: 'Hello world 2'
+			//title: 'step 2',
+			items : [{
+					xtype : 'checkbox',
+					name : 'variable___o/'
+			}]
+		}, {
+			title: 'feeee',
+			description: 'i am a description',
+			items : [{
+					xtype : 'checkbox'
+			}]
 		}],})
 		wizard.show()
 		
