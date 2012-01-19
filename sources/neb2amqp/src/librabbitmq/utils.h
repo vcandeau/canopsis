@@ -1,5 +1,5 @@
-#ifndef librabbitmq_windows_socket_h
-#define librabbitmq_windows_socket_h
+#ifndef librabbitmq_examples_utils_h
+#define librabbitmq_examples_utils_h
 
 /*
  * ***** BEGIN LICENSE BLOCK *****
@@ -39,39 +39,12 @@
  * ***** END LICENSE BLOCK *****
  */
 
-#include <winsock2.h>
+extern void die_on_error(int x, char const *context);
+extern void die_on_amqp_error(amqp_rpc_reply_t x, char const *context);
 
-extern int amqp_socket_init(void);
+extern void amqp_dump(void const *buffer, size_t len);
 
-#define amqp_socket_socket socket
-#define amqp_socket_close closesocket
-
-static inline int amqp_socket_setsockopt(int sock, int level, int optname,
-                                    const void *optval, size_t optlen)
-{
-        /* the winsock setsockopt function has its 4th argument as a
-           const char * */
-        return setsockopt(sock, level, optname, (const char *)optval, optlen);
-}
-
-/* same as WSABUF */
-struct iovec {
-	u_long iov_len;
-	void *iov_base;
-};
-
-static inline int amqp_socket_writev(int sock, struct iovec *iov, int nvecs)
-{
-	DWORD ret;
-	if (WSASend(sock, (LPWSABUF)iov, nvecs, &ret, 0, NULL, NULL) == 0)
-		return ret;
-	else
-		return -1;
-}
-
-static inline int amqp_socket_error()
-{
-	return WSAGetLastError() | ERROR_CATEGORY_OS;
-}
+extern uint64_t now_microseconds(void);
+extern void microsleep(int usec);
 
 #endif

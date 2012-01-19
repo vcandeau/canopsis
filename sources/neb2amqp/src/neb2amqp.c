@@ -10,8 +10,11 @@
 void
 amqp_main (const char *hostname,
            int port,
+           const char *vhost,
            const char *exchange,
            const char *routingkey,
+           const char *userid,
+           const char *password,
            const char *message)
 {
     int sockfd;
@@ -22,7 +25,7 @@ amqp_main (const char *hostname,
 
     die_on_error(sockfd = amqp_open_socket(hostname, port), "Opening socket");
     amqp_set_sockfd(conn, sockfd);
-    die_on_amqp_error(amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, "guest", "guest"),
+    die_on_amqp_error(amqp_login(conn, vhost, 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, userid, password),
             "Logging in");
     amqp_channel_open(conn, 1); 
     die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");

@@ -3,8 +3,11 @@
 
 void amqp_main (const char *hostname,
                 int port,
+                const char *vhost,
                 const char *exchange,
                 const char *routingkey,
+                const char *userid,
+                const char *password,
                 const char *message);
 
 #endif
