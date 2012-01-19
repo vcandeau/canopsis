@@ -67,7 +67,6 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		this.callParent(arguments);
 		this.centerPanel.setActiveTab(0)
 		this.bind_buttons()
-		
 	},
 	
 	
@@ -75,27 +74,23 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		log.debug("binding buttons",this.logAuthor)
 		//---------------------previous button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=previous]')
-		log.dump(btns)
 		for (i in btns){
-			btns[i].on('click', this.test, this)
+			btns[i].on('click', this.previous_button, this)
 		}
 		//---------------------next button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=next]')
-		log.dump(btns)
 		for (i in btns){
-			btns[i].on('click', this.test, this)
+			btns[i].on('click', this.next_button, this)
 		}
 		//---------------------cancel button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=cancel]')
-		log.dump(btns)
 		for (i in btns){
-			btns[i].on('click', this.test, this)
+			btns[i].on('click', this.cancel_button, this)
 		}
 		//---------------------finish button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]')
-		log.dump(btns)
 		for (i in btns){
-			btns[i].on('click', this.test, this)
+			btns[i].on('click', this.finish_button, this)
 		}
 	},
 	
@@ -105,19 +100,25 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 	
 	//----------------------button action functions-----------------------
 	previous_button: function(){
-		
+		log.debug('previous button')
+		panel = this.centerPanel
+		active_tab = this.centerPanel.getActiveTab()
+		panel.setActiveTab(panel.items.indexOf(active_tab) - 1)
 	},
 	
 	next_button: function(){
-		
+		log.debug('next button')
+		panel = this.centerPanel
+		active_tab = this.centerPanel.getActiveTab()
+		panel.setActiveTab(panel.items.indexOf(active_tab) + 1)
 	},
 	
 	cancel_button: function(){
-		
+		log.debug('cancel button')
 	},
 	
 	finish_button: function(){
-		
+		log.debug('finish button')
 	},
 	
 });
