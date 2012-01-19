@@ -23,7 +23,7 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 
 	alias : 'widget.ViewBuilderWizard',
 
-	title: 'Layout Window',
+	title: _('Wizard'),
 	closable: true,
 	closeAction: 'destroy',
 	width: 600,
@@ -59,12 +59,15 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		if(this.step_list){
 			this.centerPanel.add(this.step_list)
 		}
+		
 	},
 	
 	afterRender : function(){
 		//needed, otherwize window z-index is not set/controlled
 		this.callParent(arguments);
+		this.centerPanel.setActiveTab(0)
 		this.bind_buttons()
+		
 	},
 	
 	
@@ -100,10 +103,21 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		this.centerPanel.add(step)
 	},
 	
-	//bind_buttons: 
+	//----------------------button action functions-----------------------
+	previous_button: function(){
+		
+	},
 	
-	test : function(){
-		log.debug('test')
-	}
+	next_button: function(){
+		
+	},
+	
+	cancel_button: function(){
+		
+	},
+	
+	finish_button: function(){
+		
+	},
 	
 });
