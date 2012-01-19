@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
+Ext.define('canopsis.lib.view.cwizard' ,{
 	extend: 'Ext.window.Window',
 
 	alias : 'widget.ViewBuilderWizard',
