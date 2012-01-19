@@ -79,7 +79,13 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	
 	test_wizard: function(){
 		//log.debug('clicked');
-		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard')
+		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard',{title : 'Widget Wizard',step_list: [{
+			title: 'step 1',
+			html: 'Hello world 1'
+		}, {
+			title: 'step 2',
+			html: 'Hello world 2'
+		}],})
 		wizard.show()
 		
 		//this.form.jqDraggable.set_data('widget-1',{'test_key':'test_value'})
