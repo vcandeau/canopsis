@@ -2,12 +2,9 @@
 # Makefile for NEB2amqp
 ###################################
 
-all: clean neb2amqp.o librabbitmq.la
+all: clean neb2amqp.o
 
-librabbitmq.la:
-	cd lib/rabbitmq-c && autoreconf -i && ./configure && make
-
-neb2amqp.o: librabbitmq.la
+neb2amqp.o:
 	cd src && make
 
 clean:

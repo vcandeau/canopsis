@@ -14,6 +14,8 @@ extern char *userid;
 extern char *password;
 extern char *virtual_host;
 extern char *exchange_name;
+extern char *routing_key;
+extern char *g_eventsource_name;
 
 int g_last_event_program_status = 0;
 
@@ -67,9 +69,13 @@ event_service_check(int event_type __attribute__ ((__unused__)), void *data)
     {
     	//logger(LG_DEBUG, "SERVICECHECK_PROCESSED: %s->%s", c->host_name, c->service_description);
 
-    	char buffer[AMQP_MSG_SIZE_MAX];
+    	char buffer[AMQP_MSG_SIZE_MAX], key[AMQP_MSG_SIZE_MAX];
     	nebstruct_service_check_data_to_json(buffer, c);
-        amqp_main (hostname, port, exchange_name, virtual_host, buffer);
+        snprintf (key, AMQP_MSG_SIZE_MAX, "nagios.%s.check.ressource.%s.%s",
+                                          g_eventsource_name,
+                                          c->host_name,
+                                          c->service_description);
+        amqp_main (hostname, port, virtual_host, exchange_name, key, userid, password, buffer);
     }
 
     return 0;
@@ -85,9 +91,11 @@ event_host_check(int event_type __attribute__ ((__unused__)), void *data)
     {
     	//logger(LG_DEBUG, "HOSTCHECK_PROCESSED: %s", c->host_name);
 
-    	char buffer[AMQP_MSG_SIZE_MAX];
+    	char buffer[AMQP_MSG_SIZE_MAX], key[AMQP_MSG_SIZE_MAX];
     	nebstruct_host_check_data_to_json(buffer, c);
-        amqp_main (hostname, port, exchange_name, virtual_host, buffer);
+        snprintf (key, AMQP_MSG_SIZE_MAX, "nagios.%s.check.component.%s",
+                                          g_eventsource_name, c->host_name);
+        amqp_main (hostname, port, virtual_host, exchange_name, key, userid, password,buffer);
     }
 
     return 0;
