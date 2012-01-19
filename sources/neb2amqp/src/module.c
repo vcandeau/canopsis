@@ -52,6 +52,7 @@ char *userid;
 char *password;
 char *virtual_host;
 char *exchange_name;
+char *routing_key;
 
 int g_debug_level;
 int g_max_fd_ever;
@@ -77,7 +78,8 @@ nebmodule_init(int flags __attribute__ ((__unused__)), char *args, void *handle)
     userid = "guest";
     password = "guest";
     virtual_host = "canopsis";
-    exchange_name = "canopsis";
+    exchange_name = "canopsis.events";
+    routing_key = "secret";
     g_max_fd_ever = 0;
     g_debug_level = 0;
 
@@ -233,6 +235,11 @@ parse_arguments(const char *args_orig)
             {
                 exchange_name = right;
                 logger(LG_INFO, "Setting exchange_name to %s", exchange_name);
+            }
+            else if (strcmp(left, "routing_key") == 0)
+            {
+                routing_key = right;
+                logger(LG_INFO, "Setting routing_key to %s", routing_key);
             }
             else if (strcmp(left, "port") == 0)
             {
