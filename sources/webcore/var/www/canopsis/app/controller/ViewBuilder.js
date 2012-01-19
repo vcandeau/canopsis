@@ -79,12 +79,26 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	
 	test_wizard: function(){
 		//log.debug('clicked');
-		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard',{title : 'Widget Wizard',step_list: [{
+		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard',{title : 'Widget Wizard',
+		step_list: [{
 			title: 'step 1',
-			html: 'Hello world 1'
+			description : 'blablabla',
+			items : [{
+				xtype: "numberfield",
+				fieldLabel:"Icon set",
+				name: "iconset",
+				value: 1,
+				minValue: 1
+			},{
+				xtype: "numberfield",
+				fieldLabel:"test",
+				name: "iconset2",
+				value: 1,
+				minValue: 1
+			}]
 		}, {
 			title: 'step 2',
-			html: 'Hello world 2'
+			//html: 'Hello world 2'
 		}],})
 		wizard.show()
 		
