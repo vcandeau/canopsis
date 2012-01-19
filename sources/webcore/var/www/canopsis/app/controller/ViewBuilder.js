@@ -46,39 +46,50 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		log.debug("Create tab '"+this.formXtype+"'",this.logAuthor)
 		
 		this.form = add_view_tab('ViewBuilderForm', '*'+ _('New') +' '+this.modelId, true, undefined, true, false, false)
-	/*	$(function() {
-                $( "#sortable" ).sortable({
-						placeholder: "ui-sortable-placeholder",
-						//forcePlaceholderSize: false,
-						opacity: 0.4,
-						start: function(e, ui){
-							ui.placeholder.height(ui.item.height());
-							ui.placeholder.width(ui.item.width());
-						}
-					});
-                $( "#sortable" ).disableSelection();
-        });*/
-        
-        $(function() {
-			$("#container").jqGridable()
-         });
+
 		this._bindFormEvents(this.form)
 		
+	},	
+	/*
+	on_add_widget : function(id,widget){
+		//log.dump(this)
+		//log.dump(widget)
+		var the_div = Ext.get(id)
+		the_div.on('click',function(e){
+			var container =  Ext.ComponentQuery.query('ViewBuilderForm')[0]
+			container.contextMenu.showAt(e.getXY());
+		})
 	},
 	
-/*	_contextMenu : function(view, rec, node, index, e) {
+	_contextMenu : function(widget) {
 		log.debug('Show context menu',this.logAuthor);
-		e.stopEvent();
+		log.dump(this)
 		this.form.contextMenu.showAt(e.getXY());
-    },*/
-	
+    },
+	*/
 	_bindFormEvents: function(form){
 		log.debug('Binding WYSIWYG editor',this.logAuthor);
-	
+		
+		//form.ConfigureAction.setHandler(this._configureWidget)
+		
 		//form.saveButton.on('click', this._saveForm,this)
+		form.addWidgetButton.on('click', this.test_wizard,this)
 		//form.addWidgetButton.on('click', this.addWidget,this)
 	},
 	
+	test_wizard: function(){
+		//log.debug('clicked');
+		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard')
+		wizard.show()
+		
+		//this.form.jqDraggable.set_data('widget-1',{'test_key':'test_value'})
+        //log.dump(this.form.jqDraggable.get_data('widget-1'))
+	},
+	
+	_configureWidget: function(widget){
+		log.debug('eee')
+	},
+	/*
 	addWidget : function(){
 		//this.widgetCounter
 		
@@ -122,7 +133,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			})
 		}
 	},
-	
+	*/
 	_addDropZone: function(){
 		
 	},
