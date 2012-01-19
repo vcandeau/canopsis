@@ -79,36 +79,37 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	
 	test_wizard: function(){
 		//log.debug('clicked');
-		var wizard = Ext.create('canopsis.view.ViewBuilder.Wizard',{title : 'Widget Wizard',
-		step_list: [{
-			//title: 'step 1',
-			description : 'blablabla',
-			items : [{
-				xtype: "numberfield",
-				fieldLabel:"Icon set",
-				name: "iconset",
-				value: 1,
-				minValue: 1
-			},{
-				xtype: "numberfield",
-				fieldLabel:"test",
-				name: "iconset2",
-				value: 1,
-				minValue: 1
-			}]
-		}, {
-			//title: 'step 2',
-			items : [{
-					xtype : 'checkbox',
-					name : 'variable___o/'
-			}]
-		}, {
-			title: 'feeee',
-			description: 'i am a description',
-			items : [{
-					xtype : 'checkbox'
-			}]
-		}],})
+		var wizard = Ext.create('canopsis.lib.view.cwizard',{
+			title : 'Widget Wizard',
+			step_list: [{
+				//title: 'step 1',
+				description : 'blablabla',
+				items : [{
+					xtype: "numberfield",
+					fieldLabel:"Icon set",
+					name: "iconset",
+					value: 1,
+					minValue: 1
+				},{
+					xtype: "numberfield",
+					fieldLabel:"test",
+					name: "iconset2",
+					value: 1,
+					minValue: 1
+				}]
+			}, {
+				//title: 'step 2',
+				items : [{
+						xtype : 'checkbox',
+						name : 'variable___o/'
+				}]
+			}, {
+				title: 'feeee',
+				description: 'i am a description',
+				items : [{
+						xtype : 'checkbox'
+				}]
+			}],})
 		wizard.show()
 		
 		//this.form.jqDraggable.set_data('widget-1',{'test_key':'test_value'})
