@@ -44,6 +44,7 @@ if (jQuery){
 					scroll_width: 15,
 					debug: false,
 					container: this,
+					autoScale: true,
 
 					selectable_distance: 50,
 
@@ -261,19 +262,23 @@ if (jQuery){
 			debug("Load widgets")
 			var index
 			//adjust size
-			var maxRow = 0
-			var maxCol = 0
-			for (index in dump){
-				var widget = dump[index]
-				var height = widget.position.height + widget.position.top
-				var width = widget.position.width + widget.position.left
-				if (height > maxRow){ maxRow = height }
-				if (width > maxCol){ maxCol = width }
+			if (options.autoScale){
+				var maxRow = 0
+				var maxCol = 0
+				for (index in dump){
+					var widget = dump[index]
+					var height = widget.position.height + widget.position.top
+					var width = widget.position.width + widget.position.left
+					if (height > maxRow){ maxRow = height }
+					if (width > maxCol){ maxCol = width }
+				}
+				debug(" + rows: "+maxRow)
+				debug(" + cols: "+maxCol)
+					
+				redraw(maxRow, maxCol)
+			}else{
+				redraw()
 			}
-			debug(" + rows: "+maxRow)
-			debug(" + cols: "+maxCol)
-				
-			redraw(maxRow, maxCol)
 				
 			for (index in dump){
 				var widget = dump[index]
