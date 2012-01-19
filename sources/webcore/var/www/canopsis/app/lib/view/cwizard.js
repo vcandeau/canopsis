@@ -169,7 +169,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	
 	//return false is no variable in object
 	get_variables : function(){
-		log.dump(this.returnedVariable)
+		//log.dump(this.returnedVariable)
 		if(this.returnedVariable){
 			var returnValues = {}
 			for(var i=0 ; i < this.returnedVariable.length; i++){
