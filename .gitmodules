@@ -1,0 +1,3 @@
+[submodule "sources/webcore/var/www/canopsis/resources/lib/jqGridable"]
+	path = sources/webcore/var/www/canopsis/resources/lib/jqGridable
+	url = git://forge.canopsis.org/jqGridable.git
