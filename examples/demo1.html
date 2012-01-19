@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<title>jqGridable Demo 1</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" type="text/css" />
+		<link rel="stylesheet" href="../jqGridable.css" type="text/css" />
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+		<script type="text/javascript" src="../jqGridable.js"></script>
+
+	</head>
+	<script language="javascript">
+		$(document).ready(function() {
+			
+			var on_widget_dblclick = function(widget){
+				alert('dblclick on '+widget.attr('id')+' !')
+			}
+			
+			var on_widget_rightclick = function(widget){
+				var id = widget.attr('id')
+				alert('rightclick on '+id+' !')
+				$('#container').jqGridable('widget_setTitle', id, id + ' rightclicked')
+			}
+			
+			var on_add_widget = function(id, widget){
+				$('#container').jqGridable('widget_setTitle', id, id)
+				$('#container').jqGridable('widget_setContent', id, 'default content')
+			}
+
+			$("#container").jqGridable({
+				columns: 5,
+				debug: true,
+				show_grid: true,
+				on_add_widget: on_add_widget,
+				on_widget_dblclick: on_widget_dblclick,
+				on_widget_rightclick: on_widget_rightclick,
+			});
+		});
+		
+		var dump = []
+		
+		function save(){
+			dump = $('#container').jqGridable('dump')
+			$('#container').jqGridable('clear')
+		}
+			
+		function restore(){
+			$('#container').jqGridable('clear')
+			$('#container').jqGridable('load', dump)
+		}
+
+	</script>
+	<body>
+		<input type="button" value='Toggle Debug' onClick="javascript:$('#container').jqGridable('toggleDebug')">
+		<input type="button" value='Clear' onClick="javascript:$('#container').jqGridable('clear')">
+		<input type="button" value='Redraw' onClick="javascript:$('#container').jqGridable('redraw')">
+		<input type="button" value='Toggle Grid' onClick="javascript:$('#container').jqGridable('toggleGrid')">
+		<input type="button" value='Add Row' onClick="javascript:$('#container').jqGridable('addRow')">
+		<input type="button" value='Add Column' onClick="javascript:$('#container').jqGridable('addColumn')">
+		<input type="button" value='Save and Clear' onClick="javascript:save()">
+		<input type="button" value='Restore' onClick="javascript:restore()">
+		<div id="container" style='top: 20px;'></div>
+	</body>
+</html>

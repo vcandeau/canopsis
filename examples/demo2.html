@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+	<head>
+		<title>jqGridable Demo 2</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" type="text/css" />
+		<link rel="stylesheet" href="../jqGridable.css" type="text/css" />
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+		<script type="text/javascript" src="../jqGridable.js"></script>
+
+	</head>
+	<script language="javascript">
+		$(document).ready(function() {
+			
+			var on_add_widget = function(id, widget){
+				$('#container').jqGridable('widget_setTitle', id, id)
+				$('#container').jqGridable('widget_setContent', id, 'default content')
+			}
+			
+			$("#container").jqGridable({
+				columns: 5,
+				debug: false,
+				show_grid: false,
+				draggable: false,
+				resizable:  false,
+				selectable: false,
+				on_add_widget: on_add_widget,
+			});
+			var dump = [
+				{ id: 'widget1', position: { left: 0, top: 0, width: 2, height: 1}},
+				{ id: 'widget2', position: { left: 0, top: 1, width: 1, height: 1}},
+				{ id: 'widget3', position: { left: 1, top: 1, width: 1, height: 1}},
+				{ id: 'widget4', position: { left: 2, top: 0, width: 2, height: 2}},
+				{ id: 'widget5', position: { left: 4, top: 0, width: 1, height: 2}},
+			]
+			
+			$('#container').jqGridable('load', dump)
+			
+		});
+	
+
+	</script>
+	<body>
+		<div id="container"></div>
+	</body>
+</html>
