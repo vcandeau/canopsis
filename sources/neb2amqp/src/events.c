@@ -71,7 +71,7 @@ event_service_check(int event_type __attribute__ ((__unused__)), void *data)
 
     	char buffer[AMQP_MSG_SIZE_MAX], key[AMQP_MSG_SIZE_MAX];
     	nebstruct_service_check_data_to_json(buffer, c);
-        snprintf (key, AMQP_MSG_SIZE_MAX, "nagios.%s.check.ressource.%s.%s",
+        snprintf (key, AMQP_MSG_SIZE_MAX, "nagios.%s.check.resource.%s.%s",
                                           g_eventsource_name,
                                           c->host_name,
                                           c->service_description);
