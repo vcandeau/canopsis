@@ -53,8 +53,15 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 			xtype: 'tabpanel',
 		})
 		if(this.step_list){
-			this.build_steps(this.step_list)
+			var tmp = this.build_step_list(this.step_list)
+			log.debug("Wizard steps fully generated",this.logAuthor)
+			log.dump(tmp)
+			this.centerPanel.add(tmp)
+			
+			log.debug("Wizard steps added",this.logAuthor)
 		}
+		
+		
 		
 	},
 	
@@ -94,18 +101,57 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		this.centerPanel.add(step)
 	},
 	
-	build_steps : function(list){
-		log.debug("Building steps",this.logAuthor)
+	//take a list of step and build them all
+	build_step_list : function(step_list){
+		log.debug("Building step list",this.logAuthor)
 		var formated_steps = []
-		for(var i = 0; i < list.length; i++){
-			formated_steps.push(this.build_steps_items(list[i]))
+		
+		//Prepare each step
+		for(var i = 0; i < step_list.length; i++){
+			var formated_step = this.build_step(step_list[i])
+			formated_steps.push(formated_step)
 		}
-		this.centerPanel.add(formated_steps)
+		
+		//now it's generated, add to panel
+		return formated_steps
 	},
 	
-	build_steps_items : function(items){
-		log.debug("     Building items inside the step",this.logAuthor)
+	//take one step and build it
+	build_step : function(raw_step){
+		log.debug("    Building steps",this.logAuthor)
+		var step = {}
+		step.items = []
+		
+		//if not title, not generat it
+		if(raw_step.title){
+			step.title = raw_step.title
+		} else {
+			step.title = "step " + i
+		}
+		
+		if(raw_step.description){
+			step.items.push({xtype: 'panel' ,html : raw_step.description, border : false})
+		}
+		
+		//if step has items, build then, otherwise -> do nothing on step
+		if(raw_step.items){
+			var formated_items = this.build_items(raw_step.items)
+			step.items.push(formated_items)
+		}
+
+		return step
+	},
+	
+	//take step items, create Ext component and return them
+	build_items : function(items){
+		log.debug("         Building items inside the step",this.logAuthor)
 		var ext_items = []
+		
+		//building items one by one
+		for(var i = 0; i < items.length; i++){
+			var item = items[i]
+		}
+		
 		ext_items = items
 		return ext_items
 	},
