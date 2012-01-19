@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ### Check user
-if [ `id -u` -ne 0 ]; then
-    echo "You must be root ..."
+if [ `echo $USER` != "canopsis" ]; then
+    echo "You must be canopsis ..."
     exit 1
 fi
 
@@ -68,9 +68,6 @@ function install_package(){
 	cd $SRC_PATH
 }
 
-echo "Kill all $HUSER process ..."
-pkill -9 -u $HUSER
-
 echo "Install Bootstrap in $PREFIX"
 install_package "canohome"
 install_package "canotools"
@@ -81,9 +78,6 @@ cd $SRC_PATH
 echo "Copy packages ..."
 cp -R $SRC_PATH/bootstrap/* $PREFIX/var/lib/pkgmgr/packages/
 
-echo "Fix permissions ..."
-chown $HUSER:$HGROUP -R $PREFIX
-
 echo
-echo " :: Run sudo su - canopsis to start using Canopsis"
+echo " :: Canopsis installed"
 echo
