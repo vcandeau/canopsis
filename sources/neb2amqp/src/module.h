@@ -1,14 +1,8 @@
 #ifndef module_h
 #define module_h
 
-#define false 0
-#define true 1
-
-int g_debug_level;
-int g_max_fd_ever;
-
-void *g_nagios_handle;
-char * g_eventsource_name;
+#define FALSE 0
+#define TRUE 1
 
 int nebmodule_init(int flags __attribute__ ((__unused__)), char *args, void *handle);
 void terminate_threads();
