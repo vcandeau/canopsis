@@ -1,3 +1,6 @@
 [submodule "sources/webcore/var/www/canopsis/resources/lib/jqGridable"]
 	path = sources/webcore/var/www/canopsis/resources/lib/jqGridable
 	url = git://forge.canopsis.org/jqGridable.git
+[submodule "sources/neb2amqp"]
+	path = sources/neb2amqp
+	url = git://forge.canopsis.org/neb2amqp.git
