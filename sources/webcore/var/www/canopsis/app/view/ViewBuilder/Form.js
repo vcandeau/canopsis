@@ -22,7 +22,7 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 	extend: 'Ext.panel.Panel',
 
 	alias : 'widget.ViewBuilderForm',
-	
+	//id : 'ViewBuilderForm',
 	border: 0,
 	
 	layout : 'fit',
@@ -68,26 +68,26 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 		this.tbar =  [this.saveButton,this.cancelButton,'->',this.addWidgetButton],
 		
 		//-------Context menu------
-	/*	this.widgetAction = Ext.create('Ext.Action', {
+		/*this.ConfigureAction = Ext.create('Ext.Action', {
 								//iconCls: 'icon-delete',
-								text: _('Widget'),
+								text: _('Configurer'),
 							})
+							
+		this.widgetAction = Ext.create('Ext.Action', {
+								text: _('Widget'),
+							})					
 
 		this.contextMenu = Ext.create('Ext.menu.Menu',{
-								items : [this.widgetAction],
-							});*/
-		
+								items : [this.ConfigureAction],
+							});
+		*/
 		this.callParent(arguments);
 		
 		//------jquery masonry------
-		//var contentLi = new Ext.Element('<ul id="sortable"></ul>')
-		//log.dump(contentLi)
-		this.masonryLi = this.add({
-			xtype: 'container',
-			id: 'container',
+		this.jqDraggable = this.add({
+			xtype: 'jqGridable',
+			//id: 'container',
 		})
-		
-		
 		
 		log.debug('Form finish generating')
 	},
