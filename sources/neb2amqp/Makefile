@@ -13,7 +13,6 @@ neb2amqp.o: librabbitmq.la
 clean:
 	cd src && make clean
 	rm -f *.o
-	#rm -f *~ *.*~
 
 install:
 
