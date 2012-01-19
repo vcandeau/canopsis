@@ -32,14 +32,9 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
-	logAuthor: 'Wizard',
-	
 	step_list: [{
-			title: 'step 1',
-			html: 'Hello world 1'
-		}, {
-			title: 'step 2',
-			html: 'Hello world 2'
+			title: "i'm empty !",
+			html: 'you must give an object to fill me'
 		}],
 	
 	bbar : [{xtype:'button',text:_('previous'),action:'previous'},
@@ -48,7 +43,8 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 			{xtype:'button',text:_('finish'),disabled:true,action:'finish'}],
 	
 	initComponent: function() {
-		log.debug("Create Wizard" + this.id,this.logAuthor)
+		this.logAuthor = this.id
+		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
 		this.callParent(arguments);
 		
 		//---------------build the window content---------------
@@ -57,7 +53,7 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 			xtype: 'tabpanel',
 		})
 		if(this.step_list){
-			this.centerPanel.add(this.step_list)
+			this.build_steps(this.step_list)
 		}
 		
 	},
@@ -98,27 +94,44 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		this.centerPanel.add(step)
 	},
 	
+	build_steps : function(list){
+		log.debug("Building steps",this.logAuthor)
+		var formated_steps = []
+		for(var i = 0; i < list.length; i++){
+			formated_steps.push(this.build_steps_items(list[i]))
+		}
+		this.centerPanel.add(formated_steps)
+	},
+	
+	build_steps_items : function(items){
+		log.debug("     Building items inside the step",this.logAuthor)
+		var ext_items = []
+		ext_items = items
+		return ext_items
+	},
+	
 	//----------------------button action functions-----------------------
 	previous_button: function(){
-		log.debug('previous button')
+		log.debug('previous button',this.logAuthor)
 		panel = this.centerPanel
 		active_tab = this.centerPanel.getActiveTab()
 		panel.setActiveTab(panel.items.indexOf(active_tab) - 1)
 	},
 	
 	next_button: function(){
-		log.debug('next button')
+		log.debug('next button',this.logAuthor)
 		panel = this.centerPanel
 		active_tab = this.centerPanel.getActiveTab()
 		panel.setActiveTab(panel.items.indexOf(active_tab) + 1)
 	},
 	
 	cancel_button: function(){
-		log.debug('cancel button')
+		log.debug('cancel button',this.logAuthor)
+		this.destroy()
 	},
 	
 	finish_button: function(){
-		log.debug('finish button')
+		log.debug('finish button',this.logAuthor)
 	},
 	
 });
