@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
+Ext.define('canopsis.lib.view.cwizard' ,{
 	extend: 'Ext.window.Window',
 
 	alias : 'widget.ViewBuilderWizard',
@@ -40,11 +40,15 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 	bbar : [{xtype:'button',text:_('previous'),action:'previous'},
 			{xtype:'button',text:_('next'),action:'next'},'->',
 			{xtype:'button',text:_('cancel'),action:'cancel'},
-			{xtype:'button',text:_('finish'),disabled:true,action:'finish'}],
+			{xtype:'button',text:_('finish'),disabled:false,action:'finish'}],
 	
 	initComponent: function() {
 		this.logAuthor = this.id
 		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
+		
+		//the following keep a trace of asked information
+		this.returnedVariable = []
+		
 		this.callParent(arguments);
 		
 		//---------------build the window content---------------
@@ -55,14 +59,9 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		if(this.step_list){
 			var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
-			log.dump(tmp)
 			this.centerPanel.add(tmp)
-			
 			log.debug("Wizard steps added",this.logAuthor)
 		}
-		
-		
-		
 	},
 	
 	afterRender : function(){
@@ -108,7 +107,7 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		
 		//Prepare each step
 		for(var i = 0; i < step_list.length; i++){
-			var formated_step = this.build_step(step_list[i])
+			var formated_step = this.build_step(step_list[i],i)
 			formated_steps.push(formated_step)
 		}
 		
@@ -117,13 +116,14 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 	},
 	
 	//take one step and build it
-	build_step : function(raw_step){
+	build_step : function(raw_step, i){
 		log.debug("    Building steps",this.logAuthor)
 		var step = {}
 		step.items = []
 		
 		//if not title, not generat it
 		if(raw_step.title){
+			//log.dump(raw_step.title)
 			step.title = raw_step.title
 		} else {
 			step.title = "step " + i
@@ -150,10 +150,38 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 		//building items one by one
 		for(var i = 0; i < items.length; i++){
 			var item = items[i]
+			//if a variable to get back further is set
+			if(item.name){
+				var ext_component = Ext.createByAlias('widget.'+item.xtype,item)
+				if (ext_component){
+					this.returnedVariable.push({name : item.name, item : ext_component})
+					log.debug("         Added "+item.name+" variable",this.logAuthor)
+					ext_items.push(ext_component)
+				}else{
+					log.debug("         Error into item instantiate, be carefull",this.logAuthor)
+				}
+			} else {
+				ext_items.push(item)
+			}
 		}
-		
-		ext_items = items
 		return ext_items
+	},
+	
+	//return false is no variable in object
+	get_variables : function(){
+		//log.dump(this.returnedVariable)
+		if(this.returnedVariable){
+			var returnValues = {}
+			for(var i=0 ; i < this.returnedVariable.length; i++){
+				returnValues[this.returnedVariable[i].name] =  this.returnedVariable[i].item.getValue()
+			}
+			return returnValues
+		}
+		return false
+	},
+	
+	set_combobox : function(){
+		log.debug('omg one combobox, specific case spotted !')
 	},
 	
 	//----------------------button action functions-----------------------
@@ -177,7 +205,8 @@ Ext.define('canopsis.view.ViewBuilder.Wizard' ,{
 	},
 	
 	finish_button: function(){
-		log.debug('finish button',this.logAuthor)
+		//log.debug('finish button',this.logAuthor)
+		log.dump(this.get_variables())
 	},
 	
 });
