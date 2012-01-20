@@ -91,7 +91,7 @@ function createApplication(){
 	
 		//autoCreateViewport: true,
 		launch: function() {
-			this.getController('Widgets').on('loaded', this.createViewport);
+			this.getController('Widgets').on('loaded', this.createViewport,this,{single : true});
 		},
 
 		createViewport: function(){
@@ -99,6 +99,7 @@ function createApplication(){
 			log.debug('Remove mask ...');
 			Ext.get('loading').remove();
 			Ext.get('loading-mask').remove();
+			
 		}
 	});
 
