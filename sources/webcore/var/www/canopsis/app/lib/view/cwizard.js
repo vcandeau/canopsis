@@ -56,16 +56,22 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			layout: 'fit',
 			xtype: 'tabpanel',
 		})
+		
 		if(this.step_list){
 			var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
 			this.centerPanel.add(tmp)
 			log.debug("Wizard steps added",this.logAuthor)
 		}
+		
+		if(this._after_step_list){
+			this._after_step_list()
+		}
+		
 	},
 	
 	afterRender : function(){
-		//needed, otherwize window z-index is not set/controlled
+		//needed
 		this.callParent(arguments);
 		this.centerPanel.setActiveTab(0)
 		this.bind_buttons()
@@ -97,7 +103,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 	
 	add_new_step: function(step){
-		this.centerPanel.add(step)
+		//
 	},
 	
 	//take a list of step and build them all
@@ -152,7 +158,20 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			var item = items[i]
 			//if a variable to get back further is set
 			if(item.name){
-				var ext_component = Ext.createByAlias('widget.'+item.xtype,item)
+				//--------special case for combobox (need a store for it)
+				if((item.xtype == 'combobox') || (item.xtype == 'combo')){
+					if(item.store){
+						var ext_component = Ext.createByAlias(this.get_extjs_class(item.xtype),item)
+					}else{
+						this.set_combobox()
+					}
+				}else{
+					log.debug(this.get_extjs_class(item.xtype))
+					var ext_component = Ext.create(this.get_extjs_class(item.xtype),item)
+					log.debug('v')
+				}
+				
+				//--------check if component created, and keep variable link if a name is set
 				if (ext_component){
 					this.returnedVariable.push({name : item.name, item : ext_component})
 					log.debug("         Added "+item.name+" variable",this.logAuthor)
@@ -167,13 +186,28 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		return ext_items
 	},
 	
+	get_extjs_class : function(name){
+		if(name.indexOf('.') != -1){
+			return name
+		} else {
+			return 'widget.'+name
+		}
+	},
+	
 	//return false is no variable in object
 	get_variables : function(){
 		//log.dump(this.returnedVariable)
 		if(this.returnedVariable){
 			var returnValues = {}
 			for(var i=0 ; i < this.returnedVariable.length; i++){
-				returnValues[this.returnedVariable[i].name] =  this.returnedVariable[i].item.getValue()
+				var item = this.returnedVariable[i].item
+				var name = this.returnedVariable[i].name
+				//check item type
+				if((item.xtype == 'grid') || (item.xtype == 'gridpanel')){
+					returnValues[name] = item.getSelectionModel().getSelection()[0]
+				} else {
+					returnValues[name] =  item.getValue()
+				}
 			}
 			return returnValues
 		}
