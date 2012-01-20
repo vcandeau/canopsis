@@ -305,6 +305,7 @@ function show_help(){
 #	echo "    -m [ARGUMENT]       ->  Install deps, build and make a package"
 	echo "    -p 		->  Make packages"
 	echo "    -d		->  Don't check dependencies"
+	echo "    -i		->  Just build installer"
 	echo "    -h, help	->  Print this help"
 	exit 1
 }
@@ -319,18 +320,21 @@ if [ "x$ARG1" == "xhelp" ]; then
 	show_help	
 fi
 
+OPT_BUILD=1
 OPT_CLEAN=0
 OPT_NOBUILD=0
 OPT_WUT=0
 OPT_MPKG=0
 OPT_DCD=0
+OPT_MINSTALLER=0
 
-while getopts "cnupdh" opt; do
+while getopts "cnupdhi" opt; do
 	case $opt in
 		c) OPT_CLEAN=1 ;;
 		n) OPT_NOBUILD=1 ;;
 		u) OPT_WUT=1 ;;
 		p) OPT_MPKG=1 ;;
+		i) OPT_MINSTALLER=1; OPT_BUILD=0;;
 		d) OPT_DCD=1;;
 		h) show_help ;;
 		\?)
@@ -350,156 +354,159 @@ fi
 export_env
 detect_os
 
-if [ $OPT_DCD -ne 1 ]; then
-	extra_deps
-fi
+if [ $OPT_BUILD -eq 1 ]; then
 
-if [ $OPT_MPKG -eq 1 ]; then
-	echo "Purge old binaries ..."
-	rm -R $SRC_PATH/../binaries/$ARCH || true
-	rm -R $SRC_PATH/../binaries/noarch || true
-fi
+	if [ $OPT_DCD -ne 1 ]; then
+		extra_deps
+	fi
+	
+	if [ $OPT_MPKG -eq 1 ]; then
+		echo "Purge old binaries ..."
+		rm -R $SRC_PATH/../binaries/$ARCH || true
+		rm -R $SRC_PATH/../binaries/noarch || true
+	fi
 
-######################################
-#  Init file listing
-######################################
-#echo "Init files listing ..."
-#mkdir -p $PREFIX
-#cd $PREFIX &> /dev/null
-#find ./ -type f > $SRC_PATH/packages/files.lst
-#find ./ -type l >> $SRC_PATH/packages/files.lst
-#cd - &> /dev/null|| true
-
-VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
-mkdir -p $VARLIB_PATH
-touch $PREFIX/var/lib/pkgmgr/local_db
-
-######################################
-#  Build all packages
-######################################
-
-ITEMS=`ls -1 $INST_CONF | grep ".install$"`
-
-for ITEM in $ITEMS; do
-	cd $SRC_PATH
-
-	export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
-
-	NAME="x"
-	VERSION="0.1"
-	RELEASE="0"
-	FCHECK="/tmp/notexist"
-	P_ARCH=$ARCH
-	P_DIST=$DIST
-	P_DISTVERS=$DIST_VERS
-
-	NO_ARCH=false
-	NO_DIST=false
-	NO_DISTVERS=false
-
-	function pre_install(){	true; }
-	function post_install(){ true; }
-
-	. /$INST_CONF/$ITEM
-	if [ "$NAME" != 'x' ]; then
-		## Check package sources
-		if [ -e packages/$NAME/control ]; then
-			. packages/$NAME/control
-		else
-			mkdir -p packages/$NAME
-			cp pkgmgr/lib/pkgmgr/control.tpl packages/$NAME/control
-			sed "s#@NAME@#$NAME#g" -i packages/$NAME/control
-			sed "s#@VERSION@#$VERSION#g" -i packages/$NAME/control
-			sed "s#@RELEASE@#$RELEASE#g" -i packages/$NAME/control
-			. packages/$NAME/control
-		fi
-
-		pkg_options
-
-		function install(){ true; }
-		function build(){ true; }
-
+	######################################
+	#  Init file listing
+	######################################
+	#echo "Init files listing ..."
+	#mkdir -p $PREFIX
+	#cd $PREFIX &> /dev/null
+	#find ./ -type f > $SRC_PATH/packages/files.lst
+	#find ./ -type l >> $SRC_PATH/packages/files.lst
+	#cd - &> /dev/null|| true
+	
+	VARLIB_PATH="$PREFIX/var/lib/pkgmgr/packages"
+	mkdir -p $VARLIB_PATH
+	touch $PREFIX/var/lib/pkgmgr/local_db
+	
+	######################################
+	#  Build all packages
+	######################################
+	
+	ITEMS=`ls -1 $INST_CONF | grep ".install$"`
+	
+	for ITEM in $ITEMS; do
+		cd $SRC_PATH
+	
+		export MAKEFLAGS="-j$((`cat /proc/cpuinfo  | grep processor | wc -l` + 1))"
+	
+		NAME="x"
+		VERSION="0.1"
+		RELEASE="0"
+		FCHECK="/tmp/notexist"
+		P_ARCH=$ARCH
+		P_DIST=$DIST
+		P_DISTVERS=$DIST_VERS
+	
+		NO_ARCH=false
+		NO_DIST=false
+		NO_DISTVERS=false
+	
+		function pre_install(){	true; }
+		function post_install(){ true; }
+	
 		. /$INST_CONF/$ITEM
-
-		echo "################################"
-		echo "# $NAME $VERSION"
-		echo "################################"	
-
-		## Build and install
-		if [ ! -e $FCHECK ]; then
-
-			if [ $OPT_NOBUILD -ne 1 ]; then
-				echo " + Build ..."
-				build
-				check_code $? "Build failure"
-			fi
-
-			if [ $OPT_MPKG -eq 1 ]; then
-				files_listing "$SRC_PATH/packages/files.lst"
+		if [ "$NAME" != 'x' ]; then
+			## Check package sources
+			if [ -e packages/$NAME/control ]; then
+				. packages/$NAME/control
+			else
+				mkdir -p packages/$NAME
+				cp pkgmgr/lib/pkgmgr/control.tpl packages/$NAME/control
+				sed "s#@NAME@#$NAME#g" -i packages/$NAME/control
+				sed "s#@VERSION@#$VERSION#g" -i packages/$NAME/control
+				sed "s#@RELEASE@#$RELEASE#g" -i packages/$NAME/control
+				. packages/$NAME/control
 			fi
 	
-			echo " + Pre-install ..."	
-			pre_install
-
-			echo " + Install ..."
-			install
-			check_code $? "Install failure"
-
-			echo " + Update local pkgmgr database"
-			PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
-			sed "/^$NAME/d" -i $PKGLIST
-			echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
-			check_code $? "Package entrie insertion in local pkgmgr database failure"
-
-			echo " + Post-install ..."
-			post_install
-			
-			if [ $OPT_MPKG -eq 1 ]; then
-				make_package $NAME
-				check_code $? "Make package failure"
+			pkg_options
+	
+			function install(){ true; }
+			function build(){ true; }
+	
+			. /$INST_CONF/$ITEM
+	
+			echo "################################"
+			echo "# $NAME $VERSION"
+			echo "################################"	
+	
+			## Build and install
+			if [ ! -e $FCHECK ]; then
+	
+				if [ $OPT_NOBUILD -ne 1 ]; then
+					echo " + Build ..."
+					build
+					check_code $? "Build failure"
+				fi
+	
+				if [ $OPT_MPKG -eq 1 ]; then
+					files_listing "$SRC_PATH/packages/files.lst"
+				fi
+		
+				echo " + Pre-install ..."	
+				pre_install
+	
+				echo " + Install ..."
+				install
+				check_code $? "Install failure"
+	
+				echo " + Update local pkgmgr database"
+				PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
+				sed "/^$NAME/d" -i $PKGLIST
+				echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
+				check_code $? "Package entrie insertion in local pkgmgr database failure"
+	
+				echo " + Post-install ..."
+				post_install
+				
+				if [ $OPT_MPKG -eq 1 ]; then
+					make_package $NAME
+					check_code $? "Make package failure"
+				fi
+			else
+				echo " + Allready install"
 			fi
 		else
-			echo " + Allready install"
+			echo "Impossible to build $NAME ..."
+			exit 1
 		fi
-	else
-		echo "Impossible to build $NAME ..."
-		exit 1
-	fi
-done
-
-echo "################################"
-echo "# Fix permissions"
-echo "################################"
-chown $HUSER:$HGROUP -R $PREFIX
-check_code $?
-echo " + Ok"
-
-if [ $OPT_WUT -eq 1 ]; then
+	done
+	
 	echo "################################"
-	echo "# Launch Unit Tests"
+	echo "# Fix permissions"
 	echo "################################"
-	cd $SRC_PATH
-	echo
-	echo "Unit tests ..."
-	LOG=$PREFIX/var/log/unittest.log
-	launch_cmd 0 $PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG
-	EXCODE=$?
-	cp $LOG $SRC_PATH/log
-	if [ $EXCODE -ne 0 ]; then
-		cat $LOG
-	fi
-	check_code $EXCODE "Unit tests failed ..."
+	chown $HUSER:$HGROUP -R $PREFIX
+	check_code $?
 	echo " + Ok"
+	
+	if [ $OPT_WUT -eq 1 ]; then
+		echo "################################"
+		echo "# Launch Unit Tests"
+		echo "################################"
+		cd $SRC_PATH
+		echo
+		echo "Unit tests ..."
+		LOG=$PREFIX/var/log/unittest.log
+		launch_cmd 0 $PREFIX/opt/canotools/unittest.sh 2> $LOG 1> $LOG
+		EXCODE=$?
+		cp $LOG $SRC_PATH/log
+		if [ $EXCODE -ne 0 ]; then
+			cat $LOG
+		fi
+		check_code $EXCODE "Unit tests failed ..."
+		echo " + Ok"
+	fi
 fi
 
-if [ $OPT_MPKG -eq 1 ]; then
+if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "################################"
 	echo "# Make installer"
 	echo "################################"
 	INSTALLER_PATH="$SRC_PATH/../binaries/canopsis_installer"
 	BSTRAP_PATH="$INSTALLER_PATH/bootstrap"
 
-	INSTALLER_PKGS="canohome canotools pkgmgr"	
+	INSTALLER_PKGS="canohome canotools pkgmgr"
 	
 	cp $SRC_PATH/canohome/lib/common.sh $SRC_PATH/../binaries
 
@@ -508,14 +515,18 @@ if [ $OPT_MPKG -eq 1 ]; then
 	mkdir -p $BSTRAP_PATH
 	echo "  + Copy install script"
 	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
+	check_code $? "Impossible to copy"
+
 	echo "  + Copy packages ..."
 	for PKG in $INSTALLER_PKGS; do
 		if [ -e $SRC_PATH/packages/$PKG/control ]; then
 			. $SRC_PATH/packages/$PKG/control
 			pkg_options
 			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
+			check_code $? "Impossible to copy"
 		else
 			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
+			check_code $? "Impossible to copy"
 		fi	
 	done
 	echo "  + Make archive"
