@@ -68,16 +68,16 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 		this.addColumn = Ext.create('Ext.Button', {
 								iconCls: 'icon-add',
 								text: _('Add column'),
-								action: 'addWidget',
+								action: 'addColumn',
 							})
 		
 		this.addRow = Ext.create('Ext.Button', {
 								iconCls: 'icon-add',
 								text: _('Add row'),
-								action: 'addWidget',
+								action: 'addRow',
 							})
 		
-		this.tbar =  [this.saveButton,this.cancelButton,'->',this.addWidgetButton],
+		this.tbar =  [this.saveButton,this.cancelButton,this.addColumn,this.addRow,'->',this.addWidgetButton,],
 		
 		//-------Context menu------
 		/*this.ConfigureAction = Ext.create('Ext.Action', {

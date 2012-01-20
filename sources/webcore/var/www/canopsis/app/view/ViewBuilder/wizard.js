@@ -39,6 +39,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				},{
 					xtype: "combo",
 					store: 'Widget',
+					forceSelection : true,
 					fieldLabel : _('Type'),
 					name: "widget",
 					displayField: 'name',
