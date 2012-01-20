@@ -75,6 +75,14 @@ Ext.define('Ext.jq.Gridable' ,{
 			return $("#"+this.id+'-container').jqGridable('widget_getData', id)
 		//}
 	},
+	
+	add_column: function(){
+		$("#"+this.id+'-container').jqGridable('addColumn')
+	},
+	
+	add_row: function(){
+		$("#"+this.id+'-container').jqGridable('addRow')
+	},
 
 	_on_add_widget: function(id, jqwidget){
 		Ext.create('Ext.panel.Panel', {
