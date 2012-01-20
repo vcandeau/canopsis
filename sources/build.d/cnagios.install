@@ -1,9 +1,0 @@
-NAME="cnagios"
-
-function build(){
-	true
-}
-
-function install(){
-	true
-}
