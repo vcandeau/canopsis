@@ -80,88 +80,11 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	test_wizard: function(){
 		//log.debug('clicked');
 		
-		//----------------------Build wizard options
-		var step1 = {
-				title: _('Choose widget'),
-				description : _('choose which widget type you want'),
-				items : [{
-					xtype: "grid",
-					store: 'Widget',
-					name: "widget",
-					columns: [{
-						header: _('Name'),
-						dataIndex: 'name',
-						flex: 1
-					},{
-						header: _('Description'),
-						dataIndex: 'description',
-						flex: 2
-					}],
-				}]
-			}
 		
-		var step2 = {
-				title: _('General Options'),
-				description: _('General widget option'),
-				items : [{
-						xtype : 'textfield',
-						fieldLabel : _('Title'),
-						name : 'title'
-					},{
-						xtype: 'numberfield',
-						fieldLabel: _('Refresh interval'),
-						name: 'refreshInterval',
-						value: 0,
-						minValue: 0
-					},{
-						xtype : 'panel',
-						html : _('choose the nodeId') + ' :',
-						border: false
-					},{
-						xtype : 'canopsis.lib.form.field.cinventory',
-						multiSelect: false,
-						name : 'nodeId'
-					}
-				]
-			}
 		
-		//add the new option tab panel in the widget
-		var step_change_func = function(sel,record){
-			log.debug('changed selection')
-			var widgetType = record[0].data
-			var widgetOptions = widgetType.options
-			
-			//if there is option for this widget
-			if(widgetOptions){
-				var new_step = {
-					title: _('Widget Options'),
-					id : 'widgetOptions',
-					description : _('Here you can set specific option type of the selected widget'),
-					items : widgetOptions
-				}
-				
-				//remove the old option panel
-				this.remove_step('#widgetOptions')
-				
-				//add new step
-				this.add_new_step(this.build_step(new_step))
-				//remove old step
-				//add new step
-			} else {
-				this.remove_step('#widgetOptions')
-			}
-		}
 		
 		//--------------------show the wizard--------------------- 
-		var wizard = Ext.create('canopsis.lib.view.cwizard',{
-			title : 'Widget Wizard',
-			
-			change_step : {itemName : 'widget',event : 'selectionchange',functionName : step_change_func},
-			add_widget_option_step : step_change_func,
-
-			step_list: [ step1,
-						step2],
-			})
+		var wizard = Ext.create('canopsis.view.ViewBuilder.wizard')
 		wizard.show()
 	},
 	
