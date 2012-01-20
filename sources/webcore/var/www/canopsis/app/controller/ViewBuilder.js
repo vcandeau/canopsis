@@ -125,8 +125,31 @@ Ext.define('canopsis.controller.ViewBuilder', {
 				]
 			}
 		
-		var step_change_func = function(){
+		//add the new option tab panel in the widget
+		var step_change_func = function(sel,record){
 			log.debug('changed selection')
+			var widgetType = record[0].data
+			var widgetOptions = widgetType.options
+			
+			//if there is option for this widget
+			if(widgetOptions){
+				var new_step = {
+					title: _('Widget Options'),
+					id : 'widgetOptions',
+					description : _('Here you can set specific option type of the selected widget'),
+					items : widgetOptions
+				}
+				
+				//remove the old option panel
+				this.remove_step('#widgetOptions')
+				
+				//add new step
+				this.add_new_step(this.build_step(new_step))
+				//remove old step
+				//add new step
+			} else {
+				this.remove_step('#widgetOptions')
+			}
 		}
 		
 		//--------------------show the wizard--------------------- 
