@@ -27,7 +27,6 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 
 	initComponent: function() {
 		
-
 		//----------------------Build wizard options
 		var step1 = {
 				title: _('Choose widget'),
@@ -75,7 +74,6 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		
 		
 		this.step_list = [ step1,step2],
-		
 		this.change_step = {itemName : 'widget',event : 'selectionchange',functionName : this.step_change_func},
 		
 		this.callParent(arguments);
@@ -97,14 +95,8 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				description : _('Here you can set specific option type of the selected widget'),
 				items : widgetOptions
 			}
-			
-			//remove the old option panel
 			this.remove_step('#widgetOptions')
-			
-			//add new step
 			this.add_new_step(this.build_step(new_step))
-			//remove old step
-			//add new step
 		} else {
 			this.remove_step('#widgetOptions')
 		}
