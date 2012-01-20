@@ -34,8 +34,8 @@ function pre_install(){
 		usermod -a -G nagios $HUSER &> /dev/null || true
 	else
 		echo "   + Allready exist, set home and group ..."
-		usermod -d $PREFIX $HUSER
-		usermod -g $HGROUP $HUSER
+		usermod -d $PREFIX $HUSER &> /dev/null
+		usermod -g $HGROUP $HUSER &> /dev/null
 	fi
 }
 
