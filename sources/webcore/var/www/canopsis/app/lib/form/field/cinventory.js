@@ -406,7 +406,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			this.firstGrid.pagingbar.moveFirst();
 			this.InventoryStore.search(filter);
 		}
-	}
+	},
 
+	getValue : function(){
+		return this.store.getAt(0)
+	}
 
 });
