@@ -59,6 +59,8 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		//form.saveButton.on('click', this._saveForm,this)
 		form.addWidgetButton.on('click', this.test_wizard,this)
 		//form.addWidgetButton.on('click', this.addWidget,this)
+		form.addRow.on('click',form.jqDraggable.add_row)
+		form.addColumn.on('click',form.jqDraggable.add_column)
 	},
 	
 	test_wizard: function(){
