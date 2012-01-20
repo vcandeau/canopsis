@@ -32,6 +32,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
+	//see bind_action_to_var function for explanation
+	change_step : false,
+	
 	step_list: [{
 			title: "i'm empty !",
 			html: 'you must give an object to fill me'
@@ -75,6 +78,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.callParent(arguments);
 		this.centerPanel.setActiveTab(0)
 		this.bind_buttons()
+		if(this.change_step){
+			this.bind_action_to_var(this.change_step.itemName,this.change_step.event,this.change_step.functionName)
+		}
+		
 	},
 	
 	
@@ -168,7 +175,6 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 				}else{
 					log.debug(this.get_extjs_class(item.xtype))
 					var ext_component = Ext.create(this.get_extjs_class(item.xtype),item)
-					log.debug('v')
 				}
 				
 				//--------check if component created, and keep variable link if a name is set
@@ -194,6 +200,22 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		}
 	},
 	
+	//get one item of the tracked list
+	get_one_item : function(name){
+		var itemarray = this.returnedVariable
+		for(var i = 0; i < itemarray.length; i++){
+			if (itemarray[i].name == name){
+				var return_item = itemarray[i].item
+			}
+		}
+		
+		if(return_item){
+			return return_item
+		} else {
+			return false
+		}
+	},
+	
 	//return false is no variable in object
 	get_variables : function(){
 		//log.dump(this.returnedVariable)
@@ -215,8 +237,18 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 	
 	set_combobox : function(){
-		log.debug('omg one combobox, specific case spotted !')
+		log.debug('omg one combobox, specific case spotted !',this.logAuthor)
 	},
+	
+	/* this function provide a simple way to pilot the wizard
+	 * just set this.change_step = {itemName : '',event : '', functionName :}
+	 * the action bind the event to an item tracked by the wizard in 
+	 * this.returnedVariable*/
+	bind_action_to_var : function(itemName,event,functionName){
+		log.debug('bind the function on the item '+itemName+' when event '+event+' is fired',this.logAuthor)
+		this.get_one_item(itemName).on(event,functionName,this)
+	},
+	
 	
 	//----------------------button action functions-----------------------
 	previous_button: function(){
