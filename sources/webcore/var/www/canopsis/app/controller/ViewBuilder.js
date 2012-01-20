@@ -79,41 +79,58 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	
 	test_wizard: function(){
 		//log.debug('clicked');
+		
+		var step1 = {
+				title: _('Choose widget'),
+				description : _('choose which widget type you want'),
+				items : [{
+					xtype: "grid",
+					store: 'Widget',
+					name: "widget",
+					columns: [{
+						header: _('Name'),
+						dataIndex: 'name',
+						flex: 1
+					},{
+						header: _('Description'),
+						dataIndex: 'description',
+						flex: 2
+					}],
+				}]
+			}
+		
+		var step2 = {
+				title: _('General'),
+				description: _('General widget option'),
+				items : [{
+						xtype : 'textfield',
+						fieldLabel : _('Title'),
+						name : 'title'
+					},{
+						xtype: 'numberfield',
+						fieldLabel: _('Refresh interval'),
+						name: 'refreshInterval',
+						value: 0,
+						minValue: 0
+					},{
+						xtype : 'canopsis.lib.form.field.cinventory',
+						multiSelect: false,
+						name : 'nodeId'
+					}
+				]
+			}
+			/*
+			this.globalNodeId = Ext.create('canopsis.lib.form.field.cinventory',{
+								multiSelect: false,});*/
+		
+		//--------------------show the wizard--------------------- 
 		var wizard = Ext.create('canopsis.lib.view.cwizard',{
 			title : 'Widget Wizard',
-			step_list: [{
-				//title: 'step 1',
-				description : 'blablabla',
-				items : [{
-					xtype: "numberfield",
-					fieldLabel:"Icon set",
-					name: "iconset",
-					value: 1,
-					minValue: 1
-				},{
-					xtype: "numberfield",
-					fieldLabel:"test",
-					name: "iconset2",
-					value: 1,
-					minValue: 1
-				}]
-			}, {
-				//title: 'step 2',
-				items : [{
-						xtype : 'checkbox',
-						name : 'variable___o/'
-				}]
-			}, {
-				title: 'feeee',
-				description: 'i am a description',
-				items : [{
-						xtype : 'checkbox'
-				}]
-			}],})
+			_after_step_list : function(){log.debug('******test******')},
+			step_list: [ step1,
+						step2],
+			})
 		wizard.show()
-		
-		//this.form.jqDraggable.set_data('widget-1',{'test_key':'test_value'})
-        //log.dump(this.form.jqDraggable.get_data('widget-1'))
 	},
 	
 	_configureWidget: function(widget){
