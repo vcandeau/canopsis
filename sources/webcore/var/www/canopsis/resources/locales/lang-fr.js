@@ -129,4 +129,6 @@ var i18n={
 	'Week':				'Semaine',
 	'Month':			'Mois',
 	'Year':				'Année',
+	'Previous':			'Précédent',
+	'Next':				'Suivant',
 }
