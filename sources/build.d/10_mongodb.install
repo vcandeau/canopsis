@@ -2,7 +2,7 @@ NAME="mongodb"
 
 FCHECK="$PREFIX/bin/mongod"
 
-BASE="mongodb-linux-$ARCH-static-$VERSION"
+BASE="mongodb-linux-$ARCH-$VERSION"
 LOG="$LOG_PATH/$BASE.log"
 rm -f $LOG &> /dev/null
 
@@ -13,11 +13,11 @@ function build(){
 	if [ ! -e $BASE ]; then
 		extract_archive "$BASE.tgz"
 	fi
-	cd $BASE
 }
 
 function install(){
 	cd $SRC_PATH/externals/$BASE
+	check_code $?
 
 	cp -R bin/* $PREFIX/bin/
 	check_code $?
