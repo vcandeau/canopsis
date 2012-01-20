@@ -1,11 +1,5 @@
 #!/bin/bash
 
-### Check user
-if [ `echo $USER` != "canopsis" ]; then
-    echo "You must be canopsis ..."
-    exit 1
-fi
-
 ### Configurations
 SRC_PATH=`pwd`
 if [ -e $SRC_PATH/common.sh ]; then
