@@ -36,21 +36,21 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	change_step : false,
 	
 	step_list: [{
-			title: "i'm empty !",
-			html: 'you must give an object to fill me'
+			title: _("i'm empty !"),
+			html: _('you must give an object to fill me')
 		}],
 	
-	bbar : [{xtype:'button',text:_('previous'),action:'previous'},
-			{xtype:'button',text:_('next'),action:'next'},'->',
-			{xtype:'button',text:_('cancel'),action:'cancel'},
-			{xtype:'button',text:_('finish'),disabled:false,action:'finish'}],
+	bbar : [{xtype:'button',text:_('Previous'),action:'previous'},
+			{xtype:'button',text:_('Next'),action:'next'},'->',
+			{xtype:'button',text:_('Cancel'),action:'cancel'},
+			{xtype:'button',text:_('Finish'),disabled:false,action:'finish'}],
 	
 	initComponent: function() {
 		this.logAuthor = this.id
 		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
 		
 		//the following keep a trace of asked information
-		this.returnedVariable = []
+		this.returnedVariable = {}
 		
 		this.callParent(arguments);
 		
@@ -63,8 +63,8 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		if(this.step_list){
 			var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
-			this.centerPanel.add(tmp)
-			log.debug("Wizard steps added",this.logAuthor)
+			this.add_new_step(tmp)
+			log.debug("Wizard steps added to container",this.logAuthor)
 		}
 		
 		if(this._after_step_list){
@@ -110,7 +110,32 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 	
 	add_new_step: function(step){
-		//
+		this.centerPanel.add(step)
+	},
+	
+	remove_step: function(tabId){
+		log.debug('the old tab is: ' + tabId)
+		var tab = this.centerPanel.child(tabId)
+		if(tab){ 
+			//remove tracked item 
+			var itemarray = tab.items.items
+			if(itemarray){
+				for(var i = 0; i < itemarray.length; i++){
+					var name = itemarray[i].name
+					if(name){
+						if(this.returnedVariable[name]){
+							this.returnedVariable[name] = undefined
+							log.debug('item removed from return list', this.logAuthor)
+						}
+					}
+				}
+			}
+
+			this.centerPanel.remove(tab)
+			log.debug('old tab remove',this.logAuthor)
+		} else {
+			log.debug('no old tab found, do nothing',this.logAuthor)
+		}
 	},
 	
 	//take a list of step and build them all
@@ -140,6 +165,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			step.title = raw_step.title
 		} else {
 			step.title = "step " + i
+		}
+		
+		if(raw_step.id){
+			step.id = raw_step.id
 		}
 		
 		if(raw_step.description){
@@ -173,13 +202,14 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 						this.set_combobox()
 					}
 				}else{
-					log.debug(this.get_extjs_class(item.xtype))
+					//log.debug(this.get_extjs_class(item.xtype))
 					var ext_component = Ext.create(this.get_extjs_class(item.xtype),item)
 				}
 				
 				//--------check if component created, and keep variable link if a name is set
 				if (ext_component){
-					this.returnedVariable.push({name : item.name, item : ext_component})
+					this.returnedVariable[item.name] = ext_component
+					log.dump(this.returnedVariable)
 					log.debug("         Added "+item.name+" variable",this.logAuthor)
 					ext_items.push(ext_component)
 				}else{
@@ -202,15 +232,8 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	
 	//get one item of the tracked list
 	get_one_item : function(name){
-		var itemarray = this.returnedVariable
-		for(var i = 0; i < itemarray.length; i++){
-			if (itemarray[i].name == name){
-				var return_item = itemarray[i].item
-			}
-		}
-		
-		if(return_item){
-			return return_item
+		if (this.returnedVariable[name]){
+			return this.returnedVariable[name]
 		} else {
 			return false
 		}
@@ -221,14 +244,17 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		//log.dump(this.returnedVariable)
 		if(this.returnedVariable){
 			var returnValues = {}
-			for(var i=0 ; i < this.returnedVariable.length; i++){
-				var item = this.returnedVariable[i].item
-				var name = this.returnedVariable[i].name
-				//check item type
-				if((item.xtype == 'grid') || (item.xtype == 'gridpanel')){
-					returnValues[name] = item.getSelectionModel().getSelection()[0]
-				} else {
-					returnValues[name] =  item.getValue()
+			for(var i in this.returnedVariable){
+				//if was not deleted
+				if(this.returnedVariable[i]){
+					var item = this.returnedVariable[i]
+					var name = i
+					//check item type
+					if((item.xtype == 'grid') || (item.xtype == 'gridpanel')){
+						returnValues[name] = item.getSelectionModel().getSelection()[0]
+					} else {
+						returnValues[name] =  item.getValue()
+					}
 				}
 			}
 			return returnValues
