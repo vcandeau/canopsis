@@ -80,6 +80,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	test_wizard: function(){
 		//log.debug('clicked');
 		
+		//----------------------Build wizard options
 		var step1 = {
 				title: _('Choose widget'),
 				description : _('choose which widget type you want'),
@@ -100,7 +101,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			}
 		
 		var step2 = {
-				title: _('General'),
+				title: _('General Options'),
 				description: _('General widget option'),
 				items : [{
 						xtype : 'textfield',
@@ -113,20 +114,28 @@ Ext.define('canopsis.controller.ViewBuilder', {
 						value: 0,
 						minValue: 0
 					},{
+						xtype : 'panel',
+						html : _('choose the nodeId') + ' :',
+						border: false
+					},{
 						xtype : 'canopsis.lib.form.field.cinventory',
 						multiSelect: false,
 						name : 'nodeId'
 					}
 				]
 			}
-			/*
-			this.globalNodeId = Ext.create('canopsis.lib.form.field.cinventory',{
-								multiSelect: false,});*/
+		
+		var step_change_func = function(){
+			log.debug('changed selection')
+		}
 		
 		//--------------------show the wizard--------------------- 
 		var wizard = Ext.create('canopsis.lib.view.cwizard',{
 			title : 'Widget Wizard',
-			_after_step_list : function(){log.debug('******test******')},
+			
+			change_step : {itemName : 'widget',event : 'selectionchange',functionName : step_change_func},
+			add_widget_option_step : step_change_func,
+
 			step_list: [ step1,
 						step2],
 			})
