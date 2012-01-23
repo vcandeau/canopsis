@@ -27,6 +27,7 @@ Ext.define('Ext.jq.Gridable' ,{
 	columns: 5,
 	show_grid: true,
 	widget_margin: 5,
+	widget_list: [],
 	
 	draggable: true,
 	resizable:  true,
@@ -52,7 +53,8 @@ Ext.define('Ext.jq.Gridable' ,{
 				resizable:  this.resizable,
 				selectable: this.selectable,
 				on_resize_widget: this._on_resize_widget,
-				on_add_widget: this._on_add_widget,
+				on_add_widget: $.proxy(this._on_add_widget,this),
+				on_widget_dblclick: $.proxy(this._on_widget_dblclick,this),
 				tpl_widget: "<div id='[id]-content'></div>",
 		});
 		
@@ -78,21 +80,41 @@ Ext.define('Ext.jq.Gridable' ,{
 	
 	add_column: function(){
 		$("#"+this.id+'-container').jqGridable('addColumn')
+		log.debug(this)
+		this._refresh_widget_layout()
 	},
 	
 	add_row: function(){
 		$("#"+this.id+'-container').jqGridable('addRow')
+		this._refresh_widget_layout()
+	},
+	
+	_on_widget_dblclick : function(widget){
+		var id = $(widget).attr('id')
+		this.fireEvent('dblclickWidget',id)
 	},
 
 	_on_add_widget: function(id, jqwidget){
-		Ext.create('Ext.panel.Panel', {
+		var div = Ext.create('Ext.panel.Panel', {
 			id: id+'-extcmp',
+			html_id: id,
 			layout:'fit',
-			margin: this.margin,
+			margin: this.widget_margin,
 			renderTo: id+'-content',
 			title: id,
-			height: $("#"+id).height() - this.margin * 2,
+			height: $("#"+id).height() - this.widget_margin * 2,
 		});
+		this.widget_list.push(div)
+		this.fireEvent('widgetAdd',id)
 	},
+
+	_refresh_widget_layout: function(){
+		for(var i in this.widget_list){
+			var widget = this.widget_list[i]
+			widget.height = $("#"+widget.html_id).height() - this.widget_margin * 2
+			widget.doLayout()
+		}
+		
+	}
 
 });
