@@ -54,27 +54,55 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	_bindFormEvents: function(form){
 		log.debug('Binding WYSIWYG editor',this.logAuthor);
 		
-		//form.ConfigureAction.setHandler(this._configureWidget)
+		//form.addWidgetButton.on('click', this.create_wizard,this)
+		form.saveButton.on('click',this._saveForm,this)
+		form.cancelButton.on('click', function(){ this._cancelForm(form) },this)
+
+		form.addRow.on('click',form.jqDraggable.add_row,form.jqDraggable)
+		form.addColumn.on('click',form.jqDraggable.add_column,form.jqDraggable)
 		
-		//form.saveButton.on('click', this._saveForm,this)
-		form.addWidgetButton.on('click', this.test_wizard,this)
-		//form.addWidgetButton.on('click', this.addWidget,this)
-		form.addRow.on('click',form.jqDraggable.add_row)
-		form.addColumn.on('click',form.jqDraggable.add_column)
+		//-----------------------custom events----------------------
+		form.jqDraggable.on('widgetAdd',this.create_wizard,this)
+		form.jqDraggable.on('dblclickWidget',this.editWidget,this)
 	},
 	
-	test_wizard: function(){
-		Ext.create('canopsis.view.ViewBuilder.wizard').show()
+	create_wizard: function(id){
+		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
+		this.widgetWizard.show()
+		var finishButton = this.widgetWizard.down('[action=finish]')
+		//binding save WidgetForm save button
+		finishButton.on('click', function(){this._saveWidgetForm(id)},this)
+	},
+	
+	editWidget : function(id){
+		var data = this.get_from_widget(id)
+		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{edit: true,widgetData : data})
+		this.widgetWizard.show()
+		log.debug(data)
 	},
 	
 	_saveForm : function(form){
-		
+		log.debug('Saving form',this.logAuthor);
+	},
+	
+	_saveWidgetForm : function(id){
+		data = this.widgetWizard.get_variables()
+		this.stock_in_widget(id,data)
+		this.widgetWizard.destroy()
 	},
 
 	beforeload_EditForm: function(form){
 
 	},
 	
+	stock_in_widget : function(id,data){
+		log.debug('stock data in widget',this.logAuthor);
+		this.form.jqDraggable.set_data(id,data)
+	},
+	
+	get_from_widget : function(id){
+		return this.form.jqDraggable.get_data(id)
+	},
 
 	afterload_EditForm: function(form){
 

@@ -24,6 +24,8 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	title : 'Widget Wizard',
 
 	add_widget_option_step : this.step_change_func,
+	
+	edit : false,
 
 	initComponent: function() {
 		
@@ -65,13 +67,56 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		}
 		
 		
-		this.step_list = [ step1,step2],
-		this.change_step = {itemName : 'widget',event : 'select',functionName : this.step_change_func},
-		
+		this.step_list = [step1,step2]
+	
 		this.callParent(arguments);
+		
+		if(this.edit){
+			this._edit(this.widgetData)
+		}
+			
+		this.change_step = {itemName : 'widget',event : 'select',functionName : this.step_change_func}
+		
 
 	},
 
+	//function launch when in editing mode
+	_edit : function(data){
+		widgetStore = Ext.data.StoreManager.lookup('Widget')
+		//building second step if needed
+		if(data.widget){
+			var _index = widgetStore.findBy(
+			function(record, id){
+				if(record.get('name') == data.widget){
+					return true
+				}
+			}, this)
+
+			log.debug(widgetStore.getAt(_index))
+			log.debug(widgetStore.getAt(_index).get('options'))
+			var options = widgetStore.getAt(_index).get('options')
+			if(options){
+				var new_step = {
+					title: _('Widget Options'),
+					id : 'widgetOptions',
+					description : _('Here you can set specific option type of the selected widget'),
+					items : options
+				}
+				this.add_new_step(this.build_step(new_step))
+			}
+		}
+		
+		//loading data
+		for(var i in data){
+			var _variable = this.returnedVariable[i]
+			if(_variable){
+				log.debug('variable ' + i + ' already track, change value')
+				_variable.setValue(data[i])
+			} else {
+				log.debug('not tracked ' + i)
+			}		
+		}
+	},
 
 	//add the new option tab panel in the widget
 	step_change_func : function(combo,record){
