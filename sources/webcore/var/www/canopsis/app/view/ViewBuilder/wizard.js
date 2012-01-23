@@ -18,6 +18,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+
+
+/* little fix given on http://www.sencha.com/forum/showthread.php?136583-A-combobox-bug-of-extjs-4.0.2/page2
+ * related to combobox bug, this bug is fixed in extjs4.0.6 , do not need this if
+ * the extjs version is upgrated*/
+Ext.override(Ext.form.field.ComboBox, {
+    onDestroy: function() {
+        this.bindStore(null);
+
+        this.callParent();
+    }
+});
+
+//-----------------------------------------//
+
 Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
@@ -111,7 +126,12 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			var _variable = this.returnedVariable[i]
 			if(_variable){
 				log.debug('variable ' + i + ' already track, change value')
+				if(_variable.xtype == 'combo' || _variable.xtype == 'combobox')
+				{
+					_variable.clearValue()
+				}
 				_variable.setValue(data[i])
+				
 			} else {
 				log.debug('not tracked ' + i)
 			}		
@@ -138,8 +158,5 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			this.remove_step('#widgetOptions')
 		}
 	},
-
-
-
 
 });
