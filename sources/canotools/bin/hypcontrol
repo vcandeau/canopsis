@@ -8,6 +8,7 @@ if [ "$1" = "start" ]; then
 	#service sla2mongodb start
 	#service amqp2brule start
 	service amqp2websocket start
+	service celeryd start
 	#service nagios2amqp start
 	service webserver start
 	#service amqp2graphite start
@@ -19,6 +20,7 @@ if [ "$1" = "stop" ]; then
 	#service graphite_webserver stop
 	#service carbon-cache stop
 	#service amqp2graphite stop
+	service celeryd stop
 	service webserver stop
 	service amqp2websocket stop
 	#service nagios2amqp stop
