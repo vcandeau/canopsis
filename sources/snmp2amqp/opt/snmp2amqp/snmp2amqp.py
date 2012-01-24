@@ -174,6 +174,7 @@ def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
 					logger.debug("Blacklist trap: '%s'." % trap_oid)
 					return wholeMsg
 
+				mib = None
 				try:
 					mib = mibs[enterprise]
 				except:	
@@ -183,10 +184,11 @@ def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
 					#	for oid, components in varBinds:
 					#		print "  + ", oid
 
-				try:
-					parse_trap(mib, trap_oid, agent, varBinds)
-				except Exception, err:
-					logger.error("Impossible to parse trap: %s" % err)
+				if mib:
+					try:
+						parse_trap(mib, trap_oid, agent, varBinds)
+					except Exception, err:
+						logger.error("Impossible to parse trap: %s" % err)
 				
 
 	
