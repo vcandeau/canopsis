@@ -58,14 +58,26 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 								text: _('Cancel'),
 								action: 'cancel',
 							})
-							
+/*				
 		this.addWidgetButton = Ext.create('Ext.Button', {
 								iconCls: 'icon-add',
-								text: _('Add'),
+								text: _('tmp button'),
 								action: 'addWidget',
 							})
+*/						
+		this.addColumn = Ext.create('Ext.Button', {
+								iconCls: 'icon-add',
+								text: _('Add column'),
+								action: 'addColumn',
+							})
 		
-		this.tbar =  [this.saveButton,this.cancelButton,'->',this.addWidgetButton],
+		this.addRow = Ext.create('Ext.Button', {
+								iconCls: 'icon-add',
+								text: _('Add row'),
+								action: 'addRow',
+							})
+		
+		this.tbar =  [this.saveButton,this.cancelButton,'|',this.addColumn,this.addRow],
 		
 		//-------Context menu------
 		/*this.ConfigureAction = Ext.create('Ext.Action', {
@@ -86,10 +98,7 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 		//------jquery masonry------
 		this.jqDraggable = this.add({
 			xtype: 'jqGridable',
-			//id: 'container',
 		})
-		
-		log.debug('Form finish generating')
 	},
 
 	afterrender: function() {
