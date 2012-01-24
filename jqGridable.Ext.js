@@ -115,6 +115,25 @@ Ext.define('Ext.jq.Gridable' ,{
 			widget.doLayout()
 		}
 		
+	},
+	
+	_dump :function(){
+		var dump = $("#"+this.id+'-container').jqGridable('dump')
+	/*	//delete jquery irrevelant information
+		for(i in dump){
+			if (dump[i].data['draggable']){
+				delete dump[i].data['draggable']
+			}
+			if (dump[i].data['resizable']){
+				delete dump[i].data['resizable']
+			}
+			if (dump[i].data['selectableItem']){
+				delete dump[i].data['selectableItem']
+			}
+			log.debug(dump[i].data.indexOf('jquery'))
+		}*/
+
+		return dump
 	}
 
 });
