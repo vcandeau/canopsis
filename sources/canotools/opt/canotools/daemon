@@ -139,10 +139,10 @@ function start(){
 		fi
 
 		if [ $SUDO -eq 1 ]; then
-			CMD="sudo $CMD"
+			CMD="sudo -n $CMD"
 			nohup $CMD 1>> $LOG 2>> $LOG &
 			## get child process
-			sleep 0.5
+			sleep 1
 			PID=$(awk '$4 == '${!}' {pid = substr(FILENAME, 7) + 0; print pid}' /proc/[0-9]*/stat)
 		else
 			nohup $CMD 1>> $LOG 2>> $LOG &
