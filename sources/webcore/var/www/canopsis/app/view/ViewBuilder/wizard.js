@@ -107,8 +107,8 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				}
 			}, this)
 
-			log.debug(widgetStore.getAt(_index))
-			log.debug(widgetStore.getAt(_index).get('options'))
+			//log.debug(widgetStore.getAt(_index))
+			//log.debug(widgetStore.getAt(_index).get('options'))
 			var options = widgetStore.getAt(_index).get('options')
 			if(options){
 				var new_step = {
