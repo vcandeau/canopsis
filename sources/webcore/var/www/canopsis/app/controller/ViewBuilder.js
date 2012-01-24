@@ -149,11 +149,12 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			record.set('items',Ext.encode(dump))
 			log.dump(dump)
 			
-			//--------------------------name fixing----------------------
+			//--------------------------general variable----------------------
 			var viewName = this.form.viewName.getValue()
 			record.set('crecord_name',viewName);
 			record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
-			
+			record.set('template',this.form.template.getValue())
+			record.set('reporting',this.form.reporting.getValue())
 			
 			//--------------------check if already exist---------------
 			var recordId = record.get('id')
@@ -168,6 +169,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			//if didn't already exist, save it
 			if(already_exist == -1 || this.form.edit == true ){
 				//------------------add new view------------------
+				log.dump(record)
 				store.add(record);
 				store.load();
 				this._cancelForm(this.form);
@@ -220,14 +222,5 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	get_from_widget : function(id){
 		return this.form.jqDraggable.get_data(id)
 	},
-
-	afterload_EditForm: function(form){
-
-	},
-	
-	afterload_DuplicateForm: function(form){
-
-	}
-
 
 });
