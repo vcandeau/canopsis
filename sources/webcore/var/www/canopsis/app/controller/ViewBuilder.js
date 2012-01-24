@@ -83,6 +83,90 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	
 	_saveForm : function(form){
 		log.debug('Saving form',this.logAuthor);
+		
+		//check if view have a name
+		if(this.form.viewName.isValid()){
+			var dump = this.form.jqDraggable._dump()
+			var store = this.grid.store;
+			var record = Ext.create('canopsis.model.view', data);
+			var store = this.grid.store;
+			var widget_list = []
+			
+		/*	//----------------------------parsing widgets-----------------------------
+			for(var i in dump){
+				log.dump(dump[i])
+				var widget = dump[i]
+				var widgetData = dump[i].data
+				var widgetAttrTpl = this._get_widget_attribute(dump[i].data.widget)
+				var formatted_widget = {}
+				
+				formatted_widget['xtype'] = widgetData.widget
+				formatted_widget['position'] = widget.position
+				
+				for(var j in widgetAttrTpl){
+					if(widgetData[widgetAttrTpl[j]]){
+						formatted_widget[widgetAttrTpl[j]] = widgetData[widgetAttrTpl[j]]
+					}
+				}
+				widget_list.push(formatted_widget)
+			}
+			record.set('items',widget_list) */
+			
+			record.set('items',Ext.encode(dump))
+			log.dump(dump)
+			
+			//--------------------------name fixing----------------------
+			var viewName = this.form.viewName.getValue()
+			record.set('crecord_name',viewName);
+			record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
+			
+			
+			//--------------------check if already exist---------------
+			var recordId = record.get('id')
+			var already_exist = store.findBy(
+				function(storeRecord, id){
+					if(storeRecord.get('id') == recordId){
+						return true;  // a record with this data exists
+					}
+				}, this
+			);
+
+			//if didn't already exist, save it
+			if(already_exist != -1){
+				log.debug('['+this.id+'][validateForm] -  View exist');
+			} else {
+				store.add(record);
+			}
+			
+			//--------------------------add record---------------------
+			//store.add(record);
+			//log.dump(record)
+			
+		} else {
+			global.notify.notify(
+				"view name empty !",
+				"you must provide a valid view name")
+		}
+	},
+	
+	_get_widget_attribute : function(widget){
+		var widgetStore = Ext.data.StoreManager.lookup('Widget')
+		var output = []
+
+		var _index = widgetStore.findBy(
+		function(record, id){
+			if(record.get('name') == widget){
+				return true
+			}
+		}, this)
+		var attr_list = widgetStore.getAt(_index).get('options')
+		
+		for(var i in attr_list){
+			if(attr_list[i].name){
+				output.push(attr_list[i].name)
+			}
+		}
+		return output		
 	},
 	
 	_saveWidgetForm : function(id){

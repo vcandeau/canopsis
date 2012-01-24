@@ -76,8 +76,16 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 								text: _('Add row'),
 								action: 'addRow',
 							})
+							
+		this.viewName = Ext.create('Ext.form.field.Text', {
+								//iconCls: 'icon-add',
+								//text: _('Add row'),
+								fieldLabel : _("view's name"),
+								allowBlank: false
+								//action: 'addRow',
+							})	
 		
-		this.tbar =  [this.saveButton,this.cancelButton,'|',this.addColumn,this.addRow],
+		this.tbar =  [this.saveButton,this.cancelButton,'|',this.addColumn,this.addRow,'|',this.viewName],
 		
 		//-------Context menu------
 		/*this.ConfigureAction = Ext.create('Ext.Action', {
