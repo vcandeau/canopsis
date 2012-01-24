@@ -156,6 +156,7 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 
 	beforeDestroy : function() {
 		log.debug("Destroy items ...")
+		this.jqDraggable._destroy()
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
 		log.debug(this.id + " Destroyed.")
 	},
