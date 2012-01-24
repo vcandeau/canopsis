@@ -27,4 +27,5 @@ function install(){
 	easy_install_pylib ws4py
 	easy_install_pylib pysnmp
 	easy_install_pylib xmlrpclib
+	easy_install_pylib pyparsing
 }
