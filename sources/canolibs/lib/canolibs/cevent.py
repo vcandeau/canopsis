@@ -31,7 +31,8 @@ def forger(		connector,
 			state_type=1,
 			output=None,
 			long_output=None,
-			perf_data=None
+			perf_data=None,
+			address=None
 		):
 
 	if not timestamp:
@@ -55,7 +56,8 @@ def forger(		connector,
 		'state_type':		state_type,
 		'output':		output,
 		'long_output':		long_output,
-		'perf_data':		perf_data
+		'perf_data':		perf_data,
+		'address':			address
 	}
 
 	return dump
