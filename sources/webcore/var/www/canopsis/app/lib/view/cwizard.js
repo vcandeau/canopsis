@@ -64,7 +64,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
 			this.add_new_step(tmp)
-			log.debug("Wizard steps added to container",this.logAuthor)
+			//log.debug("Wizard steps added to container",this.logAuthor)
 		}
 		
 		if(this._after_step_list){
@@ -199,7 +199,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 					if(item.store){
 						var ext_component = Ext.createByAlias(this.get_extjs_class(item.xtype),item)
 					}else{
-						this.set_combobox()
+						//this.set_combobox()
+						//DEBUG TEST PURPOSE
+						var ext_component = Ext.createByAlias('widget.textfield',{name:'combotest'})
 					}
 				}else{
 					//log.debug(this.get_extjs_class(item.xtype))
