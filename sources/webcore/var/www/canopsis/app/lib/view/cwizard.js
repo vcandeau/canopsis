@@ -102,11 +102,11 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		for (i in btns){
 			btns[i].on('click', this.cancel_button, this)
 		}
-		//---------------------finish button--------------------
+	/*	//---------------------finish button--------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]')
 		for (i in btns){
 			btns[i].on('click', this.finish_button, this)
-		}
+		}*/
 	},
 	
 	add_new_step: function(step){
@@ -209,7 +209,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 				//--------check if component created, and keep variable link if a name is set
 				if (ext_component){
 					this.returnedVariable[item.name] = ext_component
-					log.dump(this.returnedVariable)
+					//log.dump(this.returnedVariable)
 					log.debug("         Added "+item.name+" variable",this.logAuthor)
 					ext_items.push(ext_component)
 				}else{

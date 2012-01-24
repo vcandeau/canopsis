@@ -18,71 +18,128 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+
+
+/* little fix given on http://www.sencha.com/forum/showthread.php?136583-A-combobox-bug-of-extjs-4.0.2/page2
+ * related to combobox bug, this bug is fixed in extjs4.0.6 , do not need this if
+ * the extjs version is upgrated*/
+Ext.override(Ext.form.field.ComboBox, {
+    onDestroy: function() {
+        this.bindStore(null);
+
+        this.callParent();
+    }
+});
+
+//-----------------------------------------//
+
 Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
 	title : 'Widget Wizard',
 
 	add_widget_option_step : this.step_change_func,
+	
+	edit : false,
 
 	initComponent: function() {
 		
 		//----------------------Build wizard options
 		var step1 = {
 				title: _('Choose widget'),
-				description : _('choose which widget type you want'),
-				items : [{
-					xtype: "grid",
+				description : _('choose the type of widget you want, its title, and refresh interval'),
+				items : [
+				{
+					xtype : 'textfield',
+					fieldLabel : _('Title'),
+					name : 'title'
+				},{
+					xtype: "combo",
 					store: 'Widget',
+					forceSelection : true,
+					fieldLabel : _('Type'),
 					name: "widget",
-					columns: [{
-						header: _('Name'),
-						dataIndex: 'name',
-						flex: 1
-					},{
-						header: _('Description'),
-						dataIndex: 'description',
-						flex: 2
-					}],
+					displayField: 'name',
+					valueField: 'name'
+				},{
+					xtype: 'numberfield',
+					fieldLabel: _('Refresh interval'),
+					name: 'refreshInterval',
+					value: 0,
+					minValue: 0
 				}]
-			}
+		}
 		
 		var step2 = {
 				title: _('General Options'),
-				description: _('General widget option'),
+				description: _('Here you choose the component that the widget will display information from'),
 				items : [{
-						xtype : 'textfield',
-						fieldLabel : _('Title'),
-						name : 'title'
-					},{
-						xtype: 'numberfield',
-						fieldLabel: _('Refresh interval'),
-						name: 'refreshInterval',
-						value: 0,
-						minValue: 0
-					},{
-						xtype : 'panel',
-						html : _('choose the nodeId') + ' :',
-						border: false
-					},{
 						xtype : 'canopsis.lib.form.field.cinventory',
 						multiSelect: false,
 						name : 'nodeId'
 					}
 				]
-			}
+		}
 		
 		
-		this.step_list = [ step1,step2],
-		this.change_step = {itemName : 'widget',event : 'selectionchange',functionName : this.step_change_func},
-		
+		this.step_list = [step1,step2]
+	
 		this.callParent(arguments);
+		
+		if(this.edit){
+			this._edit(this.widgetData)
+		}
+			
+		this.change_step = {itemName : 'widget',event : 'select',functionName : this.step_change_func}
+		
 
 	},
 
+	//function launch when in editing mode
+	_edit : function(data){
+		widgetStore = Ext.data.StoreManager.lookup('Widget')
+		//building second step if needed
+		if(data.widget){
+			var _index = widgetStore.findBy(
+			function(record, id){
+				if(record.get('name') == data.widget){
+					return true
+				}
+			}, this)
+
+			log.debug(widgetStore.getAt(_index))
+			log.debug(widgetStore.getAt(_index).get('options'))
+			var options = widgetStore.getAt(_index).get('options')
+			if(options){
+				var new_step = {
+					title: _('Widget Options'),
+					id : 'widgetOptions',
+					description : _('Here you can set specific option type of the selected widget'),
+					items : options
+				}
+				this.add_new_step(this.build_step(new_step))
+			}
+		}
+		
+		//loading data
+		for(var i in data){
+			var _variable = this.returnedVariable[i]
+			if(_variable){
+				log.debug('variable ' + i + ' already track, change value')
+				if(_variable.xtype == 'combo' || _variable.xtype == 'combobox')
+				{
+					_variable.clearValue()
+				}
+				_variable.setValue(data[i])
+				
+			} else {
+				log.debug('not tracked ' + i)
+			}		
+		}
+	},
 
 	//add the new option tab panel in the widget
-	step_change_func : function(sel,record){
+	step_change_func : function(combo,record){
 		log.debug('changed selection')
 		var widgetType = record[0].data
 		var widgetOptions = widgetType.options
@@ -101,8 +158,5 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			this.remove_step('#widgetOptions')
 		}
 	},
-
-
-
 
 });
