@@ -69,6 +69,22 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this._bindFormEvents(this.form)
 	},
 	
+	_duplicateRecord: function() {
+		log.debug('Editing record',this.logAuthor);
+		var item = this.grid.getSelectionModel().getSelection()[0]
+		var viewName = item.get('crecord_name')
+		this.form = add_view_tab('ViewBuilderForm', 'edit ' + viewName, true, undefined, true, false, false)
+		
+		//if there is items load them
+		var items = Ext.decode(item.get('items'))
+		if(items.length != 0){
+			this.form.jqDraggable._load(items)
+		}
+		//load and disable name selection
+		this.form.viewName.setValue(viewName)
+		this._bindFormEvents(this.form)
+	},
+	
 	_bindFormEvents: function(form){
 		log.debug('Binding WYSIWYG editor',this.logAuthor);
 		
