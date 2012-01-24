@@ -20,6 +20,10 @@
 
 import socket, time
 
+import re
+
+regexp_ip = re.compile("([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
+
 def forger(		connector,
 			connector_name,
 			event_type,
@@ -31,7 +35,8 @@ def forger(		connector,
 			state_type=1,
 			output=None,
 			long_output=None,
-			perf_data=None
+			perf_data=None,
+			address=None
 		):
 
 	if not timestamp:
@@ -42,6 +47,10 @@ def forger(		connector,
 
 	if not state:
 		state = 0
+		
+	if not address:
+		if bool(regexp_ip.match(component)):
+			address = component
 
 	dump = {
 		'connector':		connector,
@@ -55,7 +64,8 @@ def forger(		connector,
 		'state_type':		state_type,
 		'output':		output,
 		'long_output':		long_output,
-		'perf_data':		perf_data
+		'perf_data':		perf_data,
+		'address':			address
 	}
 
 	return dump
