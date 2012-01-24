@@ -138,6 +138,11 @@ Ext.define('Ext.jq.Gridable' ,{
 	
 	_load : function(data){
 		$("#"+this.id+'-container').jqGridable('load', data)
-	}
+	},
+	
+	_destroy : function(){
+		log.debug('######################################')
+		$("#"+this.id+'-container').jqGridable('clear')
+	},
 
 });
