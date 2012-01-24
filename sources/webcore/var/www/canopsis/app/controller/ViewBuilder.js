@@ -50,7 +50,25 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this._bindFormEvents(this.form)
 		
 	},	
-
+	
+	_editRecord: function(view, item, index) {
+		log.debug('Editing record',this.logAuthor);
+		var viewName = item.get('crecord_name')
+		this.form = add_view_tab('ViewBuilderForm', 'edit ' + viewName, true, undefined, true, false, false)
+		
+		//if there is items load them
+		var items = Ext.decode(item.get('items'))
+		if(items.length != 0){
+			this.form.jqDraggable._load(items)
+		}
+		//load and disable name selection
+		this.form.edit = true
+		this.form.viewName.setValue(viewName)
+		this.form.viewName.setDisabled(true)
+		
+		this._bindFormEvents(this.form)
+	},
+	
 	_bindFormEvents: function(form){
 		log.debug('Binding WYSIWYG editor',this.logAuthor);
 		
@@ -85,7 +103,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		log.debug('Saving form',this.logAuthor);
 		
 		//check if view have a name
-		if(this.form.viewName.isValid()){
+		if(this.form.viewName.isValid() || this.form.edit){
 			var dump = this.form.jqDraggable._dump()
 			var store = this.grid.store;
 			var record = Ext.create('canopsis.model.view', data);
@@ -132,15 +150,14 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			);
 
 			//if didn't already exist, save it
-			if(already_exist != -1){
-				log.debug('['+this.id+'][validateForm] -  View exist');
-			} else {
+			if(already_exist == -1 || this.form.edit == true ){
+				//------------------add new view------------------
 				store.add(record);
+				store.load();
+				this._cancelForm(this.form);
+			} else {
+				log.debug('['+this.id+'][validateForm] -  View exist');
 			}
-			
-			//--------------------------add record---------------------
-			//store.add(record);
-			//log.dump(record)
 			
 		} else {
 			global.notify.notify(
