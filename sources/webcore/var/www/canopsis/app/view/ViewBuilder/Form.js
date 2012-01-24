@@ -84,8 +84,20 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 								allowBlank: false
 								//action: 'addRow',
 							})	
+							
+		this.reporting = Ext.create('Ext.form.field.Checkbox',{
+								boxLabel  : _('Reporting') + ' :',
+								name      : 'reporting',
+								boxLabelAlign : 'before'
+							})
+							
+		this.template = Ext.create('Ext.form.field.Checkbox',{
+										boxLabel  : _('Template') + ' :',
+										name      : 'template',
+										boxLabelAlign : 'before'
+									})		
 		
-		this.tbar =  [this.saveButton,this.cancelButton,'|',this.addColumn,this.addRow,'|',this.viewName],
+		this.tbar =  [this.saveButton,this.cancelButton,'|',this.addColumn,this.addRow,'|',this.viewName,'|',this.reporting,this.template]
 		
 		//-------Context menu------
 		/*this.ConfigureAction = Ext.create('Ext.Action', {
