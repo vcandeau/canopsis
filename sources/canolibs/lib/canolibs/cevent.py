@@ -18,11 +18,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import socket, time
-
+import socket, time, logging
 import re
 
+logger = logging.getLogger('cevent')
+
+socket.setdefaulttimeout(1)
+
 regexp_ip = re.compile("([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
+
+dns_cache = {}
+cache_time = 1800 #30min
 
 def forger(		connector,
 			connector_name,
@@ -36,7 +42,9 @@ def forger(		connector,
 			output=None,
 			long_output=None,
 			perf_data=None,
-			address=None
+			address=None,
+			domain=None,
+			reverse_lookup=True
 		):
 
 	if not timestamp:
@@ -51,6 +59,46 @@ def forger(		connector,
 	if not address:
 		if bool(regexp_ip.match(component)):
 			address = component
+			if reverse_lookup:
+				dns = None
+				
+				# get from cache
+				try:
+					(timestamp, dns) = dns_cache[address.replace('.', '-')]
+					logger.info("Use DNS lookup from cache")
+					if (timestamp + cache_time) < int(time.time()):
+						logger.info(" + Cache is too old")
+						del dns_cache[address.replace('.', '-')]
+						dns = None
+				except:
+					logger.info(" + '%s' not in cache" % address)
+					
+				# reverse lookup
+				if not dns:
+					try:
+						logger.info("DNS reverse lookup for '%s' ..." % address)
+						dns = socket.gethostbyaddr(address)
+						logger.info(" + Succes: '%s'" % dns[0])
+						dns_cache[address.replace('.', '-')] = (int(time.time()), dns)
+					except:
+						logger.info(" + Failed");
+						
+				# Dns ok
+				if dns:	
+					# Split FQDN
+					fqdn = dns[0]
+					component = fqdn.split('.', 1)[0]
+					if not domain:
+						try:
+							domain = fqdn.split('.', 1)[1]
+						except:
+							pass
+				
+				if dns:
+					logger.info(" + Component: %s" % component);
+					logger.info(" + Address:   %s" % address);
+					logger.info(" + Domain:    %s" % domain);
+
 
 	dump = {
 		'connector':		connector,
@@ -65,7 +113,8 @@ def forger(		connector,
 		'output':		output,
 		'long_output':		long_output,
 		'perf_data':		perf_data,
-		'address':			address
+		'address':			address,
+		'domain':			domain
 	}
 
 	return dump
