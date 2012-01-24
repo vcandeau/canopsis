@@ -139,7 +139,7 @@ function start(){
 		fi
 
 		if [ $SUDO -eq 1 ]; then
-			CMD="sudo $CMD"
+			CMD="sudo -n $CMD"
 			nohup $CMD 1>> $LOG 2>> $LOG &
 			## get child process
 			sleep 0.5
