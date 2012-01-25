@@ -145,4 +145,9 @@ Ext.define('Ext.jq.Gridable' ,{
 		$("#"+this.id+'-container').jqGridable('clear')
 	},
 
+	_refresh_widget_content: function(title,content){
+		this.title = title
+		this.html = html
+	},
+
 });
