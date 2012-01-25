@@ -104,8 +104,10 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
 		this.widgetWizard.show()
 		var finishButton = this.widgetWizard.down('[action=finish]')
+		this.widgetWizard.on('destroy', function(){this.form.enable()},this)
 		//binding save WidgetForm save button
 		finishButton.on('click', function(){this._saveWidgetForm(id)},this)
+		this.form.disable()
 	},
 	
 	editWidget : function(id){

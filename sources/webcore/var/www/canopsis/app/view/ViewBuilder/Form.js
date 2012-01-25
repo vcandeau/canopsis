@@ -115,10 +115,19 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 		*/
 		this.callParent(arguments);
 		
-		//------jquery masonry------
+		//------jquery jqGridable------
 		this.jqDraggable = this.add({
 			xtype: 'jqGridable',
 		})
+		
+		//----------Spotlight---------
+	/*	this.spot = []
+		
+		Ext.create('Ext.ux.Spotlight', {
+			easing: 'easeOut',
+			duration: 300
+		});*/
+		
 	},
 
 	afterrender: function() {
