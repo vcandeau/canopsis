@@ -141,7 +141,6 @@ Ext.define('Ext.jq.Gridable' ,{
 	},
 	
 	_destroy : function(){
-		log.debug('######################################')
 		$("#"+this.id+'-container').jqGridable('clear')
 	},
 
