@@ -115,10 +115,11 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 		*/
 		this.callParent(arguments);
 		
-		//------jquery masonry------
+		//------jquery jqGridable------
 		this.jqDraggable = this.add({
 			xtype: 'jqGridable',
 		})
+		
 	},
 
 	afterrender: function() {
