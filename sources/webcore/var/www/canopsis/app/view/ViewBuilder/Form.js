@@ -120,14 +120,6 @@ Ext.define('canopsis.view.ViewBuilder.Form' ,{
 			xtype: 'jqGridable',
 		})
 		
-		//----------Spotlight---------
-	/*	this.spot = []
-		
-		Ext.create('Ext.ux.Spotlight', {
-			easing: 'easeOut',
-			duration: 300
-		});*/
-		
 	},
 
 	afterrender: function() {
