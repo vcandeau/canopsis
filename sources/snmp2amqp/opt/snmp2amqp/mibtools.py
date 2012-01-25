@@ -73,6 +73,16 @@ class mib(object):
 				notification['STATE']
 			except:
 				notification['STATE'] = "UNKNOWN"
+				
+			try:
+				notification['ARGUMENTS']
+			except:
+				notification['ARGUMENTS'] = []
+				
+			try:
+				notification['SUMMARY']
+			except:
+				notification['SUMMARY'] = ''
 
 			return notification
 		except:
