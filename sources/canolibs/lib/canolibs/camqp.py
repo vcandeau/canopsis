@@ -27,7 +27,7 @@ import time, logging, threading, os
 
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.ERROR, read_config_file=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.ERROR, read_config_file=True, auto_connect=True):
 		threading.Thread.__init__(self)
 		
 		self.logger = logging.getLogger("camqp")
@@ -44,7 +44,7 @@ class camqp(threading.Thread):
 		
 		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, self.host, self.port, self.virtual_host)
 		
-		self.logger.setLevel(logging_level)
+		#self.logger.setLevel(logging_level)
 		
 		self.exchange_name_events=exchange_name+".events"
 		self.exchange_name_alerts=exchange_name+".alerts"
@@ -65,18 +65,31 @@ class camqp(threading.Thread):
 									 IOError,
 									 OSError,)
 									 #AttributeError)
+									 						 
+		## create exchange
+		self.logger.debug("Create exchanges object")
+		for exchange_name in [self.exchange_name, self.exchange_name_events, self.exchange_name_alerts, self.exchange_name_incidents]:
+			self.logger.debug(" + %s" % exchange_name)
+			self.exchanges[exchange_name] =  Exchange(exchange_name , "topic", durable=True, auto_delete=False)
+		
+		if auto_connect:
+			self.connect()
 		
 		self.logger.debug("Object canamqp initialized")
 
 	def run(self):
 		self.logger.debug("Start thread ...")
+		reconnect = False
 		
 		while self.RUN:
+			
 			self.connect()
 			
-			self.wait_connection()
+			#self.wait_connection()
 			
 			if self.connected:
+				self.init_queue(reconnect=reconnect)
+				
 				while self.RUN:
 					try:
 						self.conn.drain_events(timeout=0.5)
@@ -91,66 +104,57 @@ class camqp(threading.Thread):
 				self.disconnect()
 		
 			if self.RUN:
-				self.logger.error("Connection loss, try to reconnect in 5 seconds ...")
-				time.sleep(5)
+				self.logger.error("Connection loss, try to reconnect in few seconds ...")
+				reconnect = True
+				self.wait_connection(timeout=5)
 			
 		self.logger.debug("End of thread ...")
 		
 	def stop(self):
 		self.logger.debug("Stop thread ...")
-		self.RUN = False
-		
+		self.RUN = False	
 
 	def connect(self):
-		self.logger.debug("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
-		
-		self.conn = BrokerConnection(self.amqp_uri)
+		if not self.connected:
+			self.logger.debug("Connect to AMQP Broker (%s:%s)" % (self.host, self.port))
 			
-		self.logger.debug(" + Open channel")
-		try:
-			self.chan = self.conn.channel()
-			self.on_connect()
-		except Exception, err:
-			self.logger.error(err)
+			self.conn = BrokerConnection(self.amqp_uri)
+				
+			self.logger.debug(" + Open channel")
+			try:
+				self.chan = self.conn.channel()
+				self.logger.info("Connected to AMQP Broker.")
+				
+				self.connected = True
+				self.logger.debug("Channel openned. Ready to send messages")
+				
+			except Exception, err:
+				self.logger.error(err)
+		else:
+			self.logger.debug("Allready connected")
 					
-	def on_connect(self):
-		
-		self.logger.info("Connected to AMQP Broker.")
-		
-		self.exchanges[self.exchange_name] =  Exchange(self.exchange_name, "topic", durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name)
-
-		self.exchanges[self.exchange_name_events] =  Exchange(self.exchange_name_events, "topic", durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_events)
-
-		self.exchanges[self.exchange_name_alerts] =  Exchange(self.exchange_name_alerts, "topic", durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_alerts)
-
-		self.exchanges[self.exchange_name_incidents]=  Exchange(self.exchange_name_incidents, "topic", durable=True, auto_delete=False)
-		self.logger.debug("Topic Exchange %s declared ..." % self.exchange_name_incidents)
-
-		self.connected = True
-		self.logger.debug("Channel openned. Ready to send messages")
-			
-		self.logger.debug("Create Queues, binding and consumer")
-		for key in self.queues.keys():
-			qsettings = self.queues[key]
-			queue_name = qsettings['queue_name']
-			exchange_name = qsettings['exchange_name']
-			no_ack = qsettings['no_ack']
-			routing_keys = qsettings['routing_keys']
-			exclusive = qsettings['exclusive']
-			auto_delete = qsettings['auto_delete']
-			callback = qsettings['callback']
-			
-			self.logger.debug("+ Create Queue '%s' and bind it on exchange '%s'" % (queue_name, exchange_name))
-			queue = Queue(queue_name, channel=self.chan, exchange=self.exchanges[exchange_name], routing_key=routing_keys[0], exclusive=exclusive, auto_delete=auto_delete, no_ack=no_ack)
-			
-			self.logger.debug("  - Declare consumer ...")
-			consumer = self.conn.Consumer(queue, callbacks=[callback])
-			consumer.consume()
-			
-			self.queues[key]['consumer'] = consumer
+	def init_queue(self, reconnect=False):
+		if self.queues:
+			self.logger.debug("Init queues")
+			for queue_name in self.queues.keys():
+				self.logger.debug(" + %s" % queue_name)
+				qsettings = self.queues[queue_name]
+				
+				if not qsettings['queue']:
+					self.logger.debug("   + Create queue")
+					qsettings['queue'] = Queue(queue_name,
+											exchange = self.exchanges[qsettings['exchange_name']],
+											routing_key = qsettings['routing_keys'][0],
+											exclusive = qsettings['exclusive'],
+											auto_delete = qsettings['auto_delete'],
+											no_ack = qsettings['no_ack'])
+					
+				if not qsettings['consumer']:
+					self.logger.debug("   + Create Consumer")
+					qsettings['consumer'] = self.conn.Consumer(qsettings['queue'], callbacks=[ qsettings['callback'] ])
+				
+				self.logger.debug("   + Consume queue")
+				qsettings['consumer'].consume()
 
 	
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
@@ -158,9 +162,11 @@ class camqp(threading.Thread):
 			routing_keys = [ routing_keys ]
 		
 		if not exchange_name:
-			exchange_name = self.exchange_name
+			exchange_name = self.exchange_name		
 		
-		self.queues[queue_name]={	'queue_name': queue_name,
+		self.queues[queue_name]={	'queue': False,
+									'consumer': False,
+									'queue_name': queue_name,
 									'routing_keys': routing_keys,
 									'callback': callback,
 									'exchange_name': exchange_name,
@@ -187,13 +193,26 @@ class camqp(threading.Thread):
  		if self.connected:
 			self.logger.info("Disconnect from AMQP Broker")
 	
+			for queue_name in self.queues.keys():
+				if self.queues[queue_name]['consumer']:
+					self.logger.debug(" + Cancel consumer on %s" % queue_name)
+					try:
+						self.queues[queue_name]['consumer'].cancel()
+					except:
+						pass
+						
+					del(self.queues[queue_name]['consumer'])
+					self.queues[queue_name]['consumer'] = False
+					del(self.queues[queue_name]['queue'])
+					self.queues[queue_name]['queue'] = False
+				
 			self.conn.release()
 			#self.conn.close()
 			self.connected = False
 
-	def wait_connection(self):
+	def wait_connection(self, timeout=5):
 		i=0
-		while self.RUN and not self.connected and i < 5:
+		while self.RUN and not self.connected and i < (timeout*2):
 			time.sleep(0.5)
 			i+=1
 
@@ -219,3 +238,6 @@ class camqp(threading.Thread):
 
 		except Exception, err:
 			self.logger.error("Impossible to load configurations (%s), use default ..." % err)
+			
+	def __del__(self):
+		self.stop()
