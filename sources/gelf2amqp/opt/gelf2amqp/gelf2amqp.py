@@ -21,8 +21,7 @@
 import socket, zlib, json, time
 from pyparsing import Word, alphas, Suppress, Combine, nums, string, Optional, Regex
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 from cinit import init
 
@@ -183,7 +182,7 @@ def on_log(gelf):
 	
 	
 	key = cevent.get_routingkey(event)						
-	msg = Content(json.dumps(event))
+	msg = json.dumps(event)
 	myamqp.publish(msg, key, myamqp.exchange_name_events)
 
 ########################################################

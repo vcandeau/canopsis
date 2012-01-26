@@ -20,13 +20,10 @@
 
 import time
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 from pymongo import Connection
 import json
-
-from twisted.internet import reactor, task
 
 from gevent import spawn
 
@@ -81,9 +78,9 @@ handler = init.handler(logger)
 #
 ########################################################
 
-def on_message(msg):
-	rk = msg.routing_key
- 	event = json.loads(msg.content.body)
+def on_message(body, msg):
+	rk = msg.delivery_info['routing_key']
+ 	event = json.loads(body)
 
 	for wsclient in wsclients:
 		try:
