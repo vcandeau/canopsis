@@ -35,8 +35,7 @@ mibs = {}
 
 sys.path.append(os.path.expanduser('~/lib/canolibs'))
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 import cevent
 
@@ -130,7 +129,7 @@ def parse_trap(mib, trap_oid, agent, varBinds):
 		logger.debug("Event: %s" % event)
 		## send event on amqp
 		key = cevent.get_routingkey(event)						
-		msg = Content(json.dumps(event))
+		msg = json.dumps(event)
 		myamqp.publish(msg, key, myamqp.exchange_name_events)
 		
 
