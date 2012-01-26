@@ -18,21 +18,21 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import socket, zlib, json, time, logging, signal
+import socket, zlib, json, time
 from pyparsing import Word, alphas, Suppress, Combine, nums, string, Optional, Regex
 
 from camqp import camqp, files_preserve
 from txamqp.content import Content
 
+from cinit import init
+
 import cevent
 
 DAEMON_NAME='gelf2amqp'
-RUN = False
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-logger = logging.getLogger(DAEMON_NAME)
+init 	= init(DAEMON_NAME)
+logger 	= init.get_logger()
+handler = init.handler(logger)
 
 gelf_port = 5555
 gelf_interface = "127.0.0.1"
@@ -54,13 +54,6 @@ syslog_parser = serverDateTime + hostname + daemon + output
 #   Functions
 #
 ########################################################
-
-#### Connect signals
-RUN = True
-def signal_handler(signum, frame):
-	logger.warning("Receive signal to stop daemon...")
-	global RUN
-	RUN = False
 
 def gelf_uncompress(data):
 	logger.debug("Uncompress GELF data ...")
@@ -114,7 +107,7 @@ def wait_gelf_udp(on_log):
 
 	logger.info("Wait GELF data from UDP (%s:%s)" % (gelf_interface, gelf_port))
 	try:
-		while RUN:
+		while handler.status():
 			data, peer = s.recvfrom(1024)
 			gelf = gelf_uncompress(data)
 			on_log(gelf)
@@ -200,8 +193,8 @@ def on_log(gelf):
 ########################################################
 
 def main():
-	signal.signal(signal.SIGINT, signal_handler)
-	signal.signal(signal.SIGTERM, signal_handler)
+
+	handler.run()
 	
 	# global
 	global myamqp

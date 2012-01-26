@@ -18,17 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging, sys, os, signal, json
+import sys, os, signal, json
 from pwd import getpwnam
+from cinit import init
 
 DAEMON_NAME='snmp2amqp'
+
+init 	= init(DAEMON_NAME)
+logger 	= init.get_logger()
+
 RUN = False
-
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-
-logger = logging.getLogger('snmp2amqp')
 
 myamqp = None
 transportDispatcher = None
