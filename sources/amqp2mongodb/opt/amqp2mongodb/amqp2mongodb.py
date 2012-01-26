@@ -20,8 +20,7 @@
 
 import time
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 from pymongo import Connection
 import json
@@ -66,19 +65,19 @@ point_per_dca = None
 #
 ########################################################
 	
-def on_message(msg):
-	event_id = msg.routing_key
+def on_message(body, msg):
+	event_id = msg.delivery_info['routing_key']
 	logger.debug("Check event: %s" % event_id)
 	try:
-	 	event = json.loads(msg.content.body)
+	 	event = json.loads(body)
 	except:
-		logger.error("Impossible to parse event, Dump:\n%s" % msg.content.body)
+		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
 
 	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
 
 		if archiver.check_event(event_id, event):
-			msg = Content(json.dumps(event))
+			msg = json.dumps(event)
 			## Event to Alert
 			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
@@ -90,7 +89,7 @@ def on_message(msg):
 		if event['state'] != 0:
 			archiver.log_event(event_id, event)
 
-			msg = Content(json.dumps(event))
+			msg = json.dumps(event)
 			## Event to Alert
 			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
@@ -99,7 +98,7 @@ def on_message(msg):
 		archiver.store_event(event_id, event)
 		archiver.log_event(event_id, event)
 
-		msg = Content(json.dumps(event))
+		msg = json.dumps(event)
 		## Event to Alert
 		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
 
