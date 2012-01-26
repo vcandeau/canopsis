@@ -19,7 +19,6 @@
 # ---------------------------------
 
 import time
-import logging
 
 from camqp import camqp, files_preserve
 from txamqp.content import Content
@@ -37,6 +36,8 @@ from ws4py.server.geventserver import UpgradableWSGIHandler, WebSocketServer
 
 from cconfig import cconfig
 
+from cinit import init
+
 ########################################################
 #
 #   Configuration
@@ -46,6 +47,8 @@ DAEMON_NAME = "amqp2websocket"
 DAEMON_TYPE = "transport"
 
 CONFIG = cconfig(name=DAEMON_NAME)
+
+init 	= init(DAEMON_NAME)
 
 amqp = None
 wsclients = []
@@ -66,13 +69,11 @@ except:
 
 ## Logger
 if debug:
-	logging_level=logging.DEBUG
+	logger 	= init.get_logger("DEBUG")
 else:
-	logging_level=logging.INFO
-logging.basicConfig(level=logging_level,
-		format='%(asctime)s %(name)s %(levelname)s %(message)s',
-)
-logger = logging.getLogger("amqp2websocket")
+	logger 	= init.get_logger("INFO")
+	
+handler = init.handler(logger)
 
 ########################################################
 #
@@ -126,16 +127,6 @@ def on_websocket(websocket, environ):
 	wsclients.remove(websocket)
 	websocket.close()
 
-
-#### Connect signals
-RUN = 1
-import signal
-def signal_handler(signum, frame):
-	logger.warning("Receive signal to stop daemon...")
-	global RUN
-	RUN = 0
- 
-
 ########################################################
 #
 #   Main
@@ -143,11 +134,13 @@ def signal_handler(signum, frame):
 ########################################################
 
 def main():
-	signal.signal(signal.SIGINT, signal_handler)
-	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, RUN
+
+	handler.run()	
+
+	global amqp
+
 	# AMQP
-	amqp = camqp(logging_level=logging_level)
+	amqp = camqp()
 
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_alerts)
 	amqp.start()
@@ -159,7 +152,7 @@ def main():
 	try:
 		wsserver.serve_forever()
 	except:
-		RUN=0
+		handler.set(0)
 
 	amqp.stop()
 	amqp.join()
