@@ -54,6 +54,7 @@ class KnownValues(unittest.TestCase):
 		print rcvmsgbody
 
 	def test_4_PublishMessage(self):
+		time.sleep(1)
 		msg = msgbody
 		myamqp.publish(msg, "unit_test.testmessage")
 		
