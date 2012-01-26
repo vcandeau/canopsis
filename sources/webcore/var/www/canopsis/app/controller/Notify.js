@@ -23,6 +23,7 @@ Ext.define('canopsis.controller.Notify', {
 
     opacity: 0.8,
     history: false,
+    logAuthor : '[controller][cnotify]',
 
     init: function() {
 		global.notify = this
@@ -47,6 +48,6 @@ Ext.define('canopsis.controller.Notify', {
 			pnotify_closer: closer,
 			pnotify_sticker: sticker
 		})
-		log.debug('[controller][cnotify] - Display notify');
+		log.debug('Display notification', this.logAuthor);
 	}
 });
