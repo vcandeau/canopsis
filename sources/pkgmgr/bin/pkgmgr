@@ -75,8 +75,11 @@ error () {
 ##########################
 ##########################
 
-. $HOME/etc/pkgmgr.conf
 . $HOME/lib/common.sh 
+set +E
+detect_os > /dev/null
+set -E
+. $HOME/etc/pkgmgr.conf
 . $HOME/lib/pkgmgr/db 
 . $HOME/lib/pkgmgr/manual 
 . $HOME/lib/pkgmgr/list 
@@ -92,10 +95,6 @@ touch $LOG_FILE
 
 exit_pending=false
 
-set +E
-detect_os > /dev/null
-set -E
-
 trap '' 2 
 #trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
 
@@ -110,7 +109,7 @@ update_info () {
 
 ask_confirmation () {
 	if [ "$OPT" != "--force-yes" ]; then
-		read -p "Do you want to continue [y/N]? " -n 1
+		read -p "Do you want to continue [y/N]? "
 		if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 			echo 
 			echo "Abort." && exit 1
