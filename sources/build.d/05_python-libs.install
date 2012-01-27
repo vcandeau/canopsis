@@ -19,8 +19,6 @@ function install(){
 	easy_install_pylib pycurl
 	easy_install_pylib tornado
 	easy_install_pylib python-daemon
-	easy_install_pylib Twisted
-	easy_install_pylib txAMQP
 	easy_install_pylib gevent
 	easy_install_pylib bottle
 	easy_install_pylib Beaker

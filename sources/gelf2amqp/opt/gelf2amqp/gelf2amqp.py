@@ -182,8 +182,7 @@ def on_log(gelf):
 	
 	
 	key = cevent.get_routingkey(event)						
-	msg = json.dumps(event)
-	myamqp.publish(msg, key, myamqp.exchange_name_events)
+	myamqp.publish(event, key, myamqp.exchange_name_events)
 
 ########################################################
 #

@@ -213,7 +213,10 @@ class camqp(threading.Thread):
 	def wait_connection(self, timeout=5):
 		i=0
 		while self.RUN and not self.connected and i < (timeout*2):
-			time.sleep(0.5)
+			try:
+				time.sleep(0.5)
+			except:
+				pass
 			i+=1
 
 	def read_config(self, name):

@@ -22,8 +22,6 @@ from caccount import caccount
 from cstorage import cstorage
 from cselector import cselector
 from crecord import crecord
-from csla import csla
-from cbrule import cbrule
 from cconfig import cconfig
 
 import logging
