@@ -45,7 +45,7 @@ DAEMON_TYPE = "transport"
 
 CONFIG = cconfig(name=DAEMON_NAME)
 
-init 	= init(DAEMON_NAME)
+init 	= init()
 
 amqp = None
 wsclients = []
@@ -66,11 +66,11 @@ except:
 
 ## Logger
 if debug:
-	logger 	= init.get_logger("DEBUG")
+	logger 	= init.getLogger(DAEMON_NAME, "DEBUG")
 else:
-	logger 	= init.get_logger("INFO")
+	logger 	= init.getLogger(DAEMON_NAME, "INFO")
 	
-handler = init.handler(logger)
+handler = init.getHandler(logger)
 
 ########################################################
 #

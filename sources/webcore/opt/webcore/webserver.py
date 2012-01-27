@@ -52,13 +52,13 @@ def main():
 
 	bottle.debug(debug)
 
-	init 	= init("webserver-"+str(port))
+	init 	= init()
 	
 	## Logger
 	if debug:
-		logger 	= init.get_logger("DEBUG")
+		logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
 	else:
-		logger 	= init.get_logger("DEBUG")
+		logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
 
 	##Session system with beaker
 	session_opts = {

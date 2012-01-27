@@ -3,13 +3,7 @@
 import signal, time, logging
 
 class init(object):
-	def __init__(self, name, level="INFO"):
-		logging.basicConfig(level=level,
-   			                format='%(asctime)s %(name)s %(levelname)s %(message)s',
- 	 	 		            )
-		self.logger = logging.getLogger(name)
-
-	class handler(object):
+	class getHandler(object):
 		def __init__(self, logger):
 			self.logger = logger
 			self.RUN = 1
@@ -35,7 +29,7 @@ class init(object):
 			while self.RUN:
 				time.sleep(1)
 
-	def get_logger(self, level="INFO"):
+	def getLogger(self, name, level="INFO"):
 		if level == "INFO":
 			self.level = logging.INFO
 		elif level == "WARNING":
@@ -46,7 +40,10 @@ class init(object):
 			self.level = logging.CRITICAL
 		elif level == "EXCEPTION":
 			self.level = logging.EXCEPTION
-		else:
-			self.level = logging.INFO
-		self.logger.setLevel(logging.INFO)
+		elif level == "DEBUG":
+			self.level = logging.DEBUG
+		logging.basicConfig(level=self.level,
+   			                format='%(asctime)s %(name)s %(levelname)s %(message)s',
+ 	 	 		            )
+		self.logger = logging.getLogger(name)
 		return self.logger

@@ -44,9 +44,9 @@ from cinit import init
 DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
-init 	= init(DAEMON_NAME)
-logger 	= init.get_logger()
-handler = init.handler(logger)
+init 	= init()
+logger 	= init.getLogger(DAEMON_NAME)
+handler = init.getHandler(logger)
 
 myamqp = None
 
