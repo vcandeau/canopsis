@@ -78,9 +78,8 @@ handler = init.getHandler(logger)
 #
 ########################################################
 
-def on_message(body, msg):
+def on_message(event, msg):
 	rk = msg.delivery_info['routing_key']
- 	event = json.loads(body)
 
 	for wsclient in wsclients:
 		try:
