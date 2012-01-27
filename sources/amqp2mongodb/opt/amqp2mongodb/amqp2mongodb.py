@@ -69,7 +69,10 @@ def on_message(body, msg):
 	event_id = msg.delivery_info['routing_key']
 	logger.debug("Check event: %s" % event_id)
 	try:
-	 	event = json.loads(body)
+		if isinstance(body, str) or isinstance(body, unicode):
+			event = json.loads(body)
+		else:
+			event = body
 	except:
 		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
@@ -77,9 +80,8 @@ def on_message(body, msg):
 	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
 
 		if archiver.check_event(event_id, event):
-			msg = json.dumps(event)
 			## Event to Alert
-			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	elif event['event_type'] == 'log':
 
@@ -88,19 +90,16 @@ def on_message(body, msg):
 		## Alert only non-ok state
 		if event['state'] != 0:
 			archiver.log_event(event_id, event)
-
-			msg = json.dumps(event)
 			## Event to Alert
-			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	elif event['event_type'] == 'trap':
 		## passthrough
 		archiver.store_event(event_id, event)
 		archiver.log_event(event_id, event)
 
-		msg = json.dumps(event)
 		## Event to Alert
-		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+		amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	else:
 		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
