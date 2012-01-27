@@ -29,9 +29,9 @@ import cevent
 
 DAEMON_NAME='gelf2amqp'
 
-init 	= init(DAEMON_NAME)
-logger 	= init.get_logger()
-handler = init.handler(logger)
+init 	= init()
+logger 	= init.getLogger(DAEMON_NAME)
+handler = init.getHandler(logger)
 
 gelf_port = 5555
 gelf_interface = "127.0.0.1"
