@@ -24,8 +24,8 @@ from cinit import init
 
 DAEMON_NAME='snmp2amqp'
 
-init 	= init(DAEMON_NAME)
-logger 	= init.get_logger()
+init 		= init()
+logger 	= init.getLogger(DAEMON_NAME)
 
 RUN = False
 
