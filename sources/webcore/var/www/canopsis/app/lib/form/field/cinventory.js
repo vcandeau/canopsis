@@ -103,7 +103,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.callParent(arguments);
 		
-		this.store.on('datachanged', function(){this.fireEvent('datachanged')},this)
+		//this.store.on('datachanged', function(){this.fireEvent('datachanged')},this)
+		this.relayEvents(this.store, ['datachanged'])
 	},
 
 	LoadStore: function(ids) {
@@ -417,7 +418,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	},
 
 	setValue : function(data){
-		
+		var tab = [data]
+		this.LoadStore(tab)
 	}
 
 });
