@@ -283,6 +283,7 @@ if (jQuery){
 			for (index in dump){
 				var widget = dump[index]
 				add_widget(widget.id, widget.position)
+				$("#" + widget.id).data(dump[index].data)
 			}
 		}
 
