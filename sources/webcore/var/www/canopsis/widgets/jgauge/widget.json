@@ -8,17 +8,8 @@
 	"refreshInterval": 60,
 	"formWidth": 600,
 	"options": [{
-			"xtype": "combo",
-			"forceSelection": "true",
-			"editable": "false",
-			"fieldLabel":"metric",
-			"name": "metric",
-			"displayField": "metric",
-			"valueField": "metric"
-		},{
-			"xtype": "textfield",
-			"fieldLabel":"Metric Max",
-			"name": "metric_max"
+			"xtype": "canopsis.lib.form.field.cmetric",
+			"name" : "metrics"
 		}]
 	
 }]
