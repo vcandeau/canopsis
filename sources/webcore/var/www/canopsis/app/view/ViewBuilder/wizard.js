@@ -82,7 +82,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					}
 				]
 		}
-		
+		/*
 		var step3 = {
 			title: _('Test'),
 			description: _('Here you choose the component that the widget will display information from, or keep it empty if the widget don\'t need it'),
@@ -92,12 +92,10 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					name : 'metrics'
 				}
 			]
-		}
+		}*/
 
-		this.step_list = [step1,step2,step3]
-		
+		this.step_list = [step1,step2]
 
-	
 		this.callParent(arguments);
 		
 		//action given by this array are bind by the cwizard class after rendering.
@@ -111,14 +109,10 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			this._edit(this.widgetData)
 		}
 	},
-	
-	afterRender : function(){
-
-		this.callParent(arguments);
-	},
 
 	//function launch when in editing mode
 	_edit : function(data){
+		this.firstEdit = true
 		widgetStore = Ext.data.StoreManager.lookup('Widget')
 		//building second step if needed
 		if(data.widget){
@@ -184,7 +178,12 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		var item = this.get_one_item('metrics')
 		var nodeId = this.get_one_item('nodeId').getValue()
 		if(item){
-			item.setNodeId(nodeId);
+			//not really clean fix, but when edit, don't load, otherwise metrics will be erase
+			if(this.firstEdit){
+				this.firstEdit = false
+			} else {
+				item.setNodeId(nodeId);
+			}
 		}
 	},
 	
