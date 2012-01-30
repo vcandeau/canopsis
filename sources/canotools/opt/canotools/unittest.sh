@@ -10,12 +10,13 @@ fi
 
 export HOME=$PREFIX
 
-hypcontrol stop &> /dev/null
+hypcontrol stop
 hypcontrol start
 sleep 1
 
 cd $HOME
 UNITTESTS=`find ./ | grep Myunittest.py`
+UNITTESTS="$UNITTESTS $HOME/opt/canotools/functional-test.py"
 
 for UNITTEST in $UNITTESTS; do 
         echo "##### Proceed to $UNITTEST" 
