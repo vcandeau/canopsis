@@ -230,7 +230,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.store.each(function(record){
 				output.push(record.get('metric'))
 			},this)
-		//log.debug(output)
 		return output
 	},
 	
@@ -238,7 +237,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		var metricModule = Ext.ModelManager.getModel('metric')
 		var metric = []
 		for( i in data){
-			//log.debug('load ' + data[i])
 			metric.push(Ext.ClassManager.instantiate(metricModule, {metric : data[i]} ))
 		}
 		if(metric){
