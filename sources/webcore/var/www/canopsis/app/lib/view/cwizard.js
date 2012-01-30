@@ -33,7 +33,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	bodyStyle: 'padding: 5px;',
 	
 	//see bind_action_to_var function for explanation
-	change_step : false,
+	panel_events_list : false,
 	
 	step_list: [{
 			title: _("i'm empty !"),
@@ -46,7 +46,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			{xtype:'button',text:_('Finish'),disabled:false,action:'finish'}],
 	
 	initComponent: function() {
-		this.logAuthor = this.id
+		this.logAuthor = '[Wizard '+ this.id+']'
 		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
 		
 		//the following keep a trace of asked information
@@ -64,7 +64,6 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
 			this.add_new_step(tmp)
-			//log.debug("Wizard steps added to container",this.logAuthor)
 		}
 		
 		if(this._after_step_list){
@@ -78,8 +77,8 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.callParent(arguments);
 		this.centerPanel.setActiveTab(0)
 		this.bind_buttons()
-		if(this.change_step){
-			this.bind_action_to_var(this.change_step.itemName,this.change_step.event,this.change_step.functionName)
+		if(this.panel_events_list){
+			this.bind_panel_events(this.panel_events_list)
 		}
 		
 	},
@@ -246,10 +245,12 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		//log.dump(this.returnedVariable)
 		if(this.returnedVariable){
 			var returnValues = {}
+			log.debug(this.returnedVariable)
 			for(var i in this.returnedVariable){
 				//if was not deleted
 				if(this.returnedVariable[i]){
 					var item = this.returnedVariable[i]
+					//log.dump(item)
 					var name = i
 					//check item type
 					if((item.xtype == 'grid') || (item.xtype == 'gridpanel')){
@@ -259,23 +260,36 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 					}
 				}
 			}
+			log.dump(returnValues)
 			return returnValues
 		}
 		return false
 	},
 	
 	set_combobox : function(){
-		log.debug('omg one combobox, specific case spotted !',this.logAuthor)
+		log.debug('combobox without store, this specific case is not managed',this.logAuthor)
 	},
 	
 	/* this function provide a simple way to pilot the wizard
 	 * just set this.change_step = {itemName : '',event : '', functionName :}
 	 * the action bind the event to an item tracked by the wizard in 
 	 * this.returnedVariable*/
-	bind_action_to_var : function(itemName,event,functionName){
-		log.debug('bind the function on the item '+itemName+' when event '+event+' is fired',this.logAuthor)
-		this.get_one_item(itemName).on(event,functionName,this)
+
+	bind_panel_events : function(event_list){
+		for(var i in event_list){
+			var itemSource = event_list[i].itemSource
+			var _function = event_list[i]._function
+			var event = event_list[i].event
+		/*	log.debug('---------------binding system--------------')
+			log.dump(itemSource)
+			log.dump(_function)
+			log.dump(event)
+			log.dump(this.returnedVariable)
+			log.debug('-------------------------------------------') */
+			this.get_one_item(itemSource).on(event,_function,this)
+		}
 	},
+	 
 	
 	
 	//----------------------button action functions-----------------------

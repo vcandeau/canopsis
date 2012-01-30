@@ -166,9 +166,6 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			});
 			
 			//-----------------------grids--------------------
-
-
-
 			var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
 				multiSelect: this.multiSelect,
 				opt_bar: false,
@@ -409,7 +406,16 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	},
 
 	getValue : function(){
-		return this.store.getAt(0)
+		var record = this.store.getAt(0)
+		if(record){
+			return record.get('id')
+		} else {
+			return undefined
+		}
+	},
+
+	setValue : function(data){
+		
 	}
 
 });
