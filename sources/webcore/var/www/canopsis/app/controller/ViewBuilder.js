@@ -58,9 +58,12 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		
 		//if there is items load them
 		var items = Ext.decode(item.get('items'))
+		//log.dump(items)
 		if(items.length != 0){
+			//log.debug('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ')
 			this.form.jqDraggable._load(items)
 		}
+		log.dump(this.form.jqDraggable._dump())
 		//load and disable name selection
 		this.form.edit = true
 		this.form.viewName.setValue(viewName)
@@ -100,6 +103,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		form.jqDraggable.on('dblclickWidget',this.editWidget,this)
 	},
 	
+	//launched when widgetAdd is fired
 	create_wizard: function(id){
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
 		this.widgetWizard.show()
@@ -110,6 +114,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.form.disable()
 	},
 	
+	//launched when dblclick is launched
 	editWidget : function(id){
 		var data = this.get_from_widget(id)
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{edit: true,widgetData : data})
@@ -130,26 +135,26 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			var store = this.grid.store;
 			var widget_list = []
 			
-		/*	//----------------------------parsing widgets-----------------------------
+			//----------------------------parsing widgets-----------------------------
 			for(var i in dump){
-				log.dump(dump[i])
+				//log.dump(dump[i])
 				var widget = dump[i]
 				var widgetData = dump[i].data
 				var widgetAttrTpl = this._get_widget_attribute(dump[i].data.widget)
-				var formatted_widget = {}
+
+				//fix informations
+				widgetAttrTpl.push('title','widget','refreshInterval','nodeId')
 				
-				formatted_widget['xtype'] = widgetData.widget
-				formatted_widget['position'] = widget.position
-				
-				for(var j in widgetAttrTpl){
-					if(widgetData[widgetAttrTpl[j]]){
-						formatted_widget[widgetAttrTpl[j]] = widgetData[widgetAttrTpl[j]]
+				for(var j in widgetData){
+					if(widgetAttrTpl.indexOf(j) == -1){
+						log.debug('deleted ' + j)
+						delete widgetData[j]
 					}
 				}
-				widget_list.push(formatted_widget)
+				//widget_list.push(formatted_widget)
 			}
-			record.set('items',widget_list) */
-			
+
+
 			record.set('items',Ext.encode(dump))
 			log.dump(dump)
 			
@@ -215,8 +220,8 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.widgetWizard.destroy()
 	},
 
-	beforeload_EditForm: function(form){
-
+	loadRecord : function(){
+		log.debug('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 	},
 	
 	stock_in_widget : function(id,data){
