@@ -14,13 +14,8 @@
 			"value": 1,
 			"minValue": 1
 		},{
-			"xtype": "combo",
-			"forceSelection": "true",
-			"editable": "false",
-			"fieldLabel":"metric",
-			"name": "metric",
-			"displayField": "metric",
-			"valueField": "metric"
+			"xtype": "canopsis.lib.form.field.cmetric",
+			"name" : "metrics"
 		}]
 	
 }]
