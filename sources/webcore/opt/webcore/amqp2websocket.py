@@ -19,15 +19,11 @@
 # ---------------------------------
 
 import time
-import logging
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 from pymongo import Connection
 import json
-
-from twisted.internet import reactor, task
 
 from gevent import spawn
 
@@ -36,6 +32,8 @@ from ws4py.server.wsgi.middleware import WebSocketUpgradeMiddleware
 from ws4py.server.geventserver import UpgradableWSGIHandler, WebSocketServer
 
 from cconfig import cconfig
+
+from cinit import init
 
 ########################################################
 #
@@ -46,6 +44,8 @@ DAEMON_NAME = "amqp2websocket"
 DAEMON_TYPE = "transport"
 
 CONFIG = cconfig(name=DAEMON_NAME)
+
+init 	= init()
 
 amqp = None
 wsclients = []
@@ -66,13 +66,11 @@ except:
 
 ## Logger
 if debug:
-	logging_level=logging.DEBUG
+	logger 	= init.getLogger(DAEMON_NAME, "DEBUG")
 else:
-	logging_level=logging.INFO
-logging.basicConfig(level=logging_level,
-		format='%(asctime)s %(name)s %(levelname)s %(message)s',
-)
-logger = logging.getLogger("amqp2websocket")
+	logger 	= init.getLogger(DAEMON_NAME, "INFO")
+	
+handler = init.getHandler(logger)
 
 ########################################################
 #
@@ -80,9 +78,8 @@ logger = logging.getLogger("amqp2websocket")
 #
 ########################################################
 
-def on_message(msg):
-	rk = msg.routing_key
- 	event = json.loads(msg.content.body)
+def on_message(event, msg):
+	rk = msg.delivery_info['routing_key']
 
 	for wsclient in wsclients:
 		try:
@@ -126,16 +123,6 @@ def on_websocket(websocket, environ):
 	wsclients.remove(websocket)
 	websocket.close()
 
-
-#### Connect signals
-RUN = 1
-import signal
-def signal_handler(signum, frame):
-	logger.warning("Receive signal to stop daemon...")
-	global RUN
-	RUN = 0
- 
-
 ########################################################
 #
 #   Main
@@ -143,11 +130,13 @@ def signal_handler(signum, frame):
 ########################################################
 
 def main():
-	signal.signal(signal.SIGINT, signal_handler)
-	signal.signal(signal.SIGTERM, signal_handler)
-	global amqp, RUN
+
+	handler.run()	
+
+	global amqp
+
 	# AMQP
-	amqp = camqp(logging_level=logging_level)
+	amqp = camqp()
 
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_alerts)
 	amqp.start()
@@ -159,7 +148,7 @@ def main():
 	try:
 		wsserver.serve_forever()
 	except:
-		RUN=0
+		handler.set(0)
 
 	amqp.stop()
 	amqp.join()

@@ -29,9 +29,9 @@ amqp = None
 #
 ########################################################
 	
-def on_message(msg):
-	source = msg.routing_key + "@" + msg.exchange
-	text= "%s:\n\t%s\n" % (source, msg.content.body)
+def on_message(body, msg):
+	source = msg.delivery_info['routing_key'] + "@" + msg.delivery_info['exchange']
+	text= "%s:\n\t%s\n" % (source, body)
 	logger.debug("New message:\n%s" % text)
 
 
