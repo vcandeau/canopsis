@@ -17,8 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import os, logging
+import os, logging, signal, time
 from subprocess import Popen
+
+logger = logging.getLogger('WRAPPER')
 
 def load_conf(filename, viewname, starttime, stoptime, wrapper_conf_file):
 	import json
@@ -32,10 +34,11 @@ def load_conf(filename, viewname, starttime, stoptime, wrapper_conf_file):
 
 def check_xorg(lock, xvfb_cmd):
 	if os.path.isfile(lock):
-		logger.debug(" [WK_WRAPPER] :: X server already started (if not, delete %s)" % lock)
+		logger.debug("[WK_WRAPPER] :: X server already started (if not, delete %s)" % lock)
 	else:
-		logger.debug(" [WK_WRAPPER] :: X server not already started")
+		logger.debug("[WK_WRAPPER] :: X server not already started")
 		output = Popen(xvfb_cmd, shell=True)
+	time.sleep(2)
 
 def export_env(interface):
 	logger.debug(" [WK_WRAPPER] :: Set env DISPLAY to %s" % interface)
@@ -54,10 +57,13 @@ def	get_cookie(cookiejar):
 	
 	if os.path.isfile(cookiejar):
 		logger.debug(" [WK_WRAPPER] :: Cookie created")
+
+def clean_x(lock):
+	if os.path.isfile(lock):
+		pid = int(open(lock).read().strip())
+		os.kill(pid, signal.SIGINT)
 	
 def run(settings):
-	global logger
-	logger = logging.getLogger('Reporting')
 	filename 		= settings['filename']
 	viewname 		= settings['viewname']
 	starttime 		= settings['starttime']
@@ -72,6 +78,7 @@ def run(settings):
 	header			= settings['header']
 	footer			= settings['footer']
 
+	#clean_x(xlock)
 	check_xorg(xlock, xvfb_cmd)
 	export_env(display_int)
 	check_report_dir(report_dir)

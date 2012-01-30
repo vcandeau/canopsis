@@ -18,17 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import logging, sys, os, signal, json
+import sys, os, signal, json
 from pwd import getpwnam
+from cinit import init
 
 DAEMON_NAME='snmp2amqp'
+
+init 		= init()
+logger 	= init.getLogger(DAEMON_NAME)
+
 RUN = False
-
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-
-logger = logging.getLogger('snmp2amqp')
 
 myamqp = None
 transportDispatcher = None
@@ -36,8 +35,7 @@ mibs = {}
 
 sys.path.append(os.path.expanduser('~/lib/canolibs'))
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 import cevent
 
@@ -131,8 +129,7 @@ def parse_trap(mib, trap_oid, agent, varBinds):
 		logger.debug("Event: %s" % event)
 		## send event on amqp
 		key = cevent.get_routingkey(event)						
-		msg = Content(json.dumps(event))
-		myamqp.publish(msg, key, myamqp.exchange_name_events)
+		myamqp.publish(event, key, myamqp.exchange_name_events)
 		
 
 ########################################################

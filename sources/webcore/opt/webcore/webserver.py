@@ -20,7 +20,7 @@
 
 from gevent import monkey; monkey.patch_all()
 
-import sys, os, logging, time
+import sys, os, time
 
 import bottle
 from bottle import route, run, static_file, redirect
@@ -28,12 +28,14 @@ from beaker.middleware import SessionMiddleware
 
 from cconfig import cconfig
 
+
 CONFIG = cconfig(name="webserver")
 
 def main():
 	#import protection function
 	#from libexec.auth import check_auth
 
+	from cinit import init
 	from ctools import dynmodloads
 
 	## get config
@@ -50,16 +52,13 @@ def main():
 
 	bottle.debug(debug)
 
+	init 	= init()
+	
 	## Logger
 	if debug:
-		logging_level=logging.DEBUG
+		logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
 	else:
-		logging_level=logging.DEBUG
-
-	logging.basicConfig(level=logging_level,
-			format='%(asctime)s %(name)s %(levelname)s %(message)s',
-	)
-	logger = logging.getLogger("webserver-"+str(port))
+		logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
 
 	##Session system with beaker
 	session_opts = {

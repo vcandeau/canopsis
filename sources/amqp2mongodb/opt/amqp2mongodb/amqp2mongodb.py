@@ -19,10 +19,8 @@
 # ---------------------------------
 
 import time
-import logging
 
-from camqp import camqp, files_preserve
-from txamqp.content import Content
+from camqp import camqp
 
 from pymongo import Connection
 import json
@@ -35,6 +33,8 @@ from pyperfstore import mongostore
 
 from ctools import parse_perfdata
 
+from cinit import init
+
 ########################################################
 #
 #   Configuration
@@ -44,11 +44,10 @@ from ctools import parse_perfdata
 DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
-logging_level = logging.INFO
-logging.basicConfig(level=logging_level,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-logger = logging.getLogger(DAEMON_NAME)
+init 	= init()
+logger 	= init.getLogger(DAEMON_NAME)
+handler = init.getHandler(logger)
+
 myamqp = None
 
 ## Pyperfstore
@@ -66,21 +65,23 @@ point_per_dca = None
 #
 ########################################################
 	
-def on_message(msg):
-	event_id = msg.routing_key
+def on_message(body, msg):
+	event_id = msg.delivery_info['routing_key']
 	logger.debug("Check event: %s" % event_id)
 	try:
-	 	event = json.loads(msg.content.body)
+		if isinstance(body, str) or isinstance(body, unicode):
+			event = json.loads(body)
+		else:
+			event = body
 	except:
-		logger.error("Impossible to parse event, Dump:\n%s" % msg.content.body)
+		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
 
 	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
 
 		if archiver.check_event(event_id, event):
-			msg = Content(json.dumps(event))
 			## Event to Alert
-			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	elif event['event_type'] == 'log':
 
@@ -89,19 +90,16 @@ def on_message(msg):
 		## Alert only non-ok state
 		if event['state'] != 0:
 			archiver.log_event(event_id, event)
-
-			msg = Content(json.dumps(event))
 			## Event to Alert
-			amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	elif event['event_type'] == 'trap':
 		## passthrough
 		archiver.store_event(event_id, event)
 		archiver.log_event(event_id, event)
 
-		msg = Content(json.dumps(event))
 		## Event to Alert
-		amqp.publish(msg, event_id, amqp.exchange_name_alerts)
+		amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	else:
 		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
@@ -146,23 +144,6 @@ def to_perfstore(_id, perf_data, timestamp):
 
 ########################################################
 #
-#   Functions
-#
-########################################################
-
-
-#### Connect signals
-RUN = 1
-import signal
-def signal_handler(signum, frame):
-	logger.warning("Receive signal to stop daemon...")
-	global RUN
-	RUN = 0
- 
-
-
-########################################################
-#
 #   Main
 #
 ########################################################
@@ -172,22 +153,23 @@ archiver=None
 perfstore=None
 
 def main():
-	signal.signal(signal.SIGINT, signal_handler)
-	signal.signal(signal.SIGTERM, signal_handler)
+
+	handler.run()
+
 	global amqp, archiver, perfstore
 
 	archiver = carchiver(namespace='events',  autolog=True)
 	perfstore = mongostore(mongo_collection='perfdata')
 
 	# AMQP
-	amqp = camqp(logging_level=logging_level)
+	amqp = camqp()
 
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events)
 
 	logger.info("Wait events ...")
 	amqp.start()
 
-	while RUN:
+	while handler.status():
 		time.sleep(1)
 
 	amqp.stop()
