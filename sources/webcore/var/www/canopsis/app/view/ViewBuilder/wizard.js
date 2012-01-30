@@ -104,7 +104,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		
 		//action given by this array are bind by the cwizard class after rendering.
 		this.panel_events_list = [
-			{itemSource: 'widget', event: 'select' , _function : this.step_change_func},
+			{itemSource: 'metrics', event: 'datachanged' , _function : this.step_change_func},
 			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
 		]
 	},
