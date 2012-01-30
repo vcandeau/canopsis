@@ -114,7 +114,9 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		var data = this.get_from_widget(id)
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{edit: true,widgetData : data})
 		this.widgetWizard.show()
-		log.debug(data)
+		var finishButton = this.widgetWizard.down('[action=finish]')
+		finishButton.on('click', function(){this._saveWidgetForm(id)},this)
+		//log.debug(data)
 	},
 	
 	_saveForm : function(form){
