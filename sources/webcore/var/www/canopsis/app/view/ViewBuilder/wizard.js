@@ -95,18 +95,26 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		}
 
 		this.step_list = [step1,step2,step3]
+		
+
 	
 		this.callParent(arguments);
-		
-		if(this.edit){
-			this._edit(this.widgetData)
-		}
 		
 		//action given by this array are bind by the cwizard class after rendering.
 		this.panel_events_list = [
 			{itemSource: 'widget', event: 'select' , _function : this.step_change_func},
 			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
 		]
+		
+		if(this.edit){
+			log.debug('editmode')
+			this._edit(this.widgetData)
+		}
+	},
+	
+	afterRender : function(){
+
+		this.callParent(arguments);
 	},
 
 	//function launch when in editing mode
