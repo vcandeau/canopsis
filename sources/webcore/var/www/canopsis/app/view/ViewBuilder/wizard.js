@@ -37,8 +37,6 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
 	title : 'Widget Wizard',
-
-	//add_widget_option_step : this.step_change_func,
 	
 	edit : false,
 	
@@ -82,17 +80,6 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					}
 				]
 		}
-		/*
-		var step3 = {
-			title: _('Test'),
-			description: _('Here you choose the component that the widget will display information from, or keep it empty if the widget don\'t need it'),
-			items : [{
-					xtype : 'canopsis.lib.form.field.cmetric',
-					//multiSelect: false,
-					name : 'metrics'
-				}
-			]
-		}*/
 
 		this.step_list = [step1,step2]
 
