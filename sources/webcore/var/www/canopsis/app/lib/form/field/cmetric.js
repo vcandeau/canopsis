@@ -237,13 +237,14 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 	
 	setValue : function(data){
-	/*	var metric
+		var metricModule = Ext.ModelManager.getModel('metric')
+		var metric = []
 		for( i in data){
-			metric.push(Ext.ClassManager.instantiate('canopsis.model.metric', {metric : data[i]} ))
+			metric.push(Ext.ClassManager.instantiate(metricModule, {metric : data[i]} ))
 		}
 		if(metric){
 			this.store.add(metric)
-		}*/
+		}
 	}
 	
 });
