@@ -38,9 +38,11 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	
 	title : 'Widget Wizard',
 
-	add_widget_option_step : this.step_change_func,
+	//add_widget_option_step : this.step_change_func,
 	
 	edit : false,
+	
+	logAuthor : '[widget wizard]',
 
 	initComponent: function() {
 		
@@ -81,18 +83,30 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				]
 		}
 		
-		
-		this.step_list = [step1,step2]
+		var step3 = {
+			title: _('Test'),
+			description: _('Here you choose the component that the widget will display information from, or keep it empty if the widget don\'t need it'),
+			items : [{
+					xtype : 'canopsis.lib.form.field.cmetric',
+					//multiSelect: false,
+					name : 'metrics'
+				}
+			]
+		}
+
+		this.step_list = [step1,step2,step3]
 	
 		this.callParent(arguments);
 		
 		if(this.edit){
 			this._edit(this.widgetData)
 		}
-			
-		this.change_step = {itemName : 'widget',event : 'select',functionName : this.step_change_func}
 		
-
+		//action given by this array are bind by the cwizard class after rendering.
+		this.panel_events_list = [
+			{itemSource: 'widget', event: 'select' , _function : this.step_change_func},
+			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
+		]
 	},
 
 	//function launch when in editing mode
@@ -107,8 +121,6 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				}
 			}, this)
 
-			//log.debug(widgetStore.getAt(_index))
-			//log.debug(widgetStore.getAt(_index).get('options'))
 			var options = widgetStore.getAt(_index).get('options')
 			if(options){
 				var new_step = {
@@ -125,7 +137,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		for(var i in data){
 			var _variable = this.returnedVariable[i]
 			if(_variable){
-				log.debug('variable ' + i + ' already track, change value')
+				log.debug('variable ' + i + ' already track, change value', this.logAuthor)
 				if(_variable.xtype == 'combo' || _variable.xtype == 'combobox')
 				{
 					_variable.clearValue()
@@ -133,14 +145,14 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				_variable.setValue(data[i])
 				
 			} else {
-				log.debug('not tracked ' + i)
+				log.debug('not tracked ' + i, this.logAuthor)
 			}		
 		}
 	},
 
 	//add the new option tab panel in the widget
 	step_change_func : function(combo,record){
-		log.debug('changed selection')
+		log.debug('changed selection', this.logAuthor)
 		var widgetType = record[0].data
 		var widgetOptions = widgetType.options
 		
@@ -158,5 +170,15 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			this.remove_step('#widgetOptions')
 		}
 	},
+	
+	loadNodeIdMetric : function(){
+		log.debug('load NodeId in metric panel if exist', this.logAuthor)
+		var item = this.get_one_item('metrics')
+		var nodeId = this.get_one_item('nodeId').getValue()
+		if(item){
+			item.setNodeId(nodeId);
+		}
+	},
+	
 
 });
