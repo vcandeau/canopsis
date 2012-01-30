@@ -280,7 +280,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			var itemSource = event_list[i].itemSource
 			var _function = event_list[i]._function
 			var event = event_list[i].event
-		/*	log.debug('---------------binding system--------------')
+			/*log.debug('---------------binding system--------------')
 			log.dump(itemSource)
 			log.dump(_function)
 			log.dump(event)
