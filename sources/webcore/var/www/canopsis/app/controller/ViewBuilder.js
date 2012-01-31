@@ -210,7 +210,9 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	_saveWidgetForm : function(id){
 		data = this.widgetWizard.get_variables()
 		this.stock_in_widget(id,data)
-		//this.form.jqDraggable._refresh_widget_content(id,data.title,data.widget + ' (i\'m a test writing)')
+		log.dump(data)
+		var content = Ext.encode(data)
+		this.form.jqDraggable._refresh_widget_content(id,data.title, content)
 		this.widgetWizard.destroy()
 	},
 	
