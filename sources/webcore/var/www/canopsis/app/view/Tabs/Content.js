@@ -18,10 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-//Ext.require([
-//    'Ext.direct.*',
-//]);
-
 Ext.define('canopsis.view.Tabs.Content' ,{
 	extend: 'Ext.Panel',
 	alias : 'widget.TabsContent',
@@ -99,13 +95,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.layout = 'fit'
 			var item = items[0]
 			//item = items[0].data
-			//log.dump(items[0])
-			//log.dump(item)
-			/*
-			if(item.widget){
-				item.xtype = item.widget
-			}
-*/
 			log.debug('   + Add: '+item.xtype, this.logAuthor)
 
 			item['width'] = '100%'
@@ -129,15 +118,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				log.debug('test on')
 			}
 
-			var jqgridable = this.add({
-					xtype: 'jqGridable',
-					draggable: false,
-					resizable:  false,
-					selectable: false,
-					show_grid: false,
-					on_add_widget: $.proxy(this._on_add_function,this),
-				})
-				
+			var jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer')
+			this.add(jqgridable)
+
 			jqgridable._load(items)
 			
 		}

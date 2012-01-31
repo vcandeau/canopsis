@@ -18,38 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.Tabs', {
-	extend: 'Ext.app.Controller',
-
-	logAuthor: '[controller][tabs]',
-
-	stores: ['Tabs'],
-	views: ['Tabs.View', 'Tabs.Content','Tabs.JqGridableViewer'],
-
-	init: function() {
-		this.control({
-			'tabpanel': {
-				tabchange: this.on_tabchange,
-				//add: this.on_add,
-				//remove: this.on_remove
-			},
-		});
-
-		var store = Ext.data.StoreManager.lookup('Tabs');
-		store.proxy.id = store.proxy.id + '.' + global.account.user
-		store.load();
+Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
+	extend: 'Ext.jq.Gridable',
+	alias : 'widget.JqGridableViewer',
+	
+	show_grid: false,
+	draggable: false,
+	resizable:  false,
+	selectable: false,
+	
+	initComponent: function() {
+		this.callParent(arguments)
 	},
-
-  	on_tabchange: function(tabPanel, new_tab, old_tab, object){
-		//log.debug('Tabchange', this.logAuthor);
-		tabPanel.old_tab = old_tab
-	},
-  	/*on_add: function(component, index, object){
-		log.debug('Added', this.logAuthor);	
-	},
-
-	on_remove: function(component, object){
-		log.debug('Removed', this.logAuthor);
-	}*/
-
-});
+})
