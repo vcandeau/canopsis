@@ -53,7 +53,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.form = add_view_tab('ViewBuilderForm', 'edit ' + viewName, true, undefined, true, false, false)
 		
 		//if there is items load them
-		var items = Ext.decode(item.get('items'))
+		var items = item.get('items')
 		//log.dump(items)
 		if(items.length != 0){
 			this.form.jqDraggable._load(items)
@@ -148,7 +148,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 				}
 			}
 			//saving widgets into view
-			record.set('items',Ext.encode(dump))
+			record.set('items',dump)
 			//log.dump(dump)
 			
 			//--------------------------general variable----------------------
