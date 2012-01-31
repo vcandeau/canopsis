@@ -90,7 +90,38 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
 		
 	},
+	
+	setContent: function(){
+		log.dump(this.view)
+		var items = this.view.items
+		
+		if (items.length == 1 ) {
+			log.debug(' + Use full mode ...', this.logAuthor)
+			this.layout = 'fit'
+			item = items[0]
 
+			log.debug('   + Add: '+item.xtype, this.logAuthor)
+
+			item['width'] = '100%'
+			item['title'] = ''
+			item['fullmode'] = true
+			
+			item['mytab'] = this
+
+			//Set default options
+			//if (! item.nodeId) { item.nodeId=nodeId}
+			//if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
+
+			if(this.view.reporting){
+				item.reportMode = true;
+			}
+
+			this.widgets.push(this.add(item))
+		}
+	},
+	
+	
+/*
 	setContent: function(){
 		var items = this.view.items;
 		var totalWidth = this.getWidth() - 20;
@@ -216,7 +247,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}, this);
 		
 	},
-	
+*/
 	//---------------------Reporting functions--------------------
 	onReport: function(){
 		log.debug('Request reporting on a time', this.logAuthor)
