@@ -164,7 +164,7 @@ def main():
 	# AMQP
 	amqp = camqp()
 
-	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events)
+	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)
 
 	logger.info("Wait events ...")
 	amqp.start()
