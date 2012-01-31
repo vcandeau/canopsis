@@ -122,6 +122,11 @@
     background-position:center; 
 }
 
+.icon-state-3 { 
+    background-image: url(../images/states/1.png) !important;
+    background-position:center; 
+}
+
 /*  state_type  */
 
 .icon-state-type-0 { 
