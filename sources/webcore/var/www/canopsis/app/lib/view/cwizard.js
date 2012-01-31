@@ -58,6 +58,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.centerPanel = this.add({
 			layout: 'fit',
 			xtype: 'tabpanel',
+			deferredRender: false,
 		})
 		
 		if(this.step_list){
