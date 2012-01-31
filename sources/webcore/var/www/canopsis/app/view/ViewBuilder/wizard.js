@@ -58,9 +58,9 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					store: 'Widget',
 					forceSelection : true,
 					fieldLabel : _('Type'),
-					name: "widget",
+					name: "xtype",
 					displayField: 'name',
-					valueField: 'name'
+					valueField: 'xtype'
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
@@ -87,7 +87,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		
 		//action given by this array are bind by the cwizard class after rendering.
 		this.panel_events_list = [
-			{itemSource: 'widget', event: 'select' , _function : this.step_change_func},
+			{itemSource: 'xtype', event: 'select' , _function : this.step_change_func},
 			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
 		]
 		

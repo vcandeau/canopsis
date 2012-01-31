@@ -58,7 +58,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		if(items.length != 0){
 			this.form.jqDraggable._load(items)
 		}
-		log.dump(this.form.jqDraggable._dump())
+		//log.dump(this.form.jqDraggable._dump())
 		//load and disable name selection
 		this.form.edit = true
 		this.form.viewName.setValue(viewName)
@@ -132,25 +132,31 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			
 			//----------------------------cleaning widgets-----------------------------
 			for(var i in dump){
-				//log.dump(dump[i])
-				var widget = dump[i]
+				var widget= {}
 				var widgetData = dump[i].data
-				var widgetAttrTpl = this._get_widget_attribute(dump[i].data.widget)
-
-				//fix static informations
-				widgetAttrTpl.push('title','widget','refreshInterval','nodeId')
 				
+				//load widget skel
+				var widgetAttrTpl = this._get_widget_attribute(dump[i].data.xtype)
+				widgetAttrTpl.push('title','xtype','refreshInterval','nodeId')
+				
+				//delete jquery junk information
 				for(var j in widgetData){
 					if(widgetAttrTpl.indexOf(j) == -1){
-						//log.debug('deleted ' + j)
 						delete widgetData[j]
 					}
 				}
+				
+				//rebuild widget
+				widget.position = dump[i].position
+				widget.id = dump[i].id
+				widget.data = widgetData
+				
+				widget_list.push(widget)
 			}
-			//saving widgets into view
-			record.set('items',dump)
-			//log.dump(dump)
 			
+			//saving widgets into view
+			record.set('items',widget_list)
+
 			//--------------------------general variable----------------------
 			var viewName = this.form.viewName.getValue()
 			record.set('crecord_name',viewName);
@@ -192,7 +198,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 
 		var _index = widgetStore.findBy(
 		function(record, id){
-			if(record.get('name') == widget){
+			if(record.get('xtype') == widget){
 				return true
 			}
 		}, this)
@@ -210,7 +216,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	_saveWidgetForm : function(id){
 		data = this.widgetWizard.get_variables()
 		this.stock_in_widget(id,data)
-		log.dump(data)
+		//log.dump(data)
 		var content = Ext.encode(data)
 		this.form.jqDraggable._refresh_widget_content(id,data.title, content)
 		this.widgetWizard.destroy()
