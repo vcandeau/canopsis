@@ -27,7 +27,7 @@ Ext.define('Ext.jq.Gridable' ,{
 	columns: 5,
 	show_grid: true,
 	widget_margin: 5,
-	widget_list: [],
+	widget_list: {},
 	
 	draggable: true,
 	resizable:  true,
@@ -104,7 +104,7 @@ Ext.define('Ext.jq.Gridable' ,{
 			title: id,
 			height: $("#"+id).height() - this.widget_margin * 2,
 		});
-		this.widget_list.push(div)
+		this.widget_list[id] = div
 		this.fireEvent('widgetAdd',id)
 	},
 
@@ -144,9 +144,11 @@ Ext.define('Ext.jq.Gridable' ,{
 		$("#"+this.id+'-container').jqGridable('clear')
 	},
 
-	_refresh_widget_content: function(title,content){
-		this.title = title
-		this.html = html
+	_refresh_widget_content: function(id,title,content){
+		this.widget_list[id].setTitle(title)
+		this.widget_list[id].removeAll()
+		this.widget_list[id].add({html: content, border: false})
+		this.widget_list[id].doLayout();
 	},
 
 });
