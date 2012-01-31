@@ -28,16 +28,16 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 	logAuthor: '[view][tabs][content]',
     
-	style: {borderWidth:'0px'},
+	//style: {borderWidth:'0px'},
 
 	autoScroll: true,
-	
+	/*
 	layout: {
 		type: 'table',
 		// The total column count must be specified here
 		columns: 1,
 	},
-
+*/
 	defaults: {
 		border: false,
 	},
@@ -92,14 +92,20 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 	
 	setContent: function(){
-		log.dump(this.view)
 		var items = this.view.items
 		
 		if (items.length == 1 ) {
 			log.debug(' + Use full mode ...', this.logAuthor)
 			this.layout = 'fit'
-			item = items[0]
-
+			var item = items[0]
+			//item = items[0].data
+			//log.dump(items[0])
+			//log.dump(item)
+			/*
+			if(item.widget){
+				item.xtype = item.widget
+			}
+*/
 			log.debug('   + Add: '+item.xtype, this.logAuthor)
 
 			item['width'] = '100%'
@@ -117,6 +123,23 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 
 			this.widgets.push(this.add(item))
+		} else {
+			
+			var _on_add_function = function(id, jqwidget){
+				log.debug('test on')
+			}
+
+			var jqgridable = this.add({
+					xtype: 'jqGridable',
+					draggable: false,
+					resizable:  false,
+					selectable: false,
+					show_grid: false,
+					on_add_widget: $.proxy(this._on_add_function,this),
+				})
+				
+			jqgridable._load(items)
+			
 		}
 	},
 	
