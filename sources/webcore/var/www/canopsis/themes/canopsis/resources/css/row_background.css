@@ -29,3 +29,8 @@
 .row-background-error {
     background-color: Tomato  !important; 
 }
+
+.row-background-unknown {
+    background-color: WhiteSmoke  !important; 
+}
+
