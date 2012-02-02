@@ -31,7 +31,7 @@ import gevent.pywsgi
 from ws4py.server.wsgi.middleware import WebSocketUpgradeMiddleware
 from ws4py.server.geventserver import UpgradableWSGIHandler, WebSocketServer
 
-from cconfig import cconfig
+import ConfigParser, os
 
 from cinit import init
 
@@ -43,26 +43,32 @@ from cinit import init
 DAEMON_NAME = "amqp2websocket"
 DAEMON_TYPE = "transport"
 
-CONFIG = cconfig(name=DAEMON_NAME)
-
 init 	= init()
 
 amqp = None
 wsclients = []
 
-MAX_WSCLIENT = 20
 
-## get config
-port=CONFIG.getint("port", 8090)
-debug=CONFIG.getbool("debug", False)
-interface=CONFIG.getstring("interface", "0.0.0.0")
-MAX_WSCLIENT=CONFIG.getint("max_clients", 20)
+## Configurations
+
+config_filename = os.path.expanduser('~/etc/' + DAEMON_NAME + '.conf')
+config = ConfigParser.RawConfigParser()
+config.read(config_filename)
+
+## default config
+port=8090
+debug=False
+interface="0.0.0.0"
+maxclients = 20
 
 try:
-	process = int(sys.argv[1])
-	port = port + (process - 1)
-except:
-	pass
+	## get config
+	port=config.getint('server', "port")
+	debug=config.getboolean('server', "debug")
+	interface=config.get('server', "interface")
+	maxclients=config.getint('server', "maxclients")
+except Exception, err:
+	print "Error when reading '%s' (%s)" % (config_filename, err)
 
 ## Logger
 if debug:
@@ -71,6 +77,14 @@ else:
 	logger 	= init.getLogger(DAEMON_NAME, "INFO")
 	
 handler = init.getHandler(logger)
+	
+
+try:
+	process = int(sys.argv[1])
+	port = port + (process - 1)
+except:
+	pass
+
 
 ########################################################
 #
@@ -94,14 +108,14 @@ def on_message(event, msg):
 def on_websocket(websocket, environ):
 	websocket.sock.settimeout(None)
 	nb = len(wsclients)
-	if nb >= MAX_WSCLIENT:
+	if nb >= maxclients:
 		logger.warning("Max websocket clients reached ...")
 		websocket.close()
 		return
 
 	wsclients.append(websocket)
 	nb += 1
-	logger.debug("Open websocket ... (%s/%s)" % (nb, MAX_WSCLIENT))
+	logger.info("Open websocket ... (%s/%s)" % (nb, maxclients))
 
 	try:
 		while True:
@@ -119,7 +133,7 @@ def on_websocket(websocket, environ):
 	except IOError:
 		logger.error("Websocket IOError ...")
 
-	logger.debug("Close websocket ... ")	
+	logger.info("Close websocket ... ")	
 	wsclients.remove(websocket)
 	websocket.close()
 
@@ -141,10 +155,11 @@ def main():
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_alerts)
 	amqp.start()
 
-	#pool = Pool(MAX_WSCLIENT)
+	#pool = Pool(maxclients)
 	#wsserver = pywsgi.WSGIServer((interface, port), on_websocket, handler_class=WebSocketHandler)
 	wsserver = WebSocketServer((interface, port), on_websocket)
 
+	logger.info("Wait connections ...")
 	try:
 		wsserver.serve_forever()
 	except:
@@ -152,6 +167,7 @@ def main():
 
 	amqp.stop()
 	amqp.join()
+	logger.info("Daemon stopped")
 
 if __name__ == "__main__":
 	main()

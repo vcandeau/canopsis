@@ -75,8 +75,7 @@ function install_init(){
 
 		check_code $? "Sed \$PREFIX,\$HUSER and \$HGROUP in init.d failure"
 	else
-		echo "Error: Impossible to find '$IFILE'"
-		exit 1
+		echo "No specific init file for $DIST"
 	fi
 }
 

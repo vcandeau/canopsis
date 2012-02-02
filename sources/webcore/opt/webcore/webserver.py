@@ -18,56 +18,75 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from gevent import monkey; monkey.patch_all()
-
-import sys, os, time
+import sys, time
 
 import bottle
 from bottle import route, run, static_file, redirect
 from beaker.middleware import SessionMiddleware
 
-from cconfig import cconfig
+from cinit import init
+from ctools import dynmodloads
 
+import ConfigParser, os
 
-CONFIG = cconfig(name="webserver")
+from gevent import monkey; monkey.patch_all()
+
+init 	= init()
+
+## Configurations
+
+config_filename = os.path.expanduser('~/etc/webserver.conf')
+config = ConfigParser.RawConfigParser()
+config.read(config_filename)
+
+## default config
+port=8082
+debug=True
+interface="0.0.0.0"
+
+session_cookie_expires=300
+session_secret='canopsis'
+session_data_dir = os.path.expanduser('~/tmp/webcore_cache')
+root_directory=os.path.expanduser("~/var/www/")
+
+try:
+	## get config
+	port=config.getint('server', "port")
+	debug=config.getboolean('server', "debug")
+	interface=config.get('server', "interface")
+	root_directory=os.path.expanduser(config.get('server', "root_directory"))
+
+	session_cookie_expires=config.getint('session', "cookie_expires")
+	session_secret=config.get('session', "secret")
+	session_data_dir=os.path.expanduser(config.get('session', "data_dir"))
+
+except Exception, err:
+	print "Error when reading '%s' (%s)" % (config_filename, err)
+
+try:
+	process = int(sys.argv[1])
+	port = port + (process - 1)
+except:
+	pass
+
+## Logger
+if debug:
+	logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
+else:
+	logger 	= init.getLogger("webserver-%s" % port, "INFO")
+
 
 def main():
-	#import protection function
-	#from libexec.auth import check_auth
-
-	from cinit import init
-	from ctools import dynmodloads
-
-	## get config
-	root_directory=os.path.expanduser(CONFIG.getstring("root_directory", "~/var/www/"))
-	port=CONFIG.getint("port", 8082)
-	debug=CONFIG.getbool("debug", False)
-	interface=CONFIG.getstring("interface", "0.0.0.0")
-
-	try:
-		process = int(sys.argv[1])
-		port = port + (process - 1)
-	except:
-		pass
-
 	bottle.debug(debug)
-
-	init 	= init()
-	
-	## Logger
-	if debug:
-		logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
-	else:
-		logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
 
 	##Session system with beaker
 	session_opts = {
 	    'session.type': 'file',
-	    'session.cookie_expires': 300,
-	    'session.data_dir': '/opt/canopsis/tmp/webcore_cache',
+	    'session.cookie_expires': session_cookie_expires,
+	    'session.data_dir': session_data_dir,
 	    'session.auto': True,
 	#   'session.timeout': 300,
-	    'session.secret': 'canopsis'
+	    'session.secret': session_secret
 	}
 	app = SessionMiddleware(bottle.app(), session_opts)
 
@@ -91,6 +110,9 @@ def main():
 		bottle.run(app, host=interface, port=port, reloader=False, server='gevent')
 	except:
 		pass
+
+	#time.sleep(1)
+	logger.info("Daemon stopped")
 
 if __name__ == "__main__":
 	main()

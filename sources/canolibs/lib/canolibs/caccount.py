@@ -65,7 +65,9 @@ class caccount(crecord):
 		return self.check_shadowpasswd(hashlib.sha1(str(passwd)).hexdigest())
 
 	def check_shadowpasswd(self, shadowpasswd):
-		if self.shadowpasswd == shadowpasswd:
+		rest_password = str(shadowpasswd).upper()
+		mongo_password = str(self.shadowpasswd).upper()
+		if mongo_password == rest_password:
 			return True
 
 		return False
