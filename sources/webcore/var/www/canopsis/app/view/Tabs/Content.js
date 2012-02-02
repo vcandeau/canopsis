@@ -154,6 +154,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		for(var i in widget_list){
 			var item = items[i].data
 			
+			item['height'] = widget_list[i].height
+			
 			if(this.view.reporting){
 				item.reportMode = true;
 			}

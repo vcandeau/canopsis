@@ -48,8 +48,11 @@ Ext.define('canopsis.view.ReportView', {
 			//log.debug(item);
 		}
 		* */
-		var height = $('#' +this.jqgridable.id).height()
-		document.body.style.height = height + 100
+		
+		//recalculate document height
+		actual_height = $('#' +this.jqgridable.id).height()
+		document.body.style.height = actual_height  + 100
+		$('#' +this.jqgridable.id).height(actual_height + 100)
 		this.doLayout()
 		
 		var task = new Ext.util.DelayedTask(function(){
@@ -108,6 +111,8 @@ Ext.define('canopsis.view.ReportView', {
 			
 			item['reportMode'] = true;
 			item['exportMode'] = true;
+			
+			item['height'] = widget_list[i].height
 			
 			item.export_from = export_from
 			item.export_to = export_to
