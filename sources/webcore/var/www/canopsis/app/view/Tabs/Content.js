@@ -152,10 +152,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//////////////////////////
 		
 		for(var i in widget_list){
+			var item = items[i].data
+			
 			if(this.view.reporting){
-				items[i].data.reportMode = true;
+				item.reportMode = true;
 			}
-			this.widgets.push(widget_list[i].add(items[i].data))
+			this.widgets.push(widget_list[i].add(item))
 		}
 	},
 	
