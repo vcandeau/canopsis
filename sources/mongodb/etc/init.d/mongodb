@@ -117,6 +117,7 @@ running() {
 wait_socket(){
     TIMEOUT=$1
     TIMEOUT=$((TIMEOUT * 2))
+    echo
     echo -n "   + Wait MongoDB socket (may be long the firstime) ..."
     i=0
     while [ $(ls /tmp/mongodb-*.sock 2> /dev/null | wc -l) -eq 0 ]; do
