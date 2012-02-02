@@ -37,6 +37,7 @@ from caccount import caccount
 from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
+from cfile import cfile
 
 #import protection function
 from libexec.auth import check_auth, get_account
@@ -45,72 +46,66 @@ logger = logging.getLogger('Reporting')
 
 #########################################################################
 
-#@get('/reporting/',apply=[check_auth])
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
 def generate_report(startTime, stopTime,view_name):
+	account = get_account()
 
-	#build file name	
+	try:
+		user 	= account.user
+		pwd		= account.shadowpasswd
+	except Exception, err:
+		logger.debug(user + "/" + pwd + "(" + err + ")")
+	
+	logger.debug(user + "/" + pwd)
+	
 	name_array = view_name.split('.')
 	file_name = name_array[len(name_array)-1]
 	file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
-	file_path = '/opt/canopsis/tmp/report/' + file_name
 
-	# Launch Reporting Celery Task
 	try:
 		import task_reporting
 	except Exception, err:
 		logger.debug("Check your celeryconfig.py, if you have reporting task imported")
 		logger.debug(err)
 	try:
+		logger.debug('Run celery task')
 		result = task_reporting.render_pdf.delay(file_name,
 										view_name,
 										startTime,
 										stopTime,
+										account,
 										"/opt/canopsis/etc/wkhtmltopdf_wrapper.json")
+		result.wait()
+		fileName = result.result
 	except Exception, err:
 		logger.debug(err)
 
-	# Wait the end of the process
-	while not result.ready():
-		gevent.sleep(1)
-	# If file has been rendered
-	if os.path.exists(file_path):
-		logger.debug('file found, send it')
-		try:
-			logger.debug("Put report in grid FS")
-			result = task_reporting.put_in_grid_fs(file_path,"127.0.0.1",27017,"canopsis","report")  
-		except Exception, err:
-			logger.debug(err)
-		
-		#put_in_grid_fs(file_path)
-		os.remove(file_path)
-		return {'total': 1, 'success': True, 'data': { 'url' : '/getReport/' + file_name }}
+	if fileName:
+		return {'total': 1, 'success': True, 'data': { 'url': '/getReport/' + str(fileName)}}
 	else:
 		logger.debug('file not found, error while generating pdf')
 		return {'total': 0, 'success': False, 'data': {}}
 	
-	
-#@get('/getReport/',apply=[check_auth])
-#@get('/getReport/:fileName',apply=[check_auth])
-#def get_report(fileName=None):
-	#return static_file(fileName, root='/opt/canopsis/tmp/report', mimetype='application/pdf')
+@get('/getReport/:metaId',apply=[check_auth])
+def get_report(metaId=None):
+	account = get_account()
+	storage = cstorage(account=account, namespace='reports')
 
-@get('/getReport/:fileName',apply=[check_auth])
-def get_report(fileName=None):
-	conn=Connection("127.0.0.1", 27017)
-	db=conn['canopsis']
-	fs = gridfs.GridFS(db, collection='report')
+	meta = storage.get(metaId)
+	meta.__class__ = cfile
 
-	try:
-		#try to find the latest version of the file
-		report_file = fs.get_version(filename=fileName, version=-1)
-	except Exception, err:
-			self.logger.error("Exception !\nReason: %s" % err)
-			return HTTPError(404, _id+" Not Found")
-	
-	if report_file:
-		#fix mime-type
-		response.content_type = 'application/pdf'
-		return report_file
+	report = meta.get(storage)
+
+	logger.debug('MetaId  : %s' % metaId)
+	logger.debug('Filename: %s' % report.name)
+
+	if report:
+		response.headers['Content-Disposition'] = 'attachment; filename=%s' % report.name
+		response.headers['Content-Type'] = 'application/pdf'
+		try:
+			return report
+		except Exception, err:
+			logger.debug(err)
 	else:
-		return HTTPError(404, fileName+" Not Found")
+		logger.error('No report found in gridfs')
+		return HTTPError(404, " Not Found")
