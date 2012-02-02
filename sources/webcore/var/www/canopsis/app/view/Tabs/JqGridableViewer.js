@@ -27,7 +27,31 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	resizable:  false,
 	selectable: false,
 	
+	logAuthor: '[view][tabs][content][jqGridable]',
+	
 	initComponent: function() {
 		this.callParent(arguments)
+		this.widget_list = []
 	},
+	
+	_on_add_widget: function(id, jqwidget){
+		var div = Ext.create('Ext.panel.Panel', {
+			id: id+'-extcmp',
+			//html_id: id,
+			border : false,
+			layout:'fit',
+			margin: this.widget_margin,
+			renderTo: id+'-content',
+			//title: id,
+			height: ($("#"+id).height() - this.widget_margin * 2) +10,
+		});
+		this.widget_list.push(div)
+		this.fireEvent('widgetAdd',id)
+	},
+	
+	get_ext_widget_list : function(){
+		log.debug("Get Extjs widgets list", this.logAuthor)
+		return this.widget_list
+	},
+	
 })

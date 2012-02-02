@@ -64,6 +64,14 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.form.viewName.setValue(viewName)
 		this.form.viewName.setDisabled(true)
 		
+		//set reporting
+		var reporting = item.get('reporting')
+		if(reporting){this.form.reporting.setValue(true)}
+		
+		//set template
+		var template = item.get('template')
+		if(template){this.form.template.setValue(true)}
+		
 		this._bindFormEvents(this.form)
 	},
 	
@@ -177,9 +185,9 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			//if didn't already exist, save it
 			if(already_exist == -1 || this.form.edit == true ){
 				//------------------add new view------------------
-				//log.dump(record)
 				store.add(record);
 				store.load();
+				Ext.data.StoreManager.lookup('Menu').load();
 				this._cancelForm(this.form);
 			} else {
 				log.debug('['+this.id+'][validateForm] -  View exist');
