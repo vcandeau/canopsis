@@ -17,32 +17,40 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-import os, logging, signal, time
+import os, logging, signal, time, json
 from subprocess import Popen
 
 logger = logging.getLogger('WRAPPER')
 
-def load_conf(filename, viewname, starttime, stoptime, wrapper_conf_file):
-	import json
+def load_conf(filename, viewname, starttime, stoptime, user, pwd, wrapper_conf_file):
 	conf = open(wrapper_conf_file, "r").read()
 	settings = json.loads(conf)
 	settings['filename'] = filename
 	settings['viewname'] = viewname
 	settings['starttime'] = starttime
 	settings['stoptime'] = stoptime
-	return settings 
+	settings['user'] = user
+	settings['pwd'] = pwd
+	return settings
 
 def check_xorg(lock, xvfb_cmd):
-	if os.path.isfile(lock):
-		logger.debug("[WK_WRAPPER] :: X server already started (if not, delete %s)" % lock)
-	else:
-		logger.debug("[WK_WRAPPER] :: X server not already started")
-		output = Popen(xvfb_cmd, shell=True)
-	time.sleep(2)
+	import random
+	from tempfile import mkstemp
+	global DISP, XAUTH
+
+	XAUTH = mkstemp()[1]
+	DISP = random.randint(1, 500)
+
+	while os.path.isfile("/tmp/.X%s-lock" % DISP):
+		DISP = random.randint(1, 500)
+
+	cmd = 'Xvfb -screen 0 1024x768x24 -terminate -auth %s -nolisten tcp :%s >/dev/null 2>&1 &' % (XAUTH, DISP)
+	logger.debug(cmd)
+	output = Popen(cmd, shell=True)
 
 def export_env(interface):
-	logger.debug(" [WK_WRAPPER] :: Set env DISPLAY to %s" % interface)
-	os.environ['DISPLAY'] = interface
+	logger.debug(" [WK_WRAPPER] :: Set env DISPLAY to %s" % DISP)
+	os.environ['DISPLAY'] = ':%s' % DISP
 
 def check_report_dir(report_dir):
 	logger.debug(" [WK_WRAPPER] :: Check if report directorie exist")
@@ -50,19 +58,22 @@ def check_report_dir(report_dir):
 		logger.debug(" [WK_WRAPPER] :: Create it at %s" % report_dir)
 		os.makedirs(report_dir)
 
-def	get_cookie(cookiejar):
+def	get_cookie(cookiejar, user, pwd):
 	logger.debug(" [WK_WRAPPER] :: Recreate cookie (%s)" % cookiejar)
-	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/root/root\" /dev/null" % cookiejar)
-	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/root/root\" /dev/null" % cookiejar, shell=True)
+	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?shadow=True\" /dev/null" % (cookiejar, user, pwd))
+	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?shadow=True\" /dev/null" % (cookiejar, user, pwd), shell=True)
+
+	output.wait()
 	
 	if os.path.isfile(cookiejar):
 		logger.debug(" [WK_WRAPPER] :: Cookie created")
 
-def clean_x(lock):
-	if os.path.isfile(lock):
-		pid = int(open(lock).read().strip())
+def clean_x():
+	os.remove(XAUTH)
+	if os.path.exists('/tmp/.X%s-lock' % DISP):
+		pid = int(open('/tmp/.X%s-lock' % DISP).read().strip())
 		os.kill(pid, signal.SIGINT)
-	
+
 def run(settings):
 	filename 		= settings['filename']
 	viewname 		= settings['viewname']
@@ -77,16 +88,22 @@ def run(settings):
 	report_dir		= settings['report_dir']
 	header			= settings['header']
 	footer			= settings['footer']
+	user			= settings['user']
+	pwd				= settings['pwd']
 
-	#clean_x(xlock)
 	check_xorg(xlock, xvfb_cmd)
 	export_env(display_int)
 	check_report_dir(report_dir)
-	get_cookie(cookiejar)
+	get_cookie(cookiejar, user, pwd)
 
 	runscript = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (viewname, starttime, stoptime)
 	opts = ' '.join(opts)
 
 	logger.debug("wkhtmltopdf %s %s %s --window-status %s --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename))
 
-	return Popen("wkhtmltopdf %s %s %s --window-status %s --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename), shell=True)
+	result = Popen("wkhtmltopdf %s %s %s --window-status %s --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename), shell=True)
+
+	result.wait()
+	clean_x()
+
+	return result
