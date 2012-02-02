@@ -114,8 +114,9 @@ if (jQuery){
 							if ($(".ui-selected", this ).size() != 0){
 								return
 							}
-
-							var widgetId = 'widget-' + options.widgets
+							
+							var timestamp = new Date().getTime();
+							var widgetId = 'widget-' + timestamp + '-' + Math.floor(Math.random()*10)
 							var position = calcul_position($("."+options.cls_ui_selectable_helper))
 
 							if (position){
