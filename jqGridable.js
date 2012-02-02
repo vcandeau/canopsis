@@ -22,8 +22,6 @@
 if (jQuery){
 	(function($) {
 		var debug, options
-		var vars = {}
-		var widgets = 0
 		
 		//#########################################################################################################################
 		//##  Methods declarations
@@ -35,7 +33,7 @@ if (jQuery){
 			//##  Init Method
 			//#########################################################################################################################
 			init : function(initOptions) {
-
+				
 				// Default options
 				var defaults = {
 					columns: 5,
@@ -43,9 +41,11 @@ if (jQuery){
 					widget_height: 0.7,
 					scroll_width: 15,
 					debug: false,
-					container: this,
+					container: $(this),
 					autoScale: true,
-
+					
+					widgets: 0,
+					
 					selectable_distance: 50,
 
 					draggable_opacity: 0.7,
@@ -80,18 +80,20 @@ if (jQuery){
 
 					show_grid: true,
 					dump: undefined,
+					
+					vars: {},
 				
 				}
 
 				options = $.extend(defaults, initOptions);
-
+				
 				debug = function(text){
 						if (options.debug) { 
 							console.log(text)
 						}
 				}
 				
-				vars.container_ori_width = options.container.width() - options.scroll_width
+				options.container_ori_width = options.container.width() - options.scroll_width
 
 				if (! options.on_add_widget ){
 					options.on_add_widget = _on_add_widget
@@ -113,7 +115,7 @@ if (jQuery){
 								return
 							}
 
-							var widgetId = 'widget-' + widgets
+							var widgetId = 'widget-' + options.widgets
 							var position = calcul_position($("."+options.cls_ui_selectable_helper))
 
 							if (position){
@@ -129,6 +131,10 @@ if (jQuery){
 				}else{
 					redraw();
 				}
+				
+				$(this).data('options', options)
+				
+				return this
 
 			},
 			
@@ -137,8 +143,8 @@ if (jQuery){
 			//#########################################################################################################################
 			addRow: function(nb){
 					if (! nb) { nb = 1; }
-					options.container.height(options.container.height() + (nb * vars.widget_height) + vars.borderCorrection)
-					if (vars.grid){
+					options.container.height(options.container.height() + (nb * options.widget_height) + options.borderCorrection)
+					if (options.grid){
 						remove_grid()
 						show_grid()
 					}
@@ -157,7 +163,7 @@ if (jQuery){
 			//##  Toggle grid mark
 			//#########################################################################################################################	
 			toggleGrid : function() {
-				if (vars.grid){
+				if (options.grid){
 					remove_grid()
 					options.show_grid = false
 				}else{
@@ -193,7 +199,7 @@ if (jQuery){
 				$('.' + options.cls_jqGridable_widget_wrapper).each(function (){
 					$(this).remove()
 				})
-				widgets = 0
+				options.widgets = 0
 				redraw()
 			},
 			
@@ -219,11 +225,11 @@ if (jQuery){
 			//#########################################################################################################################	
 			widget_setTitle : function(id, html) {
 				//DRAFT
-				$('#'+id+'-title').text(html)
+				$(options.container.find('#'+id+'-title')[0]).text(html)
 			},
 			widget_setContent : function(id, html) {
 				//DRAFT
-				$('#'+id+'-content').text(html)
+				$(options.container.find('#'+id+'-content')[0]).text(html)
 			},
 			
 			//#########################################################################################################################
@@ -232,12 +238,12 @@ if (jQuery){
 			widget_setData : function(id, data) {
 				debug("Set data on "+id)
 				debug(data)
-				$('#'+id).data(data)
+				$(options.container.find('#'+id)[0]).data(data)
 			},
 			
 			widget_getData : function(id) {
 				debug("Get data of "+id)
-				var data = $('#'+id).data()
+				var data = $(options.container.find('#'+id)[0]).data()
 				debug(data)
 				return data
 			},			
@@ -246,7 +252,7 @@ if (jQuery){
 			//##  Remove widget
 			//#########################################################################################################################
 			remove_widget: function(id){
-				$('#'+id).remove()
+				$(options.container.find('#'+id)[0]).remove()
 			}
 		}
 
@@ -283,7 +289,7 @@ if (jQuery){
 			for (index in dump){
 				var widget = dump[index]
 				add_widget(widget.id, widget.position)
-				$("#" + widget.id).data(dump[index].data)
+				$(options.container.find("#" + widget.id)[0]).data(dump[index].data)
 			}
 		}
 
@@ -293,7 +299,7 @@ if (jQuery){
 		var dump = function(){
 			var dump = []
 				
-			$('.' + options.cls_jqGridable_widget_wrapper).each(function (){
+			$(options.container.find('.' + options.cls_jqGridable_widget_wrapper)).each(function (){
 				var id = $(this).attr('id')
 				dump.push({
 					id: id,
@@ -314,36 +320,36 @@ if (jQuery){
 			
 			options.container.removeClass(options.cls_jqGridable_widget_container_debug)
 			
-			vars.borderCorrection = 0
+			options.borderCorrection = 0
 			if (options.debug) {
 				options.container.addClass(options.cls_jqGridable_widget_container_debug)
-				//vars.borderCorrection = options.container.css('border-width')
-				vars.borderCorrection = 1
+				//options.borderCorrection = options.container.css('border-width')
+				options.borderCorrection = 1
 			}
 			
 			//Init container
 			options.container.removeClass(options.cls_jqGridable_widget_container)
 			options.container.addClass(options.cls_jqGridable_widget_container)
 
-			options.widget_width = Math.round((vars.container_ori_width - vars.borderCorrection) / options.columns)
+			options.widget_width = Math.round((options.container_ori_width - options.borderCorrection) / options.columns)
 			options.container.width(options.widget_width * options.columns )
 
-			vars.widget_height = options.widget_height
-			if (vars.widget_height <= 1){
-				vars.widget_height = Math.round(vars.widget_height * options.widget_width)
+			options.widget_height = options.widget_height
+			if (options.widget_height <= 1){
+				options.widget_height = Math.round(options.widget_height * options.widget_width)
 			}
 
 			var nb_height
 			if (rows) {
 				nb_height = rows
 			}else{
-				nb_height =  Math.round((options.container.height() / vars.widget_height))
+				nb_height =  Math.round((options.container.height() / options.widget_height))
 			}
 			
-			options.container.height(nb_height * vars.widget_height + vars.borderCorrection )				
+			options.container.height(nb_height * options.widget_height + options.borderCorrection )				
 			
 			// repositionning all widget
-			$('.' + options.cls_jqGridable_widget_wrapper).each(function (){
+			$(options.container.find('.' + options.cls_jqGridable_widget_wrapper)).each(function (){
 				set_position($(this))
 			})
 				
@@ -388,7 +394,7 @@ if (jQuery){
 			var container_top = container_pos.top
 			var container_left = container_pos.left
 
-			var max_row = Math.round(container_height / vars.widget_height)
+			var max_row = Math.round(container_height / options.widget_height)
 
 			var helper_pos = helper.offset()
 			var helper_width = helper.width() - 2 * x_tolerance
@@ -405,11 +411,11 @@ if (jQuery){
 			if (dragmode){
 				//use center
 				left += options.widget_width/2
-				top += vars.widget_height/2
+				top += options.widget_height/2
 			}
 
 			left = Math.ceil(left / options.widget_width) - 1		
-			top = Math.ceil(top / vars.widget_height) - 1
+			top = Math.ceil(top / options.widget_height) - 1
 
 			if (left < 0 ) { left = 0}
 			if (top  < 0 ) { top  = 0}
@@ -421,10 +427,10 @@ if (jQuery){
 				if (width < 1 ) { width = 1}
 
 				height = (helper_top + helper_height) - container_top
-				height = Math.ceil(height / vars.widget_height) - top
+				height = Math.ceil(height / options.widget_height) - top
 				if (height < 1 ) { height = 1}
 			}else{
-				height = Math.ceil(helper_height / vars.widget_height)
+				height = Math.ceil(helper_height / options.widget_height)
 				width = Math.ceil(helper_width / options.widget_width)
 			}
 			
@@ -450,11 +456,10 @@ if (jQuery){
 				html = options.do_build_widget(id)
 			}
 
-
 			var AttrPos = "gtop='"+position.top+"' gleft='"+position.left+"' gheight='"+position.height+"' gwidth='"+position.width+"'"
 			options.container.append('<div id="'+id+'" '+AttrPos+' class="'+options.cls_jqGridable_widget_wrapper+'">'+html+'</div>');
-
-			var widget = $("#"+id)
+			
+			var widget = $(options.container.find("#" + id)[0])
 			
 			set_position(widget, position)
 
@@ -492,7 +497,7 @@ if (jQuery){
 					//containment: options.container,
 					autoHide: true,
 					grid: [ 10, 10 ],
-					minHeight: vars.widget_height - 30,
+					minHeight: options.widget_height - 30,
 					minWidth: options.widget_width - 30,
 					helper: options.cls_resizable_helper,
 					stop: function(event, ui){
@@ -522,7 +527,7 @@ if (jQuery){
 				});
 			}
 
-			widgets +=1
+			options.widgets +=1
 
 			options.on_add_widget(id, widget)
 
@@ -555,11 +560,11 @@ if (jQuery){
 				 widget.attr('gwidth', position.width)
 			}
 			
-			var top = position.top * vars.widget_height
+			var top = position.top * options.widget_height
 			var left = position.left * options.widget_width
 
 			var width = position.width * options.widget_width
-			var height = position.height * vars.widget_height
+			var height = position.height * options.widget_height
 
 			debug(" + Set widget position")
 			widget.css({
@@ -584,19 +589,19 @@ if (jQuery){
 		var remove_grid = function(){
 			debug("Remove grid")
 
-			$('.' + options.cls_jqGridable_widget_container_grid).each(function (){
+			$(options.container.find('.' + options.cls_jqGridable_widget_container_grid)).each(function (){
 					$(this).remove()
 			})
 			
-			$('.' + options.cls_jqGridable_widget_container_vgrid).each(function (){
+			$(options.container.find('.' + options.cls_jqGridable_widget_container_vgrid)).each(function (){
 				$(this).remove()
 			})
 			
-			$('.' + options.cls_jqGridable_widget_container_hgrid).each(function (){
+			$(options.container.find('.' + options.cls_jqGridable_widget_container_hgrid)).each(function (){
 				$(this).remove()
 			})
 			
-			vars.grid = false
+			options.grid = false
 		}
 		
 		//#########################################################################################################################
@@ -614,12 +619,12 @@ if (jQuery){
 				options.container.prepend('<div class="'+options.cls_jqGridable_widget_container_vgrid+'" style="width: '+options.widget_width+'px; left: '+(i*options.widget_width)+'px;"></div>');
 			}
 	
-			var height = options.container.height() - vars.borderCorrection
-			for (i=0; (i*vars.widget_height) < height; i++){
-				options.container.prepend('<div class="'+options.cls_jqGridable_widget_container_hgrid+'" style="top: '+(i*vars.widget_height)+'px; height: '+vars.widget_height+'px; "></div>');
+			var height = options.container.height() - options.borderCorrection
+			for (i=0; (i*options.widget_height) < height; i++){
+				options.container.prepend('<div class="'+options.cls_jqGridable_widget_container_hgrid+'" style="top: '+(i*options.widget_height)+'px; height: '+options.widget_height+'px; "></div>');
 			}
 			
-			vars.grid = true
+			options.grid = true
 		}
 		
 		//#########################################################################################################################
@@ -627,7 +632,12 @@ if (jQuery){
 		//#########################################################################################################################
 
 		$.fn.jqGridable = function(method) {
-
+		
+			//allready init
+			if ($(this).data('options')){
+				options = $(this).data('options')
+			}
+			
 			// Method calling logic
 			if ( methods[method] ) {
 				return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -637,7 +647,7 @@ if (jQuery){
 				$.error( 'Method ' +  method + ' does not exist on jQuery.jqGridable' );
 			}
 
-			return this
+			return $(this)
 		}
 
 	})(jQuery);
