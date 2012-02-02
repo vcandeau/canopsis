@@ -36,7 +36,7 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	
 	_on_add_widget: function(id, jqwidget){
 		var div = Ext.create('Ext.panel.Panel', {
-			id: id+'-extcmp',
+			//id: id+'-extcmp',
 			//html_id: id,
 			border : false,
 			layout:'fit',
