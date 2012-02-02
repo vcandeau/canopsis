@@ -29,6 +29,8 @@
         <link rel="stylesheet" type="text/css" href="themes/canopsis/theme.css">
 
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
+	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="resources/lib/jQuery.encoding.digests.sha1.js"></script>
 
 	
 	<script type="text/javascript" src="app/lib/global.js"></script>
@@ -68,6 +70,33 @@
 		}
 
 		function build_form(){
+			var submit_function = function(){
+				var form = winform.getForm()
+				if (winform.getForm().isValid()) { // make sure the form contains valid data before submitting
+					var passwd = form.getFieldValues().password;
+					passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
+					form.setValues({password : passwd_sha1});
+					winform.getForm().submit({
+						method: 'GET',
+						params: {
+							shadow: 'True',
+						},
+						success: function(form, action) {
+							var param = getURLParameter('url');	
+							if(param != 'null'){
+								window.location.href=param;
+							} else {
+								window.location.href='/';
+							}
+						},
+						failure: function(form, action) {
+							Ext.MessageBox.alert(_('authentification failed'), _('login or password incorrect'));
+						}
+					});
+				} else { 
+					Ext.Msg.alert(_('Invalid Data'), _('Please correct form errors.'))
+				}
+			}
 			
 			var winform = Ext.create('Ext.form.Panel', {
 				url:'/auth',
@@ -98,53 +127,14 @@
 				buttons: [{
 					text: _('Connect'),
 					id: 'submitbutton',
-					submitOnEnter : true,
-					handler: function() {
-					var form = this.up('form').getForm(); // get the basic form
-					if (form.isValid()) { // make sure the form contains valid data before submitting
-						form.submit({
-							method: 'GET',
-							success: function(form, action) {
-								var param = getURLParameter('url');	
-								if(param != 'null'){
-									window.location.href=param;
-								} else {
-									window.location.href='/';
-								}
-							},
-							failure: function(form, action) {
-								Ext.MessageBox.alert(_('authentification failed'), _('login or password incorrect'));
-							}
-						});
-					} else { // display error alert if the data is invalid
-						Ext.Msg.alert(_('Invalid Data'), _('Please correct form errors.'))
-					}
-				}
+					submitOnEnter : false,
+					handler : submit_function
 				}],			
 			});
 		
 			var nav = Ext.create('Ext.util.KeyNav', Ext.getDoc(), {
 				scope: 'my_form',
-				enter: function(){
-						if (winform.getForm().isValid()) { // make sure the form contains valid data before submitting
-							winform.getForm().submit({
-								method: 'GET',
-								success: function(form, action) {
-									var param = getURLParameter('url');	
-									if(param != 'null'){
-										window.location.href=param;
-									} else {
-										window.location.href='/';
-									}
-								},
-								failure: function(form, action) {
-									Ext.MessageBox.alert('authentification failed', 'login or password incorrect');
-								}
-							});
-						} else { // display error alert if the data is invalid
-							Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
-						}
-				}
+				enter : submit_function
 			})
 		
 

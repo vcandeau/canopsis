@@ -23,22 +23,6 @@ function post_install(){
 	rm /tmp/mongodb-*.sock &> /dev/null || true
 
 	launch_cmd 1 service mongodb start
-
-	## Wait mongo ready
-	echo "Wait mongoDB (preallocating journal file...), You can take a coffee ..."
-        i=0
-        while [ `ls /tmp/mongodb-*.sock 2> /dev/null| wc -l || true` -eq 0 ]; do
-                if [ $i -gt 1200 ]; then
-                        echo 
-                        echo "Timeout, Impossible to connect mongoDB ..."
-                        exit 1
-                fi
-                i=$((i+1))
-                echo -n "."
-                sleep 0.5
-        done
-        echo
-
 	launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
 	launch_cmd 1 service mongodb stop
 

@@ -14,7 +14,7 @@
 			"name": "filter",
 			"height": 150,
 			"width": 500,
-			"value": "{\"source_type\":\"host\"}"
+			"value": "{\"source_type\":\"component\"}"
 		}]
 
 }]
