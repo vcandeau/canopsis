@@ -27,17 +27,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	//style: {borderWidth:'0px'},
 
 	autoScroll: true,
-	/*
-	layout: {
-		type: 'table',
-		// The total column count must be specified here
-		columns: 1,
-	},
-*/
-	defaults: {
-		border: false,
-	},
-
+	
 	border: false,
 
 	displayed: false,
@@ -90,42 +80,84 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	setContent: function(){
 		var items = this.view.items
 		
+		//populating view
 		if (items.length == 1 ) {
-			log.debug(' + Use full mode ...', this.logAuthor)
-			this.layout = 'fit'
-			var item = items[0]
-			//item = items[0].data
-			log.debug('   + Add: '+item.xtype, this.logAuthor)
-
-			item['width'] = '100%'
-			item['title'] = ''
-			item['fullmode'] = true
-			
-			item['mytab'] = this
-
-			//Set default options
-			//if (! item.nodeId) { item.nodeId=nodeId}
-			//if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
-
-			if(this.view.reporting){
-				item.reportMode = true;
-			}
-
-			this.widgets.push(this.add(item))
+			this.set_one_item(items)
 		} else {
-			
-			var _on_add_function = function(id, jqwidget){
-				log.debug('test on')
-			}
-
-			var jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer')
-			this.add(jqgridable)
-
-			jqgridable._load(items)
-			
+			this.set_many_items(items)
 		}
+		
+		//if report mode
+		if(this.view.reporting){
+			this.reportBar = Ext.create('canopsis.view.ReportingBar.ReportingBar');
+			this.addDocked(this.reportBar);
+			this.reportBar.requestButton.on('click',this.onReport,this);
+			this.reportBar.nextButton.on('click',this.nextReportButton,this);
+			this.reportBar.previousButton.on('click',this.previousReportButton,this);
+			this.reportBar.saveButton.on('click',this.saveButton,this);
+			this.reportBar.linkButton.on('click',this.linkButton,this);
+			this.reportBar.currentDate.on('select',this.onReport,this);
+			this.reportBar.combo.on('select',this.onReport,this);
+		}
+
+		//binding event to save resources
+		this.on('show', function(){
+			this._onShow();
+		}, this);
+		this.on('hide', function(){
+			this._onHide();
+		}, this);
 	},
 	
+	set_one_item : function(items){
+		log.debug(' + Use full mode ...', this.logAuthor)
+		this.layout = 'fit'
+		
+		//check if standart item view or jqgridable item
+		var item = items[0]
+		if(item.data){
+			item = item.data
+		}
+
+		log.debug('   + Add: '+item.xtype, this.logAuthor)
+
+		item['width'] = '100%'
+		item['title'] = ''
+		item['mytab'] = this
+
+		//Set default options
+		//if (! item.nodeId) { item.nodeId=nodeId}
+		//if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
+
+		if(this.view.reporting){
+			item.reportMode = true;
+		}
+		this.widgets.push(this.add(item))
+	},
+	
+	set_many_items : function(items){
+		//setting jqgridable
+		var jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer',{view_widgets : items})
+		this.add(jqgridable)
+		
+		jqgridable._load(items)
+		
+		var widget_list = jqgridable.get_ext_widget_list()
+		
+		//here processing on data
+		
+		//globalNodeId
+		//refresh interval
+		
+		//////////////////////////
+		
+		for(var i in widget_list){
+			if(this.view.reporting){
+				items[i].reportMode = true;
+			}
+			this.widgets.push(widget_list[i].add(items[i].data))
+		}
+	},
 	
 /*
 	setContent: function(){
@@ -269,10 +301,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			log.debug('--------------------------------------------')
 			
 			//enable mask
-			this._maskInit()
+			//this._maskInit()
 
 			for (i in this.widgets){
-				//this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
+				log.debug('refreshing '+ i, this.logAuthor)
 				this.widgets[i]._doRefresh(startReport * 1000, stopReport * 1000)
 			}
 		}
@@ -338,8 +370,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data.url
-					//log.dump(data);
-					//window.open(data)
 					global.notify.notify(
 						_('Export ready'),
 						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
@@ -354,6 +384,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			});
 		}
 	},
+	
 	//------------------------------------------------------------
 	_maskInit: function(){
 		this.mask.show();
