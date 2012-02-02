@@ -24,8 +24,11 @@ from pymongo import objectid
 from pymongo import ASCENDING
 from pymongo import DESCENDING
 
+import gridfs
+
 from caccount import caccount
 from crecord import crecord
+from cfile import cfile
 
 import logging
 import time
@@ -37,7 +40,6 @@ CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 class cstorage(object):
 	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
-
 
 		try:
 			self.mongo_host=CONFIG.get("master", "host")
@@ -70,7 +72,7 @@ class cstorage(object):
 		
 		if mongo_autoconnect:
 			self.backend_connect()
-
+	
 	def clean_id(self, _id):
 		try:
 			int(_id, 16)
@@ -129,6 +131,7 @@ class cstorage(object):
 		records = []
 		return_ids = []
 
+
 		if isinstance(_record_or_records, crecord):
 			records = [_record_or_records]
 		elif isinstance(_record_or_records, list):
@@ -139,6 +142,11 @@ class cstorage(object):
 		self.logger.debug("Put %s record(s) ..." % len(records))
 		for record in records:
 			_id = record._id
+
+			if isinstance(record, cfile):
+				data_id = self.put_data(record.data['bin_data'], record.data['file_name'], record.data['content_type'])
+				del record.data['bin_data']
+				record.data['data_id'] = data_id
 
 			if not record.owner:
 				record.owner = account.user
@@ -264,7 +272,7 @@ class cstorage(object):
 		else:
 			return records
 
-	def get(self, _id_or_ids, account=None, namespace=None):
+	def get(self, _id_or_ids, account=None, namespace=None, return_type='cfile'):
 		if not account:
 			account = self.account
 
@@ -294,15 +302,14 @@ class cstorage(object):
 				# small hack for wrong oid
 				mfilter = dict(id_mfilter.items() + Read_mfilter.items())
 				raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
-
+			
 		except Exception, err:
 			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
 
 		if not raw_record:
 			raise KeyError("'%s' not found ..." % _id)
-
+			
 		return crecord(raw_record=raw_record)
-
 
 	def remove(self, _id_or_ids, account=None, namespace=None):
 		if not account:
@@ -329,7 +336,6 @@ class cstorage(object):
 			self.logger.debug(" + Remove record '%s'" % _id)
 			
 			oid = self.clean_id(_id)
-
 			if account.user == 'root':
 				access = True
 			else:
@@ -340,7 +346,7 @@ class cstorage(object):
 				try:
 					backend.remove({'_id': oid}, safe=self.mongo_safe)
 				except Exception, err:
-						self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
+					self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
 			else:				
 				self.logger.error("Remove: Access denied ...")
 				raise ValueError("Access denied ...")
@@ -442,12 +448,30 @@ class cstorage(object):
 
 		return self.find(mfilter, account=account)
 
+	def put_data(self, data, file_name, content_type):
+		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
+		bin_id = fs.put(data, filename=file_name, content_type=content_type)
+		return bin_id
 
+	def get_data(self, data_id):
+		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
+		bin_data = fs.get(data_id).read()
+		bin_data = fs.get(data_id)
+		return bin_data
 
+	def remove_data(self, data_id):
+		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
+		try:
+			fs.delete(data_id)
+		except Exception, err:
+			self.logger.error('Error when remove binarie', err)
+	
+	def check_data(self, data_id):
+		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
+		return fs.exists(data_id)
+	
 	def __del__(self):
 		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
-
-
 
 #####
 #       docs = doc_or_docs
