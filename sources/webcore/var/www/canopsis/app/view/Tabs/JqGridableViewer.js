@@ -43,7 +43,7 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 			margin: this.widget_margin,
 			renderTo: id+'-content',
 			//title: id,
-			height: ($("#"+id).height() - this.widget_margin * 2) +10,
+			height: ($("#"+id).height() - this.widget_margin * 2),
 		});
 		this.widget_list.push(div)
 		this.fireEvent('widgetAdd',id)
