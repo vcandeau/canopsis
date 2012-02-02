@@ -21,7 +21,7 @@
 
 if (jQuery){
 	(function($) {
-		var debug, options
+		var options
 		
 		//#########################################################################################################################
 		//##  Methods declarations
@@ -87,10 +87,10 @@ if (jQuery){
 
 				options = $.extend(defaults, initOptions);
 				
-				debug = function(text){
-						if (options.debug) { 
-							console.log(text)
-						}
+				options.print = function(text){
+					if (options.debug) { 
+						console.log(text)
+					}
 				}
 				
 				options.container_ori_width = options.container.width() - options.scroll_width
@@ -180,7 +180,7 @@ if (jQuery){
 					options.debug = false
 				}else{
 					options.debug = true
-					debug("In debug mode")
+					options.print("In debug mode")
 				}
 				redraw()
 			},
@@ -196,7 +196,7 @@ if (jQuery){
 			//##  Clear
 			//#########################################################################################################################	
 			clear : function() {
-				$('.' + options.cls_jqGridable_widget_wrapper).each(function (){
+				$(options.container.find('.' + options.cls_jqGridable_widget_wrapper)).each(function (){
 					$(this).remove()
 				})
 				options.widgets = 0
@@ -208,8 +208,8 @@ if (jQuery){
 			//#########################################################################################################################	
 			dump : function() {
 				var data = dump()
-				debug("Dump:")
-				debug(data)
+				options.print("Dump:")
+				options.print(data)
 				return data
 			},
 			
@@ -236,15 +236,15 @@ if (jQuery){
 			//##  Widget data
 			//#########################################################################################################################			
 			widget_setData : function(id, data) {
-				debug("Set data on "+id)
-				debug(data)
+				options.print("Set data on "+id)
+				options.print(data)
 				$(options.container.find('#'+id)[0]).data(data)
 			},
 			
 			widget_getData : function(id) {
-				debug("Get data of "+id)
+				options.print("Get data of "+id)
 				var data = $(options.container.find('#'+id)[0]).data()
-				debug(data)
+				options.print(data)
 				return data
 			},			
 			
@@ -259,13 +259,13 @@ if (jQuery){
 		//#########################################################################################################################
 		//##  Plugin functions
 		//#########################################################################################################################
-
+		
 		//#########################################################################################################################
 		//##  Load from dump
-		//#########################################################################################################################	
+		//#########################################################################################################################
 		var load = function(dump){
 
-			debug("Load widgets")
+			options.print("Load widgets")
 			var index
 			//adjust size
 			if (options.autoScale){
@@ -278,8 +278,8 @@ if (jQuery){
 					if (height > maxRow){ maxRow = height }
 					if (width > maxCol){ maxCol = width }
 				}
-				debug(" + rows: "+maxRow)
-				debug(" + cols: "+maxCol)
+				options.print(" + rows: "+maxRow)
+				options.print(" + cols: "+maxCol)
 					
 				redraw(maxRow, maxCol)
 			}else{
@@ -314,7 +314,7 @@ if (jQuery){
 		//##  Redraw
 		//#########################################################################################################################	
 		var redraw = function(rows, colums){
-			debug("Redraw")
+			options.print("Redraw")
 			
 			if (colums) { options.columns = colums }
 			
@@ -362,7 +362,7 @@ if (jQuery){
 		//##  HTML build function
 		//#########################################################################################################################
 		var _do_build_widget = function(id) {
-			debug(" + Set widget html")
+			options.print(" + Set widget html")
 			html_widget = options.tpl_widget
 			html_widget = html_widget.replace("[cls_ui_widget_content]", options.cls_ui_widget_content)
 			html_widget = html_widget.replace("[cls_ui_widget_header]", options.cls_ui_widget_header)
@@ -381,9 +381,9 @@ if (jQuery){
 		//##  Calcul widget position (in row and col) between container and helper 
 		//#########################################################################################################################
 		var calcul_position = function (helper, dragmode){
-
-			debug("")
-			debug("Calcul positioning and sizing")
+			
+			options.print("")
+			options.print("Calcul positioning and sizing")
 
 			var x_tolerance = 20
 			var y_tolerance = 20
@@ -437,11 +437,11 @@ if (jQuery){
 			if ((left + width) > options.columns)	{ width = options.columns - left }
 			if ((top + height) > max_row)			{ height = max_row - top }
 
-			debug("Finish:")
-			debug(" + Top: "+top)
-			debug(" + Left: "+left)
-			debug(" + Width: "+width)
-			debug(" + Height:"+height)
+			options.print("Finish:")
+			options.print(" + Top: "+top)
+			options.print(" + Left: "+left)
+			options.print(" + Width: "+width)
+			options.print(" + Height:"+height)
 			
 			return { top: top, left: left, width: width, height: height}	
 		}
@@ -450,7 +450,7 @@ if (jQuery){
 		//##  Add widget on grid
 		//#########################################################################################################################
 		var add_widget = function(id, position, html) {
-			debug("Add Widget")
+			options.print("Add Widget")
 
 			if (! html){
 				html = options.do_build_widget(id)
@@ -492,7 +492,7 @@ if (jQuery){
 
 			// Set resizable
 			if (options.resizable){
-				debug(" + Set Widget resizable")
+				options.print(" + Set Widget resizable")
 				widget.resizable({
 					//containment: options.container,
 					autoHide: true,
@@ -500,8 +500,11 @@ if (jQuery){
 					minHeight: options.widget_height - 30,
 					minWidth: options.widget_width - 30,
 					helper: options.cls_resizable_helper,
-					stop: function(event, ui){
+					options: options,
+					stop: function(event, ui){							
 						var widget = $(this)
+						options = $(widget.data('container')).data('options')
+						
 						var position = calcul_position(widget)
 						set_position(widget, position)
 						if (options.on_resize_widget){
@@ -513,7 +516,7 @@ if (jQuery){
 
 			// Set draggable
 			if (options.draggable){
-				debug(" + Set Widget draggable")
+				options.print(" + Set Widget draggable")
 				widget.draggable({
 					opacity: options.draggable_opacity,
 					containment: 'parent',
@@ -521,17 +524,21 @@ if (jQuery){
 					grid: [ 10, 10 ],
 					stop: function(event, ui) {
 						var widget =  $(this)
+						options = $(widget.data('container')).data('options')
+						
 						var position = calcul_position(widget, true)
 						set_position(widget, position)				
 					}
 				});
 			}
 
+			widget.data('container', options.container)
+			
 			options.widgets +=1
 
 			options.on_add_widget(id, widget)
 
-			debug("Widget added")
+			options.print("Widget added")
 		}
 		
 		//#########################################################################################################################
@@ -566,7 +573,7 @@ if (jQuery){
 			var width = position.width * options.widget_width
 			var height = position.height * options.widget_height
 
-			debug(" + Set widget position")
+			options.print(" + Set widget position")
 			widget.css({
 				position: 'absolute',
 				'z-index': widget.css('z-index') + 999,
@@ -587,7 +594,7 @@ if (jQuery){
 		//##  Remove grid
 		//#########################################################################################################################
 		var remove_grid = function(){
-			debug("Remove grid")
+			options.print("Remove grid")
 
 			$(options.container.find('.' + options.cls_jqGridable_widget_container_grid)).each(function (){
 					$(this).remove()
@@ -610,7 +617,7 @@ if (jQuery){
 		
 		var show_grid = function(){
 			remove_grid()			
-			debug("Show grid")
+			options.print("Show grid")
 
 			options.container.prepend('<div class="'+options.cls_jqGridable_widget_container_grid+'"></div>');
 
@@ -633,10 +640,10 @@ if (jQuery){
 
 		$.fn.jqGridable = function(method) {
 		
-			//allready init
+			//##  Get options if allready set
 			if ($(this).data('options')){
 				options = $(this).data('options')
-			}
+			}	
 			
 			// Method calling logic
 			if ( methods[method] ) {
