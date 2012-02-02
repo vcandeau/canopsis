@@ -1,4 +1,0 @@
-#!/bin/bash
-
-python ~/opt/mongodb/initDB.py
-python ~/opt/mongodb/draftDB.py

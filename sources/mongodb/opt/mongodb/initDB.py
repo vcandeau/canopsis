@@ -119,27 +119,3 @@ record3.add_children(record32)
 
 storage.put([record1, record2, record3])
 storage.put([record21, record31, record32])
-
-## Configuration
-
-config = cconfig(name="amqp", storage=storage)
-config.setstring("host", "localhost")
-config.setint("port", 5672)
-config.setstring("userid", "guest")
-config.setstring("password", "guest")
-config.setstring("virtual_host", "canopsis")
-config.setstring("exchange_name", "canopsis")
-config.save()
-
-config = cconfig(name="amqp2websocket", storage=storage)
-config.setint("port", 8090)
-config.setbool("debug", False)
-config.setstring("interface", "0.0.0.0")
-config.setint("max_clients", 20)
-config.save()
-
-config = cconfig(name="webserver", storage=storage)
-config.setint("port", 8082)
-config.setbool("debug", False)
-config.setstring("interface", "0.0.0.0")
-config.save()

@@ -163,8 +163,10 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			return 'row-background-ok'
 		} else if (state == 1){
 			return 'row-background-warning'
-		} else {
+		} else if (state == 2){
 			return 'row-background-error'
+		} else {
+			return 'row-background-unknown'
 		}
 	},
 
