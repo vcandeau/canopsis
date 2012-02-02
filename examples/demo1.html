@@ -23,12 +23,12 @@
 			var on_widget_rightclick = function(widget){
 				var id = widget.attr('id')
 				alert('rightclick on '+id+' !')
-				$('#container').jqGridable('widget_setTitle', id, id + ' rightclicked')
+				$(this).jqGridable('widget_setTitle', id, id + ' rightclicked')
 			}
 			
 			var on_add_widget = function(id, widget){
-				$('#container').jqGridable('widget_setTitle', id, id)
-				$('#container').jqGridable('widget_setContent', id, 'default content')
+				$(this).jqGridable('widget_setTitle', id, id)
+				$(this).jqGridable('widget_setContent', id, 'default content')
 			}
 
 			$("#container").jqGridable({
