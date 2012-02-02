@@ -126,7 +126,9 @@ Ext.define('canopsis.view.ViewEditor.Form' ,{
 										xtype: 'checkboxfield',
 										boxLabel  : _('Reporting') + ' :',
 										name      : 'reporting',
-										boxLabelAlign : 'before'
+										boxLabelAlign : 'before',
+										value: false,
+										hidden: true,
 									},{ xtype: 'tbspacer', width: 50 },{
 										xtype: 'checkboxfield',
 										boxLabel  : _('Template') + ' :',
