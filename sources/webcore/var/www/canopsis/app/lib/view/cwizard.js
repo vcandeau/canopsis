@@ -28,7 +28,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	closeAction: 'destroy',
 	width: 600,
 	minWidth: 350,
-	height: 350,
+	height: 450,
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	

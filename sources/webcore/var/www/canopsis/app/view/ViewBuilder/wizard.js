@@ -102,10 +102,10 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		this.firstEdit = true
 		widgetStore = Ext.data.StoreManager.lookup('Widget')
 		//building second step if needed
-		if(data.widget){
+		if(data.xtype){
 			var _index = widgetStore.findBy(
 			function(record, id){
-				if(record.get('name') == data.widget){
+				if(record.get('xtype') == data.xtype){
 					return true
 				}
 			}, this)
