@@ -47,6 +47,10 @@ def auth(login=None, password=None):
 	shadow = request.params.get('shadow', default=False)
 	if shadow:
 		shadow = True
+		
+	authkey = request.params.get('authkey', default=False)
+	if authkey:
+		authkey = True
 
 	if not password:
 		password = request.params.get('password', default=None)
@@ -59,16 +63,22 @@ def auth(login=None, password=None):
 	logger.debug(" + _id: "+_id)
 	logger.debug(" + Login: "+login)
 	logger.debug(" + Password: "+password)
-	logger.debug(" + Shadow: "+str(shadow))
+	logger.debug("    + is Shadow: "+str(shadow))
+	logger.debug("    + is Authkey: "+str(authkey))
 
 	storage = get_storage(namespace='object')
 
 	try:
 		account = caccount(storage.get(_id, caccount(user=login)))
-		logger.debug(" + Check shadow password ...")
+		logger.debug(" + Check password ...")
 
 		if shadow:
 			access = account.check_shadowpasswd(password)
+			
+		elif authkey:
+			logger.debug(" + Valid auth key: %s" % (account.make_authkey()))
+			access = account.check_authkey(password)
+			
 		else:
 			access = account.check_passwd(password)
 
@@ -84,8 +94,8 @@ def auth(login=None, password=None):
 			return output
 		else:
 			logger.debug(" + Invalid password ...")
-	except:
-		pass
+	except Exception, err:
+		logger.error(err)
 		
 	return HTTPError(403, "Forbidden")
 

@@ -25,7 +25,7 @@ from caccount import caccount_get, caccount_getall
 
 from cstorage import cstorage
 
-import hashlib
+import hashlib, time
 
 STORAGE = None
 ACCOUNT = None
@@ -42,16 +42,20 @@ class KnownValues(unittest.TestCase):
 		ACCOUNT.cat()
 
 	def test_03_Passwd(self):
-		ACCOUNT.passwd('mypassword')
+		passwd = 'root'
+		ACCOUNT.passwd(passwd)
 
-		shadow = hashlib.sha1(str('mypassword')).hexdigest()
-
+		shadow = ACCOUNT.make_shadow(passwd)
 		if not ACCOUNT.check_shadowpasswd(shadow):
-			raise Exception('Invalid shadow passwd ...')
+			raise Exception('Invalid shadow passwd ... (%s)' % shadow )
 
-		if not ACCOUNT.check_passwd('mypassword'):
-			raise Exception('Invalid passwd ...')
+		if not ACCOUNT.check_passwd(passwd):
+			raise Exception('Invalid passwd ... (%s)' % passwd)
 
+		authkey = ACCOUNT.make_authkey()
+		if not ACCOUNT.check_authkey(authkey):
+			raise Exception('Invalid authkey ... (%s)' % authkey)		
+		
 		ACCOUNT.cat()
 
 	def test_04_Store(self):
