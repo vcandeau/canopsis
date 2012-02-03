@@ -44,21 +44,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 	initComponent: function() {
 		log.debug('[cinventory] - Initialize ...')
-		/*
-		this.tbar = [ _('Select Items'),'->',{
-			iconCls: 'icon-add',
-			text: _('Add'),
-			scope: this,
- 			handler: this.DisplaySelWindow
-                }]
-		
-		if (! this.multiSelect){
-			this.grow = false
-		}
-		*/
-		var model = Ext.ModelManager.getModel('canopsis.model.event');
 
-		
+		var model = Ext.ModelManager.getModel('canopsis.model.event');
 
 		this.Win_columns = [{
 					header: '',
@@ -84,8 +71,6 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.columns = this.Win_columns
 
-		
-
 		//------------------- create stores---------------
 		this.InventoryStore = Ext.create('canopsis.lib.store.cstore', {
 				model: model,
@@ -99,10 +84,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 						totalProperty  : 'total',
 						successProperty: 'success'
 					},
-					writer: {
+				/*	writer: {
 						type: 'json',
 						writeAllFields: false,
-					},
+					},*/
 				},
 		})
 		
@@ -179,17 +164,23 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		});
 		
 		//-----------------------grids--------------------
-		var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
+		this.firstGrid = Ext.create('canopsis.lib.view.cgrid', {
 			multiSelect: this.multiSelect,
 			opt_bar: false,
 			border: true,
 			flex : 1,
 			viewConfig: {
+				copy : true,
 				plugins: {
 					ptype: 'gridviewdragdrop',
 					dragGroup: 'firstGridDDGroup',
-					dropGroup: 'secondGridDDGroup'
+					//dropGroup: 'secondGridDDGroup'
 				},
+				/*listeners: {
+					drop: function(node, data, dropRec, dropPosition) {
+					var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+				}
+				}*/
 			},
 			store: this.InventoryStore,
 			columns: this.Win_columns,
@@ -197,10 +188,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			title: _('Inventory'),
 		});
 		
-		//needed to move page in paging from function searchFunction
-		this.firstGrid = firstGrid;
 
-		firstGrid.on('itemdblclick',function(grid, record, item, index){
+		this.firstGrid.on('itemdblclick',function(grid, record, item, index){
 			if (! this.multiSelect){
 				this.store.removeAt(0)
 			}
@@ -215,6 +204,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			opt_paging: false,
 			flex : 1,
 			viewConfig: {
+				copy : true,
 				plugins: {
 					ptype: 'gridviewdragdrop',
 					dropGroup: 'firstGridDDGroup'
@@ -304,7 +294,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			items : [this.searchForm,secondGrid]
 		})
 
-		this.add([displayPanel, firstGrid])
+		this.add([displayPanel, this.firstGrid])
 
 	/*	var displayPanel = Ext.create('Ext.Panel', {
 			layout: {
