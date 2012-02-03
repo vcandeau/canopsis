@@ -74,12 +74,19 @@
 				var form = winform.getForm()
 				if (winform.getForm().isValid()) { // make sure the form contains valid data before submitting
 					var passwd = form.getFieldValues().password;
-					passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
-					form.setValues({password : passwd_sha1});
+					
+					var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
+					var timestamp = Math.floor(Ext.Date.format(new Date(), 'U') / 10) * 10
+					console.log(timestamp)
+					var authkey = $.encoding.digests.hexSha1Str(passwd_sha1 + timestamp.toString());
+					console.log(passwd_sha1 + timestamp.toString())
+					console.log(authkey)
+					
+					form.setValues({password : authkey});
 					winform.getForm().submit({
 						method: 'GET',
 						params: {
-							shadow: 'True',
+							authkey: 'True',
 						},
 						success: function(form, action) {
 							var param = getURLParameter('url');	
@@ -90,7 +97,16 @@
 							}
 						},
 						failure: function(form, action) {
-							Ext.MessageBox.alert(_('authentification failed'), _('login or password incorrect'));
+							form.setValues({password : ''});
+							
+							if (action.response.status == 0){
+								Ext.MessageBox.alert(_('authentification failed'), _('Impossible to deal with webserver'));
+							}else if (action.response.status == 403){
+								Ext.MessageBox.alert(_('authentification failed'), _('Login or password invalid'), function(){
+									form.findField('password').focus(true)
+								});
+							}	
+							
 						}
 					});
 				} else { 
@@ -121,6 +137,7 @@
 				},{
 					fieldLabel: _('Password'),
 					name: 'password',
+					id: 'password',
 					inputType: 'password',
 					allowBlank:false
 				}],
