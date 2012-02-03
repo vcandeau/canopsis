@@ -19,19 +19,33 @@
 # ---------------------------------
 */
 Ext.define('canopsis.lib.form.field.cmetric' ,{
-	extend: 'Ext.grid.Panel',
+	extend: 'Ext.panel.Panel',
 	
 	logAuthor: '[cmetric]',
 	
-	hideHeaders : true,
+	//hideHeaders : true,
 	
+	//width: 700,
+	//title : _('choose metrics'),
+	minWidth: 300,
+	height: 250,
+	border : false,
+	
+	//bodyStyle: 'padding: 5px;',
+	
+	layout: {
+		type: 'hbox',
+		align: 'stretch',
+		//padding: 5,
+	},
+	/*
 	columns : [{
 					flex: 1,
 					sortable: false,
 					dataIndex: 'metric',
 					stripeRows : true
 	       		}],
-	
+	*/
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 		
@@ -50,20 +64,22 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				model: 'metric',
 				data : []
 		});
-		
+		/*
 		var addButton = Ext.create('Ext.Button', {
 							iconCls: 'icon-add',
 							text: _('Add')
 						})
 		
 		this.tbar = [ _('Select Metrics'),'->',addButton]
-		
+		*/
 		this.callParent(arguments);
 		
 		//binding addButton
-		addButton.on('click',this.addButton,this)
+		//addButton.on('click',this.addButton,this)
+		this.CreateStores()
+		this.CreateSelectionPanel()
 	},
-	
+	/*
 	addButton : function(){
 		if(this.nodeId){
 			this.createWindow()
@@ -71,7 +87,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			global.notify.notify(_('Missing'),_('you must choose a component/resource in the previous panel'))
 		}
 	},
-	
+	*/
 	setNodeId : function(nodeId){
 		log.debug('Setting NodeId', this.logAuthor)
 		this.nodeId = nodeId
@@ -110,18 +126,23 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		//-----------------------create buttons-------------------
 		var selectAllButton = Ext.create('Ext.button.Button',{
 			text : _('select All'),
+			dock : 'bottom',
 		})
 		selectAllButton.on('click', this.selectAllMetric,this)
 		
 		var finishButton = Ext.create('Ext.button.Button',{
 			text : _('finish'),
+			dock : 'bottom',
 		})
 		finishButton.on('click', this.finishButton,this)
 		
 		var clearButton = Ext.create('Ext.button.Button',{
 			text : _('clear'),
+			dock : 'bottom',
 		})
 		clearButton.on('click', function(){this.clearStore();this.metricFetched.load()},this)
+		
+		//this.addDocked([selectAllButton,clearButton,'->',finishButton])
 		
 		//-----------------------create panels------------------
 		
@@ -133,7 +154,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			flex : 1,
 			margins          : '0 2 0 0',
 			stripeRows : true,
-			bbar : [clearButton,selectAllButton,'->',finishButton],
+			bbar : [clearButton,'->',selectAllButton],
 			columns : [{
 					flex: 1,
 					sortable: false,
@@ -171,7 +192,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				},
 			}
 		})
-		
+		/*
 		this.selectionPanel = Ext.create('Ext.panel.Panel',{
 				//width: 700,
 				title : _('choose metrics'),
@@ -186,14 +207,15 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				},
 				items : [this.gridPanel1,this.gridPanel2]
 		})
-		
+		*/
+		this.add([this.gridPanel1,this.gridPanel2])
 	},
 	
 	selectAllMetric : function(){
 		this.store.add(this.metricFetched.getRange())
 		this.metricFetched.removeAll()
 	},
-	
+	/*
 	createWindow: function(){
 		this.CreateSelectionPanel()
 		var tabbedPanel = Ext.create('Ext.tab.Panel',{
@@ -218,10 +240,10 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.metricWindow.show()
 		tabbedPanel.setActiveTab(0)
 	},
-	
+	*/
 	finishButton : function(){
 		log.debug('clicked on finishbutton', this.logAuthor)
-		this.metricWindow.close()
+		//this.metricWindow.close()
 	},
 	
 	getValue : function(){
@@ -234,6 +256,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 	
 	setValue : function(data){
+		log.debug('rrrrrrr')
 		var metricModule = Ext.ModelManager.getModel('metric')
 		var metric = []
 		for( i in data){
