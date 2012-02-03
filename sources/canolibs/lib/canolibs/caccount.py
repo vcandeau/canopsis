@@ -20,7 +20,7 @@
 
 #import logging
 from crecord import crecord
-import hashlib
+import hashlib, time
 
 class caccount(crecord):
 	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], *args, **kargs):
@@ -65,12 +65,27 @@ class caccount(crecord):
 		return self.check_shadowpasswd(hashlib.sha1(str(passwd)).hexdigest())
 
 	def check_shadowpasswd(self, shadowpasswd):
-		rest_password = str(shadowpasswd).upper()
-		mongo_password = str(self.shadowpasswd).upper()
-		if mongo_password == rest_password:
+		shadowpasswd = str(shadowpasswd).upper()
+		if shadowpasswd == str(self.shadowpasswd).upper():
 			return True
 
 		return False
+		
+	def check_authkey(self, authkey):
+		authkey =  str(authkey).upper()
+		if authkey == str(self.make_authkey(self.shadowpasswd)).upper():
+			return True
+		
+		return False
+		
+	def make_shadow(self, passwd):
+		return hashlib.sha1(str(passwd)).hexdigest()
+		
+	def make_authkey(self, shadow=None):
+		if not shadow:
+			shadow = self.shadowpasswd
+			
+		return hashlib.sha1( str(shadow).upper() + str( int( time.time() / 10)*10 )  ).hexdigest()
 
 	def dump(self):
 		self.name = self.user
