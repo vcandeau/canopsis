@@ -144,7 +144,7 @@ if (jQuery){
 			//#########################################################################################################################
 			addRow: function(nb){
 					if (! nb) { nb = 1; }
-					options.container.height(options.container.height() + (nb * options.widget_height) + options.borderCorrection)
+					options.container.height(options.container.height() + (nb * options.widget_height))
 					if (options.grid){
 						remove_grid()
 						show_grid()
