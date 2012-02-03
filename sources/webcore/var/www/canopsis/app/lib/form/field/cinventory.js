@@ -19,36 +19,46 @@
 # ---------------------------------
 */
 Ext.define('canopsis.lib.form.field.cinventory' ,{
-	extend: 'Ext.grid.Panel',
+	extend: 'Ext.panel.Panel',
 
 	window: false,
 	multiSelect: true,
 	ids: false,
 	
-	last_search : '',
+	layout: {
+				type: 'hbox',
+				align: 'stretch',
+			},
 	
+	last_search : '',
+	defaults: { padding: 5 },
 	search_type : 'all',
 	search_source_type : 'all',
 	prefetch_id : '',
+	
+	height : 300,
+	
+	border : false,
 
 	//width: '100%',
 
 	initComponent: function() {
 		log.debug('[cinventory] - Initialize ...')
-
+		/*
 		this.tbar = [ _('Select Items'),'->',{
 			iconCls: 'icon-add',
 			text: _('Add'),
 			scope: this,
  			handler: this.DisplaySelWindow
                 }]
-
+		
 		if (! this.multiSelect){
 			this.grow = false
 		}
-
+		*/
 		var model = Ext.ModelManager.getModel('canopsis.model.event');
-		//var model = 'canopsis.model.event';
+
+		
 
 		this.Win_columns = [{
 					header: '',
@@ -74,9 +84,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.columns = this.Win_columns
 
+		
+
 		//------------------- create stores---------------
 		this.InventoryStore = Ext.create('canopsis.lib.store.cstore', {
-			
 				model: model,
 				pageSize: 10,
 				proxy: {
@@ -103,7 +114,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.callParent(arguments);
 		
-		//this.store.on('datachanged', function(){this.fireEvent('datachanged')},this)
+		this.DisplaySelWindow()
+		
 		this.relayEvents(this.store, ['datachanged'])
 	},
 
@@ -146,220 +158,195 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	},
 
 	DisplaySelWindow: function(field, options){
-		this.blur()
-		if (! this.window){
 
-			//--------------------stores-----------------
-			
-			var comboSourceTypeStore = Ext.create('Ext.data.Store', {
-				fields: ['name'],
-				data : [
-					{"name":"all"},
-					{"name":"component"},
-					{"name":"resource"}
-				]
-			});
+		//--------------------stores-----------------
+		
+		var comboSourceTypeStore = Ext.create('Ext.data.Store', {
+			fields: ['name'],
+			data : [
+				{"name":"all"},
+				{"name":"component"},
+				{"name":"resource"}
+			]
+		});
 
-			var comboTypeStore = Ext.create('Ext.data.Store', {
-				fields: ['name'],
-				data : [
-					{"name":"all"},
-					{"name":"check"},
-				]
-			});
-			
-			//-----------------------grids--------------------
-			var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
-				multiSelect: this.multiSelect,
-				opt_bar: false,
-				border: true,
-				flex : 1,
-				viewConfig: {
-					plugins: {
- 						ptype: 'gridviewdragdrop',
-						dragGroup: 'firstGridDDGroup',
-						dropGroup: 'secondGridDDGroup'
-					},
-					/*listeners: {
-						drop: function(node, data, dropRec, dropPosition) {
-							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-						}
- 					}*/
-        			},
-				store: this.InventoryStore,
-				columns: this.Win_columns,
-				stripeRows: true,
-				title: _('Inventory'),
-   			});
-   			
-   			//needed to move page in paging from function searchFunction
-   			this.firstGrid = firstGrid;
+		var comboTypeStore = Ext.create('Ext.data.Store', {
+			fields: ['name'],
+			data : [
+				{"name":"all"},
+				{"name":"check"},
+			]
+		});
+		
+		//-----------------------grids--------------------
+		var firstGrid = Ext.create('canopsis.lib.view.cgrid', {
+			multiSelect: this.multiSelect,
+			opt_bar: false,
+			border: true,
+			flex : 1,
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					dragGroup: 'firstGridDDGroup',
+					dropGroup: 'secondGridDDGroup'
+				},
+			},
+			store: this.InventoryStore,
+			columns: this.Win_columns,
+			stripeRows: true,
+			title: _('Inventory'),
+		});
+		
+		//needed to move page in paging from function searchFunction
+		this.firstGrid = firstGrid;
 
-			firstGrid.on('itemdblclick',function(grid, record, item, index){
-				if (! this.multiSelect){
-					this.store.removeAt(0)
-				}
-				this.store.add(record)
-			}, this);
+		firstGrid.on('itemdblclick',function(grid, record, item, index){
+			if (! this.multiSelect){
+				this.store.removeAt(0)
+			}
+			this.store.add(record)
+		}, this);
 
-			var secondGrid = Ext.create('canopsis.lib.view.cgrid', {
-				multiSelect: this.multiSelect,
-				opt_bar: false,
-				border: true,
-				opt_paging: false,
-				flex : 4,
-				viewConfig: {
-					plugins: {
-						ptype: 'gridviewdragdrop',
-						//dragGroup: 'secondGridDDGroup',
-						dropGroup: 'firstGridDDGroup'
-					},
-					listeners: {
-						drop: function(node, data, dropRec, dropPosition) {
-							if (! this.multiSelect){
-								if (dropPosition == 'after'){
-									this.store.removeAt(0)
-								}else{
-									this.store.removeAt(1)
-								}
+		var secondGrid = Ext.create('canopsis.lib.view.cgrid', {
+			multiSelect: this.multiSelect,
+			opt_bar: false,
+			border: true,
+			//width : 
+			opt_paging: false,
+			flex : 1,
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					dropGroup: 'firstGridDDGroup'
+				},
+				listeners: {
+					drop: function(node, data, dropRec, dropPosition) {
+						if (! this.multiSelect){
+							if (dropPosition == 'after'){
+								this.store.removeAt(0)
+							}else{
+								this.store.removeAt(1)
 							}
 						}
-	 				},
-				},		
-				store: this.store,
-				columns: this.Win_columns,
-				stripeRows: true,
-				//title: _('Selection'),
-   			});
+					}
+				},
+			},		
+			store: this.store,
+			columns: this.Win_columns,
+			stripeRows: true,
+			//title: _('Selection'),
+		});
 
-			secondGrid.on('itemdblclick',function(grid, record, item, index){
-				this.store.removeAt(index)
-			}, this);
+		secondGrid.on('itemdblclick',function(grid, record, item, index){
+			this.store.removeAt(index)
+		}, this);
 
-			this.on('itemdblclick',function(grid, record, item, index){
-				this.store.removeAt(index)
-			}, this);
+		this.on('itemdblclick',function(grid, record, item, index){
+			this.store.removeAt(index)
+		}, this);
 
-			//------------------Search Options-------------------
+		//------------------Search Options-------------------
 
-			comboSourceType = Ext.create('Ext.form.ComboBox', {
-				fieldLabel: _('Source type'),
-				store: comboSourceTypeStore,
-				queryMode: 'local',
-				displayField: 'name',
-				forceSelection: true,
-				editable: false,
-				value: this.search_source_type,
-				name : 'source_type'
-			});
+		comboSourceType = Ext.create('Ext.form.ComboBox', {
+			fieldLabel: _('Source type'),
+			store: comboSourceTypeStore,
+			queryMode: 'local',
+			displayField: 'name',
+			forceSelection: true,
+			editable: false,
+			value: this.search_source_type,
+			name : 'source_type'
+		});
 
-			comboType = Ext.create('Ext.form.ComboBox', {
-				fieldLabel: _('Type'),
-				store: comboTypeStore,
-				queryMode: 'local',
-				displayField: 'name',
-				forceSelection: true,
-				editable: false,
-				value: this.search_type,
-				name : 'type'
-			});
+		comboType = Ext.create('Ext.form.ComboBox', {
+			fieldLabel: _('Type'),
+			store: comboTypeStore,
+			queryMode: 'local',
+			displayField: 'name',
+			forceSelection: true,
+			editable: false,
+			value: this.search_type,
+			name : 'type'
+		});
 
-			this.searchForm = Ext.create('Ext.form.Panel', {
-				border: 0,
-				buttonAlign: 'right',
-				defaultType: 'textfield',
-				//bodyStyle: 'padding: 5px;',
-				//height: 100,
-				flex : 3,
+		this.searchForm = Ext.create('Ext.form.Panel', {
+			border: 0,
+			buttonAlign: 'right',
+			defaultType: 'textfield',
+			//bodyStyle: 'padding: 5px;',
+			//height: 100,
+			//flex : 1,
+			items: [{
+				fieldLabel: _('Search'),
+				name: 'search',
+				//allowBlank: false,
+			}],
+		});
+		
+		var searchButton = Ext.create('Ext.Button', {
+			text: _('Search'),
+		});
+
+		this.searchForm.add(comboSourceType);
+		this.searchForm.add(comboType);
+		this.searchForm.add(searchButton);
+
+		//----------------building dislay pannel---------------
+
+		var displayPanel = Ext.create('Ext.Panel', {
+			flex : 1,
+			layout: {
+				type: 'vbox',
+				align: 'stretch',
+				padding : '5 0 0 0',
+			}, 
+			border : false,
+			items : [this.searchForm,secondGrid]
+		})
+
+		this.add([displayPanel, firstGrid])
+
+	/*	var displayPanel = Ext.create('Ext.Panel', {
+			layout: {
+				type: 'vbox',
+				align: 'stretch',
+				padding: 5
+			},
+			title: _('Search'),
+			border: 1,
+			flex : 1,
+			items: [this.searchForm, secondGrid],
+			dockedItems: {
+				xtype: 'toolbar',
+				dock: 'bottom',
 				items: [{
-					fieldLabel: _('Search'),
-					name: 'search',
-					//allowBlank: false,
-				}],
-			});
-			
-			var searchButton = Ext.create('Ext.Button', {
-				text: _('Search'),
-			});
+					text: _('Empty selection'),
+					iconCls: 'icon-delete',
+					action: 'empty-selection'
+						},'->',{
+					text: _('Use Selection'),
+					iconCls: 'icon-save',
+					action: 'set-selection'
+						}]
+				}
+		});*/
 
-			this.searchForm.add(comboSourceType);
-			this.searchForm.add(comboType);
-			this.searchForm.add(searchButton);
+		
+		//---------------diplay and launch prefetch--------------------
 
-			//----------------building dislay pannel---------------
+		this.prefetch();
+		//show ---
+		//this.down('textfield[name="search"]').focus('', 700); 
 
-			var displayPanel = Ext.create('Ext.Panel', {
-				layout: {
-					type: 'vbox',
-					align: 'stretch',
-					padding: 5
-				},
-				title: _('Search'),
-				border: 1,
-				flex : 1,
-				items: [this.searchForm, secondGrid],
-				dockedItems: {
-					xtype: 'toolbar',
-					dock: 'bottom',
-					items: [{
-						text: _('Empty selection'),
-						iconCls: 'icon-delete',
-						action: 'empty-selection'
-            				},'->',{
-						text: _('Use Selection'),
-						iconCls: 'icon-save',
-						action: 'set-selection'
-            				}]
-      				}
-			});
-
-			log.debug('[cinventory] Create window')
-			this.window = Ext.create('widget.window', {
-				title: _('Inventory selection'),
-				closable: true,
-				closeAction: 'hide',
-				width: 700,
-				//minWidth: 350,
-				height: 400,
-				//bodyStyle: 'padding: 5px;',
-				layout: {
-					type: 'hbox',
-					align: 'stretch',
-					//padding: 5,
-				},
-				defaults: { padding: 5 },
-				items: [displayPanel, firstGrid]
-			});
-			
-			//---------------diplay and launch prefetch--------------------
-
-			this.window.show();
-			this.prefetch();
-			this.window.down('textfield[name="search"]').focus('', 700); 
-
-			//------------------------binding------------------------------
-
-			this.KeyNav = Ext.create('Ext.util.KeyNav', this.window.id, {
-				scope: this,
-				enter: this.searchFunction
-			});
-
-			// Bind Button
-			searchButton.on('click',this.searchFunction, this);
-			
-			Ext.ComponentQuery.query('#' + this.window.id + ' button[action=empty-selection]')[0].on('click', function(){
-				this.store.removeAll()
-			}, this);
-
-			Ext.ComponentQuery.query('#' + this.window.id + ' button[action=set-selection]')[0].on('click', function(){
-				this.window.hide()
-				this.InventoryStore.removeAll()
-			}, this);
-			
-		}else{
-			log.debug('[cinventory] Show window')
-			this.window.show()
-		}
+		//------------------------binding------------------------------
+		/*
+		this.KeyNav = Ext.create('Ext.util.KeyNav', displayPanel.id, {
+			scope: this,
+			enter: this.searchFunction
+		});
+		*/
+		// Bind Button
+		searchButton.on('click',this.searchFunction, this);
 	},
 
 	beforeDestroy : function() {
