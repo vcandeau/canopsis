@@ -25,6 +25,14 @@ Ext.define('canopsis.store.Widget', {
 	storeId: 'store.Widget',
 
 	autoLoad: true,
+	sortOnLoad: true,
+	
+	sorters: [
+        {
+            property : 'name',
+            direction: 'DESC'
+        }
+    ],
 	
 	proxy: {
 		type: 'rest',
