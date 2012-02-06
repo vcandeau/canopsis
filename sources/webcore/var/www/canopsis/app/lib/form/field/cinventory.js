@@ -40,8 +40,6 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	
 	border : false,
 
-	//width: '100%',
-
 	initComponent: function() {
 		log.debug('[cinventory] - Initialize ...')
 
@@ -102,6 +100,14 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		this.DisplaySelWindow()
 		
 		this.relayEvents(this.store, ['datachanged'])
+	},
+	
+	afterRender : function(){
+		this.callParent(arguments);
+		this.KeyNav = Ext.create('Ext.util.KeyNav', this.id, {
+			scope: this,
+			enter: this.searchFunction
+		});
 	},
 
 	LoadStore: function(ids) {
@@ -174,13 +180,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				plugins: {
 					ptype: 'gridviewdragdrop',
 					dragGroup: 'firstGridDDGroup',
-					//dropGroup: 'secondGridDDGroup'
 				},
-				/*listeners: {
-					drop: function(node, data, dropRec, dropPosition) {
-					var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-				}
-				}*/
 			},
 			store: this.InventoryStore,
 			columns: this.Win_columns,
@@ -283,7 +283,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		//----------------building dislay pannel---------------
 
-		var displayPanel = Ext.create('Ext.Panel', {
+		this.displayPanel = Ext.create('Ext.Panel', {
 			flex : 1,
 			layout: {
 				type: 'vbox',
@@ -294,32 +294,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			items : [this.searchForm,secondGrid]
 		})
 
-		this.add([displayPanel, this.firstGrid])
-
-	/*	var displayPanel = Ext.create('Ext.Panel', {
-			layout: {
-				type: 'vbox',
-				align: 'stretch',
-				padding: 5
-			},
-			title: _('Search'),
-			border: 1,
-			flex : 1,
-			items: [this.searchForm, secondGrid],
-			dockedItems: {
-				xtype: 'toolbar',
-				dock: 'bottom',
-				items: [{
-					text: _('Empty selection'),
-					iconCls: 'icon-delete',
-					action: 'empty-selection'
-						},'->',{
-					text: _('Use Selection'),
-					iconCls: 'icon-save',
-					action: 'set-selection'
-						}]
-				}
-		});*/
+		this.add([this.displayPanel, this.firstGrid])
 
 		
 		//---------------diplay and launch prefetch--------------------
@@ -329,15 +304,12 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		//this.down('textfield[name="search"]').focus('', 700); 
 
 		//------------------------binding------------------------------
-		/*
-		this.KeyNav = Ext.create('Ext.util.KeyNav', displayPanel.id, {
-			scope: this,
-			enter: this.searchFunction
-		});
-		*/
+
 		// Bind Button
 		searchButton.on('click',this.searchFunction, this);
 	},
+	
+
 
 	beforeDestroy : function() {
 		Ext.grid.Panel.superclass.beforeDestroy.call(this);
