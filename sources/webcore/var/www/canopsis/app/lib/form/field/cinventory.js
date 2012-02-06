@@ -97,7 +97,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		this.callParent(arguments);
 		
-		this.DisplaySelWindow()
+		this.createForm()
 		
 		this.relayEvents(this.store, ['datachanged'])
 	},
@@ -148,7 +148,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		}
 	},
 
-	DisplaySelWindow: function(field, options){
+	createForm: function(field, options){
 
 		//--------------------stores-----------------
 		
@@ -300,12 +300,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		//---------------diplay and launch prefetch--------------------
 
 		this.prefetch();
-		//show ---
 		//this.down('textfield[name="search"]').focus('', 700); 
 
 		//------------------------binding------------------------------
 
-		// Bind Button
 		searchButton.on('click',this.searchFunction, this);
 	},
 	
