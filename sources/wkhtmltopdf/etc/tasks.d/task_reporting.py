@@ -19,8 +19,7 @@ def render_pdf(filename, viewname, starttime, stoptime, account, wrapper_conf_fi
 													viewname,
 													starttime,
 													stoptime,
-													account.user,
-													account.shadowpasswd,
+													account,
 													wrapper_conf_file)
 		file_path = open(wrapper_conf_file, "r").read()
 		file_path = json.loads(file_path)['report_dir'] + "/" + filename
