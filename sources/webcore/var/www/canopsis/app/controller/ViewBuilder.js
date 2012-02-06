@@ -54,13 +54,13 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		
 		//if there is items load them
 		var items = item.get('items')
-		//log.dump(items)
 		if(items.length != 0){
 			this.form.jqDraggable._load(items)
 		}
-		//log.dump(this.form.jqDraggable._dump())
+
 		//load and disable name selection
 		this.form.edit = true
+		this.form.crecord_name = viewName
 		this.form.viewName.setValue(viewName)
 		this.form.viewName.setDisabled(true)
 		
@@ -167,7 +167,12 @@ Ext.define('canopsis.controller.ViewBuilder', {
 
 			//--------------------------general variable----------------------
 			var viewName = this.form.viewName.getValue()
-			record.set('crecord_name',viewName);
+			if(this.form.crecord_name){
+				record.set('crecord_name',this.form.crecord_name)
+			} else {
+				record.set('crecord_name',viewName);
+			}
+
 			record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 			record.set('template',this.form.template.getValue())
 			record.set('reporting',this.form.reporting.getValue())
