@@ -20,11 +20,11 @@
 
 import sys, os, signal, json
 from pwd import getpwnam
-from cinit import init
+from cinit import cinit
 
 DAEMON_NAME='snmp2amqp'
 
-init 		= init()
+init 		= cinit()
 logger 	= init.getLogger(DAEMON_NAME)
 
 RUN = False
