@@ -1,0 +1,45 @@
+#!/bin/bash
+#--------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+function export_view () {
+	while read line; do
+		FIELD=1
+		L_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
+		L_VERS=$(db_parse "version" "$line")
+		L_REL=$(db_parse "release" "$line")
+		L_STATUS=$(db_parse "status" "$line")
+		R_INFO=$(cat $REMOTE_DB_PATH | grep "^$L_PNAME|" | tail -n1)
+		if [[ -z "$R_INFO" ]];then
+			L_STATUS="\e[42m \033[0m Installed"
+			echo -e "$L_PNAME" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+		else
+			R_VERS=$(db_parse "version" "$R_INFO")
+			R_REL=$(db_parse "release" "$R_INFO")
+			if [ "$R_VERS" == "$L_VERS" ]; then
+				if [ "$R_REL" == "$L_REL" ]; then
+					L_STATUS="\e[42m \033[0m Up-to-date"
+					R_VERS_INFO=""
+					L_VERS_INFO=$L_VERS-$L_REL
+					echo -e "$L_PNAME" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+				fi
+			fi
+		fi
+	done < "$LOCAL_DB_PATH"
+}
