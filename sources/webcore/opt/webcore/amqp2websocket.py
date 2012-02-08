@@ -33,7 +33,7 @@ from ws4py.server.geventserver import UpgradableWSGIHandler, WebSocketServer
 
 import ConfigParser, os
 
-from cinit import init
+from cinit import cinit
 
 ########################################################
 #
@@ -43,7 +43,7 @@ from cinit import init
 DAEMON_NAME = "amqp2websocket"
 DAEMON_TYPE = "transport"
 
-init 	= init()
+init 	= cinit()
 
 amqp = None
 wsclients = []
