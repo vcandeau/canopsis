@@ -1,11 +1,11 @@
 from celery.task import task
-from cinit import init
+from cinit import cinit
 from caccount import caccount
 from cstorage import cstorage
 from cfile import cfile
 import os, sys, json
 
-init 	= init()
+init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
