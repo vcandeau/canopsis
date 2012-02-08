@@ -26,6 +26,9 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	draggable: false,
 	resizable:  false,
 	selectable: false,
+	debug: true,
+	
+	cls_jqGridable_widget_handle: '.x-panel-header',
 	
 	logAuthor: '[view][tabs][content][jqGridable]',
 	
@@ -36,14 +39,13 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	
 	_on_add_widget: function(id, jqwidget){
 		var div = Ext.create('Ext.panel.Panel', {
-			//id: id+'-extcmp',
-			//html_id: id,
+			id: id+'-extcmp',
 			border : false,
 			layout:'fit',
-			//margin: this.widget_margin,
+			margin: this.widget_margin,
 			renderTo: id+'-content',
 			//title: id,
-			height: $("#"+id).height()
+			height: $("#"+id).height() - (this.widget_margin * 2)
 		});
 		this.widget_list.push(div)
 		this.fireEvent('widgetAdd',id)
@@ -53,5 +55,34 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 		log.debug("Get Extjs widgets list", this.logAuthor)
 		return this.widget_list
 	},
+	
+	pause_widgets : function(){
+		for(var i in this.widget_list){
+			log.dump(this.widget_list[i])
+			this.widget_list[i].items.items[0].setDisabled(true)
+		}
+	},
+	
+		
+	_toggle_widget_handles: function(){
+	/*	if(this.handle_status){
+			for(var i in this.widget_list){
+				this.widget_list[i].header.hide()
+				this.handle_status = false
+				//this.widget_list[i].removeCls('.x-panel-header')
+			}
+		} else {
+			for(var i in this.widget_list){
+				if(this.widget_list[i].header){
+					this.widget_list[i].header.show()
+					this.handle_status = true
+				} else {
+					this.widget_list[i].setTitle('handle')
+					this.handle_status = true
+				}
+				//this.widget_list[i].addClass('.ext-forced-border-box')
+			}
+		}*/
+	}
 	
 })
