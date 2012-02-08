@@ -43,6 +43,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		
+		///////////////////////////////////////////////////////
+		///////////Edit and non edit mode//////////////////////
+		///////////////////////////////////////////////////////
+		
 		//Get view options
 		Ext.Ajax.request({
 			url: '/rest/object/view/'+this.view_id,
@@ -81,11 +85,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var items = this.view.items
 		
 		//populating view
-		if (items.length == 1 ) {
-			this.set_one_item(items)
-		} else {
+		//if (items.length == 1 ) {
+		//	this.set_one_item(items)
+		//} else {
 			this.set_many_items(items)
-		}
+		//}
 		
 		//if report mode
 		if(this.view.reporting){
@@ -107,8 +111,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('hide', function(){
 			this._onHide();
 		}, this);
+	    
+	    p = $.proxy(function(){this.toolbar_creation()},this)
 	},
-	
+/*
 	set_one_item : function(items){
 		log.debug(' + Use full mode ...', this.logAuthor)
 		this.layout = 'fit'
@@ -134,15 +140,15 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 		this.widgets.push(this.add(item))
 	},
-	
+	*/
 	set_many_items : function(items){
 		//setting jqgridable
-		var jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer',{view_widgets : items})
-		this.add(jqgridable)
+		this.jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer',{view_widgets : items})
+		this.add(this.jqgridable)
 		
-		jqgridable._load(items)
+		this.jqgridable._load(items)
 		
-		var widget_list = jqgridable.get_ext_widget_list()
+		var widget_list = this.jqgridable.get_ext_widget_list()
 		
 		//here processing on data
 		
@@ -155,6 +161,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			var item = items[i].data
 			
 			item['height'] = widget_list[i].height
+			item['style'] = {'z-index': 2000}
 			
 			if(this.view.reporting){
 				item.reportMode = true;
@@ -163,133 +170,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 	},
 	
-/*
-	setContent: function(){
-		var items = this.view.items;
-		var totalWidth = this.getWidth() - 20;
-		
-		//---------------General options---------------------
-		if(this.options.nodeId){
-			//if id specified by cgrid (on-the-fly view)
-			var nodeId = this.options.nodeId;
-		} else {
-			var nodeId = this.view.nodeId;
-		}
-		var refreshInterval = this.view.refreshInterval
-		var nbColumns = this.view.nbColumns
-		var rowHeight = this.view.rowHeight
-
-		if (! rowHeight) { rowHeight = 200 }
-		if (! refreshInterval) { refreshInterval = 0 }
-		if (! nbColumns || items.length == 1) { nbColumns = 1 }
-
-		this.layout.columns = nbColumns
-
-		log.debug('Create '+nbColumns+' column(s)..', this.logAuthor)
-		
-		//-----------------populating with widgets--------------
-		if (items.length == 1 ) {
-			//one widget, so full mode
-			log.debug(' + Use full mode ...', this.logAuthor)
-			this.layout = 'fit'
-			item = items[0]
-
-			log.debug('   + Add: '+item.xtype, this.logAuthor)
-
-			//item['height'] = '10'
-			item['width'] = '100%'
-			item['title'] = ''
-			item['fullmode'] = true
-			
-			//item['baseCls'] = 'x-plain'
-			item['mytab'] = this
-
-			//Set default options
-			if (! item.nodeId) { item.nodeId=nodeId}
-			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
-			
-			//add item in the view
-			//this.register(item,item.nodeId,item.refreshInterval);
-
-			if(this.view.reporting){
-				item.reportMode = true;
-			}
-
-			//var widget = this.add(item);
-			this.widgets.push(item)
-
-		}else{
-			//many widgets
-			//this.removeAll();
-
-			//fixing layout (table goes wild without it)
-			for (i; i<nbColumns; i++){
-				this.add({ html: '', border: 0, height: 0, padding:0})
-			}
-	
-			var ext_items = []
-			for(var i= 0; i < items.length; i++) {
-				log.debug(' - Item '+i+':', this.logAuthor)
-				var item = items[i]
-
-				log.debug('   + Add: '+item.xtype, this.logAuthor)
-
-				item['mytab'] = this
-				item['fullmode'] = false
-
-				var colspan = 1
-				var rowspan = 1
-
-				if (item['colspan']) { colspan = item['colspan'] }
-				if (item['rowspan']) { rowspan = item['rowspan'] }
-				
-				item['width'] = (totalWidth / nbColumns) * colspan
-
-				item['style'] = {padding: '3px'}
-
-				//Set default options
-				if (! item.nodeId) { item.nodeId=nodeId}
-				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
-				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
-				if (item.title){ item.border = true }
-
-				if(this.view.reporting){
-					item.reportMode = true;
-				}
-
-				//var widget = this.add(item);
-				this.widgets.push(item)
-			}
-		}
-
-		//Add items on layout
-		if (this.widgets){
-			this.widgets = this.add(this.widgets)
-		}
-		
-		//if report mode
-		if(this.view.reporting){
-			this.reportBar = Ext.create('canopsis.view.ReportingBar.ReportingBar');
-			this.addDocked(this.reportBar);
-			this.reportBar.requestButton.on('click',this.onReport,this);
-			this.reportBar.nextButton.on('click',this.nextReportButton,this);
-			this.reportBar.previousButton.on('click',this.previousReportButton,this);
-			this.reportBar.saveButton.on('click',this.saveButton,this);
-			this.reportBar.linkButton.on('click',this.linkButton,this);
-			this.reportBar.currentDate.on('select',this.onReport,this);
-			this.reportBar.combo.on('select',this.onReport,this);
-		}
-
-		//binding event to save resources
-		this.on('show', function(){
-			this._onShow();
-		}, this);
-		this.on('hide', function(){
-			this._onHide();
-		}, this);
-		
-	},
-*/
 	//---------------------Reporting functions--------------------
 	onReport: function(){
 		log.debug('Request reporting on a time', this.logAuthor)
@@ -387,6 +267,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				} 
 			});
 		}
+	},
+	
+	//--------------------------Editing toolbar------------------
+	
+	toolbar_creation : function(){
+		var test = Ext.create('canopsis.view.Tabs.WidgetToolbar',{jqgridable : this.jqgridable})
 	},
 	
 	//------------------------------------------------------------
