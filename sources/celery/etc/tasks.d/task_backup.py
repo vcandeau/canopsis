@@ -1,7 +1,6 @@
 from celery.task import task
 from subprocess import Popen, PIPE
 from tempfile import mkdtemp
-from time import strftime as date
 import logging, os, shutil
 
 @task
@@ -12,7 +11,7 @@ def mongo(host='localhost', output='/opt/canopsis/var/backups'):
 	logger.debug('Output: %s' % output)
 
 	logger.debug('Create temp dir')
-	archive_name = '%s_mongodb' % date('%d-%m-%Y')
+	archive_name = 'backup_mongodb'
 	tmp_dir = mkdtemp(prefix='/opt/canopsis/tmp/')
 	os.makedirs('%s/%s' % (tmp_dir, archive_name))
 
@@ -49,7 +48,7 @@ def config(output='/opt/canopsis/var/backups'):
 		os.makedirs(output)	
 
 	logger.debug('Create temp dir')
-	archive_name = '%s_config' % date('%d-%m-%Y')
+	archive_name = 'backup_config'
 	tmp_dir = mkdtemp(prefix='/opt/canopsis/tmp/')
 
 	logger.debug('Create file with installed packages')
