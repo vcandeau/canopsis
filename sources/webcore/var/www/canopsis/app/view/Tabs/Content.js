@@ -128,7 +128,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			newview.on('click',function(){
 					add_view_tab('TabsContent', '*'+ _('New') +' '+this.modelId, true, undefined, true, false, false)
 			},this)
-			
+			/*
+			var redraw = Ext.create('Ext.button.Button',{text: _('redraw')})
+			redraw.on('click',function(){
+					this.jqgridable.redraw()
+			},this)
+			*/
 			this.debugToolbar.add([editbutton,newview])
 			
 			this.addDocked(this.debugToolbar)
@@ -143,26 +148,16 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			url: '/rest/object/view/'+this.view_id,
 			scope: this,
 			success: function(response){
+				log.debug('ajax success')
 				data = Ext.JSON.decode(response.responseText)
 				this.view = data.data[0]
-
-				if (this.autoshow){
-					log.debug('refreshcontent')
-					this.setContent();
-				}else{
-					this.on('show', function (){
-						if (! this.displayed) {
-							this.setContent();
-							this.displayed = true;
-						}
-					}, this)
-				}
-
+				log.debug(this.view)
+				this.setContent();
 			},
 			failure: function (result, request) {
-					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-					log.error("Close tab, maybe not exist ...", this.logAuthor)
-					this.close();
+				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+				log.error("Close tab, maybe not exist ...", this.logAuthor)
+				this.close();
 			} 
 		});
 	},
@@ -302,8 +297,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	//--------------------------Editing toolbar------------------
 	
 	toolbar_creation : function(){
-		var test = Ext.create('canopsis.view.Tabs.WidgetToolbar',{jqgridable : this.jqgridable, view_name : this.view.crecord_name})
-		test.on('destroy',function(){this.refreshView()},this)
+		this.toolbar = Ext.create('canopsis.view.Tabs.WidgetToolbar',{jqgridable : this.jqgridable, view_name : this.view.crecord_name})
+		this.toolbar.on('viewSaved',function(){this.refreshView()},this)
 	},
 	
 	//------------------------------------------------------------
@@ -369,5 +364,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug("Destroy items ...", this.logAuthor)
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
  		log.debug(this.id + " Destroyed.", this.logAuthor)
+ 		if(this.toolbar){
+			this.toolbar.close()
+		}
  	}
 });

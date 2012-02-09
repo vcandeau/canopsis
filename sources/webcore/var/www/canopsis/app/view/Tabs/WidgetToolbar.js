@@ -110,6 +110,7 @@ Ext.define('canopsis.view.Tabs.WidgetToolbar' ,{
 		//------------------------------add put----------------------------
 		store.add(record)
 		this.close();
+		this.fireEvent('viewSaved')
 	},
 	
 	_get_widget_attribute : function(widget){
