@@ -1,11 +1,11 @@
 from celery.task import task
-from cinit import init
+from cinit import cinit
 from caccount import caccount
 from cstorage import cstorage
 from cfile import cfile
 import os, sys, json
 
-init 	= init()
+init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
@@ -19,8 +19,7 @@ def render_pdf(filename, viewname, starttime, stoptime, account, wrapper_conf_fi
 													viewname,
 													starttime,
 													stoptime,
-													account.user,
-													account.shadowpasswd,
+													account,
 													wrapper_conf_file)
 		file_path = open(wrapper_conf_file, "r").read()
 		file_path = json.loads(file_path)['report_dir'] + "/" + filename

@@ -22,15 +22,14 @@ from subprocess import Popen
 
 logger = logging.getLogger('WRAPPER')
 
-def load_conf(filename, viewname, starttime, stoptime, user, pwd, wrapper_conf_file):
+def load_conf(filename, viewname, starttime, stoptime, account, wrapper_conf_file):
 	conf = open(wrapper_conf_file, "r").read()
 	settings = json.loads(conf)
 	settings['filename'] = filename
 	settings['viewname'] = viewname
 	settings['starttime'] = starttime
 	settings['stoptime'] = stoptime
-	settings['user'] = user
-	settings['pwd'] = pwd
+	settings['account'] = account
 	return settings
 
 def check_xorg(lock, xvfb_cmd):
@@ -58,15 +57,23 @@ def check_report_dir(report_dir):
 		logger.debug(" [WK_WRAPPER] :: Create it at %s" % report_dir)
 		os.makedirs(report_dir)
 
-def	get_cookie(cookiejar, user, pwd):
+def	get_cookie(cookiejar, account):
+	authkey = account.make_authkey()
 	logger.debug(" [WK_WRAPPER] :: Recreate cookie (%s)" % cookiejar)
-	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?shadow=True\" /dev/null" % (cookiejar, user, pwd))
-	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?shadow=True\" /dev/null" % (cookiejar, user, pwd), shell=True)
+	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?authkey=True\" /dev/null" % (cookiejar, account.user, authkey))
+	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?authkey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
 
 	output.wait()
 	
 	if os.path.isfile(cookiejar):
-		logger.debug(" [WK_WRAPPER] :: Cookie created")
+		if os.stat(cookiejar).st_size==0:
+			logger.error(" [WK_WRAPPER] :: Error while cookie forging")
+			exit()
+		else:
+			logger.debug(" [WK_WRAPPER] :: Cookie created")
+	else:
+		logger.error(" [WK_WRAPPER] :: Error while cookie forging")
+		exit()
 
 def clean_x():
 	os.remove(XAUTH)
@@ -88,13 +95,12 @@ def run(settings):
 	report_dir		= settings['report_dir']
 	header			= settings['header']
 	footer			= settings['footer']
-	user			= settings['user']
-	pwd				= settings['pwd']
+	account			= settings['account']
 
 	check_xorg(xlock, xvfb_cmd)
 	export_env(display_int)
 	check_report_dir(report_dir)
-	get_cookie(cookiejar, user, pwd)
+	get_cookie(cookiejar, account)
 
 	runscript = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (viewname, starttime, stoptime)
 	opts = ' '.join(opts)
