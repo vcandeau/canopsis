@@ -23,7 +23,7 @@ function pre_install(){
 		echo "UUID=`uuidgen`" > $PREFIX/etc/uuid
 		check_code $?
 	fi
-	chmod 400 $PREFIX/etc/uuid
+	chmod 600 $PREFIX/etc/uuid
 
 	echo " + Create Canopsis user ('$HUSER')..."
 	groupadd $HGROUP &> /dev/null || true
