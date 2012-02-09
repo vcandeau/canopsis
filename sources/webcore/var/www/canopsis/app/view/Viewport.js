@@ -18,6 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+
 Ext.define('canopsis.view.Viewport', {
 	extend: 'Ext.container.Viewport',
 
@@ -31,11 +32,35 @@ Ext.define('canopsis.view.Viewport', {
 	items: [
 	{
 		region: 'north',
+		id: 'region-north',
 		border: false,
 		height: 30,
-		xtype: 'Mainbar',
-		//html: '<div id="div-header"><div id="title"><h1>Canopsis</h1></div><div id="logo"/></div>',
-		//id: 'main-header',
+		items: [{
+					xtype: 'Mainbar',
+					height: 30,
+				}],
+		xtype: 'panel',
+		border: false,
+		collapsed: false,
+		collapsible: true,
+		preventHeader: true,
+		placeholder: Ext.create('Ext.panel.Header', {
+			height: 5,
+			listeners: {
+				mouseover: {
+					element : 'el',
+					fn : function(){ Ext.getCmp('region-north').expand(); }
+				},
+			}
+		 }),
+		  
+		listeners: {
+			dblclick: {
+				element : 'body',
+				fn : function(){ Ext.getCmp('region-north').collapse(); }
+			},
+		},
+ 
 	},{
 		region: 'center',
 		border: false,
