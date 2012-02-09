@@ -227,7 +227,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	
 	//function call when finish widget wizard
 	_saveWidgetForm : function(id){
-		data = this.widgetWizard.get_variables()
+		var data = this.widgetWizard.get_variables()
 		this.stock_in_widget(id,data)
 		//log.dump(data)
 		var content = Ext.encode(data)
