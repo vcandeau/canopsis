@@ -64,26 +64,4 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 		this.fireEvent('widgetDblclick',widget)
 	},
 	
-		
-	_toggle_widget_handles: function(){
-	/*	if(this.handle_status){
-			for(var i in this.widget_list){
-				this.widget_list[i].header.hide()
-				this.handle_status = false
-				//this.widget_list[i].removeCls('.x-panel-header')
-			}
-		} else {
-			for(var i in this.widget_list){
-				if(this.widget_list[i].header){
-					this.widget_list[i].header.show()
-					this.handle_status = true
-				} else {
-					this.widget_list[i].setTitle('handle')
-					this.handle_status = true
-				}
-				//this.widget_list[i].addClass('.ext-forced-border-box')
-			}
-		}*/
-	}
-	
 })
