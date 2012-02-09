@@ -141,7 +141,7 @@ def main(argv):
 				print('Error: Invalid json file (crontab and timedelta in same task)')
 				usage()
 				sys.exit()		
-			if not timedelta or crontab:
+			if not timedelta and not crontab:
 				print('Error: Invalid json file (must have a crontab or a timedelta at least)')
 				usage()
 				sys.exit()
