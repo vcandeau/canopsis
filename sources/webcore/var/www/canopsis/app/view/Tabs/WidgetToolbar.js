@@ -29,6 +29,11 @@ Ext.define('canopsis.view.Tabs.WidgetToolbar' ,{
 		},this)
 		
 		this.nameArea = Ext.create('Ext.form.TextField',{fieldLabel : _("View's name"), name: 'viewName',forceSelection : true})
+		if(this.view_name){
+			this.nameArea.setValue(this.view_name)
+			this.nameArea.setDisabled(true)
+		}
+		
 		
 		this.add([saveButton,addRowButton,addColumnButton,'|',this.nameArea])
 	
@@ -40,18 +45,10 @@ Ext.define('canopsis.view.Tabs.WidgetToolbar' ,{
 	},
 	
 	openWidgetWizard :function(id){
-		log.debug('warning opened wizard')
-		log.debug(id)
-		
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
 		this.widgetWizard.show()
-		
-		var finishButton = this.widgetWizard.down('[action=finish]')
-		finishButton.on('click', function(){
-				var new_data = this.widgetWizard.get_variables()
-				this.jqgridable.set_data(id,new_data)
-				this.widgetWizard.destroy()
-			},this)
+		//log.debug('widget id : ' + id)
+		this.bindFinishButton(this.widgetWizard, id)
 	},
 	
 	editWidgetWizard : function(widget){
@@ -60,14 +57,17 @@ Ext.define('canopsis.view.Tabs.WidgetToolbar' ,{
 		
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{edit: true,widgetData : data})
 		this.widgetWizard.show()
-		//this.disable()
-		var finishButton = this.widgetWizard.down('[action=finish]')
+
+		this.bindFinishButton(this.widgetWizard, id)
+	},
+	
+	bindFinishButton : function(window, id){
+		var finishButton = window.down('[action=finish]')
 		finishButton.on('click', function(){
-				var new_data = this.widgetWizard.get_variables()
+				var new_data = window.get_variables()
 				this.jqgridable.set_data(id,new_data)
-				this.widgetWizard.destroy()
+				window.destroy()
 			},this)
-		
 	},
 	
 	saveView : function(){
@@ -98,7 +98,6 @@ Ext.define('canopsis.view.Tabs.WidgetToolbar' ,{
 			widget.position = dump[i].position
 			widget.id = dump[i].id
 			widget.data = widgetData
-			
 			widget_list.push(widget)
 		}
 		
@@ -123,6 +122,9 @@ Ext.define('canopsis.view.Tabs.WidgetToolbar' ,{
 				return true
 			}
 		}, this)
+		log.debug(_index)
+		log.debug(widget)
+		//if(_index != -1){
 		var attr_list = widgetStore.getAt(_index).get('options')
 		
 		for(var i in attr_list){
