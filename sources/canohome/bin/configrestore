@@ -48,9 +48,15 @@ tmp_dir=$(mktemp -d --tmpdir=$HOME/tmp)
 echo " :: Extract config archive into temp dir"
 unzip $FULLPATH -d $tmp_dir
 echo " :: Apply config files"
-cp -R $tmp_dir/$ARCHIVE/* $HOME/etc
+cp -a $tmp_dir/$ARCHIVE/. $HOME/etc
+#cp -R $tmp_dir/$ARCHIVE/.* $HOME/etc
 echo " :: Clean temp dir"
 rm -r $tmp_dir
+if ! [ -f $HOME/etc/.packages ]; then
+	echo " ## File .packages not exist in your archive"
+	echo " ## Packages wont be reinstall"
+	exit 1
+fi
 echo " :: Reinstall packages"
 while read line; do 
 	packages="$packages $line"
