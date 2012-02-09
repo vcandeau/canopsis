@@ -24,12 +24,12 @@ class cfile(crecord):
 		crecord.__init__(self, *args, **kargs)
 		self.type = 'bin'
 
-	def put_data(self, bin_data, file_name, content_type):
+	def put_data(self, bin_data, file_name=None, content_type=None):
 		self.data['bin_data'] = bin_data
 		self.data['file_name'] = file_name
 		self.data['content_type'] = content_type 
 
-	def put_file(self, path, file_name, content_type):
+	def put_file(self, path, file_name=None, content_type=None):
 		self.data['bin_data'] = open(path,'r').read()
 		self.data['file_name'] = file_name
 		self.data['content_type'] = content_type 
