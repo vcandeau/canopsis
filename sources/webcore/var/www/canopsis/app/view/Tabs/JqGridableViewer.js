@@ -26,7 +26,7 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	draggable: false,
 	resizable:  false,
 	selectable: false,
-	debug: true,
+	debug: false,
 	
 	cls_jqGridable_widget_handle: '.x-panel-header',
 	
