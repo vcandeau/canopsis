@@ -23,13 +23,7 @@
 /* little fix given on http://www.sencha.com/forum/showthread.php?136583-A-combobox-bug-of-extjs-4.0.2/page2
  * related to combobox bug, this bug is fixed in extjs4.0.6 , do not need this if
  * the extjs version is upgrated*/
-Ext.override(Ext.form.field.ComboBox, {
-    onDestroy: function() {
-        this.bindStore(null);
 
-        this.callParent();
-    }
-});
 
 //-----------------------------------------//
 
