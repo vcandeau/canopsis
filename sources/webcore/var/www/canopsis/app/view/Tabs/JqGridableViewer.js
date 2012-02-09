@@ -26,7 +26,7 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	draggable: false,
 	resizable:  false,
 	selectable: false,
-	debug: true,
+	debug: false,
 	
 	cls_jqGridable_widget_handle: '.x-panel-header',
 	
@@ -37,7 +37,8 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 		this.widget_list = []
 	},
 	
-	_on_add_widget: function(id, jqwidget){
+	_on_add_widget: function(event, options, id, jqwidget){
+		log.debug("[jqGridable] - on add widget")
 		var div = Ext.create('Ext.panel.Panel', {
 			id: id+'-extcmp',
 			border : false,
@@ -50,17 +51,17 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 		this.widget_list.push(div)
 		this.fireEvent('widgetAdd',id)
 	},
-	
-	get_ext_widget_list : function(){
-		log.debug("Get Extjs widgets list", this.logAuthor)
-		return this.widget_list
-	},
-	
+
 	pause_widgets : function(){
+		log.debug("[jqGridable] - pause widgets")
 		for(var i in this.widget_list){
 			log.dump(this.widget_list[i])
 			this.widget_list[i].items.items[0].setDisabled(true)
 		}
+	},
+	
+	_on_widget_dblclick : function(event, options,id,widget){
+		this.fireEvent('widgetDblclick',widget)
 	},
 	
 		
