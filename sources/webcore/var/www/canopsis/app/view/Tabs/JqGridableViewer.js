@@ -26,7 +26,7 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 	draggable: false,
 	resizable:  false,
 	selectable: false,
-	debug: false,
+	debug: true,
 	
 	cls_jqGridable_widget_handle: '.x-panel-header',
 	
@@ -45,7 +45,6 @@ Ext.define('canopsis.view.Tabs.JqGridableViewer' ,{
 			layout:'fit',
 			margin: this.widget_margin,
 			renderTo: id+'-content',
-			//title: id,
 			height: $("#"+id).height() - (this.widget_margin * 2)
 		});
 		this.widget_list.push(div)
