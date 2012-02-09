@@ -33,7 +33,7 @@ def list_crons():
 			schedule['schedule'] = ret_timedelta 
 		if record.data.has_key('crontab'):
 			ret_crontab = crontab(**record.data['crontab'])			
-			schedules['schedule'] = ret_schedule
+			schedules['schedule'] = ret_crontab
 		
 		schedules[record.data['name']] = schedule
 
