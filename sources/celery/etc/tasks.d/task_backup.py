@@ -1,5 +1,5 @@
 from celery.task import task
-from subprocess import Popen
+from subprocess import Popen, PIPE
 from tempfile import mkdtemp
 from time import strftime as date
 import logging, os, shutil
@@ -52,9 +52,16 @@ def config(output='/opt/canopsis/var/backups'):
 	archive_name = '%s_config' % date('%d-%m-%Y')
 	tmp_dir = mkdtemp(prefix='/opt/canopsis/tmp/')
 
+	logger.debug('Create file with installed packages')
+	export_output = Popen('pkgmgr export', shell=True, stdout=PIPE)
+	export_output.wait()
+	f = open('/opt/canopsis/etc/.packages', 'w')
+	f.writelines(export_output.stdout.read())
+	f.close()
+
 	logger.debug('Copy config files into tmp folder')
 	shutil.copytree('/opt/canopsis/etc', '%s/%s' % (tmp_dir, archive_name))
-
+	
 	logger.debug('Create archive into %s' % output)
 	logger.debug('Archive name: %s' % archive_name)
 	shutil.make_archive('%s/%s' % (output, archive_name),
