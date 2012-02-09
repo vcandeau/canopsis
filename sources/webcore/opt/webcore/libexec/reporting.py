@@ -50,14 +50,6 @@ logger = logging.getLogger('Reporting')
 def generate_report(startTime, stopTime,view_name):
 	account = get_account()
 
-	try:
-		user 	= account.user
-		pwd		= account.shadowpasswd
-	except Exception, err:
-		logger.debug(user + "/" + pwd + "(" + err + ")")
-	
-	logger.debug(user + "/" + pwd)
-	
 	name_array = view_name.split('.')
 	file_name = name_array[len(name_array)-1]
 	file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'

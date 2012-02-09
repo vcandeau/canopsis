@@ -23,13 +23,13 @@ from pyparsing import Word, alphas, Suppress, Combine, nums, string, Optional, R
 
 from camqp import camqp
 
-from cinit import init
+from cinit import cinit
 
 import cevent
 
 DAEMON_NAME='gelf2amqp'
 
-init 	= init()
+init 	= cinit()
 logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 

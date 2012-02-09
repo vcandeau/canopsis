@@ -89,6 +89,7 @@ set -E
 . $HOME/lib/pkgmgr/lock 
 . $HOME/lib/pkgmgr/extract 
 . $HOME/lib/pkgmgr/completion
+. $HOME/lib/pkgmgr/export
 
 mkdir -p $HOME/var/log
 touch $LOG_FILE
@@ -171,7 +172,7 @@ check_args () {
 ACTION=$1
 OPT=$2
 
-if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate)$ ]]; then
+if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate|xexport)$ ]]; then
 
 	log_info "Create local db file"
 	touch $LOCAL_DB_PATH 2>&1 | tee -a $LOG_FILE
@@ -226,6 +227,8 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 		create_view && exit $?; fi
 	if [ "x$ACTION" = "xclean" ]; then 
 		clean_cache && exit $?; fi
+	if [ "x$ACTION" = "xexport" ]; then
+		export_view && exit $?; fi
 	show_help
 else
 	show_help

@@ -31,6 +31,7 @@ show_help () {
 	echo "   update                         ->  Update local database"
 	echo "   list                           ->  List packages"
 	echo "   clean                          ->  Clean cache"
+	echo "   export                         ->  List installed package(s) for export"
 	echo "   help                           ->  Print this help"
 	echo
 	echo " :: Options"

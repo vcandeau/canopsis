@@ -33,7 +33,7 @@ from pyperfstore import mongostore
 
 from ctools import parse_perfdata
 
-from cinit import init
+from cinit import cinit
 
 ########################################################
 #
@@ -44,7 +44,7 @@ from cinit import init
 DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
-init 	= init()
+init 	= cinit()
 logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 

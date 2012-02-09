@@ -24,14 +24,14 @@ import bottle
 from bottle import route, run, static_file, redirect
 from beaker.middleware import SessionMiddleware
 
-from cinit import init
+from cinit import cinit
 from ctools import dynmodloads
 
 import ConfigParser, os
 
 from gevent import monkey; monkey.patch_all()
 
-init 	= init()
+init 	= cinit()
 
 ## Configurations
 
