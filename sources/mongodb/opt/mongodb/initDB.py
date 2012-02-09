@@ -61,38 +61,38 @@ storage.put([group1, group2])
 record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
 record1.chmod('o+r')
 record1.data['rowHeight'] =  300
-record1.data['items'] = [{'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'}]
+record1.data['items'] = [{'position':{'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'},'id': 'widget-dashboard'}]
 storage.put(record1)
 
 record1 = crecord({'_id': 'view.components' }, type='view', name='Components')
 record1.chmod('o+r')
-record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"component"}', 'show_resource': False} ]
+record1.data['items'] = [ { 'position': {'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{'xtype': 'list', 'filter': '{"source_type":"component"}', 'show_resource': False},'id':'widget-components'} ]
 storage.put(record1)
 
 record1 = crecord({'_id': 'view.resources' }, type='view', name='Resources')
 record1.chmod('o+r')
-record1.data['items'] = [ { 'xtype': 'list', 'filter': '{"source_type":"resource"}'} ]
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{ 'xtype': 'list', 'filter': '{"source_type":"resource"}'},'id': 'widget-resources'} ]
 storage.put(record1)
 
 record1 = crecord({'_id': 'view.ComponentDetails' }, type='view', name='Component Details')
 record1.chmod('o+r')
-record1.data['items'] = [ { 'xtype': 'states'} ]
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{'xtype': 'states'},'id': 'widget-states'} ]
 record1.data['template'] = True
 storage.put(record1)
 
 ### Account
 record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
-record1.data['items'] = [ { 'xtype': 'AccountGrid'} ]
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'AccountGrid'},'id': 'widget-accounts'} ]
 storage.put(record1)
 
 ### Group
 record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
-record1.data['items'] = [ { 'xtype': 'GroupGrid'} ]
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'GroupGrid'},'id': 'widget-group-manager'} ]
 storage.put(record1)
 
 ### Views
 record1 = crecord({'_id': 'view.config_editor' }, type='view', name='Views')
-record1.data['items'] = [ { 'xtype': 'ViewBuilder'} ]
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewBuilder'},'id': 'widget-view-editor'} ]
 record1.chmod('o+r')
 storage.put(record1)
 
