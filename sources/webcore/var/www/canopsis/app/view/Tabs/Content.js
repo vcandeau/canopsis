@@ -23,14 +23,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	alias : 'widget.TabsContent',
 
 	logAuthor: '[view][tabs][content]',
-    
-	//style: {borderWidth:'0px'},
 
 	autoScroll: true,
 	
 	border: false,
 
-	displayed: false,
+	//displayed: false,
 
 	items: [],
     
@@ -43,7 +41,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		
-		if(this.view_id != 'TabsContent'){
+		//if(this.view_id != 'TabsContent'){
 			//Get view options
 			Ext.Ajax.request({
 				url: '/rest/object/view/'+this.view_id,
@@ -70,14 +68,14 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 						this.close();
 				} 
 			});
-		} else {
-			this.setContent();
-		}
+		//} else {
+		//	this.setContent();
+		//}
 
 		this.on('beforeclose', this.beforeclose)
 		
 		//create mask
-		this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
+		//this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
 		
 	},
 	
@@ -88,11 +86,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.set_items(items)
 		} else {
 			this.set_items()
-			
+			/*
 			this.jqgridable.on('afterRender', function(){
-					Ext.create('canopsis.view.Tabs.WidgetToolbar',{jqgridable : this.jqgridable})
+					this.toolbar = Ext.create('canopsis.view.Tabs.WidgetToolbar',{jqgridable : this.jqgridable})
+					this.toolbar.on('viewSaved',function(view_id){this.refreshView(view_id)},this)
 				},this)
-			
+			*/
 		}
 		/*
 		//if report mode
@@ -115,7 +114,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('hide', function(){
 			this._onHide();
 		}, this);
-	    
+	    /*
 	    if(!this.debugToolbar){
 			this.debugToolbar = Ext.create('Ext.toolbar.Toolbar')
 			var editbutton = Ext.create('Ext.button.Button',{text: _('edit mode')})
@@ -126,26 +125,31 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			
 			var newview = Ext.create('Ext.button.Button',{text: _('new view')})
 			newview.on('click',function(){
-					add_view_tab('TabsContent', '*'+ _('New') +' '+this.modelId, true, undefined, true, false, false)
+					add_view_tab('TabsContent', '*'+ _('New') +' '+this.modelId, true, {newView : true}, true, false, false)
 			},this)
 			/*
 			var redraw = Ext.create('Ext.button.Button',{text: _('redraw')})
 			redraw.on('click',function(){
 					this.jqgridable.redraw()
 			},this)
-			*/
+			
 			this.debugToolbar.add([editbutton,newview])
 			
 			this.addDocked(this.debugToolbar)
 		}
+		*/
 	},
 	
-	refreshView: function(){
+	refreshView: function(view_id){
 		log.debug(' refresh view  ')
+		log.dump(this)
 		this.jqgridable.destroy()
 		//try to not reload all
+		if(!view_id){
+			var view_id = this.view_id
+		}
 		Ext.Ajax.request({
-			url: '/rest/object/view/'+this.view_id,
+			url: '/rest/object/view/'+view_id,
 			scope: this,
 			success: function(response){
 				log.debug('ajax success')
@@ -158,17 +162,19 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 				log.error("Close tab, maybe not exist ...", this.logAuthor)
 				this.close();
-			} 
+			}
 		});
+	
 	},
 	
 	set_items : function(items){
 		log.debug('set items', this.logAuthor)
 		if(items){
-			this.jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer',{
-					view_widgets : items
+			this.jqgridable = Ext.create('Ext.jq.Gridable',{
+					items : items
 			})
 			this.add(this.jqgridable)
+			/*
 			this.jqgridable._load(items)
 			
 			var widget_list = this.jqgridable.get_ext_widget_list()
@@ -182,17 +188,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				}
 				this.widgets.push(widget_list[i].add(item))
 			}
-			
+			*/
 		} else {
-			this.jqgridable = Ext.create('canopsis.view.Tabs.JqGridableViewer')
+			this.jqgridable = Ext.create('Ext.jq.Gridable')
 			this.add(this.jqgridable)
 		}
-		
-		//here processing on data
-		
-		//globalNodeId
-		//refresh interval
-
 	},
 	
 	//---------------------Reporting functions--------------------
@@ -295,12 +295,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 	
 	//--------------------------Editing toolbar------------------
-	
+	/*
 	toolbar_creation : function(){
 		this.toolbar = Ext.create('canopsis.view.Tabs.WidgetToolbar',{jqgridable : this.jqgridable, view_name : this.view.crecord_name})
 		this.toolbar.on('viewSaved',function(){this.refreshView()},this)
 	},
-	
+	*/
 	//------------------------------------------------------------
 	_maskInit: function(){
 		this.mask.show();
