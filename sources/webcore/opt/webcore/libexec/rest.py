@@ -37,22 +37,22 @@ logger = logging.getLogger("rest")
 #########################################################################
 
 #### GET
-@get('/rest/:namespace/:ctype/:_id',apply=[check_auth])
-@get('/rest/:namespace/:ctype',apply=[check_auth])
-@get('/rest/:namespace',apply=[check_auth])
+@get('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
+@get('/rest/:namespace/:ctype',		apply=[check_auth])
+@get('/rest/:namespace',		apply=[check_auth])
 def rest_get(namespace, ctype=None, _id=None):
 	
 	#get the session (security)
 	account = get_account()
 
-	limit = int(request.params.get('limit', default=20))
-	page =  int(request.params.get('page', default=0))
-	start =  int(request.params.get('start', default=0))
-	groups = request.params.get('groups', default=None)
-	search = request.params.get('search', default=None)
-	filter = request.params.get('filter', default=None)
-	sort = request.params.get('sort', default=None)
-	onlyWritable = request.params.get('onlyWritable', default=False)
+	limit		= int(request.params.get('limit', default=20))
+	page		= int(request.params.get('page', default=0))
+	start		= int(request.params.get('start', default=0))
+	groups		= request.params.get('groups', default=None)
+	search		= request.params.get('search', default=None)
+	filter		= request.params.get('filter', default=None)
+	sort		= request.params.get('sort', default=None)
+	onlyWritable	= request.params.get('onlyWritable', default=False)
 
 	if filter:
 		filter = json.loads(filter)
@@ -178,8 +178,8 @@ def rest_put(namespace, ctype):
 	storage.put(record, account=account)
 	
 #### POST
-@post('/rest/:namespace/:ctype/:_id', apply=[check_auth])
-@post('/rest/:namespace/:ctype', apply=[check_auth])
+@post('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
+@post('/rest/:namespace/:ctype',	apply=[check_auth])
 def rest_put(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
@@ -245,8 +245,8 @@ def rest_put(namespace, ctype, _id=None):
 	storage.put(record, account=account)
 
 #### DELETE
-@delete('/rest/:namespace/:ctype/:_id',apply=[check_auth])
-@delete('/rest/:namespace/:ctype',apply=[check_auth])
+@delete('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
+@delete('/rest/:namespace/:ctype',	apply=[check_auth])
 def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace)

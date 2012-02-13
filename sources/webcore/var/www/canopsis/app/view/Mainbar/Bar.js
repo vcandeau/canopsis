@@ -60,6 +60,11 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				xtype: 'container',
 				html: "<div class='cps-account' >"+global.account.firstname+" "+global.account.lastname+"</div>",
 				flex:2.3
+			},{
+				iconCls: 'icon-user',
+				flex : 0.2,
+				menu: []
+
 			},'-',{
 				iconCls: 'icon-preferences',
 				flex : 0.2,
