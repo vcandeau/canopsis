@@ -34,10 +34,10 @@ Ext.define('canopsis.view.Viewport', {
 		region: 'north',
 		id: 'region-north',
 		border: false,
-		height: 30,
+		height: 27,
 		items: [{
 					xtype: 'Mainbar',
-					height: 30,
+					height: 26,
 				}],
 		xtype: 'panel',
 		border: false,
