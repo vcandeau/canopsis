@@ -21,8 +21,9 @@
 /* Toolbars */
 .Mainbar{
 	border: 0px;
-	background-image: none;
-	background: #2d2d2d;
+	/*background: #2d2d2d;*/
+	background: url(../images/mainbar-back.png) repeat-x;
+	vertical-align: bottom;
 }
 
 .Mainbar .cps-title, .cps-account{
@@ -31,7 +32,7 @@
 }
 
 .Mainbar .cps-title{
-	font-size: 20px;
+	font-size: 18px;
 	text-shadow: 1px 1px 1px #ede6e6;
 	padding: 0px 0px 0px 20px;
 	float: left;
