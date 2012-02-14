@@ -26,21 +26,13 @@ from bottle import route, get, put, delete, request, HTTPError, response
 #import protection function
 from libexec.auth import check_auth, get_account
 
-## Logger
-if bottle.debug:
-	logging_level=logging.DEBUG
-else:
-	logging_level=logging.INFO
-logging.basicConfig(level=logging_level,
-		format='%(asctime)s %(name)s %(levelname)s %(message)s',
-)
-logger = logging.getLogger("rest")
-
 # Modules
 from pyperfstore import pmath
 from pyperfstore import node
 from pyperfstore import mongostore
 from ctools import parse_perfdata
+
+logger = logging.getLogger("perfstore")
 
 perfstore = mongostore(mongo_collection='perfdata')
 
