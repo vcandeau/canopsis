@@ -256,7 +256,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 	
 	setValue : function(data){
-		log.debug('rrrrrrr')
 		var metricModule = Ext.ModelManager.getModel('metric')
 		var metric = []
 		for( i in data){
