@@ -32,7 +32,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	
 	title : 'Widget Wizard',
 	
-	edit : false,
+	data : undefined,
 	
 	logAuthor : '[widget wizard]',
 
@@ -85,9 +85,9 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
 		]
 		
-		if(this.edit){
-			log.debug('editmode')
-			this._edit(this.widgetData)
+		if(this.data){
+			//log.debug('editmode')
+			this._edit(this.data)
 		}
 	},
 
@@ -166,6 +166,12 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 				item.setNodeId(nodeId);
 			}
 		}
+	},
+	
+	finish_button: function(){
+		log.debug('save button',this.logAuthor)
+		this.fireEvent('save', this.widgetId ,this.get_variables())
+		this.close()
 	},
 	
 
