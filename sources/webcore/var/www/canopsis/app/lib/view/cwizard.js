@@ -115,6 +115,12 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		for (i in btns){
 			btns[i].on('click', this.cancel_button, this)
 		}
+		//---------------------finish button-------------------
+		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]')
+		for (i in btns){
+			btns[i].on('click', this.finish_button, this)
+		}
+		
 	},
 	
 	add_new_step: function(step){
@@ -338,6 +344,12 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	cancel_button: function(){
 		log.debug('cancel button',this.logAuthor)
 		this.destroy()
+	},
+	
+	finish_button: function(){
+		log.debug('save button',this.logAuthor)
+		this.fireEvent('save', this.get_variables())
+		this.close()
 	},
 	
 });
