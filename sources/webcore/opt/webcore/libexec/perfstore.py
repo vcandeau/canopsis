@@ -32,9 +32,13 @@ from pyperfstore import node
 from pyperfstore import mongostore
 from ctools import parse_perfdata
 
+import ConfigParser
+config = ConfigParser.RawConfigParser()
+config.read(os.path.expanduser('~/etc/cstorage.conf'))
+
 logger = logging.getLogger("perfstore")
 
-perfstore = mongostore(mongo_collection='perfdata')
+perfstore = mongostore(mongo_collection='perfdata', mongo_host=config.get("master", "host"), mongo_port=config.getint("master", "port"))
 
 #########################################################################
 
