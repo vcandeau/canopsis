@@ -272,7 +272,7 @@ class cstorage(object):
 		else:
 			return records
 
-	def get(self, _id_or_ids, account=None, namespace=None, return_type='cfile'):
+	def get(self, _id_or_ids, account=None, namespace=None):
 		if not account:
 			account = self.account
 
@@ -483,7 +483,7 @@ class cstorage(object):
 
 ## Cache storage
 STORAGES = {}
-def get_storage(namespace='object', account=None, logging_level=logging.INFO):
+def get_storage(namespace='object', account=None, logging_level=logging.ERROR):
 	global STORAGES
 	try:
 		return STORAGES[namespace]
