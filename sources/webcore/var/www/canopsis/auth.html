@@ -77,7 +77,7 @@
 					
 					var passwd_sha1 = $.encoding.digests.hexSha1Str(passwd);
 					var timestamp = Math.floor(Ext.Date.format(new Date(), 'U') / 10) * 10
-					console.log(timestamp)
+	
 					var authkey = $.encoding.digests.hexSha1Str(passwd_sha1 + timestamp.toString());
 					
 					form.setValues({password : authkey});
