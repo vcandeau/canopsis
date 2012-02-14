@@ -29,11 +29,6 @@ from ctools import dynmodloads
 
 import ConfigParser, os
 
-## Load webservices
-dynmodloads("~/opt/webcore/libexec/")
-
-from gevent import monkey; monkey.patch_all()
-
 init = cinit()
 
 ## Configurations
@@ -48,20 +43,20 @@ debug		= True
 interface	= "0.0.0.0"
 
 session_cookie_expires	= 300
-session_secret		= 'canopsis'
-session_data_dir 	= os.path.expanduser('~/tmp/webcore_cache')
-root_directory		= os.path.expanduser("~/var/www/")
+session_secret			= 'canopsis'
+session_data_dir 		= os.path.expanduser('~/tmp/webcore_cache')
+root_directory			= os.path.expanduser("~/var/www/")
 
 try:
 	## get config
-	port		= config.getint('server', "port")
-	debug		= config.getboolean('server', "debug")
-	interface	= config.get('server', "interface")
-	root_directory	= os.path.expanduser(config.get('server', "root_directory"))
+	port					= config.getint('server', "port")
+	debug					= config.getboolean('server', "debug")
+	interface				= config.get('server', "interface")
+	root_directory			= os.path.expanduser(config.get('server', "root_directory"))
 
 	session_cookie_expires	= config.getint('session', "cookie_expires")
-	session_secret		= config.get('session', "secret")
-	session_data_dir	= os.path.expanduser(config.get('session', "data_dir"))
+	session_secret			= config.get('session', "secret")
+	session_data_dir		= os.path.expanduser(config.get('session', "data_dir"))
 
 except Exception, err:
 	print "Error when reading '%s' (%s)" % (config_filename, err)
@@ -77,6 +72,12 @@ if debug:
 	logger 	= init.getLogger("webserver-%s" % port, "DEBUG")
 else:
 	logger 	= init.getLogger("webserver-%s" % port, "INFO")
+
+## Load webservices
+
+from gevent import monkey; monkey.patch_all()
+
+dynmodloads("~/opt/webcore/libexec/")
 
 
 def main():

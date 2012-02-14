@@ -44,7 +44,7 @@ def get_dashboard():
 	#get the session (security)
 	account = get_account()
 
-	storage = get_storage(namespace=namespace)
+	storage = get_storage(namespace=namespace, logging_level=logging.DEBUG)
 
 	try:
 		vid = account.data["dashboard"]

@@ -20,7 +20,7 @@
 
 import sys, os, logging, json
 import bottle, logging, hashlib, json
-from bottle import route, get, request, post, HTTPError, redirect
+from bottle import error, route, get, request, post, HTTPError, redirect
 
 from beaker.middleware import SessionMiddleware
 
