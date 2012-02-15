@@ -49,6 +49,11 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			iconCls: 'no-icon',
 		});
 		
+		this.viewSelector.on('select',function(){
+				var menu = this.down('menu[name="Run"]')
+				menu.toggleCollapse()
+			},this)
+		
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
@@ -70,6 +75,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				iconCls: 'icon-mainbar-run',
 				text: _('ITIL.Run'),
 				menu: {
+					name: 'Run',
 					items: [
 							this.viewSelector,
 					],
