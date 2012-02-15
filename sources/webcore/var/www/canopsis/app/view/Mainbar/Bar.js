@@ -76,7 +76,13 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				text: _('ITIL.Run'),
 				menu: {
 					name: 'Run',
+					showSeparator: true,
 					items: [
+							{
+								//iconCls: 'icon-mainbar-report',
+								text: _('Dashboard'),
+								action: 'openDashboard'
+							},'-',
 							this.viewSelector,
 					],
 				}
