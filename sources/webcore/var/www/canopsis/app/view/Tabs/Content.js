@@ -18,33 +18,17 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-//Ext.require([
-//    'Ext.direct.*',
-//]);
-
 Ext.define('canopsis.view.Tabs.Content' ,{
 	extend: 'Ext.Panel',
 	alias : 'widget.TabsContent',
 
 	logAuthor: '[view][tabs][content]',
-    
-	style: {borderWidth:'0px'},
 
 	autoScroll: true,
 	
-	layout: {
-		type: 'table',
-		// The total column count must be specified here
-		columns: 1,
-	},
-
-	defaults: {
-		border: false,
-	},
-
 	border: false,
 
-	displayed: false,
+	//displayed: false,
 
 	items: [],
     
@@ -57,143 +41,52 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		
-		//Get view options
-		Ext.Ajax.request({
-			url: '/rest/object/view/'+this.view_id,
-			scope: this,
-			success: function(response){
-				data = Ext.JSON.decode(response.responseText)
-				this.view = data.data[0]
+		if(!this.options.newView){
+			Ext.Ajax.request({
+				url: '/rest/object/view/'+this.view_id,
+				scope: this,
+				success: function(response){
+					data = Ext.JSON.decode(response.responseText)
+					this.view = data.data[0]
 
-				if (this.autoshow){
-					this.setContent();
-				}else{
-					this.on('show', function (){
-						if (! this.displayed) {
-							this.setContent();
-							this.displayed = true;
-						}
-					}, this)
-				}
+					if (this.autoshow){
+						this.setContent();
+					}else{
+						this.on('show', function (){
+							if (! this.displayed) {
+								this.setContent();
+								this.displayed = true;
+							}
+						}, this)
+					}
 
-			},
-			failure: function (result, request) {
-					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-					log.error("Close tab, maybe not exist ...", this.logAuthor)
-					this.close();
-			} 
-		});
+				},
+				failure: function (result, request) {
+						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+						log.error("Close tab, maybe not exist ...", this.logAuthor)
+						this.close();
+				} 
+			});
+		}else{
+			this.setContent()
+		}
 
 		this.on('beforeclose', this.beforeclose)
 		
 		//create mask
-		this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
+		//this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
 		
 	},
-
-	setContent: function(){
-		var items = this.view.items;
-		var totalWidth = this.getWidth() - 20;
-		
-		//---------------General options---------------------
-		if(this.options.nodeId){
-			//if id specified by cgrid (on-the-fly view)
-			var nodeId = this.options.nodeId;
-		} else {
-			var nodeId = this.view.nodeId;
-		}
-		var refreshInterval = this.view.refreshInterval
-		var nbColumns = this.view.nbColumns
-		var rowHeight = this.view.rowHeight
-
-		if (! rowHeight) { rowHeight = 200 }
-		if (! refreshInterval) { refreshInterval = 0 }
-		if (! nbColumns || items.length == 1) { nbColumns = 1 }
-
-		this.layout.columns = nbColumns
-
-		log.debug('Create '+nbColumns+' column(s)..', this.logAuthor)
-		
-		//-----------------populating with widgets--------------
-		if (items.length == 1 ) {
-			//one widget, so full mode
-			log.debug(' + Use full mode ...', this.logAuthor)
-			this.layout = 'fit'
-			item = items[0]
-
-			log.debug('   + Add: '+item.xtype, this.logAuthor)
-
-			//item['height'] = '10'
-			item['width'] = '100%'
-			item['title'] = ''
-			item['fullmode'] = true
-			
-			//item['baseCls'] = 'x-plain'
-			item['mytab'] = this
-
-			//Set default options
-			if (! item.nodeId) { item.nodeId=nodeId}
-			if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
-			
-			//add item in the view
-			//this.register(item,item.nodeId,item.refreshInterval);
-
-			if(this.view.reporting){
-				item.reportMode = true;
-			}
-
-			//var widget = this.add(item);
-			this.widgets.push(item)
-
-		}else{
-			//many widgets
-			//this.removeAll();
-
-			//fixing layout (table goes wild without it)
-			for (i; i<nbColumns; i++){
-				this.add({ html: '', border: 0, height: 0, padding:0})
-			}
 	
-			var ext_items = []
-			for(var i= 0; i < items.length; i++) {
-				log.debug(' - Item '+i+':', this.logAuthor)
-				var item = items[i]
-
-				log.debug('   + Add: '+item.xtype, this.logAuthor)
-
-				item['mytab'] = this
-				item['fullmode'] = false
-
-				var colspan = 1
-				var rowspan = 1
-
-				if (item['colspan']) { colspan = item['colspan'] }
-				if (item['rowspan']) { rowspan = item['rowspan'] }
-				
-				item['width'] = (totalWidth / nbColumns) * colspan
-
-				item['style'] = {padding: '3px'}
-
-				//Set default options
-				if (! item.nodeId) { item.nodeId=nodeId}
-				if (! item.refreshInterval) { item.refreshInterval=refreshInterval}
-				if (! item.rowHeight) { item.height=rowHeight }else{ item.height=item.rowHeight }
-				if (item.title){ item.border = true }
-
-				if(this.view.reporting){
-					item.reportMode = true;
-				}
-
-				//var widget = this.add(item);
-				this.widgets.push(item)
-			}
+	setContent: function(){
+		if(this.view){
+			var items = this.view.items
+			this.itemsCopy = items
+			this.set_items(items)
+		} else {
+			this.set_items()
 		}
-
-		//Add items on layout
-		if (this.widgets){
-			this.widgets = this.add(this.widgets)
-		}
-		
+		/*
 		//if report mode
 		if(this.view.reporting){
 			this.reportBar = Ext.create('canopsis.view.ReportingBar.ReportingBar');
@@ -206,7 +99,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this.reportBar.currentDate.on('select',this.onReport,this);
 			this.reportBar.combo.on('select',this.onReport,this);
 		}
-
+*/
 		//binding event to save resources
 		this.on('show', function(){
 			this._onShow();
@@ -214,11 +107,124 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('hide', function(){
 			this._onHide();
 		}, this);
+	    
+	    if(!this.debugToolbar){
+			this.debugToolbar = Ext.create('Ext.toolbar.Toolbar')
+			var editbutton = Ext.create('Ext.button.Button',{text: _('edit mode')})
+			editbutton.on('click',function(){
+					this.jqgridable.editMode()
+				},this)
+			/*
+			var reportmode = Ext.create('Ext.button.Button',{text: _('report mode')})
+			reportmode.on('click',function(){log.debug('not implented yet')},this)
+			*/
+			var newview = Ext.create('Ext.button.Button',{text: _('new view')})
+			newview.on('click',function(){
+					add_view_tab('TabsContent', '*'+ _('New') +' '+this.modelId, true, {newView : true}, true, false, false)
+			},this)
+			/*
+			var redraw = Ext.create('Ext.button.Button',{text: _('redraw')})
+			redraw.on('click',function(){
+					this.jqgridable.redraw()
+			},this)
+			*/
+			this.debugToolbar.add([editbutton,newview])
+			
+			this.addDocked(this.debugToolbar)
+		}
+		
+	},
+
+	set_items : function(items){
+		log.debug('set items', this.logAuthor)
+		if(items){
+			this.jqgridable = Ext.create('Ext.jq.Gridable',{
+					 items: items,
+					 spotlight : true,
+					 contextMenu : true,
+			})
+			this.add(this.jqgridable)
+			this.bindJqgridable(this.jqgridable)
+		} else {
+			this.jqgridable = Ext.create('Ext.jq.Gridable')
+			this.add(this.jqgridable)
+			this.bindJqgridable(this.jqgridable)
+		}
+	},
+	
+	bindJqgridable: function(jq){
+		//saving the view
+		jq.on('save',function(dump){
+				this.saveView(dump)
+			},this)
+			
+		//open a wizard
+		jq.on('widgetAdd',function(jqgridable,id){
+				this.newWidget(jqgridable,id)
+			},this)
+		
+		//edit wizard
+		jq.on('editWidget',function(jqgridable,id,widget_data){
+				this.editWidget(jqgridable,id,widget_data)
+			},this)
+		
 		
 	},
 	
+	//---------------------live editing options--------------------
+	
+	editWidget : function(jqgridable,id,widget_data){
+		log.debug('-------------edit widget------------')
+		this.jqgridable.disableJqgridable()
+		var windowWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{
+				edit: true,
+				widgetData : widget_data,
+			})
+		windowWizard.show()
+		windowWizard.on('save',function(data){
+				this.saveWidget(id,data)
+				this.jqgridable.enableJqgridable()
+			},this)
+	},
+	
+	newWidget : function(jqgridable,id){
+		log.debug('-------------new widget--------------')
+		var windowWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
+		windowWizard.show()
+		this.jqgridable.disableJqgridable()
+		windowWizard.on('save',function(data){
+				this.saveWidget(id,data)
+				this.jqgridable.enableJqgridable()
+			},this)
+	},
+	
+	saveView : function(dump){
+		//ajax request with dump sending
+		log.debug('Saving view requested',this.logAuthor)
+		log.dump(dump)
+		
+		var store = Ext.data.StoreManager.lookup('View')
+		var record = Ext.create('canopsis.model.view', data)
+		
+		viewName = 'my_new_test'
+		
+		record.set('items',dump)
+		record.set('crecord_name',viewName); ////!!!!!!!!!!!!REMIND , MANAGE WHEN ROOT EDIT NON ROOT VIEW!!!!!!!!!!
+		record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
+
+		store.add(record)
+	},
+	
+	saveWidget : function(id,data){
+		log.debug('the return from wizard')
+		log.dump(data)
+		this.jqgridable.replace_widget_content(id,data)
+		this.jqgridable.setData(id,data)
+		this.jqgridable.enableJqgridable()
+	},
+	
 	//---------------------Reporting functions--------------------
-	onReport: function(){
+/*	onReport: function(){
 		log.debug('Request reporting on a time', this.logAuthor)
 		var toolbar = this.reportBar
 
@@ -232,10 +238,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			log.debug('--------------------------------------------')
 			
 			//enable mask
-			this._maskInit()
+			//this._maskInit()
 
 			for (i in this.widgets){
-				//this.widgets[i]._displayFromTs(startReport * 1000,stopReport * 1000)
+				log.debug('refreshing '+ i, this.logAuthor)
 				this.widgets[i]._doRefresh(startReport * 1000, stopReport * 1000)
 			}
 		}
@@ -301,8 +307,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
 					data = data.data.url
-					//log.dump(data);
-					//window.open(data)
 					global.notify.notify(
 						_('Export ready'),
 						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
@@ -317,7 +321,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			});
 		}
 	},
-	//------------------------------------------------------------
+*/
+
 	_maskInit: function(){
 		this.mask.show();
 		this.mask_cpt = 0;
@@ -380,5 +385,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug("Destroy items ...", this.logAuthor)
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
  		log.debug(this.id + " Destroyed.", this.logAuthor)
+ 		if(this.toolbar){
+			this.toolbar.close()
+		}
  	}
 });
