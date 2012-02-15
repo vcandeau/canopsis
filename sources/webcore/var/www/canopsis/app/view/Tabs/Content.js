@@ -83,11 +83,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	setContent: function(){
 		if(this.view){
 			var items = this.view.items
-			this.itemsCopy = items
 			this.set_items(items)
 		} else {
 			this.set_items()
 		}
+		
+		
 		/*
 		//if report mode
 		if(this.view.reporting){
