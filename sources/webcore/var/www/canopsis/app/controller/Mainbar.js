@@ -108,5 +108,14 @@ Ext.define('canopsis.controller.Mainbar', {
 	
 	newView: function(){
 		log.debug('New view', this.logAuthor);
+		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, text){
+			if (btn == 'ok'){
+				log.dump(text)
+				tab = add_view_tab(undefined, text, true, {viewName : text}, true, false, false)
+				tab.jqgridable.editMode();
+			} else {
+				log.debug('cancel new view')
+			}
+		});
 	},
 });
