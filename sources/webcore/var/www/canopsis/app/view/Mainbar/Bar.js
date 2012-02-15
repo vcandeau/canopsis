@@ -51,7 +51,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		
 		this.viewSelector.on('select',function(){
 				var menu = this.down('menu[name="Run"]')
-				menu.toggleCollapse()
+				menu.hide()
 			},this)
 		
 		this.items = [
