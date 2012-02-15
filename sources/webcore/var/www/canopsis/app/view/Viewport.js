@@ -67,13 +67,13 @@ Ext.define('canopsis.view.Viewport', {
 		xtype: 'TabsView',
 		id: 'main-tabs',
 
-	},{
+	},/*{
 		region: 'west',
 		border: true,
 		width: 150,
 		xtype: 'MenuView',
 		id: 'main-menu'
-	}],
+	}*/],
 	
 
 	initComponent: function() {
