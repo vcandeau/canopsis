@@ -33,6 +33,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="cleartabscache"]' : {
 				click : this.cleartabscache,
 			},
+			'Mainbar combobox[action="viewSelector"]' : {
+				select : this.openView,
+			},
 			'Mainbar menuitem[action="editView"]' : {
 				click : this.editView,
 			},
@@ -100,6 +103,12 @@ Ext.define('canopsis.controller.Mainbar', {
 		});
 	},
 
+	openView: function(combo, records){
+		var vid = records[0].get('id')
+		var vtitle = records[0].get('crecord_name')
+		add_view_tab(vid, vtitle, true, {}, true, true)
+	},
+	
 	editView: function(){
 		log.debug('Edit view', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
