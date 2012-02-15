@@ -108,7 +108,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this._onHide();
 		}, this);
 	    
-	    if(!this.debugToolbar){
+	    //----------------------------DEBUG TOOLBAR---------------------
+	/*    if(!this.debugToolbar){
 			this.debugToolbar = Ext.create('Ext.toolbar.Toolbar')
 			var editbutton = Ext.create('Ext.button.Button',{text: _('edit mode')})
 			editbutton.on('click',function(){
@@ -127,75 +128,31 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			redraw.on('click',function(){
 					this.jqgridable.redraw()
 			},this)
-			*/
+			
 			this.debugToolbar.add([editbutton,newview])
 			
 			this.addDocked(this.debugToolbar)
 		}
-		
+	*/
 	},
 
 	set_items : function(items){
 		log.debug('set items', this.logAuthor)
-		if(items){
-			this.jqgridable = Ext.create('Ext.jq.Gridable',{
-					 items: items,
-					 spotlight : true,
-					 contextMenu : true,
-			})
-			this.add(this.jqgridable)
-			this.bindJqgridable(this.jqgridable)
-		} else {
-			this.jqgridable = Ext.create('Ext.jq.Gridable')
-			this.add(this.jqgridable)
-			this.bindJqgridable(this.jqgridable)
-		}
+		this.jqgridable = Ext.create('Ext.jq.Gridable',{
+				 items: items,
+				 spotlight : true,
+				 contextMenu : true,
+				 wizard: 'canopsis.view.ViewBuilder.wizard',
+		})
+		this.add(this.jqgridable)
+		this.bindJqgridable(this.jqgridable)
 	},
 	
 	bindJqgridable: function(jq){
 		//saving the view
 		jq.on('save',function(dump){
 				this.saveView(dump)
-			},this)
-			
-		//open a wizard
-		jq.on('widgetAdd',function(jqgridable,id){
-				this.newWidget(jqgridable,id)
-			},this)
-		
-		//edit wizard
-		jq.on('editWidget',function(jqgridable,id,widget_data){
-				this.editWidget(jqgridable,id,widget_data)
-			},this)
-		
-		
-	},
-	
-	//---------------------live editing options--------------------
-	
-	editWidget : function(jqgridable,id,widget_data){
-		log.debug('-------------edit widget------------')
-		this.jqgridable.disableJqgridable()
-		var windowWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{
-				edit: true,
-				widgetData : widget_data,
-			})
-		windowWizard.show()
-		windowWizard.on('save',function(data){
-				this.saveWidget(id,data)
-				this.jqgridable.enableJqgridable()
-			},this)
-	},
-	
-	newWidget : function(jqgridable,id){
-		log.debug('-------------new widget--------------')
-		var windowWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
-		windowWizard.show()
-		this.jqgridable.disableJqgridable()
-		windowWizard.on('save',function(data){
-				this.saveWidget(id,data)
-				this.jqgridable.enableJqgridable()
-			},this)
+			},this)		
 	},
 	
 	saveView : function(dump){
@@ -206,7 +163,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var store = Ext.data.StoreManager.lookup('View')
 		var record = Ext.create('canopsis.model.view', data)
 		
-		viewName = 'my_new_test'
+		viewName = 'my_new_test' + Math.floor(Math.random()*100)
 		
 		record.set('items',dump)
 		record.set('crecord_name',viewName); ////!!!!!!!!!!!!REMIND , MANAGE WHEN ROOT EDIT NON ROOT VIEW!!!!!!!!!!
@@ -214,10 +171,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		store.add(record)
 	},
-	
+	/*
 	saveWidget : function(id,data){
 		log.debug('the return from wizard')
-		log.dump(data)
+		//log.dump(data)
 		this.jqgridable.replace_widget_content(id,data)
 		this.jqgridable.setData(id,data)
 		this.jqgridable.enableJqgridable()

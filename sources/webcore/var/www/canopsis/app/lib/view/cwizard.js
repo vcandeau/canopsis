@@ -24,7 +24,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	alias : 'widget.ViewBuilderWizard',
 
 	title: _('Wizard'),
-	closable: true,
+	closable: false,
 	closeAction: 'destroy',
 	width: 600,
 	minWidth: 350,
