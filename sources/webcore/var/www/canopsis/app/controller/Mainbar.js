@@ -36,6 +36,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar combobox[action="viewSelector"]' : {
 				select : this.openView,
 			},
+			'Mainbar menuitem[action="openDashboard"]' : {
+				click : this.openDashboard,
+			},
 			'Mainbar menuitem[action="editView"]' : {
 				click : this.editView,
 			},
@@ -101,6 +104,12 @@ Ext.define('canopsis.controller.Mainbar', {
 			run: refreshClock,
 			interval: 60000
 		});
+	},
+
+	openDashboard: function(){
+		log.debug('Open dashboard', this.logAuthor);
+		var maintabs = Ext.getCmp('main-tabs');
+		maintabs.setActiveTab(0);
 	},
 
 	openView: function(combo, records){
