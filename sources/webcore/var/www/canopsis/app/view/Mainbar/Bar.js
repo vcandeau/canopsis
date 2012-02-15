@@ -34,6 +34,21 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 	baseCls: 'Mainbar',
 
 	initComponent: function() {
+		
+		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
+			hideLabel: true,
+			action: 'viewSelector',
+			store: Ext.data.StoreManager.lookup('View'),
+			displayField: 'crecord_name',
+			typeAhead: true,
+			queryMode: 'local',
+			triggerAction: 'all',
+			emptyText: _('Select a view')+' ...',
+			selectOnFocus: true,
+			width: 200,
+			iconCls: 'no-icon',
+		});
+		
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
@@ -53,7 +68,12 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				}
 			},{
 				iconCls: 'icon-mainbar-run',
-				text: _('ITIL.Run')
+				text: _('ITIL.Run'),
+				menu: {
+					items: [
+							this.viewSelector,
+					],
+				}
 			},{
 				iconCls: 'icon-mainbar-report',
 				text: _('ITIL.Report')
