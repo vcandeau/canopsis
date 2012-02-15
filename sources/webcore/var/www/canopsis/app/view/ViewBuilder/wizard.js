@@ -54,7 +54,8 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					fieldLabel : _('Type'),
 					name: "xtype",
 					displayField: 'name',
-					valueField: 'xtype'
+					valueField: 'xtype',
+					value: 'empty',
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
