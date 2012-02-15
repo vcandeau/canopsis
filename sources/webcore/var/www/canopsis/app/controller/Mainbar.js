@@ -33,6 +33,12 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="cleartabscache"]' : {
 				click : this.cleartabscache,
 			},
+			'Mainbar menuitem[action="editView"]' : {
+				click : this.editView,
+			},
+			'Mainbar menuitem[action="newView"]' : {
+				click : this.newView,
+			},
 			'Mainbar menuitem[action="showconsole"]' : {
 				click : this.showconsole,
 			},
@@ -92,5 +98,15 @@ Ext.define('canopsis.controller.Mainbar', {
 			run: refreshClock,
 			interval: 60000
 		});
-	}
+	},
+
+	editView: function(){
+		log.debug('Edit view', this.logAuthor);
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.jqgridable.editMode();
+	},
+	
+	newView: function(){
+		log.debug('New view', this.logAuthor);
+	},
 });

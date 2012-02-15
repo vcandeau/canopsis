@@ -37,7 +37,20 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
-				text: _('ITIL.Build')
+				text: _('ITIL.Build'),
+				menu: {
+					items: [
+							{
+								//iconCls: 'icon-console',
+								text: _('Edit active view'),
+								action: 'editView'
+							},{
+								//iconCls: 'icon-clear',
+								text: _('New view'),
+								action: 'newView'
+							}
+					],
+				}
 			},{
 				iconCls: 'icon-mainbar-run',
 				text: _('ITIL.Run')
