@@ -108,7 +108,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			this._onHide();
 		}, this);
 	    
-	    if(!this.debugToolbar){
+	    //----------------------------DEBUG TOOLBAR---------------------
+	/*    if(!this.debugToolbar){
 			this.debugToolbar = Ext.create('Ext.toolbar.Toolbar')
 			var editbutton = Ext.create('Ext.button.Button',{text: _('edit mode')})
 			editbutton.on('click',function(){
@@ -127,79 +128,33 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			redraw.on('click',function(){
 					this.jqgridable.redraw()
 			},this)
-			*/
+			
 			this.debugToolbar.add([editbutton,newview])
 			
 			this.addDocked(this.debugToolbar)
 		}
-		
+	*/
 	},
 
 	set_items : function(items){
 		log.debug('set items', this.logAuthor)
-		//if(items){
-			this.jqgridable = Ext.create('Ext.jq.Gridable',{
-					 items: items,
-					 spotlight : true,
-					 contextMenu : true,
-					 wizard: 'canopsis.view.ViewBuilder.wizard',
-			})
-			this.add(this.jqgridable)
-			this.bindJqgridable(this.jqgridable)
-	/*	} else {
-			this.jqgridable = Ext.create('Ext.jq.Gridable',{
-					 items: items,
-					 spotlight : true,
-					 contextMenu : true,
-					 wizard: 'canopsis.view.ViewBuilder.wizard',
-			})
-			this.add(this.jqgridable)
-			this.bindJqgridable(this.jqgridable)
-		}*/
+		this.jqgridable = Ext.create('Ext.jq.Gridable',{
+				 items: items,
+				 spotlight : true,
+				 contextMenu : true,
+				 wizard: 'canopsis.view.ViewBuilder.wizard',
+		})
+		this.add(this.jqgridable)
+		this.bindJqgridable(this.jqgridable)
 	},
 	
 	bindJqgridable: function(jq){
 		//saving the view
 		jq.on('save',function(dump){
 				this.saveView(dump)
-			},this)
-	/*		
-		//open a wizard
-		jq.on('widgetAdd',function(jqgridable,id){
-				this.newWidget(jqgridable,id)
-			},this)
-		
-		//edit wizard
-		jq.on('editWidget',function(jqgridable,id,widget_data){
-				this.editWidget(jqgridable,id,widget_data)
-			},this)
-		*/
-		
+			},this)		
 	},
 	
-	//---------------------live editing options--------------------
-	/*
-	editWidget : function(jqgridable,id,widget_data){
-		log.debug('-------------edit widget------------')
-		var windowWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{
-				edit: true,
-				widgetData : widget_data,
-			})
-		windowWizard.show()
-		windowWizard.on('save',function(data){
-				this.saveWidget(id,data)
-			},this)
-	},
-	
-	newWidget : function(jqgridable,id){
-		log.debug('-------------new widget--------------')
-		var windowWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
-		windowWizard.show()
-		windowWizard.on('save',function(data){
-				this.saveWidget(id,data)
-			},this)
-	},
-	*/
 	saveView : function(dump){
 		//ajax request with dump sending
 		log.debug('Saving view requested',this.logAuthor)
