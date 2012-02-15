@@ -35,8 +35,6 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.listXtype = 'ViewBuilder'
 
 		this.modelId = _('view')
-		
-		this.widgetCounter = 0
 
 		this.callParent(arguments);
 	},
@@ -46,9 +44,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		log.debug("Create tab '"+this.formXtype+"'",this.logAuthor)
 		
 		this.form = add_view_tab('ViewBuilderForm', '*'+ _('New') +' '+this.modelId, true, undefined, true, false, false)
-
 		this._bindFormEvents(this.form)
-		
 	},	
 	
 	_editRecord: function(view, item, index) {
@@ -57,14 +53,24 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.form = add_view_tab('ViewBuilderForm', 'edit ' + viewName, true, undefined, true, false, false)
 		
 		//if there is items load them
-		var items = Ext.decode(item.get('items'))
+		var items = item.get('items')
 		if(items.length != 0){
 			this.form.jqDraggable._load(items)
 		}
+
 		//load and disable name selection
 		this.form.edit = true
+		this.form.crecord_name = viewName
 		this.form.viewName.setValue(viewName)
 		this.form.viewName.setDisabled(true)
+		
+		//set reporting
+		var reporting = item.get('reporting')
+		if(reporting){this.form.reporting.setValue(true)}
+		
+		//set template
+		var template = item.get('template')
+		if(template){this.form.template.setValue(true)}
 		
 		this._bindFormEvents(this.form)
 	},
@@ -88,7 +94,6 @@ Ext.define('canopsis.controller.ViewBuilder', {
 	_bindFormEvents: function(form){
 		log.debug('Binding WYSIWYG editor',this.logAuthor);
 		
-		//form.addWidgetButton.on('click', this.create_wizard,this)
 		form.saveButton.on('click',this._saveForm,this)
 		form.cancelButton.on('click', function(){ this._cancelForm(form) },this)
 
@@ -100,6 +105,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		form.jqDraggable.on('dblclickWidget',this.editWidget,this)
 	},
 	
+	//launched when widgetAdd is fired
 	create_wizard: function(id){
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard')
 		this.widgetWizard.show()
@@ -110,11 +116,15 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		this.form.disable()
 	},
 	
+	//launched when dblclick is launched
 	editWidget : function(id){
 		var data = this.get_from_widget(id)
 		this.widgetWizard = Ext.create('canopsis.view.ViewBuilder.wizard',{edit: true,widgetData : data})
 		this.widgetWizard.show()
-		log.debug(data)
+		var finishButton = this.widgetWizard.down('[action=finish]')
+		finishButton.on('click', function(){this._saveWidgetForm(id)},this)
+		this.widgetWizard.on('destroy', function(){this.form.enable()},this)
+		this.form.disable()
 	},
 	
 	_saveForm : function(form){
@@ -128,32 +138,41 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			var store = this.grid.store;
 			var widget_list = []
 			
-		/*	//----------------------------parsing widgets-----------------------------
+			//----------------------------cleaning widgets-----------------------------
 			for(var i in dump){
-				log.dump(dump[i])
-				var widget = dump[i]
+				var widget= {}
 				var widgetData = dump[i].data
-				var widgetAttrTpl = this._get_widget_attribute(dump[i].data.widget)
-				var formatted_widget = {}
 				
-				formatted_widget['xtype'] = widgetData.widget
-				formatted_widget['position'] = widget.position
+				//load widget skel
+				var widgetAttrTpl = this._get_widget_attribute(dump[i].data.xtype)
+				widgetAttrTpl.push('title','xtype','refreshInterval','nodeId')
 				
-				for(var j in widgetAttrTpl){
-					if(widgetData[widgetAttrTpl[j]]){
-						formatted_widget[widgetAttrTpl[j]] = widgetData[widgetAttrTpl[j]]
+				//delete jquery junk information
+				for(var j in widgetData){
+					if(widgetAttrTpl.indexOf(j) == -1){
+						delete widgetData[j]
 					}
 				}
-				widget_list.push(formatted_widget)
+				
+				//rebuild widget
+				widget.position = dump[i].position
+				widget.id = dump[i].id
+				widget.data = widgetData
+				
+				widget_list.push(widget)
 			}
-			record.set('items',widget_list) */
 			
-			record.set('items',Ext.encode(dump))
-			log.dump(dump)
-			
+			//saving widgets into view
+			record.set('items',widget_list)
+
 			//--------------------------general variable----------------------
 			var viewName = this.form.viewName.getValue()
-			record.set('crecord_name',viewName);
+			if(this.form.crecord_name){
+				record.set('crecord_name',this.form.crecord_name)
+			} else {
+				record.set('crecord_name',viewName);
+			}
+
 			record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 			record.set('template',this.form.template.getValue())
 			record.set('reporting',this.form.reporting.getValue())
@@ -171,9 +190,9 @@ Ext.define('canopsis.controller.ViewBuilder', {
 			//if didn't already exist, save it
 			if(already_exist == -1 || this.form.edit == true ){
 				//------------------add new view------------------
-				log.dump(record)
 				store.add(record);
 				store.load();
+				Ext.data.StoreManager.lookup('Menu').load();
 				this._cancelForm(this.form);
 			} else {
 				log.debug('['+this.id+'][validateForm] -  View exist');
@@ -192,7 +211,7 @@ Ext.define('canopsis.controller.ViewBuilder', {
 
 		var _index = widgetStore.findBy(
 		function(record, id){
-			if(record.get('name') == widget){
+			if(record.get('xtype') == widget){
 				return true
 			}
 		}, this)
@@ -206,15 +225,14 @@ Ext.define('canopsis.controller.ViewBuilder', {
 		return output		
 	},
 	
+	//function call when finish widget wizard
 	_saveWidgetForm : function(id){
-		data = this.widgetWizard.get_variables()
+		var data = this.widgetWizard.get_variables()
 		this.stock_in_widget(id,data)
-		//this.form.jqDraggable._refresh_widget_content(id,data.title,data.widget + ' (i\'m a test writing)')
+		//log.dump(data)
+		var content = Ext.encode(data)
+		this.form.jqDraggable._refresh_widget_content(id,data.title, content)
 		this.widgetWizard.destroy()
-	},
-
-	beforeload_EditForm: function(form){
-
 	},
 	
 	stock_in_widget : function(id,data){

@@ -8,6 +8,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 	initComponent: function() {
 		this.callParent(arguments);
 		
+		//---------------------- Create items --------------------------------
+		
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
 			data : [
@@ -80,6 +82,10 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			action: 'link',
 			tooltip: _('view page in html')
 		})
+		
+		
+		
+		
 	}
 	
 });
