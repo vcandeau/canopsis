@@ -38,10 +38,10 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
 			hideLabel: true,
 			action: 'viewSelector',
-			store: Ext.data.StoreManager.lookup('View'),
+			store:  Ext.create('canopsis.store.View'),
 			displayField: 'crecord_name',
-			typeAhead: true,
-			queryMode: 'local',
+			//typeAhead: true,
+			queryMode: 'remote',
 			triggerAction: 'all',
 			emptyText: _('Select a view')+' ...',
 			selectOnFocus: true,
