@@ -37,7 +37,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	opt_bar_delete: false,
 	opt_bar_add: false,
 	
-	border: true,
+	border: false,
 
 	namespace: 'events',
 
