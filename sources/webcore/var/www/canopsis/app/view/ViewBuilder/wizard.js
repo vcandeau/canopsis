@@ -23,13 +23,7 @@
 /* little fix given on http://www.sencha.com/forum/showthread.php?136583-A-combobox-bug-of-extjs-4.0.2/page2
  * related to combobox bug, this bug is fixed in extjs4.0.6 , do not need this if
  * the extjs version is upgrated*/
-Ext.override(Ext.form.field.ComboBox, {
-    onDestroy: function() {
-        this.bindStore(null);
 
-        this.callParent();
-    }
-});
 
 //-----------------------------------------//
 
@@ -37,8 +31,6 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
 	title : 'Widget Wizard',
-
-	//add_widget_option_step : this.step_change_func,
 	
 	edit : false,
 	
@@ -60,9 +52,9 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					store: 'Widget',
 					forceSelection : true,
 					fieldLabel : _('Type'),
-					name: "widget",
+					name: "xtype",
 					displayField: 'name',
-					valueField: 'name'
+					valueField: 'xtype'
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
@@ -82,41 +74,32 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					}
 				]
 		}
-		
-		var step3 = {
-			title: _('Test'),
-			description: _('Here you choose the component that the widget will display information from, or keep it empty if the widget don\'t need it'),
-			items : [{
-					xtype : 'canopsis.lib.form.field.cmetric',
-					//multiSelect: false,
-					name : 'metrics'
-				}
-			]
-		}
 
-		this.step_list = [step1,step2,step3]
-	
+		this.step_list = [step1,step2]
+
 		this.callParent(arguments);
-		
-		if(this.edit){
-			this._edit(this.widgetData)
-		}
 		
 		//action given by this array are bind by the cwizard class after rendering.
 		this.panel_events_list = [
-			{itemSource: 'metrics', event: 'datachanged' , _function : this.step_change_func},
+			{itemSource: 'xtype', event: 'select' , _function : this.step_change_func},
 			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
 		]
+		
+		if(this.edit){
+			log.debug('editmode')
+			this._edit(this.widgetData)
+		}
 	},
 
 	//function launch when in editing mode
 	_edit : function(data){
+		this.firstEdit = true
 		widgetStore = Ext.data.StoreManager.lookup('Widget')
 		//building second step if needed
-		if(data.widget){
+		if(data.xtype){
 			var _index = widgetStore.findBy(
 			function(record, id){
-				if(record.get('name') == data.widget){
+				if(record.get('xtype') == data.xtype){
 					return true
 				}
 			}, this)
@@ -176,7 +159,12 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 		var item = this.get_one_item('metrics')
 		var nodeId = this.get_one_item('nodeId').getValue()
 		if(item){
-			item.setNodeId(nodeId);
+			//not really clean fix, but when edit, don't load, otherwise metrics will be erase
+			if(this.firstEdit){
+				this.firstEdit = false
+			} else {
+				item.setNodeId(nodeId);
+			}
 		}
 	},
 	

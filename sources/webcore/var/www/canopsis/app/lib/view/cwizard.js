@@ -28,7 +28,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	closeAction: 'destroy',
 	width: 600,
 	minWidth: 350,
-	height: 350,
+	height: 450,
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
@@ -39,12 +39,12 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			title: _("i'm empty !"),
 			html: _('you must give an object to fill me')
 		}],
-	
-	bbar : [{xtype:'button',text:_('Previous'),action:'previous'},
+	/*
+	tbar : [{xtype:'button',text:_('Previous'),action:'previous'},
 			{xtype:'button',text:_('Next'),action:'next'},'->',
 			{xtype:'button',text:_('Cancel'),action:'cancel'},
 			{xtype:'button',text:_('Finish'),disabled:false,action:'finish'}],
-	
+	*/
 	initComponent: function() {
 		this.logAuthor = '[Wizard '+ this.id+']'
 		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
@@ -52,12 +52,24 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		//the following keep a trace of asked information
 		this.returnedVariable = {}
 		
+		//-----------------buttons--------------------------
+		
+		this.tbar = Ext.create('Ext.toolbar.Toolbar')
+		this.previousButton = this.tbar.add({xtype:'button',text:_('Previous'),action:'previous'})
+		this.nextButton = this.tbar.add({xtype:'button',text:_('Next'),action:'next'})
+		this.tbar.add('->')
+		this.cancelButton = this.tbar.add({xtype:'button',text:_('Cancel'),action:'cancel'})
+		this.finishButton = this.tbar.add({xtype:'button',text:_('Finish'),disabled:false,action:'finish'})
+		
 		this.callParent(arguments);
 		
 		//---------------build the window content---------------
-		this.centerPanel = this.add({
+	
+		//---------tab panel----------
+		this.tabPanel = this.add({
 			layout: 'fit',
 			xtype: 'tabpanel',
+			deferredRender: false,
 		})
 		
 		if(this.step_list){
@@ -70,12 +82,14 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			this._after_step_list()
 		}
 		
+		this.previousButton.setDisabled(true)
+		
 	},
 	
 	afterRender : function(){
 		//needed
 		this.callParent(arguments);
-		this.centerPanel.setActiveTab(0)
+		this.tabPanel.setActiveTab(0)
 		this.bind_buttons()
 		if(this.panel_events_list){
 			this.bind_panel_events(this.panel_events_list)
@@ -101,20 +115,21 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		for (i in btns){
 			btns[i].on('click', this.cancel_button, this)
 		}
-	/*	//---------------------finish button--------------------
+		//---------------------finish button-------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]')
 		for (i in btns){
 			btns[i].on('click', this.finish_button, this)
-		}*/
+		}
+		
 	},
 	
 	add_new_step: function(step){
-		this.centerPanel.add(step)
+		this.tabPanel.add(step)
 	},
 	
 	remove_step: function(tabId){
 		log.debug('the old tab is: ' + tabId)
-		var tab = this.centerPanel.child(tabId)
+		var tab = this.tabPanel.child(tabId)
 		if(tab){ 
 			//remove tracked item 
 			var itemarray = tab.items.items
@@ -130,7 +145,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 				}
 			}
 
-			this.centerPanel.remove(tab)
+			this.tabPanel.remove(tab)
 			log.debug('old tab remove',this.logAuthor)
 		} else {
 			log.debug('no old tab found, do nothing',this.logAuthor)
@@ -295,16 +310,35 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	//----------------------button action functions-----------------------
 	previous_button: function(){
 		log.debug('previous button',this.logAuthor)
-		panel = this.centerPanel
-		active_tab = this.centerPanel.getActiveTab()
+		panel = this.tabPanel
+		active_tab = this.tabPanel.getActiveTab()
 		panel.setActiveTab(panel.items.indexOf(active_tab) - 1)
+		this.update_button()
 	},
 	
 	next_button: function(){
 		log.debug('next button',this.logAuthor)
-		panel = this.centerPanel
-		active_tab = this.centerPanel.getActiveTab()
+		panel = this.tabPanel
+		active_tab = this.tabPanel.getActiveTab()
 		panel.setActiveTab(panel.items.indexOf(active_tab) + 1)
+		this.update_button()
+	},
+	
+	update_button:function(){
+		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id)
+		var tabCount = this.tabPanel.items.length;
+
+		if(activeTabIndex == 0){
+			this.previousButton.setDisabled(true)
+		} else {
+			this.previousButton.setDisabled(false)
+		}
+		
+		if(activeTabIndex == (tabCount - 1)){
+			this.nextButton.setDisabled(true)
+		} else {
+			this.nextButton.setDisabled(false)
+		}
 	},
 	
 	cancel_button: function(){
@@ -313,8 +347,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 	
 	finish_button: function(){
-		//log.debug('finish button',this.logAuthor)
-		log.dump(this.get_variables())
+		log.debug('save button',this.logAuthor)
+		this.fireEvent('save', this.get_variables())
+		this.close()
 	},
 	
 });
