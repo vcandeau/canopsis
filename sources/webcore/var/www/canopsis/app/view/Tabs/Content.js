@@ -31,6 +31,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	//displayed: false,
 
 	items: [],
+	
+	newView : false,
     
 	initComponent: function() {
 
@@ -41,7 +43,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		
-		if(!this.options.newView){
+		if(this.view_id){
 			Ext.Ajax.request({
 				url: '/rest/object/view/'+this.view_id,
 				scope: this,
@@ -107,33 +109,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('hide', function(){
 			this._onHide();
 		}, this);
-	    
-	    //----------------------------DEBUG TOOLBAR---------------------
-	/*    if(!this.debugToolbar){
-			this.debugToolbar = Ext.create('Ext.toolbar.Toolbar')
-			var editbutton = Ext.create('Ext.button.Button',{text: _('edit mode')})
-			editbutton.on('click',function(){
-					this.jqgridable.editMode()
-				},this)
-			/*
-			var reportmode = Ext.create('Ext.button.Button',{text: _('report mode')})
-			reportmode.on('click',function(){log.debug('not implented yet')},this)
-			*/
-			var newview = Ext.create('Ext.button.Button',{text: _('new view')})
-			newview.on('click',function(){
-					add_view_tab('TabsContent', '*'+ _('New') +' '+this.modelId, true, {newView : true}, true, false, false)
-			},this)
-			/*
-			var redraw = Ext.create('Ext.button.Button',{text: _('redraw')})
-			redraw.on('click',function(){
-					this.jqgridable.redraw()
-			},this)
-			
-			this.debugToolbar.add([editbutton,newview])
-			
-			this.addDocked(this.debugToolbar)
-		}
-	*/
 	},
 
 	set_items : function(items){
@@ -164,11 +139,37 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var store = Ext.data.StoreManager.lookup('View')
 		var record = Ext.create('canopsis.model.view', data)
 		
-		viewName = 'my_new_test' + Math.floor(Math.random()*100)
+		//viewName = 'my_new_test' + Math.floor(Math.random()*100)
+		/*
+		if(this.options.viewName){
+			log.debug('new view')
+			viewName = this.options.viewName
+			record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
+		} else {
+			log.debug('old view')
+			if(this.view_id){
+				record.set('id',this.view_id)
+			}
+			
+		}
+		*/
+		if(this.view_id){
+			log.debug('editing view')
+			record.set('id',this.view_id)
+			record.set('crecord_name',this.view.crecord_name)
+		} else {
+			log.debug('new view')
+			if(this.options.viewName){
+				viewName = this.options.viewName
+				record.set('crecord_name',this.options.viewName)
+				record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
+			}
+		}
+		
 		
 		record.set('items',dump)
-		record.set('crecord_name',viewName); ////!!!!!!!!!!!!REMIND , MANAGE WHEN ROOT EDIT NON ROOT VIEW!!!!!!!!!!
-		record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
+		//record.set('crecord_name',viewName); ////!!!!!!!!!!!!REMIND , MANAGE WHEN ROOT EDIT NON ROOT VIEW!!!!!!!!!!
+		//record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 
 		store.add(record)
 	},

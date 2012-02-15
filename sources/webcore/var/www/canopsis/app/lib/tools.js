@@ -93,7 +93,7 @@ function add_view_tab(view_id, title, closable, options, autoshow, save,from_db,
 			store.save();
 		}
 
-		if(from_db == false){
+		/*if(from_db == false){
 			var tab = maintabs.add({
 				title: _(title),
 				id: tab_id,
@@ -106,7 +106,7 @@ function add_view_tab(view_id, title, closable, options, autoshow, save,from_db,
 				autoshow: autoshow,
 				localstore_record: localstore_record
 			});
-		} else {
+		} else {*/
 			var tab = maintabs.add({
 				title: _(title),
 				id: tab_id,
@@ -119,7 +119,7 @@ function add_view_tab(view_id, title, closable, options, autoshow, save,from_db,
 				autoshow: autoshow,
 				localstore_record: localstore_record
 			});
-		}
+		//}
 
 		if (autoshow) {
 			tab.show();
