@@ -43,7 +43,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
 		
-		if(this.view_id){
+		//if(this.view_id){
 			Ext.Ajax.request({
 				url: '/rest/object/view/'+this.view_id,
 				scope: this,
@@ -69,9 +69,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 						this.close();
 				} 
 			});
-		}else{
-			this.setContent()
-		}
+		//}else{
+			//this.setContent()
+		//}
 
 		this.on('beforeclose', this.beforeclose)
 		
@@ -122,6 +122,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		})
 		this.add(this.jqgridable)
 		this.bindJqgridable(this.jqgridable)
+		if(!items){
+			this.jqgridable.editMode()
+		}
 	},
 	
 	bindJqgridable: function(jq){
