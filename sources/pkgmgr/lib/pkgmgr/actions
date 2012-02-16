@@ -447,6 +447,7 @@ upgrade_package () {
 		else 
 			echo " :: Package $PNAME is not installed"
 			log_info "Package $PNAME not installed"
+			install_package "$PNAME"
 			if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
 		fi
 		echo "     + Done"
