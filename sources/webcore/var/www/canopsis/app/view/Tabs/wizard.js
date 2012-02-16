@@ -27,7 +27,7 @@
 
 //-----------------------------------------//
 
-Ext.define('canopsis.view.ViewBuilder.wizard' ,{
+Ext.define('canopsis.view.Tabs.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
 	title : 'Widget Wizard',

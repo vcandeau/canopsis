@@ -120,7 +120,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				 contextMenu : true,
 				 //debug: true,
 				 //autoScale: true,
-				 wizard: 'canopsis.view.ViewBuilder.wizard',
+				 wizard: 'canopsis.view.Tabs.wizard',
 		})
 		this.add(this.jqgridable)
 		this.bindJqgridable(this.jqgridable)
