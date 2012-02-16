@@ -96,8 +96,14 @@
     background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
 }
 
+.icon-page-html { 
+    background-image: url(../images/icons/page_white_code.png) !important; 
+}
+
+/* Mainbar */
+
 .icon-mainbar-run { 
-    background-image: url(../images/icons/application_home.png) !important; 
+    background-image: url(../images/icons/application_cascade.png) !important; 
 }
 
 .icon-mainbar-build { 
@@ -108,8 +114,16 @@
     background-image: url(../images/icons/application_view_gallery.png) !important; 
 }
 
-.icon-page-html { 
-    background-image: url(../images/icons/page_white_code.png) !important; 
+.icon-mainbar-edit-view { 
+    background-image: url(../images/icons/application_edit.png) !important; 
+}
+
+.icon-mainbar-new-view { 
+    background-image: url(../images/icons/application_add.png) !important; 
+}
+
+.icon-mainbar-dashboard { 
+    background-image: url(../images/icons/application_home.png) !important; 
 }
 
 /* state */
