@@ -118,7 +118,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				 items: items,
 				 spotlight : true,
 				 contextMenu : true,
-				 debug: true,
+				 //debug: true,
 				 //autoScale: true,
 				 wizard: 'canopsis.view.ViewBuilder.wizard',
 		})
