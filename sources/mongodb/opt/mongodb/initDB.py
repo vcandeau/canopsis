@@ -90,12 +90,6 @@ record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'GroupGrid'},'id': 'widget-group-manager'} ]
 storage.put(record1)
 
-### Views
-record1 = crecord({'_id': 'view.config_editor' }, type='view', name='Views')
-record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewBuilder'},'id': 'widget-view-editor'} ]
-record1.chmod('o+r')
-storage.put(record1)
-
 ## Menu
 record1 = crecord({'_id': 'menu.view', 'expanded': True, 'leaf': False }, type='menu', name='View')
 record1.chmod('o+r')
