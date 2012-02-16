@@ -74,6 +74,7 @@ function createApplication(){
 		appFolder: 'app',
 
 		controllers: [
+			'Keynav',
 			'Mainbar',
 			'Widgets',
 			'Menu',
