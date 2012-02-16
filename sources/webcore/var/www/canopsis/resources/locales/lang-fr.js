@@ -131,4 +131,11 @@ var i18n={
 	'Year':				'Année',
 	'Previous':			'Précédent',
 	'Next':				'Suivant',
+	
+	'NodeId selection':	"Selection de l'id du noeud",
+	'Here you choose the widget nodeId': "Ici vous sélectionner l'identifiant du noeud",
+	'Widget Options': 'Options du gadget',
+	'Here you can set specific option type of the selected widget' : 'Ici vous pouvez fixer les options du gadget sélectionné',
+	'Edit active view': 'édition vue active',
+	'New view':			'nouvelle vue',
 }
