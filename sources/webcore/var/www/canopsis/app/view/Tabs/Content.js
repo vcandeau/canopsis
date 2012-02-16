@@ -118,7 +118,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				 items: items,
 				 spotlight : true,
 				 contextMenu : true,
-				 debug: false,
+				 debug: true,
+				 //autoScale: true,
 				 wizard: 'canopsis.view.ViewBuilder.wizard',
 		})
 		this.add(this.jqgridable)
