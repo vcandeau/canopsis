@@ -177,6 +177,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 
 		store.add(record)
+		
+		//reload store used in mainbar
+		Ext.getCmp("viewSelector").store.load()
 	},
 	/*
 	saveWidget : function(id,data){
