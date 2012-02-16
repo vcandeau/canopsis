@@ -64,7 +64,7 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					minValue: 0
 				}]
 		}
-		
+		/*
 		var step2 = {
 				title: _('General Options'),
 				description: _('Here you choose the component that the widget will display information from'),
@@ -75,17 +75,20 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 					}
 				]
 		}
-
-		this.step_list = [step1,step2]
+*/
+		//this.step_list = [step1,step2]
+		this.step_list = [step1]
 
 		this.callParent(arguments);
 		
+		//////////////////////------ bind actions-------//////////////////////
 		//action given by this array are bind by the cwizard class after rendering.
 		this.panel_events_list = [
-			{itemSource: 'xtype', event: 'select' , _function : this.step_change_func},
-			{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}
+			{itemSource: 'xtype', event: 'select' , _function : this.add_panels},
+			//{itemSource: 'xtype', event: 'select' , _function : this.add_nodeId_panel},
+			//{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric},
 		]
-		
+		//////////////////-------------------------------------///////////////
 		if(this.data){
 			//log.debug('editmode')
 			this._edit(this.data)
@@ -133,10 +136,19 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			}		
 		}
 	},
+	
+	add_panels : function(combo,record){
+		//add nodeId panel if widget need it
+		this.add_nodeId_panel(combo,record)
+		//add metric panel if needed		
+		var added = this.add_option_panel(combo,record)
+		//if metric panel have been added, make metric listen to choosen nodeId
+		this.bind_panel_events([{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}])
+	},
 
-	//add the new option tab panel in the widget
-	step_change_func : function(combo,record){
-		log.debug('changed selection', this.logAuthor)
+	//add the new option tab panel in the wizard
+	add_option_panel : function(combo,record){
+		log.debug('add widget options panel if needed', this.logAuthor)
 		var widgetType = record[0].data
 		var widgetOptions = widgetType.options
 		
@@ -150,8 +162,38 @@ Ext.define('canopsis.view.ViewBuilder.wizard' ,{
 			}
 			this.remove_step('#widgetOptions')
 			this.add_new_step(this.build_step(new_step))
+			return true
 		} else {
 			this.remove_step('#widgetOptions')
+			return false
+		}
+	},
+	
+	//add the new nodeIdtab panel in the wizard
+	add_nodeId_panel : function(combo,record){
+		log.debug('add nodeId panel if needed', this.logAuthor)
+		var widgetType = record[0].data
+		var nodeId = widgetType.nodeId
+		if(nodeId){
+			//----------------nodeId step------------------
+			var new_step = {
+				title: _('NodeId selection'),
+				id : 'widgetNodeId',
+				description: _('Here you choose the widget nodeId'),
+				items : [{
+						xtype : 'canopsis.lib.form.field.cinventory',
+						multiSelect: false,
+						name : 'nodeId'
+					}
+				]
+			}
+			//---------------------------------------------
+			this.remove_step('#widgetNodeId')
+			this.add_new_step(this.build_step(new_step))
+			return true
+		}else{
+			this.remove_step('#widgetNodeId')
+			return false
 		}
 	},
 	

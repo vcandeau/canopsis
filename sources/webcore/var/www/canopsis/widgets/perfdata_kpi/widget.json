@@ -7,6 +7,7 @@
 	"description": "Display perfdata health with icons",
 	"refreshInterval": 300,
 	"formWidth": 600,
+	"nodeId" : true,
 	"options": [{
 			"xtype": "numberfield",
 			"fieldLabel":"Icon set",
