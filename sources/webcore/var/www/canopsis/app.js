@@ -85,6 +85,7 @@ function createApplication(){
 			'Group',
 			'Tabs',
 			'ReportingBar',
+			'Keynav',
 		],
 	
 		//autoCreateViewport: true,
