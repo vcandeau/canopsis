@@ -62,10 +62,12 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					items: [
 							{
 								//iconCls: 'icon-console',
+								iconCls:'icon-mainbar-edit-view',
 								text: _('Edit active view'),
 								action: 'editView'
 							},{
 								//iconCls: 'icon-clear',
+								iconCls:'icon-mainbar-new-view',
 								text: _('New view'),
 								action: 'newView'
 							}
@@ -80,6 +82,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					items: [
 							{
 								//iconCls: 'icon-mainbar-report',
+								iconCls: 'icon-mainbar-dashboard',
 								text: _('Dashboard'),
 								action: 'openDashboard'
 							},'-',
