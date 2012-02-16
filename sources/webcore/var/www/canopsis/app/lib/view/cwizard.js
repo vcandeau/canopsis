@@ -55,11 +55,14 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		//-----------------buttons--------------------------
 		
 		this.tbar = Ext.create('Ext.toolbar.Toolbar')
-		this.previousButton = this.tbar.add({xtype:'button',text:_('Previous'),action:'previous'})
-		this.nextButton = this.tbar.add({xtype:'button',text:_('Next'),action:'next'})
+		this.bbar = Ext.create('Ext.toolbar.Toolbar')
+		this.previousButton = this.tbar.add({xtype:'button',text:_('Previous'),action:'previous',iconCls:'icon-previous'})
 		this.tbar.add('->')
-		//this.cancelButton = this.tbar.add({xtype:'button',text:_('Cancel'),action:'cancel'})
-		this.finishButton = this.tbar.add({xtype:'button',text:_('Finish'),disabled:false,action:'finish'})
+		this.nextButton = this.tbar.add({xtype:'button',text:_('Next'),action:'next',iconCls:'icon-next',iconAlign:'right'})
+		
+		this.cancelButton = this.bbar.add({xtype:'button',text:_('Cancel'),action:'cancel',iconCls:'icon-cancel'})
+		this.bbar.add('->')
+		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),disabled:false,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 		
 		this.callParent(arguments);
 		
@@ -111,10 +114,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			btns[i].on('click', this.next_button, this)
 		}
 		//---------------------cancel button--------------------
-	/*	var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=cancel]')
+		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=cancel]')
 		for (i in btns){
 			btns[i].on('click', this.cancel_button, this)
-		}*/
+		}
 		//---------------------finish button-------------------
 		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]')
 		for (i in btns){
@@ -343,7 +346,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	
 	cancel_button: function(){
 		log.debug('cancel button',this.logAuthor)
+		this.fireEvent('cancel')
 		this.destroy()
+		
 	},
 	
 	finish_button: function(){
