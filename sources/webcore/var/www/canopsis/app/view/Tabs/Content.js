@@ -118,7 +118,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				 items: items,
 				 spotlight : true,
 				 contextMenu : true,
-				 debug: true,
+				 //debug: true,
 				 //autoScale: true,
 				 wizard: 'canopsis.view.ViewBuilder.wizard',
 		})
@@ -177,6 +177,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 
 		store.add(record)
+		
+		//reload store used in mainbar
+		Ext.getCmp("viewSelector").store.load()
 	},
 	/*
 	saveWidget : function(id,data){
