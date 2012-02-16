@@ -24,7 +24,7 @@ Ext.define('canopsis.controller.Tabs', {
 	logAuthor: '[controller][tabs]',
 
 	stores: ['Tabs'],
-	views: ['Tabs.View', 'Tabs.Content','Tabs.JqGridableViewer'],
+	views: ['Tabs.View', 'Tabs.Content'],
 
 	init: function() {
 		this.control({
