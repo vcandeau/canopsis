@@ -74,7 +74,6 @@ function createApplication(){
 		appFolder: 'app',
 
 		controllers: [
-			'Keynav',
 			'Mainbar',
 			'Widgets',
 			'Menu',
@@ -87,7 +86,8 @@ function createApplication(){
 			'ViewEditor',
 			'Tabs',
 			'ReportingBar',
-			'ViewBuilder'
+			'ViewBuilder',
+			'Keynav',
 		],
 	
 		//autoCreateViewport: true,
