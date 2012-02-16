@@ -144,20 +144,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var store = Ext.data.StoreManager.lookup('View')
 		var record = Ext.create('canopsis.model.view', data)
 		
-		//viewName = 'my_new_test' + Math.floor(Math.random()*100)
-		/*
-		if(this.options.viewName){
-			log.debug('new view')
-			viewName = this.options.viewName
-			record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
-		} else {
-			log.debug('old view')
-			if(this.view_id){
-				record.set('id',this.view_id)
-			}
-			
-		}
-		*/
 		if(this.view_id){
 			log.debug('editing view')
 			record.set('id',this.view_id)
@@ -170,24 +156,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 			}
 		}
-		
-		
 		record.set('items',dump)
-		//record.set('crecord_name',viewName); ////!!!!!!!!!!!!REMIND , MANAGE WHEN ROOT EDIT NON ROOT VIEW!!!!!!!!!!
-		//record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 
 		store.add(record)
 		
 		//reload store used in mainbar
 		Ext.getCmp("viewSelector").store.load()
-	},
-	/*
-	saveWidget : function(id,data){
-		log.debug('the return from wizard')
-		//log.dump(data)
-		this.jqgridable.replace_widget_content(id,data)
-		this.jqgridable.setData(id,data)
-		this.jqgridable.enableJqgridable()
 	},
 	
 	//---------------------Reporting functions--------------------
