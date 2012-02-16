@@ -52,15 +52,26 @@ Ext.define('canopsis.controller.Tabs', {
 				var store = Ext.data.StoreManager.lookup('View')
 				var record = Ext.create('canopsis.model.view', data)
 				
-				var id = 'view.'+ global.account.user + '.' + viewName.replace(/ /g,"_")
+				var view_id = 'view.'+ global.account.user + '.' + viewName.replace(/ /g,"_")
+				
+				//check if view already exist
+				var already_exist = store.findBy(
+						function(storeRecord, id){
+								if(storeRecord.get('id') == view_id){
+									return true;  // a record with this data exists
+								}
+					}, this);
 
-				record.set('crecord_name',viewName)
-				record.set('id',id)
-				
-				store.add(record)
-				
-				//open view
-				tab = add_view_tab(id, viewName, true, undefined, true, false, false)
+				if(already_exist != -1){
+					Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
+				} else {
+					record.set('crecord_name',viewName)
+					record.set('id',view_id)
+					store.add(record)
+					//open view
+					tab = add_view_tab(view_id, viewName, true, undefined, true, false, false)
+				}
+
 			} else {
 				log.debug('cancel new view')
 			}

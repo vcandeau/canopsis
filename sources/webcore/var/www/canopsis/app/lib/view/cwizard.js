@@ -196,8 +196,8 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 				xtype: 'panel' ,
 				//html : raw_step.description,
 				border : false, 
-				style : 'text-align:center;',
-				padding : '0 0 0 5',
+				style : 'text-align:center;top:12px;',
+				//padding : '0 0 0 5',
 				height:35,
 				//frame : true,
 				html: new Ext.XTemplate("<p>{value}</p>").apply({
