@@ -125,6 +125,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			btns[i].on('click', this.finish_button, this)
 		}
 		
+		this.tabPanel.on('tabchange',this.update_button,this)
 	},
 	
 	add_new_step: function(step){

@@ -24,7 +24,7 @@ Ext.define('canopsis.controller.Tabs', {
 	logAuthor: '[controller][tabs]',
 
 	stores: ['Tabs'],
-	views: ['Tabs.View', 'Tabs.Content','Tabs.JqGridableViewer'],
+	views: ['Tabs.View', 'Tabs.Content'],
 
 	init: function() {
 		this.control({
@@ -43,6 +43,28 @@ Ext.define('canopsis.controller.Tabs', {
   	on_tabchange: function(tabPanel, new_tab, old_tab, object){
 		//log.debug('Tabchange', this.logAuthor);
 		tabPanel.old_tab = old_tab
+	},
+	
+	create_new_view : function(){
+		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName){
+			if (btn == 'ok'){
+				//create view 
+				var store = Ext.data.StoreManager.lookup('View')
+				var record = Ext.create('canopsis.model.view', data)
+				
+				var id = 'view.'+ global.account.user + '.' + viewName.replace(/ /g,"_")
+
+				record.set('crecord_name',viewName)
+				record.set('id',id)
+				
+				store.add(record)
+				
+				//open view
+				tab = add_view_tab(id, viewName, true, undefined, true, false, false)
+			} else {
+				log.debug('cancel new view')
+			}
+		});
 	},
   	/*on_add: function(component, index, object){
 		log.debug('Added', this.logAuthor);	

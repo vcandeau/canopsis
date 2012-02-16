@@ -83,11 +83,13 @@ function createApplication(){
 			'LiveEvents',
 			'Account',
 			'Group',
-			'ViewEditor',
 			'Tabs',
 			'ReportingBar',
+<<<<<<< HEAD
 			'ViewBuilder',
 			'Keynav',
+=======
+>>>>>>> 868f5a75fdd8e0282ac454cc88943d57fe78de67
 		],
 	
 		//autoCreateViewport: true,
