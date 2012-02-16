@@ -122,6 +122,10 @@
     background-image: url(../images/icons/application_add.png) !important; 
 }
 
+.icon-mainbar-view { 
+    background-image: url(../images/icons/application.png) !important; 
+}
+
 .icon-mainbar-dashboard { 
     background-image: url(../images/icons/application_home.png) !important; 
 }

@@ -47,7 +47,6 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			emptyText: _('Select a view')+' ...',
 			selectOnFocus: true,
 			width: 200,
-			iconCls: 'no-icon',
 		});
 		
 		this.viewSelector.on('select',function(){
@@ -86,8 +85,8 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 								iconCls: 'icon-mainbar-dashboard',
 								text: _('Dashboard'),
 								action: 'openDashboard'
-							},'-',
-							this.viewSelector,
+							},'-', 
+								this.viewSelector
 					],
 				}
 			},{
