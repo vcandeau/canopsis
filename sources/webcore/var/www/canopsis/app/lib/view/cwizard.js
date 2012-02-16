@@ -28,7 +28,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	closeAction: 'destroy',
 	width: 600,
 	minWidth: 350,
-	height: 450,
+	height: 500,
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
@@ -72,6 +72,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.tabPanel = this.add({
 			layout: 'fit',
 			xtype: 'tabpanel',
+			plain: true,
 			deferredRender: false,
 		})
 		
@@ -184,17 +185,35 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			step.title = "step " + i
 		}
 		
+		//id to identify each tab
 		if(raw_step.id){
 			step.id = raw_step.id
 		}
 		
 		if(raw_step.description){
-			step.items.push({xtype: 'panel' ,html : raw_step.description, border : false})
+			step.items.push({
+				xtype: 'panel' ,
+				//html : raw_step.description,
+				border : false, 
+				style : 'text-align:center;',
+				padding : '0 0 0 5',
+				height:35,
+				//frame : true,
+				html: new Ext.XTemplate("<p>{value}</p>").apply({
+						value: raw_step.description,
+					})
+			})
 		}
 		
 		//if step has items, build then, otherwise -> do nothing on step
 		if(raw_step.items){
-			var formated_items = this.build_items(raw_step.items)
+			var formated_items = {
+				xtype : 'panel',
+				padding : 5,
+				border : false,
+				items : this.build_items(raw_step.items),
+			}
+
 			step.items.push(formated_items)
 		}
 
