@@ -58,6 +58,24 @@ Ext.define('canopsis.controller.Keynav', {
 					event.stopEvent()
 					// Search view
 					log.debug('ctrl + f', this.logAuthor)
+	
+					/*if (this.win) {
+						this.win.show();
+					} else {
+						this.win = Ext.create('widget.window', {
+							title: 'Select a view ...',
+							closable: true,
+							closeAction: 'hide',
+							width: 300,
+							resizable: true,
+							layout: 'fit',
+							bodyStyle: 'padding: 5px;',
+							items: [ Ext.getCmp("viewSelector") ],
+						}).show(false, function(){
+							Ext.getCmp("viewSelector").focus();
+						});
+					}*/
+
 				}
 			}
 		]);
