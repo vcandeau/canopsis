@@ -83,10 +83,8 @@ function createApplication(){
 			'LiveEvents',
 			'Account',
 			'Group',
-			'ViewEditor',
 			'Tabs',
 			'ReportingBar',
-			'ViewBuilder'
 		],
 	
 		//autoCreateViewport: true,
