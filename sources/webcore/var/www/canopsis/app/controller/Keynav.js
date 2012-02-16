@@ -24,34 +24,44 @@ Ext.define('canopsis.controller.Keynav', {
 	logAuthor: '[controller][Keynav]',
 
 	init: function() {
+		log.debug('Map keynav', this.logAuthor)
+		
 		this.map = Ext.create('Ext.util.KeyMap', Ext.getBody(), [
 			{
 				key: Ext.EventObject.N,
-				shift: true,
-				ctrl: false,
-				fn: function() {
+				ctrl: true,
+				fn: function(key, event) {
+					event.stopEvent()
 					// New view
-					log.debug('shift + n', this.logAuthor)
+					log.debug('ctrl + n', this.logAuthor)
 				}
 			},{
 				key: Ext.EventObject.E,
-				shift: true,
-				ctrl: false,
-				fn: function() {
+				ctrl: true,
+				fn: function(key, event) {
+					event.stopEvent()
 					// Edit view
-					log.debug('shift + e', this.logAuthor)
+					log.debug('ctrl + e', this.logAuthor)
 				}
 			},{
 				key: Ext.EventObject.S,
-				shift: true,
-				ctrl: false,
-				fn: function() {
+				ctrl: true,
+				fn: function(key, event) {
+					event.stopEvent()
 					// Save view
-					log.debug('shift + s', this.logAuthor)
+					log.debug('ctrl + s', this.logAuthor)
+				}
+			},{
+				key: Ext.EventObject.F,
+				ctrl: true,
+				fn: function(key, event) {
+					event.stopEvent()
+					// Search view
+					log.debug('ctrl + f', this.logAuthor)
 				}
 			}
 		]);
-		
+
 		this.callParent(arguments);
 	},
 
