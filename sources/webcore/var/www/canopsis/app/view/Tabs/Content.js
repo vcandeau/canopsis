@@ -83,11 +83,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	setContent: function(){
 		if(this.view){
 			var items = this.view.items
-			this.set_items(items)
 		} else {
-			this.set_items()
+			var items = undefined
 		}
-		
+		this.set_items(items)
 		
 		/*
 		//if report mode
@@ -124,7 +123,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		})
 		this.add(this.jqgridable)
 		this.bindJqgridable(this.jqgridable)
-		if(!items){
+		if(!items || (items.length == 0)){
 			this.jqgridable.editMode()
 		}
 	},
