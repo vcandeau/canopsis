@@ -56,16 +56,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					this.view = data.data[0]
 					this.dump = this.view.items
 
-					if (this.autoshow){
-						this.setContent();
-					}else{
-						this.on('show', function (){
-							if (! this.displayed) {
-								this.setContent();
-								this.displayed = true;
-							}
-						}, this)
-					}
+					this.fireEvent('ready', this)
 
 				},
 				failure: function (result, request) {
@@ -76,6 +67,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		});
 
 
+		this.on('ready', function(){
+			if (this.autoshow){
+				this.setContent()
+			}
+		}, this)
+		
 		this.on('save', this.saveView, this)
 
 		this.on('beforeclose', this.beforeclose)
@@ -87,8 +84,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 
 	setContent: function(){
-		if(this.dump){
+		if(this.dump && ! this.displayed){
+			log.dump(this.dump)
 			this.container.jqGridable('load', this.dump)
+			this.displayed = true
 		}
 	},
 	
