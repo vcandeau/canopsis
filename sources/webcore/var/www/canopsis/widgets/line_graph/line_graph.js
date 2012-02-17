@@ -179,6 +179,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	},
 
+	/*onResize: function(){
+		log.debug("onRezize", this.logAuthor)
+		if (this.chart){
+			this.chart.redraw();
+		}
+	},*/
+
+	afterLayout:function(){
+		console.log("LAYYYYOOOUUUTTT !!!")
+		if (this.chart){
+			this.chart.redraw();
+		}
+	},
+
 	createHighchart: function(){
 		log.debug(" + Set config", this.logAuthor)
 
@@ -228,7 +242,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				renderTo: this.divId,
 				//zoomType: 'x',
 				defaultSeriesType: 'area',
-				height: this.divHeight,
+				//height: this.divHeight,
 				animation: false,
 				borderColor: "#FFFFFF"
 			},
