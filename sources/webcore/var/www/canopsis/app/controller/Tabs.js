@@ -70,6 +70,7 @@ Ext.define('canopsis.controller.Tabs', {
 					store.add(record)
 					//open view
 					tab = add_view_tab(view_id, viewName, true, undefined, true, false, false)
+					tab.editMode();
 				}
 
 			} else {
