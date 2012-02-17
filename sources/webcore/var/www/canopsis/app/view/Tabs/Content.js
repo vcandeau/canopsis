@@ -19,37 +19,42 @@
 # ---------------------------------
 */
 Ext.define('canopsis.view.Tabs.Content' ,{
-	extend: 'Ext.Panel',
+	extend: 'Ext.jq.Gridable',
+	
 	alias : 'widget.TabsContent',
 
 	logAuthor: '[view][tabs][content]',
 
 	autoScroll: true,
-	
-	border: false,
-
-	//displayed: false,
+		
+	autoshow: true,
+	displayed: false,
 
 	items: [],
 	
-	newView : false,
-    
+	//Ext.jq.Gridable
+	spotlight : true,
+	contextMenu : true,
+	
+	debug: false,
+	
+	autoScale: true,
+	autoDraw: false,
+	wizard: 'canopsis.view.Tabs.wizard',
+	
+    //Init
 	initComponent: function() {
-
-		this.widgets = []
-		this.mask_cpt = 0
-		
 		this.callParent(arguments);
+				
+		log.dump("Display view '"+this.view_id+"' ...", this.logAuthor)
 
-		log.dump("Get view '"+this.view_id+"' ...", this.logAuthor)
-		
-		//if(this.view_id){
-			Ext.Ajax.request({
+		Ext.Ajax.request({
 				url: '/rest/object/view/'+this.view_id,
 				scope: this,
 				success: function(response){
 					data = Ext.JSON.decode(response.responseText)
 					this.view = data.data[0]
+					this.dump = this.view.items
 
 					if (this.autoshow){
 						this.setContent();
@@ -68,72 +73,23 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 						log.error("Close tab, maybe not exist ...", this.logAuthor)
 						this.close();
 				} 
-			});
-		//}else{
-			//this.setContent()
-		//}
+		});
+
+
+		this.on('save', this.saveView, this)
 
 		this.on('beforeclose', this.beforeclose)
 		
-		//create mask
-		//this.mask = new Ext.LoadMask(this, {msg: _("Please wait") + " ..."});
-		
-	},
-	
-	setContent: function(){
-		if(this.view){
-			var items = this.view.items
-			this.set_items(items)
-		} else {
-			this.set_items()
-		}
-		
-		
-		/*
-		//if report mode
-		if(this.view.reporting){
-			this.reportBar = Ext.create('canopsis.view.ReportingBar.ReportingBar');
-			this.addDocked(this.reportBar);
-			this.reportBar.requestButton.on('click',this.onReport,this);
-			this.reportBar.nextButton.on('click',this.nextReportButton,this);
-			this.reportBar.previousButton.on('click',this.previousReportButton,this);
-			this.reportBar.saveButton.on('click',this.saveButton,this);
-			this.reportBar.linkButton.on('click',this.linkButton,this);
-			this.reportBar.currentDate.on('select',this.onReport,this);
-			this.reportBar.combo.on('select',this.onReport,this);
-		}
-*/
 		//binding event to save resources
-		this.on('show', function(){
-			this._onShow();
-		}, this);
-		this.on('hide', function(){
-			this._onHide();
-		}, this);
+		this.on('show', this._onShow, this);
+		this.on('hide', this._onHide, this);
+	
 	},
 
-	set_items : function(items){
-		log.debug('set items', this.logAuthor)
-		this.jqgridable = Ext.create('Ext.jq.Gridable',{
-				 items: items,
-				 spotlight : true,
-				 contextMenu : true,
-				 //debug: true,
-				 //autoScale: true,
-				 wizard: 'canopsis.view.Tabs.wizard',
-		})
-		this.add(this.jqgridable)
-		this.bindJqgridable(this.jqgridable)
-		if(!items){
-			this.jqgridable.editMode()
+	setContent: function(){
+		if(this.dump){
+			this.container.jqGridable('load', this.dump)
 		}
-	},
-	
-	bindJqgridable: function(jq){
-		//saving the view
-		jq.on('save',function(dump){
-				this.saveView(dump)
-			},this)		
 	},
 	
 	saveView : function(dump){
@@ -157,155 +113,30 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 		}
 		record.set('items',dump)
-
+		
 		store.add(record)
+		
+		//reload view
+		this.dump = dump
+		//this.removeAll()
+		//this.setContent()
+		this.doRedraw()
 		
 		//reload store used in mainbar
 		Ext.getCmp("viewSelector").store.load()
 	},
 	
-	//---------------------Reporting functions--------------------
-/*	onReport: function(){
-		log.debug('Request reporting on a time', this.logAuthor)
-		var toolbar = this.reportBar
-
-		if (toolbar.currentDate.isValid()){
-			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var stopReport = startReport + toolbar.combo.getValue();
-			
-			log.debug('--------------------------------------------')
-			log.debug('start date report :' + new Date(startReport * 1000), this.logAuthor)
-			log.debug('stop date report :' + new Date(stopReport * 1000), this.logAuthor)
-			log.debug('--------------------------------------------')
-			
-			//enable mask
-			//this._maskInit()
-
-			for (i in this.widgets){
-				log.debug('refreshing '+ i, this.logAuthor)
-				this.widgets[i]._doRefresh(startReport * 1000, stopReport * 1000)
-			}
-		}
-	},
-	
-	nextReportButton: function(){
-		var inputField = this.reportBar.currentDate;
-		var startReport = parseInt(Ext.Date.format(inputField.getValue(), "U"))
-		var timeUnit = this.reportBar.combo.getValue()
-		//add the time and build a date
-		var stopReport = startReport + timeUnit
-		var newDate = new Date(stopReport * 1000)
-		//set the time
-		inputField.setValue(newDate)
-		//ask widget to go on reporting
-		this.onReport()
-	},
-	
-	previousReportButton: function(){
-		var inputField = this.reportBar.currentDate;
-		var startReport = parseInt(Ext.Date.format(inputField.getValue(), "U"))
-		var timeUnit = this.reportBar.combo.getValue()
-		//substract the time and build a date
-		var stopReport = startReport - timeUnit
-		var newDate = new Date(stopReport * 1000)
-		//set the time
-		inputField.setValue(newDate)
-		//ask widget to go on reporting
-		this.onReport()
-	},
-	
-	linkButton : function(){
-		var toolbar = this.reportBar
-		if (toolbar.currentDate.isValid()){
-			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var stopReport = startReport + toolbar.combo.getValue();
-			var url = 'http://' + window.location.host + '/static/canopsis/reporting.html?'
-			
-			url += 'view=' + this.view_id + '&'
-			url += 'from=' + startReport * 1000 + '&'
-			url += 'to=' + stopReport * 1000
-			
-			window.open(url,'_newtab')
-		}
-	},
-	
-	saveButton: function(){
-		log.debug('Report generation', this.logAuthor);
-		var toolbar = this.reportBar
-		if (toolbar.currentDate.isValid()){
-			var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var stopReport = startReport + toolbar.combo.getValue();
-			
-			//log.debug(stopReport)
-			//log.debug(startReport)
-			//log.debug(this.view_id)
-		
-			global.notify.notify(_('Please Wait'),_('Your document is rendering, a popup will ask you where to save in few seconds'))
-
-			Ext.Ajax.request({
-				url: '/reporting/'+ startReport * 1000 + '/' + stopReport * 1000 + '/' + this.view_id,
-				scope: this,
-				success: function(response){
-					var data = Ext.JSON.decode(response.responseText)
-					data = data.data.url
-					global.notify.notify(
-						_('Export ready'),
-						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
-						undefined,
-						undefined,
-						false
-					)
-				},
-				failure: function (result, request) {
-					log.error("Report generation have failed", this.logAuthor)
-				} 
-			});
-		}
-	},
-*/
-
-	_maskInit: function(){
-		this.mask.show();
-		this.mask_cpt = 0;
-	},
-	
-	_maskCheck: function(){
-		if(this.mask_cpt == (this.widgets.length -1)){
-			this.mask.hide()
-			this.mask_cpt = 0
-			//log.debug('hide the mask')
-		}else{
-			this.mask_cpt++
-			//log.debug('adding new mask')
-			//log.dump(this.mask_cpt)
-			//log.dump(this.widgets.length)
-		}
-	},
-
+	//Binding
 	_onShow: function(){
 		log.debug('Show tab '+this.id, this.logAuthor)
-		if (this.widgets){
-			var i;
-			for (i in this.widgets){
-				if (this.widgets[i].TabOnShow){
-					this.widgets[i].TabOnShow()
-				}
-			}
-		}
 	},
 
 	_onHide: function(){
 		log.debug('Hide tab '+this.id, this.logAuthor)
-		if (this.widgets){
-			var i;
-			for (i in this.widgets){
-				if (this.widgets[i].TabOnHide){
-					this.widgets[i].TabOnHide()
-				}
-			}
-		}
 	},
 	
+	
+	//// Tabs COOKING
 	beforeclose: function(tab, object){
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
@@ -326,8 +157,5 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug("Destroy items ...", this.logAuthor)
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
  		log.debug(this.id + " Destroyed.", this.logAuthor)
- 		if(this.toolbar){
-			this.toolbar.close()
-		}
  	}
 });
