@@ -2,7 +2,7 @@
 
 NAME="rabbitmq-server"
 VERSION=2.7.0
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr erlang"
 
@@ -13,32 +13,6 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-
-	launch_cmd 1 service rabbitmq-server start
-
-	echo "Safe wait ..."
-	sleep 5
-
-	CODE=0
-
-	echo " + Declare Admin user ..."
-	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare user name=admin password=admin tags=administrator
-	RCODE=$?
-	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-
-	echo " + Declare vhost ..."
-	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare vhost name=canopsis
-	RCODE=$?
-	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-
-	echo " + Declare permissions for guest user ..."
-	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 -V canopsis declare permission vhost=canopsis user=guest configure=".*" write=".*" read=".*"
-	RCODE=$?
-	if [ $RCODE -ne 0 ]; then CODE=$RCODE; fi
-
-	launch_cmd 1 service rabbitmq-server stop
-
-	check_code $CODE "Error in rabbitMQ configurations ..."
 }
 
 function pre_remove(){
