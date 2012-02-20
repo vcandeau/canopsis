@@ -385,14 +385,14 @@ class cstorage(object):
 			record.children_record.append(rec)
 
 
-	def get_record_childs(self, record):
+	def get_record_childs(self, record,account=None, namespace=None):
 		child_ids = record.children
 		if len(child_ids) == 0:
 			return []
 
 		records = []
 		for _id in child_ids:
-			records.append(self.get(_id))
+			records.append(self.get(str(_id),account=account, namespace=namespace))
 
 		return records
 				
