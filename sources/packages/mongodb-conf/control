@@ -18,17 +18,15 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 
-	if [ ! -e $PREFIX/var/lib/mongodb/canopsis.ns ]; then
-		launch_cmd 0 service mongodb stop
+	launch_cmd 0 service mongodb stop
 		
-		rm /tmp/mongodb-*.sock &> /dev/null || true
+	rm /tmp/mongodb-*.sock &> /dev/null || true
 	
-		launch_cmd 1 service mongodb start
-		launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
-		launch_cmd 1 service mongodb stop
+	launch_cmd 1 service mongodb start
+	launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
+	launch_cmd 1 service mongodb stop
 	
-		check_code $? "Impossible to init mongoDB ..."
-	fi
+	check_code $? "Impossible to init mongoDB ..."
 }
 	
 function pre_remove(){
