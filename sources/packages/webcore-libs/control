@@ -2,7 +2,7 @@
 
 NAME="webcore-libs"
 VERSION=0.1
-RELEASE=1
+RELEASE=2
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python canolibs wkhtmltopdf"
 
@@ -12,6 +12,8 @@ NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	# rm old libs
+	rm -R $HOME/var/www/canopsis/resources/lib &> /dev/null || true
 	check_code $? 
 }
 

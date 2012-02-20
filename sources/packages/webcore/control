@@ -2,7 +2,7 @@
 
 NAME="webcore"
 VERSION=0.1
-RELEASE=1
+RELEASE=3
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python canolibs wkhtmltopdf webcore-libs"
 
@@ -33,12 +33,12 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	rm -Rf $PREFIX/var/www/canopsis/widgets/* &> /dev/null || true
 	check_code $?
 }
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	service webserver restart
 	check_code $?
 }
 
