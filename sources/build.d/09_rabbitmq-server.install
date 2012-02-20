@@ -24,8 +24,6 @@ function install(){
 	fi
 	cd $BASE
 
-	install_basic_source $NAME
-
 	mkdir -p $PREFIX/var/lib/rabbitmq $PREFIX/var/log/rabbitmq $PREFIX/opt/rabbitmq-server
 	chown $HUSER:$HGROUP -R $PREFIX/var/lib/rabbitmq
 	chown $HUSER:$HGROUP -R $PREFIX/var/log/rabbitmq
