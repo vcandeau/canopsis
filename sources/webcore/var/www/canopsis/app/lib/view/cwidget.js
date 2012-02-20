@@ -28,8 +28,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	data: {},
 
-	//addToRequestManager: true,
-
 	defaultHtml: '<center><span class="icon icon-loading" /></center>',
 
 	refreshInterval: 0,
@@ -63,7 +61,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 
 		this.divId = this.id+"-content"
-		this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
+		//this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
+		//this.divId
+		this.items = [{ xtype: 'container', id: this.divId, html: this.defaultHtml, border: false}]
 		
 		this.uri = '/rest/events/event'
 		
@@ -130,7 +130,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.setHtml('No reporting mode for this widget')
 		}
 	},*/
-
+	
 	startTask: function(){
 		if (! this.reportMode) {
 			if (this.task){
@@ -167,7 +167,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if (this.doRefresh){
 			this.doRefresh(from, to)
 		}
-/*
+		/*
 		if(this.mytab.mask){
 			this.mytab._maskCheck()
 		}*/
@@ -180,6 +180,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	onRefresh: function(data){
 		log.debug("onRefresh", this.logAuthor)
+	},
+
+	onResize: function(){
+		log.debug("onRezize", this.logAuthor)
 	},
 
 	getNodeInfo: function(){
