@@ -32,11 +32,9 @@ from crecord import crecord
 #import protection function
 from libexec.auth import check_auth, get_account
 
-logger = logging.getLogger("ui-view")
-
+logger = logging.getLogger("test_tree")
+logger.setLevel(3)
 #########################################################################
-
-#### GET
 @get('/ui/dashboard', apply=[check_auth])
 def get_dashboard():
 	namespace = 'object'
@@ -71,111 +69,77 @@ def get_dashboard():
 	#logger.debug(" + Output: "+str(output))
 
 	return output
-
-### GET
-@get('/ui/views', apply=[check_auth])
-def get_tree_views():
+'''
+@get('/tree',	apply=[check_auth])
+def tree_get():
 	
-	account = get_account()
-	storage = get_storage(namespace='object')
+	node = request.params.get('node', default="")
+	logger.debug(str(node))
 	
-	mfilter = {'crecord_type': 'view'}
+	array = []
+	
+	#child_array.append({"text":"firstLeaf","leaf":"true"})
+	#child_array.append({"text":"firstDir","leaf":"false"})
+	#child_array.append({"text":"secondLeaf","leaf":"true"})
+	
+	if(node == "root"):
+		array = {"id":"myRoot","text":"myRoot","expanded":"true" }
 		
-	logger.debug('Get all views like a tree for ViewEditor')	
+	if(node == "myRoot"):
+		array = [{"id":"childDir","text":"childDir"},
+		{"id":"anotherDir","text":"anotherDir"}]
 		
-	records = storage.find(mfilter,account=account)
-	output = []
-	for record in records:
-		logger.debug('#####################here##########################')
-		logger.debug(str(record.dump()))
-		data = record.data
-		#data['id'] = str(record._id)
-		data['name'] = record.name
-		data['id'] = record._id
-		#data['leaf'] = True
-		output.append(data)
-			
-	output = json.dumps(output)
-	#logger.debug(" + Output: "+str(output))
+	if(node == "childDir"):
+		array = [{"id":"firstLeaf","text":"firstLeaf","leaf":"true"},
+		 {"id":"secondLeaf","text":"secondLeaf","leaf":"true"}]
+		
+	if(node == "anotherDir"):
+		array = [{"id":"ichiLeaf","text":"ichiLeaf","leaf":"true"},
+		{"id":"niLeaf","text":"niLeaf","leaf":"true"}]
+	
+	output = {"total": 1, "success": True, "data": array}
 	return output
-
-###POST
-@post('/ui/views', apply=[check_auth])
-def post_views_in_db():
+	'''
+	
+@get('/ui/view',	apply=[check_auth])
+def tree_get():
+	namespace = 'object'
 	account = get_account()
-	storage = get_storage(namespace='object')
+	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
+	node = request.params.get('node', default= None)
 	
-	logger.debug("PUT:")
-
-	data = request.body.readline()
-	if not data:
-		HTTPError(400, "No data received")
-
-	data = json.loads(data)
-	
-	#Create a good ID
-	_id = 'view.'+ str(account.user) + '.' + str(data['name'])
-	
-	#Creating the crecord for the view
-	my_record = crecord({'_id': _id },type='view', name=data['name'] )
-	my_record.data['items'] = []
-	my_record.data['nodeId'] = data['nodeId']
-	my_record.data['refreshInterval'] = data['refreshInterval']
-	my_record.data['column'] = data['column']
-	
-	#my_record.data['hunit'] = 300
-	#my_record.data['column'] = data['column']
-	####################################
-	
-	#Cleaning extjs output and put the record in base
-	w = data['items']
-	logger.debug('creating view : cleaning extjs output')
-	#logger.debug('##############################################################');
-	#logger.debug(w)
-	#logger.debug('##############################################################');
-	for i in w :
-		d = {}
-		d['xtype'] = i['xtype']
-		d['type'] = i['type']
-		d['refreshInterval'] = i['refreshInterval']
-		d['nodeId'] = i['nodeId']
-		d['title'] = i['title']
-		d['colspan'] = i['colspan']
-		d['rowspan'] = i['rowspan']
-		my_record.data['items'].append(d)
+	output = []
+	total = 0
+	#mfilter = {'crecord_type': 'view_directory'}
 		
-	#logger.debug('------dump the end output---------')	
-	#logger.debug(my_record)
-	#logger.debug('---------------------end dump dict-------------------')
+	if node:
+		if node == 'root':
+			node = 'directory.root.dir1'
+			parentNode = storage.get(node, account=account)
+			output = parentNode.dump(json=True)
+			output['id'] = output['_id']
+			total += 1
+		else:	
+			parentNode = storage.get(node, account=account)
+			logger.debug(str(parentNode.dump()))
+			if parentNode:
+				records = storage.get_record_childs(parentNode,account=account)
+				for record in records:
+					data = record.dump(json=True)
+					data['id'] = data['_id']
+					output.append(data)
+					total += 1
+
+	return {"total": total, "success": True, "data": output}
 	
-	try:
-		storage.put(my_record, account=account)
-		logger.debug('creating view : New view added to database')
-	except:
-		logger.debug('creating view : Adding view in database have FAILED !')
+
+@delete('/ui/view/:name',apply=[check_auth])
+def tree_delete(name=None):
+	logger.debug(str(name))
 	
-	#logger.debug(str(data))
-	
-	return
-
-###PUT
-@put('/ui/views/:_id',apply=[check_auth])
-def ui_views_put(_id):
-	#extjs try to give another index to the node, so bottle do nothing, views arn't node
-	logger.debug('PUT request intercept, do nothing (views aren\'t a real tree')
-	return
-
-#### DELETE
-@delete('/ui/views/:_id',apply=[check_auth])
-def ui_views_delete(_id):
-	account = get_account()
-	storage = get_storage(namespace='object')
-
-	logger.debug("DELETE:")
-	logger.debug(" + _id: "+str(_id))
-	try:
-		storage.remove(_id, account=account)
-	except:
-		return HTTPError(404, _id+" Not Found")
-
-
+@put('/ui/view/:name',apply=[check_auth])
+def tree_update(name='None'):
+	logger.debug(str(name))
+	data = json.loads(request.body.readline())
+	logger.debug(type(data))
+	logger.debug(str(data))
