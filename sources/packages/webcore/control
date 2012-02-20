@@ -38,7 +38,6 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	service webserver restart
 	check_code $?
 }
 
