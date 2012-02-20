@@ -18,16 +18,28 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.View', {
-    extend: 'Ext.app.Controller',
-
-    views: ['View.TreePanel'],
-    stores: ['View','TreeStoreView'],
-    model:['view'],
-
-    init: function() {
-	//log.debug('Create View stores ...')
-	//var store = Ext.create('canopsis.store.View')
-	//store.load()
-    },
-});
+Ext.define('canopsis.store.TreeStoreView', {
+    extend: 'canopsis.lib.store.ctreeStore',
+    model: 'canopsis.model.view',
+	
+	storeId: 'store.TreeStoreView',
+	
+	proxy: {
+			type: 'rest',
+			url: '/ui/view',
+			reader: {
+				type: 'json',
+				root: 'data',
+				totalProperty  : 'total',
+				successProperty: 'success',
+			},
+			writer: {
+				type: 'json'
+			},
+		},
+		listeners: {
+			move: function( node, oldParent, newParent, index, options ) {
+				this.sync();
+			}
+		},
+	});

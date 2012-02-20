@@ -18,16 +18,34 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.View', {
-    extend: 'Ext.app.Controller',
-
-    views: ['View.TreePanel'],
-    stores: ['View','TreeStoreView'],
-    model:['view'],
-
-    init: function() {
-	//log.debug('Create View stores ...')
-	//var store = Ext.create('canopsis.store.View')
-	//store.load()
-    },
+Ext.define('canopsis.lib.view.ctree' ,{
+	extend: 'Ext.tree.Panel',
+	
+	viewConfig: {
+		plugins: [{
+			ptype: 'treeviewdragdrop'
+		}],
+	},
+	useArrows: true,
+	rootVisible: false,
+	multiSelect: true,
+	
+	columns: [{
+		xtype: 'treecolumn', 
+		text: 'name',
+		flex: 1,
+		//sortable: true,
+		dataIndex: 'crecord_name'
+	}],
+	
+/*
+	initComponent: function() {
+	/*	if(this.exportMode){
+			this.border = false
+			//this.hideHeaders = true
+		}else{
+		}
+		this.callParent(arguments);
+	},
+	*/
 });
