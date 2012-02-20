@@ -5,6 +5,7 @@ rm -f $LOG &> /dev/null
 
 
 function build(){
+	true
 }
 
 function install(){
