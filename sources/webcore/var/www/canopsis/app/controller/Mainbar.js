@@ -123,7 +123,7 @@ Ext.define('canopsis.controller.Mainbar', {
 	editView: function(){
 		log.debug('Edit view', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.jqgridable.editMode();
+		tab.editMode();
 	},
 	
 	newView: function(){
