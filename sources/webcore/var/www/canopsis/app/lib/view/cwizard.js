@@ -75,8 +75,6 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		}
 
 		this.previousButton.setDisabled(true)
-		
-
 	},
 	
 	afterRender : function(){
@@ -84,9 +82,15 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.callParent(arguments);
 		this.tabPanel.setActiveTab(0)
 		this.bind_buttons()
+		
+		//bind combobox
+		
 
 		if(this.data){
 			this.loadData()
+		} else {
+			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
+			combo[0].on('select',this.add_option_panel,this)
 		}
 	},
 	
@@ -124,10 +128,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	loadData : function(){
 		if(this.data.xtype){
 			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
-			log.debug(combo)
+
 			combo[0].setValue(this.data.xtype)
 			this.add_option_panel()
-			
+			combo[0].setDisabled(true)
 		}
 		
 		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]')
@@ -140,10 +144,19 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		}
 	},
 
-	remove_step: function(tabId){
-		var tab = this.tabPanel.child(tabId)
-		this.tabPanel.remove(tab)
+	reset_steps : function(){
+		var tab_childs = this.tabPanel.items.items
+		var tab_length = tab_childs.length
+		
+		//log.debug('child panel : ' + tab_length)
+		//log.debug('step list length :' + this.step_list.length)
+		
+		for(var i = this.step_list.length ; i < tab_length; i++){
+			this.tabPanel.remove(tab_childs[i])
+		}
 	},
+	
+	
 
 	get_variables : function(){
 		var output = {}
@@ -157,6 +170,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 
 	add_option_panel : function() {
+		this.reset_steps()
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
 		if(combo[0].isValid()){
 			var store = combo[0].getStore()
@@ -190,14 +204,14 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		var index = panel.items.indexOf(active_tab)
 		
 		log.debug('active tab ' + index) 
-		
+		/*
 		if(index == 0){
 			this.add_option_panel()
-		}
+		}*/
 		panel.setActiveTab(index + 1)
-		//this.update_button()
+		this.update_button()
 	},
-/*
+
 	update_button:function(){
 		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id)
 		var tabCount = this.tabPanel.items.length;
@@ -214,7 +228,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			this.nextButton.setDisabled(false)
 		}
 	},
-	*/
+	
 	cancel_button: function(){
 		log.debug('cancel button',this.logAuthor)
 		this.fireEvent('cancel')
