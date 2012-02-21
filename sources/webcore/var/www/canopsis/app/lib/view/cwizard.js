@@ -32,37 +32,27 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
-	//see bind_action_to_var function for explanation
-	panel_events_list : false,
 	
 	step_list: [{
 			title: _("i'm empty !"),
 			html: _('you must give an object to fill me')
 		}],
-	/*
-	tbar : [{xtype:'button',text:_('Previous'),action:'previous'},
-			{xtype:'button',text:_('Next'),action:'next'},'->',
-			{xtype:'button',text:_('Cancel'),action:'cancel'},
-			{xtype:'button',text:_('Finish'),disabled:false,action:'finish'}],
-	*/
+
 	initComponent: function() {
 		this.logAuthor = '[Wizard '+ this.id+']'
 		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
 		
-		//the following keep a trace of asked information
-		this.returnedVariable = {}
 		
 		//-----------------buttons--------------------------
 		
-		this.tbar = Ext.create('Ext.toolbar.Toolbar')
 		this.bbar = Ext.create('Ext.toolbar.Toolbar')
-		this.previousButton = this.tbar.add({xtype:'button',text:_('Previous'),action:'previous',iconCls:'icon-previous'})
-		this.tbar.add('->')
-		this.nextButton = this.tbar.add({xtype:'button',text:_('Next'),action:'next',iconCls:'icon-next',iconAlign:'right'})
-		
+
 		this.cancelButton = this.bbar.add({xtype:'button',text:_('Cancel'),action:'cancel',iconCls:'icon-cancel'})
 		this.bbar.add('->')
-		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),disabled:false,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
+		this.previousButton = this.bbar.add({xtype:'button',text:_('Previous'),action:'previous',iconCls:'icon-previous'})
+		this.nextButton = this.bbar.add({xtype:'button',text:_('Next'),action:'next',iconCls:'icon-next',iconAlign:'right'})
+
+		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),hidden:false,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 		
 		this.callParent(arguments);
 		
@@ -77,17 +67,16 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		})
 		
 		if(this.step_list){
-			var tmp = this.build_step_list(this.step_list)
+			//var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
-			this.add_new_step(tmp)
+			for(var i in this.step_list){
+				this.add_new_step(this.step_list[i])
+			}
 		}
-		
-		if(this._after_step_list){
-			this._after_step_list()
-		}
-		
+
 		this.previousButton.setDisabled(true)
 		
+
 	},
 	
 	afterRender : function(){
@@ -95,10 +84,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.callParent(arguments);
 		this.tabPanel.setActiveTab(0)
 		this.bind_buttons()
-		if(this.panel_events_list){
-			this.bind_panel_events(this.panel_events_list)
+
+		if(this.data){
+			this.loadData()
 		}
-		
 	},
 	
 	
@@ -125,209 +114,63 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			btns[i].on('click', this.finish_button, this)
 		}
 		
-		this.tabPanel.on('tabchange',this.update_button,this)
+		//this.tabPanel.on('tabchange',this.update_button,this)
 	},
 	
 	add_new_step: function(step){
 		this.tabPanel.add(step)
 	},
 	
+	loadData : function(){
+		if(this.data.xtype){
+			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
+			log.debug(combo)
+			combo[0].setValue(this.data.xtype)
+			this.add_option_panel()
+			
+		}
+		
+		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]')
+
+		for(var i in ext_element){
+			var elem = ext_element[i]
+			if(this.data[elem.name]){
+				elem.setValue(this.data[elem.name])
+			}
+		}
+	},
+
 	remove_step: function(tabId){
-		log.debug('the old tab is: ' + tabId)
 		var tab = this.tabPanel.child(tabId)
-		if(tab){ 
-			//remove tracked item 
-			var itemarray = tab.items.items
-			if(itemarray){
-				for(var i = 0; i < itemarray.length; i++){
-					var name = itemarray[i].name
-					if(name){
-						if(this.returnedVariable[name]){
-							this.returnedVariable[name] = undefined
-							log.debug('item removed from return list', this.logAuthor)
-						}
-					}
-				}
-			}
+		this.tabPanel.remove(tab)
+	},
 
-			this.tabPanel.remove(tab)
-			log.debug('old tab remove',this.logAuthor)
-		} else {
-			log.debug('no old tab found, do nothing',this.logAuthor)
-		}
-	},
-	
-	//take a list of step and build them all
-	build_step_list : function(step_list){
-		log.debug("Building step list",this.logAuthor)
-		var formated_steps = []
-		
-		//Prepare each step
-		for(var i = 0; i < step_list.length; i++){
-			var formated_step = this.build_step(step_list[i],i)
-			formated_steps.push(formated_step)
-		}
-		
-		//now it's generated, add to panel
-		return formated_steps
-	},
-	
-	//take one step and build it
-	build_step : function(raw_step, i){
-		log.debug("    Building steps",this.logAuthor)
-		var step = {}
-		step.items = []
-		
-		//if not title, not generat it
-		if(raw_step.title){
-			//log.dump(raw_step.title)
-			step.title = raw_step.title
-		} else {
-			step.title = "step " + i
-		}
-		
-		//id to identify each tab
-		if(raw_step.id){
-			step.id = raw_step.id
-		}
-		
-		if(raw_step.description){
-			step.items.push({
-				xtype: 'panel' ,
-				//html : raw_step.description,
-				border : false, 
-				style : 'text-align:center;top:12px;',
-				//padding : '0 0 0 5',
-				height:35,
-				//frame : true,
-				html: new Ext.XTemplate("<p>{value}</p>").apply({
-						value: raw_step.description,
-					})
-			})
-		}
-		
-		//if step has items, build then, otherwise -> do nothing on step
-		if(raw_step.items){
-			var formated_items = {
-				xtype : 'panel',
-				padding : 5,
-				border : false,
-				items : this.build_items(raw_step.items),
-			}
-
-			step.items.push(formated_items)
-		}
-
-		return step
-	},
-	
-	//take step items, create Ext component and return them
-	build_items : function(items){
-		log.debug("         Building items inside the step",this.logAuthor)
-		var ext_items = []
-		
-		//building items one by one
-		for(var i = 0; i < items.length; i++){
-			var item = items[i]
-			//if a variable to get back further is set
-			if(item.name){
-				//--------special case for combobox (need a store for it)
-				if((item.xtype == 'combobox') || (item.xtype == 'combo')){
-					if(item.store){
-						var ext_component = Ext.createByAlias(this.get_extjs_class(item.xtype),item)
-					}else{
-						//this.set_combobox()
-						//DEBUG TEST PURPOSE
-						var ext_component = Ext.createByAlias('widget.textfield',{name:'combotest'})
-					}
-				}else{
-					//log.debug(this.get_extjs_class(item.xtype))
-					var ext_component = Ext.create(this.get_extjs_class(item.xtype),item)
-				}
-				
-				//--------check if component created, and keep variable link if a name is set
-				if (ext_component){
-					this.returnedVariable[item.name] = ext_component
-					//log.dump(this.returnedVariable)
-					log.debug("         Added "+item.name+" variable",this.logAuthor)
-					ext_items.push(ext_component)
-				}else{
-					log.debug("         Error into item instantiate, be carefull",this.logAuthor)
-				}
-			} else {
-				ext_items.push(item)
-			}
-		}
-		return ext_items
-	},
-	
-	get_extjs_class : function(name){
-		if(name.indexOf('.') != -1){
-			return name
-		} else {
-			return 'widget.'+name
-		}
-	},
-	
-	//get one item of the tracked list
-	get_one_item : function(name){
-		if (this.returnedVariable[name]){
-			return this.returnedVariable[name]
-		} else {
-			return false
-		}
-	},
-	
-	//return false is no variable in object
 	get_variables : function(){
-		//log.dump(this.returnedVariable)
-		if(this.returnedVariable){
-			var returnValues = {}
-			log.debug(this.returnedVariable)
-			for(var i in this.returnedVariable){
-				//if was not deleted
-				if(this.returnedVariable[i]){
-					var item = this.returnedVariable[i]
-					//log.dump(item)
-					var name = i
-					//check item type
-					if((item.xtype == 'grid') || (item.xtype == 'gridpanel')){
-						returnValues[name] = item.getSelectionModel().getSelection()[0]
-					} else {
-						returnValues[name] =  item.getValue()
-					}
+		var output = {}
+		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]')
+		for (var i in ext_element){
+			var name = ext_element[i].name
+			var value = ext_element[i].getValue()
+			output[name] = value
+		}
+		return output
+	},
+
+	add_option_panel : function() {
+		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
+		if(combo[0].isValid()){
+			var store = combo[0].getStore()
+			var record = store.findRecord('xtype',combo[0].getValue())
+			var options = record.get('options')
+			log.debug('the selected widget have the following options',this.logAuthor)
+			log.dump(options)
+			if(options){
+				for(var i in options){
+					this.tabPanel.add(options[i])
 				}
 			}
-			log.dump(returnValues)
-			return returnValues
-		}
-		return false
-	},
-	
-	set_combobox : function(){
-		log.debug('combobox without store, this specific case is not managed',this.logAuthor)
-	},
-	
-	/* this function provide a simple way to pilot the wizard
-	 * just set this.change_step = {itemName : '',event : '', functionName :}
-	 * the action bind the event to an item tracked by the wizard in 
-	 * this.returnedVariable*/
-
-	bind_panel_events : function(event_list){
-		for(var i in event_list){
-			var itemSource = event_list[i].itemSource
-			var _function = event_list[i]._function
-			var event = event_list[i].event
-			/*log.debug('---------------binding system--------------')
-			log.dump(itemSource)
-			log.dump(_function)
-			log.dump(event)
-			log.dump(this.returnedVariable)
-			log.debug('-------------------------------------------') */
-			this.get_one_item(itemSource).on(event,_function,this)
 		}
 	},
-	 
 	
 	
 	//----------------------button action functions-----------------------
@@ -341,12 +184,20 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	
 	next_button: function(){
 		log.debug('next button',this.logAuthor)
-		panel = this.tabPanel
-		active_tab = this.tabPanel.getActiveTab()
-		panel.setActiveTab(panel.items.indexOf(active_tab) + 1)
-		this.update_button()
+		
+		var panel = this.tabPanel
+		var active_tab = panel.getActiveTab()
+		var index = panel.items.indexOf(active_tab)
+		
+		log.debug('active tab ' + index) 
+		
+		if(index == 0){
+			this.add_option_panel()
+		}
+		panel.setActiveTab(index + 1)
+		//this.update_button()
 	},
-	
+/*
 	update_button:function(){
 		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id)
 		var tabCount = this.tabPanel.items.length;
@@ -363,7 +214,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			this.nextButton.setDisabled(false)
 		}
 	},
-	
+	*/
 	cancel_button: function(){
 		log.debug('cancel button',this.logAuthor)
 		this.fireEvent('cancel')
@@ -373,7 +224,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	
 	finish_button: function(){
 		log.debug('save button',this.logAuthor)
-		this.fireEvent('save', this.get_variables())
+		var variables = this.get_variables()
+		log.debug(variables)
+		this.fireEvent('save',this.widgetId, variables)
 		this.close()
 	},
 	
