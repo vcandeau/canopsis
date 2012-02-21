@@ -83,5 +83,22 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 		this.callParent(arguments);
 		
 	},
+	
+	cancel_button: function(){
+		log.debug('cancel button',this.logAuthor)
+		this.fireEvent('cancel',this.widgetId)
+		this.close()
+		
+	},
+	
+	finish_button: function(){
+		log.debug('save button',this.logAuthor)
+		var variables = this.get_variables()
+		log.debug(variables)
+		this.fireEvent('save',this.widgetId, variables)
+		this.close()
+	},
+	
+	
 
 });
