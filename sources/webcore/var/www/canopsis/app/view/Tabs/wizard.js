@@ -20,12 +20,8 @@
 */
 
 
-/* little fix given on http://www.sencha.com/forum/showthread.php?136583-A-combobox-bug-of-extjs-4.0.2/page2
- * related to combobox bug, this bug is fixed in extjs4.0.6 , do not need this if
- * the extjs version is upgrated*/
-
-
-//-----------------------------------------//
+Ext.require('canopsis.lib.form.field.cinventory');
+Ext.require('canopsis.lib.form.field.cmetric');
 
 Ext.define('canopsis.view.Tabs.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
@@ -88,7 +84,6 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 		log.debug('cancel button',this.logAuthor)
 		this.fireEvent('cancel',this.widgetId)
 		this.close()
-		
 	},
 	
 	finish_button: function(){

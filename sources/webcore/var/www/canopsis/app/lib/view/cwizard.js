@@ -52,7 +52,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.previousButton = this.bbar.add({xtype:'button',text:_('Previous'),action:'previous',iconCls:'icon-previous'})
 		this.nextButton = this.bbar.add({xtype:'button',text:_('Next'),action:'next',iconCls:'icon-next',iconAlign:'right'})
 
-		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),hidden:true,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
+		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),hidden:false,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 		
 		this.callParent(arguments);
 		
@@ -118,7 +118,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			btns[i].on('click', this.finish_button, this)
 		}
 		
-		//this.tabPanel.on('tabchange',this.update_button,this)
+		this.tabPanel.on('tabchange',this.update_button,this)
 	},
 	
 	add_new_step: function(step){
@@ -223,13 +223,11 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		}
 		
 		if(activeTabIndex == (tabCount - 1)){
-			this.nextButton.hide()
-			this.finishButton.show()
+			this.nextButton.setDisabled(true)
+			this.finishButton.setDisabled(false)
 		} else {
-			if(this.nextButton.isHidden()){
-				this.nextButton.show()
-				this.finishButton.hide()
-			}
+			this.nextButton.setDisabled(false)
+			this.finishButton.setDisabled(true)
 		}
 	},
 	
@@ -237,7 +235,6 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		log.debug('cancel button',this.logAuthor)
 		this.fireEvent('cancel')
 		this.close()
-		
 	},
 	
 	finish_button: function(){
