@@ -80,7 +80,12 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//binding event to save resources
 		this.on('show', this._onShow, this);
 		this.on('hide', this._onHide, this);
+		this.on('resizeWidget', this.onResizeWidget, this);
 	
+	},
+	
+	onResizeWidget: function(cmp){
+		cmp.onResize()
 	},
 
 	setContent: function(){
@@ -128,10 +133,22 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	//Binding
 	_onShow: function(){
 		log.debug('Show tab '+this.id, this.logAuthor)
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			if (cmps[i].TabOnShow){
+				cmps[i].TabOnShow()
+			}
+		}
 	},
 
 	_onHide: function(){
 		log.debug('Hide tab '+this.id, this.logAuthor)
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			if (cmps[i].TabOnHide){
+				cmps[i].TabOnHide()
+			}
+		}
 	},
 	
 	

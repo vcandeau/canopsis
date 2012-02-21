@@ -258,5 +258,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			return undefined;
 		}
 	},
+	
+	beforeDestroy : function() {
+		log.debug("Destroy ...", this.logAuthor)
+		this.stopTask()
+		canopsis.lib.view.cwidget.superclass.beforeDestroy.call(this);
+ 	}
 
 });
