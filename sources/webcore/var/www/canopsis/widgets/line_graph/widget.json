@@ -11,7 +11,8 @@
 			"title": "choose nodeId",
 			"items": [{
 						"xtype": "cinventory",
-						"name": "nodeId"
+						"name": "nodeId",
+						"multiSelect": false
 					}]
 		}]
 }]
