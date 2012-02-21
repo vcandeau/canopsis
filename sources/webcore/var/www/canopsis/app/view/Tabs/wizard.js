@@ -55,7 +55,8 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 					name: "xtype",
 					displayField: 'name',
 					valueField: 'xtype',
-					value: 'empty',
+					//value: 'empty',
+					allowBlank:false,
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
@@ -84,17 +85,17 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 		//////////////////////------ bind actions-------//////////////////////
 		//action given by this array are bind by the cwizard class after rendering.
 		this.panel_events_list = [
-			{itemSource: 'xtype', event: 'select' , _function : this.add_panels},
+			//{itemSource: 'xtype', event: 'select' , _function : this.add_panels},
 			//{itemSource: 'xtype', event: 'select' , _function : this.add_nodeId_panel},
 			//{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric},
 		]
 		//////////////////-------------------------------------///////////////
-		if(this.data){
+	/*	if(this.data){
 			//log.debug('editmode')
 			this._edit(this.data)
-		}
+		}*/
 	},
-
+/*
 	//function launch when in editing mode
 	_edit : function(data){
 		this.firstEdit = true
@@ -136,7 +137,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 			}		
 		}
 	},
-	
+
 	add_panels : function(combo,record){
 		//add nodeId panel if widget need it
 		this.add_nodeId_panel(combo,record)
@@ -144,8 +145,8 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 		var added = this.add_option_panel(combo,record)
 		//if metric panel have been added, make metric listen to choosen nodeId
 		this.bind_panel_events([{itemSource: 'nodeId' , event : 'datachanged', _function : this.loadNodeIdMetric}])
-	},
-
+	},*/
+/*
 	//add the new option tab panel in the wizard
 	add_option_panel : function(combo,record){
 		log.debug('add widget options panel if needed', this.logAuthor)
@@ -168,7 +169,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 			return false
 		}
 	},
-	
+
 	//add the new nodeIdtab panel in the wizard
 	add_nodeId_panel : function(combo,record){
 		log.debug('add nodeId panel if needed', this.logAuthor)
@@ -210,12 +211,13 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 			}
 		}
 	},
-	
+/*
 	finish_button: function(){
 		log.debug('save button',this.logAuthor)
-		this.fireEvent('save', this.widgetId ,this.get_variables())
+		log.debug(this.get_variables())
+		//this.fireEvent('save', this.widgetId ,this.get_variables())
 		this.close()
 	},
-	
+	*/
 
 });
