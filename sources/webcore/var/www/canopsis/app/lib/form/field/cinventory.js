@@ -20,6 +20,8 @@
 */
 Ext.define('canopsis.lib.form.field.cinventory' ,{
 	extend: 'Ext.panel.Panel',
+	
+	alias: 'widget.cinventory',
 
 	window: false,
 	multiSelect: true,
