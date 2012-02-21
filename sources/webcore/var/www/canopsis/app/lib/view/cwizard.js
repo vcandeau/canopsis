@@ -52,7 +52,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.previousButton = this.bbar.add({xtype:'button',text:_('Previous'),action:'previous',iconCls:'icon-previous'})
 		this.nextButton = this.bbar.add({xtype:'button',text:_('Next'),action:'next',iconCls:'icon-next',iconAlign:'right'})
 
-		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),hidden:false,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
+		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),hidden:true,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 		
 		this.callParent(arguments);
 		
@@ -223,9 +223,13 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		}
 		
 		if(activeTabIndex == (tabCount - 1)){
-			this.nextButton.setDisabled(true)
+			this.nextButton.hide()
+			this.finishButton.show()
 		} else {
-			this.nextButton.setDisabled(false)
+			if(this.nextButton.isHidden()){
+				this.nextButton.show()
+				this.finishButton.hide()
+			}
 		}
 	},
 	
