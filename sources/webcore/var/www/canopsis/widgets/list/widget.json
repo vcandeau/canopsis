@@ -9,6 +9,7 @@
 	"rowHeight": 400,
 	"formWidth": 600,
 	"options": [{
+			"title": "choose filter",
 			"xtype": "textareafield",
 			"fieldLabel": "Filter",
 			"name": "filter",

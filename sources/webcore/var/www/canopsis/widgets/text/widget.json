@@ -9,6 +9,7 @@
 	"rowHeight": 50,
 	"formWidth": 800,
 	"options": [{
+			"title": "Inner text",
 			"xtype": "htmleditor",
 			"name": "text",
 			"height": 150,
