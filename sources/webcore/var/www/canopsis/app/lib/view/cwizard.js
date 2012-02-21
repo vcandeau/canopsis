@@ -236,7 +236,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	cancel_button: function(){
 		log.debug('cancel button',this.logAuthor)
 		this.fireEvent('cancel')
-		this.destroy()
+		this.close()
 		
 	},
 	
@@ -244,7 +244,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		log.debug('save button',this.logAuthor)
 		var variables = this.get_variables()
 		log.debug(variables)
-		this.fireEvent('save',this.widgetId, variables)
+		this.fireEvent('save', variables)
 		this.close()
 	},
 	
