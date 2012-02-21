@@ -21,7 +21,7 @@
 import sys, os, logging, json
 
 import bottle
-from bottle import route, get, put, delete, request, HTTPError, post
+from bottle import route, get, put, delete, request, HTTPError, post, response
 
 ## Canopsis
 from caccount import caccount
@@ -64,7 +64,9 @@ def account_get_me():
 	output={'total': 1, 'success': True, 'data': output}
 
 	logger.debug(" + Output: "+str(output))
-
+	
+	logger.debug('Response status: %s' % response.status)
+	
 	return output
 
 #### GET
