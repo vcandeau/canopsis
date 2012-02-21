@@ -88,10 +88,13 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 	
 	finish_button: function(){
 		log.debug('save button',this.logAuthor)
-		var variables = this.get_variables()
-		log.debug(variables)
-		this.fireEvent('save',this.widgetId, variables)
-		this.close()
+		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
+		if(combo[0].isValid()){
+			var variables = this.get_variables()
+			log.debug(variables)
+			this.fireEvent('save',this.widgetId, variables)
+			this.close()
+		}
 	},
 	
 	
