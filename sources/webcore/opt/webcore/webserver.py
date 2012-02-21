@@ -20,14 +20,16 @@
 
 import sys, time
 
-import bottle
-from bottle import route, run, static_file, redirect
-from beaker.middleware import SessionMiddleware
-
 from cinit import cinit
 from ctools import dynmodloads
 
 import ConfigParser, os
+
+import bottle
+from bottle import route, run, static_file, redirect
+from beaker.middleware import SessionMiddleware
+
+from gevent import monkey; monkey.patch_all()
 
 init = cinit()
 
@@ -73,12 +75,9 @@ if debug:
 else:
 	logger 	= init.getLogger("webserver-%s" % port, "INFO")
 
+
 ## Load webservices
-
-from gevent import monkey; monkey.patch_all()
-
 dynmodloads("~/opt/webcore/libexec/")
-
 
 def main():
 	bottle.debug(debug)
@@ -98,6 +97,10 @@ def main():
 	@bottle.route('/static/:path#.+#')
 	def server_static(path):
 		return static_file(path, root=root_directory)
+
+	@bottle.route('/favicon.ico')
+	def favicon():
+		return
 
 	@bottle.route('/')
 	@bottle.route('/index.html')
