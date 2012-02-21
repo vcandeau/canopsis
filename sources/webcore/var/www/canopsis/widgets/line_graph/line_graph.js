@@ -179,17 +179,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	},
 
-	/*onResize: function(){
+	onResize: function(){
 		log.debug("onRezize", this.logAuthor)
 		if (this.chart){
-			this.chart.redraw();
-		}
-	},*/
-
-	afterLayout:function(){
-		console.log("LAYYYYOOOUUUTTT !!!")
-		if (this.chart){
-			this.chart.redraw();
+			this.chart.setSize(this.getWidth(), this.getHeight(), false);
 		}
 	},
 
@@ -455,5 +448,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	}
 	*/
+	
+	
+ 	beforeDestroy : function() {
+		widgets.line_graph.line_graph.superclass.beforeDestroy.call(this);
+		
+ 		if (this.chart){
+			this.chart.destroy()
+			log.debug(" + Chart Destroyed", this.logAuthor)
+		}
+ 	}
 
 });
