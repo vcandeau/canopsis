@@ -21,6 +21,8 @@
 Ext.define('canopsis.lib.form.field.cmetric' ,{
 	extend: 'Ext.panel.Panel',
 	
+	alias: 'widget.cmetric',
+
 	logAuthor: '[cmetric]',
 	
 	//hideHeaders : true,
