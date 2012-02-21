@@ -49,10 +49,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 
 		this.cancelButton = this.bbar.add({xtype:'button',text:_('Cancel'),action:'cancel',iconCls:'icon-cancel'})
 		this.bbar.add('->')
-		this.previousButton = this.bbar.add({xtype:'button',text:_('Previous'),action:'previous',iconCls:'icon-previous'})
-		this.nextButton = this.bbar.add({xtype:'button',text:_('Next'),action:'next',iconCls:'icon-next',iconAlign:'right'})
+		this.previousButton = this.bbar.add({xtype:'button',text:_('Previous'),action:'previous',disabled:true,iconCls:'icon-previous'})
+		this.nextButton = this.bbar.add({xtype:'button',text:_('Next'),action:'next',disabled:true,iconCls:'icon-next',iconAlign:'right'})
 
-		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),hidden:false,action:'finish',iconCls: 'icon-save',iconAlign:'right'})
+		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 		
 		this.callParent(arguments);
 		
@@ -183,6 +183,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 					this.tabPanel.add(options[i])
 				}
 			}
+			this.update_button()
 		}
 	},
 	
@@ -203,11 +204,6 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		var active_tab = panel.getActiveTab()
 		var index = panel.items.indexOf(active_tab)
 		
-		log.debug('active tab ' + index) 
-		/*
-		if(index == 0){
-			this.add_option_panel()
-		}*/
 		panel.setActiveTab(index + 1)
 		this.update_button()
 	},
