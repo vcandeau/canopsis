@@ -32,6 +32,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
+	edit : false,
 	
 	step_list: [{
 			title: _("i'm empty !"),
@@ -139,6 +140,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 	
 	loadData : function(){
+		this.edit = true
 		if(this.data.xtype){
 			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
 
@@ -233,10 +235,14 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		
 		if(activeTabIndex == (tabCount - 1)){
 			this.nextButton.setDisabled(true)
-			this.finishButton.setDisabled(false)
+			if(!this.edit){
+				this.finishButton.setDisabled(false)
+			}
 		} else {
 			this.nextButton.setDisabled(false)
-			this.finishButton.setDisabled(true)
+			if(!this.edit){
+				this.finishButton.setDisabled(true)
+			}
 		}
 	},
 	
