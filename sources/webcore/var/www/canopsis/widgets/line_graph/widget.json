@@ -9,7 +9,9 @@
 	"locales": ["en", "fr"],
 	"options": [{
 			"title": "choose nodeId",
-			"xtype": "cinventory",
-			"name": "nodeId"
+			"items": [{
+						"xtype": "cinventory",
+						"name": "nodeId"
+					}]
 		}]
 }]
