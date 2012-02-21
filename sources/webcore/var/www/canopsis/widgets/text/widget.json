@@ -10,10 +10,12 @@
 	"formWidth": 800,
 	"options": [{
 			"title": "Inner text",
-			"xtype": "htmleditor",
-			"name": "text",
-			"height": 150,
-			"width": 500,
-			"value": ""
+			"items" : [{
+						"xtype": "htmleditor",
+						"name": "text",
+						"height": 200,
+						"width": 550,
+						"value": ""
+					}]
 		}]
 }]
