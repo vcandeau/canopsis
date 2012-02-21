@@ -122,6 +122,19 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 	
 	add_new_step: function(step){
+		log.debug('Dumping step before adding')
+		log.dump(step)
+		step.bodyPadding = 10
+
+		//adding some style
+	/*	var items = step.items
+		for(var i in items){
+			var item = items[i]
+			item.padding = 5
+			item.marging = 5
+			item.border = false
+		}*/
+		//adding to center panel
 		this.tabPanel.add(step)
 	},
 	
@@ -180,7 +193,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			log.dump(options)
 			if(options){
 				for(var i in options){
-					this.tabPanel.add(options[i])
+					this.add_new_step(options[i])
 				}
 			}
 			this.update_button()

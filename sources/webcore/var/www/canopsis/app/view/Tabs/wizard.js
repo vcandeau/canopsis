@@ -37,7 +37,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 		//----------------------Build wizard options
 		var step1 = {
 				title: _('Choose widget'),
-				description : _('choose the type of widget you want, its title, and refresh interval'),
+				//description : _('choose the type of widget you want, its title, and refresh interval'),
 				items : [
 				{
 					xtype : 'textfield',

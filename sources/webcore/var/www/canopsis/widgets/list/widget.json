@@ -10,12 +10,14 @@
 	"formWidth": 600,
 	"options": [{
 			"title": "choose filter",
-			"xtype": "textareafield",
-			"fieldLabel": "Filter",
-			"name": "filter",
-			"height": 150,
-			"width": 500,
-			"value": "{\"source_type\":\"component\"}"
+			"items": [{
+					"xtype": "textareafield",
+					"fieldLabel": "Filter",
+					"name": "filter",
+					"height": 100,
+					"width": 550,
+					"value": "{\"source_type\":\"component\"}"
+				}]
 		}]
 
 }]
