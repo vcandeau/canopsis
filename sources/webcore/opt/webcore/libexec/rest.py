@@ -52,6 +52,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	search		= request.params.get('search', default=None)
 	filter		= request.params.get('filter', default=None)
 	sort		= request.params.get('sort', default=None)
+	query		= request.params.get('query', default=None)
 	onlyWritable	= request.params.get('onlyWritable', default=False)
 
 	if filter:
@@ -84,7 +85,8 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + MSort: "+str(msort))
 	logger.debug(" + Search: "+str(search))
 	logger.debug(" + filter: "+str(filter))
-
+	logger.debug(" + query: "+str(query))
+	
 	storage = get_storage(namespace=namespace)
 
 	if isinstance(filter, list):
@@ -103,6 +105,9 @@ def rest_get(namespace, ctype=None, _id=None):
 			mfilter['crecord_type'] = ctype
 		else:
 			mfilter = {'crecord_type': ctype}
+			
+	if query:
+		mfilter = {'crecord_name': { '$regex' : '.*'+str(query)+'.*', '$options': 'i' }}
 
 	if _id:
 		list_id = _id.split(',')
