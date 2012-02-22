@@ -25,6 +25,8 @@ Ext.define('widgets.text.text' ,{
 
 	initComponent: function() {
 		this.nodeId = false
+		this.refreshInterval = 0
+		
 		this.callParent(arguments);
 	},
 
