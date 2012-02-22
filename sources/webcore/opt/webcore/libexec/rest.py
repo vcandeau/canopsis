@@ -87,6 +87,13 @@ def rest_get(namespace, ctype=None, _id=None):
 
 	storage = get_storage(namespace=namespace)
 
+	if isinstance(filter, list):
+		if len(filter) > 0:
+			filter = filter[0]
+		else:
+			logger.error(" + Invalid filter format")
+			filter = {}
+
 	total = 0
 	mfilter = {}
 	records = []
