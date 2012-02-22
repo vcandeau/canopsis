@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 #!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -64,7 +65,7 @@ class crecord(object):
 		self.access_unauth = dump['aaa_access_unauth']
 		self.type = str(dump['crecord_type'])
 		self.write_time = dump['crecord_write_time']
-		self.name = str(dump['crecord_name'])
+		self.name = dump['crecord_name']
 		self.children = dump['children']
 		self.parent = dump['parent']
 		self.enable = dump['enable']
