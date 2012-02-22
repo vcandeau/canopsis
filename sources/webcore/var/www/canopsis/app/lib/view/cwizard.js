@@ -190,6 +190,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		if(combo[0].isValid()){
 			var store = combo[0].getStore()
 			var record = store.findRecord('xtype',combo[0].getValue())
+			
+			this.set_default_values(record)
+			
 			var options = record.get('options')
 			//log.debug('the selected widget have the following options',this.logAuthor)
 			//log.dump(options)
@@ -202,7 +205,22 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		}
 	},
 	
-	
+	set_default_values: function(record){
+		log.debug('set defaults value to wizard', this.logAuthor)
+		var elements = Ext.ComponentQuery.query('#' + this.id + ' [name]')
+		for(var i in elements){
+			var element = elements[i]
+			//don't reset xtype
+			if(element.name != "xtype"){
+				var value = record.get(element.name)
+				if(value != undefined){
+					//log.debug('setting value :' + value)
+					//log.debug('to : ' + element.name)
+					element.setValue(value)
+				}
+			}
+		}
+	},
 	//----------------------button action functions-----------------------
 	previous_button: function(){
 		log.debug('previous button',this.logAuthor)
