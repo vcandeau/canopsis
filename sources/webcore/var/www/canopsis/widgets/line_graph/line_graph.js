@@ -32,33 +32,27 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	layout: 'fit',
 
 	first: false,
-	
 	shift: false,
-
 	last_from: false,
 	pushPoints: false,
-
-	//addToRequestManager: false,
 
 	logAuthor: '[line_graph]',
 
 	options: {},
 	chart: false,
-
-	//PollNodeInfo: false,
-
+	
 	params: {},
 
 	//metrics: [],
 
+	//Default Options
 	time_window: global.commonTs.day, //24 hours
-	
-	//Options
 	zoom: true,
 	legend: true,
 	tooltip: true,
 	
-
+	//..
+	
 	initComponent: function() {
 		this.callParent(arguments);
 		this.metrics = []
