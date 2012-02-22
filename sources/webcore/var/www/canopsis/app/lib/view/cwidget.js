@@ -40,10 +40,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	
 	reportMode : false,
 	exportMode : false,
+	
+	time_window: global.commonTs.day, //24 hours
 
-	//rendered: false,
-
-	PollNodeInfo: true,
+	//PollNodeInfo: true,
 
 	initComponent: function() {
 
@@ -55,16 +55,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.title = false;
 		}
 
-		this.divHeight = this.height
-		if (this.title) {
-			this.divHeight = this.height - 30
-		}
+		this.wcontainerId = this.id+"-content"
 
-		this.divId = this.id+"-content"
-		//this.items = [{html: "<div id='"+this.divId+"'>" + this.defaultHtml + "</div>", border: false}]
-		//this.divId
-		this.items = [{ xtype: 'container', id: this.divId, html: this.defaultHtml, border: false}]
+		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false });
+
+		this.items = this.wcontainer
 		
+		this.wcontainer.on('afterrender', this.afterContainerRender, this)
+
 		this.uri = '/rest/events/event'
 		
 		this.callParent(arguments);
@@ -94,18 +92,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 						interval: this.refreshInterval * 1000,
 						scope: this
 					}
-					//this.on('afterrender', function(){ this.rendered = true;}, this);
-					//this.startTask()
-					this.on('afterrender', this.startTask, this);
-				}else{
-					this.on('afterrender', this._doRefresh, this);		
 				}
-
-			} else {
-				this.on('afterrender', this._doRefresh, this);
 			}
 		}
-		
 	},
 	
 	//display data from timestamp
@@ -130,6 +119,19 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.setHtml('No reporting mode for this widget')
 		}
 	},*/
+	
+	afterContainerRender: function(){
+		log.debug(' + Ready', this.logAuthor)
+		this.ready();
+	},
+	
+	ready: function(){
+		if (this.task){
+			this.startTask();
+		}else{
+			this._doRefresh();
+		}
+	},
 	
 	startTask: function(){
 		if (! this.reportMode) {
@@ -160,17 +162,19 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 
 	_doRefresh: function(from, to){
-		if (this.PollNodeInfo){
-			this.getNodeInfo() //after onRefresh()
+		if (! to || to < 10000000) {
+			to = Date.now();
 		}
-
-		if (this.doRefresh){
-			this.doRefresh(from, to)
+			
+		if (! from || from < 10000000) {
+			from = to - (this.time_window * 1000);
 		}
-		/*
-		if(this.mytab.mask){
-			this.mytab._maskCheck()
-		}*/
+			
+		this.doRefresh(from, to)
+	},
+	
+	doRefresh: function(from, to){
+		this.getNodeInfo()
 	},
 
 	_onRefresh: function(data){
@@ -206,14 +210,14 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	setHtml: function(html){
 		log.debug('setHtml in widget', this.logAuthor)
-		this.removeAll()
-		this.add({html: html, border: false})
-		this.doLayout();
+		this.wcontainer.removeAll()
+		this.wcontainer.add({html: html, border: false})
+		this.wcontainer.doLayout();
 	},
 
 	setHtmlTpl: function(tpl, data){
-		log.debug('setHtmlTpl in div '+this.divId, this.logAuthor)
-		tpl.overwrite(this.divId, data)
+		log.debug('setHtmlTpl in div '+this.wcontainerId, this.logAuthor)
+		tpl.overwrite(this.wcontainerId, data)
 	},
 	
 	getMetricUnit: function(perfArray){

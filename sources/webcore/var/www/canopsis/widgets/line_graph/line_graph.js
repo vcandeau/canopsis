@@ -19,10 +19,10 @@
 # ---------------------------------
 */
 
-// initComponent -> doRefresh -> -> createHighchart -> doRefresh -> onRefresh -> addDataOnChart
-//                                -> setchartTitle                                -> getSerie
-//				  -> setOptions
-//				  -> createChart
+// initComponent -> afterContainerRender 	-> setchartTitle -> ready -> doRefresh -> onRefresh -> addDataOnChart
+//                                			-> setOptions                             			-> getSerie
+//											-> createChart
+
 
 Ext.define('widgets.line_graph.line_graph' ,{
 	extend: 'canopsis.lib.view.cwidget',
@@ -45,30 +45,37 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	options: {},
 	chart: false,
 
-	PollNodeInfo: false,
+	//PollNodeInfo: false,
 
 	params: {},
 
 	//metrics: [],
 
 	time_window: global.commonTs.day, //24 hours
+	
+	//Options
+	zoom: true,
+	legend: true,
+	tooltip: true,
+	
 
 	initComponent: function() {
 		this.callParent(arguments);
 		this.metrics = []
 	},
+	
+	afterContainerRender: function(){
+		log.debug(" + Set config", this.logAuthor)
+		this.setchartTitle();
+		this.setOptions();
+		this.createChart();
+		
+		this.ready();
+	},
 
 	doRefresh: function(from, to){
 		if (this.chart){
 			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
-
-			if (! to || to < 10000000) {
-				to = Date.now();
-			}
-
-			if (! from || from < 10000000) {
-				from = to - (this.time_window * 1000);
-			}
 
 			if (! this.reportMode && this.last_from){
 				from = this.last_from;
@@ -97,8 +104,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 				} 
 			})
-		}else{
-			this.createHighchart();
 		}
 	},
 
@@ -139,10 +144,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if (this.chart){
 			log.debug(" + On refresh "+this.id+" ...", this.logAuthor)
 
-			/*if (this.reportMode){
-				this.chart.showLoading();
-			}*/
-
 			if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
 				var i;
@@ -172,37 +173,27 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			} else {
 				log.debug(' + On refresh : no metric data', this.logAuthor)
 			}
-
-			/*if (this.reportMode){
-				this.chart.hideLoading();
-			}*/
 		}
+	},
+	
+	getHeight: function(){
+		var height = this.callParent();
+		if (this.title){ height -= 30 }
+		return height
 	},
 
 	onResize: function(){
 		log.debug("onRezize", this.logAuthor)
 		if (this.chart){
-			this.chart.setSize(this.getWidth(), this.getHeight(), false);
+			this.chart.setSize(this.getWidth(), this.getHeight() , false);
 		}
-	},
-
-	createHighchart: function(){
-		log.debug(" + Set config", this.logAuthor)
-
-		this.setchartTitle();
-
-		this.setOptions();
-
-		this.createChart();
-	
-		this.doRefresh();
 	},
 
 	setchartTitle: function(){
 		var title = ""
 		if(!this.title && this.nodeId){
 			var nodeName = this.nodeId.split('.')
-			
+		
 			// resource
 			if (nodeName[5]){
 				title += nodeName[5] + ' ' + _('line_graph.on') + ' '
@@ -232,15 +223,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.options = {
 			reportMode: this.reportMode,
 			chart: {
-				renderTo: this.divId,
-				//zoomType: 'x',
+				renderTo: this.wcontainerId,
 				defaultSeriesType: 'area',
-				//height: this.divHeight,
+				height: this.getHeight(),
 				animation: false,
 				borderColor: "#FFFFFF"
 			},
 			global: {
-				useUTC: false
+				useUTC: true
 			},
 			exporting: {
 				enabled: false
@@ -251,7 +241,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				floating: true
 			},
 			tooltip: {
-				enabled: true,
+				enabled: this.tooltip,
 				formatter: function() {
 					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + this.y;
 				}
@@ -281,7 +271,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				title: {
 					text: ''
 				}
-        		},
+        	},
 			plotOptions: {
 				series: {
 					animation: false,
@@ -300,14 +290,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			credits: {	
 				enabled: false
 			},
-			/*legend: {
-				layout: 'vertical',
-				align: 'right',
-				verticalAlign: 'top',
-				x: -10,
-				y: 100,
-				borderWidth: 1
-			      },*/
+			legend: {
+				enabled: this.legend	
+			},
 			series: []
 		}
 
@@ -315,7 +300,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if(this.exportMode){
 			this.options.plotOptions.series['enableMouseTracking'] = false;
 		}else{
-			this.options.chart.zoomType = "x"
+			if (this.zoom){
+				this.options.chart.zoomType = "x"
+			}
 		}
 	},
 
