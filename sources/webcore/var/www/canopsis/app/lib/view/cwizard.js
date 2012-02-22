@@ -191,8 +191,8 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			var store = combo[0].getStore()
 			var record = store.findRecord('xtype',combo[0].getValue())
 			var options = record.get('options')
-			log.debug('the selected widget have the following options',this.logAuthor)
-			log.dump(options)
+			//log.debug('the selected widget have the following options',this.logAuthor)
+			//log.dump(options)
 			if(options){
 				for(var i in options){
 					this.add_new_step(options[i])
