@@ -45,6 +45,14 @@ Ext.define('canopsis.controller.Tabs', {
 		tabPanel.old_tab = old_tab
 	},
 	
+	reload_active_view: function(){
+		log.debug('Reload active view', this.logAuthor)
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.removeAll()
+		tab.displayed = false
+		tab.setContent()
+	},
+	
 	create_new_view : function(){
 		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName){
 			if (btn == 'ok'){
