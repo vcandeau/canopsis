@@ -30,22 +30,33 @@ Ext.define('canopsis.controller.Keynav', {
 			{
 				key: Ext.EventObject.N,
 				ctrl: true,
+				scope: this,
 				fn: function(key, event) {
 					event.stopEvent()
 					// New view
-					log.debug('ctrl + n', '[controller][Keynav]')
+					log.debug('ctrl + n', this.logAuthor)	
+				}
+			},{
+				key: Ext.EventObject.R,
+				ctrl: true,
+				scope: this,
+				fn: function(key, event) {
+					event.stopEvent()
+					// Reload view
+					log.debug('ctrl + r', this.logAuthor)
 					
 					var ctrl = this.getController('Tabs')
-					ctrl.create_new_view()
+					ctrl.reload_active_view()
 		
 				}
 			},{
 				key: Ext.EventObject.E,
 				ctrl: true,
+				scope: this,
 				fn: function(key, event) {
 					event.stopEvent()
 					// Edit view
-					log.debug('ctrl + e', '[controller][Keynav]')
+					log.debug('ctrl + e', this.logAuthor)
 					
 					var tab = Ext.getCmp('main-tabs').getActiveTab();
 					tab.editMode();
@@ -53,10 +64,11 @@ Ext.define('canopsis.controller.Keynav', {
 			},{
 				key: Ext.EventObject.S,
 				ctrl: true,
+				scope: this,
 				fn: function(key, event) {
 					event.stopEvent()
 					// Save view
-					log.debug('ctrl + s', '[controller][Keynav]')
+					log.debug('ctrl + s', this.logAuthor)
 					
 					var tab = Ext.getCmp('main-tabs').getActiveTab();
 					tab.saveJqGridable()
@@ -64,10 +76,11 @@ Ext.define('canopsis.controller.Keynav', {
 			},{
 				key: Ext.EventObject.F,
 				ctrl: true,
+				scope: this,
 				fn: function(key, event) {
 					event.stopEvent()
 					// Search view
-					log.debug('ctrl + f', '[controller][Keynav]')
+					log.debug('ctrl + f', this.logAuthor)
 	
 					/*if (this.win) {
 						this.win.show();
