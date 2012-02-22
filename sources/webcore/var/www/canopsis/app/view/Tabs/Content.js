@@ -127,6 +127,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.doRedraw()
 		
 		//reload store used in mainbar
+		//this.fireEvent('newView')
+		Ext.getCmp("viewSelector").setValue(undefined)
 		Ext.getCmp("viewSelector").store.load()
 	},
 	
