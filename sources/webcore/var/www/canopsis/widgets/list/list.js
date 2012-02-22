@@ -26,15 +26,23 @@ Ext.define('widgets.list.list' ,{
 	//don't work
 	filter: {"source_type":"component"},
 
+	//Default options
 	show_component: true,
 	show_resource: true,
-
+	paging: true,
+	bar_search: true,
+	reload: true,
+	bar: true,
+	//..
+	
 	initComponent: function() {
+		
+		if (this.reload || this.bar_search) { this.bar = true } else { this.bar = false }
 	
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			exportMode : this.exportMode,
 			//border: (this.title || this.fullmode) ? false : true,
-			opt_paging: true,
+			opt_paging: this.paging,
 			filter: this.filter,
 			autoload: true,
 			pageSize: global.pageSize,
@@ -50,16 +58,16 @@ Ext.define('widgets.list.list' ,{
 			opt_show_component: this.show_component,
 			opt_show_resource: this.show_resource,
 		
-			opt_bar: true,
-			opt_bar_search: true,
+			opt_bar: this.bar,
+			opt_bar_search: this.bar_search,
 			opt_bar_search_field: ['component', 'resource'],
 
 			opt_bar_add: false,
 			opt_bar_duplicate: false,
-			opt_bar_reload: true,
+			opt_bar_reload: this.reload,
 			opt_bar_delete: false,
 			
-			opt_view_element:'view.ComponentDetails'
+			//opt_view_element:'view.ComponentDetails'
 
 		});
 
