@@ -99,6 +99,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	saveView : function(dump){
 		//ajax request with dump sending
 		log.debug('Saving view requested',this.logAuthor)
+		
+		if (dump == undefined){
+			dump = this.dumpJqGridable()
+		}
+		
 		log.dump(dump)
 		
 		var store = Ext.data.StoreManager.lookup('View')
