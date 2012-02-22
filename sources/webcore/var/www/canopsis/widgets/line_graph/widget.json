@@ -8,6 +8,24 @@
 	"refreshInterval": 300,
 	"locales": ["en", "fr"],
 	"options": [{
+			"title": "Options",
+			"items": [{
+						"xtype": "checkbox",
+						"boxLabel": "Show legend",
+						"checked": true,
+						"name": "legend"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Enable tooltip",
+						"checked": true,
+						"name": "tooltip"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Enable zoom",
+						"checked": true,
+						"name": "zoom"
+					}]
+		}, {
 			"title": "choose nodeId",
 			"items": [{
 						"xtype": "cinventory",
