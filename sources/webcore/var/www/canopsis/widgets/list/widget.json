@@ -9,7 +9,40 @@
 	"rowHeight": 400,
 	"formWidth": 600,
 	"options": [{
-			"title": "choose filter",
+			"title": "Options",
+			"items": [{
+						"xtype": "checkbox",
+						"boxLabel": "Border",
+						"checked": false,
+						"name": "border"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Show component column",
+						"checked": true,
+						"name": "show_component"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Show resource column",
+						"checked": true,
+						"name": "show_resource"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Enable pagging",
+						"checked": false,
+						"name": "paging"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Enable search field",
+						"checked": false,
+						"name": "bar_search"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Enable reload button",
+						"checked": true,
+						"name": "reload"
+					}]
+		},{
+			"title": "Filter",
 			"items": [{
 					"xtype": "textareafield",
 					"fieldLabel": "Filter",
