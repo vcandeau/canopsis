@@ -36,18 +36,19 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 	initComponent: function() {
 		
 		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
-			hideLabel: true,
 			id: 'viewSelector',
 			action: 'viewSelector',
-			store:  Ext.create('canopsis.store.View'),
+			store:  Ext.create('canopsis.store.View', {autoLoad: false}),
 			displayField: 'crecord_name',
-			typeAhead: true,
-			queryMode: 'local',
-			triggerAction: 'all',
+			valueField: 'id',
+			typeAhead: false,
+			hideLabel: true,
+			minChars: 2,
+			queryMode: 'remote',
 			emptyText: _('Select a view')+' ...',
-			selectOnFocus: true,
 			width: 200,
 		});
+		
 		
 		this.viewSelector.on('select',function(){
 				var menu = this.down('menu[name="Run"]')
