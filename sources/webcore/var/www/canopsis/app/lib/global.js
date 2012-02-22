@@ -74,6 +74,11 @@ var global = {
 		'Peru'
 	],
 	
+	gen_id: function(){
+			var timestamp = new Date().getTime();
+			return timestamp + '-' + Math.floor(Math.random()*10)
+	},
+	
 	commonTs:{
 		hours: 3600,
 		threeHours: 10800,

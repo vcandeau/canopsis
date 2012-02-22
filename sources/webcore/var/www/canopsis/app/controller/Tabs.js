@@ -60,7 +60,7 @@ Ext.define('canopsis.controller.Tabs', {
 				var store = Ext.data.StoreManager.lookup('View')
 				var record = Ext.create('canopsis.model.view', data)
 				
-				var view_id = 'view.'+ global.account.user + '.' + viewName.replace(/ /g,"_")
+				var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
 				
 				//check if view already exist
 				var already_exist = store.findBy(
