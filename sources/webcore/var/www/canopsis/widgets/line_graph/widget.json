@@ -24,6 +24,25 @@
 						"boxLabel": "Enable zoom",
 						"checked": true,
 						"name": "zoom"
+					},{
+						"xtype": "combobox",
+						"name": "time_windows",
+						"fieldLabel": "Choose time window",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": 86400,
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": 3600, "text": "1 hour"},
+								{"value": 86400, "text": "1 day"},
+								{"value": 604800, "text": "1 week"},
+								{"value": 2629800, "text": "1 month"},
+								{"value": 31557600, "text": "1 year"}
+							]
+						}
 					}]
 		}, {
 			"title": "choose nodeId",
