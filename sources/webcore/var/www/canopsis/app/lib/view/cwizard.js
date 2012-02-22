@@ -136,7 +136,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			item.border = false
 		}*/
 		//adding to center panel
-		this.tabPanel.add(step)
+		return this.tabPanel.add(step)
 	},
 	
 	loadData : function(){
@@ -145,7 +145,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
 
 			combo[0].setValue(this.data.xtype)
-			this.add_option_panel()
+			var list_tab = this.add_option_panel()
 			combo[0].setDisabled(true)
 		}
 		
@@ -153,7 +153,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 
 		for(var i in ext_element){
 			var elem = ext_element[i]
-			if(this.data[elem.name]){
+			//log.debug('the element is : ' + elem.name)
+			//log.debug('the new value is : ' + this.data[elem.name])
+			if(this.data[elem.name] != undefined){
 				elem.setValue(this.data[elem.name])
 			}
 		}
@@ -185,6 +187,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	},
 
 	add_option_panel : function() {
+		output = []
 		this.reset_steps()
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
 		if(combo[0].isValid()){
@@ -198,11 +201,12 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			//log.dump(options)
 			if(options){
 				for(var i in options){
-					this.add_new_step(options[i])
+					output.push(this.add_new_step(options[i]))
 				}
 			}
 			this.update_button()
 		}
+		return output
 	},
 	
 	set_default_values: function(record){
