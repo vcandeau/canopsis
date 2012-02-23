@@ -165,8 +165,8 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		var tab_childs = this.tabPanel.items.items
 		var tab_length = tab_childs.length
 		
-		log.debug('child panel : ' + tab_length)
-		log.debug('step list length :' + this.step_list.length)
+		//log.debug('child panel : ' + tab_length)
+		//log.debug('step list length :' + this.step_list.length)
 		
 		var tab_to_remove = []
 		
@@ -194,9 +194,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 
 	add_option_panel : function() {
 		output = []
-		log.debug('-------RESET STEPS-------')
 		this.reset_steps()
-		log.debug('------AFTER RESET STEPS------')
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
 		if(combo[0].isValid()){
 			var store = combo[0].getStore()
