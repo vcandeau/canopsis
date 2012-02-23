@@ -46,7 +46,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	initComponent: function() {
 		this.callParent(arguments);
 				
-		log.dump("Display view '"+this.view_id+"' ...", this.logAuthor)
+		log.debug("Display view '"+this.view_id+"' ...", this.logAuthor)
 
 		Ext.Ajax.request({
 				url: '/rest/object/view/'+this.view_id,
@@ -125,10 +125,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		store.add(record)
 		
-		//reload view
 		this.dump = dump
-		//this.removeAll()
-		//this.setContent()
 		this.doRedraw()
 	},
 	

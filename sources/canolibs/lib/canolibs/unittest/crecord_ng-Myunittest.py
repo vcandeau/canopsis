@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 #!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -49,6 +50,23 @@ class KnownValues(unittest.TestCase):
 		if record.data != self.data:
 			raise Exception('Data corruption ...')
 
+	def test_02_Specialchars(self):
+		name = '//ééèè\\'
+		
+		record = crecord_ng(name=name)
+		record.data = self.data
+		record.save()
+		
+		record = crecord_ng(record=record)
+
+		record = crecord_ng(name=name)
+
+		if record.data != self.data:
+			print "Record data: ", record.data
+			print "Ori data: ", self.data
+			raise Exception('Data corruption ...')	
+		
+		
 
 		
 if __name__ == "__main__":
