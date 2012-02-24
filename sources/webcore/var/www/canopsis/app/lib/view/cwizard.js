@@ -126,6 +126,11 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		log.debug('Dumping step before adding')
 		log.dump(step)
 		step.bodyPadding = 10
+		
+		if (step.items.length == 1){
+			step.layout = 'fit'
+			step.bodyPadding = 5
+		}
 
 		//adding some style
 	/*	var items = step.items
