@@ -19,10 +19,6 @@
 # ---------------------------------
 */
 
-
-Ext.require('canopsis.lib.form.field.cinventory');
-Ext.require('canopsis.lib.form.field.cmetric');
-
 Ext.define('canopsis.view.Tabs.wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
@@ -61,19 +57,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 					minValue: 0
 				}]
 		}
-		/*
-		var step2 = {
-				title: _('General Options'),
-				description: _('Here you choose the component that the widget will display information from'),
-				items : [{
-						xtype : 'canopsis.lib.form.field.cinventory',
-						multiSelect: false,
-						name : 'nodeId'
-					}
-				]
-		}
-*/
-		//this.step_list = [step1,step2]
+		
 		this.step_list = [step1]
 
 		this.callParent(arguments);
