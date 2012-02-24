@@ -42,8 +42,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	chart: false,
 	
 	params: {},
-
-	//metrics: [],
+	
+	metrics: [],
 
 	//Default Options
 	time_window: global.commonTs.day, //24 hours
@@ -53,13 +53,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	//..
 	
-	initComponent: function() {
+	/*initComponent: function() {
 		this.callParent(arguments);
-		this.metrics = []
-	},
+	},*/
 	
 	afterContainerRender: function(){
-		log.debug(" + Set config", this.logAuthor)
+		log.debug("Initialize line_graph", this.logAuthor)
+		log.debug(' + Time window: '+this.time_window, this.logAuthor)
 		this.setchartTitle();
 		this.setOptions();
 		this.createChart();
@@ -102,11 +102,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	},
 
 	makeUrl: function(from, to){
-		var metrics_txt
-
-		if (this.metrics.lenght > 0){
-			var i;
-			for (i in this.metrics){
+		var metrics_txt = ''
+		if (this.metrics){
+			for (var i in this.metrics){
 				metrics_txt += this.metrics[i] + ","
 			}
 			//small hack
@@ -305,11 +303,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	},
 
 	getSerie: function(metric_name, bunit){
+		
+		var serie = this.chart.get(metric_name)
+		if (serie) { return serie }
+		
 		var metric_index = this.metrics.indexOf(metric_name)
-		if (metric_index >= 0){
-			return this.chart.get(metric_name)
-		}
-
+	
 		log.debug('  + Create Metric '+metric_name+' '+bunit, this.logAuthor)
 		metric_index = this.metrics.push(metric_name)
 		log.debug('    + metric_index: '+metric_index, this.logAuthor)
