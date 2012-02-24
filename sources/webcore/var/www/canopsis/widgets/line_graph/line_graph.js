@@ -63,8 +63,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.setchartTitle();
 		this.setOptions();
 		this.createChart();
-		
-		this.ready();
+
+
+		this.ready();	
 	},
 
 	doRefresh: function(from, to){
@@ -81,6 +82,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				to = this.export_to;
 			}
 
+			
 			url = this.makeUrl(from, to)
 			this.last_from = to
 
@@ -135,7 +137,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	onRefresh: function (data){
 		if (this.chart){
 			log.debug(" + On refresh "+this.id+" ...", this.logAuthor)
-
+			
 			if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
 				var i;
@@ -302,15 +304,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.chart = new Highcharts.Chart(this.options);
 	},
 
-	getSerie: function(metric_name, bunit){
-		
+	getSerie: function(metric_name, bunit){		
 		var serie = this.chart.get(metric_name)
 		if (serie) { return serie }
 		
 		var metric_index = this.metrics.indexOf(metric_name)
-	
 		log.debug('  + Create Metric '+metric_name+' '+bunit, this.logAuthor)
-		metric_index = this.metrics.push(metric_name)
+		if (metric_index == -1){
+			metric_index = this.metrics.push(metric_name)
+		}
 		log.debug('    + metric_index: '+metric_index, this.logAuthor)
 
 		var metric_long_name = metric_name

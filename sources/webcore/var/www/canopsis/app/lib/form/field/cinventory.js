@@ -334,13 +334,10 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				}
 				
 				//check if all metrics are checked
-				/*if (metrics.length == nb_metric){
-					rdump.metrics = [ "<all>" ]
-				}*/
+				if (metrics.length == nb_metric){
+					metrics = [ "<all>" ]
+				}
 			}
-			
-			console.log(nb_metric)
-			console.log(metrics)
 			
 			var rdump = {
 				id: id,
@@ -348,14 +345,8 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				perf_data_array: record.data.perf_data_array,
 				resource: record.data.resource,
 				source_type: record.data.source_type,
-				metrics: [],
+				metrics: metrics,
 			}
-			
-			//console.log(rdump.metrics.length)
-			console.log(rdump.metrics)
-			console.log(rdump)
-			console.log(rdump.metrics)
-			//console.log(rdump.metrics.length)
 			dump.push(rdump)
 		});
 		
