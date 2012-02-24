@@ -45,11 +45,12 @@
 						}
 					}]
 		}, {
-			"title": "choose nodeId",
+			"title": "Choose Metrics",
 			"items": [{
 						"xtype": "cinventory",
-						"name": "nodeId",
-						"multiSelect": false
+						"name": "nodes",
+						"multiSelect": false,
+						"metrics": true
 					}]
 		}]
 }]
