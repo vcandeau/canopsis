@@ -72,7 +72,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 		
 		//Compatibility
-		if (this.nodes.length > 0){
+		if (this.nodes){
 			log.debug('Nodes:', this.logAuthor)
 			log.dump(this.nodes)
 			this.nodeId = this.nodes[0].id
