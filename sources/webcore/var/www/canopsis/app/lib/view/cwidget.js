@@ -71,6 +71,15 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			this.refreshInterval = false
 		}
 		
+		//Compatibility
+		if (this.nodes.length > 0){
+			log.debug('Nodes:', this.logAuthor)
+			log.dump(this.nodes)
+			this.nodeId = this.nodes[0].id
+			this.metrics = this.nodes[0].metrics
+			console.log(this.metrics)
+		}
+		
 		//if reporting
 		if(this.exportMode){
 			//this._reporting(this.reportStartTs,this.reportStopTs)
