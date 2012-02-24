@@ -173,8 +173,14 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		//log.debug('child panel : ' + tab_length)
 		//log.debug('step list length :' + this.step_list.length)
 		
-		for(var i = this.step_list.length ; i < tab_length; i++){
-			this.tabPanel.remove(tab_childs[i])
+		var tab_to_remove = []
+		
+		for(var i = this.step_list.length; i < tab_length; i++){
+			tab_to_remove.push(tab_childs[i])
+		}
+
+		for(var i in tab_to_remove){
+			this.tabPanel.remove(tab_to_remove[i])
 		}
 	},
 	
