@@ -47,7 +47,7 @@ Ext.define('canopsis.controller.View', {
 		Ext.Msg.prompt(_('Directory name'), _('Please enter directory name:'), function(btn, directoryName){
 			if (btn == 'ok'){
 				//add (if selected) -> add to this node
-				//this.tree.store.add()
+				//
 				var store = Ext.data.StoreManager.lookup('TreeStoreView')
 				var record = Ext.create('canopsis.model.view')
 				
@@ -57,6 +57,8 @@ Ext.define('canopsis.controller.View', {
 				
 				record.set('id',directory_id)
 				record.set('_id',directory_id)
+				//need to set the empty array , otherwise treepanel send request
+				//to fetch inside
 				record.set('children',[])
 				
 				store.getRootNode().appendChild(record)

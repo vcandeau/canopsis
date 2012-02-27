@@ -22,6 +22,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	extend: 'Ext.tree.Panel',
 	
 	animCollapse: false,
+	animate:false,
 
 	useArrows: true,
 	rootVisible: false,
