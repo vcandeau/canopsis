@@ -122,6 +122,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 		}
 		record.set('items',dump)
+		record.set('leaf', true)
 		
 		store.add(record)
 		
