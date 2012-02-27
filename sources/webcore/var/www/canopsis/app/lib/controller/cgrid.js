@@ -371,7 +371,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			tempObj[grid.opt_bar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
 			myArray.push(tempObj);
 		}
-		store.search(store.getOrFilter(myArray));
+		
+		store.search(store.getOrFilter(myArray), false);
 		
 		if (grid.pagingbar){
 			grid.pagingbar.moveFirst();
