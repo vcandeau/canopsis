@@ -32,7 +32,7 @@ from crecord import crecord
 #import protection function
 from libexec.auth import check_auth, get_account
 
-logger = logging.getLogger("test_tree")
+logger = logging.getLogger("ui_view")
 logger.setLevel(3)
 #########################################################################
 @get('/ui/dashboard', apply=[check_auth])
@@ -69,38 +69,8 @@ def get_dashboard():
 	#logger.debug(" + Output: "+str(output))
 
 	return output
+
 '''
-@get('/tree',	apply=[check_auth])
-def tree_get():
-	
-	node = request.params.get('node', default="")
-	logger.debug(str(node))
-	
-	array = []
-	
-	#child_array.append({"text":"firstLeaf","leaf":"true"})
-	#child_array.append({"text":"firstDir","leaf":"false"})
-	#child_array.append({"text":"secondLeaf","leaf":"true"})
-	
-	if(node == "root"):
-		array = {"id":"myRoot","text":"myRoot","expanded":"true" }
-		
-	if(node == "myRoot"):
-		array = [{"id":"childDir","text":"childDir"},
-		{"id":"anotherDir","text":"anotherDir"}]
-		
-	if(node == "childDir"):
-		array = [{"id":"firstLeaf","text":"firstLeaf","leaf":"true"},
-		 {"id":"secondLeaf","text":"secondLeaf","leaf":"true"}]
-		
-	if(node == "anotherDir"):
-		array = [{"id":"ichiLeaf","text":"ichiLeaf","leaf":"true"},
-		{"id":"niLeaf","text":"niLeaf","leaf":"true"}]
-	
-	output = {"total": 1, "success": True, "data": array}
-	return output
-	'''
-	
 @get('/ui/view',	apply=[check_auth])
 def tree_get():
 	namespace = 'object'
@@ -110,7 +80,6 @@ def tree_get():
 	
 	output = []
 	total = 0
-	#mfilter = {'crecord_type': 'view_directory'}
 		
 	if node:
 		if node == 'root':
@@ -131,7 +100,31 @@ def tree_get():
 					total += 1
 
 	return {"total": total, "success": True, "data": output}
+'''
+
+@get('/ui/view',	apply=[check_auth])
+def tree_get():
+	namespace = 'object'
+	account = get_account()
+	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
+	node = request.params.get('node', default= None)
 	
+	output = []
+	total = 0
+		
+	if node:
+		if node == 'root':
+			parentNode = storage.get('directory.root.dir1', account=account)
+			storage.recursive_get(parentNode,account=account)
+			output = parentNode.recursive_dump(json=True)
+			
+	#return {"success": True, "data": {"text":".","children":[output]}}
+	return {"text":".","children":[output]}
+			
+			
+			
+			
+			
 
 @delete('/ui/view/:name',apply=[check_auth])
 def tree_delete(name=None):
@@ -139,7 +132,28 @@ def tree_delete(name=None):
 	
 @put('/ui/view/:name',apply=[check_auth])
 def tree_update(name='None'):
-	logger.debug(str(name))
+	namespace = 'object'
+	account = get_account()
+	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	data = json.loads(request.body.readline())
-	logger.debug(type(data))
-	logger.debug(str(data))
+
+	record_child = storage.get(data['id'], account=account)
+	record_parent = storage.get(data['parentId'], account=account)
+	
+	#if parents are really different
+	if(record_child.parent[0] != data['parentId']):
+		parent = storage.get(record_child.parent, account=account)
+
+		if isinstance(parent, crecord):
+			parent.remove_children(record_child)
+			if storage.is_parent(parent,record_child):
+				raise ValueError("parent/children link don't remove")
+			storage.put([parent])
+		
+		record_parent.add_children(record_child)
+		storage.put([record_child,record_parent])
+		
+	else : 
+		logger.debug('same parent, nothing to do')
+	
+
