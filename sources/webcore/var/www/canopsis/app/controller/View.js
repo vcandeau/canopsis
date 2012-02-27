@@ -19,15 +19,28 @@
 # ---------------------------------
 */
 Ext.define('canopsis.controller.View', {
-    extend: 'Ext.app.Controller',
+    extend: 'canopsis.lib.controller.ctree',
 
     views: ['View.TreePanel'],
     stores: ['View','TreeStoreView'],
     model:['view'],
+    
+    logAuthor: '[controller][View]',
 
     init: function() {
-	//log.debug('Create View stores ...')
-	//var store = Ext.create('canopsis.store.View')
-	//store.load()
+		log.debug('Initialize ...', this.logAuthor);
+
+		//this.formXtype = 'GroupForm'
+		this.listXtype = 'ViewTreePanel'
+
+		this.modelId = 'view'
+
+		this.callParent(arguments);
+
     },
+    
+    addLeafButton : function(){
+		this.getController('Tabs').create_new_view()
+	}
+    //Ext.app.Controller
 });

@@ -21,31 +21,132 @@
 Ext.define('canopsis.lib.view.ctree' ,{
 	extend: 'Ext.tree.Panel',
 	
+
+	useArrows: true,
+	rootVisible: false,
+	multiSelect: true,
+	animCollapse: false,
+	
+	//options	
+	opt_bar: true,
+	//opt_bar_bottom: false,
+	opt_bar_add:true,
+	opt_bar_add_directory:true,
+	opt_bar_delete:true,
+	opt_bar_duplicate: true,
+	opt_bar_reload: true,
+
 	viewConfig: {
 		plugins: [{
 			ptype: 'treeviewdragdrop'
 		}],
 	},
-	useArrows: true,
-	rootVisible: false,
-	multiSelect: true,
-	
+
 	columns: [{
 		xtype: 'treecolumn', 
 		text: 'name',
-		flex: 1,
-		//sortable: true,
+		flex: 5,
 		dataIndex: 'crecord_name'
+	},{
+		flex: 1,
+		dataIndex: 'id',
 	}],
-	
-/*
+
 	initComponent: function() {
-	/*	if(this.exportMode){
-			this.border = false
-			//this.hideHeaders = true
-		}else{
+		var bar_child = [];
+
+		if(this.opt_bar_add){
+			bar_child.push({
+				xtype: 'button',
+				iconCls: 'icon-add',
+				text: _('Add leaf'),
+				action: 'add_leaf',
+			})
 		}
+		
+		if(this.opt_bar_add_directory){
+			bar_child.push({
+				xtype: 'button',
+				iconCls: 'icon-add',
+				text: _('Add directory'),
+				action: 'add_directory',
+			})
+		}
+		
+		if(this.opt_bar_reload){
+			bar_child.push({
+				xtype: 'button',
+				iconCls: 'icon-reload',
+				text: _('Reload'),
+				action: 'reload',
+			})
+		}
+		
+		if(this.opt_bar_duplicate){
+			bar_child.push({
+				xtype: 'button',
+				iconCls: 'icon-copy', 
+				text: _('Duplicate'),
+				action: 'duplicate',
+			})
+		}
+
+		if(this.opt_bar_delete){
+			bar_child.push({
+				xtype: 'button',
+				iconCls: 'icon-delete',
+				text: _('Delete'),
+				disabled: true,
+				action: 'delete',
+			})
+		}
+		
+		//-----------------creating toolbar--------------------
+		if(this.opt_bar_bottom){
+			this.bbar = Ext.create('Ext.toolbar.Toolbar', {
+				items: bar_child,
+			});
+		}else{
+			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
+				items: bar_child,
+			});
+		}
+		
+		
+		//--------------------Context menu---------------------
+		if (this.opt_bar){
+			var myArray = [];
+			
+			if(this.opt_bar_delete){
+				myArray.push(
+					Ext.create('Ext.Action', {
+						iconCls: 'icon-delete',
+						text: _('Delete'),
+						action: 'delete',
+					})
+				)
+			}
+			
+			if (this.opt_bar_duplicate){
+				myArray.push(
+					Ext.create('Ext.Action', {
+						iconCls: 'icon-copy',
+						text: _('Duplicate'),
+						action: 'duplicate',
+					})
+				)
+			}
+			
+			if (myArray.length != 0){
+				this.contextMenu = Ext.create('Ext.menu.Menu',{
+					items : myArray,
+				});
+			}
+		}
+		//-------------------------------------------------------
 		this.callParent(arguments);
+		
 	},
-	*/
+	
+	
 });
