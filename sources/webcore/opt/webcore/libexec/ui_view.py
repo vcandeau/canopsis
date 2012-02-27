@@ -113,47 +113,81 @@ def tree_get():
 	total = 0
 		
 	if node:
-		if node == 'root':
-			parentNode = storage.get('directory.root.dir1', account=account)
-			storage.recursive_get(parentNode,account=account)
-			output = parentNode.recursive_dump(json=True)
+	#if node == 'root':
+		parentNode = storage.get('directory.root.dir1', account=account)
+		storage.recursive_get(parentNode,account=account)
+		output = parentNode.recursive_dump(json=True)
 			
 	#return {"success": True, "data": {"text":".","children":[output]}}
-	return {"text":".","children":[output]}
-			
-			
-			
-			
-			
+	#return {"text":".","children":[output]}
+	return output
+
 
 @delete('/ui/view/:name',apply=[check_auth])
 def tree_delete(name=None):
-	logger.debug(str(name))
+	namespace='object'
+	account = get_account()
+	storage = get_storage(namespace=namespace, account=account)
+	
+	record = storage.get(name, account=account)
+	
+	if isinstance(record, crecord):
+		#remove record from its parent child list
+		for parent in record.parent:
+			parent_rec = storage.get(parent, account=account)
+			parent_rec.remove_children(record )
+			storage.put(parent_rec,account=account)
+	
+		try:
+			storage.remove(record, account=account)
+		except:
+			return HTTPError(404, 'error while removing '+ _id)
+
+	
+	
 	
 @put('/ui/view/:name',apply=[check_auth])
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
-	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
+	storage = get_storage(namespace=namespace, account=account)
+	
 	data = json.loads(request.body.readline())
 
-	record_child = storage.get(data['id'], account=account)
 	record_parent = storage.get(data['parentId'], account=account)
-	
-	#if parents are really different
-	if(record_child.parent[0] != data['parentId']):
-		parent = storage.get(record_child.parent, account=account)
+	record_child = storage.find_one(mfilter={'id':data['id']}, account=account)
 
-		if isinstance(parent, crecord):
-			parent.remove_children(record_child)
-			if storage.is_parent(parent,record_child):
-				raise ValueError("parent/children link don't remove")
-			storage.put([parent])
+	#test if the record exist
+	if isinstance(record_child, crecord):
+		#if parents are really different
+		if(record_child.parent[0] != data['parentId']):
+			parent = storage.get(record_child.parent, account=account)
+
+			if isinstance(parent, crecord):
+				parent.remove_children(record_child)
+				if storage.is_parent(parent,record_child):
+					raise ValueError("parent/children link don't remove")
+				storage.put([parent])
+			
+			record_parent.add_children(record_child)
+			storage.put([record_child,record_parent])
+			
+		else : 
+			logger.debug('same parent, nothing to do')
+			
+	else:
+		#add new view/folder
+		parentNode = storage.get(data['parentId'], account=account)
+		if data['leaf'] == True:
+			logger.debug('It s a LEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF')
+			record = crecord({'leaf':True,'id':data['id'],'_id':data['id']},type='view',name=data['crecord_name'],account=account)
+		else:
+			record = crecord({'id':data['id'],'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
 		
-		record_parent.add_children(record_child)
-		storage.put([record_child,record_parent])
+		parentNode.add_children(record)
 		
-	else : 
-		logger.debug('same parent, nothing to do')
-	
+		record.chown(account.user)
+		record.chgrp(account.group)
+		
+		storage.put([record,parentNode],account=account)
 
