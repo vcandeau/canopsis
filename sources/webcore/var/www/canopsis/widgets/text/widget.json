@@ -10,6 +10,7 @@
 	"formWidth": 800,
 	"options": [{
 			"title": "Inner text",
+			"layout": "fit",
 			"items" : [{
 						"xtype": "htmleditor",
 						"name": "text",

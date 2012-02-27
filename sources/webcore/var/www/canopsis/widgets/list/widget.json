@@ -12,9 +12,19 @@
 			"title": "Options",
 			"items": [{
 						"xtype": "checkbox",
-						"boxLabel": "Border",
+						"boxLabel": "Enable scroll",
+						"checked": true,
+						"name": "scroll"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Show border",
 						"checked": false,
 						"name": "border"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Hide headers",
+						"checked": false,
+						"name": "hideHeaders"
 					},{
 						"xtype": "checkbox",
 						"boxLabel": "Show component column",

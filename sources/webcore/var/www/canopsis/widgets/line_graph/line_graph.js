@@ -45,12 +45,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	metrics: [],
 
+	chartTitle: "",
+
 	//Default Options
 	time_window: global.commonTs.day, //24 hours
 	zoom: true,
 	legend: true,
 	tooltip: true,
-	
+	legend_verticalAlign: "bottom",
+	legend_align: "center",
+	legend_layout: "horizontal",
 	//..
 	
 	/*initComponent: function() {
@@ -60,144 +64,38 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	afterContainerRender: function(){
 		log.debug("Initialize line_graph", this.logAuthor)
 		log.debug(' + Time window: '+this.time_window, this.logAuthor)
+		
+		this.series = {}
+		
 		this.setchartTitle();
+		
 		this.setOptions();
 		this.createChart();
-
+		
+		if (this.nodes){
+			// Clean this.nodes
+			var post_params = []
+			for (var i in this.nodes){
+				post_params.push({
+					id: this.nodes[i].id,
+					metrics: this.nodes[i].metrics,
+				})
+			}
+			this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+		}
 
 		this.ready();	
 	},
 
-	doRefresh: function(from, to){
-		if (this.chart){
-			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
-
-			if (! this.reportMode && this.last_from){
-				from = this.last_from;
-				to = Date.now();
-			}
-			
-			if (this.exportMode){
-				from = this.export_from;
-				to = this.export_to;
-			}
-
-			
-			url = this.makeUrl(from, to)
-			this.last_from = to
-
-			Ext.Ajax.request({
-				url: url,
-				scope: this,
-				params: this.params,
-				method: 'GET',
-				success: function(response){
-					var data = Ext.JSON.decode(response.responseText)
-					data = data.data
-					this.onRefresh(data)	
-				},
-				failure: function ( result, request) {
-					log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-				} 
-			})
-		}
-	},
-
-	makeUrl: function(from, to){
-		var metrics_txt = ''
-		if (this.metrics){
-			for (var i in this.metrics){
-				metrics_txt += this.metrics[i] + ","
-			}
-			//small hack
-			metrics_txt = metrics_txt.replace('/', "<slash>")
-		}
-		
-		if (metrics_txt){
-			log.debug(" + Refresh metrics '"+metrics_txt+"', "+from+" -> "+to, this.logAuthor)
-
-			var url = '/perfstore/values/'+this.nodeId + '/' + metrics_txt
-		}else{
-			log.debug(" + Refresh All metrics, "+from+" -> "+to, this.logAuthor)
-			//small hack
-			var url = '/perfstore/values/'+this.nodeId+'/<all>'
-		}
-
-		if (! to){
-			url += '/' + from
-		}
-
-		if (from && to){
-			url += '/' + from + '/' + to
-		}
-	
-		return url;	
-	},
-
-	onRefresh: function (data){
-		if (this.chart){
-			log.debug(" + On refresh "+this.id+" ...", this.logAuthor)
-			
-			if (this.reportMode){
-				log.debug(' + Clean series', this.logAuthor)
-				var i;
-				for (i in this.metrics){
-					metric = this.metrics[i]
-					this.addDataOnChart({'metric': metric, 'values': [] })
-				}
-			}
-
-			if(data.length > 0){
-				var i;
-				for (i in data){
-					this.addDataOnChart(data[i])
-				}
-
-				this.chart.redraw();
-
-				if (data[0].values.length > 0){
-					var extremes = this.chart.series[0].xAxis.getExtremes()
-					var data_window = extremes.max - extremes.min
-					this.shift = data_window > (this.time_window*1000)
-
-					log.debug('     + Data window: '+data_window, this.logAuthor)
-					log.debug('      + Shift: '+this.shift, this.logAuthor)
-				}
-
-			} else {
-				log.debug(' + On refresh : no metric data', this.logAuthor)
-			}
-		}
-	},
-	
-	getHeight: function(){
-		var height = this.callParent();
-		if (this.title){ height -= 30 }
-		return height
-	},
-
-	onResize: function(){
-		log.debug("onRezize", this.logAuthor)
-		if (this.chart){
-			this.chart.setSize(this.getWidth(), this.getHeight() , false);
-		}
-	},
-
 	setchartTitle: function(){
 		var title = ""
-		if(!this.title && this.nodeId){
-			var nodeName = this.nodeId.split('.')
-		
-			// resource
-			if (nodeName[5]){
-				title += nodeName[5] + ' ' + _('line_graph.on') + ' '
-			}
-
-			//component
-			if(nodeName[4]){
-				title += nodeName[4]
-			}
+		if(!this.title && this.nodeId && this.nodes.length == 1){
+			var info = split_amqp_rk(this.nodes[0].id)
 			
+			if (info.source_type == 'resource')
+				title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
+			else
+				title = info.component
 		}
 		this.chartTitle = title	
 	},
@@ -285,7 +183,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				enabled: false
 			},
 			legend: {
-				enabled: this.legend	
+				enabled: this.legend,
+				verticalAlign: this.legend_verticalAlign,
+				align: this.legend_align,
+				layout: this.legend_layout,
 			},
 			series: []
 		}
@@ -303,46 +204,172 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	createChart: function(){
 		this.chart = new Highcharts.Chart(this.options);
 	},
+	
+	////////////////////// CORE
 
-	getSerie: function(metric_name, bunit){		
-		var serie = this.chart.get(metric_name)
-		if (serie) { return serie }
+	makeUrl: function(from, to){
+		var url = '/perfstore/values'
 		
-		var metric_index = this.metrics.indexOf(metric_name)
-		log.debug('  + Create Metric '+metric_name+' '+bunit, this.logAuthor)
-		if (metric_index == -1){
-			metric_index = this.metrics.push(metric_name)
+		if (! to){
+			url += '/' + from
 		}
-		log.debug('    + metric_index: '+metric_index, this.logAuthor)
 
-		var metric_long_name = metric_name
-		if (bunit){
+		if (from && to){
+			url += '/' + from + '/' + to
+		}
+	
+		return url;	
+	},
+
+	doRefresh: function(from, to){
+		if (this.chart){
+			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
+
+			if (! this.reportMode && this.last_from){
+				from = this.last_from;
+				to = Date.now();
+			}
+			
+			if (this.exportMode){
+				from = this.export_from;
+				to = this.export_to;
+			}
+
+			//for (var i in this.nodes){
+			//	var node = this.nodes[i].id
+			//	var metrics = this.nodes[i].metrics
+				
+			//	log.debug("   + " + node, this.logAuthor)
+			
+			if (this.nodes) {
+				url = this.makeUrl(from, to)
+				this.last_from = to
+
+				Ext.Ajax.request({
+					url: url,
+					scope: this,
+					params: this.post_params,
+					method: 'POST',
+					success: function(response){
+						var data = Ext.JSON.decode(response.responseText)
+						data = data.data
+						this.onRefresh(data)	
+					},
+					failure: function ( result, request) {
+						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+					} 
+				})
+			}
+		}
+	},
+
+	onRefresh: function (data){
+		if (this.chart){
+			log.debug(" + On refresh "+this.id+" ...", this.logAuthor)
+			
+			/*if (this.reportMode){
+				log.debug(' + Clean series', this.logAuthor)
+				var i;
+				for (i in this.metrics){
+					metric = this.metrics[i]
+					this.addDataOnChart({'metric': metric, 'values': [] })
+				}
+			}*/
+
+			if(data.length > 0){
+				var i;
+				for (i in data){
+					this.addDataOnChart(data[i])
+				}
+
+				this.chart.redraw();
+
+				if (data[0].values.length > 0){
+					var extremes = this.chart.series[0].xAxis.getExtremes()
+					var data_window = extremes.max - extremes.min
+					this.shift = data_window > (this.time_window*1000)
+
+					log.debug('     + Data window: '+data_window, this.logAuthor)
+					log.debug('      + Shift: '+this.shift, this.logAuthor)
+				}
+
+			} else {
+				log.debug(' + On refresh : no metric data', this.logAuthor)
+			}
+		}
+	},
+	
+	getHeight: function(){
+		var height = this.callParent();
+		if (this.title){ height -= 30 }
+		return height
+	},
+
+	onResize: function(){
+		log.debug("onRezize", this.logAuthor)
+		if (this.chart){
+			this.chart.setSize(this.getWidth(), this.getHeight() , false);
+		}
+	},
+	
+	getSerie: function(node, metric_name, bunit){
+		var serie_id = node + '.' +metric_name
+		
+		var serie = this.chart.get(serie_id)
+		if (serie) { return serie }
+
+		log.debug('  + Create Serie:', this.logAuthor)
+	
+		var serie_index = this.chart.series.length
+		
+		log.debug('    + serie id: '+serie_id, this.logAuthor)
+		log.debug('    + serie index: '+serie_index, this.logAuthor)
+		log.debug('    + bunit: '+bunit, this.logAuthor)
+
+		var metric_long_name = ''
+		
+		if (this.nodes.length != 1){
+			var info = split_amqp_rk(node)
+			
+			metric_long_name = info.component
+			if (info.source_type == 'resource')
+				metric_long_name += " - " + info.resource 
+			
+			metric_long_name = "(" + metric_long_name + ") "
+		}
+		
+		metric_long_name += "<b>" + metric_name + "</b>"
+		
+		if (bunit)
 			metric_long_name += " ("+bunit+")"
-		}
+			
+		log.debug('    + legend: '+metric_long_name, this.logAuthor)
+		
+		var color = global.default_colors[serie_index]
 
-		var color = global.default_colors[metric_index]
-
-		var serie = {id: metric_name, name: metric_long_name, data: [], color: color}
-		//log.dump(serie)
-
-		log.debug('    + metric_id: '+metric_name, this.logAuthor)
+		var serie = {id: serie_id, name: metric_long_name, data: [], color: color}
+		
+		this.series[serie_id] = serie
 		
 		this.chart.addSeries(serie, true, false)
 	
-		return this.chart.get(metric_name)
+		return this.chart.get(serie_id)
 	},
 
 	addDataOnChart: function(data){
 		var metric_name = data['metric']
 		var values = data['values']
 		var bunit = data['bunit']
+		var node = data['node']
 		
 		//log.dump(data)
 
-		var serie = this.getSerie(metric_name, bunit)
-	
-		log.debug('  + Add data on metric '+metric_name+' ...', this.logAuthor)
+		var serie = this.getSerie(node, metric_name, bunit)
+		
+		var serie_id = node + '.' +metric_name
 
+		log.debug('  + Add data for '+node+', metric "'+metric_name+'" ...', this.logAuthor)
+		
 		if (values.length <= 0){
 			log.debug('   + No data', this.logAuthor)
 			if (this.reportMode){
@@ -362,12 +389,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 		}
 	
-		if (! this.pushPoints || this.reportMode){
+		if (! this.series[serie_id].pushPoints || this.reportMode){
 			log.debug('   + Set data', this.logAuthor)
 			this.first = values[0][0];
 
 			serie.setData(values, false);
-			this.pushPoints = true;
+			this.series[serie_id].pushPoints = true;
+			
 		}else{
 			log.debug('   + Push data', this.logAuthor)
 
@@ -375,7 +403,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			for (i in values) {
 				value = values[i]
 				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
-            			serie.addPoint(value, false, this.shift, false);
+            	serie.addPoint(value, false, this.shift, false);
 			}
 		}
 
