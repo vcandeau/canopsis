@@ -74,14 +74,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		if (this.nodes){
 			// Clean this.nodes
-			var post_nodes = []
+			var post_params = []
 			for (var i in this.nodes){
-				post_nodes.push({
+				post_params.push({
 					id: this.nodes[i].id,
 					metrics: this.nodes[i].metrics,
 				})
 			}
-			this.params['nodes'] = Ext.JSON.encode(post_nodes)
+			this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
 		}
 
 		this.ready();	
@@ -207,6 +207,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	////////////////////// CORE
 
+	makeUrl: function(from, to){
+		var url = '/perfstore/values'
+		
+		if (! to){
+			url += '/' + from
+		}
+
+		if (from && to){
+			url += '/' + from + '/' + to
+		}
+	
+		return url;	
+	},
+
 	doRefresh: function(from, to){
 		if (this.chart){
 			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
@@ -226,6 +240,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			//	var metrics = this.nodes[i].metrics
 				
 			//	log.debug("   + " + node, this.logAuthor)
+			
 			if (this.nodes) {
 				url = this.makeUrl(from, to)
 				this.last_from = to
@@ -233,7 +248,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				Ext.Ajax.request({
 					url: url,
 					scope: this,
-					params: this.params,
+					params: this.post_params,
 					method: 'POST',
 					success: function(response){
 						var data = Ext.JSON.decode(response.responseText)
@@ -246,54 +261,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				})
 			}
 		}
-	},
-
-	makeUrl: function(from, to){
-		/*var metrics_uri = ''
-		var nodes_uri = ''
-		
-		for (var i in nodes){
-				var node = nodes[i].id
-				var metrics = nodes[i].metrics
-				
-				if (metrics){
-					for (var i in metrics){
-						metrics_uri += metrics[i] + ","
-					}
-					//small hack
-					metrics_uri = metrics_uri.replace('/', "<slash>")
-				}
-				
-				//metrics_uri += metrics[i] + ","
-		}
-		
-		if (metrics_txt){
-			log.debug(" + Refresh metrics '"+metrics_txt+"', "+from+" -> "+to, this.logAuthor)
-
-			var url = '/perfstore/values/'+node + '/' + metrics_txt
-		}else{
-			log.debug(" + Refresh All metrics, "+from+" -> "+to, this.logAuthor)
-			//small hack
-			var url = '/perfstore/values/'+node+'/<all>'
-		}*/
-		
-		// Remove '<all>' from metrics var
-		/*if (this.metrics)
-			if (this.metrics[0] == "<all>")
-				this.metrics = []
-		*/
-
-		var url = '/perfstore/values'
-		
-		if (! to){
-			url += '/' + from
-		}
-
-		if (from && to){
-			url += '/' + from + '/' + to
-		}
-	
-		return url;	
 	},
 
 	onRefresh: function (data){
@@ -400,8 +367,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var serie = this.getSerie(node, metric_name, bunit)
 		
 		var serie_id = node + '.' +metric_name
-		
-		log.dump(serie)
+
 		log.debug('  + Add data for '+node+', metric "'+metric_name+'" ...', this.logAuthor)
 		
 		if (values.length <= 0){
