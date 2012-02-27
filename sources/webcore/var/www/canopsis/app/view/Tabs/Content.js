@@ -127,6 +127,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		this.dump = dump
 		this.doRedraw()
+		global.notify.notify(record.get('crecord_name'), _('Saved.'))
 	},
 	
 	//Binding
