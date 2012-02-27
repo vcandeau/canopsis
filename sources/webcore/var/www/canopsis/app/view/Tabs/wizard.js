@@ -37,7 +37,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 				items : [
 				{
 					xtype : 'textfield',
-					fieldLabel : _('Title'),
+					fieldLabel : _('Title')+ " ("+_('optional')+")",
 					name : 'title'
 				},{
 					xtype: "combo",
