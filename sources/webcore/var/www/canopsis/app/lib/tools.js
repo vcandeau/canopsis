@@ -156,3 +156,13 @@ function find_gcd(nums)
                 for(a = nums[--i]; r = a % GCDNum; a = GCDNum, GCDNum = r);
         return GCDNum;
 }
+
+// Split AMQP Routing key
+function split_amqp_rk(rk){
+	var rk = rk.split('.')
+	// check
+	if (rk[2] == 'check'){
+		return {source_type: rk[3]  ,component: rk[4], resource: rk[5]}
+	}
+	return {}
+}
