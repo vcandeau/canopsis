@@ -139,24 +139,25 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 	logger.debug(" + stop:      %s" % stop)
 	
 	mynode = node(_id, storage=perfstore)
-
-	if (metrics[0] == "<all>"):
-		metrics = mynode.metric_get_all_dn()
-		logger.debug(" + metrics:   %s" % metrics)
-
+	
 	output=[]
 	
-	for metric in metrics:
-		try:
-			values = mynode.metric_get_values(metric, start, stop)
-	
-			values = [[x[0] * 1000, x[1]] for x in values]
-			if len(values) > 1:
-				bunit = mynode.metric_get(metric).bunit
-				output.append({'node': _id, 'metric': metric, 'values': values, 'bunit': bunit })
-					
-		except Exception, err:
-			logger.error(err)
+	if metrics:
+		if (metrics[0] == "<all>"):
+			metrics = mynode.metric_get_all_dn()
+			logger.debug(" + metrics:   %s" % metrics)
+
+		for metric in metrics:
+			try:
+				values = mynode.metric_get_values(metric, start, stop)
+		
+				values = [[x[0] * 1000, x[1]] for x in values]
+				if len(values) > 1:
+					bunit = mynode.metric_get(metric).bunit
+					output.append({'node': _id, 'metric': metric, 'values': values, 'bunit': bunit })
+						
+			except Exception, err:
+				logger.error(err)
 				
 	return output
 
