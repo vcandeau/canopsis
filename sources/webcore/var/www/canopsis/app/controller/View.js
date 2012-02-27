@@ -41,6 +41,44 @@ Ext.define('canopsis.controller.View', {
     
     addLeafButton : function(){
 		this.getController('Tabs').create_new_view()
-	}
-    //Ext.app.Controller
+	},
+    
+    addDirectoryButton : function(){
+		Ext.Msg.prompt(_('Directory name'), _('Please enter directory name:'), function(btn, directoryName){
+			if (btn == 'ok'){
+				//add (if selected) -> add to this node
+				//this.tree.store.add()
+				var store = Ext.data.StoreManager.lookup('TreeStoreView')
+				var record = Ext.create('canopsis.model.view')
+				
+				var directory_id = 'directory.'+ global.account.user + '.' + global.gen_id()
+				
+				record.set('crecord_name',directoryName)
+				
+				record.set('id',directory_id)
+				record.set('_id',directory_id)
+				record.set('children',[])
+				
+				store.getRootNode().appendChild(record)
+				store.sync()
+				
+			} else {
+				log.debug('cancel new view',this.logAuthor)
+			}
+		});
+	},
+	
+	itemDoubleClick : function(){
+		var tree = this.tree
+		
+		var selection = tree.getSelectionModel().getSelection()[0];
+		log.dump(selection)
+		if (selection.get('leaf')){
+			view_id = selection.get('id')
+			viewName = selection.get('crecord_name')
+			add_view_tab(view_id, viewName, true, undefined, true, true, false)
+			
+		}
+	},
+    
 });

@@ -62,6 +62,10 @@ Ext.define('canopsis.store.TreeStoreView', {
 	
 	clearOnLoad: true,
 	
+	root:{
+		id:'directory.root.dir1'
+	},
+	
 	proxy: {
 			type: 'rest',
 			url: '/ui/view',
