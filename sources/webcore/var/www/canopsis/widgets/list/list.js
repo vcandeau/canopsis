@@ -33,6 +33,8 @@ Ext.define('widgets.list.list' ,{
 	bar_search: true,
 	reload: true,
 	bar: true,
+	hideHeaders: false,
+	scroll: true,
 	//..
 	
 	initComponent: function() {
@@ -66,6 +68,8 @@ Ext.define('widgets.list.list' ,{
 			opt_bar_duplicate: false,
 			opt_bar_reload: this.reload,
 			opt_bar_delete: false,
+			hideHeaders: this.hideHeaders,
+			scroll: this.scroll 
 			
 			//opt_view_element:'view.ComponentDetails'
 

@@ -11,9 +11,59 @@
 			"title": "Options",
 			"items": [{
 						"xtype": "checkbox",
-						"boxLabel": "Show legend",
+						"boxLabel": "Enable legend",
 						"checked": true,
 						"name": "legend"
+					},{
+						"xtype": "combobox",
+						"name": "legend_verticalAlign",
+						"fieldLabel": "Legend vertical alignement",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": "bottom",
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": "top", "text": "Top"},
+								{"value": "middle", "text": "Middle"},
+								{"value": "bottom", "text": "Bottom"}
+							]
+						}
+					},{
+						"xtype": "combobox",
+						"name": "legend_align",
+						"fieldLabel": "Legend horizontal alignement",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": "center",
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": "left", "text": "Left"},
+								{"value": "center", "text": "Center"},
+								{"value": "right", "text": "Right"}
+							]
+						}
+					},{
+						"xtype": "combobox",
+						"name": "legend_layout",
+						"fieldLabel": "Legend layout",
+						"queryMode": "local",
+						"displayField": "text",
+						"valueField": "value",
+						"value": "horizontal",
+						"store": {
+							"xtype": "store",
+							"fields": ["value", "text"],
+							"data" : [
+								{"value": "horizontal", "text": "Horizontal"},
+								{"value": "vertical", "text": "Vertical"}
+							]
+						}
 					},{
 						"xtype": "checkbox",
 						"boxLabel": "Enable tooltip",
@@ -49,7 +99,7 @@
 			"items": [{
 						"xtype": "cinventory",
 						"name": "nodes",
-						"multiSelect": false,
+						"multiSelect": true,
 						"metrics": true
 					}]
 		}]

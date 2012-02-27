@@ -75,7 +75,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		this.columns.push({
 			header: _('State'),
 			sortable: false,
-			width: 50,
+			width: 25,
 			dataIndex: 'state',
 			renderer: rdr_status
 		});
@@ -83,7 +83,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		this.columns.push({
 			header: _('Last check'),
 			sortable: false,
-			width: 130,
+			flex: 1,
 			dataIndex: 'timestamp',
 			renderer: rdr_tstodate
 		});
