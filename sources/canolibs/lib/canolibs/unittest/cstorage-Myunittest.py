@@ -195,22 +195,33 @@ class KnownValues(unittest.TestCase):
 		record4 = crecord({'data': 4}, name="record4")
 
 		STORAGE.put([record1, record2, record3, record4])
-
+		'''
+		STORAGE.add_children(record1,record2)
+		STORAGE.add_children(record1,record3)
+		
+		STORAGE.add_children(record2,record4)
+		'''
+		record2.add_children(record4)
+		
 		record1.add_children(record2)
 		record1.add_children(record3)
-
-		record2.add_children(record4)
-
+		
 		STORAGE.put([record1, record2])
-
 		STORAGE.get_record_childs(record1)
-		STORAGE.set_record_tree(record1)
+		STORAGE.recursive_get(record1)
 
 		STORAGE.print_record_tree(record1)
 		
 		json.dumps(record1.dump(json=True))
+		
+	def test_18_GetRecursivelyAllChilds(self):
+		parent_record = STORAGE.find_one({'data': 1})
+		STORAGE.recursive_get(parent_record)
+		if len(parent_record.children) != 2:
+			raise Exception('Wrong parent/children tree builded')
+			
 
-	def test_18_RemoveAll(self):
+	def test_19_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 		pass

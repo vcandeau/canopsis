@@ -142,6 +142,18 @@ class crecord(object):
 		#		dump['children'].append(child)
 
 		return dump
+	
+	def recursive_dump(self, json=False):
+		dump = self.dump(json=json)
+		dump['children'] = []
+		
+		for child in self.children:
+			if isinstance(child, crecord):
+				formated = child.recursive_dump(json=json)
+				dump['children'].append(formated)
+			
+		return dump
+	
 
 	def cat(self, dump=False):
 		for_str=False

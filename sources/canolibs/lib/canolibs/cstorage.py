@@ -212,6 +212,21 @@ class cstorage(object):
 			return return_ids[0]
 		else:
 			return return_ids
+	'''
+	#warning : not tested
+	def recursive_put(self, record,depth=0, account=None, namespace=None):
+		depth += 1
+		
+		children_ids = []
+		
+		for child in record.children:
+			self.recursive_put(child,depth,account=account,namespace=namespace)
+			children_ids.append(child._id)
+			
+		record.children = children_ids
+		self.put(record,account=None, namespace=None)
+	'''	
+		
 
 	def find_one(self, *args, **kargs):
 		return self.find(one=True, *args, **kargs)
@@ -372,18 +387,39 @@ class cstorage(object):
 	def drop_namespace(self, namespace):
 		self.db.drop_collection(namespace)
 
-	def set_record_tree(self, record, depth=0):
+	def recursive_get(self, record, depth=0,account=None, namespace=None):
 		depth += 1
 		childs = record.children
 		if len(childs) == 0:
 			return
 
-		rchilds = []
-		for child in childs:
-			rec = self.get(child)
-			self.set_record_tree(rec, depth)
-			record.children_record.append(rec)
+		record.children = []
 
+		for child in childs:
+			rec = self.get(child,account=account,namespace=namespace)
+			self.recursive_get(rec, depth,account=account,namespace=namespace)
+			record.children.append(rec)
+	
+	
+	
+	'''		
+	def recursive_dump(self, record, depth=0,account=None, namespace=None):
+		depth += 1
+		childs = record.children
+		if len(childs) == 0:
+			return
+			
+		jsonRecord = record.dump(json=True)
+		jsonRecord['children'] = []
+		
+		for child in childs:
+			rec = self.get(child,account=account,namespace=namespace)
+			self.set_record_tree(rec, depth,account=account,namespace=namespace)
+			#record.children_record.append(rec)
+			jsonRecord['children'].append(rec.dump(json=True))
+			
+		return jsonRecord
+	'''
 
 	def get_record_childs(self, record,account=None, namespace=None):
 		child_ids = record.children
@@ -447,6 +483,50 @@ class cstorage(object):
 			mfilter['crecord_type'] = rtype
 
 		return self.find(mfilter, account=account)
+	'''		
+	def add_children(self, parent_record, child_record, autosave=True):
+		_id = child_record._id
+
+		if autosave:
+			if not _id:
+				child_record.save()
+			if not parent_record._id:
+				parent_record.save()
+
+		if not _id or not parent_record._id:
+			raise ValueError("You must save all records before this operation ...")
+
+		if str(_id) not in parent_record.children:
+			parent_record.children.append(str(_id))
+			child_record.parent.append(str(parent_record._id))
+			if autosave:
+				parent_record.save()
+				child_record.save()
+				
+	def remove_children(self, parent_record, child_record, autosave=True):
+		_id = child_record._id
+
+		if autosave:
+			if not _id:
+				child_record.save()
+			if not parent_record._id:
+				parent_record.save()
+
+		if not _id or not parent_record._id:
+			raise ValueError("You must save all records before this operation ...")
+
+		if str(_id) in parent_record.children:
+			parent_record.children.remove(str(_id))
+			child_record.parent.remove(str(parent_record._id))
+			if autosave:
+				parent_record.save()
+				child_record.save()
+	'''			
+	def is_parent(self, parent_record, child_record):
+		if str(child_record._id) in parent_record.children:
+			return True
+		else:
+			return False
 
 	def put_data(self, data, file_name, content_type):
 		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
