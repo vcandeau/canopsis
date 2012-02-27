@@ -32,6 +32,9 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	
+	constrain: true,
+	constrainHeader: true,
+	
 	edit : false,
 	
 	step_list: [{
