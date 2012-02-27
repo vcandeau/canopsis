@@ -82,7 +82,7 @@ Ext.define('canopsis.controller.Tabs', {
 				}
 
 			} else {
-				log.debug('cancel new view')
+				log.debug('cancel new view',this.logAuthor)
 			}
 		});
 	},
