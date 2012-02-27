@@ -23,6 +23,7 @@ Ext.define('canopsis.model.view', {
 
 	fields: [
 		{name: 'id'},
+		{name: 'leaf'},
 		{name: 'crecord_name'},
 		{name: 'nbColumns'},
 		{name: 'nodeId'},

@@ -40,6 +40,8 @@ Ext.define('canopsis.lib.controller.ctree', {
 		
 		log.debug('[controller][ctree] - Bind events "'+id+'" ...')
 		
+		
+		
 		//------------------Bind Context Menu-----------------------
 		if(tree.contextMenu){
 			tree.on('itemcontextmenu', this._showMenu)
@@ -90,7 +92,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		
 		//---------------------general binding ---------------------
 		tree.on('selectionchange',	this._selectionchange,	this)
-		
+		tree.on('itemdblclick', this._itemDoubleClick,this)
 	},
 
 	_selectionchange: function(view, records){
@@ -164,5 +166,11 @@ Ext.define('canopsis.lib.controller.ctree', {
 		this.contextMenu.showAt(e.getXY());
 		return false;
 	},
+	
+	_itemDoubleClick : function(record){
+		if(this.itemDoubleClick){
+			this.itemDoubleClick(record)
+		}
+	}
 
 });

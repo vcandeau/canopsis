@@ -21,11 +21,12 @@
 Ext.define('canopsis.lib.view.ctree' ,{
 	extend: 'Ext.tree.Panel',
 	
+	animCollapse: false,
 
 	useArrows: true,
 	rootVisible: false,
 	multiSelect: true,
-	animCollapse: false,
+	
 	
 	//options	
 	opt_bar: true,
@@ -34,7 +35,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_add_directory:true,
 	opt_bar_delete:true,
 	opt_bar_duplicate: true,
-	opt_bar_reload: true,
+	opt_bar_reload: false,
 
 	viewConfig: {
 		plugins: [{
