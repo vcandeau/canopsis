@@ -230,8 +230,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				url = this.makeUrl(from, to)
 				this.last_from = to
 
-				console.log(this.params)
-
 				Ext.Ajax.request({
 					url: url,
 					scope: this,
