@@ -25,6 +25,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	layout : 'fit',
 	nodeId_refresh: true,
 	nodeData: {},
+	nodes: [],
 
 	data: {},
 
@@ -73,10 +74,12 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		
 		//Compatibility
 		if (this.nodes){
-			log.debug('Nodes:', this.logAuthor)
-			log.dump(this.nodes)
-			this.nodeId = this.nodes[0].id
-			this.metrics = this.nodes[0].metrics
+			if (this.nodes.length > 0){
+				log.debug('Nodes:', this.logAuthor)
+				log.dump(this.nodes)
+				this.nodeId = this.nodes[0].id
+				this.metrics = this.nodes[0].metrics
+			}
 		}
 		
 		//if reporting
