@@ -19,7 +19,7 @@
 # ---------------------------------
 
 import unittest
-
+import json
 from crecord import crecord
 from caccount import caccount
 
@@ -118,6 +118,21 @@ class KnownValues(unittest.TestCase):
 		record.set_disable()
 		if record.is_enable():
 			raise Exception('Impossible to disable ...')
+			
+	def test_08_recursive_dump(self):
+		record1 = crecord(self.data)
+		record2 = crecord(self.data)
+		record3 = crecord(self.data)
+		record4 = crecord(self.data)
+		
+		record2.children.append(record3)
+		
+		record1.children.append(record2)
+		record1.children.append(record4)
+
+		json_output = record1.recursive_dump(json=True)
+		json.dumps(json_output)
+		
 		
 if __name__ == "__main__":
 	unittest.main(verbosity=1)
