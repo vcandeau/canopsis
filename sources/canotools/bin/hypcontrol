@@ -4,7 +4,7 @@ if [ "$1" = "start" ]; then
 	service rabbitmq-server start
 	service mongodb start
 	service amqp2mongodb start
-	service amqp2websocket start
+	#service amqp2websocket start
 	service celeryd start
 	service webserver start
 fi
@@ -12,7 +12,7 @@ fi
 if [ "$1" = "stop" ]; then
 	service webserver stop
 	service celeryd stop
-	service amqp2websocket stop
+	#service amqp2websocket stop
 	service amqp2mongodb stop
 	service mongodb stop
 	service rabbitmq-server stop
