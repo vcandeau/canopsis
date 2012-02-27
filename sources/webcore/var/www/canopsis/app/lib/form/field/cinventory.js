@@ -348,6 +348,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				metrics: metrics,
 			}
 			dump.push(rdump)
+			console.log(metrics)
 		});
 		
 		log.debug("getValue Dump:", this.logAuthor)
@@ -362,15 +363,26 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 
 		for (var i in data){
 			var rdata = data[i]
-			for (var metric in rdata.perf_data_array){
-				if (metric != '<all>')
+			// uncheck all metrics
+			log.debug(" + Uncheck all metrics", this.logAuthor)
+			for (var metric in rdata.perf_data_array)
 					this.selection_grid.check_metric(rdata.id, metric , false)
+	
+			// if '<all>' check all metrics
+			if (rdata.metrics){
+				if (rdata.metrics[0] == '<all>'){
+					log.debug(" + Check all metrics", this.logAuthor)
+					for (var metric in rdata.perf_data_array)
+						this.selection_grid.check_metric(rdata.id, metric , true)
+				}else{
+					for (var j in rdata.metrics){
+						var metric = rdata.metrics[j]
+						log.debug(" + Check '"+metric+"'", this.logAuthor)
+						this.selection_grid.check_metric(rdata.id, metric, true)
+					}
+				}
 			}
-			for (var j in rdata.metrics){
-				var metric = rdata.metrics[j]
-				if (metric != '<all>')
-					this.selection_grid.check_metric(rdata.id, metric, true)
-			}
+			
 			this.addRecord({data: rdata})
 		}
 	},
