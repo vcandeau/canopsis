@@ -102,7 +102,7 @@ def tree_get():
 	return {"total": total, "success": True, "data": output}
 '''
 
-@get('/ui/view',	apply=[check_auth])
+@get('/ui/view',apply=[check_auth])
 def tree_get():
 	namespace = 'object'
 	account = get_account()
@@ -113,8 +113,7 @@ def tree_get():
 	total = 0
 		
 	if node:
-	#if node == 'root':
-		parentNode = storage.get('directory.root.dir1', account=account)
+		parentNode = storage.get('directory.root', account=account)
 		storage.recursive_get(parentNode,account=account)
 		output = parentNode.recursive_dump(json=True)
 			
@@ -132,16 +131,19 @@ def tree_delete(name=None):
 	record = storage.get(name, account=account)
 	
 	if isinstance(record, crecord):
-		#remove record from its parent child list
-		for parent in record.parent:
-			parent_rec = storage.get(parent, account=account)
-			parent_rec.remove_children(record )
-			storage.put(parent_rec,account=account)
-	
-		try:
-			storage.remove(record, account=account)
-		except:
-			return HTTPError(404, 'error while removing '+ _id)
+		if len(record.children) == 0:
+			#remove record from its parent child list
+			for parent in record.parent:
+				parent_rec = storage.get(parent, account=account)
+				parent_rec.remove_children(record )
+				storage.put(parent_rec,account=account)
+		
+			try:
+				storage.remove(record, account=account)
+			except:
+				return HTTPError(404, 'error while removing '+ _id)
+		else:
+			logger.debug('This record have children, remove those child before')
 
 	
 	
@@ -179,7 +181,6 @@ def tree_update(name='None'):
 		#add new view/folder
 		parentNode = storage.get(data['parentId'], account=account)
 		if data['leaf'] == True:
-			logger.debug('It s a LEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF')
 			record = crecord({'leaf':True,'id':data['id'],'_id':data['id']},type='view',name=data['crecord_name'],account=account)
 		else:
 			record = crecord({'id':data['id'],'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)

@@ -80,6 +80,34 @@ record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height'
 record1.data['template'] = True
 storage.put(record1)
 
+###Root directory
+record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+storage.put(record1)
+
+###test views
+'''
+record1 = crecord({'_id': 'directory.root.dir1','id': 'directory.root.dir1','expanded':'true'},type='view_directory', name="root directory")
+record4 = crecord({'_id': 'directory.root.dir2','id': 'directory.root.dir2'},type='view_directory', name="second directory")
+record6 = crecord({'_id': 'directory.root.dir3','id': 'directory.root.dir3'},type='view_directory', name="third directory")
+record8 = crecord({'_id': 'directory.root.dir8','id': 'directory.root.dir8'},type='view_directory', name="eight directory")
+record2 = crecord({'_id': 'view.root.one','leaf': True,'id': 'view.root.one'},type='view', name="first view")
+record3 = crecord({'_id': 'view.root.two','leaf': True,'id': 'view.root.two'},type='view', name="second view")
+record5 = crecord({'_id': 'view.root.three','leaf': True,'id': 'view.root.three'},type='view', name="third view")
+record7 = crecord({'_id': 'view.root.seven','leaf': True,'id': 'view.root.seven'},type='view', name="seven view")
+
+storage.put([record1, record2, record3, record4,record5,record6,record7,record8])
+
+record1.add_children(record4)
+record1.add_children(record2)
+record1.add_children(record6)
+record1.add_children(record7)
+
+record4.add_children(record3)
+record4.add_children(record5)
+record4.add_children(record8)
+
+storage.put([record1, record2, record3, record4,record5,record6,record7,record8])
+'''
 ### Account
 record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'AccountGrid'},'id': 'widget-accounts'} ]
@@ -88,6 +116,11 @@ storage.put(record1)
 ### Group
 record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'GroupGrid'},'id': 'widget-group-manager'} ]
+storage.put(record1)
+
+### View
+record1 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
 storage.put(record1)
 
 ## Menu
