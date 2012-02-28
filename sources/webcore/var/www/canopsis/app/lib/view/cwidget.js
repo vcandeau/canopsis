@@ -63,10 +63,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		this.items = this.wcontainer
 		
 		this.wcontainer.on('afterrender', this.afterContainerRender, this)
-
-		this.uri = '/rest/events/event'
 		
 		this.callParent(arguments);
+
+		this.uri = '/rest/events/event'
 
 		if (this.reportMode) {
 			this.refreshInterval = false
@@ -86,27 +86,32 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		if(this.exportMode){
 			//this._reporting(this.reportStartTs,this.reportStopTs)
 			//this._reporting(reportStart,reportStop)
-			this.uri += '/' + this.nodeId;
-			if (this.nodeId){
+			//this.uri += '/' + this.nodeId;
+			
+			/*if (this.nodeId){
 				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
 				this.on('afterrender', this._doRefresh, this);
-			}
+			}*/
+			
 		}else{
-			if (this.nodeId){
+			
+			/*if (this.nodeId){
 				this.uri += '/' + this.nodeId;
 				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
-
-				if (this.refreshInterval){				
-					log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
-					this.task = {
-						run: this._doRefresh,
-						interval: this.refreshInterval * 1000,
-						scope: this
-					}
+			}*/
+			
+			if (this.refreshInterval){				
+				log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
+				this.task = {
+					run: this._doRefresh,
+					interval: this.refreshInterval * 1000,
+					scope: this
 				}
 			}
 		}
 	},
+	
+	
 	
 	//display data from timestamp
 	/*_displayFromTs: function(from, to){

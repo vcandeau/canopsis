@@ -5,26 +5,14 @@
 	"website": "http://www.canopsis.org",
 	"xtype": "list",
 	"description": "Display list of inventory items",
-	"refreshInterval": 0,
-	"rowHeight": 400,
-	"formWidth": 600,
+	"refreshInterval": 300,
 	"options": [{
 			"title": "Options",
 			"items": [{
 						"xtype": "checkbox",
-						"boxLabel": "Enable scroll",
-						"checked": true,
-						"name": "scroll"
-					},{
-						"xtype": "checkbox",
 						"boxLabel": "Show border",
 						"checked": false,
 						"name": "border"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Hide headers",
-						"checked": false,
-						"name": "hideHeaders"
 					},{
 						"xtype": "checkbox",
 						"boxLabel": "Show component column",
@@ -50,6 +38,16 @@
 						"boxLabel": "Enable reload button",
 						"checked": true,
 						"name": "reload"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Enable scroll",
+						"checked": true,
+						"name": "scroll"
+					},{
+						"xtype": "checkbox",
+						"boxLabel": "Hide headers",
+						"checked": false,
+						"name": "hideHeaders"
 					}]
 		},{
 			"title": "Filter",
