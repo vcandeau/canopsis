@@ -195,12 +195,7 @@ class KnownValues(unittest.TestCase):
 		record4 = crecord({'data': 4}, name="record4")
 
 		STORAGE.put([record1, record2, record3, record4])
-		'''
-		STORAGE.add_children(record1,record2)
-		STORAGE.add_children(record1,record3)
-		
-		STORAGE.add_children(record2,record4)
-		'''
+	
 		record2.add_children(record4)
 		
 		record1.add_children(record2)
