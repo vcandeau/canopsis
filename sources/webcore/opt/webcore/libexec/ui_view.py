@@ -33,7 +33,7 @@ from crecord import crecord
 from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger("ui_view")
-logger.setLevel(3)
+
 #########################################################################
 @get('/ui/dashboard', apply=[check_auth])
 def get_dashboard():
