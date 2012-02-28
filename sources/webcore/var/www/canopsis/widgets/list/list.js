@@ -46,7 +46,7 @@ Ext.define('widgets.list.list' ,{
 			//border: (this.title || this.fullmode) ? false : true,
 			opt_paging: this.paging,
 			filter: this.filter,
-			autoload: true,
+			//autoload: true,
 			pageSize: global.pageSize,
 			remoteSort: true,
 			sorters: [{
@@ -85,6 +85,14 @@ Ext.define('widgets.list.list' ,{
 
 		//adding grid to widget 
 		this.removeAll();
-		this.add(this.grid);	
+		this.add(this.grid);
+		
+		this.ready();
 	},
+	
+	doRefresh: function(from, to){
+		if (this.grid)
+			this.grid.store.load()
+	},
+	
 });
