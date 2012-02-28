@@ -40,6 +40,11 @@ storage = cstorage(account=account1, namespace='object')
 record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
 storage.put(record1)
 
+## add view manager
+record1 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
+storage.put(record1)
+
 ##find all views
 views = storage.find({'crecord_type':'view'}, account=account1)
 for view in views:
