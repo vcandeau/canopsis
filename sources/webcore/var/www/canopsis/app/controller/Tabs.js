@@ -58,6 +58,7 @@ Ext.define('canopsis.controller.Tabs', {
 			if (btn == 'ok'){
 				//create view 
 				var store = Ext.data.StoreManager.lookup('View')
+				var treeStore = Ext.data.StoreManager.lookup('TreeStoreView')
 				var record = Ext.create('canopsis.model.view', data)
 				
 				var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
@@ -65,7 +66,7 @@ Ext.define('canopsis.controller.Tabs', {
 				//check if view already exist
 				var already_exist = store.findBy(
 						function(storeRecord, id){
-								if(storeRecord.get('id') == view_id){
+								if(storeRecord.get('crecord_name') == viewName){
 									return true;  // a record with this data exists
 								}
 					}, this);
@@ -75,7 +76,10 @@ Ext.define('canopsis.controller.Tabs', {
 				} else {
 					record.set('crecord_name',viewName)
 					record.set('id',view_id)
-					store.add(record)
+					record.set('leaf', true)
+					//add to treestore, view get children of node
+					treeStore.getRootNode().appendChild(record)
+					treeStore.sync()
 					//open view
 					tab = add_view_tab(view_id, viewName, true, undefined, true, true, false)
 					tab.editMode();
