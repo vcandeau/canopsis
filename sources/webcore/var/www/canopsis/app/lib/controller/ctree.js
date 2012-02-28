@@ -93,6 +93,15 @@ Ext.define('canopsis.lib.controller.ctree', {
 		//---------------------general binding ---------------------
 		tree.on('selectionchange',	this._selectionchange,	this)
 		tree.on('itemdblclick', this._itemDoubleClick,this)
+		
+		//------keep memory of last expanded node, expand it again after load-----
+		tree.store.on('expand', function(node){this.currentNode = node.getPath()},this)
+		tree.on('load', function(){
+				if(this.currentNode){
+					this.tree.expandPath(this.currentNode)
+				}
+			},this)
+
 	},
 
 	_selectionchange: function(view, records){

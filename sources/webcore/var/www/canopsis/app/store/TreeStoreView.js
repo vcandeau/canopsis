@@ -49,4 +49,41 @@ Ext.define('canopsis.store.TreeStoreView', {
 				this.sync();
 			}
 		},
-	});
+		
+	//--------------FIX , because without this in 4.0.7 you can't refresh !--------
+	//http://www.sencha.com/forum/showthread.php?151674-4.0.7-Tree-Store-Bug&highlight=treestore
+	//
+    load: function(options) {
+        options = options || {};
+        options.params = options.params || {};
+
+        var me = this,
+            node = options.node || me.tree.getRootNode(),
+            root;
+
+        // If there is not a node it means the user hasnt defined a rootnode yet. In this case lets just
+        // create one for them.
+        if (!node) {
+            node = me.setRootNode({
+                expanded: true
+            });
+        }
+
+        if (me.clearOnLoad) {
+            //BUG
+            //node.removeAll(true);
+            node.removeAll(false);
+        }
+
+        Ext.applyIf(options, {
+            node: node
+        });
+        options.params[me.nodeParam] = node ? node.getId() : 'root';
+
+        if (node) {
+            node.set('loading', true);
+        }
+
+        return me.callParent([options]);
+    }
+});

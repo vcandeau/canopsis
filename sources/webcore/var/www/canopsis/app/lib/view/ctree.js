@@ -35,8 +35,8 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_add:true,
 	opt_bar_add_directory:true,
 	opt_bar_delete:true,
-	opt_bar_duplicate: true,
-	opt_bar_reload: false,
+	opt_bar_duplicate: false,
+	opt_bar_reload: true,
 
 	viewConfig: {
 		plugins: [{
@@ -55,6 +55,11 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	}],
 
 	initComponent: function() {
+		log.debug('-------------------------------------------')
+		log.debug('animCollapse set to : ' +this.animCollapse)
+		log.debug('animate set to : ' +this.animate)
+		log.debug('-------------------------------------------')
+		
 		var bar_child = [];
 
 		if(this.opt_bar_add){
