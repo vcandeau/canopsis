@@ -38,6 +38,12 @@
 								"checked": true,
 								"name": "legend"
 							},{
+								"xtype" : "numberfield",
+								"name" : "legend_borderWidth",
+								"fieldLabel": "Border Width",
+								"minValue": 0,
+								"value": 1
+                           },{
 								"xtype": "combobox",
 								"name": "legend_verticalAlign",
 								"fieldLabel": "Legend vertical alignement",
@@ -132,6 +138,7 @@
 								"xtype" : "numberfield",
 								"name" : "lineWidth",
 								"fieldLabel": "Line Width",
+								"minValue": 1,
 								"value": 1
                            }]
 					}]
