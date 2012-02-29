@@ -129,6 +129,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		log.debug('Dumping step before adding')
 		log.dump(step)
 		step.bodyPadding = 10
+		step.autoScroll = true
 		
 		if (step.items.length == 1){
 			step.layout = 'fit'
