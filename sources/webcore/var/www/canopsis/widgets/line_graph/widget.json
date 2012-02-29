@@ -76,7 +76,7 @@
 						"name": "zoom"
 					},{
 						"xtype": "combobox",
-						"name": "time_windows",
+						"name": "time_window",
 						"fieldLabel": "Choose time window",
 						"queryMode": "local",
 						"displayField": "text",
