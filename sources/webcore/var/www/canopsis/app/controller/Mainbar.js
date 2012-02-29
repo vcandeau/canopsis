@@ -48,6 +48,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="showconsole"]' : {
 				click : this.showconsole,
 			},
+			'Mainbar menuitem[action="openViews"]' : {
+				click : this.openViews,
+			},
 			'Mainbar [name="clock"]' : {
 				afterrender : this.setClock,
 			},
@@ -118,6 +121,10 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Open view '+vid, this.logAuthor);
 		combo.clearValue();
 		add_view_tab(vid, vtitle, true, {}, true, true);
+	},
+	
+	openViews: function(){
+		add_view_tab('view.view_manager', _('Views'), true, {}, true, true);
 	},
 	
 	editView: function(){
