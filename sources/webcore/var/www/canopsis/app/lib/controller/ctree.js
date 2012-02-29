@@ -105,7 +105,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_selectionchange: function(view, records){
-		log.debug('[controller][ctree] - selectionchange'this.logAuthor);
+		log.debug('[controller][ctree] - selectionchange',this.logAuthor);
 		var tree = this.tree
 
 		//Enable delete Button
@@ -120,7 +120,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_addDirectoryButton : function(){
-		log.debug('add directory'this.logAuthor)
+		log.debug('add directory',this.logAuthor)
 		
 		if(this.addDirectoryButton){
 			this.addDirectoryButton()
@@ -136,7 +136,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_duplicateButton : function(){
-		log.debug('duplicate'this.logAuthor)
+		log.debug('duplicate',this.logAuthor)
 		
 		if(this.duplicateButton){
 			this.duplicateButton()
@@ -144,7 +144,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 	
 	_deleteButton : function(){
-		log.debug('[controller][ctree] - clicked deleteButton'this.logAuthor);
+		log.debug('[controller][ctree] - clicked deleteButton',this.logAuthor);
 		var tree = this.tree
 		
 		var selection = tree.getSelectionModel().getSelection();
