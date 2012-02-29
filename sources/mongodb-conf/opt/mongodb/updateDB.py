@@ -41,8 +41,8 @@ record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'tr
 storage.put(record1)
 
 ## add view manager
-record1 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
-record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
+record2 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
+record2.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
 storage.put(record1)
 
 ##find all views
@@ -51,7 +51,7 @@ for view in views:
 	if view._id not in ['view._default_.dashboard','view.ComponentDetails','view.components','view.resources','view.group_manager','view.account_manager','view.view_manager']:
 		##update all views
 		print view._id
-		view.leaf = True
+		view.data['leaf'] = True
 		record1.add_children(view)
 		storage.put(view)
 storage.put(record1)
