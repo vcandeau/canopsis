@@ -9,46 +9,84 @@
 	"options": [{
 			"title": "Options",
 			"items": [{
-						"xtype": "checkbox",
-						"boxLabel": "Show border",
-						"checked": false,
-						"name": "border"
+						"xtype": "fieldset",
+						"title": "Style",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"boxLabel": "Show border",
+								"checked": false,
+								"name": "border"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable search field",
+								"checked": false,
+								"name": "bar_search"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable reload button",
+								"checked": true,
+								"name": "reload"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable scroll",
+								"checked": true,
+								"name": "scroll"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Hide headers",
+								"checked": false,
+								"name": "hideHeaders"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Enable pagging",
+								"checked": false,
+								"name": "paging"
+							}
+						]
 					},{
-						"xtype": "checkbox",
-						"boxLabel": "Show component column",
-						"checked": true,
-						"name": "show_component"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Show resource column",
-						"checked": true,
-						"name": "show_resource"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Enable pagging",
-						"checked": false,
-						"name": "paging"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Enable search field",
-						"checked": false,
-						"name": "bar_search"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Enable reload button",
-						"checked": true,
-						"name": "reload"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Enable scroll",
-						"checked": true,
-						"name": "scroll"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Hide headers",
-						"checked": false,
-						"name": "hideHeaders"
-					}]
+						"xtype": "fieldset",
+						"title": "Columns",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"boxLabel": "Source type icon",
+								"checked": true,
+								"name": "show_source_type"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "State type",
+								"checked": true,
+								"name": "show_state_type"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "State",
+								"checked": true,
+								"name": "show_state"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Last check's time",
+								"checked": true,
+								"name": "show_last_check"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Component",
+								"checked": true,
+								"name": "show_component"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Resource",
+								"checked": true,
+								"name": "show_resource"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Plugin's output",
+								"checked": true,
+								"name": "show_output"
+							}]
+				}]
 		},{
 			"title": "Filter",
 			"items": [{
