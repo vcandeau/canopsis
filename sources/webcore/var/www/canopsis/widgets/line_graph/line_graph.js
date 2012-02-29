@@ -55,6 +55,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
 	legend_layout: "horizontal",
+	legend_backgroundColor: null,
+	SeriesType: "area",
 	//..
 	
 	/*initComponent: function() {
@@ -116,7 +118,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			reportMode: this.reportMode,
 			chart: {
 				renderTo: this.wcontainerId,
-				defaultSeriesType: 'area',
+				defaultSeriesType: this.SeriesType,
 				height: this.getHeight(),
 				animation: false,
 				borderColor: "#FFFFFF"
@@ -187,6 +189,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				verticalAlign: this.legend_verticalAlign,
 				align: this.legend_align,
 				layout: this.legend_layout,
+				backgroundColor: this.legend_backgroundColor
 			},
 			series: []
 		}
