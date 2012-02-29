@@ -76,6 +76,7 @@ Ext.define('canopsis.controller.Tabs', {
 				} else {
 					record.set('crecord_name',viewName)
 					record.set('leaf', true)
+					record.set('id', view_id)
 					//add to treestore, view get children of node
 					treeStore.getRootNode().appendChild(record)
 					treeStore.sync()
