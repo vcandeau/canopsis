@@ -63,6 +63,11 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 		}*/
 
 
+		// Hack
+		if (this.hideHeaders){
+			this.bodyStyle = { 'border-width': 0 }
+		}
+
 		//------------------Option docked bar--------------
 		if(this.exportMode){
 			this.border = false
