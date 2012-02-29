@@ -56,6 +56,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_align: "center",
 	legend_layout: "horizontal",
 	legend_backgroundColor: null,
+	legend_borderColor: "#909090",
 	SeriesType: "area",
 	lineWidth: 1,
 	legend_borderWidth: 1,
@@ -184,7 +185,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				align: this.legend_align,
 				layout: this.legend_layout,
 				backgroundColor: this.legend_backgroundColor,
-				borderWidth: this.legend_borderWidth
+				borderWidth: this.legend_borderWidth,
+				borderColor: this.legend_borderColor
 			},
 			series: []
 		}

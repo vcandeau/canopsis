@@ -44,6 +44,16 @@
 								"minValue": 0,
 								"value": 1
                            },{
+								"xtype" : "colorfield",
+								"name" : "legend_backgroundColor",
+								"fieldLabel": "Background color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "colorfield",
+								"name" : "legend_borderColor",
+								"fieldLabel": "Border color",
+								"value": "909090"
+                           },{
 								"xtype": "combobox",
 								"name": "legend_verticalAlign",
 								"fieldLabel": "Legend vertical alignement",
