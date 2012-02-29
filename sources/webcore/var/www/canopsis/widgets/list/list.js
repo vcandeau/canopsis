@@ -29,6 +29,12 @@ Ext.define('widgets.list.list' ,{
 	//Default options
 	show_component: true,
 	show_resource: true,
+	show_state: true,
+	show_state_type: true,
+	show_source_type: true,
+	show_last_check: true,
+	show_output: true,
+	
 	paging: true,
 	bar_search: true,
 	reload: true,
@@ -59,6 +65,11 @@ Ext.define('widgets.list.list' ,{
 
 			opt_show_component: this.show_component,
 			opt_show_resource: this.show_resource,
+			opt_show_state: this.show_state,
+			opt_show_state_type: this.show_state_type,
+			opt_show_source_type: this.show_source_type,
+			opt_show_last_check: this.show_last_check,
+			opt_show_output: this.show_output,
 		
 			opt_bar: this.bar,
 			opt_bar_search: this.bar_search,
