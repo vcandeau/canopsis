@@ -75,7 +75,6 @@ Ext.define('canopsis.controller.Tabs', {
 					Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
 				} else {
 					record.set('crecord_name',viewName)
-					record.set('id',view_id)
 					record.set('leaf', true)
 					//add to treestore, view get children of node
 					treeStore.getRootNode().appendChild(record)
