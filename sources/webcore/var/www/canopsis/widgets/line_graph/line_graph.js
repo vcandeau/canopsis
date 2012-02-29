@@ -57,6 +57,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_layout: "horizontal",
 	legend_backgroundColor: null,
 	SeriesType: "area",
+	lineWidth: 1,
 	//..
 	
 	/*initComponent: function() {
@@ -170,14 +171,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				series: {
 					animation: false,
 					shadow: false
-				},
-				area: {
-					lineWidth: 1,
-					shadow: false,
-					cursor: 'pointer',
-					marker: {
-						enabled: false,
-					}
 				}
 			},
 			symbols: [],
@@ -192,6 +185,27 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				backgroundColor: this.legend_backgroundColor
 			},
 			series: []
+		}
+
+		if 		(this.SeriesType == "area"){
+			this.options.plotOptions["area"] = {
+				lineWidth: this.lineWidth,
+				shadow: false,
+				cursor: 'pointer',
+				marker: {
+					enabled: false,
+				}
+			}
+			
+		}else if (this.SeriesType == "line"){
+			this.options.plotOptions["line"] = {
+				lineWidth: this.lineWidth,
+				shadow: false,
+				cursor: 'pointer',
+				marker: {
+					enabled: false,
+				}
+			}
 		}
 
 		//specifique options to add
