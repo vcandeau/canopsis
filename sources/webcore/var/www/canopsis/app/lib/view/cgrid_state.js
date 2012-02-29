@@ -32,6 +32,12 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	opt_show_state_type: true,
 	opt_show_component: false,
 	opt_show_resource: true,
+	opt_show_state: true,
+	opt_show_state_type: true,
+	opt_show_source_type: true,
+	opt_show_last_check: true,
+	opt_show_output: true,
+	
 	opt_show_row_background: true,
 
 	opt_bar_delete: false,
@@ -54,17 +60,19 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		this.columns = []
 
 		//set columns
-		this.columns.push({
-			header: '',
-			width: 25,
-			sortable: false,
-			dataIndex: 'source_type',
-			renderer: rdr_source_type
-	       	});
+		if(this.opt_show_source_type){
+			this.columns.push({
+				header: '',
+				width: 25,
+				sortable: false,
+				dataIndex: 'source_type',
+				renderer: rdr_source_type
+				});
+		}
 	
 		if(this.opt_show_state_type){
 			this.columns.push({
-				header: '',
+				header: 'ST',
 				sortable: false,
 				width: 25,
 				dataIndex: 'state_type',
@@ -72,21 +80,25 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		this.columns.push({
-			header: _('State'),
-			sortable: false,
-			width: 25,
-			dataIndex: 'state',
-			renderer: rdr_status
-		});
+		if(this.opt_show_state){
+			this.columns.push({
+				header: _('S'),
+				sortable: false,
+				width: 25,
+				dataIndex: 'state',
+				renderer: rdr_status
+			});
+		}
 
-		this.columns.push({
-			header: _('Last check'),
-			sortable: false,
-			flex: 1,
-			dataIndex: 'timestamp',
-			renderer: rdr_tstodate
-		});
+		if(this.opt_show_last_check){
+			this.columns.push({
+				header: _('Last check'),
+				sortable: false,
+				flex: 1,
+				dataIndex: 'timestamp',
+				renderer: rdr_tstodate
+			});
+		}
 
 		if(this.opt_show_component){
 			this.columns.push({
@@ -106,12 +118,14 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		this.columns.push({
-			header: _('Output'),
-			flex: 4,
-			sortable: false,
-			dataIndex: 'output',
-		});				
+		if(this.opt_show_output){
+			this.columns.push({
+				header: _('Output'),
+				flex: 4,
+				sortable: false,
+				dataIndex: 'output',
+			});
+		}			
 
 		//store
 		if (! this.store){
