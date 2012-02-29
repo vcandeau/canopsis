@@ -22,7 +22,6 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	extend: 'Ext.tree.Panel',
 	
 	animCollapse: false,
-	animate:false,
 
 	useArrows: true,
 	rootVisible: false,
@@ -57,7 +56,6 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	initComponent: function() {
 		log.debug('-------------------------------------------')
 		log.debug('animCollapse set to : ' +this.animCollapse)
-		log.debug('animate set to : ' +this.animate)
 		log.debug('-------------------------------------------')
 		
 		var bar_child = [];
