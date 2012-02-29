@@ -112,7 +112,28 @@
 										{"value": 31557600, "text": "1 year"}
 									]
 								}
-							}]
+							},{
+								"xtype": "combobox",
+								"name": "SeriesType",
+								"fieldLabel": "Series Type",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "area",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "area", "text": "Area"},
+										{"value": "line", "text": "Line"}
+									]
+								}
+							},{
+								"xtype" : "numberfield",
+								"name" : "lineWidth",
+								"fieldLabel": "Line Width",
+								"value": 1
+                           }]
 					}]
 						
 		}, {
