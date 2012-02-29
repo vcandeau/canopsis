@@ -74,11 +74,11 @@ record1.chmod('o+r')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{ 'xtype': 'list', 'filter': '{"source_type":"resource"}'},'id': 'widget-resources'} ]
 storage.put(record1)
 
-record1 = crecord({'_id': 'view.ComponentDetails' }, type='view', name='Component Details')
-record1.chmod('o+r')
-record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{'xtype': 'states'},'id': 'widget-states'} ]
-record1.data['template'] = True
-storage.put(record1)
+#record1 = crecord({'_id': 'view.ComponentDetails' }, type='view', name='Component Details')
+#record1.chmod('o+r')
+#record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{'xtype': 'states'},'id': 'widget-states'} ]
+#record1.data['template'] = True
+#storage.put(record1)
 
 ###Root directory
 record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
