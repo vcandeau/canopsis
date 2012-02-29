@@ -27,7 +27,6 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	rootVisible: false,
 	multiSelect: true,
 	
-	
 	//options	
 	opt_bar: true,
 	//opt_bar_bottom: false,
@@ -43,20 +42,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		}],
 	},
 
-	columns: [{
-		xtype: 'treecolumn', 
-		text: 'name',
-		flex: 5,
-		dataIndex: 'crecord_name'
-	},{
-		flex: 1,
-		dataIndex: 'id',
-	}],
-
 	initComponent: function() {
-		log.debug('-------------------------------------------')
-		log.debug('animCollapse set to : ' +this.animCollapse)
-		log.debug('-------------------------------------------')
 		
 		var bar_child = [];
 
