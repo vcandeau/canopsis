@@ -9,91 +9,112 @@
 	"locales": ["en", "fr"],
 	"options": [{
 			"title": "Options",
-			"items": [{
-						"xtype": "checkbox",
-						"boxLabel": "Enable legend",
-						"checked": true,
-						"name": "legend"
+			"items": [
+					{
+						"xtype": "fieldset",
+						"title": "Style",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"boxLabel": "Tooltip",
+								"checked": true,
+								"name": "tooltip"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Zoom",
+								"checked": true,
+								"name": "zoom"
+							}						
+						]
 					},{
-						"xtype": "combobox",
-						"name": "legend_verticalAlign",
-						"fieldLabel": "Legend vertical alignement",
-						"queryMode": "local",
-						"displayField": "text",
-						"valueField": "value",
-						"value": "bottom",
-						"store": {
-							"xtype": "store",
-							"fields": ["value", "text"],
-							"data" : [
-								{"value": "top", "text": "Top"},
-								{"value": "middle", "text": "Middle"},
-								{"value": "bottom", "text": "Bottom"}
-							]
-						}
+						"xtype": "fieldset",
+						"title": "Legend",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"boxLabel": "Enable legend",
+								"checked": true,
+								"name": "legend"
+							},{
+								"xtype": "combobox",
+								"name": "legend_verticalAlign",
+								"fieldLabel": "Legend vertical alignement",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "bottom",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "top", "text": "Top"},
+										{"value": "middle", "text": "Middle"},
+										{"value": "bottom", "text": "Bottom"}
+									]
+								}
+							},{
+								"xtype": "combobox",
+								"name": "legend_align",
+								"fieldLabel": "Legend horizontal alignement",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "center",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "left", "text": "Left"},
+										{"value": "center", "text": "Center"},
+										{"value": "right", "text": "Right"}
+									]
+								}
+							},{
+								"xtype": "combobox",
+								"name": "legend_layout",
+								"fieldLabel": "Legend layout",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "horizontal",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "horizontal", "text": "Horizontal"},
+										{"value": "vertical", "text": "Vertical"}
+									]
+								}
+							}]
 					},{
-						"xtype": "combobox",
-						"name": "legend_align",
-						"fieldLabel": "Legend horizontal alignement",
-						"queryMode": "local",
-						"displayField": "text",
-						"valueField": "value",
-						"value": "center",
-						"store": {
-							"xtype": "store",
-							"fields": ["value", "text"],
-							"data" : [
-								{"value": "left", "text": "Left"},
-								{"value": "center", "text": "Center"},
-								{"value": "right", "text": "Right"}
-							]
-						}
-					},{
-						"xtype": "combobox",
-						"name": "legend_layout",
-						"fieldLabel": "Legend layout",
-						"queryMode": "local",
-						"displayField": "text",
-						"valueField": "value",
-						"value": "horizontal",
-						"store": {
-							"xtype": "store",
-							"fields": ["value", "text"],
-							"data" : [
-								{"value": "horizontal", "text": "Horizontal"},
-								{"value": "vertical", "text": "Vertical"}
-							]
-						}
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Enable tooltip",
-						"checked": true,
-						"name": "tooltip"
-					},{
-						"xtype": "checkbox",
-						"boxLabel": "Enable zoom",
-						"checked": true,
-						"name": "zoom"
-					},{
-						"xtype": "combobox",
-						"name": "time_window",
-						"fieldLabel": "Choose time window",
-						"queryMode": "local",
-						"displayField": "text",
-						"valueField": "value",
-						"value": 86400,
-						"store": {
-							"xtype": "store",
-							"fields": ["value", "text"],
-							"data" : [
-								{"value": 3600, "text": "1 hour"},
-								{"value": 86400, "text": "1 day"},
-								{"value": 604800, "text": "1 week"},
-								{"value": 2629800, "text": "1 month"},
-								{"value": 31557600, "text": "1 year"}
-							]
-						}
+						"xtype": "fieldset",
+						"title": "Graph",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "combobox",
+								"name": "time_window",
+								"fieldLabel": "Time window",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": 86400,
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": 3600, "text": "1 hour"},
+										{"value": 86400, "text": "1 day"},
+										{"value": 604800, "text": "1 week"},
+										{"value": 2629800, "text": "1 month"},
+										{"value": 31557600, "text": "1 year"}
+									]
+								}
+							}]
 					}]
+						
 		}, {
 			"title": "Choose Metrics",
 			"items": [{
