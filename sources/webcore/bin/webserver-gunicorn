@@ -1,0 +1,84 @@
+#!/bin/bash
+set -e
+
+DIR="$HOME/opt/webcore"
+BIN="gunicorn"
+
+PIDF="$HOME/var/run/webserver.pid"
+LOGF="$HOME/var/log/webserver.log"
+
+LL="debug"
+
+ABIND="0.0.0.0:8082"
+WORKER=2
+APP="wsgi_webserver:app"
+
+GCMD="$BIN -D --pid $PIDF --log-file $LOGF --access-logfile $LOGF --log-level $LL -k gevent -w $WORKER -b $ABIND $APP"
+
+function start (){
+	cd $DIR
+	$GCMD
+}
+
+function stop (){
+	PID=$(getPid)
+	kill $PID
+	sleep 1
+	if [ $(check) -eq 1 ]; then
+		echo " + Failed"
+		exit 1
+	fi
+}
+
+function check (){
+	PID=$(getPid)
+	echo $(ps ax | grep "^\s*$PID\s" | wc -l)
+}
+
+function getPid (){
+	if [ -e $PIDF ]; then
+		PID=$(cat $PIDF | tail -n 1)
+		echo $PID
+	else
+		echo 0
+	fi
+}
+
+function cmd () {
+	case $1 in
+		start)
+			echo "Starting..."
+			if [ $(check) -eq 1 ]; then
+				echo " + Already started ..."
+			else
+				start
+			fi
+		;;  
+		stop)
+			echo "Stoping..."
+			if [ $(check) -eq 1 ]; then
+				stop
+			else
+				echo " + Not running ..."
+			fi
+		;;
+ 		status)
+			if [ $(check) -eq 1 ]; then
+				echo "Run"
+			else
+				echo "Not running ..."
+				exit 1
+			fi
+		;;  
+
+		restart|relod)
+			true
+		;;  
+		*)  
+			echo >&2 "Usage: $0 <start|stop|restart|status>"
+			exit 1
+		;;  
+    esac
+}
+
+cmd "$1"
