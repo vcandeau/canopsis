@@ -32,30 +32,26 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 	
 	columns: [{
 		xtype: 'treecolumn', 
-		text: _('name'),
+		text: _('Name'),
 		flex: 5,
 		dataIndex: 'crecord_name'
 	},{
 		flex: 1,
 		dataIndex: 'aaa_owner',
-		text: _('owner')
+		text: _('Owner')
 	},{
 		flex: 1,
 		dataIndex: 'aaa_group',
-		text: _('group owner')
+		text: _('Group')
 	},{
-		flex: 5,
-		text: _('Rights'),
-		columns: [{
-			text:  _('Owner'),
-			dataIndex: 'aaa_access_owner',
-		},{
-			text: _('Group'),
-			dataIndex: 'aaa_access_group',
-		},{
-			text:  _('Other'),
-			dataIndex: 'aaa_access_other',
-		}]
+		text:  _('Owner'),
+		dataIndex: 'aaa_access_owner',
+	},{
+		text: _('Group'),
+		dataIndex: 'aaa_access_group',
+	},{
+		text:  _('Other'),
+		dataIndex: 'aaa_access_other',
 	}]
 	
 });
