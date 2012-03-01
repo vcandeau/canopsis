@@ -77,12 +77,24 @@ Ext.define('canopsis.controller.Tabs', {
 					record.set('crecord_name',viewName)
 					record.set('leaf', true)
 					record.set('id', view_id)
-					//add to treestore, view get children of node
-					treeStore.getRootNode().appendChild(record)
+					
+					treeStore.load()
+					
+					var rootNode = treeStore.getRootNode()
+					log.debug('rootNode Id is : ' + rootNode.get('id'),this.logAuthor)
+					log.debug('record Id is : ' + record.get('id'),this.logAuthor)
+					
+					rootNode.appendChild(record)
+					rootNode.dirty = false
+					
 					treeStore.sync()
+
 					//open view
 					tab = add_view_tab(view_id, viewName, true, undefined, true, true, false)
 					tab.editMode();
+					
+					//refresh stores
+					//treeStore.load()
 				}
 
 			} else {
