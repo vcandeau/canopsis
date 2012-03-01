@@ -1,0 +1,116 @@
+[{
+	"name":  "Pie",
+	"verions": 0.1,
+	"author": "capensis",
+	"website": "http://www.canopsis.org",
+	"xtype":"pie",
+	"description": "Display perfdata pie",
+	"refreshInterval": 300,
+	"options": [{
+			"title": "Options",
+			"items": [
+					{
+						"xtype": "fieldset",
+						"title": "Pie",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype" : "textfield",
+								"name" : "other_label",
+								"fieldLabel": "Label",
+								"value": "Free"
+                           },{
+								"xtype" : "numberfield",
+								"name" : "max",
+								"fieldLabel": "Total (by default use 'max' field of perfdata)"
+                           }]
+					},{
+						"xtype": "fieldset",
+						"title": "Legend",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"boxLabel": "Enable legend",
+								"checked": true,
+								"name": "legend"
+							},{
+								"xtype" : "numberfield",
+								"name" : "legend_borderWidth",
+								"fieldLabel": "Border Width",
+								"minValue": 0,
+								"value": 1
+                           },{
+								"xtype" : "colorfield",
+								"name" : "legend_backgroundColor",
+								"fieldLabel": "Background color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "colorfield",
+								"name" : "legend_borderColor",
+								"fieldLabel": "Border color",
+								"value": "909090"
+                           },{
+								"xtype": "combobox",
+								"name": "legend_verticalAlign",
+								"fieldLabel": "Legend vertical alignement",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "bottom",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "top", "text": "Top"},
+										{"value": "middle", "text": "Middle"},
+										{"value": "bottom", "text": "Bottom"}
+									]
+								}
+							},{
+								"xtype": "combobox",
+								"name": "legend_align",
+								"fieldLabel": "Legend horizontal alignement",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "center",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "left", "text": "Left"},
+										{"value": "center", "text": "Center"},
+										{"value": "right", "text": "Right"}
+									]
+								}
+							},{
+								"xtype": "combobox",
+								"name": "legend_layout",
+								"fieldLabel": "Legend layout",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "horizontal",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "horizontal", "text": "Horizontal"},
+										{"value": "vertical", "text": "Vertical"}
+									]
+								}
+							}]
+					}]
+						
+		},{
+			"title": "Choose Metrics",
+			"items": [
+			{
+						"xtype": "cinventory",
+						"name": "nodes",
+						"multiSelect": false,
+						"metrics": true
+					}]
+		}]
+}]
