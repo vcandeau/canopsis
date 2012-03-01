@@ -220,3 +220,6 @@
     background-image: url(../images/icons/user.png) !important; 
 } 
 
+.icon-mimetype-pdf { 
+    background-image: url(../images/icons/page_white_acrobat.png) !important; 
+}
