@@ -74,18 +74,22 @@ Ext.define('canopsis.controller.Tabs', {
 				if(already_exist != -1){
 					Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
 				} else {
+					//building record
 					record.set('crecord_name',viewName)
 					record.set('leaf', true)
 					record.set('id', view_id)
 					
+					//load store
 					treeStore.load()
 					
+					//get rootNode
 					var rootNode = treeStore.getRootNode()
 					log.debug('rootNode Id is : ' + rootNode.get('id'),this.logAuthor)
 					log.debug('record Id is : ' + record.get('id'),this.logAuthor)
 					
+					//append child and 
 					rootNode.appendChild(record)
-					rootNode.dirty = false
+					rootNode.dirty = false //fix, avoid the root node to be send
 					
 					treeStore.sync()
 
@@ -94,7 +98,7 @@ Ext.define('canopsis.controller.Tabs', {
 					tab.editMode();
 					
 					//refresh stores
-					store.load()
+					//store.load()
 					//treeStore.load()
 				}
 
