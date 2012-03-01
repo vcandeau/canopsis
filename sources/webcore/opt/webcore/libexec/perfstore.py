@@ -56,11 +56,16 @@ def perfstore_node_get(_id):
 @post('/perfstore/values',apply=[check_auth])
 @post('/perfstore/values/:start/:stop',apply=[check_auth])
 def perfstore_nodes_get_values(start=None, stop=None):
-	
+
 	nodes = request.params.get('nodes', default=None)
 	output = []
 	
+	#logger.debug('WWWAAAZZZZAAA')
+	#for info in request.header:
+	#	logger.debug("%s: %s" (info, request.header[info])
+	
 	if not nodes:
+		logger.warning("Invalid arguments")
 		return HTTPError(404, "Invalid arguments")
 
 	nodes = json.loads(nodes)

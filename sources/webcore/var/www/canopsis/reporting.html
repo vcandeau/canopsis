@@ -22,6 +22,11 @@
 <html>
 <head>
     <title>Canopsis</title>
+    
+	<meta http-equiv="Cache-Control" content="no-cache">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
+    
 	<!-- Theme -->
 	<link rel="stylesheet" type="text/css" href= "resources/lib/extjs/resources/css/ext-all.css">
 	<!-- <link rel="stylesheet" type="text/css" href= "../RGraph/css/common.css"> -->
@@ -41,7 +46,9 @@
 	<link rel="stylesheet" type="text/css" href="/ui/widgets.css">
 
 </head>
-<body style="width:940px;height:10px;">
+<body>
+	
+	<div id='container' style="height: 100px;"></div>
 
 	<!--<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>-->
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
@@ -70,60 +77,17 @@
 	<script type="text/javascript" src="app/lib/locale.js"></script>
 
 	<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.Ext.js"></script>
-
+	
 	<!-- starting the reporting here -->
 	<script type="text/javascript">
-	if(!export_view_id){
-		var decoded_url = Ext.urlDecode(window.location.search)
-		var export_from = decoded_url.from
-		var export_to = decoded_url.to
-		var export_view_id = decoded_url.view
-		log.debug('decoded_url.view : ' + decoded_url.view)
-		log.debug('export_view_id : '+ export_view_id)
-		log.debug('decoded_url.from : ' + decoded_url.from)
-		log.debug('decoded_url.to : ' + decoded_url.to)
-	}
 		
-		
-	Ext.onReady(function() {
-		Ext.Loader.setConfig({enabled:true});
-		//global.account = 'root'
-		
-		//check authentification
-		log.debug('Check auth ...', "[app]");
-		Ext.Ajax.request({
-			type: 'rest',
-			url: '/account/me',
-			reader: {
-				type: 'json',
-				root: 'data',
-				totalProperty  : 'total',
-				successProperty: 'success'
-			},
-			success: function(response){
-				request_state = Ext.JSON.decode(response.responseText).success
-				if (request_state){
-					global.account = Ext.JSON.decode(response.responseText).data[0];
-					createApplication()
-				} else {
-					log.debug('unauthorized')
-				}
-			},
-			failure: function() {
-				log.debug('unauthorized')
-			}
-		});
-		//createApplication()
-	});
+	log.debug('Start reporting')
 
-	//these are only for testing purpose
-	//var export_view_id = 'view.root.test3';
-	//var export_from = 1323990000000;
-	//var export_to = 1324076400000;
-	
-	
-	
-	function createApplication(){
+	function on_failure(){
+		log.error('Impossible deal with server')
+	}
+
+	function displayView(){
 		log.debug("Loading locale ...", "[app]");
 	
 		var locale = global.account['locale']
@@ -136,32 +100,91 @@
 		Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
 		
 		log.debug("Start ExtJS application ...", "[app]");
+		
 		var app = Ext.application({
 			name: 'canopsis',
 			appFolder: 'app',
 			controllers: [
-				'View',
-				'ViewEditor',
 				'Widgets',
 			],
 			launch: function() {
-				this.getController('Widgets').on('loaded', this.createViewport);
+				this.getController('Widgets').on('loaded', this.createView);
 			},
-			createViewport: function(){
-				reportViewport = Ext.create('Ext.container.Viewport');
+			createView: function(){
 
-				//pass reporting parameters
-				var content = Ext.create('canopsis.view.ReportView',{
+				var content = Ext.create('canopsis.view.Tabs.Content',{
+					renderTo: 'container',
+					width: 940,
 					view_id : export_view_id,
-					//export_from : export_from,
-					//export_to : export_to,
+					
+					reportMode : true,
+					exportMode : true,
+					export_from : export_from,
+					export_to : export_to,
+					
+					//border: true,
+					//debug: true,
 					autoshow : true,
-					options : []});
-				reportViewport.add(content);
+				});	
+				
+				var task = new Ext.util.DelayedTask(function(){
+					window.status = 'ready'
+				});
+				task.delay(3000)
 			}
 		});
 		log.debug("Application started", "[app]");
 	}
+
+		
+	Ext.onReady(function() {
+		Ext.Loader.setConfig({enabled:true});
+		
+		try {
+			if(! export_view_id){
+				var decoded_url = Ext.urlDecode(window.location.search)
+				log.debug('Get options from URL ('+decoded_url+')')
+				
+				export_from = decoded_url.from
+				export_to = decoded_url.to
+				export_view_id = decoded_url.view
+			}
+		} catch(err) {
+			//these are only for testing purpose
+			export_view_id = 'view._default_.dashboard';
+			export_to = Date.now();
+			export_from = export_to - (global.commonTs.day * 1000);
+		
+		}
+	
+		log.debug(' + View Id: ' + export_view_id)
+		log.debug(' + From: ' + export_from)
+		log.debug(' + To: ' + export_to)
+		
+		Ext.Ajax.request({
+			type: 'rest',
+			url: '/account/me',
+			reader: {
+				type: 'json',
+				root: 'data',
+				totalProperty  : 'total',
+				successProperty: 'success'
+			},		
+			success: function(response){
+				var response = Ext.JSON.decode(response.responseText)
+				if (response.success) {
+					global.account = response.data[0]
+					displayView()
+				}else{
+					log.debug('Auth failed')
+					on_failure()
+				}
+			},
+			failure: on_failure
+		});
+		
+	});
+	
 	</script>
 	
 </body>
