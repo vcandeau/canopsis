@@ -36,10 +36,6 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_duplicate: false,
 	opt_bar_reload: true,
 
-	viewConfig : {
-		animate : false
-	},
-
 	initComponent: function() {
 		
 		var bar_child = [];
@@ -136,8 +132,11 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		this.callParent(arguments);
 		
 		//fix the non destroy plugin with manualy instantiate it
+		var innerView = this.getView()
 		this.ddplugin = Ext.PluginManager.create({ptype : 'treeviewdragdrop'})
-		this.ddplugin.init(this.getView())
+		this.ddplugin.init(innerView)
+		
+		innerView.animate = false
 	},
 	
 	destroy: function(){
