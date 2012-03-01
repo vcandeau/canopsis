@@ -36,6 +36,9 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_duplicate: false,
 	opt_bar_reload: true,
 
+	viewConfig : {
+		animate : false
+	},
 
 	initComponent: function() {
 		
