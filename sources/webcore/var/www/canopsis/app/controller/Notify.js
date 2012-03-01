@@ -40,6 +40,7 @@ Ext.define('canopsis.controller.Notify', {
 		$.pnotify({
 			pnotify_title: title,
 			pnotify_text: text,
+			pnotify_delay: 3500,
 			pnotify_type: type,
 			pnotify_history: this.history,
 			pnotify_notice_icon: icon,
