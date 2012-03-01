@@ -93,13 +93,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				this.on('afterrender', this._doRefresh, this);
 			}*/
 			
+			//this._doRefresh()
+			
 		}else{
-			
-			/*if (this.nodeId){
-				this.uri += '/' + this.nodeId;
-				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
-			}*/
-			
 			if (this.refreshInterval){				
 				log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
 				this.task = {
