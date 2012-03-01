@@ -35,13 +35,14 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_delete:true,
 	opt_bar_duplicate: false,
 	opt_bar_reload: true,
-
+/*
 	viewConfig: {
 		plugins: [{
-			ptype: 'treeviewdragdrop'
+			ptype: 'treeviewdragdrop',
+			pluginId : 'ddplugin'
 		}],
 	},
-
+*/
 	initComponent: function() {
 		
 		var bar_child = [];
@@ -137,7 +138,14 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		//-------------------------------------------------------
 		this.callParent(arguments);
 		
+		this.ddplugin = Ext.PluginManager.create({ptype : 'treeviewdragdrop'})
+		this.ddplugin.init(this.getView())
 	},
+	
+	destroy: function(){
+		this.ddplugin.destroy()
+		Ext.tree.Panel.superclass.destroy.call(this);
+	}
 	
 	
 });
