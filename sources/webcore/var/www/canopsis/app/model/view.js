@@ -32,6 +32,9 @@ Ext.define('canopsis.model.view', {
 		{name: 'template', defaultValue: false},
 		{name: 'reporting', defaultValue: false},
 		
+		{name: 'enable'},
+		//{name: 'checked', mapping:'enable'},
+		
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
