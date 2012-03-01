@@ -93,7 +93,18 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				}
 			},{
 				iconCls: 'icon-mainbar-report',
-				text: _('ITIL.Report')
+				text: _('ITIL.Report'),
+				menu: {
+					name: 'Report',
+					showSeparator: true,
+					items: [
+							{
+								iconCls: 'icon-mimetype-pdf',
+								text: _('Export active view'),
+								action: 'exportView'
+							}
+					],
+				}
 			},'-',{
 				xtype: 'container',
 				html: "<div class='cps-title' >Canopsis</div>",
