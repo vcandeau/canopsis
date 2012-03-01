@@ -52,14 +52,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	zoom: true,
 	legend: true,
 	tooltip: true,
+	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
 	legend_layout: "horizontal",
 	legend_backgroundColor: null,
 	legend_borderColor: "#909090",
+	legend_borderWidth: 1,
+	
 	SeriesType: "area",
 	lineWidth: 1,
-	legend_borderWidth: 1,
 	//..
 	
 	/*initComponent: function() {
