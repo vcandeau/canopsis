@@ -205,7 +205,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	getNodeInfo: function(){
 		if (this.nodeId){
 			Ext.Ajax.request({
-				url: this.uri,
+				url: this.uri + '/' + this.nodeId,
 				scope: this,
 				success: function(response){
 					var data = Ext.JSON.decode(response.responseText)
@@ -232,7 +232,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		tpl.overwrite(this.wcontainerId, data)
 	},
 	
-	getMetricUnit: function(perfArray){
+	/*getMetricUnit: function(perfArray){
 		if(perfArray[this.metric]){
 			return perfArray[this.metric].unit;
 		} else {
@@ -273,7 +273,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			log.debug('impossible to calculate health (no perf_data_array)', this.logAuthor);
 			return undefined;
 		}
-	},
+	},*/
 	
 	beforeDestroy : function() {
 		log.debug("Destroy ...", this.logAuthor)
