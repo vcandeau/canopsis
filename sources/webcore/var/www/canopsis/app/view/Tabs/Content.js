@@ -42,11 +42,24 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	autoDraw: false,
 	wizard: 'canopsis.view.Tabs.wizard',
 	
+	// Export an report
+	reportMode : false,
+	exportMode : false,
+	export_from : undefined,
+	export_to : undefined,
+	
     //Init
 	initComponent: function() {
 		this.callParent(arguments);
 				
 		log.debug("Display view '"+this.view_id+"' ...", this.logAuthor)
+		
+		this.options = {
+			reportMode : this.reportMode,
+			exportMode : this.exportMode,
+			export_from : this.export_from,
+			export_to : this.export_to
+		}
 
 		Ext.Ajax.request({
 				url: '/rest/object/view/'+this.view_id,
@@ -91,7 +104,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	setContent: function(){
 		if(this.dump && ! this.displayed){
 			log.dump(this.dump)
-			this.container.jqGridable('load', this.dump)
+			this.load(this.dump)
 			this.displayed = true
 		}
 	},
