@@ -54,6 +54,8 @@ def generate_report(startTime, stopTime,view_name):
 	file_name = name_array[len(name_array)-1]
 	file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
 
+	fileName = None
+	
 	try:
 		import task_reporting
 	except Exception, err:
@@ -70,7 +72,7 @@ def generate_report(startTime, stopTime,view_name):
 		result.wait()
 		fileName = result.result
 	except Exception, err:
-		logger.debug(err)
+		logger.error(err)
 
 	if fileName:
 		return {'total': 1, 'success': True, 'data': { 'url': '/getReport/' + str(fileName)}}
