@@ -95,7 +95,7 @@ Ext.define('canopsis.controller.Tabs', {
 					
 					//refresh stores
 					store.load()
-					treeStore.load()
+					//treeStore.load()
 				}
 
 			} else {
