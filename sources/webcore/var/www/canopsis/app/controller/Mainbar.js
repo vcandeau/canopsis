@@ -51,9 +51,13 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="openViews"]' : {
 				click : this.openViews,
 			},
+			'Mainbar menuitem[action="exportView"]' : {
+				click : this.exportView,
+			},
 			'Mainbar [name="clock"]' : {
 				afterrender : this.setClock,
 			},
+			
 		})
 
 		//Set clock
@@ -137,5 +141,10 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('New view', this.logAuthor);
 		var ctrl = this.getController('Tabs')
 		ctrl.create_new_view()
+	},
+	
+	exportView: function(id){
+		var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id		
+		this.getController('Reporting').launchReport(view_id)
 	},
 });
