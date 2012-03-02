@@ -107,6 +107,7 @@ def tree_get():
 	namespace = 'object'
 	account = get_account()
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
+	
 	node = request.params.get('node', default= None)
 	
 	output = []
@@ -126,7 +127,7 @@ def tree_get():
 def tree_delete(name=None):
 	namespace='object'
 	account = get_account()
-	storage = get_storage(namespace=namespace, account=account)
+	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
 	record = storage.get(name, account=account)
 	
@@ -140,10 +141,11 @@ def tree_delete(name=None):
 		
 			try:
 				storage.remove(record, account=account)
-			except:
-				return HTTPError(404, 'error while removing '+ _id)
+			except Exception, err:
+				logger.error(err)
+				return HTTPError(404, 'Error while removing: %s' % err)
 		else:
-			logger.debug('This record have children, remove those child before')
+			logger.warning('This record have children, remove those child before')
 
 	
 	
