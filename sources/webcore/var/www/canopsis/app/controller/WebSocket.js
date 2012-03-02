@@ -24,7 +24,7 @@ Ext.define('canopsis.controller.WebSocket', {
     views: [],
     stores: [],
 
-    autoconnect: true,
+    autoconnect: false,
     ws_enable: true,
     open: false,
     ws: false,
