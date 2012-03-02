@@ -245,7 +245,7 @@ class cstorage(object):
 
 		self.logger.debug("Find '%s' records ..." % mfilter)
 
-		mfilter = dict(mfilter.items() + Read_mfilter.items())
+		mfilter = { '$and': [ mfilter, Read_mfilter ] }
 
 		self.logger.debug(" + %s" % mfilter)
 
@@ -310,12 +310,14 @@ class cstorage(object):
 			oid_mfilter = {'_id': oid}
 			id_mfilter = {'_id': _id}
 
-			mfilter = dict(oid_mfilter.items() + Read_mfilter.items())
+			#mfilter = dict(oid_mfilter.items() + Read_mfilter.items())
+			mfilter = { '$and': [ oid_mfilter, Read_mfilter ] }
 			raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
 
 			if not raw_record:
 				# small hack for wrong oid
-				mfilter = dict(id_mfilter.items() + Read_mfilter.items())
+				#mfilter = dict(id_mfilter.items() + Read_mfilter.items())
+				mfilter = { '$and': [ id_mfilter, Read_mfilter ] }
 				raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
 			
 		except Exception, err:
@@ -373,7 +375,8 @@ class cstorage(object):
 		backend = self.get_backend(namespace)
 		
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
-		mfilter = dict(mfilter.items() + Read_mfilter.items())
+		#mfilter = dict(mfilter.items() + Read_mfilter.items())
+		mfilter = { '$and': [ mfilter, Read_mfilter ] }
 
 		output = {}
 		if backend.find(mfilter).count() > 0:	
@@ -396,10 +399,13 @@ class cstorage(object):
 		record.children = []
 
 		for child in childs:
-			rec = self.get(child,account=account,namespace=namespace)
-			self.recursive_get(rec, depth,account=account,namespace=namespace)
-			record.children.append(rec)
-	
+			# HACK: fix root_directory in UI !!!
+			try:
+				rec = self.get(child,account=account,namespace=namespace)
+				self.recursive_get(rec, depth,account=account,namespace=namespace)
+				record.children.append(rec)
+			except Exception, err:
+				self.logger.debug(err)
 	
 	
 	'''		
