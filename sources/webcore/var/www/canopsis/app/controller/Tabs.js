@@ -52,61 +52,15 @@ Ext.define('canopsis.controller.Tabs', {
 		tab.displayed = false
 		tab.setContent()
 	},
+
+	open_view : function(view_id, view_name){
+		return add_view_tab(view_id, view_name, true, undefined, true, true, false)
+	},
 	
 	create_new_view : function(){
-		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName){
-			if (btn == 'ok'){
-				//create view 
-				var store = Ext.data.StoreManager.lookup('View')
-				var treeStore = Ext.data.StoreManager.lookup('TreeStoreView')
-				var record = Ext.create('canopsis.model.view', data)
-				
-				var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
-				
-				//check if view already exist
-				var already_exist = store.findBy(
-						function(storeRecord, id){
-								if(storeRecord.get('crecord_name') == viewName){
-									return true;  // a record with this data exists
-								}
-					}, this);
-
-				if(already_exist != -1){
-					Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
-				} else {
-					//building record
-					record.set('crecord_name',viewName)
-					record.set('leaf', true)
-					record.set('id', view_id)
-					
-					//load store
-					treeStore.load()
-					
-					//get rootNode
-					var rootNode = treeStore.getRootNode()
-					log.debug('rootNode Id is : ' + rootNode.get('id'),this.logAuthor)
-					log.debug('record Id is : ' + record.get('id'),this.logAuthor)
-					
-					//append child and 
-					rootNode.appendChild(record)
-					rootNode.dirty = false //fix, avoid the root node to be send
-					
-					treeStore.sync()
-
-					//open view
-					tab = add_view_tab(view_id, viewName, true, undefined, true, true, false)
-					tab.editMode();
-					
-					//refresh stores
-					//store.load()
-					//treeStore.load()
-				}
-
-			} else {
-				log.debug('cancel new view',this.logAuthor)
-			}
-		});
+		this.getController('View').create_new_view()
 	},
+	
   	/*on_add: function(component, index, object){
 		log.debug('Added', this.logAuthor);	
 	},
