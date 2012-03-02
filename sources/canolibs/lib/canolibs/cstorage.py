@@ -356,7 +356,7 @@ class cstorage(object):
 			if account.user == 'root':
 				access = True
 			else:
-				oldrecord = self.get(oid)
+				oldrecord = self.get(oid, account=account)
 				access = oldrecord.check_write(account)			
 	
 			if access:
@@ -577,6 +577,6 @@ def get_storage(namespace='object', account=None, logging_level=logging.ERROR):
 		if not account:
 			account = caccount()
 		
-		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
+		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging.DEBUG)
 		return STORAGES[namespace]
 
