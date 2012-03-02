@@ -120,15 +120,15 @@ Ext.define('canopsis.controller.Mainbar', {
 	},
 
 	openView: function(combo, records){
-		var vid = records[0].get('id');
-		var vtitle = records[0].get('crecord_name');
-		log.debug('Open view '+vid, this.logAuthor);
+		var view_id = records[0].get('id');
+		var view_name = records[0].get('crecord_name');
+		log.debug('Open view "'+view_name+'" ('+view_id+')', this.logAuthor);
 		combo.clearValue();
-		add_view_tab(vid, vtitle, true, {}, true, true);
+		this.getController('Tabs').open_view(view_id, view_name)
 	},
 	
 	openViews: function(){
-		add_view_tab('view.view_manager', _('Views'), true, {}, true, true);
+		this.getController('Tabs').open_view('view.view_manager', _('Views'))
 	},
 	
 	editView: function(){
