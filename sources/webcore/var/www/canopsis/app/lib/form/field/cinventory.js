@@ -348,7 +348,6 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				metrics: metrics,
 			}
 			dump.push(rdump)
-			console.log(metrics)
 		});
 		
 		log.debug("getValue Dump:", this.logAuthor)
