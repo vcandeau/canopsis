@@ -27,8 +27,8 @@ from cconfig import cconfig
 import logging
 import time
 
-namespaces = ['cache', 'events', 'events_log', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
-#namespaces = ['cache', 'object']
+#namespaces = ['cache', 'events', 'events_log', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
+namespaces = ['cache', 'object']
 
 ## Create accounts and groups
 group1 = crecord({'_id': 'group.root' }, type='group', name='root')
@@ -82,10 +82,23 @@ storage.put(record1)
 #storage.put(record1)
 
 ###Root directory
-record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
-record1.chmod('o+w')
-record1.chmod('o+r')
-storage.put(record1)
+rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+rootdir.chmod('o+r')
+storage.put(rootdir)
+
+for user in [ 'canopsis', 'root' ]:
+	userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
+	userdir.chown(user)
+	userdir.chgrp(user)
+	userdir.chmod('g-w')
+	userdir.chmod('g-r')
+
+	storage.put(userdir)
+	rootdir.add_children(userdir)
+
+	storage.put(rootdir)
+	storage.put(userdir)
+	
 
 ###test views
 '''
