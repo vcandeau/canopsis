@@ -577,6 +577,6 @@ def get_storage(namespace='object', account=None, logging_level=logging.ERROR):
 		if not account:
 			account = caccount()
 		
-		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging.DEBUG)
+		STORAGES[namespace] = cstorage(account, namespace=namespace, logging_level=logging_level)
 		return STORAGES[namespace]
 
