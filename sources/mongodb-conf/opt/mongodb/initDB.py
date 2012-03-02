@@ -28,6 +28,7 @@ import logging
 import time
 
 namespaces = ['cache', 'events', 'events_log', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
+#namespaces = ['cache', 'object']
 
 ## Create accounts and groups
 group1 = crecord({'_id': 'group.root' }, type='group', name='root')
@@ -82,6 +83,8 @@ storage.put(record1)
 
 ###Root directory
 record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+record1.chmod('o+w')
+record1.chmod('o+r')
 storage.put(record1)
 
 ###test views
@@ -121,28 +124,5 @@ storage.put(record1)
 ### View
 record1 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
-storage.put(record1)
-
-## Menu
-record1 = crecord({'_id': 'menu.view', 'expanded': True, 'leaf': False }, type='menu', name='View')
 record1.chmod('o+r')
-
-record2 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Configuration')
-record2.chmod('o+r')
-record21 = crecord({'leaf': True, 'view': 'view.config_editor'}, type='menu', name='Views')
-record21.chmod('o+r')
-
-record3 = crecord({'expanded': True, 'leaf': False }, type='menu', name='Administration')
-record31 = crecord({'leaf': True, 'view': 'view.account_manager' }, type='menu', name='Accounts')
-record32 = crecord({'leaf': True, 'view': 'view.group_manager' }, type='menu', name='Groups')
-
-storage.put([record1, record2, record3])
-storage.put([record21, record31, record32])
-
-record2.add_children(record21)
-
-record3.add_children(record31)
-record3.add_children(record32)
-
-storage.put([record1, record2, record3])
-storage.put([record21, record31, record32])
+storage.put(record1)
