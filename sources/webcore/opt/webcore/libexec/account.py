@@ -134,6 +134,7 @@ def account_get(_id=None):
 def account_post():
 	#get the session (security)
 	account = get_account()
+	root_account = caccount(user="root", group="root")
 	
 	storage = get_storage(namespace='object')
 
@@ -207,6 +208,24 @@ def account_post():
 
 			logger.debug(' + Save new account')
 			storage.put(new_account, account=account)
+			
+			logger.debug(' + Create view directory')
+			
+			rootdir = storage.get('directory.root', account=root_account)
+			if rootdir:
+				userdir = crecord({'_id': 'directory.root.%s' % new_account.user,'id': 'directory.root.%s' % new_account.user ,'expanded':'true'}, type='view_directory', name=new_account.user)
+				userdir.chown(new_account.user)
+				userdir.chgrp(new_account.group)
+				userdir.chmod('g-w')
+				userdir.chmod('g-r')
+				storage.put(userdir, account=account)
+				rootdir.add_children(userdir)
+
+				storage.put(rootdir, account=root_account)
+				storage.put(userdir, account=account)
+			else:
+				logger.error('Imposible to get rootdir')
+
 	else:
 		logger.warning('WARNING : no user specified ...')
 
