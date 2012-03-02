@@ -27,6 +27,7 @@ Ext.define('widgets.pie.pie' ,{
 	
 	options: {},
 	chart: undefined,
+	serie: undefined,
 	
 	//Default Options
 	max: undefined,
@@ -128,18 +129,17 @@ Ext.define('widgets.pie.pie' ,{
 		if (this.chart && data){
 			
 			// Remove old series
-			var serie = this.chart.get('pie')
-			if (serie)
-				serie.destroy()
+			this.removeSerie()
 			
 			var serie = {
 				id: 'pie',
 				type: 'pie',
 				data: []
 			};
-			
+						
 			// Parse perf_data
 			var perf_data = data.perf_data_array
+						
 			for (var metric in perf_data){
 				var value = perf_data[metric].value
 				var max = perf_data[metric].max
@@ -151,17 +151,39 @@ Ext.define('widgets.pie.pie' ,{
 				if (max == undefined)
 					max = this.max
 				
-				if (unit)
+				if (unit){
 					metric_name += " ("+unit+")"
 					other_label += " ("+unit+")"
+				}
 				
 				serie.data.push({ id: metric, name: metric_name, y: value, color: global.default_colors[0] })
 				serie.data.push({ id: 'other', name: other_label, y: max-value, color: global.default_colors[1] })	
 			}
 			
-			this.chart.addSeries(serie)
+			if (serie.data){
+				this.serie = serie
+				this.displaySerie()
+			}else{
+				log.debug("No data to display", this.logAuthor)
+			}
 		}
 	
+	},
+	
+	removeSerie: function(){
+		var serie = this.chart.get('pie')
+		if (serie)
+			serie.destroy()
+	},
+	
+	displaySerie: function(){
+		if (this.serie)
+			this.chart.addSeries(Ext.clone(this.serie))
+	},
+	
+	reloadSerie: function(){
+		this.removeSerie()
+		this.displaySerie()
 	},
 	
 	getHeight: function(){
@@ -174,6 +196,7 @@ Ext.define('widgets.pie.pie' ,{
 		log.debug("onRezize", this.logAuthor)
 		if (this.chart){
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
+			this.reloadSerie()
 		}
 	},
 
