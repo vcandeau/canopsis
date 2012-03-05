@@ -131,22 +131,6 @@ function add_view_tab(view_id, title, closable, options, autoshow, save,from_db,
 
 var random_id = function () { return Math.floor(Math.random()*11)}
 
-function show_dashboard(){
-	log.dump("Get my dashboard ...")
-	Ext.Ajax.request({
-		url: '/ui/dashboard',
-		success: function(response){
-			data = Ext.JSON.decode(response.responseText)
-			data = data.data[0]
-			add_view_tab(data._id, 'Dashboard', false, {}, true, false)
-			load_tabs_from_store()
-		},
-		failure: function (result, request) {
-				log.error("Ajax request failed ... ("+request.url+")")
-		} 
-	});
-}
-
 //find the greatest common divisor
 function find_gcd(nums)
 {
