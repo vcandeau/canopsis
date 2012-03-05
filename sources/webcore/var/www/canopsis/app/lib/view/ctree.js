@@ -35,6 +35,8 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_delete:true,
 	opt_bar_duplicate: false,
 	opt_bar_reload: true,
+	
+	opt_menu_rights: true,
 
 	initComponent: function() {
 		
@@ -118,6 +120,16 @@ Ext.define('canopsis.lib.view.ctree' ,{
 						iconCls: 'icon-copy',
 						text: _('Duplicate'),
 						action: 'duplicate',
+					})
+				)
+			}
+			
+			if(this.opt_menu_rights == true){
+				myArray.push(
+					Ext.create('Ext.Action', {
+						//iconCls: 'icon-copy',
+						text: _('Rights'),
+						action: 'rights',
 					})
 				)
 			}
