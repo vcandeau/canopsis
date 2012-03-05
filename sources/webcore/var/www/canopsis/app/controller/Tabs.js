@@ -31,7 +31,8 @@ Ext.define('canopsis.controller.Tabs', {
 			'tabpanel': {
 				tabchange: this.on_tabchange,
 				//add: this.on_add,
-				//remove: this.on_remove
+				//remove: this.on_remove,
+				afterrender: this.open_dashboard,
 			},
 		});
 
@@ -51,6 +52,10 @@ Ext.define('canopsis.controller.Tabs', {
 		tab.removeAll()
 		tab.displayed = false
 		tab.setContent()
+	},
+	
+	open_dashboard : function(){
+		this.getController('View').open_dashboard()
 	},
 
 	open_view : function(view_id, view_name){
