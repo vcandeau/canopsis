@@ -57,6 +57,12 @@ Ext.define('canopsis.lib.controller.ctree', {
 				btns[i].on('click', this._deleteButton, this)
 			}
 			
+			//edit rights
+			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=rights]')
+			for (i in btns){
+				btns[i].on('click', this._editRights, this)
+			}
+			
 		}
 		
 		//--------------------toolbar buttons--------------------------
@@ -88,7 +94,6 @@ Ext.define('canopsis.lib.controller.ctree', {
 		for (i in btns){
 			btns[i].on('click', this._duplicateButton, this)
 		}
-		
 		
 		//---------------------general binding ---------------------
 		tree.on('selectionchange',	this._selectionchange,	this)
@@ -149,9 +154,9 @@ Ext.define('canopsis.lib.controller.ctree', {
 		
 		var selection = tree.getSelectionModel().getSelection();
 		for(var i in selection){
-			log.debug('selection')
-			log.dump(selection[i])
-			log.dump(selection[i].childNodes.length)
+			//log.debug('selection')
+			//log.dump(selection[i])
+			//log.dump(selection[i].childNodes.length)
 			if(selection[i].childNodes.length > 0){
 				global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'))
 			} else {
@@ -168,6 +173,12 @@ Ext.define('canopsis.lib.controller.ctree', {
 	_reloadButton: function() {
 		log.debug('[controller][ctree] - Reload store "'+this.tree.store.storeId+'" of '+this.tree.id);
 		this.tree.store.load()
+	},
+	
+	_editRights: function(){
+		log.debug('[controller][ctree] - Edit rights',this.logAuthor);
+		//create form
+		Ext.create('canopsis.lib.view.crights')
 	},
 
 	_showMenu: function(view, rec, node, index, e){
