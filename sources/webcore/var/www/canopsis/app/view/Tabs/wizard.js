@@ -36,10 +36,6 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
 				items : [
 				{
-					xtype : 'textfield',
-					fieldLabel : _('Title')+ " ("+_('optional')+")",
-					name : 'title'
-				},{
 					xtype: "combo",
 					store: 'Widget',
 					forceSelection : true,
@@ -49,6 +45,15 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 					valueField: 'xtype',
 					//value: 'empty',
 					allowBlank:false,
+				},{
+					xtype : 'textfield',
+					fieldLabel : _('Title')+ " ("+_('optional')+")",
+					name : 'title'
+				},{
+					xtype: "checkbox",
+					fieldLabel: "Show border",
+					checked: false,
+					name: "border"
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
