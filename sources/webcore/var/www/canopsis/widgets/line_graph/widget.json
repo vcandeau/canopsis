@@ -16,6 +16,11 @@
 						"collapsible": false,
 						"items": [
 							{
+								"xtype": "checkbox",
+								"boxLabel": "Auto title (if one node)",
+								"checked": true,
+								"name": "autoTitle"
+							},{
 								"xtype": "combobox",
 								"name": "time_window",
 								"fieldLabel": "Time window",
