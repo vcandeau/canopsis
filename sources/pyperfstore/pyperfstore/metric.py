@@ -244,7 +244,8 @@ class metric(object):
 
 			if values[0][0] < tstart - 300:
 				## set first value with old data
-				values[0][0] = tstart
+				#values[0][0] = tstart
+				del values[0]
 
 		self.logger.debug(" + Return %s points" % len(values))
 		return values
