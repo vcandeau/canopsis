@@ -25,7 +25,9 @@ Ext.define('canopsis.lib.view.crights' ,{
 
 	logAuthor: '[crights]',
 	
-	minWidth: 300,
+	layout : 'fit',
+	
+	Width: 300,
 	height: 250,
 	border : false,
 	
@@ -50,8 +52,91 @@ Ext.define('canopsis.lib.view.crights' ,{
 		this.saveButton.on('click',this._save,this)
 		this.cancelButton.on('click',function(){this.close()},this)
 		
-		this.callParent(arguments);
+
+		//--------------Rights Store (for combo)----------------
+		var rights_store = Ext.create('Ext.data.Store', {
+			fields: ['text', 'value'],
+			data : [
+				{text:_('Write and Read'),value : ["r", "w"]},
+				{text:_('Read'),value : ["r"]},
+				{text:_('Write'),value : ["w"]},
+			]
+		});
 		
+		//--------------------left fieldSet--------------------
+		
+		var bottom_panel = Ext.widget('fieldset',{title:_('Rights')})
+		
+		if(this.opt_owner_rights == true){
+			this.combo_owner_rights = Ext.widget('combo',{
+				fieldLabel: _("Owner rights"),
+				queryMode: 'local',
+				displayField: 'text',
+				valueField: 'value',
+				store : rights_store
+			})
+			bottom_panel.add(this.combo_owner_rights)
+		}
+		
+		if(this.opt_group_rights == true){
+			this.combo_group_rights = Ext.widget('combo',{
+				fieldLabel: _("Groups rights"),
+				queryMode: 'local',
+				displayField: 'text',
+				valueField: 'value',
+				store : rights_store
+			})
+			bottom_panel.add(this.combo_group_rights)
+		}
+		
+		if(this.opt_others_rights == true){
+			this.combo_others_rights = Ext.widget('combo',{
+				fieldLabel: _("Others rights"),
+				queryMode: 'local',
+				displayField: 'text',
+				valueField: 'value',
+				store : rights_store
+			})
+			bottom_panel.add(this.combo_others_rights)
+		}
+		
+		
+		//--------------------right fieldSet------------------
+		var top_panel = Ext.widget('fieldset',{title:_('Owners')})
+		
+		if(this.opt_owner == true){
+			this.combo_owner = Ext.widget('combo',{
+				fieldLabel: _("Owner"),
+				queryMode: 'remote',
+				displayField: 'user',
+				valueField: '_id',
+				store : 'Account'
+			})
+			top_panel.add(this.combo_owner)
+		}
+		
+		if(this.opt_group == true){
+			this.combo_group = Ext.widget('combo',{
+				fieldLabel: _("Group"),
+				queryMode: 'remote',
+				displayField: 'crecord_name',
+				valueField: '_id',
+				store : 'Group'
+			})
+			top_panel.add(this.combo_group)
+		}
+		
+		//---------------------building panel-----------------
+		var inner_panel = Ext.widget('panel',{
+				items:[top_panel,bottom_panel],
+				layout : 'hbox'
+			
+			})
+
+		this.items = [inner_panel]
+		
+		
+		this.callParent(arguments);
 		this.show()
 	},
 	
