@@ -52,6 +52,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	zoom: true,
 	legend: true,
 	tooltip: true,
+	autoTitle: true,
 	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
@@ -64,17 +65,40 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	lineWidth: 1,
 	//..
 	
-	/*initComponent: function() {
+	initComponent: function() {
+		//Set title
+		if (this.autoTitle) {
+			this.setchartTitle();
+			this.title = ''
+		}else{
+			if (! this.border){
+				this.chartTitle = this.title
+				this.title = ''
+			}
+		}
 		this.callParent(arguments);
-	},*/
+	},
+
+	setchartTitle: function(){
+		var title = ""
+		if (this.nodes) {
+			if (this.nodes.length == 1){
+				var info = split_amqp_rk(this.nodes[0].id)
+				
+				if (info.source_type == 'resource')
+					title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
+				else
+					title = info.component
+			}
+		}
+		this.chartTitle = title	
+	},
 	
 	afterContainerRender: function(){
 		log.debug("Initialize line_graph", this.logAuthor)
 		log.debug(' + Time window: '+this.time_window, this.logAuthor)
 		
 		this.series = {}
-		
-		this.setchartTitle();
 		
 		this.setOptions();
 		this.createChart();
@@ -92,19 +116,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 
 		this.ready();	
-	},
-
-	setchartTitle: function(){
-		var title = ""
-		if(!this.title && this.nodeId && this.nodes.length == 1){
-			var info = split_amqp_rk(this.nodes[0].id)
-			
-			if (info.source_type == 'resource')
-				title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
-			else
-				title = info.component
-		}
-		this.chartTitle = title	
 	},
 
 	setOptions: function(){
