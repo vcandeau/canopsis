@@ -54,8 +54,12 @@ Ext.define('canopsis.controller.Tabs', {
 		tab.setContent()
 	},
 	
-	open_dashboard : function(){
-		this.getController('View').open_dashboard()
+	open_dashboard: function(){
+		if ( ! global.account['dashboard']){
+			global.account['dashboard'] = "view._default_.dashboard"
+		}
+		log.debug('Open dashboard: ' + global.account['dashboard'],this.logAuthor)
+		this.open_view(global.account['dashboard'], _("Dashboard"))
 	},
 
 	open_view : function(view_id, view_name){
