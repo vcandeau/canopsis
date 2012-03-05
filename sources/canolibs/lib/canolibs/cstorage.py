@@ -356,7 +356,11 @@ class cstorage(object):
 			if account.user == 'root':
 				access = True
 			else:
-				oldrecord = self.get(oid, account=account)
+				try:
+					oldrecord = self.get(oid, account=account)
+				except Exception, err:
+					raise ValueError("Access denied or id not found")
+					
 				access = oldrecord.check_write(account)			
 	
 			if access:
