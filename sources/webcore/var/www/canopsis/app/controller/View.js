@@ -37,8 +37,11 @@ Ext.define('canopsis.controller.View', {
 		
 		log.debug(' + Load treeStore ...', this.logAuthor);
 		this.treeStore = Ext.data.StoreManager.lookup('TreeStoreView')
+		this.treeStore.load()
 
 		this.callParent(arguments);
+		
+		
     },
     
     addLeafButton : function(){
@@ -66,7 +69,6 @@ Ext.define('canopsis.controller.View', {
 	create_new_directory: function(){
 		Ext.Msg.prompt(_('Directory name'), _('Please enter directory name:'), function(btn, directoryName){
 			if (btn == 'ok'){
-				//add (if selected) -> add to this node
 				
 				var record = Ext.create('canopsis.model.view')
 				
