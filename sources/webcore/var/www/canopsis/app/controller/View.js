@@ -140,10 +140,14 @@ Ext.define('canopsis.controller.View', {
 					log.debug(' + name: ' + viewName,this.logAuthor)
 					log.debug(' + id: ' + view_id,this.logAuthor)
 					
-					var rootNode = this.treeStore.getNodeById(rootDir)
-					
-					if (rootNode){
-						rootNode.appendChild(record)
+					var parentNode = this.treeStore.getNodeById(rootDir)
+					var rootNode = this.treeStore.getRootNode()
+					if (parentNode){
+						parentNode.appendChild(record)
+						
+						//this is a hack
+						rootNode.dirty = false
+						
 						this.treeStore.sync()
 						this.treeStore.load()
 						
@@ -151,7 +155,7 @@ Ext.define('canopsis.controller.View', {
 						this.getController('Tabs').open_view(view_id, viewName).editMode();
 						
 					}else{
-						log.debug('Impossible to add directory, root directory not found ....',this.logAuthor)
+						log.debug('Impossible to add view, root directory not found ....',this.logAuthor)
 					}
 				}
 
