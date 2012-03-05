@@ -140,7 +140,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		store.add(record)
 		
 		this.dump = dump
+		
 		this.doRedraw()
+		this.startAllTasks();
+		
 		global.notify.notify(record.get('crecord_name'), _('Saved.'))
 	},
 	
@@ -165,6 +168,30 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}
 	},
 	
+	editMode: function(){
+		this.stopAllTasks();
+		this.callParent(arguments);
+	},
+	
+	startAllTasks: function(){
+		log.debug('Start all tasks', this.logAuthor)
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			if (cmps[i].startTask){
+				cmps[i].startTask()
+			}
+		}		
+	},
+	
+	stopAllTasks: function(){
+		log.debug('Stop all tasks', this.logAuthor)
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			if (cmps[i].stopTask){
+				cmps[i].stopTask()
+			}
+		}		
+	},
 	
 	//// Tabs COOKING
 	beforeclose: function(tab, object){
