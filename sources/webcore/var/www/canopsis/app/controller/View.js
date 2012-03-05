@@ -66,15 +66,6 @@ Ext.define('canopsis.controller.View', {
 	
 	/////////////////
 	
-	open_dashboard: function(){
-		if ( ! global.account['dashboard']){
-			global.account['dashboard'] = "view._default_.dashboard"
-		}
-		log.debug('Open dashboard: ' + global.account['dashboard'],this.logAuthor)
-		this.getController('Tabs').open_view(global.account['dashboard'], _("Dashboard"))
-		
-	},
-	
 	create_new_directory: function(){
 		Ext.Msg.prompt(_('Directory name'), _('Please enter directory name:'), function(btn, directoryName){
 			if (btn == 'ok'){
