@@ -27,7 +27,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 	
 	layout : 'fit',
 	
-	Width: 300,
+	width: 600,
 	height: 250,
 	border : false,
 	
@@ -63,9 +63,13 @@ Ext.define('canopsis.lib.view.crights' ,{
 			]
 		});
 		
-		//--------------------left fieldSet--------------------
+		//--------------------bottom fieldSet--------------------
 		
-		var bottom_panel = Ext.widget('fieldset',{title:_('Rights')})
+		var bottom_panel = Ext.widget('fieldset',{
+				title:_('Rights'),
+				margin : 4
+				//layout : 'hbox',
+			})
 		
 		if(this.opt_owner_rights == true){
 			this.combo_owner_rights = Ext.widget('combo',{
@@ -101,8 +105,12 @@ Ext.define('canopsis.lib.view.crights' ,{
 		}
 		
 		
-		//--------------------right fieldSet------------------
-		var top_panel = Ext.widget('fieldset',{title:_('Owners')})
+		//--------------------top fieldSet------------------
+		var top_panel = Ext.widget('fieldset',{
+				title:_('Owners'),
+				margin : 4
+				//layout: 'hbox'
+			})
 		
 		if(this.opt_owner == true){
 			this.combo_owner = Ext.widget('combo',{
@@ -129,8 +137,8 @@ Ext.define('canopsis.lib.view.crights' ,{
 		//---------------------building panel-----------------
 		var inner_panel = Ext.widget('panel',{
 				items:[top_panel,bottom_panel],
-				layout : 'hbox'
-			
+				layout : 'hbox',
+				//bodyPadding: 4,
 			})
 
 		this.items = [inner_panel]
