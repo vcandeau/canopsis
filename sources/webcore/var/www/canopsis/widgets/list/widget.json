@@ -15,11 +15,6 @@
 						"items": [
 							{
 								"xtype": "checkbox",
-								"boxLabel": "Show border",
-								"checked": false,
-								"name": "border"
-							},{
-								"xtype": "checkbox",
 								"boxLabel": "Enable search field",
 								"checked": false,
 								"name": "bar_search"
