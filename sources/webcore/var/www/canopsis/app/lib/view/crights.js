@@ -27,8 +27,8 @@ Ext.define('canopsis.lib.view.crights' ,{
 	
 	layout : 'fit',
 	
-	width: 600,
-	height: 250,
+	width: 305,
+	height: 350,
 	border : false,
 	
 	title : _('Editing rights'),
@@ -69,6 +69,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		if(this.opt_owner_rights == true){
 			this.combo_owner_rights = Ext.widget('combo',{
+				forceSelection: true,
 				fieldLabel: _("Owner rights"),
 				queryMode: 'local',
 				displayField: 'text',
@@ -80,6 +81,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		if(this.opt_group_rights == true){
 			this.combo_group_rights = Ext.widget('combo',{
+				forceSelection: true,
 				fieldLabel: _("Groups rights"),
 				queryMode: 'local',
 				displayField: 'text',
@@ -91,6 +93,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		if(this.opt_others_rights == true){
 			this.combo_others_rights = Ext.widget('combo',{
+				forceSelection: true,
 				fieldLabel: _("Others rights"),
 				queryMode: 'local',
 				displayField: 'text',
@@ -110,10 +113,11 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		if(this.opt_owner == true){
 			this.combo_owner = Ext.widget('combo',{
+				forceSelection: true,
 				fieldLabel: _("Owner"),
 				queryMode: 'remote',
 				displayField: 'user',
-				valueField: '_id',
+				valueField: 'user',
 				store : 'Account'
 			})
 			top_panel.add(this.combo_owner)
@@ -121,10 +125,11 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		if(this.opt_group == true){
 			this.combo_group = Ext.widget('combo',{
+				forceSelection: true,
 				fieldLabel: _("Group"),
 				queryMode: 'remote',
 				displayField: 'crecord_name',
-				valueField: '_id',
+				valueField: 'crecord_name',
 				store : 'Group'
 			})
 			top_panel.add(this.combo_group)
@@ -133,7 +138,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		//---------------------building panel-----------------
 		var inner_panel = Ext.widget('panel',{
 				items:[top_panel,bottom_panel],
-				layout : 'hbox',
+				layout : 'vbox',
 				//bodyPadding: 4,
 			})
 
@@ -152,12 +157,59 @@ Ext.define('canopsis.lib.view.crights' ,{
 	_save : function(record){
 		log.debug('Saving rights', this.logAuthor)
 		log.dump(this.combo_owner_rights.getValue())
+		
+		//creating params to send
+		var params = {}
+		
+		//prepare values
+		var aaa_owner = this.combo_owner.getValue()
+		var aaa_group = this.combo_group.getValue()
+		var aaa_access_owner = this.combo_owner_rights.getValue()
+		var aaa_access_group = this.combo_group_rights.getValue()
+		var aaa_access_other = this.combo_others_rights.getValue()
+		
+		//check if null and add them to params
+		if(aaa_owner != null){
+			params.aaa_owner = aaa_owner
+		}
+		if(aaa_group != null){
+			params.aaa_group = aaa_group
+		}
+		if(aaa_access_owner != null){
+			params.aaa_access_owner = Ext.encode(aaa_access_owner)
+		}
+		if(aaa_access_group != null){
+			params.aaa_access_group = Ext.encode(aaa_access_group)
+		}
+		if(aaa_access_other != null){
+			params.aaa_access_other = Ext.encode(aaa_access_other)
+		}
+		
+		//ajax request
+		Ext.Ajax.request({
+			url: '/rights/' + record.get('_id'),
+			method: 'PUT',
+			params: params,
+			scope: this,
+			success: function(response){
+				var text = response.responseText;
+				global.notify.notify(_('Success'),_('Rights updated'))
+				//close the window
+				this.close()
+			},
+			failure : function(){
+				log.error(_('Updating rights have failed'),this.logAuthor)
+			}
+		});
+		
 	},
 	
+	//local store for combox
 	_build_store : function(){
 		this.store = Ext.create('Ext.data.Store', {
 			fields: ['text', 'value'],
 			data : [
+				{text:_('No rights'),value : []},
 				{text:_('Write and Read'),value : ["r", "w"]},
 				{text:_('Read'),value : ["r"]},
 				{text:_('Write'),value : ["w"]},
@@ -172,8 +224,15 @@ Ext.define('canopsis.lib.view.crights' ,{
 	
 	_load : function(record){
 		log.debug('Loading record values', this.logAuthor)
-		log.dump(record)
+		
 		this.title = this.title + ' "'+ record.get('crecord_name') +'"'
+		
+		log.debug('a_owner : ',this.logAuthor)
+		log.dump(record.get('aaa_access_owner'))
+		log.debug('a_group : ',this.logAuthor)
+		log.dump(record.get('aaa_access_group'))
+		log.debug('a_other : ',this.logAuthor)
+		log.dump(record.get('aaa_access_other'))
 		
 		//setting data
 		this.combo_owner_rights.setValue(this._get_model(record.get('aaa_access_owner')))
