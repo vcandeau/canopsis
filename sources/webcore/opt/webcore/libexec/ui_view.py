@@ -35,41 +35,6 @@ from libexec.auth import check_auth, get_account
 logger = logging.getLogger("ui_view")
 
 #########################################################################
-@get('/ui/dashboard', apply=[check_auth])
-def get_dashboard():
-	namespace = 'object'
-	
-	#get the session (security)
-	account = get_account()
-
-	storage = get_storage(namespace=namespace, logging_level=logging.DEBUG)
-
-	try:
-		vid = account.data["dashboard"]
-	except:
-		vid = "view._default_.dashboard"
-
-	logger.debug('Dashboard View: '+vid)
-
-	try:
-		record = storage.get(vid, account=account)
-	except:
-		logger.debug('View not found')
-		return HTTPError(404, vid+" Not Found")
-
-	output = []
-
-	if record:
-		data = record.dump(json=True)
-		data['id'] = data['_id']
-		output.append(data)
-
-	output={'total': len(output), 'success': True, 'data': output}
-
-	#logger.debug(" + Output: "+str(output))
-
-	return output
-
 '''
 @get('/ui/view',	apply=[check_auth])
 def tree_get():
