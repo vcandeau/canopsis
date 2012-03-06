@@ -158,7 +158,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 			//log.dump(selection[i])
 			//log.dump(selection[i].childNodes.length)
 			if(selection[i].childNodes.length > 0){
-				global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'))
+				global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'),"error")
 			} else {
 				selection[i].remove()
 			}
