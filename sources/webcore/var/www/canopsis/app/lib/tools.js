@@ -37,115 +37,33 @@ function init_REST_Store(collection, selector, groupField){
 	return store
 }
 
-function load_tabs_from_store(){
-	var store = Ext.data.StoreManager.lookup('Tabs');
-	//store.on('load', function(){
-	
-	log.debug('Parse tabs store ...');
-	store.each(function(record) {
-		var view_id = record.get('view_id');
-		var options = record.get('options');
-		var title = record.get('title');
-		var closable = record.get('closable');
-
-		log.debug(' + Id: '+record.id);
-		log.debug('   + Title: '+title);
-		log.debug('   + Closable: '+closable);
-		log.debug('   + View_id: '+view_id);
-		log.debug('   + Options: '+options);
-
-		var tab = add_view_tab(view_id, title, closable, options, false, false)
-		tab.localstore_record = record
-	})
-
-	//}, this);
-}
-
-function add_view_tab(view_id, title, closable, options, autoshow, save,from_db, tab_id){
-	log.debug("Add view tab '"+view_id+"'")
-
-	var maintabs = Ext.getCmp('main-tabs');
-	if(tab_id){
-		var tab_id = view_id+ tab_id +'.tab'
-	} else {
-		var tab_id = view_id +'.tab'
-	}
-	var tab = Ext.getCmp(tab_id);
-
-	//if (! closable) { closable = true }
-	//if (! autoshow) { autoshow = true }
-	//if (! save) { save = true }
-	
-	//log.debug(record.data)
-	if (tab) {
-		log.debug(" - Tab allerady open, just show it")
-		maintabs.setActiveTab(tab);
-	}else{
-		log.debug(" - Create tab ...")
-		log.debug("    - Get view config ("+view_id+") ...")
-		
-		var localstore_record = false;
-		if (save){
-			// archive tab in store
-			log.debug("Add '"+title+"' ('"+view_id+"') in localstore ...")
-			var store = Ext.data.StoreManager.lookup('Tabs');
-			localstore_record = store.add({ title: title, closable: closable, options: options, view_id: view_id });
-			store.save();
-		}
-
-		/*if(from_db == false){
-			var tab = maintabs.add({
-				title: _(title),
-				id: tab_id,
-				iconCls: [ 'icon-bullet-orange' ],
-				view_id: view_id,
-				//view: view,
-				xtype: view_id,
-				closable: closable,
-				options: options,
-				autoshow: autoshow,
-				localstore_record: localstore_record
-			});
-		} else {*/
-			var tab = maintabs.add({
-				title: _(title),
-				id: tab_id,
-				iconCls: [ 'icon-bullet-orange' ],
-				view_id: view_id,
-				//view: view,
-				xtype: 'TabsContent',
-				closable: closable,
-				options: options,
-				autoshow: autoshow,
-				localstore_record: localstore_record
-			});
-		//}
-
-		if (autoshow) {
-			tab.show();
-		}
-
-		return tab;
-	}
-}
-
-var random_id = function () { return Math.floor(Math.random()*11)}
-
-function show_dashboard(){
-	log.dump("Get my dashboard ...")
+//Ajax action
+var ajaxAction = function(uri, params, cb, scope){
 	Ext.Ajax.request({
-		url: '/ui/dashboard',
-		success: function(response){
-			data = Ext.JSON.decode(response.responseText)
-			data = data.data[0]
-			add_view_tab(data._id, 'Dashboard', false, {}, true, false)
-			load_tabs_from_store()
-		},
+		url: uri,
+		scope: scope,
+		success: cb,
 		failure: function (result, request) {
-				log.error("Ajax request failed ... ("+request.url+")")
+			log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
 		} 
 	});
 }
+
+// Create Global "extend" method
+var extend = function(obj, extObj) {
+    if (arguments.length > 2) {
+        for (var a = 1; a < arguments.length; a++) {
+            extend(obj, arguments[a]);
+        }
+    } else {
+        for (var i in extObj) {
+            obj[i] = extObj[i];
+        }
+    }
+    return obj;
+};
+
+var random_id = function () { return Math.floor(Math.random()*11)}
 
 //find the greatest common divisor
 function find_gcd(nums)
