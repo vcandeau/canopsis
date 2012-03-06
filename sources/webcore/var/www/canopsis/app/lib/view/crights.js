@@ -31,7 +31,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 	height: 250,
 	border : false,
 	
-	title : _('Editing Rights'),
+	title : _('Editing rights'),
 	
 	//options
 	opt_owner : true,
@@ -39,6 +39,8 @@ Ext.define('canopsis.lib.view.crights' ,{
 	opt_group : true,
 	opt_group_rights : true,
 	opt_others_rights : true,
+	
+	data: undefined,
 	
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
@@ -49,19 +51,13 @@ Ext.define('canopsis.lib.view.crights' ,{
 		this.bbar = [this.cancelButton,'->',this.saveButton]
 		
 		//-------------------binding events--------------------
-		this.saveButton.on('click',this._save,this)
+		this.saveButton.on('click',function(){this._save(this.data)},this)
 		this.cancelButton.on('click',function(){this.close()},this)
 		
 
 		//--------------Rights Store (for combo)----------------
-		var rights_store = Ext.create('Ext.data.Store', {
-			fields: ['text', 'value'],
-			data : [
-				{text:_('Write and Read'),value : ["r", "w"]},
-				{text:_('Read'),value : ["r"]},
-				{text:_('Write'),value : ["w"]},
-			]
-		});
+		this._build_store()
+		
 		
 		//--------------------bottom fieldSet--------------------
 		
@@ -77,7 +73,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 				queryMode: 'local',
 				displayField: 'text',
 				valueField: 'value',
-				store : rights_store
+				store : this.store
 			})
 			bottom_panel.add(this.combo_owner_rights)
 		}
@@ -88,7 +84,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 				queryMode: 'local',
 				displayField: 'text',
 				valueField: 'value',
-				store : rights_store
+				store : this.store
 			})
 			bottom_panel.add(this.combo_group_rights)
 		}
@@ -99,7 +95,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 				queryMode: 'local',
 				displayField: 'text',
 				valueField: 'value',
-				store : rights_store
+				store : this.store
 			})
 			bottom_panel.add(this.combo_others_rights)
 		}
@@ -143,16 +139,48 @@ Ext.define('canopsis.lib.view.crights' ,{
 
 		this.items = [inner_panel]
 		
+		//----------------------load values----------------------
+		if(this.data != undefined){
+			this._load(this.data)
+		}
+		
 		
 		this.callParent(arguments);
 		this.show()
 	},
 	
-	_save : function(){
+	_save : function(record){
 		log.debug('Saving rights', this.logAuthor)
-	
+		log.dump(this.combo_owner_rights.getValue())
 	},
 	
+	_build_store : function(){
+		this.store = Ext.create('Ext.data.Store', {
+			fields: ['text', 'value'],
+			data : [
+				{text:_('Write and Read'),value : ["r", "w"]},
+				{text:_('Read'),value : ["r"]},
+				{text:_('Write'),value : ["w"]},
+			]
+		});
+	},
 	
+	_get_model : function(value){
+		var index = this.store.find('value',value)
+		return this.store.getAt(index)
+	},
+	
+	_load : function(record){
+		log.debug('Loading record values', this.logAuthor)
+		log.dump(record)
+		this.title = this.title + ' "'+ record.get('crecord_name') +'"'
+		
+		//setting data
+		this.combo_owner_rights.setValue(this._get_model(record.get('aaa_access_owner')))
+		this.combo_group_rights.setValue(this._get_model(record.get('aaa_access_group')))
+		this.combo_others_rights.setValue(this._get_model(record.get('aaa_access_other')))
+		this.combo_owner.setValue(record.get('aaa_owner'))
+		this.combo_group.setValue(record.get('aaa_group'))
+	}
 	
 });
