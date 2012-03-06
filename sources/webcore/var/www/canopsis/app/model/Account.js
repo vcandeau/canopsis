@@ -21,7 +21,8 @@
 Ext.define('canopsis.model.Account', {
     extend: 'Ext.data.Model',
     fields: [
-		{name : 'id'},
+		{name: '_id'},
+		{name: 'id', mapping:'_id'},
 		{name : 'crecord_type'},
 		{name : 'firstname'},
 		{name : 'lastname'},
