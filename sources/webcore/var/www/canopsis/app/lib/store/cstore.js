@@ -27,9 +27,10 @@ Ext.define('canopsis.lib.store.cstore', {
     baseFilter : false,
 
 	logAuthor: '[cstore]',
+	
     //raise an exception if server didn't accept the request
 	//and display a popup if the store is modified
-    listeners: {
+    /*listeners: {
 		exception: function(proxy, response, operation){
 			Ext.MessageBox.show({
 				title: _('REMOTE EXCEPTION'),
@@ -37,13 +38,13 @@ Ext.define('canopsis.lib.store.cstore', {
 				icon: Ext.MessageBox.ERROR,
 				buttons: Ext.Msg.OK
 			});
-			log.debug(response);
+			log.error(response, this.logAuthor);
 		},
-   },
+   },*/
   
    //function for search and filter
    setFilter : function(filter){
-		log.debug('[cstore]Setting base store filter ')
+		log.debug('Setting base store filter', this.logAuthor)
 		this.baseFilter = filter;
 		if(typeof(filter) == 'object'){
 			filter = Ext.JSON.encode(filter);
@@ -67,7 +68,7 @@ Ext.define('canopsis.lib.store.cstore', {
 		if (autoLoad == undefined)
 			autoLoad = true;
 	   
-		log.debug('[cstore] Building filter request')
+		log.debug('Building filter request', this.logAuthor)
 		if(this.baseFilter){
 			var newObject = Ext.JSON.decode(this.baseFilter);
 			newObject = this.getAndFilter([newObject, filter]);
@@ -75,9 +76,9 @@ Ext.define('canopsis.lib.store.cstore', {
 			var newObject = filter;
 		}
 		this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
-		log.debug('[cstore] Filter: ' + this.proxy.extraParams.filter);
+		log.debug('Filter: ' + this.proxy.extraParams.filter, this.logAuthor);
 		if (autoLoad){
-			log.debug('[cstore] Filter: ' + this.proxy.extraParams.filter);
+			log.debug('ilter: ' + this.proxy.extraParams.filter, this.logAuthor);
 			this.load();
 		}
    },

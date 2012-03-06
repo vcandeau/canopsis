@@ -38,6 +38,21 @@ Ext.define('canopsis.controller.View', {
 		log.debug(' + Load treeStore ...', this.logAuthor);
 		this.treeStore = Ext.data.StoreManager.lookup('TreeStoreView')
 		this.treeStore.load()
+		
+		this.store = Ext.data.StoreManager.lookup('View')
+		
+		this.store.proxy.on('exception', function(proxy, response){
+			console.log(response)
+			log.error('Error in request', this.logAuthor);
+			var message = Ext.String.format(
+				'{0}<br>{1}: {2}',
+				 _('Error in request:'),
+				 response.status,
+				 response.statusText
+			);
+			
+			global.notify.notify(_('View'), message, "error")
+		}, this)
 
 		this.callParent(arguments);
 		
