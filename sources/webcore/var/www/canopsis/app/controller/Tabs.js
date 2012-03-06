@@ -31,7 +31,11 @@ Ext.define('canopsis.controller.Tabs', {
 			'tabpanel': {
 				tabchange: this.on_tabchange,
 				//add: this.on_add,
-				//remove: this.on_remove
+				//remove: this.on_remove,
+				afterrender: function() { 
+						this.open_dashboard()
+						this.open_saved_view()
+					},
 			},
 		});
 
@@ -52,9 +56,111 @@ Ext.define('canopsis.controller.Tabs', {
 		tab.displayed = false
 		tab.setContent()
 	},
+	
+	open_dashboard: function(){
+		var dashboard_id = this.getController('Account').getDashboard()
+		log.debug('Open dashboard: ' + dashboard_id, this.logAuthor)
+		return this.open_view({ view_id: dashboard_id, title: _("Dashboard"), closable: false, save: false }, 0)
+	},
+	
+	open_saved_view: function(){
+		var store = Ext.data.StoreManager.lookup('Tabs');
+		var views = []
+		
+		store.each(function(record) {
+			var options = record.get('options');
+			views.push(options)
+		}, this)
+		
+		store.proxy.clear();
+		
+		log.debug('Load saved tabs:',  this.logAuthor);
+		for (var i in views){
+			var options = views[i]
+			log.debug(' + ' + options.title + '('+options.view_id+')',  this.logAuthor);			
+			options.autoshow = false
 
-	open_view : function(view_id, view_name){
-		return add_view_tab(view_id, view_name, true, undefined, true, true, false)
+			var tab = this.open_view(options)
+			if (! tab){
+				log.debug("Invalid view options:", this.logAuthor)
+				log.dump(options)
+			}
+		}
+		
+		var maintabs = Ext.getCmp('main-tabs');
+		maintabs.setActiveTab(0);
+	},
+
+	open_view : function(args, index){
+		
+		//default options
+		var default_options = {
+			title: _('no title'),
+			closable: true,
+			options: {},
+			autoshow: true,
+			save: true,
+			tab_id: undefined,
+			index: undefined,
+			iconCls: 'icon-bullet-orange',
+		}
+		
+		var options = extend(default_options, args)
+		
+		log.debug("Open view tab '"+options.view_id+"'")
+
+		if (options.view_id){
+			var maintabs = Ext.getCmp('main-tabs');
+			
+			if(options.tab_id){
+				var tab_id = options.view_id + options.tab_id +'.tab'
+			} else {
+				var tab_id = options.view_id +'.tab'
+			}
+			
+			var tab = Ext.getCmp(tab_id);
+
+			if (tab) {
+				log.debug(" - Tab allerady open, just show it")
+				maintabs.setActiveTab(tab);
+			}else{
+				log.debug(" - Create tab ...")
+				log.debug("    - Get view config ("+options.view_id+") ...")
+				
+				var localstore_record = false;
+				if (options.save){
+					// archive tab in store
+					log.debug("Add '"+options.title+"' ('"+options.view_id+"') in localstore ...")
+					var store = Ext.data.StoreManager.lookup('Tabs');
+					localstore_record = store.add({options: options});
+					store.save();
+				}
+
+				var tab = {
+					title: _(options.title),
+					id: tab_id,
+					iconCls: [ options.iconCls ],
+					view_id: options.view_id,
+					xtype: 'TabsContent',
+					closable: options.closable,
+					options: options.options,
+					autoshow: options.autoshow,
+					localstore_record: localstore_record,
+				}
+				
+				if (index != undefined){
+					tab = maintabs.insert(index, tab)
+				}else{
+					tab = maintabs.add(tab)
+				}
+
+				if (options.autoshow) {
+					tab.show();
+				}
+
+				return tab;
+			}
+		}
 	},
 	
 	create_new_view : function(){

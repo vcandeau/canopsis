@@ -26,27 +26,6 @@ Ext.define('canopsis.view.Tabs.View' ,{
 	bodyBorder: false,
 	componentCls: 'cps-headertabs',
 	plain: false,
-
-/*	items:[{
-    		title: _('Dashboard'),
-    		id: 'dashboard.tab',
-    		view: 'anonymous-default-dashboard',
-		xtype: 'TabsContent',
-	}],*/
-
-	initComponent: function() {
-		this.on('afterrender', this._afterrender, this);
-		this.callParent(arguments);
-	},
-
-	_afterrender: function() {
-		show_dashboard()
-	}
-	
-	/*listeners: {
-		'tabchange': function(tp, p) {
-		tp.doLayout();
-	}*/	
-	
+		
 });
 
