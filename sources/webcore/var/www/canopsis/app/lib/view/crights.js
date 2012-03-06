@@ -27,8 +27,12 @@ Ext.define('canopsis.lib.view.crights' ,{
 	
 	layout : 'fit',
 	
-	width: 305,
-	height: 350,
+	constrain: true,
+	constrainHeader: true,
+	
+	//width: 305,
+	//height: 350,
+	
 	border : false,
 	
 	title : _('Editing rights'),
@@ -138,7 +142,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		//---------------------building panel-----------------
 		var inner_panel = Ext.widget('panel',{
 				items:[top_panel,bottom_panel],
-				layout : 'vbox',
+				//layout : 'vbox',
 				//bodyPadding: 4,
 			})
 
