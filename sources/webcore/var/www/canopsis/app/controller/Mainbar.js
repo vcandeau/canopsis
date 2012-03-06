@@ -36,6 +36,12 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar combobox[action="viewSelector"]' : {
 				select : this.openView,
 			},
+			'Mainbar combobox[action="dashboardSelector"]' : {
+				select : this.setDashboard,
+			},
+			'Mainbar combobox[action="localeSelector"]' : {
+				select : this.setLocale,
+			},
 			'Mainbar menuitem[action="openDashboard"]' : {
 				click : this.openDashboard,
 			},
@@ -112,7 +118,36 @@ Ext.define('canopsis.controller.Mainbar', {
 			interval: 60000
 		});
 	},
+	
+	setLocale: function(combo, records){
+		var language = records[0].get('value');
+		log.debug('Set language to '+language, this.logAuthor);
+		this.getController('Account').setLocale(language)
+	},
 
+	setDashboard: function(combo, records){
+		var view_id = records[0].get('id');
+		log.debug('Set dashboard to '+view_id, this.logAuthor);
+		
+		//set new dashboard
+		this.getController('Account').setDashboard(view_id)
+		
+		var maintabs = Ext.getCmp('main-tabs');
+		
+		//close view selected if open
+		var tab = Ext.getCmp(view_id+".tab");
+		if (tab){
+			tab.close()
+		}
+		
+		//close current dashboard
+		
+		maintabs.setActiveTab(0)
+		maintabs.getActiveTab().close()
+		var tab = this.getController('Tabs').open_dashboard()
+	
+	},
+	
 	openDashboard: function(){
 		log.debug('Open dashboard', this.logAuthor);
 		var maintabs = Ext.getCmp('main-tabs');
@@ -124,11 +159,11 @@ Ext.define('canopsis.controller.Mainbar', {
 		var view_name = records[0].get('crecord_name');
 		log.debug('Open view "'+view_name+'" ('+view_id+')', this.logAuthor);
 		combo.clearValue();
-		this.getController('Tabs').open_view(view_id, view_name)
+		this.getController('Tabs').open_view({ view_id: view_id, title: view_name })
 	},
 	
 	openViews: function(){
-		this.getController('Tabs').open_view('view.view_manager', _('Views'))
+		this.getController('Tabs').open_view({ view_id: 'view.view_manager', title: _('Views') })
 	},
 	
 	editView: function(){

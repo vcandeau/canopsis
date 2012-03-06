@@ -35,6 +35,26 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 
 	initComponent: function() {
 		
+		this.localeSelector = Ext.create('Ext.form.field.ComboBox', {
+			id: 'localeSelector',
+			action: 'localeSelector',
+			queryMode: "local",
+			displayField: "text",
+			valueField: "value",
+			fieldLabel: "Language",
+			value: global.account['locale'],
+			store: {
+				xtype: "store",
+				fields: ["value", "text"],
+				data: [
+						{"value": 'fr', "text": "Français"},
+						{"value": 'en', "text": "English"},
+				]
+			},
+			iconCls: 'no-icon',
+			//iconCls:'icon-mainbar-edit-view',
+		});
+		
 		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
 			id: 'viewSelector',
 			action: 'viewSelector',
@@ -49,12 +69,32 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			width: 200,
 		});
 		
+		this.dashboardSelector = Ext.create('Ext.form.field.ComboBox', {
+			iconCls: 'icon-mainbar-dashboard',
+			id: 'dashboardSelector',
+			action: 'dashboardSelector',
+			store:  Ext.create('canopsis.store.View', {autoLoad: false}),
+			displayField: 'crecord_name',
+			valueField: 'id',
+			typeAhead: true,
+			//hideLabel: true,
+			fieldLabel: "Dashboard",
+			minChars: 2,
+			queryMode: 'remote',
+			emptyText: _('Select a view')+' ...',
+			value: global.account['dashboard'],
+			width: 200,
+			iconCls: 'no-icon'
+			// Bug ...
+			//iconCls: 'icon-mainbar-dashboard',
+		});
 		
+		// Hide  menu when item are selected
 		this.viewSelector.on('select',function(){
 				var menu = this.down('menu[name="Run"]')
 				menu.hide()
 			},this)
-		
+	
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
@@ -124,12 +164,28 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			},{
 				iconCls: 'icon-user',
 				flex : 0.2,
-				menu: []
+				menu: {
+					items: [
+						/*'-',
+						{
+							iconCls: 'icon-mainbar-dashboard',
+							text: _('Language') + ":",
+						},*/
+						this.localeSelector,
+						'-',
+						/*{
+							iconCls: 'icon-mainbar-dashboard',
+							text: _('Dashboard') + ":",
+						},*/
+						this.dashboardSelector,
+					]
+				}
 
 			},'-',{
 				iconCls: 'icon-preferences',
 				flex : 0.2,
 				menu: {
+					name: 'Preferences',
 					showSeparator: true,
 					items: [
 							{

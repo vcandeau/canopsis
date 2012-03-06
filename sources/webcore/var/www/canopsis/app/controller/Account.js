@@ -26,6 +26,8 @@ Ext.define('canopsis.controller.Account', {
 	models: ['Account'],
 
 	iconCls: 'icon-crecord_type-account',
+	
+	logAuthor: '[controller][Account]',
 
 	init: function() {
 		log.debug('['+this.id+'] - Initialize ...');
@@ -36,6 +38,39 @@ Ext.define('canopsis.controller.Account', {
 		this.modelId = 'Account'
 
 		this.callParent(arguments);
+	},
+	
+	getDashboard: function(){
+		if ( ! global.account['dashboard']){
+			global.account['dashboard'] = "view._default_.dashboard"
+		}
+		return global.account['dashboard']
+	},
+
+	setDashboard: function(view_id){
+		global.account['dashboard'] = view_id
+		var uri = '/account/setDashboard/' + view_id
+		ajaxAction(uri, {}, function(){
+			log.debug(' + setDashboard Ok', this.logAuthor);
+		});	
+	},
+	
+	setLocale: function(language){
+		var uri = '/account/setLocale/' + language
+		ajaxAction(uri, {}, function(){
+			log.debug(' + setLocale Ok', this.logAuthor);
+			Ext.MessageBox.show({
+				title: _('Configure language'),
+				msg: _("Application must be reload, do you want reload now ?"),
+				icon: Ext.MessageBox.WARNING,
+  				buttons: Ext.Msg.OKCANCEL,
+  				fn: function(btn){
+					if (btn == 'ok'){
+						window.location.reload()
+					}
+				}
+			});
+		});			
 	},
 
 	beforeload_EditForm: function(form){
@@ -53,7 +88,7 @@ Ext.define('canopsis.controller.Account', {
 			store.findBy(
 				function(record, id){
 					if(record.get('user') == data['user']){
-						log.debug('['+this.id+'][validateForm] -  User already exist');
+						log.debug('User already exist', this.logAuthor + '[validateForm]');
 						already_exist = true;  // a record with this data exists
 					}
 				}
