@@ -253,8 +253,13 @@ def rest_put(namespace, ctype, _id=None):
 		record = crecord(raw_record=raw_record)
 		record.chown(account.user)
 		record.chgrp(account.group)
-
-	storage.put(record, account=account)
+	try:
+		storage.put(record, namespace=namespace, account=account)
+		
+	except Exception, err:
+		logger.error('Impossible to put (%s)' % err)
+		return HTTPError(403, "Access denied")
+		
 
 #### DELETE
 @delete('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
