@@ -73,7 +73,6 @@ function createApplication(){
 		controllers: [
 			'Mainbar',
 			'Widgets',
-			'Menu',
 			'View',
 			'WebSocket',
 			'Notify',
