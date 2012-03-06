@@ -60,7 +60,7 @@ Ext.define('canopsis.controller.View', {
 		if (selection.get('leaf')){
 			view_id = selection.get('id')
 			view_name = selection.get('crecord_name')
-			this.getController('Tabs').open_view(view_id, view_name)
+			this.getController('Tabs').open_view({ view_id: view_id, title: view_name })
 		}
 	},
 	
@@ -152,7 +152,7 @@ Ext.define('canopsis.controller.View', {
 						this.treeStore.load()
 						
 						//open view for edition
-						this.getController('Tabs').open_view(view_id, viewName).editMode();
+						this.getController('Tabs').open_view({ view_id: view_id, title: viewName }).editMode();
 						
 					}else{
 						log.debug('Impossible to add view, root directory not found ....',this.logAuthor)

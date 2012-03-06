@@ -69,6 +69,36 @@ def account_get_me():
 	
 	return output
 
+#### GET Me
+@get('/account/setDashboard/:_id',apply=[check_auth])
+def account_setDashboard(_id):
+	account = get_account()
+	storage = get_storage(namespace='object')
+	
+	account.data['dashboard'] = _id
+	storage.put(account, account=account)
+	
+	output={'total': 0, 'success': True, 'data': []}
+	
+	return output
+	
+#### GET Me
+@get('/account/setLocale/:locale',apply=[check_auth])
+def account_setLocale(locale):
+	account = get_account()
+	storage = get_storage(namespace='object')
+	logger.debug("Set %s locale for %s" % (locale, account.user))
+	
+	if locale == 'fr' or locale == 'en':
+		account.data['locale'] = locale
+		storage.put(account, account=account)
+		
+		output={'total': 0, 'success': True, 'data': []}
+	else:
+		return HTTPError(404, "Locale not found")
+	
+	return output
+
 #### GET
 @get('/account/:_id',apply=[check_auth])
 @get('/account/',apply=[check_auth])
