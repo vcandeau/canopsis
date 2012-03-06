@@ -26,15 +26,20 @@ Ext.define('canopsis.controller.Tabs', {
 	stores: ['Tabs'],
 	views: ['Tabs.View', 'Tabs.Content'],
 
+	tabpanel_rendered: false,
+
 	init: function() {
 		this.control({
 			'tabpanel': {
 				tabchange: this.on_tabchange,
 				//add: this.on_add,
 				//remove: this.on_remove,
-				afterrender: function() { 
-						this.open_dashboard()
-						this.open_saved_view()
+				afterrender: function() {
+						if (! this.tabpanel_rendered){
+							this.open_dashboard()
+							this.open_saved_view()
+							this.tabpanel_rendered = true
+						}
 					},
 			},
 		});

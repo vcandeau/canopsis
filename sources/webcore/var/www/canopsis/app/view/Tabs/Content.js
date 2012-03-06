@@ -144,7 +144,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.doRedraw()
 		this.startAllTasks();
 		
-		global.notify.notify(record.get('crecord_name'), _('Saved.'))
+		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved.'))
 	},
 	
 	//Binding
@@ -169,8 +169,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 	
 	editMode: function(){
-		this.stopAllTasks();
-		this.callParent(arguments);
+		if (! this.edit){
+			this.stopAllTasks();
+			this.callParent(arguments);
+		}
 	},
 	
 	startAllTasks: function(){
