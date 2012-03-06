@@ -160,11 +160,12 @@ class cstorage(object):
 					access = True
 				else:
 					try:
-						oldrecord = self.get(_id)
+						oldrecord = self.get(_id, namespace=namespace, account=account)
 						access = oldrecord.check_write(account)
-					except:
+					except Exception, err:
 						## New record
 						## Todo: check if account have right to create record ...
+						self.logger.debug("Impossible to get old record (%s)" % err)
 						access = True
 
 				if access:
@@ -184,11 +185,13 @@ class cstorage(object):
 					except Exception, err:
 						self.logger.error("Impossible to store !\nReason: %s" % err)
 						self.logger.debug("Record dump:\n%s" % record.dump())
+						raise ValueError("Impossible to store (%s)" % err)
 	
 					record._id = _id
 					return_ids.append(_id)
 				else:
 					self.logger.error("Puts: Access denied ...")
+					raise ValueError("Access denied")
 			else:
 			## Insert
 				try:
@@ -573,7 +576,7 @@ class cstorage(object):
 
 ## Cache storage
 STORAGES = {}
-def get_storage(namespace='object', account=None, logging_level=logging.ERROR):
+def get_storage(namespace='object', account=None, logging_level=logging.DEBUG):
 	global STORAGES
 	try:
 		return STORAGES[namespace]
