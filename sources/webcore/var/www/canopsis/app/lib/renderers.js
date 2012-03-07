@@ -58,3 +58,19 @@ var rdr_havePerfdata = function (val, metadata, record, rowIndex, colIndex, stor
 var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, store) {	
 	return "<span style='background-color:" + global.default_colors[rowIndex] + ";color:" + global.default_colors[rowIndex] + ";'>__</span>"
 }
+
+//Function for rendering export to pdf button, we haven't find another solution
+var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, store,view){
+	var id = Ext.id();
+	if(record.get('leaf')){
+		var output = ''
+		output += Ext.String.format(
+			'<div style="{0}" class="{1}" onclick="Ext.getCmp(\'{2}\').ownerCt.export_pdf(\'{3}\')"></div>',
+			'height:16px;width:16px;',
+			'icon-mimetype-pdf',
+			view.id,
+			record.get('_id')
+		)
+		return output
+	}
+}

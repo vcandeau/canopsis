@@ -106,6 +106,10 @@ Ext.define('canopsis.lib.controller.ctree', {
 					this.tree.expandPath(this.currentNode)
 				}
 			},this)
+			
+		if(this.bindTreeEvent){
+			this.bindTreeEvent()
+		}
 
 	},
 
