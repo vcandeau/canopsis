@@ -142,6 +142,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 
 	_duplicateButton : function(){
 		log.debug('duplicate',this.logAuthor)
+		var tree = this.tree
 		
 		if(this.duplicateButton){
 			this.duplicateButton()
@@ -172,7 +173,9 @@ Ext.define('canopsis.lib.controller.ctree', {
 	
 	_reloadButton: function() {
 		log.debug('[controller][ctree] - Reload store "'+this.tree.store.storeId+'" of '+this.tree.id);
-		this.tree.store.load()
+		if(!this.tree.store.isLoading()){
+			this.tree.store.load()
+		}
 	},
 	
 	_editRights: function(){

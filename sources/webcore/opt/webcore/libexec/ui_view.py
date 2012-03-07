@@ -124,7 +124,12 @@ def tree_update(name='None'):
 	data = json.loads(request.body.readline())
 
 	record_parent = storage.get(data['parentId'], account=account)
-	record_child = storage.find_one(mfilter={'id':data['id']}, account=account)
+	try:
+		logger.debug('try to get the children record')
+		record_child = storage.get(data['_id'], account=account)
+	except:
+		logger.debug('record_child not found')
+		record_child = None
 
 	#test if the record exist
 	if isinstance(record_child, crecord):
@@ -138,6 +143,7 @@ def tree_update(name='None'):
 					raise ValueError("parent/children link don't remove")
 				storage.put([parent])
 			
+			logger.debug('updating records')
 			record_parent.add_children(record_child)
 			storage.put([record_child,record_parent])
 			
@@ -147,10 +153,13 @@ def tree_update(name='None'):
 	else:
 		#add new view/folder
 		parentNode = storage.get(data['parentId'], account=account)
+		
 		if data['leaf'] == True:
-			record = crecord({'leaf':True,'id':data['id'],'_id':data['id']},type='view',name=data['crecord_name'],account=account)
+			logger.debug('record is a leaf, add the new view')
+			record = crecord({'leaf':True,'_id':data['id'],'items':data['items']},type='view',name=data['crecord_name'],account=account)
 		else:
-			record = crecord({'id':data['id'],'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
+			logger.debug('record is a directory, add it')
+			record = crecord({'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
 		
 		parentNode.add_children(record)
 		
