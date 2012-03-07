@@ -55,7 +55,16 @@ Ext.define('canopsis.controller.View', {
 		}, this)
 
 		this.callParent(arguments);
+		
+		//binding view export pdf
+		
     },
+    
+    bindTreeEvent: function(){
+		this.tree.on('exportPdf',function(view){
+				this.getController('Reporting').launchReport(view)
+			},this)
+	},
     
     addLeafButton : function(){
 		this.create_new_view()

@@ -26,32 +26,47 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 	store : 'TreeStoreView',
 	model : 'view',
 	
+	reporting : true,
+	
 	initComponent: function() {
+		
+		
+		this.columns = [{
+			xtype: 'treecolumn', 
+			text: _('Name'),
+			flex: 5,
+			dataIndex: 'crecord_name'
+		},{
+			flex: 1,
+			dataIndex: 'aaa_owner',
+			text: _('Owner')
+		},{
+			flex: 1,
+			dataIndex: 'aaa_group',
+			text: _('Group')
+		},{
+			text:  _('Owner'),
+			dataIndex: 'aaa_access_owner',
+		},{
+			text: _('Group'),
+			dataIndex: 'aaa_access_group',
+		},{
+			text:  _('Other'),
+			dataIndex: 'aaa_access_other',
+		}]
+		
+		if(this.reporting == true){
+			this.columns.push({
+				width: 16,
+				renderer: rdr_export_button
+			})
+		}
 		this.callParent(arguments);
+		
 	},
 	
-	columns: [{
-		xtype: 'treecolumn', 
-		text: _('Name'),
-		flex: 5,
-		dataIndex: 'crecord_name'
-	},{
-		flex: 1,
-		dataIndex: 'aaa_owner',
-		text: _('Owner')
-	},{
-		flex: 1,
-		dataIndex: 'aaa_group',
-		text: _('Group')
-	},{
-		text:  _('Owner'),
-		dataIndex: 'aaa_access_owner',
-	},{
-		text: _('Group'),
-		dataIndex: 'aaa_access_group',
-	},{
-		text:  _('Other'),
-		dataIndex: 'aaa_access_other',
-	}]
+	export_pdf : function(view){
+		this.fireEvent('exportPdf',view)
+	}
 	
 });
