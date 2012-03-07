@@ -245,14 +245,14 @@ Ext.define('canopsis.lib.view.crights' ,{
 		log.debug('Loading record values', this.logAuthor)
 		
 		this.title = this.title + ' "'+ record.get('crecord_name') +'"'
-		
+		/*
 		log.debug('a_owner : ',this.logAuthor)
 		log.dump(record.get('aaa_access_owner'))
 		log.debug('a_group : ',this.logAuthor)
 		log.dump(record.get('aaa_access_group'))
 		log.debug('a_other : ',this.logAuthor)
 		log.dump(record.get('aaa_access_other'))
-		
+		*/
 		//setting data
 		this.combo_owner_rights.setValue(this._get_model(record.get('aaa_access_owner')))
 		this.combo_group_rights.setValue(this._get_model(record.get('aaa_access_group')))
