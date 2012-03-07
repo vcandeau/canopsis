@@ -127,7 +127,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 			if(this.opt_menu_rights == true){
 				myArray.push(
 					Ext.create('Ext.Action', {
-						//iconCls: 'icon-copy',
+						iconCls: 'icon-access',
 						text: _('Rights'),
 						action: 'rights',
 					})
