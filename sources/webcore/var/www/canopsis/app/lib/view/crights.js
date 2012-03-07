@@ -223,8 +223,21 @@ Ext.define('canopsis.lib.view.crights' ,{
 		});
 	},
 	
-	_get_model : function(value){
-		var index = this.store.find('value',value)
+	_get_model : function(values){
+		var index = this.store.findBy(function(record){
+				var data = record.get('value')
+				if(values.length == data.length){
+					var returned_value = false
+					for(i in values){
+						if (values[i] == data[i]){
+							returned_value = true
+						}else{
+							returned_value = false
+						}
+					}
+					return returned_value
+				}
+			})
 		return this.store.getAt(index)
 	},
 	
