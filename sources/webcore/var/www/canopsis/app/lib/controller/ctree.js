@@ -142,6 +142,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 
 	_duplicateButton : function(){
 		log.debug('duplicate',this.logAuthor)
+		var tree = this.tree
 		
 		if(this.duplicateButton){
 			this.duplicateButton()
