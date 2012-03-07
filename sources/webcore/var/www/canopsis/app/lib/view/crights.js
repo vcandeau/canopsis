@@ -199,12 +199,14 @@ Ext.define('canopsis.lib.view.crights' ,{
 				var text = response.responseText;
 				global.notify.notify(_('Success'),_('Rights updated'))
 				//close the window
+				this.fireEvent('save')
 				this.close()
 			},
 			failure : function(){
 				log.error(_('Updating rights have failed'),this.logAuthor)
 			}
 		});
+		
 		
 	},
 	
@@ -221,8 +223,21 @@ Ext.define('canopsis.lib.view.crights' ,{
 		});
 	},
 	
-	_get_model : function(value){
-		var index = this.store.find('value',value)
+	_get_model : function(values){
+		var index = this.store.findBy(function(record){
+				var data = record.get('value')
+				if(values.length == data.length){
+					var returned_value = false
+					for(i in values){
+						if (values[i] == data[i]){
+							returned_value = true
+						}else{
+							returned_value = false
+						}
+					}
+					return returned_value
+				}
+			})
 		return this.store.getAt(index)
 	},
 	
@@ -230,14 +245,14 @@ Ext.define('canopsis.lib.view.crights' ,{
 		log.debug('Loading record values', this.logAuthor)
 		
 		this.title = this.title + ' "'+ record.get('crecord_name') +'"'
-		
+		/*
 		log.debug('a_owner : ',this.logAuthor)
 		log.dump(record.get('aaa_access_owner'))
 		log.debug('a_group : ',this.logAuthor)
 		log.dump(record.get('aaa_access_group'))
 		log.debug('a_other : ',this.logAuthor)
 		log.dump(record.get('aaa_access_other'))
-		
+		*/
 		//setting data
 		this.combo_owner_rights.setValue(this._get_model(record.get('aaa_access_owner')))
 		this.combo_group_rights.setValue(this._get_model(record.get('aaa_access_group')))
