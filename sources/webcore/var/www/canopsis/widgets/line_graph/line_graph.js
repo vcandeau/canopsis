@@ -54,12 +54,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	tooltip: true,
 	autoTitle: true,
 	
+	title_fontSize: 12,
+	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
 	legend_layout: "horizontal",
 	legend_backgroundColor: null,
 	legend_borderColor: "#909090",
 	legend_borderWidth: 1,
+	legend_fontSize: 12,
 	
 	SeriesType: "area",
 	lineWidth: 1,
@@ -148,7 +151,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			colors: [],
 			title: {
 				text: this.chartTitle,
-				floating: true
+				floating: true,
+				style: {
+					fontSize: this.title_fontSize
+				}
 			},
 			tooltip: {
 				enabled: this.tooltip,
@@ -199,7 +205,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				layout: this.legend_layout,
 				backgroundColor: this.legend_backgroundColor,
 				borderWidth: this.legend_borderWidth,
-				borderColor: this.legend_borderColor
+				borderColor: this.legend_borderColor,
+				itemStyle: {
+					fontSize: this.legend_fontSize
+				}
 			},
 			series: []
 		}
