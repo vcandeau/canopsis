@@ -181,7 +181,8 @@ Ext.define('canopsis.lib.controller.ctree', {
 		var selection = tree.getSelectionModel().getSelection();
 		//create form
 		var crights = Ext.create('canopsis.lib.view.crights',{data:selection[0]})
-		crights.on('close', function(){tree.store.load()},this)
+		//listen to save event to refresh store
+		crights.on('save', function(){tree.store.load()},this)
 	},
 
 	_showMenu: function(view, rec, node, index, e){

@@ -199,12 +199,14 @@ Ext.define('canopsis.lib.view.crights' ,{
 				var text = response.responseText;
 				global.notify.notify(_('Success'),_('Rights updated'))
 				//close the window
+				this.fireEvent('save')
 				this.close()
 			},
 			failure : function(){
 				log.error(_('Updating rights have failed'),this.logAuthor)
 			}
 		});
+		
 		
 	},
 	
