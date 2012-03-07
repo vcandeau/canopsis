@@ -141,7 +141,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		this.dump = dump
 		
-		this.doRedraw()
+		//this.doRedraw()
 		this.startAllTasks();
 		
 		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved.'))
