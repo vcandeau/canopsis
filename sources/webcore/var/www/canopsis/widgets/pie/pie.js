@@ -33,6 +33,7 @@ Ext.define('widgets.pie.pie' ,{
 	max: undefined,
 	other_label: "Free",
 	
+	autoTitle: true,
 	title_fontSize: 12,
 	
 	legend_verticalAlign: "bottom",
@@ -43,28 +44,43 @@ Ext.define('widgets.pie.pie' ,{
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
 	//
-	
-	afterContainerRender: function(){
-		log.debug("Initialize Pie", this.logAuthor)
-		
-		this.setchartTitle();
-		this.setOptions();
-		this.createChart();
-		
-		this.ready();
+
+	initComponent: function() {
+		//Set title
+		if (this.autoTitle) {
+			this.setchartTitle();
+			this.title = ''
+		}else{
+			if (! this.border){
+				this.chartTitle = this.title
+				this.title = ''
+			}
+		}
+		this.callParent(arguments);
 	},
 
 	setchartTitle: function(){
 		var title = ""
-		if(!this.title && this.nodeId && this.nodes.length == 1){
-			var info = split_amqp_rk(this.nodes[0].id)
-			
-			if (info.source_type == 'resource')
-				title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
-			else
-				title = info.component
+		if (this.nodes) {
+			if (this.nodes.length == 1){
+				var info = split_amqp_rk(this.nodes[0].id)
+				
+				if (info.source_type == 'resource')
+					title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
+				else
+					title = info.component
+			}
 		}
 		this.chartTitle = title	
+	},
+	
+	afterContainerRender: function(){
+		log.debug("Initialize Pie", this.logAuthor)
+		
+		this.setOptions();
+		this.createChart();
+		
+		this.ready();
 	},
 
 	setOptions: function(){

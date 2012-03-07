@@ -17,7 +17,7 @@
 						"items": [
 							{
 								"xtype": "checkbox",
-								"boxLabel": "Auto title (if one node)",
+								"fieldLabel": "Auto title (if one node)",
 								"checked": true,
 								"name": "autoTitle"
 							},{
@@ -82,12 +82,12 @@
 						"items": [
 							{
 								"xtype": "checkbox",
-								"boxLabel": "Tooltip",
+								"fieldLabel": "Tooltip",
 								"checked": true,
 								"name": "tooltip"
 							},{
 								"xtype": "checkbox",
-								"boxLabel": "Zoom",
+								"fieldLabel": "Zoom",
 								"checked": true,
 								"name": "zoom"
 							}						
@@ -99,7 +99,7 @@
 						"items": [
 							{
 								"xtype": "checkbox",
-								"boxLabel": "Enable legend",
+								"fieldLabel": "Enable legend",
 								"checked": true,
 								"name": "legend"
 							},{
