@@ -11,6 +11,19 @@
 			"items": [
 					{
 						"xtype": "fieldset",
+						"title": "Title",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype" : "numberfield",
+								"name" : "title_fontSize",
+								"fieldLabel": "Font Size",
+								"minValue": 1,
+								"value": 15
+                           }		
+						]
+					},{
+						"xtype": "fieldset",
 						"title": "Pie",
 						"collapsible": false,
 						"items": [
@@ -35,6 +48,12 @@
 								"checked": true,
 								"name": "legend"
 							},{
+								"xtype" : "numberfield",
+								"name" : "legend_fontSize",
+								"fieldLabel": "Font Size",
+								"minValue": 1,
+								"value": 12
+                           },{
 								"xtype" : "numberfield",
 								"name" : "legend_borderWidth",
 								"fieldLabel": "Border Width",
