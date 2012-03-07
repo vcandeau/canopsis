@@ -64,6 +64,10 @@
     background-image: url(../images/icons/cross.png) !important; 
 }
 
+.icon-access {
+	background-image: url(../images/icons/lock.png) !important; 
+}
+
 .icon-save { 
     background-image: url(../images/icons/save.png) !important; 
 }
