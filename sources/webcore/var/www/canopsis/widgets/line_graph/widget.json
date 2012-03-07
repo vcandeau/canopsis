@@ -12,7 +12,7 @@
 			"items": [
 					{
 						"xtype": "fieldset",
-						"title": "Graph",
+						"title": "Title",
 						"collapsible": false,
 						"items": [
 							{
@@ -21,6 +21,19 @@
 								"checked": true,
 								"name": "autoTitle"
 							},{
+								"xtype" : "numberfield",
+								"name" : "title_fontSize",
+								"fieldLabel": "Font Size",
+								"minValue": 1,
+								"value": 15
+                           }		
+						]
+					},{
+						"xtype": "fieldset",
+						"title": "Graph",
+						"collapsible": false,
+						"items": [
+							{
 								"xtype": "combobox",
 								"name": "time_window",
 								"fieldLabel": "Time window",
@@ -90,6 +103,12 @@
 								"checked": true,
 								"name": "legend"
 							},{
+								"xtype" : "numberfield",
+								"name" : "legend_fontSize",
+								"fieldLabel": "Font Size",
+								"minValue": 1,
+								"value": 12
+                           },{
 								"xtype" : "numberfield",
 								"name" : "legend_borderWidth",
 								"fieldLabel": "Border Width",
