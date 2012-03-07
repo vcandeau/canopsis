@@ -25,7 +25,7 @@ Ext.define('canopsis.store.TreeStoreView', {
 	
 	storeId: 'store.TreeStoreView',
 	
-	autoLoad : true,
+	autoLoad : false,
 	autoSync : false,
 	
 	clearOnLoad: true,
@@ -34,7 +34,7 @@ Ext.define('canopsis.store.TreeStoreView', {
 		id:'directory.root'
 	},
 	*/
-	defaultRootId : 'directory.root',
+	//defaultRootId : 'directory.root',
 	
 	proxy: {
 			type: 'rest',
@@ -54,6 +54,7 @@ Ext.define('canopsis.store.TreeStoreView', {
 				this.sync();
 			},
 		},
+		
 		
 	//--------------FIX , because without this in 4.0.7 you can't refresh !--------
 	//http://www.sencha.com/forum/showthread.php?151674-4.0.7-Tree-Store-Bug&highlight=treestore
@@ -101,5 +102,38 @@ Ext.define('canopsis.store.TreeStoreView', {
 		}
 
 		return me.callParent([options]);
-	}
+	},
+	
+	setRootNode: function(root) {
+        var me = this;
+
+        root = root || {};
+        if (!root.isNode) {
+            // create a default rootNode and create internal data struct.
+            Ext.applyIf(root, {
+                id: me.defaultRootId,
+                text: 'Root',
+                allowDrag: false
+            });
+            root = Ext.ModelManager.create(root, me.model);
+        }
+        Ext.data.NodeInterface.decorate(root);
+
+        // Because we have decorated the model with new fields,
+        // we need to build new extactor functions on the reader.
+        me.getProxy().getReader().buildExtractors(true);
+
+        // When we add the root to the tree, it will automaticaly get the NodeInterface
+        me.tree.setRootNode(root);
+
+   /*     // If the user has set expanded: true on the root, we want to call the expand function
+        if (!root.isLoaded() && (me.autoLoad === true || root.isExpanded())) {
+            me.load({
+                node: root
+            });
+        }*/
+
+        return root;
+    },
+	
 });
