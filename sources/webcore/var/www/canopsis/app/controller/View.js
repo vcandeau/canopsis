@@ -55,8 +55,6 @@ Ext.define('canopsis.controller.View', {
 		}, this)
 
 		this.callParent(arguments);
-		
-		
     },
     
     addLeafButton : function(){
@@ -71,13 +69,30 @@ Ext.define('canopsis.controller.View', {
 		var tree = this.tree
 		
 		var selection = tree.getSelectionModel().getSelection()[0];
-		log.dump(selection)
 		if (selection.get('leaf')){
 			view_id = selection.get('id')
 			view_name = selection.get('crecord_name')
 			this.getController('Tabs').open_view({ view_id: view_id, title: view_name })
 		}
 	},
+	
+	_duplicateButton : function(){
+		log.debug('duplicate',this.logAuthor)
+		//get selected views
+		var tree = this.tree
+		var selection = tree.getSelectionModel().getSelection();
+		//for each selected view
+		for(var i in selection){
+			if(selection[i].isLeaf()){
+				var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
+				var new_record = selection[i].copy(view_id)
+				new_record.set('_id', view_id)
+				new_record.set('id', view_id)
+				this.add_to_home(new_record,false)
+			}
+		}
+	},	
+		
 	
 	/////////////////
 	
@@ -91,30 +106,13 @@ Ext.define('canopsis.controller.View', {
 				
 				record.set('crecord_name',directoryName)
 				
-				record.set('id',directory_id)
 				record.set('_id',directory_id)
+				record.set('id', view_id)
 				//need to set the empty array , otherwise treepanel send request
 				//to fetch inside
 				record.set('children',[])
 				
-				//TreeStore.getRootNode().appendChild(record)
-				var rootDir = 'directory.root.'+ global.account.user
-					
-				log.debug('Add directory: ', this.logAuthor)
-				log.debug(' + root dir: ' + rootDir, this.logAuthor)
-				log.debug(' + name: ' + directoryName, this.logAuthor)
-				log.debug(' + id: ' + directory_id, this.logAuthor)
-					
-				var rootNode = this.treeStore.getNodeById(rootDir)
-				
-				if (rootNode){
-					rootNode.appendChild(record)
-					this.treeStore.sync()
-					this.treeStore.load()
-					
-				}else{
-					log.debug('Impossible to add directory, root directory not found ....',this.logAuthor)
-				}
+				this.add_to_home(record,false)
 				
 			} else {
 				log.debug('cancel new view',this.logAuthor)
@@ -143,41 +141,47 @@ Ext.define('canopsis.controller.View', {
 					
 					//building record
 					var record = Ext.create('canopsis.model.view')
+					record.set('_id', view_id)
 					record.set('id', view_id)
 					record.set('crecord_name',viewName)
 					record.set('leaf', true)
-										
-					//append child and 
-					var rootDir = 'directory.root.'+ global.account.user
 					
-					log.debug('Add view: ',this.logAuthor)
-					log.debug(' + root dir: ' + rootDir,this.logAuthor)
-					log.debug(' + name: ' + viewName,this.logAuthor)
-					log.debug(' + id: ' + view_id,this.logAuthor)
-					
-					var parentNode = this.treeStore.getNodeById(rootDir)
-					var rootNode = this.treeStore.getRootNode()
-					if (parentNode){
-						parentNode.appendChild(record)
-						
-						//this is a hack
-						rootNode.dirty = false
-						
-						this.treeStore.sync()
-						this.treeStore.load()
-						
-						//open view for edition
-						this.getController('Tabs').open_view({ view_id: view_id, title: viewName }).editMode();
-						
-					}else{
-						log.debug('Impossible to add view, root directory not found ....',this.logAuthor)
-					}
+					this.add_to_home(record,true)
 				}
 
 			} else {
 				log.debug('cancel new view',this.logAuthor)
 			}
 		}, this);
+	},
+	
+	add_to_home : function(record,open_after_put){
+		//append child 
+		var rootDir = 'directory.root.'+ global.account.user
+		
+		log.debug('Add view: ',this.logAuthor)
+		log.debug(' + root dir: ' + rootDir,this.logAuthor)
+		log.debug(' + name: ' + record.get('crecord_name'),this.logAuthor)
+		log.debug(' + id: ' + record.get('_id'),this.logAuthor)
+		
+		var parentNode = this.treeStore.getNodeById(rootDir)
+		var rootNode = this.treeStore.getRootNode()
+		if (parentNode){
+			parentNode.appendChild(record)
+			
+			//this is a hack
+			rootNode.dirty = false
+			
+			this.treeStore.sync()
+			this.treeStore.load()
+			
+			//open view for edition
+			if(open_after_put == true){
+				this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') }).editMode();
+			}
+		}else{
+			log.debug('Impossible to add view, root directory not found ....',this.logAuthor)
+		}
 	}
     
 });
