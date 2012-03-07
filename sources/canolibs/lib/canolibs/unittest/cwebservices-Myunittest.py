@@ -33,11 +33,6 @@ get_auth_uri = [
 	'/rest/object',
 	'/rest/object/account',
 	'/rest/object/account/account.root',
-	# ui_menu
-	#'/ui/menu',
-	# ui_view
-	'/ui/dashboard',
-	#'/ui/views', !!!!!!!!!!!
 ]
 
 class KnownValues(unittest.TestCase): 
