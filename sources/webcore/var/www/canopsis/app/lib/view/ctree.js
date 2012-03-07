@@ -33,7 +33,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_add:true,
 	opt_bar_add_directory:true,
 	opt_bar_delete:true,
-	opt_bar_duplicate: false,
+	opt_bar_duplicate: true,
 	opt_bar_reload: true,
 	
 	opt_menu_rights: true,
