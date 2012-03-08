@@ -191,23 +191,30 @@ Ext.define('canopsis.lib.controller.ctree', {
 	_renameButton: function(){
 		var tree = this.tree
 		var selection = tree.getSelectionModel().getSelection()[0];
-		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, new_name){
-			if (btn == 'ok'){
-				selection.set('crecord_name',new_name)
-				this.tree.store.sync()
-			}
-		},this)
-		
+		if(this.getController('Account').check_right(selection,'w')){
+			Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, new_name){
+				if (btn == 'ok'){
+					selection.set('crecord_name',new_name)
+					this.tree.store.sync()
+				}
+			},this)
+		} else {
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		}
 	},
 	
 	_editRights: function(){
 		log.debug('[controller][ctree] - Edit rights',this.logAuthor);
 		var tree = this.tree
-		var selection = tree.getSelectionModel().getSelection();
+		var selection = tree.getSelectionModel().getSelection()[0];
 		//create form
-		var crights = Ext.create('canopsis.lib.view.crights',{data:selection[0]})
-		//listen to save event to refresh store
-		crights.on('save', function(){tree.store.load()},this)
+		if(this.getController('Account').check_right(selection,'w')){
+			var crights = Ext.create('canopsis.lib.view.crights',{data:selection})
+			//listen to save event to refresh store
+			crights.on('save', function(){tree.store.load()},this)
+		} else {
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		}
 	},
 
 	_showMenu: function(view, rec, node, index, e){

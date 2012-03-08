@@ -108,4 +108,33 @@ Ext.define('canopsis.controller.Account', {
 		}	
 	},
 	
+	//check if owner have right on this enreg
+	check_right : function(record,option){
+		var user = global.account.user
+		var groups = global.account.groups
+
+		//root can do everything
+		if(user == 'root'){
+			return true
+		}
+		
+		if((option == 'r') || (option == 'w')){
+			if ((user == record.get('aaa_owner')) && (record.data.aaa_access_owner.indexOf(option) > -1)){
+				//log.debug('owner')
+				return true
+			} else if((groups.indexOf(record.get('aaa_group')) != -1) && (record.data.aaa_access_group.indexOf(option) > -1)){
+				//log.debug('group')
+				return true
+			} else {
+				//log.debug('nothing')
+				return false
+			}
+		} else {
+			log.error(_('Incorrect right option given'),this.logAuthor)
+		}
+		
+		
+	}
+	
+	
 });
