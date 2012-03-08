@@ -37,6 +37,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_reload: true,
 	
 	opt_menu_rights: true,
+	opt_menu_rename: true,
 
 	initComponent: function() {
 		
@@ -68,7 +69,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 				action: 'reload',
 			})
 		}
-		
+		/*
 		if(this.opt_bar_duplicate){
 			bar_child.push({
 				xtype: 'button',
@@ -77,7 +78,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 				action: 'duplicate',
 			})
 		}
-
+		*/
 		if(this.opt_bar_delete){
 			bar_child.push({
 				xtype: 'button',
@@ -134,6 +135,16 @@ Ext.define('canopsis.lib.view.ctree' ,{
 				)
 			}
 			
+			if(this.opt_menu_rename == true){
+				myArray.push(
+					Ext.create('Ext.Action', {
+						iconCls: 'icon-edit',
+						text: _('Rename'),
+						action: 'rename',
+					})
+				)
+			}
+			
 			if (myArray.length != 0){
 				this.contextMenu = Ext.create('Ext.menu.Menu',{
 					items : myArray,
@@ -149,6 +160,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		this.ddplugin.init(innerView)
 		
 		innerView.animate = false
+		//innerView.loadMask  = false
 	},
 	
 	destroy: function(){

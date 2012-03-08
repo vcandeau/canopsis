@@ -37,7 +37,10 @@ Ext.define('canopsis.controller.View', {
 		
 		log.debug(' + Load treeStore ...', this.logAuthor);
 		this.treeStore = Ext.data.StoreManager.lookup('TreeStoreView')
-		this.treeStore.load()
+		
+		if(!this.treeStore.isLoading()){
+			this.treeStore.load()
+		}
 		
 		this.store = Ext.data.StoreManager.lookup('View')
 		
@@ -55,7 +58,26 @@ Ext.define('canopsis.controller.View', {
 		}, this)
 
 		this.callParent(arguments);
+		
+		//binding view export pdf
+		
     },
+    
+    bindTreeEvent: function(){
+		this.tree.on('exportPdf',function(view){
+				this.getController('Reporting').launchReport(view)
+			},this)
+			
+		//reload treeStore if view store is update (means that someone have save a 
+		//view, you need to sync those two stores
+		var viewStore = Ext.data.StoreManager.lookup('View')
+		viewStore.on('write',function(){
+			if(!this.treeStore.isLoading()){
+				this.treeStore.load()
+			}
+		
+		},this)
+	},
     
     addLeafButton : function(){
 		this.create_new_view()
@@ -107,7 +129,7 @@ Ext.define('canopsis.controller.View', {
 				record.set('crecord_name',directoryName)
 				
 				record.set('_id',directory_id)
-				record.set('id', view_id)
+				record.set('id',directory_id)
 				//need to set the empty array , otherwise treepanel send request
 				//to fetch inside
 				record.set('children',[])
@@ -173,7 +195,10 @@ Ext.define('canopsis.controller.View', {
 			rootNode.dirty = false
 			
 			this.treeStore.sync()
-			this.treeStore.load()
+			
+			if(!this.treeStore.isLoading()){
+				this.treeStore.load()
+			}
 			
 			//open view for edition
 			if(open_after_put == true){
