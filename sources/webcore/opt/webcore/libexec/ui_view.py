@@ -155,11 +155,11 @@ def tree_update(name='None'):
 				storage.put(record_child,account=account)
 			except:
 				logger.error('Access Denied')
-				
+				return HTTPError(403, "Access denied")
 		
 		else :
 			logger.debug('records are the same, nothing to do')
-			return HTTPError(403, "Access denied")
+			
 	else:
 		#add new view/folder
 		parentNode = storage.get(data['parentId'], account=account)
