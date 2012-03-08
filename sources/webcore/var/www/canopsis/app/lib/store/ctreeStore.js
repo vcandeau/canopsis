@@ -57,6 +57,7 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 		if(request.status == 403){
 			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
 			log.error(_('Access denied'))
+			this.load()
 		}else{
 			log.error(_('Error while store synchronisation with server'))
 		}
