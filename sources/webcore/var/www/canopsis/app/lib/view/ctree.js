@@ -138,7 +138,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 			if(this.opt_menu_rename == true){
 				myArray.push(
 					Ext.create('Ext.Action', {
-						iconCls: 'icon-access',
+						iconCls: 'icon-edit',
 						text: _('Rename'),
 						action: 'rename',
 					})
