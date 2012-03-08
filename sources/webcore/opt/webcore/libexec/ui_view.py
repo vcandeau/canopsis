@@ -33,6 +33,7 @@ from crecord import crecord
 from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger("ui_view")
+
 #########################################################################
 '''
 @get('/ui/view',	apply=[check_auth])
@@ -132,51 +133,60 @@ def tree_update(name='None'):
 
 	#test if the record exist
 	if isinstance(record_child, crecord):
-		#if parents are really different
-		if(record_child.parent[0] != data['parentId']):
-			parent = storage.get(record_child.parent, account=account)
+		#check write rights
+		if record_parent.check_write(account=account) and record_child.check_write(account=account):
+			#if parents are really different
+			if(record_child.parent[0] != data['parentId']):
+				parent = storage.get(record_child.parent, account=account)
 
-			if isinstance(parent, crecord):
-				parent.remove_children(record_child)
-				if storage.is_parent(parent,record_child):
-					raise ValueError("parent/children link don't remove")
-				storage.put([parent],account=account)
-			
-			logger.debug('updating records')
-			record_parent.add_children(record_child)
-			storage.put([record_child,record_parent],account=account)
-			
-		elif (record_child.name != data['crecord_name']): 
-			logger.debug('different crecord_name, update name')
-			logger.debug('old name : %s' % str(record_child.name))
-			logger.debug('new name : %s' % data['crecord_name'])
-			record_child.name = data['crecord_name']
-			try:
+				if isinstance(parent, crecord):
+					parent.remove_children(record_child)
+					if storage.is_parent(parent,record_child):
+						raise ValueError("parent/children link don't remove")
+					storage.put([parent],account=account)
+				
+				logger.debug('updating records')
+				record_parent.add_children(record_child)
+				storage.put([record_child,record_parent],account=account)
+				
+			elif (record_child.name != data['crecord_name']): 
+				logger.debug('different crecord_name, update name')
+				logger.debug('old name : %s' % str(record_child.name))
+				logger.debug('new name : %s' % data['crecord_name'])
+				record_child.name = data['crecord_name']
 				storage.put(record_child,account=account)
-			except:
-				logger.error('Access Denied')
-				return HTTPError(403, "Access denied")
-		
-		else :
-			logger.debug('records are the same, nothing to do')
+			
+			else :
+				logger.debug('records are the same, nothing to do')
+		else:
+			logger.debug('Access Denied')
+			return HTTPError(403, "Access Denied")
 			
 	else:
 		#add new view/folder
 		parentNode = storage.get(data['parentId'], account=account)
-		
-		if data['leaf'] == True:
-			logger.debug('record is a leaf, add the new view')
-			record = crecord({'leaf':True,'_id':data['id'],'items':data['items']},type='view',name=data['crecord_name'],account=account)
-		else:
-			logger.debug('record is a directory, add it')
-			record = crecord({'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
-		
-		parentNode.add_children(record)
-		
-		record.chown(account.user)
-		record.chgrp(account.group)
-		record.chmod('g-w')
-		record.chmod('g-r')
-		
-		storage.put([record,parentNode],account=account)
+		#test rights
+		if isinstance(parentNode, crecord):
+			if parentNode.check_write(account=account):
+				if data['leaf'] == True:
+					logger.debug('record is a leaf, add the new view')
+					record = crecord({'leaf':True,'_id':data['id'],'items':data['items']},type='view',name=data['crecord_name'],account=account)
+				else:
+					logger.debug('record is a directory, add it')
+					record = crecord({'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
+				
+				parentNode.add_children(record)
+				
+				record.chown(account.user)
+				record.chgrp(account.group)
+				record.chmod('g-w')
+				record.chmod('g-r')
+				
+				storage.put([record,parentNode],account=account)
+			else:
+				logger.debug('Access Denied')
+				return HTTPError(403, "Access Denied")
+
+		else :
+			logger.error('ParentNode doesn\'t exist')
 
