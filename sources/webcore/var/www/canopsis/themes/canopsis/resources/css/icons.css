@@ -68,6 +68,10 @@
 	background-image: url(../images/icons/lock.png) !important; 
 }
 
+.icon-edit {
+	background-image: url(../images/icons/edit.png) !important; 
+}
+
 .icon-save { 
     background-image: url(../images/icons/save.png) !important; 
 }
