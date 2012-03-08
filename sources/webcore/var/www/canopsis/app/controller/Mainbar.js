@@ -168,8 +168,8 @@ Ext.define('canopsis.controller.Mainbar', {
 	
 	editView: function(){
 		log.debug('Edit view', this.logAuthor);
-		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.editMode();
+		var ctrl = this.getController('Tabs')
+		ctrl.edit_active_view()
 	},
 	
 	newView: function(){
