@@ -69,7 +69,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 				action: 'reload',
 			})
 		}
-		
+		/*
 		if(this.opt_bar_duplicate){
 			bar_child.push({
 				xtype: 'button',
@@ -78,7 +78,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 				action: 'duplicate',
 			})
 		}
-
+		*/
 		if(this.opt_bar_delete){
 			bar_child.push({
 				xtype: 'button',
