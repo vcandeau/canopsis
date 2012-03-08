@@ -22,11 +22,17 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 	extend: 'Ext.data.TreeStore',
 
 	autoLocalization: false,
+	
+	constructor: function(config) {
+        this.callParent(arguments);
+
+        this.proxy.on('exception',this._manage_exception, this);
+    },
 
 	//raise an exception if server didn't accept the request
 	//and display a popup if the store is modified
 	listeners: {
-		exception: function(proxy, response, operation){
+	/*	exception: function(proxy, response, operation){
 			Ext.MessageBox.show({
 				title: _('REMOTE EXCEPTION'),
 				msg: this.storeId + ': ' + _('request failed'),
@@ -34,7 +40,7 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 				buttons: Ext.Msg.OK
 			});
 			log.debug(response);
-		},
+		},*/
 		load: function(store, node, records){
 			if (this.autoLocalization){
 				var i;
@@ -45,5 +51,14 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 				}
 			}
 		}
-   }	
+   },
+   
+   	_manage_exception : function(store, request, options){
+		if(request.status == 403){
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+			log.error(_('Access denied'))
+		}else{
+			log.error(_('Error while store synchronisation with server'))
+		}
+	}
 });
