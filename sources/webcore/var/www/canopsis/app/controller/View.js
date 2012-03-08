@@ -78,6 +78,20 @@ Ext.define('canopsis.controller.View', {
 		
 		},this)
 	},
+	
+	check_right_on_drop: function(node,data,overModel){
+		log.debug('checking right on record before drop',this.logAuthor)
+		var ctrl = this.getController('Account')
+		var src_record = data.records[0]
+		var dest_record = overModel
+		
+		//check if right to right, if not, stop event + display notif
+		if(!(ctrl.check_record_right(src_record,'w') && ctrl.check_record_right(dest_record,'w'))){
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+			return true
+		}
+
+	},
     
     addLeafButton : function(){
 		this.create_new_view()

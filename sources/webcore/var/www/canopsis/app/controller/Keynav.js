@@ -57,9 +57,9 @@ Ext.define('canopsis.controller.Keynav', {
 					event.stopEvent()
 					// Edit view
 					log.debug('ctrl + e', this.logAuthor)
-					
-					var tab = Ext.getCmp('main-tabs').getActiveTab();
-					tab.editMode();
+
+					var ctrl = this.getController('Tabs')
+					ctrl.edit_active_view()
 				}
 			},{
 				key: Ext.EventObject.S,
@@ -70,8 +70,8 @@ Ext.define('canopsis.controller.Keynav', {
 					// Save view
 					log.debug('ctrl + s', this.logAuthor)
 					
-					var tab = Ext.getCmp('main-tabs').getActiveTab();
-					tab.saveJqGridable()
+					var ctrl = this.getController('Tabs')
+					ctrl.save_active_view()
 				}
 			},{
 				key: Ext.EventObject.F,
