@@ -116,7 +116,7 @@ Ext.define('canopsis.controller.View', {
 				record.set('crecord_name',directoryName)
 				
 				record.set('_id',directory_id)
-				record.set('id', view_id)
+				record.set('id',directory_id)
 				//need to set the empty array , otherwise treepanel send request
 				//to fetch inside
 				record.set('children',[])
