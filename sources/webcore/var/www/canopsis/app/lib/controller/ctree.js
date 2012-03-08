@@ -20,6 +20,8 @@
 */
 Ext.define('canopsis.lib.controller.ctree', {
 	extend: 'Ext.app.Controller',
+	
+	logAuthor : '[controller][ctree]',
 
 	init: function() {
 		log.debug('[controller][ctree] - '+this.id+' Initialize ...');
@@ -105,6 +107,15 @@ Ext.define('canopsis.lib.controller.ctree', {
 		tree.on('selectionchange',	this._selectionchange,	this)
 		tree.on('itemdblclick', this._itemDoubleClick,this)
 		
+		//----------------before drop fonction listening-----------
+		tree.getView().on('beforedrop',function(n,d,o){
+			var stop_event = this._check_right_on_drop(n,d,o)
+			if(stop_event == true){
+				return false
+			}
+		},this)
+		
+		
 		//------keep memory of last expanded node, expand it again after load-----
 		tree.store.on('expand', function(node){this.currentNode = node.getPath()},this)
 		tree.on('load', function(){
@@ -118,9 +129,19 @@ Ext.define('canopsis.lib.controller.ctree', {
 		}
 
 	},
+	
+	_check_right_on_drop : function(node,data,overModel,dropPosition,dropFunction,opts){
+		if(this.check_right_on_drop){
+			var stop_event = this.check_right_on_drop(node,data,overModel,dropPosition,dropFunction,opts)
+		}
+		
+		if(stop_event){
+			return true
+		}
+	},
 
 	_selectionchange: function(view, records){
-		log.debug('[controller][ctree] - selectionchange',this.logAuthor);
+		log.debug('selectionchange',this.logAuthor);
 		var tree = this.tree
 
 		//Enable delete Button
@@ -191,7 +212,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	_renameButton: function(){
 		var tree = this.tree
 		var selection = tree.getSelectionModel().getSelection()[0];
-		if(this.getController('Account').check_right(selection,'w')){
+		if(this.getController('Account').check_record_right(selection,'w')){
 			Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, new_name){
 				if (btn == 'ok'){
 					selection.set('crecord_name',new_name)
@@ -208,7 +229,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		var tree = this.tree
 		var selection = tree.getSelectionModel().getSelection()[0];
 		//create form
-		if(this.getController('Account').check_right(selection,'w')){
+		if(this.getController('Account').check_record_right(selection,'w')){
 			var crights = Ext.create('canopsis.lib.view.crights',{data:selection})
 			//listen to save event to refresh store
 			crights.on('save', function(){tree.store.load()},this)

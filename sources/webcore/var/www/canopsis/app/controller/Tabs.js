@@ -168,8 +168,29 @@ Ext.define('canopsis.controller.Tabs', {
 		}
 	},
 	
+	save_active_tab : function(){
+		
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		var right = this.getController('Account').check_right(tab.view,'w')
+		if(right == true){
+			tab.saveJqGridable()
+		}else{
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		}
+	},
+	
 	create_new_view : function(){
 		this.getController('View').create_new_view()
+	},
+	
+	edit_active_view : function(){
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		var right = this.getController('Account').check_right(tab.view,'w')
+		if(right == true){
+			tab.editMode();
+		}else{
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		}
 	},
 	
   	/*on_add: function(component, index, object){
