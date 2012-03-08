@@ -102,6 +102,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		log.debug(' + Time window: '+this.time_window, this.logAuthor)
 		
 		this.series = {}
+		this.series_hc = {}
 		
 		this.setOptions();
 		this.createChart();
@@ -135,12 +136,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		this.options = {
 			reportMode: this.reportMode,
+			
+			cwidget: this,
+			
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
 				height: this.getHeight(),
 				animation: false,
-				borderColor: "#FFFFFF"
+				borderColor: "#FFFFFF",
+				events: {
+					redraw: this.checkTimewindow
+				}
 			},
 			global: {
 				useUTC: true
@@ -308,7 +315,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	onRefresh: function (data){
 		if (this.chart){
-			log.debug(" + On refresh "+this.id+" ...", this.logAuthor)
+			log.debug("On refresh", this.logAuthor)
 			
 			/*if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
@@ -327,19 +334,24 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 				this.chart.redraw();
 
-				if (data[0].values.length > 0){
-					var extremes = this.chart.series[0].xAxis.getExtremes()
-					var data_window = extremes.max - extremes.min
-					this.shift = data_window > (this.time_window*1000)
-
-					log.debug('     + Data window: '+data_window, this.logAuthor)
-					log.debug('      + Shift: '+this.shift, this.logAuthor)
-				}
-
 			} else {
-				log.debug(' + On refresh : no metric data', this.logAuthor)
+				log.debug(' + No data', this.logAuthor)
 			}
 		}
+	},
+	
+	checkTimewindow: function(){
+		var me = this.options.cwidget
+		
+		log.debug('Check Time window', me.logAuthor)
+		if (! me.shift){
+			var extremes = this.series[0].xAxis.getExtremes()
+			var data_window = extremes.max - extremes.min
+			me.shift = data_window > (me.time_window*1000)
+
+			log.debug(' + Data window: '+data_window, me.logAuthor)
+			log.debug('   + Shift: '+me.shift, me.logAuthor)
+		}	
 	},
 	
 	getHeight: function(){
@@ -357,8 +369,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	getSerie: function(node, metric_name, bunit){
 		var serie_id = node + '.' +metric_name
-		
-		var serie = this.chart.get(serie_id)
+
+		//var serie = this.chart.get(serie_id)
+		var serie = this.series_hc[serie_id]
 		if (serie) { return serie }
 
 		log.debug('  + Create Serie:', this.logAuthor)
@@ -394,9 +407,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		this.series[serie_id] = serie
 		
-		this.chart.addSeries(serie, true, false)
-	
-		return this.chart.get(serie_id)
+		var hcserie = this.chart.addSeries(Ext.clone(serie), false, false)
+
+		this.series_hc[serie_id] = hcserie
+		
+		return hcserie
 	},
 
 	addDataOnChart: function(data){
@@ -408,9 +423,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		//log.dump(data)
 
 		var serie = this.getSerie(node, metric_name, bunit)
-		
-		var serie_id = node + '.' +metric_name
 
+		var serie_id = serie.options.id
+		
 		log.debug('  + Add data for '+node+', metric "'+metric_name+'" ...', this.logAuthor)
 		
 		if (values.length <= 0){
