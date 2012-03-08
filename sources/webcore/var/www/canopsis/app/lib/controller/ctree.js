@@ -63,6 +63,12 @@ Ext.define('canopsis.lib.controller.ctree', {
 				btns[i].on('click', this._editRights, this)
 			}
 			
+			//rename button
+			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=rename]')
+			for (i in btns){
+				btns[i].on('click', this._renameButton, this)
+			}
+			
 		}
 		
 		//--------------------toolbar buttons--------------------------
@@ -106,6 +112,10 @@ Ext.define('canopsis.lib.controller.ctree', {
 					this.tree.expandPath(this.currentNode)
 				}
 			},this)
+			
+		if(this.bindTreeEvent){
+			this.bindTreeEvent()
+		}
 
 	},
 
@@ -176,6 +186,18 @@ Ext.define('canopsis.lib.controller.ctree', {
 		if(!this.tree.store.isLoading()){
 			this.tree.store.load()
 		}
+	},
+	
+	_renameButton: function(){
+		var tree = this.tree
+		var selection = tree.getSelectionModel().getSelection()[0];
+		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, new_name){
+			if (btn == 'ok'){
+				selection.set('crecord_name',new_name)
+				this.tree.store.sync()
+			}
+		},this)
+		
 	},
 	
 	_editRights: function(){
