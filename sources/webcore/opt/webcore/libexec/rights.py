@@ -32,8 +32,8 @@ from crecord import crecord
 #import protection function
 from libexec.auth import check_auth, get_account
 
-logger = logging.getLogger("ui_view")
-logger.setLevel(3)
+logger = logging.getLogger("rights")
+
 #########################################################################
 
 @get('/rights/:crecord_id', apply=[check_auth])
@@ -68,6 +68,7 @@ def change_rights(crecord_id=None):
 		record = storage.get(crecord_id, account=account)
 		
 	if isinstance(record, crecord):
+		logger.debug('record found, changing rights/owner')
 		#change owner and group
 		if aaa_owner is not None:
 			record.chown(aaa_owner)
