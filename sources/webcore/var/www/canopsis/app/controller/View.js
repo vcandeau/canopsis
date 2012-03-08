@@ -64,6 +64,11 @@ Ext.define('canopsis.controller.View', {
 		this.tree.on('exportPdf',function(view){
 				this.getController('Reporting').launchReport(view)
 			},this)
+			
+		//reload treeStore if view store is update (means that someone have save a 
+		//view, you need to sync those two stores
+		var viewStore = Ext.data.StoreManager.lookup('View')
+		viewStore.on('write',function(){this.treeStore.load()},this)
 	},
     
     addLeafButton : function(){
