@@ -33,7 +33,6 @@ from crecord import crecord
 from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger("ui_view")
-
 #########################################################################
 '''
 @get('/ui/view',	apply=[check_auth])
@@ -141,14 +140,21 @@ def tree_update(name='None'):
 				parent.remove_children(record_child)
 				if storage.is_parent(parent,record_child):
 					raise ValueError("parent/children link don't remove")
-				storage.put([parent])
+				storage.put([parent],account=account)
 			
 			logger.debug('updating records')
 			record_parent.add_children(record_child)
-			storage.put([record_child,record_parent])
+			storage.put([record_child,record_parent],account=account)
 			
-		else : 
-			logger.debug('same parent, nothing to do')
+		elif (record_child.name != data['crecord_name']): 
+			logger.debug('different crecord_name, update name')
+			logger.debug('old name : %s' % str(record_child.name))
+			logger.debug('new name : %s' % data['crecord_name'])
+			record_child.name = data['crecord_name']
+			storage.put(record_child,account=account)
+		
+		else :
+			logger.debug('records are the same, nothing to do')
 			
 	else:
 		#add new view/folder
