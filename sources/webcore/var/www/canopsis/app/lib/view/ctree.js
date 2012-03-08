@@ -160,6 +160,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		this.ddplugin.init(innerView)
 		
 		innerView.animate = false
+		//innerView.loadMask  = false
 	},
 	
 	destroy: function(){

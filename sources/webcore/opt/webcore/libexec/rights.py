@@ -84,8 +84,11 @@ def change_rights(crecord_id=None):
 			record.access_other = json.loads(aaa_access_other)
 			
 		#logger.debug(json.dumps(record.dump(json=True), sort_keys=True, indent=4))
-		
-		storage.put(record,account=account)
+		try:
+			storage.put(record,account=account)
+		except:
+			logger.error('Access denied')
+			return HTTPError(403, "Access denied")
 	
 	else:
 		logger.warning('The record doesn\'t exist')

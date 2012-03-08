@@ -202,8 +202,14 @@ Ext.define('canopsis.lib.view.crights' ,{
 				this.fireEvent('save')
 				this.close()
 			},
-			failure : function(){
-				log.error(_('Updating rights have failed'),this.logAuthor)
+			failure : function(response){
+				
+				if(response.status == 403){
+					global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+					log.error(_('Access denied'))
+				} else {
+					log.error(_('Updating rights have failed'),this.logAuthor)
+				}
 			}
 		});
 		
