@@ -98,17 +98,26 @@ def tree_delete(name=None):
 	
 	if isinstance(record, crecord):
 		if len(record.children) == 0:
-			#remove record from its parent child list
-			for parent in record.parent:
-				parent_rec = storage.get(parent, account=account)
-				parent_rec.remove_children(record )
-				storage.put(parent_rec,account=account)
-		
-			try:
-				storage.remove(record, account=account)
-			except Exception, err:
-				logger.error(err)
-				return HTTPError(404, 'Error while removing: %s' % err)
+			if record.check_write(account=account):
+				#remove record from its parent child list
+				for parent in record.parent:
+					parent_rec = storage.get(parent, account=account)
+					parent_rec.remove_children(record )
+					if parent_rec.check_write(account=account):
+						storage.put(parent_rec,account=account)
+					else:
+						logger.debug('Access Denied')
+						return HTTPError(403, "Access Denied")
+			
+				try:
+					storage.remove(record, account=account)
+				except Exception, err:
+					logger.error(err)
+					return HTTPError(404, 'Error while removing: %s' % err)
+			else:
+				logger.debug('Access Denied')
+				return HTTPError(403, "Access Denied")
+				
 		else:
 			logger.warning('This record have children, remove those child before')
 
