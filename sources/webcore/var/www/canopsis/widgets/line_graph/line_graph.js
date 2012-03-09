@@ -253,6 +253,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	createChart: function(){
 		this.chart = new Highcharts.Chart(this.options);
+		this.message = this.chart.renderer.text(_("Wait data") + " ...", 50, 50).add()
 	},
 	
 	////////////////////// CORE
@@ -325,13 +326,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					this.addDataOnChart({'metric': metric, 'values': [] })
 				}
 			}*/
-
+			
 			if(data.length > 0){
 				var i;
 				for (i in data){
 					this.addDataOnChart(data[i])
 				}
-
+				
+				this.message.destroy();
 				this.chart.redraw();
 
 			} else {
@@ -344,7 +346,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var me = this.options.cwidget
 		
 		log.debug('Check Time window', me.logAuthor)
-		if (! me.shift){
+		if (! me.shift && this.series.length > 0){
 			var extremes = this.series[0].xAxis.getExtremes()
 			var data_window = extremes.max - extremes.min
 			me.shift = data_window > (me.time_window*1000)
