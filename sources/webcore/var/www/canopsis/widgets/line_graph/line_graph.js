@@ -253,7 +253,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	createChart: function(){
 		this.chart = new Highcharts.Chart(this.options);
-		this.message = this.chart.renderer.text(_("Waiting data") + " ...", 50, 50).add()
+		this.chartMessage = this.chart.renderer.text(_("Waiting data") + " ...", 50, 50).add()
 	},
 	
 	////////////////////// CORE
@@ -333,7 +333,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					this.addDataOnChart(data[i])
 				}
 				
-				this.message.destroy();
+				//Disable no data message
+				if (this.chartMessage){
+					this.chartMessage.destroy();
+					this.chartMessage = undefined
+				}
+				
 				this.chart.redraw();
 
 			} else {
