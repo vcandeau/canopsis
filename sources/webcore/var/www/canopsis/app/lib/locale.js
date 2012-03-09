@@ -26,10 +26,12 @@ function _(text,context) {
 		} else if(i18n[text]){
 			return i18n[text]
 		} else {
-			if(global.locale != 'en'){
+			if(global.locale != 'en' && (global.log.level > 4)){
 				global.untranslated.push(text)
 			}
 			return text
 		}
+	}else{
+		return text
 	}
 }
