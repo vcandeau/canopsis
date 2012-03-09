@@ -8,7 +8,7 @@
 	"refreshInterval": 0,
 	"rowHeight": 50,
 	"formWidth": 800,
-	"locales": ["en", "fr"],
+	"locales": ["fr"],
 	"options": [{
 			"title": "Inner text",
 			"layout": "fit",

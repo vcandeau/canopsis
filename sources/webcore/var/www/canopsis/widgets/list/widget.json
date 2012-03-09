@@ -6,7 +6,7 @@
 	"xtype": "list",
 	"description": "Display list of inventory items",
 	"refreshInterval": 300,
-	"locales": ["en", "fr"],
+	"locales": ["fr"],
 	"options": [{
 			"title": "Options",
 			"items": [{
