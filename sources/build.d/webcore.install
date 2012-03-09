@@ -6,6 +6,5 @@ function build(){
 
 function install(){
 	install_basic_source $NAME
-	install_python_daemon "$PREFIX/opt/webcore/webserver.py"
 	install_python_daemon "$PREFIX/opt/webcore/amqp2websocket.py"
 }
