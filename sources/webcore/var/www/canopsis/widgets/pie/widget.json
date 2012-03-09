@@ -6,7 +6,7 @@
 	"xtype":"pie",
 	"description": "Display perfdata pie",
 	"refreshInterval": 300,
-	"locales": ["en", "fr"],
+	"locales": ["fr"],
 	"options": [{
 			"title": "Options",
 			"items": [
