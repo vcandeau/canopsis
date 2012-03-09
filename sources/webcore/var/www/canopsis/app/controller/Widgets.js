@@ -24,6 +24,8 @@ Ext.define('canopsis.controller.Widgets', {
     //views: ['Widgets.kpi', 'Widgets.host_header'],
     stores: ['Widget'],
     models: ['event'],
+    
+    item_to_translate : ['title','fieldLabel','boxLabel'],
 
     logAuthor: "[controller][Widgets]",
 
@@ -45,11 +47,49 @@ Ext.define('canopsis.controller.Widgets', {
 				}
 			}, this);
 			
+			//translate the store
+			this.check_translate();
+			
 			// small hack
-			setTimeout(function(ctrl){ ctrl.fireEvent('loaded'); },1000, this);
+			setTimeout(function(ctrl){ 
+				ctrl.fireEvent('loaded');
+			 },1000, this);
 
 		}, this);
     },
     
+	check_translate : function(){
+		if(global.locale != 'en'){
+			log.debug('Attempting to translate widget in store', this.logAuthor)
+			this.store.each(function(record){
+				var options = record.get('options')
+				if(options != undefined){
+					for(i in options){
+						this.translate(record.get('xtype'),options[i])
+					}
+				}
+			},this)
+		}
+	},
+	
+	//recursive translate function for widget records
+	translate : function(xtype,record_data){
+		// for every item
+		for(item_name in record_data){
+			var item = record_data[item_name]
+			//if the item must be translated
+			if(this.item_to_translate.indexOf(item_name) > -1){
+				//log.debug('translating : ' + item)
+				record_data[item_name] = _(item,xtype)
+			} else if(item_name == 'items'){
+				//if there is item in items
+				for(sub_item in item){
+					this.translate(xtype,item[sub_item])
+				}
+			}
+			
+			
+		}
+	}
 	
 });
