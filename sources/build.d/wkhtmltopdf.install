@@ -12,7 +12,6 @@ function build(){
 }
 
 function install(){
-
 	cd $PREFIX/bin
 	tar xfj $SRC_PATH/externals/$BASE.tar.bz2
 	if [ "$ARCH" == "i386" ]; then
@@ -20,6 +19,4 @@ function install(){
 	elif [ "$ARCH" == "x86_64" ]; then
 		ln -s wkhtmltopdf-amd64 wkhtmltopdf &> /dev/null
 	fi	
-
-	install_basic_source $NAME
 }
