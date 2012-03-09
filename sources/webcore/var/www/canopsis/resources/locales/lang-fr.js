@@ -20,6 +20,7 @@
 */
 
 var i18n={
+	'Language':			'Langue',
 	'Add': 				'Ajouter',
 	'Delete':			'Supprimer',
 	'Duplicate':			'Dupliquer',
@@ -27,6 +28,8 @@ var i18n={
 	'search':			'rechercher',
 	'Build':			'Construire',
 	'Cancel':			'Annuler',
+	'Finish':			'Fin',
+	'optional':			'optionnel',
 	'Clear tabs cache':		'Effacer le cache des onglets',
 	'Colspan':			'Largeur',
 	'Component':			'Composant',
@@ -74,6 +77,8 @@ var i18n={
 	'Source':			'Source',
 	'State':			'État',
 	'Title':			'Titre',
+	'Style':			'Style',
+	'Type':				'type',
 	'title':			'titre',
 	'Your document is rendering, a popup will ask you where to save in few seconds': 'Le document est en cours de génération, veuillez patienter quelques secondes ...',
 	'ITIL.Report':			'Reporting',
@@ -100,11 +105,14 @@ var i18n={
 	'Widget options':		'Options du Widget',
 	"you can't add the same user twice": 'Vous ne pouvez pas ajouter le même utilisateur',
 	"you can't add the same view twice": 'Vous ne pouvez pas ajouter la même vue',
+	'Wizard':		'Assistant',
+
 
 	'aaa access owner':		'',
 	'aaa owner':			'',
 	'From':				'De',
 	'Nb column':			'Nb colonne',
+	'Columns' :			'Colonnes',
 	'password':			'Mot de passe',
 	'Password':			'Mot de passe',
 	'Search Option':		'Option de recherche',
@@ -119,6 +127,8 @@ var i18n={
 	'You can get your document':	'Vous pouvez télécharger votre document',
 	'View':				'Vue',
 	'view':				'vue',
+	'views':			'vues',
+
 	'Views':			'Vues',
 	'authentification failed':	"L'authentification a échouée",
 	'Login or password invalid':	"Nom d'utilisateur ou mot de passe incorrecte",
@@ -145,4 +155,23 @@ var i18n={
 	'Here you can set specific option type of the selected widget' : 'Ici vous pouvez fixer les options du gadget sélectionné',
 	'Edit active view': 'édition vue active',
 	'New view':			'nouvelle vue',
+	'no title':			'pas de titre',
+	'No title':			'Pas de titre',
+	
+	'Options':	'Options',
+	'Tooltip': 'Infobulle',
+	'Select a view': 'Sélectionner une vue',
+	'Label': 'Label',
+	'leaf': 'feuille',
+	'Border color': 'Couleur bordure',
+	'Border Width': 'Largeur bordure',
+	'Background color': 'Couleur arrière-plan',
+	
+	'Choose Metrics':	'Choisir les metriques',
+	'Choose widget':	'Choisir le widget',
+	'Font Size':	'Taille de la police',
+	'Legend': 'légende',
+	'Filter': 'Filtre',
+	'Border color': 'Couleur bordure',
+	
 }
