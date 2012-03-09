@@ -20,7 +20,12 @@
 */
 
 i18n['line_graph.on'] = 'sur';
-i18n['Auto title (if one node)'] = 'Titre automatique (si un noeud)';
-i18n["Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance"
-i18n['Time window'] = 'Fenêtre de temps'
-i18n['Series Type']
+i18n['line_graph.Auto title (if one node)'] = 'Titre automatique (si un noeud)';
+i18n["line_graph.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance"
+i18n['line_graph.Time window'] = 'Fenêtre de temps'
+i18n['line_graph.Series Type'] = 'Type de séries'
+i18n['line_graph.Line Width'] = 'Largeur de la ligne'
+i18n['line_graph.Enable legend'] = 'Afficher la légende'
+i18n['line_graph.Legend vertical alignement'] = 'Alignement vertical de la légende'
+i18n['line_graph.Legend horizontal alignement'] = 'Alignement horizontal de la légende'
+i18n['line_graph.Legend layout'] = 'Disposition de la légende'
