@@ -59,7 +59,7 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 		},{
 			width: 60,
 			align: 'center',
-			text:  _('Other'),
+			text:  _('Others'),
 			dataIndex: 'aaa_access_other',
 		}]
 		
