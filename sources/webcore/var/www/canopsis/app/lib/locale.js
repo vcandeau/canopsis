@@ -22,6 +22,10 @@
 function _(text) {
 	if (typeof(i18n)!='undefined' && i18n[text]) {
 		return i18n[text]
+	} else if (global.log.level >= 4){
+		if(global.locale != 'en'){
+			global.untranslated.push(text)
+		}
 	}
 	return text
 }
