@@ -26,6 +26,8 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 	store : 'TreeStoreView',
 	model : 'view',
 	
+	leafName : _('view'),
+	
 	reporting : true,
 	
 	initComponent: function() {
