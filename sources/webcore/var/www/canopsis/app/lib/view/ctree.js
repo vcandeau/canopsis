@@ -27,7 +27,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	rootVisible: false,
 	multiSelect: true,
 	
-	leafName : _('leaf'),
+	leafName : 'leaf',
 	
 	//options	
 	opt_bar: true,
