@@ -86,5 +86,7 @@ var global = {
 		week: 604800,
 		month : 2629800,
 		year : 31557600
-	}
+	},
+	
+	untranslated : [],
 }
