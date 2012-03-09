@@ -54,7 +54,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	tooltip: true,
 	autoTitle: true,
 	
-	title_fontSize: 12,
+	title_fontSize: 15,
 	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
