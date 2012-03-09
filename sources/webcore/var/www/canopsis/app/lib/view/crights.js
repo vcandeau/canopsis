@@ -50,8 +50,15 @@ Ext.define('canopsis.lib.view.crights' ,{
 		log.debug('Initializing...', this.logAuthor)
 		
 		//--------------------creating bbar-------------------
-		this.saveButton = Ext.widget('button',{text:_('Save')})
-		this.cancelButton = Ext.widget('button',{text:_('Cancel')})
+		this.saveButton = Ext.widget('button',{
+			text:_('Save'),
+			iconCls: 'icon-save',
+			iconAlign:'right',
+			})
+		this.cancelButton = Ext.widget('button',{
+			text:_('Cancel'),
+			iconCls:'icon-cancel',
+			})
 		this.bbar = [this.cancelButton,'->',this.saveButton]
 		
 		//-------------------binding events--------------------
