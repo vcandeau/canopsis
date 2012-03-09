@@ -189,10 +189,22 @@ Ext.define('canopsis.lib.controller.ctree', {
 			//log.debug('selection')
 			//log.dump(selection[i])
 			//log.dump(selection[i].childNodes.length)
-			if(selection[i].childNodes.length > 0){
-				global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'),"error")
-			} else {
-				selection[i].remove()
+			
+			if(this.getController('Account').check_record_right(selection[i], 'w')){
+				if(selection[i].childNodes.length > 0){
+					global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'),"error")
+					
+				} else {
+					var view_id = selection[i].data.id
+					var maintabs = Ext.getCmp('main-tabs');
+					var tab = Ext.getCmp(view_id + '.tab');
+					
+					if (tab){
+						global.notify.notify(_('Delete failed'),_('You must close view before delete it'), 'error')
+					}else{
+						selection[i].remove()
+					}
+				}
 			}
 		}
 		tree.store.sync()
