@@ -151,6 +151,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 				items:[top_panel,bottom_panel],
 				//layout : 'vbox',
 				//bodyPadding: 4,
+				border: false,
 			})
 
 		this.items = [inner_panel]
