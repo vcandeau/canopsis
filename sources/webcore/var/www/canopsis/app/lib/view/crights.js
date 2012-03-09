@@ -86,7 +86,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		if(this.opt_group_rights == true){
 			this.combo_group_rights = Ext.widget('combo',{
 				forceSelection: true,
-				fieldLabel: _("Groups rights"),
+				fieldLabel: _("Group rights"),
 				queryMode: 'local',
 				displayField: 'text',
 				valueField: 'value',
@@ -221,7 +221,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		this.store = Ext.create('Ext.data.Store', {
 			fields: ['text', 'value'],
 			data : [
-				{text:_('No rights'),value : []},
+				{text:_('No right'),value : []},
 				{text:_('Write and Read'),value : ["r", "w"]},
 				{text:_('Read'),value : ["r"]},
 				{text:_('Write'),value : ["w"]},

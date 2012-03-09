@@ -51,7 +51,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 					name : 'title'
 				},{
 					xtype: "checkbox",
-					fieldLabel: "Show border",
+					fieldLabel: _("Show border"),
 					checked: false,
 					name: "border"
 				},{

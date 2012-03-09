@@ -144,7 +144,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//this.doRedraw()
 		this.startAllTasks();
 		
-		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved.'))
+		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved'))
 	},
 	
 	//Binding
