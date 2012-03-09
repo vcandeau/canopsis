@@ -253,7 +253,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	createChart: function(){
 		this.chart = new Highcharts.Chart(this.options);
-		this.message = this.chart.renderer.text(_("Wait data") + " ...", 50, 50).add()
+		this.message = this.chart.renderer.text(_("Waiting data") + " ...", 50, 50).add()
 	},
 	
 	////////////////////// CORE
