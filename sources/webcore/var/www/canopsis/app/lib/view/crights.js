@@ -33,6 +33,8 @@ Ext.define('canopsis.lib.view.crights' ,{
 	//width: 305,
 	//height: 350,
 	
+	resizable : false,
+	
 	border : false,
 	
 	title : _('Editing rights'),
