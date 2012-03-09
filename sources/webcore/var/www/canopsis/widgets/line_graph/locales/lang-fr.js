@@ -19,4 +19,8 @@
 # ---------------------------------
 */
 
-i18n['line_graph.on'] = "sur";
+i18n['line_graph.on'] = 'sur';
+i18n['Auto title (if one node)'] = 'Titre automatique (si un noeud)';
+i18n["Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance"
+i18n['Time window'] = 'Fenêtre de temps'
+i18n['Series Type']
