@@ -27,6 +27,8 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	rootVisible: false,
 	multiSelect: true,
 	
+	leafName : _('leaf'),
+	
 	//options	
 	opt_bar: true,
 	//opt_bar_bottom: false,
@@ -46,8 +48,8 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		if(this.opt_bar_add){
 			bar_child.push({
 				xtype: 'button',
-				iconCls: 'icon-add',
-				text: _('Add leaf'),
+				iconCls: 'icon-leaf-add',
+				text: _('Add ') + this.leafName,
 				action: 'add_leaf',
 			})
 		}
@@ -55,7 +57,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 		if(this.opt_bar_add_directory){
 			bar_child.push({
 				xtype: 'button',
-				iconCls: 'icon-add',
+				iconCls: 'icon-folder-add',
 				text: _('Add directory'),
 				action: 'add_directory',
 			})
