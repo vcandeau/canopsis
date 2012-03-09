@@ -14,7 +14,6 @@ function easy_install_pylib(){
 }
 
 function install(){
-  install_basic_source $NAME
 	cd $PREFIX
 	easy_install_pylib "celery"
 	install_python_daemon "$PREFIX/bin/celeryd"
