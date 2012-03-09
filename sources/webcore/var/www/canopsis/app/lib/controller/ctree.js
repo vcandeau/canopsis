@@ -141,7 +141,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_selectionchange: function(view, records){
-		log.debug('selectionchange',this.logAuthor);
+		//log.debug('selectionchange',this.logAuthor);
 		var tree = this.tree
 
 		//Enable delete Button
@@ -239,7 +239,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_showMenu: function(view, rec, node, index, e){
-		e.stopEvent();
+		view.select(rec)
 		this.contextMenu.showAt(e.getXY());
 		return false;
 	},
