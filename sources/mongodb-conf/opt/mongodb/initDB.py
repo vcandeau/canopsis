@@ -32,7 +32,9 @@ namespaces = ['cache', 'object']
 
 ## Create accounts and groups
 group1 = crecord({'_id': 'group.root' }, type='group', name='root')
+group1.chmod('o+r')
 group2 = crecord({'_id': 'group.canopsis' }, type='group', name='canopsis')
+group2.chmod('o+r')
 
 account1 = caccount(user="root", group="root")
 account1.firstname = "Call-me"
