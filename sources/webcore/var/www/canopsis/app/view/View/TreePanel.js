@@ -47,22 +47,33 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 			dataIndex: 'aaa_group',
 			text: _('Group')
 		},{
+			width: 60,
+			align: 'center',
 			text:  _('Owner'),
 			dataIndex: 'aaa_access_owner',
 		},{
+			width: 60,
+			align: 'center',
 			text: _('Group'),
 			dataIndex: 'aaa_access_group',
 		},{
+			width: 60,
+			align: 'center',
 			text:  _('Other'),
 			dataIndex: 'aaa_access_other',
 		}]
 		
 		if(this.reporting == true){
 			this.columns.push({
-				width: 16,
+				width: 20,
 				renderer: rdr_export_button
 			})
 		}
+		
+		this.columns.push({
+				width: 16
+			})
+		
 		this.callParent(arguments);
 		
 	},
