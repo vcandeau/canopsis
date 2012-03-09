@@ -34,7 +34,7 @@ Ext.define('widgets.pie.pie' ,{
 	other_label: "Free",
 	
 	autoTitle: true,
-	title_fontSize: 12,
+	title_fontSize: 15,
 	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
