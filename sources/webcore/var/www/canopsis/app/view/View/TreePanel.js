@@ -26,7 +26,7 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 	store : 'TreeStoreView',
 	model : 'view',
 	
-	leafName : _('view'),
+	leafName : 'view',
 	
 	reporting : true,
 	
@@ -47,7 +47,7 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 			dataIndex: 'aaa_group',
 			text: _('Group')
 		},{
-			width: 60,
+			width: 80,
 			align: 'center',
 			text:  _('Owner'),
 			dataIndex: 'aaa_access_owner',
