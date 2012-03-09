@@ -26,7 +26,7 @@ Ext.define('canopsis.store.Widget', {
 	
 	logAuthor : '[store][widget]',
 	
-	item_to_translate : ['title','fieldLabel'],
+	item_to_translate : ['title','fieldLabel','boxLabel'],
 
 	autoLoad: true,
 	sortOnLoad: true,
