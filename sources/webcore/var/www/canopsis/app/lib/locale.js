@@ -19,13 +19,17 @@
 # ---------------------------------
 */
 
-function _(text) {
-	if (typeof(i18n)!='undefined' && i18n[text]) {
-		return i18n[text]
-	} else if (global.log.level >= 4){
-		if(global.locale != 'en'){
-			global.untranslated.push(text)
+function _(text,context) {
+	if (typeof(i18n)!='undefined') {
+		if(i18n[context + '.' + text]){
+			return i18n[context + '.' + text]
+		} else if(i18n[text]){
+			return i18n[text]
+		} else {
+			if(global.locale != 'en'){
+				global.untranslated.push(text)
+			}
+			return text
 		}
 	}
-	return text
 }
