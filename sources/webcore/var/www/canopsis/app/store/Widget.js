@@ -23,9 +23,19 @@ Ext.define('canopsis.store.Widget', {
 	model: 'canopsis.model.widget',
 	
 	storeId: 'store.Widget',
+	
+	logAuthor : '[store][widget]',
+	
+	item_to_translate : ['title','fieldLabel'],
 
 	autoLoad: true,
 	sortOnLoad: true,
+	
+	constructor: function(config)
+    {    
+        this.callParent(arguments);
+        this.on('load',this.check_translate,this)
+    },
 	
 	sorters: [
         {
@@ -43,6 +53,40 @@ Ext.define('canopsis.store.Widget', {
 			totalProperty  : 'total',
 			successProperty: 'success'
 		},
+	},
+	
+	check_translate : function(){
+		if(global.locale != 'en'){
+			log.debug('Attempting to translate widget in store', this.logAuthor)
+			this.each(function(record){
+				var options = record.get('options')
+				if(options != undefined){
+					for(i in options){
+						this.translate(record.get('xtype'),options[i])
+					}
+				}
+			},this)
+		}
+	},
+	//recursive translate function for widget records
+	translate : function(xtype,record_data){
+		//log.debug('translate : ' + record_data.title,this.logAuthor)
+		// for every item
+		for(item_name in record_data){
+			var item = record_data[item_name]
+			//if the item must be translated
+			if(this.item_to_translate.indexOf(item_name) > -1){
+				//log.debug('translating : ' + item)
+				record_data[item_name] = _(item,xtype)
+			} else if(item_name == 'items'){
+				//if there is item in items
+				for(sub_item in item){
+					this.translate(xtype,item[sub_item])
+				}
+			}
+			
+			
+		}
 	}
 	
 });
