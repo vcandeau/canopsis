@@ -374,6 +374,15 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	},
 	
+	dblclick: function(){
+		if (this.chart){
+			if (this.chart.xAxis){
+				this.chart.xAxis[0].setExtremes(null, null, true, false)
+				this.chart.toolbar.remove('zoom');
+			}
+		}
+	},
+	
 	getSerie: function(node, metric_name, bunit){
 		var serie_id = node + '.' +metric_name
 
