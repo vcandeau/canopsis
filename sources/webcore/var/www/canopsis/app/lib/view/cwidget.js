@@ -162,6 +162,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 			Ext.TaskManager.stop(this.task)
 		}
 	},
+	
+	/*
+	dblclick: function(){
+	},
+	*/
 
 	TabOnShow: function(){
 		log.debug('Show', this.logAuthor)
