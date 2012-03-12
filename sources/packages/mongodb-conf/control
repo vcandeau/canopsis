@@ -2,7 +2,7 @@
 
 NAME="mongodb-conf"
 VERSION=0.1
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python canolibs mongodb"
 
@@ -23,7 +23,14 @@ function post_install(){
 	rm /tmp/mongodb-*.sock &> /dev/null || true
 	
 	launch_cmd 1 service mongodb start
-	launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
+	#check if db already exist
+	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
+	then
+		launch_cmd 1 python $PREFIX/opt/mongodb/updateDB.py
+	else
+		launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
+	fi
+	
 	launch_cmd 1 service mongodb stop
 	
 	check_code $? "Impossible to init mongoDB ..."
@@ -45,6 +52,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	launch_cmd 1 python $PREFIX/opt/mongodb/updateDB.py
 	check_code $?
 }
 

@@ -128,7 +128,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 			this.combo_owner = Ext.widget('combo',{
 				forceSelection: true,
 				fieldLabel: _("Owner"),
-				queryMode: 'remote',
+				queryMode: 'local',
 				displayField: 'user',
 				valueField: 'user',
 				store : 'Account'
@@ -140,7 +140,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 			this.combo_group = Ext.widget('combo',{
 				forceSelection: true,
 				fieldLabel: _("Group"),
-				queryMode: 'remote',
+				queryMode: 'local',
 				displayField: 'crecord_name',
 				valueField: 'crecord_name',
 				store : 'Group'
