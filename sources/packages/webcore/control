@@ -34,7 +34,10 @@ function post_remove(){
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
 	rm -Rf $PREFIX/var/www/canopsis/widgets/* &> /dev/null || true
-	check_code $?
+
+	# Delete old init script
+	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
+	rm $PREFIX/etc/daemon.d/webserver.conf &> /dev/null || true
 }
 
 function post_update(){
