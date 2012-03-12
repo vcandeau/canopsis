@@ -45,11 +45,14 @@ Ext.define('canopsis.lib.store.cstore', {
    //function for search and filter
    setFilter : function(filter){
 		log.debug('Setting base store filter', this.logAuthor)
-		this.baseFilter = filter;
 		if(typeof(filter) == 'object'){
-			filter = Ext.JSON.encode(filter);
+			this.baseFilter = filter;
+		}else{
+			this.baseFilter = Ext.JSON.decode(filter);
 		}
-		this.proxy.extraParams.filter = filter;
+
+		// For first load
+		this.proxy.extraParams.filter = Ext.JSON.encode(this.baseFilter);
    },
 
    getFilter : function(){
@@ -70,15 +73,16 @@ Ext.define('canopsis.lib.store.cstore', {
 	   
 		log.debug('Building filter request', this.logAuthor)
 		if(this.baseFilter){
-			var newObject = Ext.JSON.decode(this.baseFilter);
+			var newObject = this.baseFilter;
 			newObject = this.getAndFilter([newObject, filter]);
 		} else {
 			var newObject = filter;
 		}
+
 		this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
 		log.debug('Filter: ' + this.proxy.extraParams.filter, this.logAuthor);
+
 		if (autoLoad){
-			log.debug('ilter: ' + this.proxy.extraParams.filter, this.logAuthor);
 			this.load();
 		}
    },

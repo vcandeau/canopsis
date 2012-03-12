@@ -56,7 +56,12 @@ def rest_get(namespace, ctype=None, _id=None):
 	onlyWritable	= request.params.get('onlyWritable', default=False)
 
 	if filter:
-		filter = json.loads(filter)
+		try:
+			filter = json.loads(filter)
+		except Exception, err:
+			logger.error("Filter decode: %s" % err)
+			filter = None
+			
 
 	msort = []
 	if sort:
