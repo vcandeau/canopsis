@@ -24,39 +24,73 @@ from cselector import cselector
 from crecord import crecord
 from cconfig import cconfig
 
-import logging
 import time
 
 ##set root account
 account1 = caccount(user="root", group="root")
-account1.firstname = "Call-me"
-account1.lastname = "God"
-account1.passwd("root")
 
 ##get storage
 storage = cstorage(account=account1, namespace='object')
 
-## add root directory
-record1 = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
-storage.put(record1)
+#remove old view manager
+storage.remove('view.config_editor',account=account1)
 
 ## add view manager
-record2 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
-record2.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
-storage.put(record1)
+try:
+	record_in_db = storage.get('view.view_manager')
+except:
+	record1 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
+	record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
+	record1.chmod('o+r')
+	storage.put(record1)
 
-##find all views
-views = storage.find({'crecord_type':'view'}, account=account1)
-for view in views:
-	if view._id not in ['view._default_.dashboard','view.ComponentDetails','view.components','view.resources','view.group_manager','view.account_manager','view.view_manager']:
-		##update all views
-		print view._id
-		view.data['leaf'] = True
-		record1.add_children(view)
-		storage.put(view)
-storage.put(record1)
+## add root directory
+try:
+	record_in_db = storage.get('directory.root')
+except:
+	rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+	rootdir.chmod('o+r')
+	storage.put(rootdir)
+
+##find all account and create root dir for them
+account_list = storage.find({'crecord_type':'account'}, account=account1)
+accounts_names = []
+
+#for each account
+for record in account_list:
+	account = caccount(record)
+	user = account.name
+	print('|--- update %s views ---|' % user)
+	#test if user root dir existe, then if not -> add directory view
+	try :
+		record_in_db = storage.get('directory.root.%s' % user)
+	except:
+		record_in_db = None
 		
+	if record_in_db is None:
+		userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
+		userdir.chown(user)
+		userdir.chgrp(user)
+		userdir.chmod('g-w')
+		userdir.chmod('g-r')
 
+		storage.put(userdir)
+		rootdir.add_children(userdir)
 
-
-
+		storage.put(rootdir)
+		storage.put(userdir)
+		
+		#search all user view and add them to root directory
+		views = storage.find({'crecord_type':'view'}, account=account)
+		for view in views:
+			#if this account is the owner of the view
+			if view.owner == user:
+				#if view is not in administration views
+				if view._id not in ['view._default_.dashboard','view.ComponentDetails','view.components','view.resources','view.group_manager','view.account_manager','view.view_manager']:
+					if not view.parent:
+						print(view.dump()['crecord_name'])
+						view.data['items'] = []
+						view.data['leaf'] = True
+						userdir.add_children(view)
+						storage.put(view)
+		storage.put(userdir)
