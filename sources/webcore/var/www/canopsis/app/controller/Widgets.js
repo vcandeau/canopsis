@@ -51,10 +51,15 @@ Ext.define('canopsis.controller.Widgets', {
 			this.check_translate();
 			
 			// small hack
+			Ext.Function.defer(function(){ 
+				this.fireEvent('loaded');
+			 },1000, this);
+
+			/*
 			setTimeout(function(ctrl){ 
 				ctrl.fireEvent('loaded');
 			 },1000, this);
-
+			*/
 		}, this);
     },
     
