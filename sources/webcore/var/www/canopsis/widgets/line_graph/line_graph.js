@@ -349,9 +349,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	checkTimewindow: function(){
 		var me = this.options.cwidget
+		var now = Date.now()
 		
-		log.debug('Check Time window', me.logAuthor)
-		if (! me.shift && this.series.length > 0){
+		if (! me.shift && this.series.length > 0 && now < (me.last_from + 500)){
+			log.debug('Check Time window', me.logAuthor)
+			
 			var extremes = this.series[0].xAxis.getExtremes()
 			var data_window = extremes.max - extremes.min
 			me.shift = data_window > (me.time_window*1000)
@@ -375,10 +377,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	},
 	
 	dblclick: function(){
-		if (this.chart){
+		if (this.chart && ! this.isDisabled()){
 			if (this.chart.xAxis){
 				this.chart.xAxis[0].setExtremes(null, null, true, false)
-				this.chart.toolbar.remove('zoom');
+				try{
+					this.chart.toolbar.remove('zoom');
+				}catch(err){
+					log.debug("Toolbar zoom doesn't exist", this.logAuthor)
+				}
 			}
 		}
 	},
