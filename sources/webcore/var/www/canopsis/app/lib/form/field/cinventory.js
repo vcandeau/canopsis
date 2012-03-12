@@ -147,6 +147,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		
 		this.selection_grid = Ext.create('canopsis.lib.view.cgrid', {
 			title: _("Selection"),
+			border: true,
 			multiSelect: this.multiSelect,
 			opt_bar: false,
 			border: true,
