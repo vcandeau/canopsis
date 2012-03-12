@@ -226,8 +226,13 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 					},
 				},
 				
-				autoLoad: true
+				autoLoad: false
 		})
+
+		if (this.metrics)
+			this.search_store.setFilter({'perf_data_array': {'$exists': true}})
+
+		this.search_store.load()
 		
 		this.search_grid = Ext.create('canopsis.lib.view.cgrid', {
 			multiSelect: this.multiSelect,
