@@ -63,7 +63,7 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 			dataIndex: 'aaa_access_other',
 		}]
 		
-		if(this.reporting == true){
+		if(global.reporting == true){
 			this.columns.push({
 				width: 20,
 				renderer: rdr_export_button

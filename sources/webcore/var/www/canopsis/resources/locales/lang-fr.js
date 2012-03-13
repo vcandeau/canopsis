@@ -155,7 +155,9 @@ var i18n={
 	'Here you choose the widget nodeId': "Ici vous sélectionner l'identifiant du noeud",
 	'Widget Options': 'Options du gadget',
 	'Here you can set specific option type of the selected widget' : 'Ici vous pouvez fixer les options du gadget sélectionné',
-	'Edit active view': 'édition vue active',
+	'Edit active view': 'Édition vue active',
+	'Edit groups':		'Éditer les groupes',
+	'Edit accounts':	'Éditer les comptes',
 	'New view':			'nouvelle vue',
 	'no title':			'pas de titre',
 	'No title':			'Pas de titre',
@@ -189,5 +191,6 @@ var i18n={
 	'Legend': 'légende',
 	'Filter': 'Filtre',
 	'Border color': 'Couleur bordure',
+	
 	
 }

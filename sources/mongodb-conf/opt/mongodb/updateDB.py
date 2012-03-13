@@ -43,6 +43,36 @@ except:
 	record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]
 	record1.chmod('o+r')
 	storage.put(record1)
+	
+##############################update administration views##################################
+record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
+record1.chmod('o+r')
+record1.data['rowHeight'] =  300
+record1.data['items'] = [{'position':{'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'},'id': 'widget-dashboard'}]
+storage.put(record1)
+
+record1 = crecord({'_id': 'view.components' }, type='view', name='Components')
+record1.chmod('o+r')
+record1.data['items'] = [ { 'position': {'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{'xtype': 'list', 'filter': '{"source_type":"component"}', 'show_resource': False},'id':'widget-components'} ]
+storage.put(record1)
+
+record1 = crecord({'_id': 'view.resources' }, type='view', name='Resources')
+record1.chmod('o+r')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{ 'xtype': 'list', 'filter': '{"source_type":"resource"}'},'id': 'widget-resources'} ]
+storage.put(record1)
+
+### Account
+record1 = crecord({'_id': 'view.account_manager' }, type='view', name='Accounts')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'AccountGrid'},'id': 'widget-accounts'} ]
+storage.put(record1)
+
+### Group
+record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'GroupGrid'},'id': 'widget-group-manager'} ]
+storage.put(record1)
+
+############################################################################################
+
 
 ## add root directory
 try:
