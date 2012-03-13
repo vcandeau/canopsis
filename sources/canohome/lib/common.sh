@@ -34,11 +34,11 @@ function detect_os(){
 		echo " + $DIST $DIST_VERS"
 	elif [ $REDHAT -ne 0 ]; then
 		DIST="REDHAT"
-		DIST_VERS=`lsb_release -r | cut -f2`
+		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
 	elif [ $CENTOS -ne 0 ]; then
 		DIST="CENTOS"
-		DIST_VERS=`lsb_release -r | cut -f2`
+		DIST_VERS=`lsb_release -r | cut -f2 | cut -d '.' -f1`
 		echo " + $DIST $DIST_VERS"
 	elif [ $ARCHL -ne 0 ]; then
 		DIST="ARCHLINUX"

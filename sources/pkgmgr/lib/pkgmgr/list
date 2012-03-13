@@ -25,8 +25,9 @@ function create_view () {
 	INFO_DIST_VERS=$(cat $VARLIB_PATH/info | grep "^DIST_VERS|" | tail -n1 | cut -d '|' -f2)
 	if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
 		echo
-		echo "System     : `echo $INFO_DIST $INFO_DIST_VERS $INFO_ARCH`"
-		echo "Last update: `echo $LAST_UPDATE`"
+		echo "System     : $INFO_DIST $INFO_DIST_VERS $INFO_ARCH"
+		echo "Repo       : $REPO_URL$REPO_BASE ($REPO_VERS)"
+		echo "Last update: $LAST_UPDATE"
 		echo
 		echo -e "#=============================================================#"
 		echo -e "| Package                 Version             Status          |"
