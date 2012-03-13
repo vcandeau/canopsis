@@ -29,9 +29,9 @@ function create_view () {
 		echo "Repo       : $REPO_URL$REPO_BASE ($REPO_VERS)"
 		echo "Last update: $LAST_UPDATE"
 		echo
-		echo -e "#=============================================================#"
-		echo -e "| Package                 Version             Status          |"
-		echo -e "#=============================================================#"
+		echo -e "#================================================================================#"
+		echo -e "| Package                     Version                            Status          |"
+		echo -e "#================================================================================#"
 		while read line; do
 			FIELD=1
 			L_PNAME=$(echo "$line" | cut -d '|' -f$FIELD)
@@ -39,12 +39,22 @@ function create_view () {
 			L_REL=$(db_parse "release" "$line")
 			L_STATUS=$(db_parse "status" "$line")
 			R_INFO=$(cat $REMOTE_DB_PATH | grep "^$L_PNAME|" | tail -n1)
+
 			if [[ -z "$R_INFO" ]];then
 				L_STATUS="\e[42m \033[0m Installed"
-				echo -e "  $L_PNAME(*)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+				echo -e "  $L_PNAME(*)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
 			else
 				R_VERS=$(db_parse "version" "$R_INFO")
 				R_REL=$(db_parse "release" "$R_INFO")
+
+				_R_VERS=$(echo ${R_VERS//[^0-9]/})
+            	_L_VERS=$(echo ${L_VERS//[^0-9]/})
+            	_R_REL=$(echo ${R_REL//[^0-9]/})
+            	_L_REL=$(echo ${L_REL//[^0-9]/})
+
+            	VER_CALC=`echo "$_R_VERS > $_L_VERS" | bc`
+            	REL_CALC=`echo "$_R_REL > $_L_REL" | bc`
+
 				if [ -z "$L_STATUS" ]; then
 					L_STATUS="\e[0;101m \033[0m Not Installed"
 					L_VERS_INFO=""
@@ -55,18 +65,26 @@ function create_view () {
 							L_STATUS="\e[42m \033[0m Up-to-date"
 							R_VERS_INFO=""
 							L_VERS_INFO=$L_VERS-$L_REL
-						else
-							L_STATUS="\E[43;31m \033[0m New Release"
-							R_VERS_INFO=[$R_VERS-$R_REL]
+						elif [ $REL_CALC == 1 ]; then
+							L_STATUS="\e[43;31m \033[0m New Release"
+							R_VERS_INFO="[$R_VERS-$R_REL]"
+							L_VERS_INFO="$L_VERS-$L_REL -> "
+						elif [ $REL_CALC == 0 ]; then
+							L_STATUS="\e[41m \033[0m Older Release"
+							R_VERS_INFO="[$R_VERS-$R_REL]"
 							L_VERS_INFO="$L_VERS-$L_REL -> "
 						fi
-					else
-						L_STATUS="\E[43;31m \033[0m New Version"
+					elif [ $VER_CALC == 1 ]; then
+						L_STATUS="\e[43;31m \033[0m New Version"
 						R_VERS_INFO=[$R_VERS-$R_REL]
 						L_VERS_INFO="$L_VERS-$L_REL -> "
+					elif [ $VER_CALC == 0 ]; then
+						L_STATUS="\e[41m \033[0m Older Version"
+                        R_VERS_INFO=[$R_VERS-$R_REL]
+                        L_VERS_INFO="$L_VERS-$L_REL -> "
 					fi
 				fi
-				echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+				echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
 			fi
 		done < "$LOCAL_DB_PATH"
 
@@ -82,7 +100,7 @@ function create_view () {
 
 			if [ -z "$L_INFO" ]; then
 				L_STATUS="\e[0;101m \033[0m Not Installed"
-				echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+				echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
 			fi
 		done < "$REMOTE_DB_PATH"
 	echo
