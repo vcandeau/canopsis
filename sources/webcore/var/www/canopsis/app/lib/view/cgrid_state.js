@@ -28,6 +28,8 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 	opt_paging: false,
 	opt_bar: false,
+	
+	opt_column_sortable : false,
 
 	opt_show_state_type: true,
 	opt_show_component: false,
@@ -64,7 +66,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			this.columns.push({
 				header: '',
 				width: 25,
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
 				});
@@ -73,7 +75,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		if(this.opt_show_state_type){
 			this.columns.push({
 				header: 'ST',
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				width: 25,
 				dataIndex: 'state_type',
 				renderer: rdr_state_type
@@ -83,7 +85,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		if(this.opt_show_state){
 			this.columns.push({
 				header: _('S'),
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				width: 25,
 				dataIndex: 'state',
 				renderer: rdr_status
@@ -93,7 +95,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		if(this.opt_show_last_check){
 			this.columns.push({
 				header: _('Last check'),
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				flex: 1,
 				dataIndex: 'timestamp',
 				renderer: rdr_tstodate
@@ -104,7 +106,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			this.columns.push({
 				header: _('Component'),
 				flex: 1,
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				dataIndex: 'component',
 			});
 		}
@@ -113,7 +115,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			this.columns.push({
 				header: _('Resource'),
 				flex: 1,
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				dataIndex: 'resource',
 			});
 		}
@@ -122,7 +124,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			this.columns.push({
 				header: _('Output'),
 				flex: 4,
-				sortable: false,
+				sortable: this.opt_column_sortable,
 				dataIndex: 'output',
 			});
 		}			

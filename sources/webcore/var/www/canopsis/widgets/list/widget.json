@@ -81,6 +81,11 @@
 								"boxLabel": "Plugin's output",
 								"checked": true,
 								"name": "show_output"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Column sortable",
+								"checked": false,
+								"name": "column_sort"
 							}]
 				}]
 		},{
