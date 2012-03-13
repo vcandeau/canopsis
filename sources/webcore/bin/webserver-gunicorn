@@ -51,9 +51,10 @@ function cmd () {
 			if [ $(check) -eq 1 ]; then
 				echo " + Already started ..."
 			else
+				start
+				sleep 0.5
 				PID=$(getPid)
 				echo " + $PID"
-				start
 			fi
 		;;  
 		stop)
