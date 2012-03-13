@@ -48,6 +48,7 @@ Ext.define('canopsis.controller.Widgets', {
 				}
 			}, this);
 			
+			//translate the store
 			this.check_translate();
 			
 			// small hack
@@ -55,14 +56,6 @@ Ext.define('canopsis.controller.Widgets', {
 				this.fireEvent('loaded');
 			 },1000, this);
 
-			//translate the store
-			//this.check_translate();
-
-			/*
-			setTimeout(function(ctrl){ 
-				ctrl.fireEvent('loaded');
-			 },1000, this);
-			*/
 		}, this);
     },
     
