@@ -53,10 +53,13 @@ clean_tree () {
 parse_install_deps () {
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
+		trap 'error ${LINENO} "Package $dep is a dependencie needed but its not available on repositorie"' ERR
 		local tmp
 		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
 		if [ $tmp -le 0 ]; then
+			echo "Package $dep is a dependencie package needed but it's unkown on repositorie" >> $LOG_FILE
 			echo "[`date +'%T %x'`][ERR][${LINENO}] Package $dep is a dependencie package needed but it is unknown on repositorie" >> $LOG_FILE
+			echo 
 			exit 1 && exit 1
 		fi
 		local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)

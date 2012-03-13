@@ -78,7 +78,7 @@ db_parse () {
 
 check_repo () {
 	log_info "Check if repositorie is available ($REPO_URL)"
-	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $REPO_URL)
+	response=$($curl_cmd -I --write-out %{http_code} --silent --output /dev/null $REPO_URL)
 	if [ "$response" != "200" ]; then
 		error ${LINENO} "Check repositorie\nCurl return $response code in http header of $REPO_URL" 1
 	fi
@@ -87,7 +87,7 @@ check_repo () {
 clean_packages_list () {
 	LIST_PATH=$1
 	FIELD_NAME=1
-	log_info "Clean useless arch and sitro from Packages.list"
+	log_info "Clean useless arch and distro from Packages.list"
 	# Remove useless ARCH
 	while read line; do
 		C_PNAME=$(echo "$line" | cut -d '|' -f$FIELD_NAME)
@@ -124,7 +124,6 @@ clean_packages_list () {
 }
 
 update_db () {
-	log_info "Download Packages.list"
 	echo " :: Download Packages.list ..."
 	check_repo
 	if [ -z "$REPO_BASE" ]; then
@@ -137,12 +136,12 @@ update_db () {
 	trap 'error ${LINENO} "Remove old database ($REMOTE_DB_PATH)"' ERR
 	rm -Rf "$REMOTE_DB_PATH"
 	log_info "Download Packages.list"
-	response=$(curl -I --write-out %{http_code} --silent --output /dev/null "$FINAL_URL/Packages.list")
+	response=$($curl_cmd -I --write-out %{http_code} --silent --output /dev/null "$FINAL_URL/Packages.list")
     if [ "$response" != "200" ]; then
         error ${LINENO} "Failure during download Packages.list ($FINAL_URL/Packages.list | $response)" 1
     else
         trap 'error ${LINENO} "Failure during download Packages.list ($FINAL_URL/Packages.list)"' ERR
-		curl --silent -o "$REMOTE_DB_PATH" "$FINAL_URL/Packages.list"
+		$curl_cmd --silent -o "$REMOTE_DB_PATH" "$FINAL_URL/Packages.list"
     fi
 	clean_packages_list "$REMOTE_DB_PATH"
 	log_info "Update Last Update in info file"
