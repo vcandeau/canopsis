@@ -42,7 +42,8 @@ Ext.define('canopsis.controller.Widgets', {
 					if (record.data.locales.indexOf(global.locale) >= 0){
 						log.debug(' + loading locale '+global.locale+' ...', this.logAuthor);
 						var name ='widgets.' + record.data.xtype + '.locales.lang-' +  global.locale;
-						Ext.require(name);
+						//Ext.require(name);
+						Ext.Loader.syncRequire(name)
 					}
 				}
 			}, this);
@@ -55,11 +56,6 @@ Ext.define('canopsis.controller.Widgets', {
 				this.fireEvent('loaded');
 			 },1000, this);
 
-			/*
-			setTimeout(function(ctrl){ 
-				ctrl.fireEvent('loaded');
-			 },1000, this);
-			*/
 		}, this);
     },
     

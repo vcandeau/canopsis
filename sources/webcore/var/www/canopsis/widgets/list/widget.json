@@ -81,7 +81,56 @@
 								"boxLabel": "Plugin's output",
 								"checked": true,
 								"name": "show_output"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Column sortable",
+								"checked": true,
+								"name": "column_sort"
 							}]
+				},{
+						"xtype": "fieldset",
+						"title": "Default sorting",
+						"collapsible": false,
+						"items":[
+							{
+								"xtype": "combobox",
+								"name": "default_sort_column",
+								"fieldLabel": "Default column",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "state",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "source_type", "text": "Source type"},
+										{"value": "state_type", "text": "State type"},
+										{"value": "state", "text": "State"},
+										{"value": "timestamp", "text": "Timestamp"},
+										{"value": "component", "text": "Component"},
+										{"value": "resource", "text": "Resource"},
+										{"value": "output", "text": "Output"}
+									]
+								}
+							},{
+								"xtype": "combobox",
+								"name": "default_sort_direction",
+								"fieldLabel": "Default direction",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "DESC",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "DESC", "text": "Descending"},
+										{"value": "ASC", "text": "Ascending"}
+									]
+								}
+							}						
+						]
 				}]
 		},{
 			"title": "Filter",
