@@ -32,7 +32,7 @@ function stop (){
 
 function check (){
 	PID=$(getPid)
-	echo $(ps ax | grep -E "^$PID " | wc -l)
+	echo $(ps ax | grep -E "^ *$PID " | wc -l)
 }
 
 function getPid (){
