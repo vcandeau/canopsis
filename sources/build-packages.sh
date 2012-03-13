@@ -2,14 +2,14 @@
 
 SRC="/usr/local/src/canopsis"
 REPO_URL="http://repo.canopsis.org/daily"
-REPO_GIT=
+REPO_GIT="git://forge.canopsis.org/canopsis.git"
 CMD_INSTALL="pkgmgr install --force-yes cmaster"
 
 #### Git Pull
 echo "-------> Clone repository"
 cd /usr/local/src
 if [ ! -e canopsis ]; then
-	git clone git://forge.canopsis.org/canopsis.git
+	git clone $REPO_GIT
 	git submodule init
 fi
 echo " + Ok"
