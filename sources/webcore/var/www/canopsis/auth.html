@@ -84,6 +84,7 @@
 	
 					var authkey = $.encoding.digests.hexSha1Str(passwd_sha1 + timestamp.toString());
 					
+					form.passwd_sha1 = passwd_sha1
 					form.setValues({password : authkey});
 					winform.getForm().submit({
 						method: 'GET',
@@ -99,15 +100,35 @@
 							}
 						},
 						failure: function(form, action) {
-							form.setValues({password : ''});
+							var passwd_sha1 = form.passwd_sha1
 							
-							if (action.response.status == 0){
-								Ext.MessageBox.alert(_('authentification failed'), _('Impossible to deal with webserver'));
-							}else if (action.response.status == 403){
-								Ext.MessageBox.alert(_('authentification failed'), _('Login or password invalid'), function(){
-									form.findField('password').focus(true)
-								});
-							}	
+							//relaunch auth with sha 1 mdp
+							form.setValues({password : passwd_sha1});
+							form.submit({
+								method: 'GET',
+								params: {
+									shadow: 'True',
+								},
+								success: function(form, action) {
+									var param = getURLParameter('url');	
+									if(param != 'null'){
+										window.location.href=param;
+									} else {
+										window.location.href='/';
+									}
+								},
+								failure: function(form, action) {
+									form.setValues({password : ''});
+									
+									if (action.response.status == 0){
+										Ext.MessageBox.alert(_('authentification failed'), _('Impossible to deal with webserver'));
+									}else if (action.response.status == 403){
+										Ext.MessageBox.alert(_('authentification failed'), _('Login or password invalid'), function(){
+											form.findField('password').focus(true)
+										});
+									}	
+								}
+							})
 							
 						}
 					});
