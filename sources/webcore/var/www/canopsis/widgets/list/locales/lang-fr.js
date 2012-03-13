@@ -27,7 +27,10 @@ i18n['list.Enable pagging'] = 'Activer la pagination'
 i18n['list.Source type icon'] = "Type d'icone source"
 i18n['list.State type'] = "Type d'état"
 i18n['list.State'] = 'Etat'
-i18n["list.Last check's time"] = 'Heure de dernier contrôle'
-i18n["list.Plugin's output"] = 'Sortie du plugin'
-
+i18n['list.Last check\'s time'] = 'Heure de dernier contrôle'
+i18n['list.Plugin\'s output'] = 'Sortie du plugin'
+i18n['list.Column sortable'] = 'Colonne triable'
+i18n['list.Default sorting'] = 'Tri par défaut'
+i18n['list.Default column'] = 'Colonne par défaut'
+i18n['list.Default direction'] = 'sens par défaut'
 

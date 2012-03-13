@@ -41,6 +41,10 @@ Ext.define('widgets.list.list' ,{
 	bar: true,
 	hideHeaders: false,
 	scroll: true,
+	column_sort: true,
+	
+	default_sort_column : 'state',
+	default_sort_direction : 'DESC',
 	//..
 	
 	initComponent: function() {
@@ -56,11 +60,8 @@ Ext.define('widgets.list.list' ,{
 			pageSize: global.pageSize,
 			remoteSort: true,
 			sorters: [{
-				property : 'component',
-				direction: 'ASC'
-			},{
-				property : 'resource',
-				direction: 'ASC'
+				property : this.default_sort_column,
+				direction: this.default_sort_direction
 			}],
 
 			opt_show_component: this.show_component,
@@ -70,6 +71,8 @@ Ext.define('widgets.list.list' ,{
 			opt_show_source_type: this.show_source_type,
 			opt_show_last_check: this.show_last_check,
 			opt_show_output: this.show_output,
+			
+			opt_column_sortable : this.column_sort,
 		
 			opt_bar: this.bar,
 			opt_bar_search: this.bar_search,
