@@ -84,7 +84,7 @@
 							},{
 								"xtype": "checkbox",
 								"boxLabel": "Column sortable",
-								"checked": false,
+								"checked": true,
 								"name": "column_sort"
 							}]
 				}]
