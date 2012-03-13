@@ -41,6 +41,7 @@ Ext.define('widgets.list.list' ,{
 	bar: true,
 	hideHeaders: false,
 	scroll: true,
+	column_sort: true,
 	//..
 	
 	initComponent: function() {
@@ -70,6 +71,8 @@ Ext.define('widgets.list.list' ,{
 			opt_show_source_type: this.show_source_type,
 			opt_show_last_check: this.show_last_check,
 			opt_show_output: this.show_output,
+			
+			opt_column_sortable : this.column_sort,
 		
 			opt_bar: this.bar,
 			opt_bar_search: this.bar_search,

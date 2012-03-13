@@ -29,5 +29,5 @@ i18n['list.State type'] = "Type d'état"
 i18n['list.State'] = 'Etat'
 i18n["list.Last check's time"] = 'Heure de dernier contrôle'
 i18n["list.Plugin's output"] = 'Sortie du plugin'
-
+i18n["list.Column sortable"] = 'Colonne triable'
 
