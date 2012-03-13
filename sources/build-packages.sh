@@ -41,8 +41,6 @@ cd $SRC/sources
 pkill -u canopsis &> /dev/null || true
 ./build-install.sh -c
 
-exit
-
 ##### Install from package
 echo "-------> Install from packages"
 
@@ -64,11 +62,18 @@ if [ $? -ne 0 ]; then exit 1; fi
 echo "---> Clean bootstrap"
 su - canopsis -c "rm -Rf tmp/canopsis_installer*"
 
-echo "---> Start HTTP Repo"
+echo "---> Make Repo"
 cd $SRC/binaries
-./mk_repo ./
+./mk_repo $SRC/binaries
+if [ $? -ne 0 ]; then exit 1; fi
+
+echo "---> Start HTTP Repo"
 python -m SimpleHTTPServer 80 &
+WWWCODE=$?
 WWWPID=$!
+if [ $WWWCODE -ne 0 ]; then exit 1; fi
+
+echo "-----> + PID: $WWWPID"
 
 ## Configure pkgmgr
 echo "---> Configure pkgmgr"
@@ -78,12 +83,12 @@ sed -i 's#repo.canopsis.org#localhost#g' /opt/canopsis/etc/pkgmgr.conf
 ## Start install
 echo "---> Start install ($CMD_INSTALL)"
 su - canopsis -c "$CMD_INSTALL"
-if [ $? -ne 0 ]; then exit 1; kill -9 $WWWPID; fi
+if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
 ## Check install
 echo "---> Check install"
 su - canopsis -c "opt/canotools/unittest.sh"
-if [ $? -ne 0 ]; then exit 1; kill -9 $WWWPID; fi
+if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
 echo "---> Clean"
 kill -9 $WWWPID
