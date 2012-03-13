@@ -18,18 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-warning_deps () {
-	echo $1
-	exit 1
-}
-
 build_install_deps_tree () {
 	init_tmp
 	log_info "Create deps tree"
 	parse_install_deps $@
 	clean_tree
 	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
-	rm -Rf $TMP_FILE	
+	#rm -Rf $TMP_FILE	
 }
 
 build_remove_deps_tree () {
@@ -47,33 +42,31 @@ init_tmp () {
 }
 
 clean_tree () {
-	sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++'
+	pkg_list_deps=$(sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++')
 }
 
 parse_install_deps () {
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
-		trap 'error ${LINENO} "Package $dep is a dependencie needed but its not available on repositorie"' ERR
 		local tmp
+		trap 'error ${LINENO} "Package $dep must be install but its not available on repositorie"' ERR
 		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
 		if [ $tmp -le 0 ]; then
-			echo "Package $dep is a dependencie package needed but it's unkown on repositorie" >> $LOG_FILE
-			echo "[`date +'%T %x'`][ERR][${LINENO}] Package $dep is a dependencie package needed but it is unknown on repositorie" >> $LOG_FILE
-			echo 
-			exit 1 && exit 1
-		fi
-		local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
-		local L_DEPS=$(db_parse "deps" "$DBINFO")
-		if [ -z "$L_DEPS" ]; then 
-			NB_DEPS=0
-		else 
-			NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l)
-		fi
-
-		if [ $NB_DEPS -gt 0 ]; then
-			parse_install_deps $L_DEPS
+			exit 1
 		else
-			echo "$L_DEPS" "$D_TREE" > $TMP_FILE
+			local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
+			local L_DEPS=$(db_parse "deps" "$DBINFO")
+			if [ -z "$L_DEPS" ]; then 
+				NB_DEPS=0
+			else 
+				NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l)
+			fi
+
+			if [ $NB_DEPS -gt 0 ]; then
+				parse_install_deps $L_DEPS
+			else
+				echo "$L_DEPS $D_TREE" >> $TMP_FILE
+			fi
 		fi
 	done
 }
