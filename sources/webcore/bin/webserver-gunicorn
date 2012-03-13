@@ -23,7 +23,7 @@ function start (){
 function stop (){
 	PID=$(getPid)
 	kill $PID
-	sleep 1
+	sleep 2
 	if [ $(check) -eq 1 ]; then
 		echo " + Failed"
 		exit 1
@@ -32,7 +32,7 @@ function stop (){
 
 function check (){
 	PID=$(getPid)
-	echo $(ps ax | grep "^\s*$PID\s" | wc -l)
+	echo $(ps ax | grep -E "^$PID " | wc -l)
 }
 
 function getPid (){
@@ -47,15 +47,18 @@ function getPid (){
 function cmd () {
 	case $1 in
 		start)
-			echo "Starting..."
+			echo "Starting Webserver ..."
 			if [ $(check) -eq 1 ]; then
 				echo " + Already started ..."
 			else
 				start
+				sleep 0.5
+				PID=$(getPid)
+				echo " + $PID"
 			fi
 		;;  
 		stop)
-			echo "Stoping..."
+			echo "Stoping Webserver ..."
 			if [ $(check) -eq 1 ]; then
 				stop
 			else
