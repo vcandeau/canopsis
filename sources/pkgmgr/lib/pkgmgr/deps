@@ -56,7 +56,9 @@ parse_install_deps () {
 		local tmp
 		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
 		if [ $tmp -le 0 ]; then
+			echo "Package $dep is a dependencie package needed but it's unkown on repositorie"
 			echo "[`date +'%T %x'`][ERR][${LINENO}] Package $dep is a dependencie package needed but it is unknown on repositorie" >> $LOG_FILE
+			echo 
 			exit 1 && exit 1
 		fi
 		local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
