@@ -48,14 +48,20 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="editView"]' : {
 				click : this.editView,
 			},
-			'Mainbar menuitem[action="newView"]' : {
-				click : this.newView,
+			'Mainbar menuitem[action="editAccount"]' : {
+				click : this.openAccount,
 			},
 			'Mainbar menuitem[action="showconsole"]' : {
 				click : this.showconsole,
 			},
 			'Mainbar menuitem[action="openViews"]' : {
 				click : this.openViews,
+			},
+			'Mainbar menuitem[action="editGroup"]' : {
+				click : this.openGroup,
+			},
+			'Mainbar menuitem[action="newView"]' : {
+				click : this.newView,
 			},
 			'Mainbar menuitem[action="exportView"]' : {
 				click : this.exportView,
@@ -164,6 +170,14 @@ Ext.define('canopsis.controller.Mainbar', {
 	
 	openViews: function(){
 		this.getController('Tabs').open_view({ view_id: 'view.view_manager', title: _('Views') })
+	},
+	
+	openAccount: function(){
+		this.getController('Tabs').open_view({ view_id: 'view.account_manager', title: _('Accounts') })
+	},
+	
+	openGroup: function(){
+		this.getController('Tabs').open_view({ view_id: 'view.group_manager', title: _('Groups') })
 	},
 	
 	editView: function(){
