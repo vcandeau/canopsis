@@ -30,7 +30,7 @@ if [ -e $SRC/builded ]; then
 	if [ $? -ne 0 ]; then exit 1; fi
 else
 	./build-install.sh -cup
-	if [ $? -ne 0 ]; then exit 1; fi*
+	if [ $? -ne 0 ]; then exit 1; fi
 	touch $SRC/builded	
 fi
 
@@ -95,3 +95,7 @@ kill -9 $WWWPID
 pkill -u canopsis &> /dev/null || true
 cd $SRC/sources
 ./build-install.sh -c
+
+## End
+echo "---> Package ready"
+echo "+ $SRC/binaries"
