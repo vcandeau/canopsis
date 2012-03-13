@@ -124,9 +124,9 @@ curl_settings () {
 		curl_cmd="$curl_cmd --proxy-user $HTTP_AUTH"
 	fi
 	if [ -n "$TIMEOUT" ]; then
-		curl_cmd="$curl_cmd --max-time $TIMEOUT"
+		curl_cmd="$curl_cmd --connect-timeout $TIMEOUT"
 	else
-		curl_cmd="$curl_cmd --max-time 10"
+		curl_cmd="$curl_cmd --connect-timeout 10"
 	fi
 }
 
@@ -222,7 +222,7 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
 		update_db
-		#trap 'error ${LINENO} "Package dependencie failure, look at: ($LOG_FILE)"' ERR
+		trap 'error ${LINENO} "Package dependencie failure, look at ($LOG_FILE)"' ERR
 		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
 		echo "    + Following dependencies will be installed" && print_deps "$pkg_list_deps"

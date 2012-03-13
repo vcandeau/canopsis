@@ -100,7 +100,7 @@ function create_view () {
 
 			if [ -z "$L_INFO" ]; then
 				L_STATUS="\e[0;101m \033[0m Not Installed"
-				echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-26s%-20s%s\n",$1,$2,$3}' FS=\|
+				echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
 			fi
 		done < "$REMOTE_DB_PATH"
 	echo
