@@ -2,4 +2,4 @@ yum clean all
 yum update
 yum install -y redhat-lsb make gcc gcc-c++ zlib-devel libevent-devel libevent ncurses-devel libcurl-devel
 
-yum localinstall externals/libevent-devel-1.4.13-1.el6.i686.rpm
+yum localinstall --nogpgcheck -y externals/libevent-devel-1.4.13-1.el6.x86_64.rpm
