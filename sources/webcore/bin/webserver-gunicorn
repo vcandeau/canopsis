@@ -47,15 +47,17 @@ function getPid (){
 function cmd () {
 	case $1 in
 		start)
-			echo "Starting..."
+			echo "Starting Webserver ..."
 			if [ $(check) -eq 1 ]; then
 				echo " + Already started ..."
 			else
+				PID=$(getPid)
+				echo " + $PID"
 				start
 			fi
 		;;  
 		stop)
-			echo "Stoping..."
+			echo "Stoping Webserver ..."
 			if [ $(check) -eq 1 ]; then
 				stop
 			else
