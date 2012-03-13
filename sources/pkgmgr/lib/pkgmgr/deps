@@ -24,7 +24,7 @@ build_install_deps_tree () {
 	parse_install_deps $@
 	clean_tree
 	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
-	rm -Rf $TMP_FILE	
+	#rm -Rf $TMP_FILE	
 }
 
 build_remove_deps_tree () {
@@ -42,7 +42,7 @@ init_tmp () {
 }
 
 clean_tree () {
-	sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++'
+	pkg_list_deps=$(sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++')
 }
 
 parse_install_deps () {
@@ -65,7 +65,7 @@ parse_install_deps () {
 			if [ $NB_DEPS -gt 0 ]; then
 				parse_install_deps $L_DEPS
 			else
-				pkg_list_deps="$L_DEPS $D_TREE" > $TMP_FILE
+				echo "$L_DEPS $D_TREE" >> $TMP_FILE
 			fi
 		fi
 	done
