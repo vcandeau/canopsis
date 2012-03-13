@@ -1,0 +1,74 @@
+#! /bin/sh
+#
+# chkconfig: 234 40 35
+# description:  MongoDB - schema free, document-oriented database
+# processname: mongod
+# config: /etc/mongodb.conf
+# pidfile: /data/db/mongod.lock
+
+# Standard LSB functions
+#. /lib/lsb/init-functions
+
+# Source function library.
+. /etc/init.d/functions
+
+# Check that networking is up.
+. /etc/sysconfig/network
+
+[ ${NETWORKING} = "no" ] && exit 0
+
+MONGODB_HOME=/opt/canopsis/
+MONGODB_CONFIG=$MONGODB_HOME/etc/mongodb.conf
+
+RETVAL=0
+prog="mongod"
+
+start () {
+  echo $"Starting $prog: "
+
+  daemon $MONGODB_HOME/bin/mongod --config $MONGODB_CONFIG --fork > /dev/null
+  RETVAL=$?
+  sleep 5
+
+	[ $RETVAL -eq 0 ] && touch $MONGODB_HOME/var/run/mongod
+}
+
+stop () {
+  echo $"Stopping $prog: "
+  
+  killproc $prog
+  RETVAL=$?
+  if [ $RETVAL -eq 0 ] ; then
+    rm -f /opt/canopsis/var/run/mongod
+  fi
+}
+
+restart () {
+	stop
+	start
+}
+
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+  	;;
+  status)
+    status mongod
+    ;;
+  restart|reload|force-reload)
+    restart
+    ;;
+  condrestart)
+    [ -f /opt/canopsis/var/run/mongod ] && restart || :
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    exit 1
+esac
+
+exit $?
