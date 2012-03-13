@@ -94,6 +94,36 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				var menu = this.down('menu[name="Run"]')
 				menu.hide()
 			},this)
+			
+		//Reporting menu
+		if(global.reporting == true){
+			reporting_menu =
+				{
+					iconCls: 'icon-mimetype-pdf',
+					text: _('Export active view'),
+					action: 'exportView'
+				}
+			
+		} else {
+			reporting_menu = []
+		}
+			
+		//root build menu
+		if(global.account.user == 'root'){
+			var root_build_option = [
+				{
+					iconCls:'icon-mainbar-edit-account',
+					text: _('Edit accounts'),
+					action: 'editAccount'
+				},{
+					iconCls:'icon-mainbar-edit-group',
+					text: _('Edit groups'),
+					action: 'editGroup'
+				}
+			]
+		} else {
+			var root_build_option = []
+		}
 	
 		this.items = [
 			{
@@ -101,6 +131,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				text: _('ITIL.Build'),
 				menu: {
 					items: [
+							root_build_option,
 							{
 								iconCls:'icon-mainbar-edit-view',
 								text: _('Edit active view'),
@@ -134,17 +165,13 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			},{
 				iconCls: 'icon-mainbar-report',
 				text: _('ITIL.Report'),
-				/*menu: {
+				menu: {
 					name: 'Report',
 					showSeparator: true,
 					items: [
-							{
-								iconCls: 'icon-mimetype-pdf',
-								text: _('Export active view'),
-								action: 'exportView'
-							}
+							reporting_menu
 					],
-				}*/
+				}
 			},'-',{
 				xtype: 'container',
 				html: "<div class='cps-title' >Canopsis</div>",
