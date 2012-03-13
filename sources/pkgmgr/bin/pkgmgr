@@ -29,6 +29,21 @@ log_info () {
 		echo -e "[`date +'%T %x'`][INF] ${MESSAGE}" >> "$LOG_FILE"
 	fi
 }
+
+log_debug () {
+	local MESSAGE="$1"
+	if [ $LOG -ge 4 ]; then
+		echo -e "[`date +'%T %x'`][DEB] ${MESSAGE}" >> "$LOG_FILE"
+	fi
+}
+
+log_verbose () {
+	local MESSAGE="$1"
+	if [ $LOG -ge 3 ]; then
+		echo -e "[`date +'%T %x'`][DEB] ${MESSAGE}" >> "$LOG_FILE"
+	fi
+}
+
 error () {
 	local PARENT_LINENO="$1"
 	local MESSAGE="$2"
@@ -98,6 +113,22 @@ exit_pending=false
 
 trap '' 2 
 #trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
+
+curl_settings () {
+	curl_cmd="curl"
+	if [ -n "$HTTP_PROXY" ]; then
+		curl_cmd="$curl_cmd --proxy $HTTP_PROXY"
+	fi
+	if [ -n "$HTTP_AUTH" ]; then
+		echo $HTTP_AUTH
+		curl_cmd="$curl_cmd --proxy-user $HTTP_AUTH"
+	fi
+	if [ -n "$TIMEOUT" ]; then
+		curl_cmd="$curl_cmd --max-time $TIMEOUT"
+	else
+		curl_cmd="$curl_cmd --max-time 10"
+	fi
+}
 
 update_info () {
 	sed -i /^"ARCH|"/d $VARLIB_PATH/info
@@ -184,11 +215,14 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 	touch $VARLIB_PATH/info 2>&1 | tee -a $LOG_FILE	
 	
 	update_info
-	
+
+	curl_settings
+	log_debug "Curl command: $curl_cmd"
+
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
 		update_db
-		trap 'error ${LINENO} "Package dependencie failure, look at: ($LOG_FILE)"' ERR
+		#trap 'error ${LINENO} "Package dependencie failure, look at: ($LOG_FILE)"' ERR
 		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
 		echo "    + Following dependencies will be installed" && print_deps "$pkg_list_deps"
