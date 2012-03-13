@@ -64,12 +64,12 @@ download_package() {
 	# Download it
 	echo "    + Download $PNAME"
 	log_info "Download $PNAME package"
-	response=$(curl -I --write-out %{http_code} --silent --output /dev/null $FINAL_URL/$PNAME.tar)
+	response=$($curl_cmd -I --write-out %{http_code} --silent --output /dev/null $FINAL_URL/$PNAME.tar)
 	if [ "$response" != "200" ]; then
 		error ${LINENO} "Failure during download package ($FINAL_URL/$PNAME.tar | $response)" 1
 	else
 		trap 'error ${LINENO} "Failure during download package ($FINAL_URL/$PNAME.tar)"' ERR
-		curl -# -o $PACKAGES_PATH/$PNAME.tar $FINAL_URL/$PNAME.tar 
+		$curl_cmd -# -o $PACKAGES_PATH/$PNAME.tar $FINAL_URL/$PNAME.tar 
 	fi
 }
 
@@ -152,7 +152,7 @@ install_package () {
 			log_info "Check downloaded $PNAME package md5"
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "    + Check MD5: [Fail]"
-				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
+				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: $curl_cmd -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
 			else
 				echo "    + Check MD5: [Success]"
 			fi
@@ -397,7 +397,7 @@ upgrade_package () {
 
 			if [ "$L_MD5" != "$R_MD5" ]; then
 				echo "     + Checking Md5Sum: [Fail]"
-				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: curl -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
+				error ${LINENO} "Local Md5: $L_MD5\nRemote Md5: $R_MD5\nCommand: $curl_cmd -# -o $PNAME.tar $FINAL_URL/$PNAME.tar" 1
 				else
 				echo "     + Checking Md5Sum: [Success]"
 			fi
