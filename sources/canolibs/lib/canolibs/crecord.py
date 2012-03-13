@@ -121,7 +121,10 @@ class crecord(object):
 		dump['children'] =  self.children
 
 		if json:
-			dump['_id'] = str(self._id)
+			try:
+				dump['_id'] = str(self._id)
+			except:
+				dump['_id'] = self._id
 
 			items  = []
 			for item in dump['parent']:
