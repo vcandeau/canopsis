@@ -19,6 +19,8 @@
 # ---------------------------------
 */
 var global = {
+	reporting : false,
+	
 	state_colors: {
 		up: '#50b432',
 		down: '#ed241b',
