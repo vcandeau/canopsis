@@ -42,6 +42,9 @@ Ext.define('widgets.list.list' ,{
 	hideHeaders: false,
 	scroll: true,
 	column_sort: true,
+	
+	default_sort_column : 'state',
+	default_sort_direction : 'DESC',
 	//..
 	
 	initComponent: function() {
@@ -57,11 +60,8 @@ Ext.define('widgets.list.list' ,{
 			pageSize: global.pageSize,
 			remoteSort: true,
 			sorters: [{
-				property : 'component',
-				direction: 'ASC'
-			},{
-				property : 'resource',
-				direction: 'ASC'
+				property : this.default_sort_column,
+				direction: this.default_sort_direction
 			}],
 
 			opt_show_component: this.show_component,
