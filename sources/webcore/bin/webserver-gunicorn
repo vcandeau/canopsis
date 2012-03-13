@@ -23,7 +23,7 @@ function start (){
 function stop (){
 	PID=$(getPid)
 	kill $PID
-	sleep 1
+	sleep 2
 	if [ $(check) -eq 1 ]; then
 		echo " + Failed"
 		exit 1
