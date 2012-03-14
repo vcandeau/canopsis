@@ -1,9 +1,13 @@
 #!/bin/bash
 
 SRC="/usr/local/src/canopsis"
-REPO_URL="http://repo.canopsis.org/daily"
 REPO_GIT="git://forge.canopsis.org/canopsis.git"
 CMD_INSTALL="pkgmgr install --force-yes cmaster"
+BRANCH="freeze"
+
+if [ "x$1" != "x" ]; then
+	BRANCH=$1
+fi
 
 #### Git Pull
 echo "-------> Clone repository"
@@ -18,7 +22,8 @@ echo " + Ok"
 echo "-------> Pull repository"
 cd $SRC
 
-git pull origin develop
+git checkout $BRANCH
+git pull origin $BRANCH
 
 git submodule update
 
@@ -53,7 +58,7 @@ useradd -m -d /opt/canopsis -s /bin/bash canopsis
 echo "---> Install bootstrap"
 su - canopsis -c "mkdir -p tmp"
 su - canopsis -c "rm -Rf tmp/* &> /dev/null"
-su - canopsis -c "cd tmp && wget $REPO_URL/../canopsis_installer.tgz"
+su - canopsis -c "cd tmp && wget http://localhost/canopsis_installer.tgz"
 su - canopsis -c "cd tmp && tar xvf canopsis_installer.tgz"
 su - canopsis -c "cd tmp && cd canopsis_installer && ./install.sh"
 
