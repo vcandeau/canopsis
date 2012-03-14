@@ -91,6 +91,7 @@ error () {
 ##########################
 
 . $HOME/lib/common.sh 
+. $HOME/lib/pkgmgr/common
 set +E
 detect_os > /dev/null
 set -E
@@ -204,6 +205,14 @@ ACTION=$1
 OPT=$2
 
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate|xexport)$ ]]; then
+
+	if ! [ -z $OPT ]; then
+		_test_option=$(grep "^[-0-9a-zA-Z]*$" <<<$OPT)
+		if [ -z $_test_option ]; then
+	    	echo " :: Package name contain non alphanumeric character(s)"
+    		exit 1
+		fi
+	fi
 
 	log_info "Create local db file"
 	touch $LOCAL_DB_PATH 2>&1 | tee -a $LOG_FILE

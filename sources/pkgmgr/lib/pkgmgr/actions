@@ -317,6 +317,7 @@ remove_package () {
 		L_MD5=$(db_parse "md5" "$DBINFO")
 	
 		if [ "x$PSTATUS" == "xinstalled" ]; then
+			PNAME=$(db_parse "name" "$DBINFO")
 			echo " :: Remove package $PNAME"
 			PPATH=$(get_ppath "$PNAME")
 			load_control_tpl
@@ -350,7 +351,7 @@ remove_package () {
 			else
 				echo " :: Package $PNAME is not installed"
 				log_info "Package ($PNAME) already installed"
-				if [ "$PNAME" == "${@: -1}" ]; then exit 1; else continue; fi
+				if [ "$PNAME" == "${@: -1}" ]; then off_lock && exit 1; else continue; fi
 		fi
 		log_info "Finised"
 		echo "    + Done"
