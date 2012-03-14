@@ -154,6 +154,9 @@
     background-image: url(../images/icons/application_home.png) !important; 
 }
 
+.icon-mainbar-viewdetails { 
+    background-image: url(../images/icons/application_view_detail.png) !important; 
+}
 
 
 /* state */
