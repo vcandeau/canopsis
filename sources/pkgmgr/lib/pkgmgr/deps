@@ -65,7 +65,7 @@ parse_install_deps () {
 			if [ $NB_DEPS -gt 0 ]; then
 				parse_install_deps $L_DEPS
 			else
-				echo "$L_DEPS $D_TREE" >> $TMP_FILE
+				echo "$L_DEPS $D_TREE" > $TMP_FILE
 			fi
 		fi
 	done
