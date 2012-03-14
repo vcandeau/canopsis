@@ -34,6 +34,13 @@ Ext.define('canopsis.controller.ReportingBar', {
 			btns[i].on('click', this.nextButton, this)
 		}
 		
+		//savebutton
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="save"]')
+		for (i in btns){
+			btns[i].on('click', this.saveButton, this)
+		}
+		
+		//exit button
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="exit"]')
 		for (i in btns){
 			btns[i].on('click', this.exitButton, this)
@@ -42,6 +49,14 @@ Ext.define('canopsis.controller.ReportingBar', {
 		//if ask to reload data after duration/data selection
 		if(this.bar.reloadAfterAction == true){
 			log.debug('binding event to reload after any action',this.logAuthor)
+			var btns = Ext.ComponentQuery.query('#' + id + ' combobox')
+			for (i in btns){
+				btns[i].on('change', this.launchReport, this)
+			}
+			var btns = Ext.ComponentQuery.query('#' + id + ' datefield')
+			for (i in btns){
+				btns[i].on('change', this.launchReport, this)
+			}
 			
 		} else {
 			var btns = Ext.ComponentQuery.query('#' + id + ' button[action="request"]')
@@ -57,12 +72,33 @@ Ext.define('canopsis.controller.ReportingBar', {
 	
 	launchReport: function(){
 		var toolbar = this.bar
-		var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-		var endReport =	startReport - toolbar.combo.getValue();
+		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+		var startReport =	endReport - toolbar.combo.getValue();
 		log.debug('from : ' + startReport + 'To : ' + endReport,this.logAuthor)
 		//launch tab function
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.setReportDate(endReport*1000,startReport*1000)
+		tab.setReportDate(startReport*1000,endReport*1000)
+	},
+	
+	saveButton : function(){
+		log.debug('launching pdf reporting',this.logAuthor)
+		//get end/start
+		var toolbar = this.bar
+		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+		var startReport = endReport - toolbar.combo.getValue();
+		
+		//Get view id
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		var view_id = tab.view_id
+		
+		//launch reporting fonction
+		var ctrl = this.getController('Reporting')
+		
+		log.debug('view_id : ' + view_id)
+		log.debug('startReport : ' + startReport*1000)
+		log.debug('stopReport : ' + endReport*1000)
+		
+		ctrl.launchReport(view_id,startReport*1000,endReport*1000)
 	},
 	
 	nextButton: function(){

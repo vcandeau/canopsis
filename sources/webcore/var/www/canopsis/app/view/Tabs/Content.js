@@ -202,7 +202,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	addReportingBar : function() {
 		if(this.reportingBar == undefined){
 			log.debug('Show reporting bar', this.logAuthor)
-			this.reportingBar = Ext.widget('ReportingBar')
+			this.reportingBar = Ext.widget('ReportingBar',{reloadAfterAction: true})
 			this.addDocked(this.reportingBar)
 			
 			//stop refresh and switch widgets to report mode
