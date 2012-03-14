@@ -81,11 +81,6 @@
 								"boxLabel": "Plugin's output",
 								"checked": true,
 								"name": "show_output"
-							},{
-								"xtype": "checkbox",
-								"boxLabel": "Column sortable",
-								"checked": true,
-								"name": "column_sort"
 							}]
 				},{
 						"xtype": "fieldset",
@@ -129,6 +124,11 @@
 										{"value": "ASC", "text": "Ascending"}
 									]
 								}
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Column sortable",
+								"checked": true,
+								"name": "column_sort"
 							}						
 						]
 				}]
