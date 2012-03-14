@@ -155,9 +155,19 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 								text: _('Dashboard'),
 								action: 'openDashboard'
 							},{
+								iconCls: 'icon-mainbar-viewdetails',
+								text: _('Components'),
+								action: 'openViewMenu',
+								viewId: 'view.components'
+							},{
+								iconCls: 'icon-mainbar-viewdetails',
+								text: _('Resources'),
+								action: 'openViewMenu',
+								viewId: 'view.resources'
+							},{
 								iconCls: 'icon-mainbar-run',
-								text: _('Views'),
-								action: 'openViews'
+								text: _("Views manager"),
+								action: 'openViewsManager'
 							},'-', 
 								this.viewSelector
 					],
