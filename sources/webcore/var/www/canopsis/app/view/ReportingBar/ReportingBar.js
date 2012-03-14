@@ -45,11 +45,14 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			action: 'previous'
 		})
 		
+		var today = new Date()
+		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000))
+		
 		this.currentDate = this.add({
 			xtype: 'datefield',
 			name: 'from',
-			value: new Date(),
-			maxValue: new Date(),
+			value: today,
+			maxValue: tommorow,
 		})
 		
 		this.nextButton = this.add({
