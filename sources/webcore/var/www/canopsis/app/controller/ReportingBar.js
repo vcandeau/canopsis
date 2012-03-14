@@ -77,28 +77,36 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('from : ' + startReport + 'To : ' + endReport,this.logAuthor)
 		//launch tab function
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.setReportDate(startReport*1000,endReport*1000)
+		if(toolbar.currentDate.isValid()){
+			tab.setReportDate(startReport*1000,endReport*1000)
+		} else {
+			global.notify.notify(_('Invalid date'),_('The selected date is in futur'))
+		}
 	},
 	
 	saveButton : function(){
 		log.debug('launching pdf reporting',this.logAuthor)
 		//get end/start
 		var toolbar = this.bar
-		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-		var startReport = endReport - toolbar.combo.getValue();
-		
-		//Get view id
-		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		var view_id = tab.view_id
-		
-		//launch reporting fonction
-		var ctrl = this.getController('Reporting')
-		
-		log.debug('view_id : ' + view_id)
-		log.debug('startReport : ' + startReport*1000)
-		log.debug('stopReport : ' + endReport*1000)
-		
-		ctrl.launchReport(view_id,startReport*1000,endReport*1000)
+		if(toolbar.currentDate.isValid()){
+			var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var startReport = endReport - toolbar.combo.getValue();
+			
+			//Get view id
+			var tab = Ext.getCmp('main-tabs').getActiveTab();
+			var view_id = tab.view_id
+			
+			//launch reporting fonction
+			var ctrl = this.getController('Reporting')
+			
+			log.debug('view_id : ' + view_id)
+			log.debug('startReport : ' + startReport*1000)
+			log.debug('stopReport : ' + endReport*1000)
+			
+			ctrl.launchReport(view_id,startReport*1000,endReport*1000)
+		} else {
+			global.notify.notify(_('Invalid date'),_('The selected date is in futur'))
+		}
 	},
 	
 	nextButton: function(){
