@@ -191,6 +191,7 @@ var i18n={
 	'Legend': 'légende',
 	'Filter': 'Filtre',
 	'Border color': 'Couleur bordure',
+	'Views manager': 'Gestionnaire des vues'
 	
 	
 }
