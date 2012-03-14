@@ -5,6 +5,9 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 	
 	dock: 'top',
 	
+	//false to prevent reloading after choosing date/duration
+	reloadAfterAction: false,
+	
 	initComponent: function() {
 		this.callParent(arguments);
 		
@@ -61,12 +64,14 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		this.add('->');
 		
-		this.requestButton = this.add({
-			xtype: 'button', // default for Toolbars
-			iconCls: 'icon-reload',
-			text: _('request'),
-			action: 'request'
-		})
+		if(this.reloadAfterAction == false){
+			this.requestButton = this.add({
+				xtype: 'button', // default for Toolbars
+				iconCls: 'icon-reload',
+				text: _('request'),
+				action: 'request'
+			})
+		}
 		
 		this.saveButton = this.add({
 			xtype: 'button', // default for Toolbars
