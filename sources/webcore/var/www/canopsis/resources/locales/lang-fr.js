@@ -191,7 +191,11 @@ var i18n={
 	'Legend': 'légende',
 	'Filter': 'Filtre',
 	'Border color': 'Couleur bordure',
-	'Views manager': 'Gestionnaire des vues'
-	
+	'Views manager': 'Gestionnaire des vues',
+	'Add column': 'Ajouter une colonne',
+	'Add row': 'Ajouter une ligne',	
+	'Edit mode': 'Mode édition',
+	'View mode': 'Mode visualisation',
+	'Remove all': 'Supprimer tous',	
 	
 }
