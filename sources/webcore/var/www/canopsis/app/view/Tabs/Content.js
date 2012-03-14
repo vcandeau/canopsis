@@ -96,13 +96,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('resizeWidget', this.onResizeWidget, this);
 
 	},
-	
-	afterRender : function(){
-		this.callParent(arguments);
-		//---------------------DEBUG REPORTING BAR------------------------
-		this.addReportingBar()
-	},
-	
+
 	onResizeWidget: function(cmp){
 		cmp.onResize()
 	},
@@ -201,6 +195,18 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}		
 	},
 	
+	//Reporting
+	addReportingBar : function() {
+		log.debug('creating reporting bar', this.logAuthor)
+		var bar = Ext.widget('ReportingBar')
+		log.debug('bar created')
+		this.addDocked(bar)
+	},
+	
+	removeReportingBar : function(){
+		log.debug('removing reporting bar', this.logAuthor)
+	},
+	
 	//// Tabs COOKING
 	beforeclose: function(tab, object){
 		log.debug('Active previous tab', this.logAuthor);
@@ -224,14 +230,5 @@ Ext.define('canopsis.view.Tabs.Content' ,{
  		log.debug(this.id + " Destroyed.", this.logAuthor)
  	},
  	
- 	addReportingBar : function() {
-		log.debug('creating reporting bar', this.logAuthor)
-		var bar = Ext.widget('ReportingBar')
-		log.debug('bar created')
-		this.addDocked(bar)
-	},
-	
-	removeReportingBar : function(){
-		log.debug('removing reporting bar', this.logAuthor)
-	},
+ 
 });

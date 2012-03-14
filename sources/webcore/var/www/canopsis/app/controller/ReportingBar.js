@@ -34,8 +34,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 			btns[i].on('click', this.nextButton, this)
 		}
 		
+		
+		
 	},
-
 	
 	//the following is now manage bien mainbar/content.js
 	
@@ -69,6 +70,17 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var newDate = new Date(timestamp * 1000)
 		//set the time
 		inputField.setValue(newDate)
-	}
+	},
+	
+	enable_reporting_mode : function(){
+		log.debug('enable reporting mode', this.logAuthor)
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.addReportingBar()
+	},
+	
+	disable_reporting_mode : function(){
+		log.debug('disable reporting mode', this.logAuthor)
+		tab.removeReportingBar()
+	},
 	
 })

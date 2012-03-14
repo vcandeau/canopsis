@@ -66,6 +66,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="exportView"]' : {
 				click : this.exportView,
 			},
+			'Mainbar menuitem[action="reportingMode"]' : {
+				click : this.reportingMode,
+			},
 			'Mainbar [name="clock"]' : {
 				afterrender : this.setClock,
 			},
@@ -184,6 +187,12 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Edit view', this.logAuthor);
 		var ctrl = this.getController('Tabs')
 		ctrl.edit_active_view()
+	},
+	
+	reportingMode: function(){
+		log.debug('Live reporting mode activated', this.logAuthor);
+		var ctrl = this.getController('ReportingBar')
+		ctrl.enable_reporting_mode()
 	},
 	
 	newView: function(){
