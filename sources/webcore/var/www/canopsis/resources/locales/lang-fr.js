@@ -197,5 +197,7 @@ var i18n={
 	'Edit mode': 'Mode édition',
 	'View mode': 'Mode visualisation',
 	'Remove all': 'Supprimer tous',	
+	'Ascending': 'Croissant',
+	'Descending': 'Décroissant',
 	
 }
