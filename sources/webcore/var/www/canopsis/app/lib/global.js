@@ -19,7 +19,7 @@
 # ---------------------------------
 */
 var global = {
-	reporting : false,
+	reporting : true,
 	
 	state_colors: {
 		up: '#50b432',
