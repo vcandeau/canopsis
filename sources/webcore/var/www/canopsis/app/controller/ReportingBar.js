@@ -34,8 +34,16 @@ Ext.define('canopsis.controller.ReportingBar', {
 			btns[i].on('click', this.nextButton, this)
 		}
 		
-		
-		
+		//if ask to reload data after duration/data selection
+		if(this.bar.reloadAfterAction == true){
+			log.debug('binding event to reload after any action',this.logAuthor)
+			
+		} else {
+			var btns = Ext.ComponentQuery.query('#' + id + ' button[action="request"]')
+			for (i in btns){
+				btns[i].on('click', this.launchReport, this)
+			}
+		}
 	},
 	
 	//the following is now manage bien mainbar/content.js

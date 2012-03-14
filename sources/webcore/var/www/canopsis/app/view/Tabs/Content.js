@@ -197,17 +197,20 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	//Reporting
 	addReportingBar : function() {
-		log.debug('creating reporting bar', this.logAuthor)
-		var bar = Ext.widget('ReportingBar')
-		log.debug('bar created')
-		this.addDocked(bar)
+		if(this.reportingBar == undefined){
+			log.debug('Creating reporting bar', this.logAuthor)
+			this.reportingBar = Ext.widget('ReportingBar')
+			this.addDocked(this.reportingBar)
+		} else {
+			log.debug('Already in reporting mode',this.logAuthor)
+		}
+		
 	},
 	
 	removeReportingBar : function(){
 		log.debug('removing reporting bar', this.logAuthor)
 	},
 	
-	//// Tabs COOKING
 	beforeclose: function(tab, object){
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
