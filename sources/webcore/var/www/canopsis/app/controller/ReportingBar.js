@@ -3,32 +3,44 @@ Ext.define('canopsis.controller.ReportingBar', {
 	
 	views: ['ReportingBar.ReportingBar'],
 	
-	logAuthor : 'ReportingBar',
-	
-	refs : [{
-		ref : 'toolbar',
-		selector : 'Reporting'
-	}],
+	logAuthor : '[controller][ReportingBar]',
 	
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
-		
+
 		this.control({
-			/*'Reporting button[action="previous"]' : {
-				click : this.previousButton,
-			},
-			'Reporting button[action="next"]' : {
-				click : this.nextButton,
-			},	*/	
+			'ReportingBar' : {
+				afterrender : this._bindBarEvents
+			}
 		})
 		
 		this.callParent(arguments);
 	},
 	
+	_bindBarEvents: function(bar) {
+		var id = bar.id
+		this.bar = bar
+		log.debug('Bind events "'+id+'" ...' , this.logAuthor)
+		
+		//previous button
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="previous"]')
+		for (i in btns){
+			btns[i].on('click', this.previousButton, this)
+		}
+		
+		//next button
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="next"]')
+		for (i in btns){
+			btns[i].on('click', this.nextButton, this)
+		}
+		
+	},
+
+	
 	//the following is now manage bien mainbar/content.js
 	
-/*	launchReport: function(){
-		var toolbar = this.getToolbar()
+	launchReport: function(){
+		var toolbar = this.bar
 		var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 		var endReport =	startReport - toolbar.combo.getValue();
 		log.debug('from : ' + startReport + 'To : ' + endReport)
@@ -37,9 +49,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 	
 	nextButton: function(){
 		//get toolbar elements
-		var inputField = this.getToolbar().currentDate;
+		var inputField = this.bar.currentDate;
 		var selectedTime = parseInt(Ext.Date.format(inputField.getValue(), "U"))
-		var timeUnit = this.getToolbar().combo.getValue()
+		var timeUnit = this.bar.combo.getValue()
 		//add the time and build a date
 		var timestamp = selectedTime + timeUnit
 		var newDate = new Date(timestamp * 1000)
@@ -49,14 +61,14 @@ Ext.define('canopsis.controller.ReportingBar', {
 	
 	previousButton: function(){
 		//get toolbar elements
-		var inputField = this.getToolbar().currentDate;
+		var inputField = this.bar.currentDate;
 		var selectedTime = parseInt(Ext.Date.format(inputField.getValue(), "U"))
-		var timeUnit = this.getToolbar().combo.getValue()
+		var timeUnit = this.bar.combo.getValue()
 		//substract the time and build a date
 		var timestamp = selectedTime - timeUnit
 		var newDate = new Date(timestamp * 1000)
 		//set the time
 		inputField.setValue(newDate)
-	}*/
+	}
 	
 })

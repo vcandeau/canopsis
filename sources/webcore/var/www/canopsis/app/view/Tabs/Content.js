@@ -94,7 +94,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('show', this._onShow, this);
 		this.on('hide', this._onHide, this);
 		this.on('resizeWidget', this.onResizeWidget, this);
+
+	},
 	
+	afterRender : function(){
+		this.callParent(arguments);
+		//---------------------DEBUG REPORTING BAR------------------------
+		this.addReportingBar()
 	},
 	
 	onResizeWidget: function(cmp){
@@ -216,5 +222,16 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		log.debug("Destroy items ...", this.logAuthor)
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
  		log.debug(this.id + " Destroyed.", this.logAuthor)
- 	}
+ 	},
+ 	
+ 	addReportingBar : function() {
+		log.debug('creating reporting bar', this.logAuthor)
+		var bar = Ext.widget('ReportingBar')
+		log.debug('bar created')
+		this.addDocked(bar)
+	},
+	
+	removeReportingBar : function(){
+		log.debug('removing reporting bar', this.logAuthor)
+	},
 });
