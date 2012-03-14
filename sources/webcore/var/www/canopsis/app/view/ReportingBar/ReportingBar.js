@@ -64,7 +64,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			this.requestButton = this.add({
 				xtype: 'button', 
 				iconCls: 'icon-reload',
-				text: _('Refresh'),
+				tooltip: _('Refresh'),
 				action: 'request'
 			})
 		}
