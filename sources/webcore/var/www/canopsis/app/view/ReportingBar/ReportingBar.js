@@ -40,8 +40,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		this.add({ xtype: 'tbspacer', width: 400 });
 		
 		this.previousButton = this.add({
-			xtype: 'button', // default for Toolbars
-			//text: '<',
+			xtype: 'button', 
 			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
 		})
@@ -49,16 +48,13 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		this.currentDate = this.add({
 			xtype: 'datefield',
 			name: 'from',
-			//fieldLabel: _('From'),
 			value: new Date(),
 			maxValue: new Date(),
-			//format: 'd m Y',
 		})
 		
 		this.nextButton = this.add({
-			xtype: 'button', // default for Toolbars
+			xtype: 'button', 
 			cls: 'x-btn-icon x-tbar-page-next',
-			//text: '>',
 			action: 'next'
 		})
 		
@@ -66,26 +62,32 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		if(this.reloadAfterAction == false){
 			this.requestButton = this.add({
-				xtype: 'button', // default for Toolbars
+				xtype: 'button', 
 				iconCls: 'icon-reload',
-				text: _('request'),
+				text: _('Refresh'),
 				action: 'request'
 			})
 		}
 		
 		this.saveButton = this.add({
-			xtype: 'button', // default for Toolbars
+			xtype: 'button', 
 			iconCls: 'icon-save',
-			//text: _('request'),
 			action: 'save',
-			tooltip: _('export this view to pdf')
+			tooltip: _('Export this view to pdf')
 		})
 		
 		this.linkButton = this.add({
-			xtype: 'button', // default for Toolbars
+			xtype: 'button', 
 			iconCls: 'icon-page-html',
 			action: 'link',
-			tooltip: _('view page in html')
+			tooltip: _('View page in html')
+		})
+		
+		this.exitButton = this.add({
+			xtype: 'button', 
+			iconCls: 'icon-exit',
+			action: 'exit',
+			tooltip: _('Leave reporting mode')
 		})
 	}
 	

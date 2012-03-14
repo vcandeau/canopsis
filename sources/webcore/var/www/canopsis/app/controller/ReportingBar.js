@@ -20,7 +20,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 	_bindBarEvents: function(bar) {
 		var id = bar.id
 		this.bar = bar
-		log.debug('Bind events "'+id+'" ...' , this.logAuthor)
+		log.debug('Bind events "'+id , this.logAuthor)
 		
 		//previous button
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="previous"]')
@@ -34,6 +34,11 @@ Ext.define('canopsis.controller.ReportingBar', {
 			btns[i].on('click', this.nextButton, this)
 		}
 		
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="exit"]')
+		for (i in btns){
+			btns[i].on('click', this.exitButton, this)
+		}
+		
 		//if ask to reload data after duration/data selection
 		if(this.bar.reloadAfterAction == true){
 			log.debug('binding event to reload after any action',this.logAuthor)
@@ -44,6 +49,8 @@ Ext.define('canopsis.controller.ReportingBar', {
 				btns[i].on('click', this.launchReport, this)
 			}
 		}
+		
+		
 	},
 	
 	//the following is now manage bien mainbar/content.js
@@ -52,8 +59,10 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var toolbar = this.bar
 		var startReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 		var endReport =	startReport - toolbar.combo.getValue();
-		log.debug('from : ' + startReport + 'To : ' + endReport)
-		toolbar.fireEvent('reporting', {start : startReport, stop : endReport})
+		log.debug('from : ' + startReport + 'To : ' + endReport,this.logAuthor)
+		//launch tab function
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.setReportDate(endReport*1000,startReport*1000)
 	},
 	
 	nextButton: function(){
@@ -80,14 +89,20 @@ Ext.define('canopsis.controller.ReportingBar', {
 		inputField.setValue(newDate)
 	},
 	
+	exitButton : function(){
+		log.debug('Exit reporting mode', this.logAuthor)
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.removeReportingBar()
+	},
+	
 	enable_reporting_mode : function(){
-		log.debug('enable reporting mode', this.logAuthor)
+		log.debug('Enable reporting mode', this.logAuthor)
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
 		tab.addReportingBar()
 	},
 	
 	disable_reporting_mode : function(){
-		log.debug('disable reporting mode', this.logAuthor)
+		log.debug('Disable reporting mode', this.logAuthor)
 		tab.removeReportingBar()
 	},
 	

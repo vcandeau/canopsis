@@ -95,6 +95,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('hide', this._onHide, this);
 		this.on('resizeWidget', this.onResizeWidget, this);
 
+		//create hidden reportingBar
+		log.debug('Creating reporting bar', this.logAuthor)
+		
 	},
 
 	onResizeWidget: function(cmp){
@@ -198,9 +201,18 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	//Reporting
 	addReportingBar : function() {
 		if(this.reportingBar == undefined){
-			log.debug('Creating reporting bar', this.logAuthor)
+			log.debug('Show reporting bar', this.logAuthor)
 			this.reportingBar = Ext.widget('ReportingBar')
 			this.addDocked(this.reportingBar)
+			
+			//stop refresh and switch widgets to report mode
+			var cmps = this.getCmps()
+			for(var i in cmps){
+				if(cmps[i].reportMode == false){
+					cmps[i].reportMode = true
+				}
+			}
+			this.stopAllTasks()
 		} else {
 			log.debug('Already in reporting mode',this.logAuthor)
 		}
@@ -209,8 +221,29 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	removeReportingBar : function(){
 		log.debug('removing reporting bar', this.logAuthor)
+		
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			if(cmps[i].reportMode == true){
+				cmps[i].reportMode = false
+			}
+		}
+		this.startAllTasks()
+		this.removeDocked(this.reportingBar,true)
+		this.reportingBar = undefined
 	},
 	
+	setReportDate : function(from,to){
+		log.debug('Send report data for widgets', this.logAuthor)
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			cmps[i]._doRefresh(from,to)
+		}		
+		
+	},
+	
+	
+	//misc
 	beforeclose: function(tab, object){
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
