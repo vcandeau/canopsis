@@ -154,6 +154,9 @@
     background-image: url(../images/icons/application_home.png) !important; 
 }
 
+.icon-mainbar-reporting { 
+    background-image: url(../images/icons/chart_curve_edit.png) !important; 
+}
 
 
 /* state */
