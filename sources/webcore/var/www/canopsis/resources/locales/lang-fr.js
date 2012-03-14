@@ -158,7 +158,7 @@ var i18n={
 	'Edit active view': 'Édition vue active',
 	'Edit groups':		'Éditer les groupes',
 	'Edit accounts':	'Éditer les comptes',
-	'New view':			'nouvelle vue',
+	'New view':			'Nouvelle vue',
 	'no title':			'pas de titre',
 	'No title':			'Pas de titre',
 	'Show border':		'Afficher les bordures',
