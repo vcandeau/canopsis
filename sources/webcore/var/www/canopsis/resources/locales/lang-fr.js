@@ -158,7 +158,7 @@ var i18n={
 	'Edit active view': 'Édition vue active',
 	'Edit groups':		'Éditer les groupes',
 	'Edit accounts':	'Éditer les comptes',
-	'New view':			'nouvelle vue',
+	'New view':			'Nouvelle vue',
 	'no title':			'pas de titre',
 	'No title':			'Pas de titre',
 	'Show border':		'Afficher les bordures',
@@ -191,6 +191,11 @@ var i18n={
 	'Legend': 'légende',
 	'Filter': 'Filtre',
 	'Border color': 'Couleur bordure',
-	
+	'Views manager': 'Gestionnaire des vues',
+	'Add column': 'Ajouter une colonne',
+	'Add row': 'Ajouter une ligne',	
+	'Edit mode': 'Mode édition',
+	'View mode': 'Mode visualisation',
+	'Remove all': 'Supprimer tous',	
 	
 }
