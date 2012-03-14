@@ -13,13 +13,16 @@ Ext.define('canopsis.controller.Reporting', {
 	launchReport: function(view_id, from, to){
 		log.debug('Launch Report on view '+ view_id , this.logAuthor);
 		
-		to = Date.now() / 1000
-		from = to - global.commonTs.day
+		//if no date given
+		if(to == undefined){
+			to = Date.now() 
+			from = (to - global.cmmonTs.day) * 1000
+		}
 		
 		global.notify.notify(_('Please Wait'),_('Your document is rendering, a popup will ask you where to save in few seconds'))
 
 		Ext.Ajax.request({
-			url: '/reporting/'+ from * 1000 + '/' + to * 1000 + '/' + view_id,
+			url: '/reporting/'+ from  + '/' + to  + '/' + view_id,
 			scope: this,
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
