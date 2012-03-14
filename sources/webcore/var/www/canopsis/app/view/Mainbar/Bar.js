@@ -97,13 +97,17 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			
 		//Reporting menu
 		if(global.reporting == true){
-			reporting_menu =
+			reporting_menu =[
 				{
 					iconCls: 'icon-mimetype-pdf',
 					text: _('Export active view'),
 					action: 'exportView'
+				},{
+					iconCls: 'icon-mimetype-pdf',
+					text: _('Switch to live reporting'),
+					action: 'reportingMode'
 				}
-			
+			]
 		} else {
 			reporting_menu = []
 		}
@@ -168,9 +172,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				menu: {
 					name: 'Report',
 					showSeparator: true,
-					items: [
-							reporting_menu
-					],
+					items: reporting_menu,
 				}
 			},'-',{
 				xtype: 'container',
