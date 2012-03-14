@@ -478,7 +478,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 	echo "################################"
 	echo "# Fix permissions"
 	echo "################################"
-	mkdir -p .$PREFIX/.python-eggs
+	mkdir -p $PREFIX/.python-eggs
 	chown $HUSER:$HGROUP -R $PREFIX
 	check_code $?
 	echo " + Ok"
