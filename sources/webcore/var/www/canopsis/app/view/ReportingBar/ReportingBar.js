@@ -82,10 +82,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			action: 'link',
 			tooltip: _('view page in html')
 		})
-		
-		
-		
-		
 	}
 	
 });

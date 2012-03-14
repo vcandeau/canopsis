@@ -81,6 +81,7 @@ function createApplication(){
 			'Group',
 			'Tabs',
 			'Reporting',
+			'ReportingBar',
 			'Keynav',
 		],
 	
