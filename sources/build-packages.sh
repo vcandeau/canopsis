@@ -79,6 +79,7 @@ WWWPID=$!
 if [ $WWWCODE -ne 0 ]; then exit 1; fi
 
 echo "-----> + PID: $WWWPID"
+sleep 2
 
 ## Configure pkgmgr
 echo "---> Configure pkgmgr"
