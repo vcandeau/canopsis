@@ -103,7 +103,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					text: _('Export active view'),
 					action: 'exportView'
 				},{
-					iconCls: 'icon-mimetype-pdf',
+					iconCls: 'icon-mainbar-reporting',
 					text: _('Switch to live reporting'),
 					action: 'reportingMode'
 				}
