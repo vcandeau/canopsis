@@ -4,7 +4,7 @@ NAME="webcore"
 VERSION=0.2
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python canolibs wkhtmltopdf-libs webcore-libs"
+REQUIRES="canohome pkgmgr python canolibs wkhtmltopdf-libs"
 
 NO_ARCH=true
 NO_DIST=true
