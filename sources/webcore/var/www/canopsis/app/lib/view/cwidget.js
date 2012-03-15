@@ -170,7 +170,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	TabOnShow: function(){
 		log.debug('Show', this.logAuthor)
-		this.startTask()
+		if (! this.isDisabled())
+			this.startTask()
 	},
 
 	TabOnHide: function(){
