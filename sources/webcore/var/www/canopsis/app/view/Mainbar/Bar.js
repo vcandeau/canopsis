@@ -80,7 +80,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			//hideLabel: true,
 			fieldLabel: _("Dashboard"),
 			minChars: 2,
-			queryMode: 'remote',
+			queryMode: 'local',
 			emptyText: _('Select a view')+' ...',
 			value: global.account['dashboard'],
 			width: 200,
