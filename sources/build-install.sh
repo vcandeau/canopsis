@@ -517,7 +517,7 @@ if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "  + Create bootstrap env"
 	mkdir -p $BSTRAP_PATH
 	echo "  + Copy install script"
-	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
+	cp $SRC_PATH/../binaries/{install.sh,common.sh,INSTALL} $INSTALLER_PATH
 	check_code $? "Impossible to copy"
 
 	echo "  + Copy packages ..."
