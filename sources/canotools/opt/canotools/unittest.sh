@@ -9,7 +9,7 @@ else
 fi
 
 export HOME=$PREFIX
-export GUNICORN_WORKER=1
+#export GUNICORN_WORKER=1
 
 hypcontrol stop
 hypcontrol start
