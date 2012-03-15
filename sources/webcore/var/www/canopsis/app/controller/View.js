@@ -216,7 +216,9 @@ Ext.define('canopsis.controller.View', {
 			
 			//open view for edition
 			if(open_after_put == true){
-				this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') }).editMode();
+				var tab = this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') })
+				tab.editMode();
+				tab.doRedraw();
 			}
 		}else{
 			log.debug('Impossible to add view, root directory not found ....',this.logAuthor)
