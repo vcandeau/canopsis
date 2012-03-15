@@ -9,12 +9,14 @@ else
 fi
 
 export HOME=$PREFIX
+export GUNICORN_WORKER=1
 
 hypcontrol stop
 hypcontrol start
 sleep 1
 
 cd $HOME
+
 UNITTESTS=`find ./ | grep Myunittest.py`
 UNITTESTS="$UNITTESTS $HOME/opt/canotools/functional-test.py"
 
