@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-set -E -o pipefail
+set -e -o pipefail
 
 ############################
 ######  Logging Trap  ######
@@ -92,9 +92,9 @@ error () {
 
 . $HOME/lib/common.sh 
 . $HOME/lib/pkgmgr/common
-set +E
+set +e
 detect_os > /dev/null
-set -E
+set -e
 . $HOME/etc/pkgmgr.conf
 . $HOME/lib/pkgmgr/db 
 . $HOME/lib/pkgmgr/manual 
