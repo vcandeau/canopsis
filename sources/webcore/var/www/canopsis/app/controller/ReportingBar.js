@@ -39,6 +39,11 @@ Ext.define('canopsis.controller.ReportingBar', {
 		for (i in btns){
 			btns[i].on('click', this.saveButton, this)
 		}
+		//html report button
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="link"]')
+		for (i in btns){
+			btns[i].on('click', this.htmlReport, this)
+		}
 		
 		//exit button
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="exit"]')
@@ -68,7 +73,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 		
 	},
 	
-	//the following is now manage bien mainbar/content.js
+	
 	
 	launchReport: function(){
 		var toolbar = this.bar
@@ -131,6 +136,22 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var newDate = new Date(timestamp * 1000)
 		//set the time
 		inputField.setValue(newDate)
+	},
+	
+	htmlReport : function(){
+		var toolbar = this.bar
+		if(toolbar.currentDate.isValid()){
+			var ctrl = this.getController('Reporting')
+			
+			//Get view id
+			var tab = Ext.getCmp('main-tabs').getActiveTab();
+			var view = tab.view_id
+			
+			var to = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
+			var from = to - toolbar.combo.getValue();
+			
+			ctrl.openHtmlReport(view,from*1000,to*1000)
+		}
 	},
 	
 	exitButton : function(){

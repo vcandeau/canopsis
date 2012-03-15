@@ -141,19 +141,26 @@
 		Ext.Loader.setConfig({enabled:true});
 		
 		try {
-			if(! export_view_id){
-				var decoded_url = Ext.urlDecode(window.location.search)
-				log.debug('Get options from URL ('+decoded_url+')')
-				
+			if(!export_view_id){
+				log.debug('export_view_id is undefined')
+			} else {
+				log.debug('export_view_id is defined')
+			}
+		} catch(err) {
+			var decoded_url = Ext.urlDecode(window.location.search)
+			log.debug('Get options from URL ('+decoded_url+')')
+			
+			if(decoded_url.view != undefined){
 				export_from = decoded_url.from
 				export_to = decoded_url.to
 				export_view_id = decoded_url.view
+			} else {
+				//these are only for testing purpose
+				log.debug('no view specified, render dashboard')
+				export_view_id = 'view._default_.dashboard';
+				export_to = Date.now();
+				export_from = export_to - (global.commonTs.day * 1000);
 			}
-		} catch(err) {
-			//these are only for testing purpose
-			export_view_id = 'view._default_.dashboard';
-			export_to = Date.now();
-			export_from = export_to - (global.commonTs.day * 1000);
 		
 		}
 	
