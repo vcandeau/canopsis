@@ -14,6 +14,5 @@ function install(){
 	cd $SRC_PATH	
 	install_basic_source $NAME
 
-	install_init "mongodb"
 	install_conf "mongodb.conf"
 }
