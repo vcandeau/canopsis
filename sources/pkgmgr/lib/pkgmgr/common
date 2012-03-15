@@ -1,0 +1,33 @@
+
+function check_code {
+    if [ $1 -ne 0 ]; then
+        echo -e "Error: Code: $1"
+        echo -e "Output:\n$2"
+		echo " => $PNAME installation failed"
+        echo "[`date +'%T %x'`][ERR] $PNAME installation failed ($1)" >> $LOG_FILE
+        echo "[`date +'%T %x'`][ERR] Output: ($2)" >> $LOG_FILE
+        off_lock
+        exit $1
+    fi
+}
+
+function launch_cmd() {
+	shift
+    MYCMD=$@
+    if [ "x$MYCMD" != "x" ]; then
+        if [ "x`id -un`" == "x$HUSER" ]; then
+            $MYCMD 2>&1 | tee -a $LOG_FILE ; test ${PIPESTATUS[0]} -eq 0
+            EXCODE=$?
+            check_code $EXCODE "Error in command '$MYCMD'..."
+        else
+            if [ `id -u` -eq 0 ]; then
+                su - $HUSER -c ". .bash_profile && $MYCMD"
+                EXCODE=$?
+                check_code $EXCODE "Error in command '$MYCMD'..."
+            else
+                echo "Impossible to launch command with '`id -un`' ..."
+                exit 1
+            fi
+        fi
+    fi
+}
