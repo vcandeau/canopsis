@@ -31,7 +31,7 @@ cd sources
 
 echo "-------> Start Build"
 if [ -e $SRC/builded ]; then
-	./build-install.sh -cupn
+	./build-install.sh -cupnd
 	if [ $? -ne 0 ]; then exit 1; fi
 else
 	./build-install.sh -cup
