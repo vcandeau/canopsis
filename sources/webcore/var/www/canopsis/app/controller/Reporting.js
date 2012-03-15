@@ -41,5 +41,13 @@ Ext.define('canopsis.controller.Reporting', {
 		});
 	},
 	
-	
+	openHtmlReport : function(view, from, to){
+		log.debug('Open html report : '+ view , this.logAuthor);
+		var url = Ext.String.format('reporting.html?view={0}&from={1}&to={2}',
+		view,
+		from,
+		to)
+		log.debug('url is : ' + url)
+		window.open(url,'_newtab')
+	}
 })
