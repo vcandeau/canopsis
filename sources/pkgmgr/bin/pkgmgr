@@ -232,8 +232,8 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
 		update_db
-		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
+		pkg_list_install_deps "$@"
 		echo "    + Following dependencies will be installed" && print_deps "$pkg_list_deps"
 		ask_confirmation
 		install_package $pkg_list_deps && exit $?; fi
@@ -252,9 +252,8 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 	if [ "x$ACTION" = "xupgrade" ]; then
 		check_args $@
 		update_db
-		trap 'error ${LINENO} "Package dependencie failure, look at: ($LOG_FILE)"' ERR
-		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
+		pkg_list_install_deps "$@"
 		echo "    + Following dependencies will be installed or upgraded" && print_deps "$pkg_list_deps"
 		ask_confirmation
 		upgrade_package $pkg_list_deps && exit $?; fi
