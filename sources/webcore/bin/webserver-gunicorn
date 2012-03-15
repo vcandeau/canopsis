@@ -7,9 +7,11 @@ BIN="gunicorn"
 PIDF="$HOME/var/run/webserver.pid"
 LOGF="$HOME/var/log/webserver.log"
 
-LL="debug"
+LL="error"
 
 ABIND="0.0.0.0:8082"
+
+. $HOME/etc/gunicorn.conf
 
 # Use export variable
 if [ "x$GUNICORN_WORKER" == "x" ]; then
