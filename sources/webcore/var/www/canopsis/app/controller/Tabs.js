@@ -168,7 +168,7 @@ Ext.define('canopsis.controller.Tabs', {
 		}
 	},
 	
-	save_active_tab : function(){
+	save_active_view : function(){
 		
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
 		var right = this.getController('Account').check_right(tab.view,'w')
