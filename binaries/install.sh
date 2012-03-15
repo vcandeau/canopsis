@@ -75,3 +75,6 @@ cp -R $SRC_PATH/bootstrap/* $PREFIX/var/lib/pkgmgr/packages/
 echo
 echo " :: Canopsis installed"
 echo
+
+echo '   ***  /!\  Please re-login for re-load shell environement  /!\ ***'
+echo
