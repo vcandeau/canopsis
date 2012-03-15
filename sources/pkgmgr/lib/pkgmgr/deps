@@ -21,6 +21,7 @@
 build_install_deps_tree () {
 	init_tmp
 	log_info "Create deps tree"
+	_sec=0
 	parse_install_deps $@
 	clean_tree
 	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
@@ -46,10 +47,19 @@ clean_tree () {
 }
 
 parse_install_deps () {
+	if [ $_sec -gt 200 ];then
+		echo "[`date +'%T %x'`][ERR] Error in packages dependences build" >> $LOG_FILE
+		echo "[`date +'%T %x'`][ERR] Take care about circular dependency (1)" >> $LOG_FILE 
+		echo " => Error in packages dependences build"
+		trap 'error ${LINENO} "Error in packages dependences build. Take care about circular dependency."' ERR
+		exit 1
+	else
+		let _sec++
+	fi
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
 		local tmp
-		trap 'error ${LINENO} "Package $dep must be install but its not available on repositorie"' ERR
+		trap 'error ${LINENO} "Package \"$dep\" must be install but its not available on repositorie"' ERR
 		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
 		if [ $tmp -le 0 ]; then
 			exit 1
