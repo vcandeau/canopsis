@@ -55,7 +55,7 @@ cd $SRC/binaries
 if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Start HTTP Repo"
-python -m SimpleHTTPServer 80 &
+python -m SimpleHTTPServer 8081 &
 WWWCODE=$?
 WWWPID=$!
 if [ $WWWCODE -ne 0 ]; then exit 1; fi
@@ -72,7 +72,7 @@ useradd -m -d /opt/canopsis -s /bin/bash canopsis
 echo "---> Install bootstrap"
 su - canopsis -c "mkdir -p tmp"
 su - canopsis -c "rm -Rf tmp/* &> /dev/null"
-su - canopsis -c "cd tmp && wget http://localhost/canopsis_installer.tgz"
+su - canopsis -c "cd tmp && wget http://localhost:8081/canopsis_installer.tgz"
 if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
 su - canopsis -c "cd tmp && tar xvf canopsis_installer.tgz"
@@ -87,7 +87,7 @@ su - canopsis -c "rm -Rf tmp/canopsis_installer*"
 ## Configure pkgmgr
 echo "---> Configure pkgmgr"
 sed -i 's#="stable"#=""#g' /opt/canopsis/etc/pkgmgr.conf
-sed -i 's#repo.canopsis.org#localhost#g' /opt/canopsis/etc/pkgmgr.conf
+sed -i 's#repo.canopsis.org:80#localhost:8081#g' /opt/canopsis/etc/pkgmgr.conf
 
 ## Start install
 echo "---> Start install ($CMD_INSTALL)"
