@@ -1,0 +1,31 @@
+Requirements
+============
+
+(with root user)
+
+	Debian like (Debian, Ubuntu ...)
+	--------------------------------
+
+		apt-get update
+		apt-get install sudo uuid-runtime curl xvfb bzip2 libbz2-dev
+
+	Ubuntu
+	------
+
+		apt-get update
+		apt-get install libevent-dev libxrender1 libfontconfig1
+
+Environment
+===========
+
+(with root user)
+
+		useradd -m -d /opt/canopsis -s /bin/bash canopsis
+
+Installation
+============
+
+		mv canopsis_installer /opt/canopsis
+		su - canopsis
+		cd canopsis_installer
+		./install.sh
