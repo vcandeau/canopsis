@@ -59,6 +59,17 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 	return "<span style='background-color:" + global.default_colors[rowIndex] + ";color:" + global.default_colors[rowIndex] + ";'>__</span>"
 }
 
+var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
+	var output = ''
+	
+	if(val.hours)
+		output += val.hours + ' h '
+	if(val.minutes)
+		output += val.minutes + ' m '
+	
+	return output
+}
+
 //Function for rendering export to pdf button, we haven't find another solution
 var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, store,view){
 	var id = Ext.id();

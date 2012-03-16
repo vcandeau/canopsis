@@ -30,16 +30,16 @@ Ext.define('canopsis.view.Group.Grid' ,{
 
 	columns: [
 		{
-                	header: '',
-	                width: 25,
-	                sortable: false,
-			renderer: rdr_crecord_type,
-	                dataIndex: 'crecord_type',
+				header: '',
+				width: 25,
+				sortable: false,
+				renderer: rdr_crecord_type,
+	               dataIndex: 'crecord_type',
         	},{
-        	        header: _('Name'),
-	                flex: 2,
-	                sortable: true,
-                	dataIndex: 'crecord_name',
+				header: _('Name'),
+				flex: 2,
+				sortable: true,
+				dataIndex: 'crecord_name',
 		}
             
 	],

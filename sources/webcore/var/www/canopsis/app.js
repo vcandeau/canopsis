@@ -83,6 +83,7 @@ function createApplication(){
 			'Reporting',
 			'ReportingBar',
 			'Keynav',
+			'Task',
 		],
 	
 		//autoCreateViewport: true,
