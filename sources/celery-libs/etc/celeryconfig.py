@@ -29,11 +29,13 @@ def list_crons():
 			schedule['args'] = record.data['args']
 
 		if record.data.has_key('timedelta'):
-			ret_timedelta = timedelta(**record.data['timedelta'])
-			schedule['schedule'] = ret_timedelta 
+			if record.data['timedelta'] != None:
+				ret_timedelta = timedelta(**record.data['timedelta'])
+				schedule['schedule'] = ret_timedelta 
 		if record.data.has_key('crontab'):
-			ret_crontab = crontab(**record.data['crontab'])			
-			schedules['schedule'] = ret_crontab
+			if record.data['crontab'] != None:
+				ret_crontab = crontab(**record.data['crontab'])			
+				schedules['schedule'] = ret_crontab
 		
 		schedules[record.data['name']] = schedule
 
