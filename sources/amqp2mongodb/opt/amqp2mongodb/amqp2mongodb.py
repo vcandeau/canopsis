@@ -68,6 +68,8 @@ point_per_dca = None
 def on_message(body, msg):
 	event_id = msg.delivery_info['routing_key']
 	logger.debug("Check event: %s" % event_id)
+	
+	## Check event format
 	try:
 		if isinstance(body, str) or isinstance(body, unicode):
 			event = json.loads(body)
@@ -77,6 +79,33 @@ def on_message(body, msg):
 		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
 
+	## Try to parse perfdata
+	perf_data_array = {}
+	perf_data = None
+	try:
+		try:
+			perf_data = str(event['perf_data'])
+		except:
+			perf_data = dict(event['perf_data_array'])
+		
+		logger.debug(' + perf_data: %s', perf_data_array)
+		try:
+			if perf_data:
+				timestamp = int(event['timestamp'])
+				perf_data_array = to_perfstore(event_id, perf_data, timestamp)
+			
+		except Exception, err:
+			logger.debug(err)
+				
+	except Exception, err:
+		logger.debug('Invalid perfdata (%s)', err)
+	
+	
+	logger.debug(' + perf_data_array: %s', perf_data_array)
+	event['perf_data_array'] = perf_data_array
+	
+	
+	## Archive event
 	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
 
 		if archiver.check_event(event_id, event):
@@ -104,43 +133,44 @@ def on_message(body, msg):
 	else:
 		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
 
-	try:
-		perf_data = event['perf_data']
-		if perf_data != "":
-			timestamp = int(event['timestamp'])
-			to_perfstore(event_id, perf_data, timestamp)
-	except Exception, err:
-		logger.debug('No perfdata')
-
 
 
 def to_perfstore(_id, perf_data, timestamp):
-	try:
-		perf_data = parse_perfdata(perf_data)
-	except:
-		raise Exception("Imposible to parse: " + str(perf_data))
-
-	mynode = node(_id, storage=perfstore, point_per_dca=point_per_dca, rotate_plan=rotate_plan)
-
-	#{u'rta': {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, u'pl': {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'}}
-
-	for metric in perf_data.keys():
-		value = perf_data[metric]['value']
+	
+	if isinstance(perf_data, str):
 		try:
-			unit = str(perf_data[metric]['unit'])
-		except:
-			unit = None
-
-		if int(value) == value:
-			value = int(value)
-		else:
-			value = float(value)
+			perf_data = parse_perfdata(perf_data)
+		except Exception, err:
+			raise Exception("Imposible to parse: %s (%s)" % (perf_data, err))
 			
-		logger.debug(" + Put metric '%s' (%s %s) for ts %s ..." % (metric, value, unit, timestamp))
+	if isinstance(perf_data, dict):
 
-		mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+		mynode = node(_id, storage=perfstore, point_per_dca=point_per_dca, rotate_plan=rotate_plan)
 
-	#del mynode
+		#{u'rta': {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, u'pl': {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'}}
+
+		for metric in perf_data.keys():
+			value = perf_data[metric]['value']
+			try:
+				unit = str(perf_data[metric]['unit'])
+			except:
+				unit = None
+
+			if int(value) == value:
+				value = int(value)
+			else:
+				value = float(value)
+				
+			logger.debug(" + Put metric '%s' (%s %s) for ts %s ..." % (metric, value, unit, timestamp))
+
+			mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+		
+		#del mynode
+		
+		return perf_data
+		
+	else:
+		raise Exception("Imposible to parse: %s (is not a dict)" % perf_data)
 
 ########################################################
 #
