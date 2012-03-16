@@ -87,9 +87,12 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid data ...')
 			
 		if revent['state'] != event['state']:
-			raise Exception('Invalid data ...')	
-		
+			raise Exception('Invalid data ...')
+
+		event['perf_data_array'] = {'mymetric': {'min': 0.0, 'max': 30.0, 'metric': 'mymetric', 'value': 1.0, 'warn': 10.0, 'crit': 20.0, 'unit': 's'}}
 		if event_alert != event:
+			print "event_alert: %s" % event_alert
+			print "event: %s" % event
 			raise Exception('Invalid alert data ...')
 			
 		
