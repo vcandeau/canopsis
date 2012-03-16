@@ -45,7 +45,7 @@ DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
 init 	= cinit()
-logger 	= init.getLogger(DAEMON_NAME, level="INFO")
+logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 myamqp = None
