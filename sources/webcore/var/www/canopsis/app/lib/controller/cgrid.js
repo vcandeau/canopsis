@@ -209,9 +209,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				log.debug('[controller][cgrid][form] - Form is conform');
 				var record = Ext.create('canopsis.model.'+this.modelId, data);
 				log.debug('[controller][cgrid][form] - Store record in store');
-				record = this._preSave(record)
+				record = this._preSave(record,data)
 				store.add(record);
-				this._postSave(record)
+				this._postSave(record,data)
 				log.debug('[controller][cgrid][form] - Reload store');
 				store.load();
 
@@ -239,10 +239,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
-	_preSave: function(record){
+	_preSave: function(record,data){
 		log.debug('[controller][cgrid][form] - Pre-Save');
 		if (this.preSave){
-			return this.preSave(record)
+			return this.preSave(record,data)
 		}else{
 			return record
 		}
