@@ -26,16 +26,23 @@ Ext.define('canopsis.controller.Reporting', {
 			scope: this,
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)
-				data = data.data.url
-				global.notify.notify(
-					_('Export ready'),
-					_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
-					undefined,
-					undefined,
-					false
-				)
+				log.dump(data)
+				if(data.success == true){
+					data = data.data.url
+					global.notify.notify(
+						_('Export ready'),
+						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
+						undefined,
+						undefined,
+						false
+					)
+				}else{
+					global.notify.notify('Failed','The report generation have failed','error')
+					log.error("Report generation have failed", this.logAuthor)
+				}
 			},
 			failure: function (result, request) {
+				global.notify.notify('Failed','The report generation have failed','error')
 				log.error("Report generation have failed", this.logAuthor)
 			} 
 		});
