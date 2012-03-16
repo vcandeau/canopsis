@@ -29,3 +29,5 @@ Installation
 		su - canopsis
 		cd canopsis_installer
 		./install.sh
+
+And now, logout and re-login.
