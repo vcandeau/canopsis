@@ -21,6 +21,11 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
+
+echo "Init submodules ..."
+git submodule init
+git submodule update
+
 ######################################
 #  functions
 ######################################
