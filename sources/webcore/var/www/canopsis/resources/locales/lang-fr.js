@@ -26,6 +26,7 @@ var i18n={
 	'Duplicate':			'Dupliquer',
 	'Reload':			'Recharger',
 	'search':			'rechercher',
+	'Search':			'Rechercher',
 	'Build':			'Construire',
 	'Cancel':			'Annuler',
 	'Finish':			'Fin',
@@ -199,5 +200,9 @@ var i18n={
 	'Remove all': 'Supprimer tous',	
 	'Ascending': 'Croissant',
 	'Descending': 'Décroissant',
-	
+	'Invalid login': "Nom d'utilisateur invalide",
+	'Invalid name': 'Nom invalide',
+	'use alphanumeric characters only': 'Veuillez utiliser uniquement des caractères alpha-numérique',
+	'Invalid form': 'Formulaire invalide',
+	'Record saved': 'Enregistrement sauvegardé' 
 }
