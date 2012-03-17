@@ -203,6 +203,8 @@ var i18n={
 	'Invalid login': "Nom d'utilisateur invalide",
 	'Invalid name': 'Nom invalide',
 	'use alphanumeric characters only': 'Veuillez utiliser uniquement des caractères alpha-numérique',
+	'Please check your form': 'Veuillez vérifier votre formulaire',
 	'Invalid form': 'Formulaire invalide',
-	'Record saved': 'Enregistrement sauvegardé' 
+	'Record saved': 'Enregistrement sauvegardé',
+	'Success': 'Succès'
 }
