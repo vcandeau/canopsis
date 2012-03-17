@@ -21,6 +21,8 @@
 Ext.define('canopsis.lib.controller.cgrid', {
 	extend: 'Ext.app.Controller',
 
+	allowEdit: true,
+
 	init: function() {
 		log.debug('[controller][cgrid] - '+this.id+' Initialize ...');
 
@@ -41,6 +43,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		log.debug('[controller][cgrid] - Bind events "'+id+'" ...')
 
+		//Bind Dblclick
 		grid.on('selectionchange',	this._selectionchange,	this)
 		if(grid.opt_view_element){
 			grid.on('itemdblclick',this._viewElement,this)
@@ -277,6 +280,9 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_editRecord: function(view, item, index) {
+		if (! this.allowEdit)
+			return
+
 		log.debug('[controller][cgrid] - clicked editRecord');
 
 		if (this.formXtype) {
