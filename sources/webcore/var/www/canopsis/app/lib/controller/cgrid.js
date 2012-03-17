@@ -219,15 +219,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 
 			}else{
-				log.debug('[controller][cgrid][form] - Form is not valid !');
+				log.error('[controller][cgrid][form] - Form is not valid !');
+				global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
+				return
 			}
 		}else{
-			log.debug('[controller][cgrid][form] - Form is not valid !');
+			log.error('[controller][cgrid][form] - Form is not valid !');
+			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
+			return
 		}
 
 		if (this.saveForm) {
 			this.saveForm(form)
 		}
+
+		global.notify.notify(_('Success'), _('Record saved'))
 			
 	},
 	
