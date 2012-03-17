@@ -23,8 +23,12 @@ INST_CONF="$SRC_PATH/build.d/"
 
 
 echo "Init submodules ..."
+cd ..
 git submodule init
+check_code $? "Impossible to init submodule"
 git submodule update
+check_code $? "Impossible to update submodule"
+cd sources
 
 ######################################
 #  functions
