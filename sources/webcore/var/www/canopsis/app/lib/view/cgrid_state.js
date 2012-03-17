@@ -64,9 +64,11 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		//set columns
 		if(this.opt_show_source_type){
 			this.columns.push({
-				header: '',
+				header: ' ',
 				width: 25,
 				sortable: this.opt_column_sortable,
+				//menuDisabled: true,
+				hideable: false,
 				dataIndex: 'source_type',
 				renderer: rdr_source_type
 				});
