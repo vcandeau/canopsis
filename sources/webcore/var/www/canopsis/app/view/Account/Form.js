@@ -29,6 +29,8 @@ Ext.define('canopsis.view.Account.Form', {
 				fieldLabel: _('Login'),
 				name: 'user',
 				allowBlank: false,
+				regex: /^[A-Za-z0-9_]+$/,
+				regexText: _("Invalid login") + ", "+_("use alphanumeric characters only") + "<br/>([A-Za-z0-9_])"
 			},{
 				fieldLabel: _('First Name'),
 				name: 'firstname',
@@ -37,10 +39,7 @@ Ext.define('canopsis.view.Account.Form', {
 				fieldLabel: _('Last Name'),
 				name: 'lastname',
 				allowBlank : false
-			},/*{
-				fieldLabel: _('aaa access owner'),
-				name: 'aaa_access_owner'
-			},*/{
+			},{
 				fieldLabel: _('E-mail'),
 				name: 'mail',
 				vtype: 'email',
@@ -60,14 +59,6 @@ Ext.define('canopsis.view.Account.Form', {
 				inputType: 'password',
 				name: 'passwd',
 				allowBlank : false
-			}/*,{
-				fieldLabel: _('aaa owner'),
-				name: 'aaa_owner'
-			}*/],
-    
-
-    initComponent: function(){
-        this.callParent();
-    },
+			}],
     
 });

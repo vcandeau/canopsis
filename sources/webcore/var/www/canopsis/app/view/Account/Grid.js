@@ -73,8 +73,4 @@ Ext.define('canopsis.view.Account.Grid' ,{
             
 	],
 
-	initComponent: function() {
-		this.callParent(arguments);
-	}
-
 });
