@@ -122,7 +122,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					bar_child.push({
 						xtype : 'button',
 						action: 'search',
-						text: _('search'),
+						//text: _('Search'),
+						iconCls: 'icon-search',
 						pack: 'end',
 					})
 				}
