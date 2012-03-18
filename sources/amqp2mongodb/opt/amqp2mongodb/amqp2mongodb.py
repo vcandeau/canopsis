@@ -72,10 +72,18 @@ def on_message(body, msg):
 	## Check event format
 	try:
 		if isinstance(body, str) or isinstance(body, unicode):
-			event = json.loads(body)
+			try:
+				event = json.loads(body)
+			except:
+				try:
+					# Hack for windows FS -_-
+					event = json.loads(body.replace('\\', '\\\\'))
+				except Exception, err:
+					raise Exception(err)
 		else:
 			event = body
-	except:
+	except Exception, err:
+		logger.error(err)
 		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
 
@@ -95,10 +103,10 @@ def on_message(body, msg):
 				perf_data_array = to_perfstore(event_id, perf_data, timestamp)
 			
 		except Exception, err:
-			logger.debug(err)
+			logger.warning(err)
 				
 	except Exception, err:
-		logger.debug('Invalid perfdata (%s)', err)
+		logger.warning('Invalid perfdata (%s)', err)
 	
 	
 	logger.debug(' + perf_data_array: %s', perf_data_array)
