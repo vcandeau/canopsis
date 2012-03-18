@@ -29,7 +29,7 @@ class cinit(object):
 			while self.RUN:
 				time.sleep(1)
 
-	def getLogger(self, name, level="ERROR"):
+	def getLogger(self, name, level="INFO"):
 		if level == "INFO":
 			self.level = logging.INFO
 		elif level == "WARNING":
