@@ -23,6 +23,9 @@ import unittest
 from ctools import calcul_pct
 from ctools import parse_perfdata
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
 		pass
@@ -45,6 +48,13 @@ class KnownValues(unittest.TestCase):
 
 		result = {'warn': {'min': 0.0, 'max': 100.0, 'metric': 'warn', 'value': 0.0, 'warn': 0.0, 'crit': 0.0, 'unit': '%'}, 'crit': {'min': 0.0, 'max': 100.0, 'metric': 'crit', 'value': 0.0, 'warn': 0.0, 'crit': 0.0, 'unit': '%'}, 'ok': {'min': 0.0, 'max': 100.0, 'metric': 'ok', 'value': 100.0, 'warn': 98.0, 'crit': 95.0, 'unit': '%'}}
 		perf_data = "'ok'=100.0%;98;95;0;100 'warn'=0%;0;0;0;100 'crit'=0%;0;0;0;100"
+		perf_data = parse_perfdata(perf_data)
+		if perf_data != result:
+			print perf_data
+			raise Exception('Error in perfdata parsing ...')
+
+		result = {'warn: /ing': {'min': 0.0, 'max': 100.0, 'metric': 'warn: /ing', 'value': 0.0, 'warn': 0.0, 'crit': 0.0, 'unit': '%'}, 'D:\ Used': {'min': 0.0, 'max': 100.0, 'metric': 'D:\ Used', 'value': 0.0, 'warn': 0.0, 'crit': 0.0, 'unit': '%'}, 'C:/ Used': {'min': 0.0, 'max': 100.0, 'metric': 'C:/ Used', 'value': 100.0, 'warn': 98.0, 'crit': 95.0, 'unit': '%'}}
+		perf_data = "'C:/ Used'=100.0%;98;95;0;100; 'warn: /ing'=0%;0;0;0;100; 'D:\ Used'=0%;0;0;0;100;"
 		perf_data = parse_perfdata(perf_data)
 		if perf_data != result:
 			print perf_data
