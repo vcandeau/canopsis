@@ -59,6 +59,10 @@ class KnownValues(unittest.TestCase):
 		if perf_data != result:
 			print perf_data
 			raise Exception('Error in perfdata parsing ...')
+			
+			
+		perf_data = "rta=0.093000ms;100.000000;500.000000;0.000000 pl=0%;20;60;0"
+		perf_data = parse_perfdata(perf_data)
 
 	def test_02_calcul_pct(self):
 		result = {'unknown': 23.01, 'warning': 41.0, 'ok': 26.55, 'critical': 9.44}

@@ -93,6 +93,8 @@ def parse_perfdata(perf_data):
 								perf_data_clean[key] = float(perf_data[key])
 							except:
 								perf_data_clean[key] = perf_data[key]
+								
+							#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
 				
 					perf_data_array[perf_data_clean['metric']] = perf_data_clean
 
