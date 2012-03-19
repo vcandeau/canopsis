@@ -109,7 +109,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		}
 			
 		//root build menu
-		if(global.account.user == 'root'){
+		if(global.account.user == 'root' || (global.account.groups.indexOf('root') != -1)){
 			var root_build_option = [
 				{
 					iconCls:'icon-mainbar-edit-account',
@@ -183,8 +183,11 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					],
 				}
 			},'-',{
-				xtype: 'container',
-				html: "<div class='cps-title' >Canopsis</div>",
+				//xtype: 'container',
+				//html: "<div class='cps-title' >Canopsis</div>",
+				xtype: 'tbtext',
+				text: 'Canopsis',
+				cls: 'cps-title',
 				flex : 1
 			},/*{
 				xtype : 'container',
