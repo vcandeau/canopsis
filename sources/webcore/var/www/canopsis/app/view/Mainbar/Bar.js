@@ -183,8 +183,11 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					],
 				}
 			},'-',{
-				xtype: 'container',
-				html: "<div class='cps-title' >Canopsis</div>",
+				//xtype: 'container',
+				//html: "<div class='cps-title' >Canopsis</div>",
+				xtype: 'tbtext',
+				text: 'Canopsis',
+				cls: 'cps-title',
 				flex : 1
 			},/*{
 				xtype : 'container',
