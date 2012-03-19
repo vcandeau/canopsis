@@ -51,7 +51,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			header: _('Every'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'timedelta',
+			dataIndex: 'crontab',
 			renderer: rdr_task_timedelta,
 		}
 	],
