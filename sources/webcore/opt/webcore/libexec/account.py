@@ -33,7 +33,7 @@ from crecord import crecord
 from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger('Account')
-
+logger.setLevel(3)
 #########################################################################
 
 #### GET Me
@@ -205,7 +205,9 @@ def account_post():
 
 		if update:
 			passwd = str(data['passwd'])
+			group = str (data['groups'])
 			del data['passwd']
+			del data['groups']
 
 			for key in dict(data).keys():
 				record.data[key] = data[key]
@@ -214,12 +216,17 @@ def account_post():
 			if passwd:
 				logger.debug(' + Update password ...')
 				update_account.passwd(passwd)
+			if group:
+				logger.debug(' + Update group ...')
+				logger.debug(group)
+				logger.debug(type(group))
+				update_account.chgrp(group)
 
 			storage.put(update_account, account=account)
 
 		else:
 			logger.debug(' + New account')
-			new_account = caccount(user=data['user'], group=data['aaa_group'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
+			new_account = caccount(user=data['user'], group=data['groups'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
 
 			passwd = data['passwd']
 			new_account.passwd(passwd)
