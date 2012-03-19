@@ -29,7 +29,7 @@ Ext.define('canopsis.store.Task', {
 
 	proxy: {
 		type: 'rest',
-		url: '/rest/object/schedule',
+		url: '/task',
 		reader: {
 			type: 'json',
 			root: 'data',
