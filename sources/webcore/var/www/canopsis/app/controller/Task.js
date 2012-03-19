@@ -21,17 +21,38 @@
 Ext.define('canopsis.controller.Task', {
 	extend: 'canopsis.lib.controller.cgrid',
     
-	views: ['Task.Grid'],
+	views: ['Task.Grid','Task.Form'],
 	stores: ['Task'],
 	models: ['Task'],
 	
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
-		//this.formXtype = 'GroupForm'
+		this.formXtype = 'TaskForm'
 		this.listXtype = 'TaskGrid'
+		
+		this.modelId = 'Task'
 
 		this.callParent(arguments);
 	},
+	
+	preSave: function(record,data){
+		record.set('task','task_reporting.render_pdf')
+		log.dump(data)
+		//--------------formating crontab-----------------------
+		var time = data.hours.split(':')
+		var crontab = {
+			minute: time[1],
+			hour: time[0]
+		}
+
+		if(data.day != undefined)
+			crontab['day_of_week'] = data.day.substring(0,3)
+		record.set('crontab',crontab)
+		//------------------------------------------------------
+		log.dump(crontab)
+		
+		return record
+	}
 	
 });
