@@ -49,7 +49,7 @@ Ext.define('canopsis.view.Account.Form', {
 				name: 'groups'
 			},*/{
 				fieldLabel: _('group'),
-				name: 'aaa_group',
+				name: 'groups',
 				store: 'Group',
 				displayField: 'crecord_name',
 				xtype: 'combobox',

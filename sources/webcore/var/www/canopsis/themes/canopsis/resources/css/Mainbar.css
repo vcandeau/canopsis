@@ -36,6 +36,7 @@
 	text-shadow: 1px 1px 1px #ede6e6;
 	padding: 0px 0px 0px 20px;
 	float: left;
+	top : 0px !important; 
 }
 
 .Mainbar .cps-account{
