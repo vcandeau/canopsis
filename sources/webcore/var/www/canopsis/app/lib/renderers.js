@@ -61,12 +61,12 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 
 var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
 	var output = ''
-	
+	/*
 	if(val.hours)
 		output += val.hours + ' h '
 	if(val.minutes)
 		output += val.minutes + ' m '
-	
+	*/
 	return output
 }
 
