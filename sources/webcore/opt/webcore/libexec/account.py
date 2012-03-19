@@ -33,7 +33,7 @@ from crecord import crecord
 from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger('Account')
-logger.setLevel(3)
+
 #########################################################################
 
 #### GET Me
