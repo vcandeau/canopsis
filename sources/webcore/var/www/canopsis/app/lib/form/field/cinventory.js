@@ -101,12 +101,13 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		this.selection_render_metrics = function(perf_data, p, record){
 			if (perf_data) {
 				var output = ''
-								
+				
+				var i = 0
 				for (var name in perf_data){
 					metric = perf_data[name]
 					
 					var checked = 'checked'
-					var state = this.get_metric(record.data.id, name)
+					var state = this.get_metric(record.data.id, name, i)
 					if (! state){ checked ='' }
 					
 					output += Ext.String.format(
@@ -114,10 +115,11 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 						name,
 						this.id,
 						record.data.id,
-						name,
+						name.replace(/\\/g, '\\\\'),
 						checked,
 						name
 					);
+					i += 1
 				}
 				return output
 			}
@@ -182,6 +184,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			
 			// keep checked metrics
 			metrics: {},
+			
 			init_metric: function(node, metric) {
 				if (this.metrics[node] == undefined){
 					this.metrics[node] = {}
@@ -205,7 +208,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				return check
 			},
 			
-			get_metric: function(node, metric) {
+			get_metric: function(node, metric, index) {
 				this.init_metric(node, metric)
 				return this.metrics[node][metric]
 			}
