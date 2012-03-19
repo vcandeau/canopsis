@@ -38,6 +38,7 @@ Ext.define('canopsis.controller.Task', {
 	
 	preSave: function(record,data){
 		record.set('task','task_reporting.render_pdf')
+		record.set('_id',data['_id'])
 		log.dump(data)
 		//--------------formating crontab-----------------------
 		var time = data.hours.split(':')
