@@ -61,7 +61,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Error in perfdata parsing ...')
 			
 			
-		perf_data = "rta=0.093000ms;100.000000;500.000000;0.000000 pl=0%;20;60;0"
+		perf_data = "/=541MB;906;956;0;1007 /home=62MB;452;477;0;503 /tmp=38MB;906;956;0;1007 /var=943MB;1813;1914;0;2015 /usr=2249MB;5441;5743;0;6046 /opt=68MB;112;118;0;125 /boot=25MB;90;95;0;100 /backup=4410MB;7256;7659;0;8063 /mnt/NAS_OPU_LIVRAISON=35603MB;36300;38317;0;40334 /products/admin=595MB;906;956;0;1007 /products/oracle/10.2.0=146MB;7256;7659;0;8063 /products/agtgrid=851MB;6349;6702;0;7055 /app/PPOPVGL=10966MB;27213;28725;0;30237"
 		perf_data = parse_perfdata(perf_data)
 
 	def test_02_calcul_pct(self):
