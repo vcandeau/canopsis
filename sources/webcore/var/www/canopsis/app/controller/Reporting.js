@@ -16,7 +16,7 @@ Ext.define('canopsis.controller.Reporting', {
 		//if no date given
 		if(to == undefined){
 			to = Date.now() 
-			from = (to - global.cmmonTs.day) * 1000
+			from = (to - global.commonTs.day)
 		}
 		
 		global.notify.notify(_('Please Wait'),_('Your document is rendering, a popup will ask you where to save in few seconds'))
