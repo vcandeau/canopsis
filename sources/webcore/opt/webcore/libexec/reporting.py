@@ -49,10 +49,21 @@ logger = logging.getLogger('Reporting')
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
 def generate_report(startTime, stopTime,view_name):
 	account = get_account()
-
-	name_array = view_name.split('.')
-	file_name = name_array[len(name_array)-1]
-	file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
+	storage = cstorage(account=account, namespace='object')
+	
+	#get crecord name of the view (id is really harsh)
+	try:
+		record = storage.get(view_name,account=account)
+		
+		fromDate = str(date.fromtimestamp(int(startTime) / 1000))
+		toDate = str(date.fromtimestamp(int(stopTime) / 1000))
+		
+		file_name = '%s_From_%s_To_%s' % (record.name,fromDate,toDate)
+	except  Exception, err:
+		logger.error(err)
+		name_array = view_name.split('.')
+		file_name = name_array[len(name_array)-1]
+		file_name += '_' + str(date.fromtimestamp(int(startTime) / 1000)) +'.pdf'
 
 	fileName = None
 	
