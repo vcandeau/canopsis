@@ -72,7 +72,9 @@ class KnownValues(unittest.TestCase):
 		
 		perf_data = "'C:\ %'=67%;10;5; 'C:\'=6.65G;2;1;0;20; 'E:\ %'=31%;10;5; 'E:\'=10870.0M;1567.45;783.72;0;15674.52; 'J:\ %'=88%;10;5; 'J:\'=2.57G;2;1;0;20.00; 'T:\ %'=100%;10;5; 'T:\'=49.53M;512.3;256.19;0;5123.90;"
 		perf_data = parse_perfdata(perf_data)
-
+		
+		perf_data = "'C:\ Used'=55.4%;90;95; 'S:\ Used'=27.2%;90;95; 'E:\ Used'=24.6%;90;95; 'Q:\ Used'=1.1%;90;95; 'F:\ Used'=83.3%;90;95; 'F:\Journaux\ Used'=0.5%;90;95; 'F:\Data\ Used'=2.0%;90;95; 'F:\App\ Used'=1.4%;90;95; 'G:\ Used'=62.6%;90;95; 'G:\Journaux\ Used'=21.6%;90;95; 'G:\App\ Used'=7.8%;90;95; '\\?\Volume{c75733e9-4327-11e0-8596-0010184d9c22}\ Used'=35.9%;90;95; 'H:\ Used'=76.6%;90;95; 'H:\Journaux\ Used'=7.2%;90;95; '\\?\Volume{b7cdcbde-4fe5-11e0-a4e6-0010184d9c22}\ Used'=49.6%;90;95; 'H:\App\ Used'=9.9%;90;95; 'I:\ Used'=46.7%;90;95; 'I:\Journaux\ Used'=8.7%;90;95; '\\?\Volume{b7cdcbe1-4fe5-11e0-a4e6-0010184d9c22}\ Used'=99.0%;90;95; 'I:\App\ Used'=10.8%;90;95; 'J:\ Used'=75.2%;90;95; 'J:\Journaux\ Used'=7.0%;90;95; 'J:\App\ Used'=10.0%;90;95; 'J:\Data\ Used'=74.2%;90;95; 'K:\ Used'=77.3%;90;95; 'K:\Journaux\ Used'=8.2%;90;95; 'K:\Data\ Used'=84.6%;90;95; 'K:\App\ Used'=10.2%;90;95; 'G:\Data\ Used'=25.7%;90;95; 'H:\Data\ Used'=41.4%;90;95; 'I:\Data\ Used'=46.1%;90;95;"
+		perf_data = parse_perfdata(perf_data)
 
 	def test_02_calcul_pct(self):
 		result = {'unknown': 23.01, 'warning': 41.0, 'ok': 26.55, 'critical': 9.44}
