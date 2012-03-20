@@ -85,24 +85,27 @@ def parse_perfdata(perf_data):
 
 				i+=1
 				if i==15:
-					logger.debug(" + %s" % perf_data)
-					perf_data_clean = {}
-					for key in perf_data.keys():
-						if perf_data[key]:
-							try:
-								perf_data_clean[key] = float(perf_data[key])
-							except:
-								perf_data_clean[key] = perf_data[key]
-								
-							#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
-				
-					perf_data_array[perf_data_clean['metric']] = perf_data_clean
-
+					try:
+						logger.debug(" + %s" % perf_data)
+						perf_data_clean = {}
+						for key in perf_data.keys():
+							if perf_data[key]:
+								try:
+									perf_data_clean[key] = float(perf_data[key])
+								except:
+									perf_data_clean[key] = perf_data[key]
+									
+								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
+					
+						perf_data_array[perf_data_clean['metric']] = perf_data_clean
+					except Exception, err:
+						logger.error("perf_data: Impossible to clean '%s': %s" % (perf_data, err))
+	
 					perf_data = {}
 					i=0
 
-			except:
-				logger.error("perf_data: Invalid metric %s: %s" % (i, info))
+			except Exception, err:
+				logger.error("perf_data: Invalid metric %s: %s (%s)" % (i, info, err))
 
 		return perf_data_array
 
