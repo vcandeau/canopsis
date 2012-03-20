@@ -206,17 +206,8 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				flex : 0.2,
 				menu: {
 					items: [
-						/*'-',
-						{
-							iconCls: 'icon-mainbar-dashboard',
-							text: _('Language') + ":",
-						},*/
 						this.localeSelector,
 						'-',
-						/*{
-							iconCls: 'icon-mainbar-dashboard',
-							text: _('Dashboard') + ":",
-						},*/
 						this.dashboardSelector,
 					]
 				}
