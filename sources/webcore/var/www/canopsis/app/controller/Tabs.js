@@ -48,6 +48,11 @@ Ext.define('canopsis.controller.Tabs', {
 		store.proxy.id = store.proxy.id + '.' + global.account.user
 		store.load();
 	},
+	
+	doRedraw: function(){
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.doRedraw()
+	},
 
   	on_tabchange: function(tabPanel, new_tab, old_tab, object){
 		//log.debug('Tabchange', this.logAuthor);
