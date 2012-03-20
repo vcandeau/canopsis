@@ -165,17 +165,21 @@ Ext.define('widgets.pie.pie' ,{
 			var node = this.nodes[0]
 			
 			// Parse perf_data
-			var perf_data = data.perf_data_array
+			var perf_data_array = data.perf_data_array
 						
-			for (var metric in perf_data){
-				var value = perf_data[metric].value
-				var max = perf_data[metric].max
-				var unit = perf_data[metric].unit
+			for (var index in perf_data_array){
+				
+				var perf_data = perf_data_array[index]
+				
+				var metric = perf_data['metric']
+				var value = perf_data['value']
+				var max = perf_data['max']
+				var unit = perf_data['unit']
 				
 				if (unit == '%' && ! max)
 					max = 100
 					
-				var metric_name = metric
+				var metric_name = metric 
 				
 				if (node.metrics.indexOf(metric) != -1){
 					var other_label = this.other_label
