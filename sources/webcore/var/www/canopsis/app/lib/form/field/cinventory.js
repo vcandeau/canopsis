@@ -103,21 +103,21 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 				var output = ''
 				
 				var i = 0
-				for (var name in perf_data){
-					metric = perf_data[name]
+				for (var index in perf_data){
+					metric = perf_data[index]['metric']
 					
 					var checked = 'checked'
-					var state = this.get_metric(record.data.id, name, i)
+					var state = this.get_metric(record.data.id, metric, i)
 					if (! state){ checked ='' }
 					
 					output += Ext.String.format(
 						'<input type="checkbox" value="{0}" onclick="Ext.getCmp(\'{1}\').check_metric(\'{2}\',\'{3}\');" {4}> {5}<br>',
-						name,
+						metric,
 						this.id,
 						record.data.id,
-						name.replace(/\\/g, '\\\\'),
+						metric.replace(/\\/g, '\\\\'),
 						checked,
-						name
+						metric
 					);
 					i += 1
 				}
@@ -373,18 +373,22 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 			var rdata = data[i]
 			// uncheck all metrics
 			log.debug(" + Uncheck all metrics", this.logAuthor)
-			for (var metric in rdata.perf_data_array)
+			for (var index in rdata.perf_data_array){
+					var metric = rdata.perf_data_array[index]['metric']
 					this.selection_grid.check_metric(rdata.id, metric , false)
+			}
 	
 			// if '<all>' check all metrics
 			if (rdata.metrics){
 				if (rdata.metrics[0] == '<all>'){
 					log.debug(" + Check all metrics", this.logAuthor)
-					for (var metric in rdata.perf_data_array)
+					for (var index in rdata.perf_data_array){
+						var metric = rdata.perf_data_array[index]['metric']
 						this.selection_grid.check_metric(rdata.id, metric , true)
+					}
 				}else{
-					for (var j in rdata.metrics){
-						var metric = rdata.metrics[j]
+					for (var index in rdata.metrics){
+						var metric = rdata.metrics[index]
 						log.debug(" + Check '"+metric+"'", this.logAuthor)
 						this.selection_grid.check_metric(rdata.id, metric, true)
 					}
