@@ -26,6 +26,7 @@ Ext.define('canopsis.model.Task', {
 		{name : 'crecord_type', defaultValue: 'schedule'},
 		{name : 'name'},
 		//{name : 'crecord_name'},
+		{name : 'args', defaultsValue : []},
 		{name : 'task'},
 		{name : 'timedelta', defaultValue: undefined},
 		{name : 'crontab', defaultValue: undefined}
