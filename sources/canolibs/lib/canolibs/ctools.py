@@ -49,17 +49,17 @@ def calcul_pct(data, total=None):
 	return data_pct
 
 #############################################
-RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\. ]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;? ?))")
+RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\.%% ]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;? ?))")
 
-def parse_perfdata(perf_data):
+def parse_perfdata(perf_data_raw):
 		# 'label'=value[UOM];[warn];[crit];[min];[max]
 		#   load1=0.440     ;5.000 ;10.000;0    ;
 
-		logger.debug("Parse: %s" % perf_data)
+		logger.debug("Parse: %s" % perf_data_raw)
 
-		perfs = RE_PERF_DATA.split(perf_data)
+		perfs = RE_PERF_DATA.split(perf_data_raw)
 
-		perf_data_array = {}
+		perf_data_array = []
 		perf_data = {}
 		i=0
 		for info in perfs:
@@ -97,8 +97,18 @@ def parse_perfdata(perf_data):
 									
 								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
 					
-						perf_data_array[perf_data_clean['metric']] = perf_data_clean
+					
+						try:
+							value = perf_data_clean['value']
+							metric = perf_data_clean['metric']
+							perf_data_array.append(perf_data_clean)
+						except Exception, err:
+							logger.warning("perf_data: Missing fields %s (%s)" % (err, perf_data_clean))
+							logger.debug("perf_data: Raw: %s" % perf_data_raw)
+						
 					except Exception, err:
+						
+						logger.error("perf_data: Raw: %s" % perf_data_raw)
 						logger.error("perf_data: Impossible to clean '%s': %s" % (perf_data, err))
 	
 					perf_data = {}
