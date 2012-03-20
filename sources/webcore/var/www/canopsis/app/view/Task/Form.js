@@ -36,7 +36,7 @@ Ext.define('canopsis.view.Task.Form', {
 		
 		this.timeOptions = Ext.widget('fieldset',{
 			xtype: 'fieldset',
-			title: _('Period'),
+			title: _('Frequency'),
 		/*	layout: {
 				type: 'hbox',
 				align: 'stretch'
@@ -44,6 +44,15 @@ Ext.define('canopsis.view.Task.Form', {
 			collapsible: false,
 		})
 		
+		this.reportOptions = Ext.widget('fieldset',{
+			xtype: 'fieldset',
+			title: _('Reporting Options'),
+		/*	layout: {
+				type: 'hbox',
+				align: 'stretch'
+			},*/
+			collapsible: false,
+		})
 		//-----------------General options----------------------
 		
 		var TaskName = Ext.widget('textfield',{
@@ -71,6 +80,7 @@ Ext.define('canopsis.view.Task.Form', {
 		*/
 		var viewCombo = Ext.widget('combobox',{
 			fieldLabel: _('View'),
+			name: 'view',
 			store:  Ext.create('canopsis.store.View', {autoLoad: false}),
 			displayField: 'crecord_name',
 			valueField: 'id',
@@ -128,17 +138,39 @@ Ext.define('canopsis.view.Task.Form', {
 		
 		var hoursCombo = Ext.widget('timefield',{
 			name: 'hours',
-			fieldLabel: 'Hours',
+			fieldLabel: _('Hours'),
 			//value: '9:00 AM',
 			//minValue: '0:00 AM',
 			//maxValue: '11:45 PM',
-			increment: 15,
+			increment: 3,
 			allowBlank: false,
 			submitFormat: 'G:i',
 			//anchor: '100%'
 		})
 			
 		this.timeOptions.add([durationCombo,dayCombo,hoursCombo])
+		
+		//---------------------------Report option----------------------
+		var lengthCombo = Ext.widget('combobox',{
+			name: 'timeLength',
+			fieldLabel: _('The last'),
+			queryMode: 'local',
+			displayField: 'text',
+			valueField: 'value',
+			value: global.commonTs.day,
+			store: {
+				xtype: 'store',
+				fields: ['value', 'text'],
+				data : [
+					{value: global.commonTs.day, text: _('Day')},
+					{value: global.commonTs.week, text: _('Week')},
+					{value: global.commonTs.month, text: _('Month')},
+					{value: global.commonTs.year, text: _('Year')}
+				]
+			}
+		})
+
+		this.reportOptions.add(lengthCombo)
 		
 		//-----------------------Binding Events-------------------
 		durationCombo.on('change',function(combo,newValue,oldValue){
@@ -152,7 +184,7 @@ Ext.define('canopsis.view.Task.Form', {
 
 		//-----------------------Building------------------------
         this.callParent();
-        this.add([this.generalOptions,this.timeOptions])
+        this.add([this.generalOptions,this.timeOptions,this.reportOptions])
     },
     
 });
