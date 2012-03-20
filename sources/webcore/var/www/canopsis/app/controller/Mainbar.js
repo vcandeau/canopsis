@@ -27,6 +27,10 @@ Ext.define('canopsis.controller.Mainbar', {
 
 	init: function() {
 		this.control({
+			'#region-north' : {
+				collapse : this.onCollapseMainbar,
+				expand: this.onExpandMainbar,
+			},
 			'Mainbar menuitem[action="logout"]' : {
 				click : this.logout,
 			},
@@ -75,10 +79,13 @@ Ext.define('canopsis.controller.Mainbar', {
 			
 		})
 
-		//Set clock
-		//this.setClock();
-
 		this.callParent(arguments);
+	},
+
+	onCollapseMainbar: function(){
+	},
+	
+	onExpandMainbar: function(){
 	},
 
 	logout: function(){
