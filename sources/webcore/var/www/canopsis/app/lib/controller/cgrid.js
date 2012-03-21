@@ -296,13 +296,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				
 
 				if (this.beforeload_EditForm) {
-					this.beforeload_EditForm(form)
+					this.beforeload_EditForm(form,item)
 				}
 
 				form.loadRecord(item);
 
 				if (this.afterload_EditForm) {
-					this.afterload_EditForm(form)
+					this.afterload_EditForm(form,item)
 				}
 
 				this._bindFormEvents(form)
