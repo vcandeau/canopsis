@@ -190,7 +190,8 @@ class camqp(threading.Thread):
 			
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with producers[self.conn].acquire(block=True) as producer:
-				producer.publish(msg, serializer="json", compression=None, routing_key=routing_key, exchange=self.exchanges[exchange_name])
+				producer.publish(msg, serializer="json", compression=None, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
+			self.logger.debug(" + Sended")
 				
 		else:
 			self.logger.error("You are not connected ...")
