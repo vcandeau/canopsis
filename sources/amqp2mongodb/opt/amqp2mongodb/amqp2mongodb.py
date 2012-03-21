@@ -24,6 +24,7 @@ from camqp import camqp
 
 from pymongo import Connection
 import json
+import logging
 
 from carchiver import carchiver
 
@@ -205,7 +206,7 @@ def main():
 
 	global amqp, archiver, perfstore
 
-	archiver = carchiver(namespace='events',  autolog=True)
+	archiver = carchiver(namespace='events',  autolog=True, logging_level=logging.ERROR)
 	perfstore = mongostore(mongo_collection='perfdata')
 
 	# AMQP
