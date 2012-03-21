@@ -181,7 +181,7 @@ Ext.define('widgets.pie.pie' ,{
 					
 				var metric_name = metric 
 				
-				if (node.metrics.indexOf(metric) != -1){
+				if (node.metrics.indexOf(metric) != -1 || node.metrics.indexOf('<all>') != -1){
 					var other_label = this.other_label
 					
 					if (max == undefined)
