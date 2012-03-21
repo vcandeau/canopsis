@@ -81,10 +81,11 @@ Ext.define('canopsis.view.Task.Form', {
 		var viewCombo = Ext.widget('combobox',{
 			fieldLabel: _('View'),
 			name: 'view',
-			store:  Ext.create('canopsis.store.View', {autoLoad: false}),
+			store:  Ext.create('canopsis.store.View', {autoLoad: true}),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: false,
+			allowBlank: false,
 			minChars: 2,
 			queryMode: 'remote',
 			emptyText: _('Select a view')+' ...',

@@ -56,6 +56,54 @@ Ext.define('canopsis.controller.Task', {
 		//------------------------------------------------------
 		
 		return record
-	}
+	},
+	
+	beforeload_EditForm : function(form,item){
+		//---------------get args--------------
+		var args = item.get('args')
+		var viewName = args[1]
+		var timeLength = args[2]
+		
+		//--------------get cron---------------
+		var cron = item.get('crontab')
+		var hours = cron.hour + ':' + cron.minute
+		
+		//set view
+		item.set('view',viewName)
+		
+		//set right day if exist
+		if(cron.day_of_week != undefined){
+			item.set('every','week')
+			item.set('day',this.trunc_day_to_day(cron.day_of_week))
+		}else{
+			item.set('every','day')
+		}
+		
+		item.set('hours',hours)
+		item.set('timeLength',timeLength)
+	},
+
+	trunc_day_to_day: function(day){
+		switch(day)
+		{
+			case 'mon':
+				return 'monday';
+			case 'tue':
+				return 'tuesday';
+			case 'wed':
+				return 'wednesday';
+			case 'thu':
+				return 'thursday';
+			case 'fri':
+				return 'friday';
+			case 'sat':
+				return 'satursday';
+			case 'sun':
+				return 'sunday';
+			default:
+				return undefined
+		}
+		
+	},
 	
 });
