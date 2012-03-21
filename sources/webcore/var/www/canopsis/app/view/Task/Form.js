@@ -57,7 +57,7 @@ Ext.define('canopsis.view.Task.Form', {
 		
 		var TaskName = Ext.widget('textfield',{
 				fieldLabel: _('Task name'),
-				name: 'name',
+				name: 'crecord_name',
 				allowBlank: false,
 		})
 		/*

@@ -59,6 +59,11 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	beforeload_EditForm : function(form,item){
+		var user_textfield = Ext.ComponentQuery.query("#" + form.id + " textfield[name=crecord_name]")[0]
+		if (user_textfield){
+			user_textfield.hide()
+		}
+		
 		//---------------get args--------------
 		var args = item.get('args')
 		var viewName = args[1]
@@ -105,5 +110,29 @@ Ext.define('canopsis.controller.Task', {
 		}
 		
 	},
+	
+	validateForm: function(store, data, form){
+		if(!form.editing){
+			var already_exist = false
+			
+			store.findBy(
+				function(record, id){
+					if(record.get('crecord_name') == data['crecord_name']){
+						log.debug('task already exist exist', this.logAuthor);
+						already_exist = true;  // a record with this data exists
+					}
+				}
+			);
+			
+			if (already_exist){
+				global.notify.notify(data['crecord_name'] + ' already exist','you can\'t add the same task twice','error')
+				return false
+			}
+				
+			return false
+		}else{
+			return true
+		}
+	}
 	
 });

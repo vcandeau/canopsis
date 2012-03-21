@@ -67,7 +67,7 @@ def post_tasks():
 	data = request.body.readline()
 	data = json.loads(data)
 	
-	_id = 'schedule.%s' % data['name']
+	_id = 'schedule.%s' % data['crecord_name']
 	
 	#check if it's an update
 	update = False
@@ -82,8 +82,8 @@ def post_tasks():
 		for key in dict(data).keys():
 			record.data[key] = data[key]
 	else:
-		formated_id = 'schedule.%s' % data['name']
-		record = crecord({'_id':formated_id}, type='schedule', name=data['name'])
+		formated_id = 'schedule.%s' % data['crecord_name']
+		record = crecord({'_id':formated_id}, type='schedule', name=data['crecord_name'])
 		for key in dict(data).keys():
 			record.data[key] = data[key]
 
