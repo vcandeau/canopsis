@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SRC="/usr/local/src/canopsis"
-REPO_GIT="git://forge.canopsis.org/canopsis.git"
+REPO_GIT="https://github.com/capensis/canopsis.git"
 CMD_INSTALL="pkgmgr install --force-yes cmaster"
 BRANCH="freeze"
 
