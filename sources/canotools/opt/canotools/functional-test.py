@@ -63,6 +63,7 @@ class KnownValues(unittest.TestCase):
 							callback = on_alert,
 							exchange_name = myamqp.exchange_name_alerts)
 		myamqp.start()
+		time.sleep(1)
 		
 		global storage
 		storage = cstorage(caccount(user="root", group="root"), namespace='events', logging_level=logging.DEBUG)
@@ -89,25 +90,26 @@ class KnownValues(unittest.TestCase):
 		if revent['state'] != event['state']:
 			raise Exception('Invalid data ...')
 
-		event['perf_data_array'] = {'mymetric': {'min': 0.0, 'max': 30.0, 'metric': 'mymetric', 'value': 1.0, 'warn': 10.0, 'crit': 20.0, 'unit': 's'}}
+		event['perf_data_array'] = [{'min': 0.0, 'max': 30.0, 'metric': 'mymetric', 'value': 1.0, 'warn': 10.0, 'crit': 20.0, 'unit': 's'}]
 		if event_alert != event:
 			print "event_alert: %s" % event_alert
 			print "event: %s" % event
 			raise Exception('Invalid alert data ...')
 			
 		
-	def test_4_Check_amqp2mongodb_archiver(self):	
+	def test_4_Check_amqp2mongodb_archiver(self):
 		## change state
 		event['state'] = 1
+		event['timestamp'] = int(time.time())
 		myamqp.publish(event, rk, exchange_name=myamqp.exchange_name_events)
 		time.sleep(1)
 		
-		records = storage.find({'event_id': rk}, namespace='events_log')
+		records = storage.find({'event_id': rk}, sort='timestamp',  namespace='events_log')
 		
 		if len(records) != 2:
 			raise Exception("Archiver don't work ...")
 			
-		revent = records[len(records)-1].data
+		revent = records[1].data
 		
 		if revent['state'] != event['state']:
 			raise Exception('Invalid log state')
@@ -116,7 +118,7 @@ class KnownValues(unittest.TestCase):
 		mynode = node(rk, storage=perfstore)
 		mynode.pretty_print()
 
-		values = mynode.metric_get_values('mymetric', int(time.time() - 10), int(time.time()))
+		values = mynode.metric_get_values(dn='mymetric', tstart=int(time.time() - 10), tstop=int(time.time()))
 		
 		if len(values) != 2:
 			raise Exception("Perfsore don't work ...")
