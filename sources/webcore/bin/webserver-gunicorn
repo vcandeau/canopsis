@@ -67,6 +67,8 @@ function cmd () {
 		stop)
 			echo "Stoping Webserver ..."
 			if [ $(check) -eq 1 ]; then
+				PID=$(getPid)
+		                echo " + $PID ..."
 				stop
 			else
 				echo " + Not running ..."
