@@ -38,10 +38,11 @@ Ext.define('canopsis.controller.Task', {
 	
 	preSave: function(record,data){
 		record.set('task','task_reporting.render_pdf')
+		
+		//(filename viewname starttime stoptime account wrapper_conf_file)
 		record.set('args',[null,data.view,data.timeLength,null,global.account.user,null])
 		record.set('_id',data['_id'])
 		
-		log.dump(data)
 		//--------------formating crontab-----------------------
 		var time = data.hours.split(':')
 		var crontab = {
@@ -53,7 +54,6 @@ Ext.define('canopsis.controller.Task', {
 			crontab['day_of_week'] = data.day.substring(0,3)
 		record.set('crontab',crontab)
 		//------------------------------------------------------
-		//log.dump(crontab)
 		
 		return record
 	}
