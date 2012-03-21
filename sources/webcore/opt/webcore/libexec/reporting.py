@@ -25,6 +25,7 @@ import gevent
 import bottle
 from bottle import route, get, request, HTTPError, post, static_file, response
 
+from urllib import quote
 #gridfs
 from pymongo import Connection
 import gridfs
@@ -101,11 +102,11 @@ def get_report(metaId=None):
 
 	report = meta.get(storage)
 
-	logger.debug('MetaId  : %s' % metaId)
-	logger.debug('Filename: %s' % report.name)
+	#logger.debug('MetaId  : %s' % metaId)
+	#logger.debug('Filename: %s' % report.name)
 
 	if report:
-		response.headers['Content-Disposition'] = 'attachment; filename=%s' % report.name
+		response.headers['Content-Disposition'] = 'attachment; filename="%s"' % report.name
 		response.headers['Content-Type'] = 'application/pdf'
 		try:
 			return report
