@@ -96,7 +96,7 @@ Ext.define('canopsis.controller.Account', {
 		var already_exist = false;
 
 		// in creation mode
-		if (! form._record) {
+		if (!form.editing) {
 			store.findBy(
 				function(record, id){
 					if(record.get('user') == data['user']){
