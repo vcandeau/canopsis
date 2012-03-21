@@ -204,7 +204,11 @@ def account_post():
 			logger.debug('Create account %s' % _id)
 
 		if update:
-			passwd = str(data['passwd'])
+			if data['passwd'] is not None:
+				passwd = str(data['passwd'])
+			else:
+				passwd = None
+				
 			del data['passwd']
 
 			for key in dict(data).keys():
@@ -212,7 +216,7 @@ def account_post():
 
 			update_account = caccount(record)			
 			if passwd:
-				logger.debug(' + Update password ...')
+				logger.error(' + Update password ...')
 				update_account.passwd(passwd)
 
 			storage.put(update_account, account=account)
@@ -221,6 +225,7 @@ def account_post():
 			logger.debug(' + New account')
 			new_account = caccount(user=data['user'], group=data['aaa_group'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
 
+			
 			passwd = data['passwd']
 			new_account.passwd(passwd)
 			logger.debug("   + Passwd: '%s'" % passwd)
