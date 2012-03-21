@@ -2,7 +2,7 @@
 
 NAME="canolibs"
 VERSION=0.1
-RELEASE=2
+RELEASE=3
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python python-libs"
 
