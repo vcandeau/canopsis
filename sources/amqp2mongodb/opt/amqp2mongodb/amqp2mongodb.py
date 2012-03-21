@@ -72,10 +72,19 @@ def on_message(body, msg):
 	## Check event format
 	try:
 		if isinstance(body, str) or isinstance(body, unicode):
-			event = json.loads(body)
+			try:
+				event = json.loads(body)
+			except:
+				try:
+					# Hack for windows FS -_-
+					event = json.loads(body.replace('\\', '\\\\'))
+					#event = json.loads(body.replace('\\', '/'))
+				except Exception, err:
+					raise Exception(err)
 		else:
 			event = body
-	except:
+	except Exception, err:
+		logger.error(err)
 		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
 
@@ -95,10 +104,10 @@ def on_message(body, msg):
 				perf_data_array = to_perfstore(event_id, perf_data, timestamp)
 			
 		except Exception, err:
-			logger.debug(err)
+			logger.warning("To_perfstore: %s ('%s')" % (err, perf_data))
 				
 	except Exception, err:
-		logger.debug('Invalid perfdata (%s)', err)
+		logger.warning('Invalid perfdata (%s)', err)
 	
 	
 	logger.debug(' + perf_data_array: %s', perf_data_array)
@@ -143,19 +152,27 @@ def to_perfstore(_id, perf_data, timestamp):
 		except Exception, err:
 			raise Exception("Imposible to parse: %s (%s)" % (perf_data, err))
 			
-	if isinstance(perf_data, dict):
+	if isinstance(perf_data, list):
 
-		mynode = node(_id, storage=perfstore, point_per_dca=point_per_dca, rotate_plan=rotate_plan)
+		try:
+			mynode = node(_id, storage=perfstore, point_per_dca=point_per_dca, rotate_plan=rotate_plan)
+			
+		except Exception, err:
+			raise Exception("Imposible to init node: %s (%s)" % (_id, err))
 
-		#{u'rta': {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, u'pl': {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'}}
+		#[ {'min': 0.0, 'metric': u'rta', 'value': 0.097, 'warn': 100.0, 'crit': 500.0, 'unit': u'ms'}, {'min': 0.0, 'metric': u'pl', 'value': 0.0, 'warn': 20.0, 'crit': 60.0, 'unit': u'%'} ]
 
-		for metric in perf_data.keys():
-			value = perf_data[metric]['value']
+		for perf in perf_data:
+			
+			metric = perf['metric']
+			value = perf['value']
+			
 			try:
-				unit = str(perf_data[metric]['unit'])
+				unit =  perf['unit']
+				unit = str(unit)
 			except:
 				unit = None
-
+			
 			if int(value) == value:
 				value = int(value)
 			else:
@@ -170,7 +187,7 @@ def to_perfstore(_id, perf_data, timestamp):
 		return perf_data
 		
 	else:
-		raise Exception("Imposible to parse: %s (is not a dict)" % perf_data)
+		raise Exception("Imposible to parse: %s (is not a list)" % perf_data)
 
 ########################################################
 #
