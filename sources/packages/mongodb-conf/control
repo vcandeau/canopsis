@@ -22,7 +22,9 @@ function post_install(){
 		
 	rm /tmp/mongodb-*.sock &> /dev/null || true
 	
-	launch_cmd 1 service mongodb start
+	#launch_cmd 1 service mongodb start
+	launch_cmd 1 mongod -f $PREFIX/etc/mongodb.conf --nojournal --noprealloc --fork
+
 	#check if db already exist
 	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
 	then
@@ -31,7 +33,8 @@ function post_install(){
 		launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
 	fi
 	
-	launch_cmd 1 service mongodb stop
+	#launch_cmd 1 service mongodb stop
+	launch_cmd 1 mongod -f etc/mongodb.conf --shutdown 
 	
 	check_code $? "Impossible to init mongoDB ..."
 }
