@@ -32,4 +32,13 @@ for UNITTEST in $UNITTESTS; do
         echo 
 done 
 
+echo "Check celery and tasks"
+runtask task_backup mongo
+if [ ! -e $HOME/var/backups/backup_mongodb.zip ]; then
+	echo " + Error"
+	hypcontrol stop
+	exit 1
+else
+	echo " + Ok"
+fi
 hypcontrol stop
