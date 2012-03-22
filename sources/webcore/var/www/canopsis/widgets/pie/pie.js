@@ -222,12 +222,6 @@ Ext.define('widgets.pie.pie' ,{
 		this.removeSerie()
 		this.displaySerie()
 	},
-	
-	getHeight: function(){
-		var height = this.callParent();
-		if (this.title){ height -= 30 }
-		return height
-	},
 
 	onResize: function(){
 		log.debug("onRezize", this.logAuthor)
