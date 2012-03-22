@@ -42,6 +42,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	reportMode : false,
 	exportMode : false,
 	
+	titleHeight: 27,
+	
 	time_window: global.commonTs.day, //24 hours
 
 	//PollNodeInfo: true,
@@ -143,7 +145,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	getHeight: function(){
 		var height = this.callParent();
-		if (this.title){ height -= 28 }
+		if (this.title){ height -= this.titleHeight }
 		return height
 	},
 	
