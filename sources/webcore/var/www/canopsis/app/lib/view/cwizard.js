@@ -31,6 +31,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	height: 500,
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
+	labelWidth: 200,
 	
 	constrain: true,
 	constrainHeader: true,
@@ -131,6 +132,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		step.bodyPadding = 10
 		step.autoScroll = true
 		
+		step.defaults = { labelWidth: this.labelWidth }
+		
+		console.log(step)
+		
 		if (step.items.length == 1){
 			step.layout = 'fit'
 			step.bodyPadding = 5
@@ -216,6 +221,10 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			//log.dump(options)
 			if(options){
 				for(var i in options){
+					for (var j in options[i].items)
+						if (options[i].items[j].xtype == 'fieldset')
+							options[i].items[j].defaults = { labelWidth: this.labelWidth }
+							
 					output.push(this.add_new_step(options[i]))
 				}
 			}
