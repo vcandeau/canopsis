@@ -32,9 +32,10 @@ function stop (){
 	kill $PID
 	sleep 2
 	if [ $(check) -eq 1 ]; then
-		echo " + Failed"
+		echo " Failed"
 		exit 1
 	fi
+	echo " Ok"
 }
 
 function check (){
@@ -68,7 +69,7 @@ function cmd () {
 			echo "Stoping Webserver ..."
 			if [ $(check) -eq 1 ]; then
 				PID=$(getPid)
-		                echo " + $PID ..."
+		                echo -n " + $PID ..."
 				stop
 			else
 				echo " + Not running ..."
