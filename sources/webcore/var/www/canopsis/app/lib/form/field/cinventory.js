@@ -234,7 +234,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		})
 
 		if (this.metrics)
-			this.search_store.setFilter({'perf_data_array': {'$ne': []}})
+			this.search_store.setFilter({'$and': [{'perf_data_array': {'$ne': []}}, {'perf_data_array': {'$exists': true} } ]})
 
 		this.search_store.load()
 		
