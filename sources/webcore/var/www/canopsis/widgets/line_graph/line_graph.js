@@ -364,12 +364,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.debug('   + Shift: '+me.shift, me.logAuthor)
 		}	
 	},
-	
-	getHeight: function(){
-		var height = this.callParent();
-		if (this.title){ height -= 30 }
-		return height
-	},
 
 	onResize: function(){
 		log.debug("onRezize", this.logAuthor)
