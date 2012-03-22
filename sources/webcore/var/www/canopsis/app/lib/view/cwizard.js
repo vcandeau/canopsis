@@ -134,8 +134,6 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		
 		step.defaults = { labelWidth: this.labelWidth }
 		
-		console.log(step)
-		
 		if (step.items.length == 1){
 			step.layout = 'fit'
 			step.bodyPadding = 5
