@@ -24,7 +24,7 @@ function post_install(){
 	
 	#launch_cmd 1 service mongodb start
 	launch_cmd 1 mongod -f $PREFIX/etc/mongodb.conf --nojournal --noprealloc --fork
-	sleep 2
+	sleep 5
 
 	#check if db already exist
 	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
