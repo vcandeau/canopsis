@@ -29,6 +29,6 @@ function install(){
 	easy_install_pylib gunicorn
 
 	# Clean
-	rm -Rf $PREFIX/.python-eggs/*
+	#rm -Rf $PREFIX/.python-eggs/*
 
 }
