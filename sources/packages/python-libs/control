@@ -2,7 +2,7 @@
 
 NAME="python-libs"
 VERSION=0.2
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python"
 
@@ -14,6 +14,8 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	update_pylibs
+	check_code $?
+	python $PREFIX/opt/python-libs/init_pythonEggs.py
 	check_code $?
 }
 
@@ -34,6 +36,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	update_pylibs
 	check_code $?
 }
 
