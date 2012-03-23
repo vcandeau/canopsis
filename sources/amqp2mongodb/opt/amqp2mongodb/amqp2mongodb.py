@@ -90,7 +90,7 @@ def on_message(body, msg):
 		raise Exception('Impossible to parse event')
 
 	## Try to parse perfdata
-	perf_data_array = {}
+	perf_data_array = []
 	perf_data = None
 	try:
 		try:
