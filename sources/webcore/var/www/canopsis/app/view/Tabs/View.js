@@ -25,7 +25,7 @@ Ext.define('canopsis.view.Tabs.View' ,{
 	activeTab: 0, // index or id
 	bodyBorder: false,
 	componentCls: 'cps-headertabs',
-	plain: false,
+	plain: true,
 		
 });
 

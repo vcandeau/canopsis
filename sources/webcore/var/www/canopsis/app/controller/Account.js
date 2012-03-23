@@ -74,6 +74,11 @@ Ext.define('canopsis.controller.Account', {
 	},
 
 	beforeload_EditForm: function(form){
+		var pass_textfield = Ext.ComponentQuery.query("#" + form.id + " textfield[name=passwd]")[0]
+		if (pass_textfield){
+			pass_textfield.allowBlank = true
+		}
+
 		var user_textfield = Ext.ComponentQuery.query("#" + form.id + " textfield[name=user]")[0]
 		if (user_textfield)
 			user_textfield.hide()

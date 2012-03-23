@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-set -E -o pipefail
+set -e -o pipefail
 
 ############################
 ######  Logging Trap  ######
@@ -91,9 +91,10 @@ error () {
 ##########################
 
 . $HOME/lib/common.sh 
-set +E
+. $HOME/lib/pkgmgr/common
+set +e
 detect_os > /dev/null
-set -E
+set -e
 . $HOME/etc/pkgmgr.conf
 . $HOME/lib/pkgmgr/db 
 . $HOME/lib/pkgmgr/manual 
@@ -108,6 +109,7 @@ set -E
 
 mkdir -p $HOME/var/log
 touch $LOG_FILE
+set +e
 
 exit_pending=false
 
@@ -205,6 +207,14 @@ OPT=$2
 
 if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgrade|xremove|xlist|xclean|xupdate|xexport)$ ]]; then
 
+	if ! [ -z $OPT ]; then
+		_test_option=$(grep "^[-0-9a-zA-Z]*$" <<<$OPT)
+		if [ -z $_test_option ]; then
+	    	echo " :: Package name contain non alphanumeric character(s)"
+    		exit 1
+		fi
+	fi
+
 	log_info "Create local db file"
 	touch $LOCAL_DB_PATH 2>&1 | tee -a $LOG_FILE
 
@@ -222,8 +232,8 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 	if [ "x$ACTION" = "xinstall" ]; then
 		check_args $@
 		update_db
-		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
+		pkg_list_install_deps "$@"
 		echo "    + Following dependencies will be installed" && print_deps "$pkg_list_deps"
 		ask_confirmation
 		install_package $pkg_list_deps && exit $?; fi
@@ -242,9 +252,8 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 	if [ "x$ACTION" = "xupgrade" ]; then
 		check_args $@
 		update_db
-		trap 'error ${LINENO} "Package dependencie failure, look at: ($LOG_FILE)"' ERR
-		pkg_list_install_deps "$@"
 		echo " :: Resolve dependencies"
+		pkg_list_install_deps "$@"
 		echo "    + Following dependencies will be installed or upgraded" && print_deps "$pkg_list_deps"
 		ask_confirmation
 		upgrade_package $pkg_list_deps && exit $?; fi

@@ -48,6 +48,11 @@ Ext.define('canopsis.controller.Tabs', {
 		store.proxy.id = store.proxy.id + '.' + global.account.user
 		store.load();
 	},
+	
+	doRedraw: function(){
+		var tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.doRedraw()
+	},
 
   	on_tabchange: function(tabPanel, new_tab, old_tab, object){
 		//log.debug('Tabchange', this.logAuthor);
@@ -168,7 +173,7 @@ Ext.define('canopsis.controller.Tabs', {
 		}
 	},
 	
-	save_active_tab : function(){
+	save_active_view : function(){
 		
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
 		var right = this.getController('Account').check_right(tab.view,'w')

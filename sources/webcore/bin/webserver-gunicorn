@@ -7,13 +7,20 @@ BIN="gunicorn"
 PIDF="$HOME/var/run/webserver.pid"
 LOGF="$HOME/var/log/webserver.log"
 
-LL="debug"
+LL="error"
 
 ABIND="0.0.0.0:8082"
-WORKER=2
+
+. $HOME/etc/gunicorn.conf
+
+# Use export variable
+if [ "x$GUNICORN_WORKER" == "x" ]; then
+	GUNICORN_WORKER=$(cat /proc/cpuinfo | grep "^processor" | wc -l)
+fi
+	
 APP="wsgi_webserver:app"
 
-GCMD="$BIN -D --pid $PIDF --log-file $LOGF --access-logfile $LOGF --log-level $LL -k gevent -w $WORKER -b $ABIND $APP"
+GCMD="$BIN -D --pid $PIDF --log-file $LOGF --access-logfile $LOGF --log-level $LL -k gevent -w $GUNICORN_WORKER -b $ABIND $APP"
 
 function start (){
 	cd $DIR
@@ -25,9 +32,10 @@ function stop (){
 	kill $PID
 	sleep 2
 	if [ $(check) -eq 1 ]; then
-		echo " + Failed"
+		echo " Failed"
 		exit 1
 	fi
+	echo " Ok"
 }
 
 function check (){
@@ -60,6 +68,8 @@ function cmd () {
 		stop)
 			echo "Stoping Webserver ..."
 			if [ $(check) -eq 1 ]; then
+				PID=$(getPid)
+		                echo -n " + $PID ..."
 				stop
 			else
 				echo " + Not running ..."

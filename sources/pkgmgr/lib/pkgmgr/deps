@@ -21,10 +21,11 @@
 build_install_deps_tree () {
 	init_tmp
 	log_info "Create deps tree"
+	_sec=0
 	parse_install_deps $@
 	clean_tree
 	trap 'error ${LINENO} "Remove tmp file ($TMP_FILE)"' ERR
-	#rm -Rf $TMP_FILE	
+	rm -Rf $TMP_FILE	
 }
 
 build_remove_deps_tree () {
@@ -46,10 +47,19 @@ clean_tree () {
 }
 
 parse_install_deps () {
+	if [ $_sec -gt 200 ];then
+		echo "[`date +'%T %x'`][ERR] Error in packages dependences build" >> $LOG_FILE
+		echo "[`date +'%T %x'`][ERR] Take care about circular dependency (1)" >> $LOG_FILE 
+		echo " => Error in packages dependences build"
+		trap 'error ${LINENO} "Error in packages dependences build. Take care about circular dependency."' ERR
+		exit 1
+	else
+		let _sec++
+	fi
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
 		local tmp
-		trap 'error ${LINENO} "Package $dep must be install but its not available on repositorie"' ERR
+		trap 'error ${LINENO} "Package \"$dep\" must be install but its not available on repositorie"' ERR
 		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
 		if [ $tmp -le 0 ]; then
 			exit 1
@@ -57,16 +67,16 @@ parse_install_deps () {
 			local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
 			local L_DEPS=$(db_parse "deps" "$DBINFO")
 			if [ -z "$L_DEPS" ]; then 
-				NB_DEPS=0
-			else 
-				NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l)
-			fi
+               	NB_DEPS=0
+           	else 
+               	NB_DEPS=$(echo $L_DEPS | sed 's# #\n#g' | wc -l)
+           	fi
 
-			if [ $NB_DEPS -gt 0 ]; then
-				parse_install_deps $L_DEPS
-			else
-				echo "$L_DEPS $D_TREE" >> $TMP_FILE
-			fi
+           	if [ $NB_DEPS -gt 0 ]; then
+               	parse_install_deps $L_DEPS
+           	else
+               	echo "$L_DEPS $D_TREE" > $TMP_FILE
+         	fi
 		fi
 	done
 }

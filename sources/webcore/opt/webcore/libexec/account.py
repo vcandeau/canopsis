@@ -209,7 +209,10 @@ def account_post():
 			else:
 				passwd = None
 				
+			group = str(data['groups'])
+
 			del data['passwd']
+			del data['groups']
 
 			for key in dict(data).keys():
 				record.data[key] = data[key]
@@ -218,12 +221,17 @@ def account_post():
 			if passwd:
 				logger.error(' + Update password ...')
 				update_account.passwd(passwd)
+			if group:
+				logger.debug(' + Update group ...')
+				logger.debug(group)
+				logger.debug(type(group))
+				update_account.chgrp(group)
 
 			storage.put(update_account, account=account)
 
 		else:
 			logger.debug(' + New account')
-			new_account = caccount(user=data['user'], group=data['aaa_group'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
+			new_account = caccount(user=data['user'], group=data['groups'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
 
 			
 			passwd = data['passwd']

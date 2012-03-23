@@ -20,6 +20,7 @@
 
 import logging
 import time
+import hashlib
 
 from pyperfstore.metric import metric
 from pyperfstore.dca import dca
@@ -42,19 +43,13 @@ class node(object):
 		self.storage = storage
 
 		self.metrics = {}
+		self.metrics_id = {}
 
 		self.writetime = None
 
 		data = self.storage.get(self._id)
 		if data:
 			self.load(data)
-
-		## create lock
-
-	#def __del__(self):
-		## release lock
-		#self.save()
-	#	pass
 
 	def dump(self):
 		dump = {
@@ -63,18 +58,19 @@ class node(object):
 			'retention':	self.retention,
 			'point_per_dca':self.point_per_dca,
 			'rotate_plan':	self.rotate_plan,
-			'metrics':	self.metrics,
+			'metrics':		self.metrics,
+			'metrics_id':	self.metrics_id,
 			'writetime':	time.time()
 		}
 
-		for dn in self.metrics.keys():
-			item = self.metrics[dn]
+		for _id in self.metrics.keys():
+			item = self.metrics[_id]
 			if isinstance(item ,metric):
 				item.save()
-				dump['metrics'][dn] = { 'id': item._id, 'bunit': item.bunit }
+				dump['metrics'][_id] = { 'id': item._id, 'bunit': item.bunit }
 			else:
-				dump['metrics'][dn] = { 'id': item['id'], 'bunit': item['bunit'] }
-
+				dump['metrics'][_id] = { 'id': item['id'], 'bunit': item['bunit'] }
+			
 		return dump
 
 	def load(self, data):
@@ -85,64 +81,95 @@ class node(object):
 		self.retention		= data['retention']
 		self.point_per_dca	= data['point_per_dca']
 		self.rotate_plan	= data['rotate_plan']
-
-		self.metrics		= data['metrics']
-
+		
 		self.writetime		= data['writetime']
-
+		self.metrics = data['metrics']
+		
+		## For compatibility
+		try:
+			self.metrics_id		= data['metrics_id']
+			
+		except Exception, err:
+			self.logger.warning("Convert Node in new format !")
+			convert_node(self)
+			self.save()
+			
 	def save(self):
 		dump = self.dump()
 
 		self.logger.debug("Save node '%s'" % self._id)
 		self.storage.set(self._id, dump)
 
-	def metric_get_id(self, dn):
-		return self._id + "-" + dn
+	def metric_make_id(self, dn):
+		return self._id.replace('.','-') + "-" + hashlib.md5(dn).hexdigest()
 
-	def metric_get(self, dn):
-		item = None
-		try:
-			item = self.metrics[dn]
-
-			if not isinstance(item ,metric):
-				## load metric from store
-				item = metric(_id=item['id'], node=self, storage=self.storage)
-				self.metrics[dn] = item
-		except:
+	def metric_get(self, dn=None, _id=None):
+		_id = self.metric_get_id(dn, _id)
+		
+		if not _id:
 			self.logger.error("Unknown metric '%s' ... " % dn)
+			return None
+			
+		item = self.metrics[_id]
+
+		if not isinstance(item ,metric):
+			## load metric from store
+			item = metric(_id=item['id'], node=self, storage=self.storage)
+			self.metrics[_id] = item
 
 		return item
 
 
 	def metric_get_all_dn(self):
-		return [ dn for dn in self.metrics.keys() ]
-		
+		return [ dn for dn in self.metrics_id.keys() ]
 
-	def metric_dump(self, dn):
-		item = self.metrics[dn]
+
+	def metric_get_id(self, dn=None, _id=None):
+		if _id:
+			return _id
+		
+		if not dn:
+			return None
+
+		return self.metric_idBydn(dn)
+
+	def metric_idBydn(self, dn):
+		try:
+			return self.metrics_id[dn]
+		except:
+			return None
+		
+	def metric_dump(self, dn=None, _id=None):
+		_id = self.metric_get_id(dn, _id)
+		
+		item = self.metrics[_id]
 
 		if isinstance(item ,metric):
 			## load metric from store
 			return item.dump()
 
-		return self.metric_get(dn).dump()
+		return self.metric_get(_id=_id).dump()
 
 
-	def metric_exist(self, dn):
-		try:
-			self.metrics[dn]
-			return True
+	def metric_exist(self, dn=None, _id=None):	
+		_id = self.metric_get_id(dn, _id)
+		
+		if not _id:
+			return False
+			
+		try:		
+			return self.metrics[_id]
 		except:
 			return False
 
 	def metric_add(self, dn, bunit=None):
 		self.logger.debug("Add metric '%s' (%s)" % (dn, bunit))
 
-		if not self.metric_exist(dn):
-			metric_id = self.metric_get_id(dn)
+		if not self.metric_exist(dn=dn):
+			metric_id = self.metric_make_id(dn)
 
 			self.logger.debug(" + Metric ID: '%s'" % metric_id)
-			self.metrics[dn] = metric(
+			self.metrics[metric_id] = metric(
 							_id=metric_id,
 							dn=dn,
 							bunit=bunit,
@@ -152,13 +179,22 @@ class node(object):
 							point_per_dca=self.point_per_dca,
 							rotate_plan=self.rotate_plan,
 						)
-
+						
+			self.metrics_id[dn] = metric_id
+			
 			self.save()
 		else:
 			self.logger.debug(" + Metric allready exist")
+			metric_id = self.metric_get_id(dn=dn)
+		
+		return metric_id
 
 
-	def metric_get_values(self, dn, tstart, tstop=None, auto_aggregate=True):
+	def metric_get_values(self, tstart, tstop=None, auto_aggregate=True, dn=None, _id=None):
+		_id = self.metric_get_id(dn, _id)
+		if not _id:
+			return []
+		
 		if not tstop:
 			tstop = int(time.time())
 
@@ -167,7 +203,7 @@ class node(object):
 
 		self.logger.debug("Get values in '%s'" % dn)
 
-		mymetric = self.metric_get(dn)
+		mymetric = self.metric_get(_id=_id)
 
 		if mymetric:
 			values = mymetric.get_values(tstart, tstop)
@@ -179,38 +215,47 @@ class node(object):
 			return []
 	
 
-	def metric_push_value(self, dn, value, unit=None, timestamp=None):
-		self.logger.debug("Push value on metric '%s'" % dn)
-
+	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None):
+		_id = self.metric_get_id(dn, _id)
+		
+		self.logger.debug("Push value on metric '%s' (_id: %s)" % (dn, _id))
+		
+		if not _id:
+			_id = self.metric_add(dn=dn, bunit=unit)
+			
 		if not timestamp:
 			timestamp = int(time.time())
 		else:
 			timestamp = int(timestamp)
-
-		if not self.metric_exist(dn):
-			self.metric_add(dn=dn, bunit=unit)
-
-		mymetric = self.metric_get(dn)
+			
+		mymetric = self.metric_get(_id=_id)
 
 		mymetric.push_value(value=value, timestamp=timestamp)
 
-	def metric_remove(self, dn):
+	def metric_remove(self, dn=None, _id=None):
 		self.logger.debug("Remove metric '%s'" % dn)
-
-		mymetric = self.metric_get(dn)
-
+		
+		_id = self.metric_get_id(dn, _id)
+		if not _id:
+			return None
+			
+		mymetric = self.metric_get(_id=_id)
+		
+		dn = mymetric.dn
+		
 		mymetric.dca_remove_all()
-		self.storage.rm(mymetric._id)
+		self.storage.rm(_id)
 
-		del self.metrics[dn]
+		del self.metrics_id[dn]
+		del self.metrics[_id]
 		del mymetric
 	
 		self.save()
 		
 	def metric_remove_all(self):
-		for dn in self.metrics.keys():
-			item = self.metric_get(dn)
-			self.metric_remove(item.dn)
+		for _id in self.metrics.keys():
+			item = self.metric_get(_id=_id)
+			self.metric_remove(_id=_id)
 
 	def remove(self):
 		self.metric_remove_all()
@@ -224,11 +269,11 @@ class node(object):
 		print " + Retention: %s" % self.retention
 		print " + Metrics:"
 
-		for dn in self.metrics.keys():
+		for _id in self.metrics.keys():
 
-			metric = self.metric_get(dn)
+			metric = self.metric_get(_id=_id)
 
-			print "    + %s" % metric.dn
+			print "    + %s (%s)" % (metric.dn, metric._id)
 
 			item = metric.dca_get(metric.current_dca)
 			print "      + Current DCA (%s -> %s),\tPoints: %s" % (item.tstart, item.tstop, item.size )
@@ -254,3 +299,25 @@ class node(object):
 					print "      + %s DCA (%s -> %s),\tPoints: %s" % (item.format, item.tstart, item.tstop, item.size )
 
 				print ""
+
+
+
+def convert_node(node):
+	metrics = {}
+	node.logger.debug("Convert %s" % node._id)
+	for dn in node.metrics.keys():
+		metric_raw = node.metrics[dn]
+		ometric = metric(_id=metric_raw['id'], node=node, storage=node.storage)
+		
+		_id = node.metric_make_id(dn)
+		
+		node.logger.debug(" + %s (%s)" % (dn, _id))
+		
+		ometric._id = _id
+		ometric.save()
+		
+		metrics[_id] = ometric
+
+		node.metrics_id[dn] = _id
+		
+	node.metrics = metrics

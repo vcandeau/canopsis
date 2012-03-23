@@ -51,6 +51,10 @@ class mongostore(storage):
 		except InvalidStringData:
 			self.rm(key)
 			self.grid.put(value, _id=key)
+		except Exception, err:
+			self.logger.error(err)
+			self.logger.error(self.db.error())
+			
 
 	def set(self, key, value):
 		self.logger.debug("Set '%s'" % key)
