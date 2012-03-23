@@ -46,6 +46,8 @@ def get_tasks():
 	namespace='object'
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
+	
+	
 	search = storage.find({'crecord_type': 'schedule'},limit=limit, offset=start,account=account)
 	
 	output = []
@@ -53,6 +55,21 @@ def get_tasks():
 	
 	for schedule in search:
 		if isinstance(schedule, crecord):
+			#try to fetch last log
+			try:
+				task_id = 'schedule.%s' % schedule.name
+				last_log = storage.find({'crecord_name': task_id},namespace='task_log',sort=[('timestamp', -1)])
+				last_log = last_log[0]
+				logger.error(last_log)
+			except Exception, err:
+				logger.error('Error when fetching last log : %s' % err)
+			
+			#add to schedule list
+			if isinstance(last_log, crecord):
+				formated_log = {'success': last_log.data['success'],'output':last_log.data['output'],'timestamp':last_log.data['timestamp'],'data':str(last_log.data['data'])}
+				logger.error(formated_log)
+				schedule.data['log'] = [formated_log]
+				
 			output.append(schedule.dump(json=True))
 			total += 1
 			
@@ -67,6 +84,9 @@ def post_tasks():
 	data = request.body.readline()
 	data = json.loads(data)
 	
+	#cleaning
+	del data['log']
+	
 	_id = 'schedule.%s' % data['crecord_name']
 	
 	#check if it's an update
@@ -77,15 +97,19 @@ def post_tasks():
 		update = True
 	except:
 		logger.debug('Create task %s' % _id)
-			
+	
+	#is it a update ?
 	if update:
 		for key in dict(data).keys():
 			record.data[key] = data[key]
 	else:
 		formated_id = 'schedule.%s' % data['crecord_name']
-		record = crecord({'_id':formated_id}, type='schedule', name=data['crecord_name'])
+		sup_args = {'periodic_task_id': formated_id}
+		record = crecord({'_id':formated_id,'name':data['crecord_name']}, type='schedule', name=data['crecord_name'])
 		for key in dict(data).keys():
 			record.data[key] = data[key]
+			
+		record.data['kwargs'] = sup_args
 
 		record.chown(account.user)
 		record.chgrp(account.group)

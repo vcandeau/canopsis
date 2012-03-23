@@ -39,12 +39,12 @@ Ext.define('canopsis.view.Task.Grid' ,{
 	        dataIndex: 'crecord_type',
 		},*/{
 			header: _('Name'),
-			flex: 3,
+			flex: 1,
 			sortable: true,
 			dataIndex: 'crecord_name',
 		},{
 			header: _('Function name'),
-			flex: 3,
+			flex: 1,
 			sortable: true,
 			dataIndex: 'task',
 		},{
@@ -53,6 +53,12 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			sortable: true,
 			dataIndex: 'crontab',
 			renderer: rdr_task_timedelta,
+		},{
+			header: _('Last run'),
+			flex: 3,
+			sortable: true,
+			dataIndex: 'log',
+			renderer: rdr_task_output,
 		}
 	],
 
