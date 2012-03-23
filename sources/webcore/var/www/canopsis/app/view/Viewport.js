@@ -30,50 +30,45 @@ Ext.define('canopsis.view.Viewport', {
 	layout: 'border',
 
 	items: [
-	{
-		region: 'north',
-		id: 'region-north',
-		border: false,
-		height: 27,
-		items: [{
-					xtype: 'Mainbar',
-					height: 26,
-				}],
-		xtype: 'panel',
-		border: false,
-		collapsed: false,
-		collapsible: true,
-		preventHeader: true,
-		placeholder: Ext.create('Ext.panel.Header', {
-			height: 5,
+		{
+			region: 'north',
+			id: 'region-north',
+			border: false,
+			height: 27,
+			items: [{
+						xtype: 'Mainbar',
+						height: 26,
+					}],
+			xtype: 'panel',
+			border: false,
+			collapsed: false,
+			collapsible: true,
+			preventHeader: true,
+			placeholder: Ext.create('Ext.panel.Header', {
+				height: 5,
+				listeners: {
+					mouseover: {
+						element : 'el',
+						fn : function(){ Ext.getCmp('region-north').expand(); }
+					},
+				}
+			 }),
+			  
 			listeners: {
-				mouseover: {
-					element : 'el',
-					fn : function(){ Ext.getCmp('region-north').expand(); }
+				dblclick: {
+					element : 'body',
+					fn : function(){ Ext.getCmp('region-north').collapse(); }
 				},
-			}
-		 }),
-		  
-		listeners: {
-			dblclick: {
-				element : 'body',
-				fn : function(){ Ext.getCmp('region-north').collapse(); }
 			},
-		},
- 
-	},{
-		region: 'center',
-		border: false,
-		xtype: 'TabsView',
-		id: 'main-tabs',
+	 
+		},{
+			region: 'center',
+			border: false,
+			xtype: 'TabsView',
+			id: 'main-tabs',
 
-	},/*{
-		region: 'west',
-		border: true,
-		width: 150,
-		xtype: 'MenuView',
-		id: 'main-menu'
-	}*/],
+		},
+	],
 	
 
 	initComponent: function() {

@@ -4,7 +4,7 @@ NAME="webcore-libs"
 VERSION=0.1
 RELEASE=2
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python canolibs"
+REQUIRES="canohome pkgmgr python canolibs webcore"
 
 NO_ARCH=true
 NO_DIST=true

@@ -90,7 +90,13 @@
 								"fieldLabel": "Zoom",
 								"checked": true,
 								"name": "zoom"
-							}						
+							},{
+								"xtype" : "numberfield",
+								"name" : "maxZoom",
+								"fieldLabel": "Max zoom (seconds)",
+								"minValue": 60,
+								"value": 3600
+                           }					
 						]
 					},{
 						"xtype": "fieldset",

@@ -94,6 +94,8 @@ def perfstore_metric_get_values(_id, metrics="<all>", start=None, stop=None):
 	
 	# Small hack
 	metrics = metrics.replace("<slash>", '/')
+	metrics = metrics.replace("<bslash>", '\\')
+	
 	metrics = metrics.split(',')
 	if not metrics[len(metrics)-1]:
 		del metrics[len(metrics)-1]
@@ -154,11 +156,11 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 
 		for metric in metrics:
 			try:
-				values = mynode.metric_get_values(metric, start, stop)
+				values = mynode.metric_get_values(dn=metric, tstart=start, tstop=stop)
 		
 				values = [[x[0] * 1000, x[1]] for x in values]
 				if len(values) > 1:
-					bunit = mynode.metric_get(metric).bunit
+					bunit = mynode.metric_get(dn=metric).bunit
 					output.append({'node': _id, 'metric': metric, 'values': values, 'bunit': bunit })
 						
 			except Exception, err:

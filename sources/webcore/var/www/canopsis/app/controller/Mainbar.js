@@ -27,6 +27,10 @@ Ext.define('canopsis.controller.Mainbar', {
 
 	init: function() {
 		this.control({
+			'#region-north' : {
+				collapse : this.onCollapseMainbar,
+				expand: this.onExpandMainbar,
+			},
 			'Mainbar menuitem[action="logout"]' : {
 				click : this.logout,
 			},
@@ -34,7 +38,7 @@ Ext.define('canopsis.controller.Mainbar', {
 				click : this.cleartabscache,
 			},
 			'Mainbar combobox[action="viewSelector"]' : {
-				select : this.openView,
+				select : this.openViewSelector,
 			},
 			'Mainbar combobox[action="dashboardSelector"]' : {
 				select : this.setDashboard,
@@ -54,8 +58,8 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="showconsole"]' : {
 				click : this.showconsole,
 			},
-			'Mainbar menuitem[action="openViews"]' : {
-				click : this.openViews,
+			'Mainbar menuitem[action="openViewsManager"]' : {
+				click : this.openViewsManager,
 			},
 			'Mainbar menuitem[action="editGroup"]' : {
 				click : this.openGroup,
@@ -72,13 +76,19 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar [name="clock"]' : {
 				afterrender : this.setClock,
 			},
+			'Mainbar menuitem[action="openViewMenu"]' : {
+				click : this.openViewMenu,
+			},
 			
 		})
 
-		//Set clock
-		//this.setClock();
-
 		this.callParent(arguments);
+	},
+
+	onCollapseMainbar: function(){
+	},
+	
+	onExpandMainbar: function(){
 	},
 
 	logout: function(){
@@ -105,6 +115,11 @@ Ext.define('canopsis.controller.Mainbar', {
 	showconsole: function(){
 		log.debug('Show log console', this.logAuthor);
 		log.show_console();
+	},
+	
+	openViewMenu: function(item){
+		var view_id = item.viewId
+		this.getController('Tabs').open_view({ view_id: view_id, title: _(item.text) })
 	},
 	
 	setClock : function(item){
@@ -163,7 +178,7 @@ Ext.define('canopsis.controller.Mainbar', {
 		maintabs.setActiveTab(0);
 	},
 
-	openView: function(combo, records){
+	openViewSelector: function(combo, records){
 		var view_id = records[0].get('id');
 		var view_name = records[0].get('crecord_name');
 		log.debug('Open view "'+view_name+'" ('+view_id+')', this.logAuthor);
@@ -171,7 +186,7 @@ Ext.define('canopsis.controller.Mainbar', {
 		this.getController('Tabs').open_view({ view_id: view_id, title: view_name })
 	},
 	
-	openViews: function(){
+	openViewsManager: function(){
 		this.getController('Tabs').open_view({ view_id: 'view.view_manager', title: _('Views') })
 	},
 	

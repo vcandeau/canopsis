@@ -27,7 +27,13 @@ import ConfigParser, os
 
 import bottle
 from bottle import route, run, static_file, redirect
-from beaker.middleware import SessionMiddleware
+
+## Hack: Prevent "ExtractionError: Can't extract file(s) to egg cache" when 2 process extract egg at the same time ...
+try:
+	from beaker.middleware import SessionMiddleware
+except:
+	time.sleep(2)
+	from beaker.middleware import SessionMiddleware
 
 from gevent import monkey; monkey.patch_all()
 

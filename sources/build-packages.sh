@@ -1,9 +1,13 @@
 #!/bin/bash
 
 SRC="/usr/local/src/canopsis"
-REPO_URL="http://repo.canopsis.org/daily"
-REPO_GIT="git://forge.canopsis.org/canopsis.git"
+REPO_GIT="https://github.com/capensis/canopsis.git"
 CMD_INSTALL="pkgmgr install --force-yes cmaster"
+BRANCH="freeze"
+
+if [ "x$1" != "x" ]; then
+	BRANCH=$1
+fi
 
 #### Git Pull
 echo "-------> Clone repository"
@@ -18,7 +22,8 @@ echo " + Ok"
 echo "-------> Pull repository"
 cd $SRC
 
-git pull origin develop
+git checkout $BRANCH
+git pull origin $BRANCH
 
 git submodule update
 
@@ -26,7 +31,7 @@ cd sources
 
 echo "-------> Start Build"
 if [ -e $SRC/builded ]; then
-	./build-install.sh -cupn
+	./build-install.sh -cupnd
 	if [ $? -ne 0 ]; then exit 1; fi
 else
 	./build-install.sh -cup
@@ -44,6 +49,20 @@ pkill -u canopsis &> /dev/null || true
 ##### Install from package
 echo "-------> Install from packages"
 
+echo "---> Make Repo"
+cd $SRC/binaries
+./mk_repo $SRC/binaries
+if [ $? -ne 0 ]; then exit 1; fi
+
+echo "---> Start HTTP Repo"
+python -m SimpleHTTPServer 8081 &
+WWWCODE=$?
+WWWPID=$!
+if [ $WWWCODE -ne 0 ]; then exit 1; fi
+
+echo "-----> + PID: $WWWPID"
+sleep 2
+
 echo "---> Create User"
 
 ## Requirements
@@ -53,32 +72,22 @@ useradd -m -d /opt/canopsis -s /bin/bash canopsis
 echo "---> Install bootstrap"
 su - canopsis -c "mkdir -p tmp"
 su - canopsis -c "rm -Rf tmp/* &> /dev/null"
-su - canopsis -c "cd tmp && wget $REPO_URL/../canopsis_installer.tgz"
-su - canopsis -c "cd tmp && tar xvf canopsis_installer.tgz"
-su - canopsis -c "cd tmp && cd canopsis_installer && ./install.sh"
+su - canopsis -c "cd tmp && wget http://localhost:8081/canopsis_installer.tgz"
+if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
-if [ $? -ne 0 ]; then exit 1; fi
+su - canopsis -c "cd tmp && tar xvf canopsis_installer.tgz"
+if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
+
+su - canopsis -c "cd tmp && cd canopsis_installer && ./install.sh"
+if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
 echo "---> Clean bootstrap"
 su - canopsis -c "rm -Rf tmp/canopsis_installer*"
 
-echo "---> Make Repo"
-cd $SRC/binaries
-./mk_repo $SRC/binaries
-if [ $? -ne 0 ]; then exit 1; fi
-
-echo "---> Start HTTP Repo"
-python -m SimpleHTTPServer 80 &
-WWWCODE=$?
-WWWPID=$!
-if [ $WWWCODE -ne 0 ]; then exit 1; fi
-
-echo "-----> + PID: $WWWPID"
-
 ## Configure pkgmgr
 echo "---> Configure pkgmgr"
 sed -i 's#="stable"#=""#g' /opt/canopsis/etc/pkgmgr.conf
-sed -i 's#repo.canopsis.org#localhost#g' /opt/canopsis/etc/pkgmgr.conf
+sed -i 's#repo.canopsis.org:80#localhost:8081#g' /opt/canopsis/etc/pkgmgr.conf
 
 ## Start install
 echo "---> Start install ($CMD_INSTALL)"

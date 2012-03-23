@@ -76,14 +76,14 @@ class KnownValues(unittest.TestCase):
 
 		dump1 = mynode.dump()
 
-		metric1 =  mynode.metric_dump('load1')
+		metric1 =  mynode.metric_dump(dn='load1')
 
 		del mynode
 
 		mynode = node('nagios.Central.check.service.localhost9', storage=storage)	
 
 		dump2 = mynode.dump()
-		metric2 =  mynode.metric_dump('load1')
+		metric2 =  mynode.metric_dump(dn='load1')
 
 		del dump1['writetime']
 		del dump2['writetime']
@@ -113,14 +113,17 @@ class KnownValues(unittest.TestCase):
 		pass
 
 
-	def test_05_GetValues(self):
+	def test_05_GetBy(self):
+		_id =  mynode.metric_get_id(dn='load1')
+
+	def test_06_GetValues(self):
 		last = timestamp - 1
 
 		print "Last: %s" % last
 
 		## Get first 100 values
 		start = time.time()
-		values = mynode.metric_get_values('load1', 1, 100)
+		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=100)
 		print " + %s Old values in %s ms" % (len(values), ((time.time() - start) * 1000))
 
 		if len(values) != 100:
@@ -135,7 +138,7 @@ class KnownValues(unittest.TestCase):
 
 		## Get last 100 values
 		start = time.time()
-		values = mynode.metric_get_values('load1', last-99, last)
+		values = mynode.metric_get_values(dn='load1', tstart=last-99, tstop=last)
 		print " + %s Recent values in %s ms" % (len(values), ((time.time() - start) * 1000))
 
 		if len(values) != 100:
@@ -150,7 +153,7 @@ class KnownValues(unittest.TestCase):
 
 		## Get middle 100 values
 		start = time.time()
-		values = mynode.metric_get_values('load1', last-499, last-400)
+		values = mynode.metric_get_values(dn='load1', tstart=last-499, tstop=last-400)
 		print " + %s Middle values in %s ms" % (len(values), ((time.time() - start) * 1000))
 
 		if len(values) != 100:
@@ -164,26 +167,26 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid Middle Data')
 
 
-	def test_06_aggregate(self):
+	def test_07_aggregate(self):
 		##### DRAFT !
-		values = mynode.metric_get_values('load1', 1, 100)
+		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=100)
 		values = pyperfstore.pmath.aggregate(values, max_points=50)
 
 		if len(values) != 50:
 			raise Exception('Invalid aggregate (len: %s)' % len(values))
 
-	def test_07_candlestick(self):
+	def test_08_candlestick(self):
 		##### DRAFT !
-		values = mynode.metric_get_values('load1', 1, 1000, auto_aggregate=False)
+		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, auto_aggregate=False)
 
 		values = pyperfstore.pmath.candlestick(values, window=100)
 
 		#if len(values) != 10:
 		#	raise Exception('Invalid candlestick (len: %s)' % len(values))
 
-	def test_08_timesplit(self):
+	def test_09_timesplit(self):
 		##### DRAFT !
-		values = mynode.metric_get_values('load1', 1, 1000, auto_aggregate=False)
+		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, auto_aggregate=False)
 
 		start = time.time()
 		pyperfstore.pmath.timesplit(values, 35, 632)
@@ -193,11 +196,25 @@ class KnownValues(unittest.TestCase):
 	def test_99_Remove(self):
 		global mynode
 
-		#mynode.metric_remove('load1')
-		#mynode.metric_remove_all()
+		mynode.metric_remove('load1')
+		
+		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=100)
+		if values:
+			raise Exception('Impossible to remove "load1"')
+			
+		values = mynode.metric_get_values(dn='load5', tstart=1, tstop=100)
+		if not values:
+			raise Exception('"load5" removed ?')
+		
+		mynode.metric_remove_all()
+		
+		values = mynode.metric_get_values(dn='load5', tstart=1, tstop=100)
+		if values:
+			raise Exception('Impossible to remove 	all')
 
-		#mynode.remove()
 		del mynode
+		
+		
 
 
 
