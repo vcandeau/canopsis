@@ -468,8 +468,8 @@ if [ $OPT_BUILD -eq 1 ]; then
 				echo " + Post-install ..."
 				post_install
 				
-				#echo " + Clean python-eggs  ..."
-				#rm -Rf $PREFIX/.python-eggs &> /dev/null || true
+				echo " + Clean python-eggs  ..."
+				rm -Rf $PREFIX/.python-eggs &> /dev/null || true
 	
 				if [ $OPT_MPKG -eq 1 ]; then
 					make_package $NAME
