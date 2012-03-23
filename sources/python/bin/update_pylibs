@@ -11,15 +11,15 @@ for lib in $libs; do
 done
 echo "import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getattr(sys,'__egginsert',0); sys.path[p:p]=new; sys.__egginsert = p+len(new)" >> $easy_install_pth
 
-echo ""
-echo "Update .python-eggs:"
-for lib in $libs; do
-	name=$(echo "$lib" | cut -d '-' -f1)
-	vers=$(echo "$lib" | cut -d '-' -f2)
-	echo " + $name"
-	echo "try:
-	import $name
-except:
-	pass
-	#print \"Invalid module '$name'\"" | python
-done
+#echo ""
+#echo "Update .python-eggs:"
+#for lib in $libs; do
+#	name=$(echo "$lib" | cut -d '-' -f1)
+#	vers=$(echo "$lib" | cut -d '-' -f2)
+#	echo " + $name"
+#	echo "try:
+#	import $name
+#except:
+#	pass
+#	#print \"Invalid module '$name'\"" | python
+#done
