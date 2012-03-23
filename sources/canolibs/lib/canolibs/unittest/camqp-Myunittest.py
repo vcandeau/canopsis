@@ -60,10 +60,10 @@ class KnownValues(unittest.TestCase):
 		
 	def test_5_CheckReceiveInQueue(self):		
 		start = time.time()
-		end = start + 5.0
+		end = start + 20.0
 		while not rcvmsgbody:
 			time.sleep(0.1)
-			if time.time() > (end+5.0):
+			if time.time() > end:
 				break
 		
 		duration = time.time() - start
