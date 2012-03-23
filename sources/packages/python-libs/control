@@ -15,8 +15,6 @@ function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	update_pylibs
 	check_code $?
-	python $PREFIX/opt/python-libs/init_pythonEggs.py
-	check_code $?
 }
 
 function pre_remove(){
