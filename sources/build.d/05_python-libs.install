@@ -31,5 +31,4 @@ function install(){
 	# Clean
 	rm -Rf $PREFIX/.python-eggs/*
 
-	install_basic_source $NAME
 }
