@@ -27,6 +27,8 @@ def list_crons():
 		schedule['task'] = record.data['task']
 		if record.data.has_key('args'):
 			schedule['args'] = record.data['args']
+		if record.data.has_key('kwargs'):
+			schedule['kwargs'] = record.data['kwargs']
 
 		if record.data.has_key('timedelta'):
 			if record.data['timedelta'] != None:
