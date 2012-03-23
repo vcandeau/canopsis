@@ -29,12 +29,12 @@ fi
 if [ -e $CONF_PATH/$APP_NAME.conf ]; then
 	. $CONF_PATH/$APP_NAME.conf
 else
-	echo "Impossible to find daemon configuration ..."
+	echo "[$APP_NAME] Impossible to find daemon configuration ..."
 	exit 1
 fi
 
 if [ "x$APP_BIN" == "x" ]; then
-	echo "Error in configuration ..."
+	echo "[$APP_NAME] Error in configuration ..."
 	exit 1
 fi
 

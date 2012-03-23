@@ -47,7 +47,26 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	exportMode : false,
 	export_from : undefined,
 	export_to : undefined,
-	
+
+	//Locales
+	locales : {
+		save: _('Save'),
+		column: _('Add column'),
+		row : _('Add row'),
+		editMode : _('Edit mode'),
+		viewMode : _('View mode'),
+		removeAll : _('Remove all'),
+		del : _('Delete'),
+		cancel: _('Cancel'),
+		edit: _('Edit'),
+		duplicate: _('Duplicate'),
+	},
+
+	//Logging
+	log: function(message){
+		log.debug(message, this.logAuthor)
+	},
+
     //Init
 	initComponent: function() {
 		this.callParent(arguments);

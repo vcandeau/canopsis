@@ -21,6 +21,15 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
+
+echo "Init submodules ..."
+cd ..
+git submodule init
+check_code $? "Impossible to init submodule"
+git submodule update
+check_code $? "Impossible to update submodule"
+cd sources
+
 ######################################
 #  functions
 ######################################
@@ -459,8 +468,8 @@ if [ $OPT_BUILD -eq 1 ]; then
 				echo " + Post-install ..."
 				post_install
 				
-				echo " + Clean python-eggs  ..."
-				rm -Rf $PREFIX/.python-eggs &> /dev/null || true
+				#echo " + Clean python-eggs  ..."
+				#rm -Rf $PREFIX/.python-eggs &> /dev/null || true
 	
 				if [ $OPT_MPKG -eq 1 ]; then
 					make_package $NAME
@@ -478,6 +487,7 @@ if [ $OPT_BUILD -eq 1 ]; then
 	echo "################################"
 	echo "# Fix permissions"
 	echo "################################"
+	mkdir -p $PREFIX/.python-eggs
 	chown $HUSER:$HGROUP -R $PREFIX
 	check_code $?
 	echo " + Ok"
@@ -516,7 +526,7 @@ if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "  + Create bootstrap env"
 	mkdir -p $BSTRAP_PATH
 	echo "  + Copy install script"
-	cp $SRC_PATH/../binaries/{install.sh,common.sh} $INSTALLER_PATH
+	cp $SRC_PATH/../binaries/{install.sh,common.sh,INSTALL} $INSTALLER_PATH
 	check_code $? "Impossible to copy"
 
 	echo "  + Copy packages ..."
