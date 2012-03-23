@@ -1,6 +1,7 @@
 from celery.task import task
 from cinit import cinit
 from caccount import caccount
+from crecord import crecord
 from cstorage import cstorage
 from cfile import cfile
 from datetime import date
@@ -13,7 +14,51 @@ import time
 init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
+def stock_result_in_db(func):
+	def render_pdf(*args,**kwargs):
+		
+		try:
+			my_func = func(*args)
+			logger.error('Task successfully done')
+		except Exception, err:
+			function_error = err
+			logger.error(err)
+			
+		#check if the task was scheduled
+		if len(kwargs) != 0:
+			logger.error('kwaaaaaaarrrrrrrrrrrrgggggggggssssss')
+			#get account/storage
+			if isinstance(args[4],unicode):
+				account = caccount(user=args[4])
+			else:
+				account = args[4]
+			
+			storage = cstorage(account=account, namespace='task_log')
+			
+			#the function have succeed ?
+			if my_func:
+				if isinstance(my_func, list):
+					data = my_func
+				else:
+					data = [my_func]
+	
+				timestamp = int(time.time())
+				log = {'success': True,'total':1,'output':'Task done','timestamp':timestamp,'data':data}
+			else:
+				log = {'success': False,'total':1,'output':function_error,'timestamp':timestamp}
+
+
+			logger.error(log)
+			log_record = crecord(log,name=kwargs['periodic_task_id'])
+			storage.put(log_record)
+			
+		return my_func
+	return render_pdf
+
+
+
 @task
+@stock_result_in_db
 def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None):
 
 	if viewname is None:
@@ -75,6 +120,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		return id
 	except Exception, err:
 		logger.error(err)
+		#return {'success': False, 'total': '1', 'output': 'Task failed to render', 'data': err,'name': render_pdf.name}
 
 @task
 def put_in_grid_fs(file_path, file_name, account):
@@ -86,4 +132,4 @@ def put_in_grid_fs(file_path, file_name, account):
 		logger.error('Report not in grid fs')
 		return False
 	else:
-		return id
+		return id	
