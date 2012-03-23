@@ -70,7 +70,7 @@ class camqp(threading.Thread):
 		self.logger.debug("Create exchanges object")
 		for exchange_name in [self.exchange_name, self.exchange_name_events, self.exchange_name_alerts, self.exchange_name_incidents]:
 			self.logger.debug(" + %s" % exchange_name)
-			self.exchanges[exchange_name] =  Exchange(exchange_name , "topic", durable=True, auto_delete=False)
+			self.get_exchange(exchange_name)
 		
 		if auto_connect:
 			self.connect()
@@ -132,7 +132,14 @@ class camqp(threading.Thread):
 				self.logger.error(err)
 		else:
 			self.logger.debug("Allready connected")
-					
+	
+	def get_exchange(self, name):
+		try:
+			return self.exchanges[name]
+		except:
+			self.exchanges[name] =  Exchange(name , "topic", durable=True, auto_delete=False)
+			return self.exchanges[name]
+		
 	def init_queue(self, reconnect=False):
 		if self.queues:
 			self.logger.debug("Init queues")
@@ -143,7 +150,7 @@ class camqp(threading.Thread):
 				if not qsettings['queue']:
 					self.logger.debug("   + Create queue")
 					qsettings['queue'] = Queue(queue_name,
-											exchange = self.exchanges[qsettings['exchange_name']],
+											exchange = self.get_exchange(qsettings['exchange_name']),
 											routing_key = qsettings['routing_keys'][0],
 											exclusive = qsettings['exclusive'],
 											auto_delete = qsettings['auto_delete'],
@@ -183,7 +190,8 @@ class camqp(threading.Thread):
 			
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with producers[self.conn].acquire(block=True) as producer:
-				producer.publish(msg, serializer="json", compression=None, routing_key=routing_key, exchange=self.exchanges[exchange_name])
+				producer.publish(msg, serializer="json", compression=None, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
+			self.logger.debug(" + Sended")
 				
 		else:
 			self.logger.error("You are not connected ...")

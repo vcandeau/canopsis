@@ -25,7 +25,7 @@ Ext.define('canopsis.controller.Widgets', {
     stores: ['Widget'],
     models: ['event'],
     
-    item_to_translate : ['title','fieldLabel','boxLabel'],
+    item_to_translate : ['title','fieldLabel','boxLabel', 'text'],
 
     logAuthor: "[controller][Widgets]",
 
@@ -74,22 +74,17 @@ Ext.define('canopsis.controller.Widgets', {
 	},
 	
 	//recursive translate function for widget records
-	translate : function(xtype,record_data){
+	translate : function(xtype, data){
+		
 		// for every item
-		for(item_name in record_data){
-			var item = record_data[item_name]
-			//if the item must be translated
-			if(this.item_to_translate.indexOf(item_name) > -1){
-				//log.debug('translating : ' + item)
-				record_data[item_name] = _(item,xtype)
-			} else if(item_name == 'items'){
-				//if there is item in items
-				for(sub_item in item){
-					this.translate(xtype,item[sub_item])
-				}
+		for( var key in data){
+			if (key == 'items' || key == 'store' || key == 'data' || key >= 0){
+				this.translate(xtype, data[key])
 			}
-			
-			
+				
+			if(this.item_to_translate.indexOf(key) > -1){
+				data[key] = _(data[key], xtype)
+			}
 		}
 	}
 	

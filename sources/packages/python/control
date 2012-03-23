@@ -2,7 +2,7 @@
 
 NAME="python"
 VERSION=2.7.1
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr"
 

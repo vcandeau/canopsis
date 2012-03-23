@@ -47,7 +47,7 @@ Ext.define('widgets.list.list' ,{
 	default_sort_direction : 'DESC',
 	//..
 	
-	initComponent: function() {
+	afterContainerRender: function() {
 		
 		if (this.reload || this.bar_search) { this.bar = true } else { this.bar = false }
 	
@@ -94,12 +94,9 @@ Ext.define('widgets.list.list' ,{
 		this.on('afterrender', function() {
 			this.ctrl._bindGridEvents(this.grid)
 		}, this);
-
-		this.callParent(arguments);
-
-		//adding grid to widget 
-		this.removeAll();
-		this.add(this.grid);
+		
+		this.wcontainer.removeAll();
+		this.wcontainer.add(this.grid);
 		
 		this.ready();
 	},

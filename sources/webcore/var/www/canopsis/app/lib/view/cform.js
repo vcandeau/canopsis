@@ -44,23 +44,23 @@ Ext.define('canopsis.lib.view.cform', {
 
 	logAuthor: '[view][cform]',
 
-    initComponent: function(){
-	this.on('beforeclose', this.beforeclose)
-	//this.tbar =  this.bbar;
-        this.callParent();
-    },
+	initComponent: function(){
+		this.on('beforeclose', this.beforeclose)
+		//this.tbar =  this.bbar;
+		this.callParent();
+	},
     
-    beforeclose: function(tab, object){
-	log.debug('Active previous tab', this.logAuthor);
-	old_tab = Ext.getCmp('main-tabs').old_tab;
-	if (old_tab) {
-		Ext.getCmp('main-tabs').setActiveTab(old_tab);
-	}
-    },
+	beforeclose: function(tab, object){
+		log.debug('Active previous tab', this.logAuthor);
+		old_tab = Ext.getCmp('main-tabs').old_tab;
+		if (old_tab) {
+			Ext.getCmp('main-tabs').setActiveTab(old_tab);
+		}
+	},
 
-    beforeDestroy : function() {
+	beforeDestroy : function() {
 		log.debug("Destroy items ...", this.logAuthor)
-		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
+		Ext.form.Panel.superclass.beforeDestroy.call(this);
 		log.debug(this.id + " Destroyed.", this.logAuthor);
 	}
     
