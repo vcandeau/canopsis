@@ -27,6 +27,7 @@ from crecord import crecord
 from caccount import caccount
 from pyperfstore import node
 from pyperfstore import mongostore
+from cwebservices import cwebservices
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -125,6 +126,21 @@ class KnownValues(unittest.TestCase):
 			
 		if values[1][1] != 1:
 			raise Exception("Perfsore don't work ...")		
+	
+	def test_6_Check_webserver(self):	
+		WS = cwebservices()
+		WS.login('root', 'root')
+		
+		data = WS.get('/rest/events/event/%s' % rk)
+		data = data[0]
+		record = storage.get(rk)
+		rdata = record.dump()
+		
+		WS.logout()
+		
+		if data['crecord_write_time'] != rdata['crecord_write_time']:
+			raise Exception("Webservice don't work ...")
+			
 		
 
 	def test_99_Disconnect(self):
