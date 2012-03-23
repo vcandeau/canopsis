@@ -59,15 +59,14 @@ def get_tasks():
 			try:
 				task_id = 'schedule.%s' % schedule.name
 				last_log = storage.find({'crecord_name': task_id},namespace='task_log',sort=[('timestamp', -1)])
+				#take the latest
 				last_log = last_log[0]
-				logger.error(last_log)
 			except Exception, err:
 				logger.error('Error when fetching last log : %s' % err)
 			
 			#add to schedule list
 			if isinstance(last_log, crecord):
 				formated_log = {'success': last_log.data['success'],'output':last_log.data['output'],'timestamp':last_log.data['timestamp'],'data':str(last_log.data['data'])}
-				logger.error(formated_log)
 				schedule.data['log'] = [formated_log]
 				
 			output.append(schedule.dump(json=True))
