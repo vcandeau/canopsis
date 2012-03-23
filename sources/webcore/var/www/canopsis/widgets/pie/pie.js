@@ -161,28 +161,40 @@ Ext.define('widgets.pie.pie' ,{
 				type: 'pie',
 				data: []
 			};
-						
+			
+			var node = this.nodes[0]
+			
 			// Parse perf_data
-			var perf_data = data.perf_data_array
+			var perf_data_array = data.perf_data_array
 						
-			for (var metric in perf_data){
-				var value = perf_data[metric].value
-				var max = perf_data[metric].max
-				var unit = perf_data[metric].unit
+			for (var index in perf_data_array){
 				
-				var metric_name = metric
-				var other_label = this.other_label
+				var perf_data = perf_data_array[index]
 				
-				if (max == undefined)
-					max = this.max
+				var metric = perf_data['metric']
+				var value = perf_data['value']
+				var max = perf_data['max']
+				var unit = perf_data['unit']
 				
-				if (unit){
-					metric_name += " ("+unit+")"
-					other_label += " ("+unit+")"
+				if (unit == '%' && ! max)
+					max = 100
+					
+				var metric_name = metric 
+				
+				if (node.metrics.indexOf(metric) != -1 || node.metrics.indexOf('<all>') != -1){
+					var other_label = this.other_label
+					
+					if (max == undefined)
+						max = this.max
+					
+					if (unit){
+						metric_name += " ("+unit+")"
+						other_label += " ("+unit+")"
+					}
+					
+					serie.data.push({ id: metric, name: metric_name, y: value, color: global.default_colors[0] })
+					serie.data.push({ id: 'other', name: other_label, y: max-value, color: global.default_colors[1] })
 				}
-				
-				serie.data.push({ id: metric, name: metric_name, y: value, color: global.default_colors[0] })
-				serie.data.push({ id: 'other', name: other_label, y: max-value, color: global.default_colors[1] })	
 			}
 			
 			if (serie.data){
@@ -209,12 +221,6 @@ Ext.define('widgets.pie.pie' ,{
 	reloadSerie: function(){
 		this.removeSerie()
 		this.displaySerie()
-	},
-	
-	getHeight: function(){
-		var height = this.callParent();
-		if (this.title){ height -= 30 }
-		return height
 	},
 
 	onResize: function(){

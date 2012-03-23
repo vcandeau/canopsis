@@ -1,4 +1,4 @@
-/*
+#!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,25 +17,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-*/
-Ext.define('canopsis.view.Group.Form', {
-	extend: 'canopsis.lib.view.cform',
 
-	alias: 'widget.GroupForm',
+import logging, time
+from cstorage import get_storage
+from caccount import caccount
+from cinit import cinit
 
-	iconCls: 'icon-crecord_type-group',
+freshness = 60 * 60 * 5
 
-	items: [{
-			fieldLabel: _('Name'),
-			name: 'crecord_name',
-			allowBlank: false,
-			regex: /^[A-Za-z0-9_]+$/,
-			regexText: _("Invalid name") + ", "+_("use alphanumeric characters only") + "<br/>([A-Za-z0-9_])"
-		}],
-    
+init 	= cinit()
 
-    initComponent: function(){
-        this.callParent();
-    },
-    
-});
+logger 	= init.getLogger("CleanEventDB", level="DEBUG")
+storage = get_storage(namespace='events', logging_level=logging.ERROR, account=caccount(user="root", group="root"))
+
+logger.debug("Find all events")
+records = storage.find({'event_type': 'check'})
+
+logger.debug(" + %s found" % len(records))
+
+logger.debug("Check last 'write_time'")
+for record in records:
+	if (record.write_time < int(time.time() - freshness)):
+		logger.debug(" + %s" % record._id)
+		logger.debug("    -> Too old, delete it")
+		storage.remove(record)
+
+

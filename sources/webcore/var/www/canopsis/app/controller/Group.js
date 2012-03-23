@@ -29,6 +29,8 @@ Ext.define('canopsis.controller.Group', {
 
 	logAuthor: '[controller][Group]',
 
+	allowEdit: false,
+
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
