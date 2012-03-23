@@ -90,7 +90,7 @@ def on_message(body, msg):
 		raise Exception('Impossible to parse event')
 
 	## Try to parse perfdata
-	perf_data_array = {}
+	perf_data_array = []
 	perf_data = None
 	try:
 		try:
@@ -98,7 +98,7 @@ def on_message(body, msg):
 		except:
 			perf_data = dict(event['perf_data_array'])
 		
-		logger.debug(' + perf_data: %s', perf_data_array)
+		logger.debug(' + perf_data: %s', perf_data)
 		try:
 			if perf_data:
 				timestamp = int(event['timestamp'])
