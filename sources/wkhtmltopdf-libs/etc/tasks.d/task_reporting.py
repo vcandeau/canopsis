@@ -19,14 +19,13 @@ def stock_result_in_db(func):
 		
 		try:
 			my_func = func(*args)
-			logger.error('Task successfully done')
+			logger.info('Task successfully done')
 		except Exception, err:
 			function_error = err
 			logger.error(err)
 			
 		#check if the task was scheduled
 		if len(kwargs) != 0:
-			logger.error('kwaaaaaaarrrrrrrrrrrrgggggggggssssss')
 			#get account/storage
 			if isinstance(args[4],unicode):
 				account = caccount(user=args[4])
@@ -47,8 +46,6 @@ def stock_result_in_db(func):
 			else:
 				log = {'success': False,'total':1,'output':function_error,'timestamp':timestamp}
 
-
-			logger.error(log)
 			log_record = crecord(log,name=kwargs['periodic_task_id'])
 			storage.put(log_record)
 			
