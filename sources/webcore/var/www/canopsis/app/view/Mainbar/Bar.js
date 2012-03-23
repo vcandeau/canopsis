@@ -42,7 +42,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			displayField: "text",
 			valueField: "value",
 			fieldLabel: _("Language"),
-			value: global.account['locale'],
+			value: global.locale,
 			store: {
 				xtype: "store",
 				fields: ["value", "text"],
@@ -80,7 +80,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			//hideLabel: true,
 			fieldLabel: _("Dashboard"),
 			minChars: 2,
-			queryMode: 'remote',
+			queryMode: 'local',
 			emptyText: _('Select a view')+' ...',
 			value: global.account['dashboard'],
 			width: 200,
@@ -113,7 +113,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		}
 			
 		//root build menu
-		if(global.account.user == 'root'){
+		if(global.account.user == 'root' || (global.account.groups.indexOf('root') != -1)){
 			var root_build_option = [
 				{
 					iconCls:'icon-mainbar-edit-account',
@@ -159,9 +159,19 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 								text: _('Dashboard'),
 								action: 'openDashboard'
 							},{
+								iconCls: 'icon-mainbar-viewdetails',
+								text: _('Components'),
+								action: 'openViewMenu',
+								viewId: 'view.components'
+							},{
+								iconCls: 'icon-mainbar-viewdetails',
+								text: _('Resources'),
+								action: 'openViewMenu',
+								viewId: 'view.resources'
+							},{
 								iconCls: 'icon-mainbar-run',
-								text: _('Views'),
-								action: 'openViews'
+								text: _("Views manager"),
+								action: 'openViewsManager'
 							},'-', 
 								this.viewSelector
 					],
@@ -175,8 +185,11 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					items: reporting_menu,
 				}
 			},'-',{
-				xtype: 'container',
-				html: "<div class='cps-title' >Canopsis</div>",
+				//xtype: 'container',
+				//html: "<div class='cps-title' >Canopsis</div>",
+				xtype: 'tbtext',
+				text: 'Canopsis',
+				cls: 'cps-title',
 				flex : 1
 			},/*{
 				xtype : 'container',
@@ -195,17 +208,8 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				flex : 0.2,
 				menu: {
 					items: [
-						/*'-',
-						{
-							iconCls: 'icon-mainbar-dashboard',
-							text: _('Language') + ":",
-						},*/
 						this.localeSelector,
 						'-',
-						/*{
-							iconCls: 'icon-mainbar-dashboard',
-							text: _('Dashboard') + ":",
-						},*/
 						this.dashboardSelector,
 					]
 				}

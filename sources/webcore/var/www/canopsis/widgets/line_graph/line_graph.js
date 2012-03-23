@@ -63,6 +63,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_borderColor: "#909090",
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
+	maxZoom: 60 * 60, //1 hour
 	
 	SeriesType: "area",
 	lineWidth: 1,
@@ -172,7 +173,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			xAxis: {
 				//min: Date.now() - (this.time_window * 1000),
 				type: 'datetime',
-				maxZoom: 60 * 60 * 1000, // 1 hour
+				maxZoom: this.maxZoom * 1000,
+				
 				//tickInterval: tickInterval,
 			/*	type: 'datetime',
 				dateTimeLabelFormats:{
@@ -362,12 +364,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.debug('   + Shift: '+me.shift, me.logAuthor)
 		}	
 	},
-	
-	getHeight: function(){
-		var height = this.callParent();
-		if (this.title){ height -= 30 }
-		return height
-	},
 
 	onResize: function(){
 		log.debug("onRezize", this.logAuthor)
@@ -445,7 +441,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		//log.dump(data)
 
 		var serie = this.getSerie(node, metric_name, bunit)
-
+		
+		if (! serie){
+			log.error("Impossible to get serie, node: "+node+" metric: "+metric_name, this.logAuthor)
+			return
+		}
+		
+		if (! serie.options){
+			log.error("Impossible to read serie's option", this.logAuthor)
+			log.dump(serie)
+			return
+		}
+		
 		var serie_id = serie.options.id
 		
 		log.debug('  + Add data for '+node+', metric "'+metric_name+'" ...', this.logAuthor)

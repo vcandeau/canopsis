@@ -32,6 +32,7 @@ class carchiver(object):
 	def __init__(self, namespace, storage=None, autolog=False, logging_level=logging.ERROR):
 
 		self.logger = logging.getLogger('carchiver')
+		self.logger.setLevel(logging_level)
 
 		self.namespace = namespace
 		self.namespace_log = namespace + '_log'

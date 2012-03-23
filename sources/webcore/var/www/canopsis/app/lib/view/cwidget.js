@@ -42,6 +42,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	reportMode : false,
 	exportMode : false,
 	
+	titleHeight: 27,
+	
 	time_window: global.commonTs.day, //24 hours
 
 	//PollNodeInfo: true,
@@ -58,11 +60,15 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		this.wcontainerId = this.id+"-content"
 
-		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false });
-
+		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false, layout: 'fit' });
 		this.items = this.wcontainer
 		
 		this.wcontainer.on('afterrender', this.afterContainerRender, this)
+		
+		this.on('afterlayout', function(){
+			log.debug('SetHeight of wcontainer', this.logAuthor)
+			this.wcontainer.setHeight(this.getHeight())
+		}, this)
 		
 		this.callParent(arguments);
 
@@ -136,6 +142,12 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		log.debug(' + Ready', this.logAuthor)
 		this.ready();
 	},
+
+	getHeight: function(){
+		var height = this.callParent();
+		if (this.title){ height -= this.titleHeight }
+		return height
+	},
 	
 	ready: function(){
 		if (this.task){
@@ -170,7 +182,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	TabOnShow: function(){
 		log.debug('Show', this.logAuthor)
-		this.startTask()
+		if (! this.isDisabled())
+			this.startTask()
 	},
 
 	TabOnHide: function(){

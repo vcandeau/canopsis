@@ -24,6 +24,8 @@ legend = ['ok','warning','critical','unknown']
 
 logger = logging.getLogger('ctools')
 
+#############################################
+
 def calcul_pct(data, total=None):
 	if not total:
 		## Get total
@@ -46,39 +48,78 @@ def calcul_pct(data, total=None):
 
 	return data_pct
 
+#############################################
+RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\.%%\-{}\? ]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;? ?))")
 
-def parse_perfdata(perf_data):
+def parse_perfdata(perf_data_raw):
 		# 'label'=value[UOM];[warn];[crit];[min];[max]
 		#   load1=0.440     ;5.000 ;10.000;0    ;
-		perfs = perf_data.split(' ')
 
-		perf_data_array = {}
-		for perf in perfs:
-			perf_data = {}
-			perf = perf.replace(',','.')
-			resultat = re.search("'?([0-9A-Za-z/]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?",perf);
-			
-			perf_data['metric'] = resultat.group(1)
-			perf_data['value'] = resultat.group(2)
-			perf_data['unit'] = resultat.group(4)
-			perf_data['warn'] = resultat.group(6)
-			perf_data['crit'] = resultat.group(8)
-			perf_data['min'] = resultat.group(10)
-			perf_data['max'] = resultat.group(12)
+		logger.debug("Parse: %s" % perf_data_raw)
 
-			perf_data_clean = {}
-			for key in perf_data.keys():
-				if perf_data[key]:
+		perfs = RE_PERF_DATA.split(perf_data_raw)
+
+		perf_data_array = []
+		perf_data = {}
+		i=0
+		for info in perfs:
+			if info == '':
+				info = None
+
+			#logger.debug(" + %s '%s'" % (i, info))
+			try:
+				if   info and i == 2:
+					perf_data['metric'] = info
+				elif info and i == 3:
+					perf_data['value'] = info.replace(',','.')
+				elif info and i == 4:
+					perf_data['unit'] = info
+				elif info and i == 7:
+					perf_data['warn'] = info.replace(',','.')
+				elif info and i == 9:
+					perf_data['crit'] = info.replace(',','.')
+				elif info and i == 11:
+					perf_data['min'] = info.replace(',','.')
+				elif info and i == 13:
+					perf_data['max'] = info.replace(',','.')
+
+				i+=1
+				if i==15:
 					try:
-						perf_data_clean[key] = float(perf_data[key])
-					except:
-						perf_data_clean[key] = perf_data[key]
+						logger.debug(" + %s" % perf_data)
+						perf_data_clean = {}
+						for key in perf_data.keys():
+							if perf_data[key]:
+								try:
+									perf_data_clean[key] = float(perf_data[key])
+								except:
+									perf_data_clean[key] = perf_data[key]
+									
+								#logger.debug("   + %s: %s" % (key, perf_data_clean[key]))
+					
+					
+						try:
+							value = perf_data_clean['value']
+							metric = perf_data_clean['metric']
+							perf_data_array.append(perf_data_clean)
+						except Exception, err:
+							logger.warning("perf_data: Missing fields %s (%s)" % (err, perf_data_clean))
+							logger.debug("perf_data: Raw: %s" % perf_data_raw)
+						
+					except Exception, err:
+						
+						logger.error("perf_data: Raw: %s" % perf_data_raw)
+						logger.error("perf_data: Impossible to clean '%s': %s" % (perf_data, err))
+	
+					perf_data = {}
+					i=0
 
-			
-			perf_data_array[perf_data_clean['metric']] = perf_data_clean
+			except Exception, err:
+				logger.error("perf_data: Invalid metric %s: %s (%s)" % (i, info, err))
 
 		return perf_data_array
 
+#############################################
 
 def dynmodloads(path=".", subdef=False, pattern=".*"):
 	import os, sys

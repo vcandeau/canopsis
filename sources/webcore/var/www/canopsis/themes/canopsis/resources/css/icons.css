@@ -55,11 +55,17 @@
 .icon-reload { 
     background-image: url(../images/icons/reload.png) !important; 
 }
+
+.icon-search { 
+    background-image: url(../images/icons/magnifier.png) !important; 
+}
+
 /*
 .icon-cancel { 
     background-image: url(../images/icons/move.png) !important; 
 }
 */
+
 .icon-cancel { 
     background-image: url(../images/icons/cross.png) !important; 
 }
@@ -162,6 +168,9 @@
     background-image: url(../images/icons/chart_curve_edit.png) !important; 
 }
 
+.icon-mainbar-viewdetails { 
+    background-image: url(../images/icons/application_view_detail.png) !important; 
+}
 
 /* state */
 

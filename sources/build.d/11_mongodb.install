@@ -24,4 +24,6 @@ function install(){
 	
 	chown $HUSER:$HGROUP $PREFIX/bin/mongo*
 	check_code $?
+
+	install_init "mongodb"
 }
