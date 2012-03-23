@@ -218,9 +218,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				this._cancelForm(form);
 
 
-			}else{
-				global.notify.notify('Invalid form','Some fields aren\'t valid','error')
-				log.debug('[controller][cgrid][form] - Form is not valid !');
 			}
 		}else{
 			global.notify.notify('Invalid form','Some fields aren\'t valid','error')

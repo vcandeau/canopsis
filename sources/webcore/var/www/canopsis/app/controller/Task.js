@@ -127,9 +127,9 @@ Ext.define('canopsis.controller.Task', {
 			if (already_exist){
 				global.notify.notify(data['crecord_name'] + ' already exist','you can\'t add the same task twice','error')
 				return false
+			}else{
+				return true
 			}
-				
-			return false
 		}else{
 			return true
 		}
