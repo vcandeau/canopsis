@@ -95,13 +95,6 @@ class carchiver(object):
 		record.chmod("o+r")
 		record._id = _id
 
-		try:
-			perf_data = event['perf_data']
-			perf_data = parse_perfdata(perf_data)
-			record.data['perf_data_array'] = perf_data
-		except:
-			pass
-
 		self.storage.put(record, namespace=self.namespace, account=self.account)
 	
 
