@@ -47,10 +47,7 @@ Ext.define('canopsis.view.Task.Form', {
 		this.reportOptions = Ext.widget('fieldset',{
 			xtype: 'fieldset',
 			title: _('Reporting Options'),
-		/*	layout: {
-				type: 'hbox',
-				align: 'stretch'
-			},*/
+			layout: 'hbox',
 			collapsible: false,
 		})
 		//-----------------General options----------------------
@@ -152,9 +149,10 @@ Ext.define('canopsis.view.Task.Form', {
 		this.timeOptions.add([durationCombo,dayCombo,hoursCombo])
 		
 		//---------------------------Report option----------------------
+
+		
 		var lengthCombo = Ext.widget('combobox',{
-			name: 'timeLength',
-			fieldLabel: _('The last'),
+			name: 'timeLengthUnit',
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
@@ -170,8 +168,17 @@ Ext.define('canopsis.view.Task.Form', {
 				]
 			}
 		})
+		
+		var unitCombo = Ext.widget('textfield',{
+			name: 'timeLength',
+			fieldLabel: _('The last'),
+			value: 1,
+			allowBlank: false,
+			minLength : 1,
+			width: 140,
+		})
 
-		this.reportOptions.add(lengthCombo)
+		this.reportOptions.add(unitCombo,lengthCombo)
 		
 		//-----------------------Binding Events-------------------
 		durationCombo.on('change',function(combo,newValue,oldValue){
