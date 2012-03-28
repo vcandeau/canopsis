@@ -82,12 +82,32 @@ class carchiver(object):
 			self.logger.debug(" + New event")
 			changed = True
 		
+		event = self.merge_perf_data(record.data, event)
 		self.store_event(_id, event)
 
 		if changed and self.autolog:
 			self.log_event(_id, event)			
 
 		return changed
+		
+	def merge_perf_data(self, old_event, new_event):
+				
+		perf_data_array = old_event['perf_data_array']
+		
+		new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
+		old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
+		
+		if new_metrics == old_metrics:
+			return new_event
+		
+		for new_metric in new_metrics:
+			if new_metric in old_metrics:
+				perf_data_array[old_metrics.index(new_metric)] = new_event['perf_data_array'][new_metrics.index(new_metric)]
+			else:
+				perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
+					
+		new_event['perf_data_array'] = perf_data_array
+		return new_event
 
 	def store_event(self, _id, event):
 		record = crecord(event)
@@ -95,16 +115,8 @@ class carchiver(object):
 		record.chmod("o+r")
 		record._id = _id
 
-		try:
-			perf_data = event['perf_data']
-			perf_data = parse_perfdata(perf_data)
-			record.data['perf_data_array'] = perf_data
-		except:
-			pass
-
 		self.storage.put(record, namespace=self.namespace, account=self.account)
 	
-
 	def log_event(self, _id, event):
 		self.logger.debug("Log event '%s' in %s ..." % (_id, self.namespace_log))
 		record = crecord(event)
