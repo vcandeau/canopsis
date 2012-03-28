@@ -8,9 +8,6 @@ from datetime import date
 import os, sys, json
 import time
 
-#import protection function
-#from libexec.auth import check_auth, get_account
-
 init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
@@ -117,7 +114,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		return id
 	except Exception, err:
 		logger.error(err)
-		#return {'success': False, 'total': '1', 'output': 'Task failed to render', 'data': err,'name': render_pdf.name}
+		
 
 @task
 def put_in_grid_fs(file_path, file_name, account):
