@@ -156,6 +156,7 @@ Ext.define('canopsis.view.Task.Form', {
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
+			padding: '0 0 5 5',
 			value: global.commonTs.day,
 			store: {
 				xtype: 'store',
@@ -169,12 +170,12 @@ Ext.define('canopsis.view.Task.Form', {
 			}
 		})
 		
-		var unitCombo = Ext.widget('textfield',{
+		var unitCombo = Ext.widget('numberfield',{
 			name: 'timeLength',
 			fieldLabel: _('The last'),
-			value: 1,
+			minValue: 1,
+			value : 1,
 			allowBlank: false,
-			minLength : 1,
 			width: 140,
 		})
 
