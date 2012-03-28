@@ -181,7 +181,10 @@ def to_perfstore(_id, perf_data, timestamp):
 				
 			logger.debug(" + Put metric '%s' (%s %s) for ts %s ..." % (metric, value, unit, timestamp))
 
-			mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+			try:
+				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+			except Exception, err:
+				logger.warning('Impossible to put value in perfstore (%s) (metric=%s, unit=%s, value=%s)', err, metric, unit, value)
 		
 		#del mynode
 		
@@ -217,8 +220,7 @@ def main():
 	logger.info("Wait events ...")
 	amqp.start()
 
-	while handler.status():
-		time.sleep(1)
+	handler.wait()
 
 	amqp.stop()
 	amqp.join()
