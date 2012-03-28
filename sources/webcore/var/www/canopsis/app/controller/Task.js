@@ -40,7 +40,9 @@ Ext.define('canopsis.controller.Task', {
 		record.set('task','task_reporting.render_pdf')
 		
 		//(filename viewname starttime stoptime account wrapper_conf_file)
-		record.set('args',[null,data.view,data.timeLength,null,global.account.user,null])
+		var timeLength = data.timeLength * data.timeLengthUnit
+		
+		record.set('args',[null,data.view,timeLength,null,global.account.user,null])
 		record.set('_id',data['_id'])
 		
 		//--------------formating crontab-----------------------
@@ -85,7 +87,26 @@ Ext.define('canopsis.controller.Task', {
 		}
 		
 		item.set('hours',hours)
-		item.set('timeLength',timeLength)
+		
+		//compute timeLength
+		scale = Math.floor(timeLength/global.commonTs.day)
+
+		if(scale >= 365){
+			item.set('timeLengthUnit',global.commonTs.year)
+			item.set('timeLength',Math.floor(scale/365))
+		}else if(scale >= 30){
+			item.set('timeLengthUnit',global.commonTs.month)
+			item.set('timeLength',Math.floor(scale/30))
+		}else if(scale >= 7){
+			item.set('timeLengthUnit',global.commonTs.week)
+			item.set('timeLength',Math.floor(scale/7))
+			log.dump(item)
+		} else {
+			item.set('timeLengthUnit',global.commonTs.day)
+			item.set('timeLength',Math.floor(scale))
+		}
+		
+
 	},
 
 	trunc_day_to_day: function(day){
