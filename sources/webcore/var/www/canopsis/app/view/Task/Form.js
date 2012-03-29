@@ -57,7 +57,7 @@ Ext.define('canopsis.view.Task.Form', {
 				name: 'crecord_name',
 				allowBlank: false,
 		})
-		/*
+		
 		var fonctionCombo = Ext.widget('combobox',{
 			fieldLabel: _('Action'),
 			name : 'task',
@@ -74,7 +74,7 @@ Ext.define('canopsis.view.Task.Form', {
 				]
 			}
 		})
-		*/
+		
 		var viewCombo = Ext.widget('combobox',{
 			fieldLabel: _('View'),
 			name: 'view',
@@ -88,7 +88,7 @@ Ext.define('canopsis.view.Task.Form', {
 			emptyText: _('Select a view')+' ...',
 		})
 		
-		this.generalOptions.add([TaskName,viewCombo])
+		this.generalOptions.add([fonctionCombo,TaskName,viewCombo])
 		
 		//--------------------------time options--------------
 		var durationCombo = Ext.widget('combobox',{
@@ -176,7 +176,7 @@ Ext.define('canopsis.view.Task.Form', {
 			minValue: 1,
 			value : 1,
 			allowBlank: false,
-			width: 140,
+			width: 160,
 		})
 
 		this.reportOptions.add(unitCombo,lengthCombo)
