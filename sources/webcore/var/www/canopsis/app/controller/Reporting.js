@@ -48,6 +48,11 @@ Ext.define('canopsis.controller.Reporting', {
 		});
 	},
 	
+	downloadReport : function(id){
+		url = location.protocol + '//' + location.host + '/getReport/' + id
+		window.open(url,'_newtab');
+	},	
+	
 	openHtmlReport : function(view, from, to){
 		log.debug('Open html report : '+ view , this.logAuthor);
 		var url = Ext.String.format('reporting.html?view={0}&from={1}&to={2}',

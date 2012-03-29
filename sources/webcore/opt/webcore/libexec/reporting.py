@@ -116,12 +116,15 @@ def get_report(metaId=None):
 		logger.error('No report found in gridfs')
 		return HTTPError(404, " Not Found")
 
-@get('/getReport',apply=[check_auth])
+@get('/report',apply=[check_auth])
 def get_list_report():
+	limit		= int(request.params.get('limit', default=20))
+	start		= int(request.params.get('start', default=0))
+	
 	account = get_account()
 	storage = cstorage(account=account, namespace='reports')
 	
-	records = storage.find({}, account=account)
+	records = storage.find({}, limit=limit, offset=start,account=account)
 	total = storage.count({}, account=account)
 	
 	data = []
@@ -132,7 +135,7 @@ def get_list_report():
 	
 	return {'total': total, 'success': True, 'data': data}
 
-@delete('/getReport/:metaId',apply=[check_auth])
+@delete('/report/:metaId',apply=[check_auth])
 def delete_report(metaId=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='reports')

@@ -40,6 +40,10 @@
     background-image: url(../images/icons/resultset_next.png) !important; 
 } 
 
+.icon-download { 
+    background-image: url(../images/icons/disk.png) !important; 
+} 
+
 .icon-previous { 
     background-image: url(../images/icons/resultset_previous.png) !important; 
 } 

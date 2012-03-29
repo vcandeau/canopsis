@@ -137,10 +137,11 @@ def rest_get(namespace, ctype=None, _id=None):
 		
 		logger.debug(" + mfilter: "+str(mfilter))
 		records =  storage.find(mfilter, sort=msort, limit=limit, offset=start, account=account)
-		total =	   storage.count(mfilter, account=account)
-
+		total =	storage.count(mfilter, account=account)
 
 	output = []
+	
+	#----------------dump part of record (binaries aren't json encodable)-------
 	for record in records:
 		if record:
 			data = None

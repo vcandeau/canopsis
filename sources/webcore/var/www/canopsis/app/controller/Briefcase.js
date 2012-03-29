@@ -26,6 +26,7 @@ Ext.define('canopsis.controller.Briefcase', {
 	stores: ['Document'],
 	models: ['Document'],
 	
+	logAuthor : '[controller][Briefcase]',
 	
 	init: function() {
 		this.listXtype = 'BriefcaseGrid'
@@ -33,5 +34,21 @@ Ext.define('canopsis.controller.Briefcase', {
 		this.modelId = 'Document'
 		
 		this.callParent(arguments);
+		
 	},
+	
+	_viewElement: function(view, item, index){
+		log.debug('Clicked on element, function viewElement',this.logAuthor);
+		this.getController('Reporting').downloadReport(item.get('_id'))
+	},
+	
+	_downloadButton : function(){
+		log.debug('clicked deleteButton',this.logAuthor);
+		var grid = this.grid
+		var selection = grid.getSelectionModel().getSelection()[0];
+		if (selection) {
+			this.getController('Reporting').downloadReport(selection.get('_id'))
+		}
+	},
+	
 })
