@@ -6,7 +6,7 @@ class cinit(object):
 	class getHandler(object):
 		def __init__(self, logger):
 			self.logger = logger
-			self.RUN = 1
+			self.RUN = True
 
 		def status(self):
 			return self.RUN
@@ -15,19 +15,26 @@ class cinit(object):
 			self.logger.warning("Receive signal to stop daemon...")
 			if self.callback:
 				self.callback()
-			self.RUN = 0
+			self.stop()
 
 		def run(self, callback=None):
 			self.callback = callback
 			signal.signal(signal.SIGINT, self.signal_handler)
 			signal.signal(signal.SIGTERM, self.signal_handler)
+			
+		def stop(self):
+			self.RUN = False
 
 		def set(self, statut):
 			self.RUN = statut
 
 		def wait(self):
 			while self.RUN:
-				time.sleep(1)
+				try:
+					time.sleep(1)
+				except:
+					break
+			self.stop()
 
 	def getLogger(self, name, level="INFO"):
 		if level == "INFO":
