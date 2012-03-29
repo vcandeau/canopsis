@@ -23,7 +23,7 @@ import sys, os, logging, json, subprocess
 import gevent
 
 import bottle
-from bottle import route, get, request, HTTPError, post, static_file, response
+from bottle import route, get, delete, request, HTTPError, post, static_file, response
 
 from urllib import quote
 #gridfs
@@ -115,3 +115,35 @@ def get_report(metaId=None):
 	else:
 		logger.error('No report found in gridfs')
 		return HTTPError(404, " Not Found")
+
+@get('/getReport',apply=[check_auth])
+def get_list_report():
+	account = get_account()
+	storage = cstorage(account=account, namespace='reports')
+	
+	records = storage.find({}, account=account)
+	total = storage.count({}, account=account)
+	
+	data = []
+	
+	for record in records:
+		dump = record.dump(json=True)
+		data.append({'file_name':dump['file_name'],'_id':dump['_id'],'crecord_write_time':dump['crecord_write_time']})
+	
+	return {'total': total, 'success': True, 'data': data}
+
+@delete('/getReport/:metaId',apply=[check_auth])
+def delete_report(metaId=None):
+	account = get_account()
+	storage = cstorage(account=account, namespace='reports')
+	
+	if metaId:
+		try :
+			storage.remove(metaId,account=account)
+		except:
+			logger.error('Failed to remove report')
+			return HTTPError(500, "Failed to remove report")
+		
+	else:
+		logger.error('No report Id specified')
+		return HTTPError(404, " No report Id specified")
