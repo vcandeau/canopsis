@@ -59,7 +59,7 @@ parse_install_deps () {
 	D_TREE="$@ $D_TREE"
 	for dep in $@; do
 		local tmp
-		trap 'error ${LINENO} "Package \"$dep\" must be install but its not available on repositorie"' ERR
+		trap 'error ${LINENO} "Package \"$dep\" must be installed but is not available on repository"' ERR
 		tmp=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1 | wc -l)
 		if [ $tmp -le 0 ]; then
 			exit 1
