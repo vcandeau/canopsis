@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# collectd    Startup script for the Collectd statistics gathering daemon
+# chkconfig: - 99 01
+# description: Collectd is a statistics gathering daemon used to collect \
+#   system information ie. cpu, memory, disk, network
+# processname: collectd
+# config: /etc/collectd.conf
+# config: /etc/sysconfig/collectd
+# pidfile: /var/run/collectd.pid
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/bin:/usr/sbin:$PATH
+
+. /lib/lsb/init-functions
+
+RETVAL=0
+prog="collectdmon"
+service="collectd"
+CONFIG=$HOME/etc/collectd.conf
+ARGS="-C "$CONFIG""
+COLLECTD=$HOME/bin/collectd
+COLLECTDPID=$HOME/var/run/collectd.pid
+
+if [ -r $HOME/etc/$prog.conf ]; then
+	. $HOME/etc/$prog.conf
+fi
+
+start () {
+	echo -n $"Starting collectd: "
+	if [ -r "$CONFIG" ]
+	then
+		start-stop-daemon --background --start --quiet --make-pidfile --pidfile $COLLECTDPID --exec $COLLECTD -- $ARGS
+		RETVAL=$?
+		if [ $RETVAL -eq 0 ]; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+	fi
+}
+stop () {
+	echo -n $"Stopping collectd: "
+	start-stop-daemon --stop --quiet --pidfile $COLLECTDPID
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ]; then
+		log_end_msg 0
+	else
+		log_end_msg 1
+	fi
+
+}
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|reload}"
+	exit 1
+esac
+
+exit $?
+
+# vim:syntax=sh
