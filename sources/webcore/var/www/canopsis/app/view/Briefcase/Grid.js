@@ -26,6 +26,10 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	model: 'Document',
 	store : 'Document',	
 	
+	opt_bar_add:false,
+	opt_view_element : true,
+	opt_bar_download: true,
+	
 	columns: [
 		{
 			header: _('time'),
@@ -48,5 +52,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 
 	initComponent: function() {
 		this.callParent(arguments);
-	}
+	},
+	
+	
 })

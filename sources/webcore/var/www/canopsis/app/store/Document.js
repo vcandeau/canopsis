@@ -28,7 +28,7 @@ Ext.define('canopsis.store.Document', {
 
 	proxy: {
 		type: 'rest',
-		url: '/getReport',
+		url: '/report',
 		reader: {
 			type: 'json',
 			root: 'data',

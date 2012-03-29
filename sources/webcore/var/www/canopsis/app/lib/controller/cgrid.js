@@ -116,6 +116,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		for (i in btns){
 			btns[i].on('click', this._reloadButton, this)
 		}
+		
+		// Download buttons
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=download]')
+		for (i in btns){
+			btns[i].on('click', this._downloadButton, this)
+		}
 
 		//this._reloadButton(grid)
 		

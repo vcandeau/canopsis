@@ -45,14 +45,15 @@ def get_tasks():
 	account = get_account()
 	namespace='object'
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
-	
-	
-	
-	search = storage.find({'crecord_type': 'schedule'},limit=limit, offset=start,account=account)
+
+	mfilter = {'crecord_type': 'schedule'}
+
+	search = storage.find(mfilter,limit=limit, offset=start,account=account)
+	total =	storage.count(mfilter, account=account)
 	
 	output = []
-	total = 0
 	
+	#-------------------- fetching last existing log-----------------------------
 	for schedule in search:
 		if isinstance(schedule, crecord):
 			#try to fetch last log
@@ -62,7 +63,7 @@ def get_tasks():
 				#take the latest
 				last_log = last_log[0]
 			except Exception, err:
-				logger.error('Error when fetching last log : %s' % err)
+				logger.error('Error while fetching last log : %s' % err)
 			
 			#add to schedule list
 			if isinstance(last_log, crecord):
@@ -70,7 +71,6 @@ def get_tasks():
 				schedule.data['log'] = [formated_log]
 				
 			output.append(schedule.dump(json=True))
-			total += 1
 			
 	return {'total': total, 'success': True, 'data': output}
 
@@ -114,7 +114,6 @@ def post_tasks():
 		record.chgrp(account.group)
 		
 	try:
-		logger.error(record.dump())
 		storage.put(record, namespace=namespace, account=account)
 		
 	except Exception, err:
