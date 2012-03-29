@@ -64,6 +64,7 @@ class carchiver(object):
 		try:
 			# Get old record
 			record = self.storage.get(_id, account=self.account)
+			
 			self.logger.debug(" + Check with old record:")
 			old_state = record.data['state']
 			old_state_type = record.data['state_type']
@@ -76,13 +77,14 @@ class carchiver(object):
 				changed = True
 			else:
 				self.logger.debug(" + No change.")
+				
+			event = self.merge_perf_data(record.data, event)
 
 		except:
 			# No old record
 			self.logger.debug(" + New event")
 			changed = True
 		
-		event = self.merge_perf_data(record.data, event)
 		self.store_event(_id, event)
 
 		if changed and self.autolog:
