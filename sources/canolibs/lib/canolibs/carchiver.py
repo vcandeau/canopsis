@@ -77,8 +77,11 @@ class carchiver(object):
 				changed = True
 			else:
 				self.logger.debug(" + No change.")
-				
-			event = self.merge_perf_data(record.data, event)
+			
+			try:
+				event = self.merge_perf_data(record.data, event)
+			except Exception, err:
+				self.logger.warning("merge_perf_data: %s" % err)
 
 		except:
 			# No old record
