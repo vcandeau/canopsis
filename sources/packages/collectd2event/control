@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="cmaster"
+NAME="collectd2event"
 VERSION=0.1
-RELEASE=1
+RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr amqp2mongodb canolibs canotools ccli erlang mongodb-conf python python-libs rabbitmq-server-conf webcore-libs celery-libs collectd2event collectd-libs"
+REQUIRES="canohome pkgmgr python canolibs"
 
 NO_ARCH=true
 NO_DIST=true

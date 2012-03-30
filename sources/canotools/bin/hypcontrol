@@ -7,12 +7,15 @@ if [ "$1" = "start" ]; then
 	#service amqp2websocket start
 	service celeryd start
 	service webserver start
+	service collectd2event start
+	service collectd start
 fi
 
 if [ "$1" = "stop" ]; then
+	service collectd stop
+	service collectd2event stop
 	service webserver stop
 	service celeryd stop
-	#service amqp2websocket stop
 	service amqp2mongodb stop
 	service mongodb stop
 	service rabbitmq-server stop

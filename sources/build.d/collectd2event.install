@@ -1,4 +1,4 @@
-NAME="webcore"
+NAME="collectd2event"
 
 function build(){
 	true
@@ -6,4 +6,5 @@ function build(){
 
 function install(){
 	install_basic_source $NAME
+	install_python_daemon "$PREFIX/opt/$NAME/$NAME.py"
 }

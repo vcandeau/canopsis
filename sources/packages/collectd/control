@@ -1,23 +1,19 @@
 #!/bin/bash
 
-NAME="cmaster"
-VERSION=0.1
-RELEASE=1
+NAME="collectd"
+VERSION=5.0
+RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr amqp2mongodb canolibs canotools ccli erlang mongodb-conf python python-libs rabbitmq-server-conf webcore-libs celery-libs collectd2event collectd-libs"
-
-NO_ARCH=true
-NO_DIST=true
-NO_DISTVERS=true
+REQUIRES="canohome pkgmgr"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	check_code $?
 }
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	check_code $?
 }
 
 function pre_remove(){
