@@ -18,52 +18,37 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Task.Grid' ,{
-	extend: 'canopsis.lib.view.cgrid',
+Ext.define('canopsis.controller.Briefcase', {
+	extend: 'canopsis.lib.controller.cgrid',
 
-	alias: 'widget.TaskGrid',
 
-	model: 'Task',
-	store : 'Task',	
-
+	views: ['Briefcase.Grid'],
+	stores: ['Document'],
+	models: ['Document'],
 	
-	opt_menu_delete: true,
-
-	columns: [
-	/*	{
-			header: '',
-			//width: 25,
-			flex : 1,
-			sortable: false,
-			//renderer: rdr_crecord_type,
-	        dataIndex: 'crecord_type',
-		},*/{
-			header: _('Name'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'crecord_name',
-		},{
-			header: _('Function name'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'task',
-		},{
-			header: _('At'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'crontab',
-			renderer: rdr_task_timedelta,
-		},{
-			header: _('Last run'),
-			flex: 3,
-			sortable: true,
-			dataIndex: 'log',
-			renderer: rdr_task_output,
-		}
-	],
-
-	initComponent: function() {
+	logAuthor : '[controller][Briefcase]',
+	
+	init: function() {
+		this.listXtype = 'BriefcaseGrid'
+		
+		this.modelId = 'Document'
+		
 		this.callParent(arguments);
-	}
-
+		
+	},
+	
+	_viewElement: function(view, item, index){
+		log.debug('Clicked on element, function viewElement',this.logAuthor);
+		this.getController('Reporting').downloadReport(item.get('_id'))
+	},
+	
+	_downloadButton : function(){
+		log.debug('clicked deleteButton',this.logAuthor);
+		var grid = this.grid
+		var selection = grid.getSelectionModel().getSelection()[0];
+		if (selection) {
+			this.getController('Reporting').downloadReport(selection.get('_id'))
+		}
+	},
+	
 })
