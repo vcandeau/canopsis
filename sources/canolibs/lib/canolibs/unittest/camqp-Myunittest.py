@@ -48,10 +48,12 @@ class KnownValues(unittest.TestCase):
 		myamqp.start()
 		
 	def on_message(self, body, msg):
-		print "Receive message ..."
-		global rcvmsgbody
-		rcvmsgbody = body
-		print rcvmsgbody
+		rk = msg.delivery_info['routing_key']
+		print "Receive message from %s ..." % rk
+		if rk == "unit_test.testmessage":
+			global rcvmsgbody
+			rcvmsgbody = body
+			print rcvmsgbody
 
 	def test_4_PublishMessage(self):
 		time.sleep(1)
