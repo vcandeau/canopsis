@@ -64,7 +64,8 @@ function build(){
 	fi
 	
 	echo " + Configure ..."
-	./configure --prefix=$PREFIX 1>> $LOG 2>> $LOG
+	mkdir -p $PREFIX/lib
+	./configure --prefix=$PREFIX --enable-shared LDFLAGS="-Wl,-rpath $PREFIX/lib"  1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo " + Build ..."
