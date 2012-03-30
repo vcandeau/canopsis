@@ -18,52 +18,41 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Task.Grid' ,{
+Ext.define('canopsis.view.Briefcase.Grid' ,{
 	extend: 'canopsis.lib.view.cgrid',
 
-	alias: 'widget.TaskGrid',
+	alias: 'widget.BriefcaseGrid',
 
-	model: 'Task',
-	store : 'Task',	
-
+	model: 'Document',
+	store : 'Document',	
 	
-	opt_menu_delete: true,
-
+	opt_bar_add:false,
+	opt_view_element : true,
+	opt_bar_download: true,
+	
 	columns: [
-	/*	{
-			header: '',
-			//width: 25,
-			flex : 1,
-			sortable: false,
-			//renderer: rdr_crecord_type,
-	        dataIndex: 'crecord_type',
-		},*/{
+		{
+			header: _('time'),
+			flex: 1,
+			sortable: true,
+			dataIndex: 'crecord_write_time',
+			renderer : rdr_tstodate,
+		},{
 			header: _('Name'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'crecord_name',
+			dataIndex: 'file_name',
 		},{
-			header: _('Function name'),
+			header: _('id'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'task',
-		},{
-			header: _('At'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'crontab',
-			renderer: rdr_task_timedelta,
-		},{
-			header: _('Last run'),
-			flex: 3,
-			sortable: true,
-			dataIndex: 'log',
-			renderer: rdr_task_output,
+			dataIndex: '_id',
 		}
 	],
 
 	initComponent: function() {
 		this.callParent(arguments);
-	}
-
+	},
+	
+	
 })

@@ -34,6 +34,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_bar: true,
 	opt_bar_bottom: false,
 	opt_bar_add:true,
+	opt_bar_download:false,
 	opt_bar_duplicate: false,
 	opt_bar_reload:true,
 	opt_bar_delete:true,
@@ -125,6 +126,15 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 						//text: _('Search'),
 						iconCls: 'icon-search',
 						pack: 'end',
+					})
+				}
+				
+				if(this.opt_bar_download){
+					bar_child.push({
+						xtype : 'button',
+						text: _('download'),
+						iconCls: 'icon-download',
+						action: 'download',
 					})
 				}
 				

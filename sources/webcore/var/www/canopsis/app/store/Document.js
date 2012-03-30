@@ -18,52 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Task.Grid' ,{
-	extend: 'canopsis.lib.view.cgrid',
-
-	alias: 'widget.TaskGrid',
-
-	model: 'Task',
-	store : 'Task',	
-
+Ext.define('canopsis.store.Document', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Document',
 	
-	opt_menu_delete: true,
+	//storeId: 'store.Group',
+	autoLoad: true,
+	autoSync: true,
 
-	columns: [
-	/*	{
-			header: '',
-			//width: 25,
-			flex : 1,
-			sortable: false,
-			//renderer: rdr_crecord_type,
-	        dataIndex: 'crecord_type',
-		},*/{
-			header: _('Name'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'crecord_name',
-		},{
-			header: _('Function name'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'task',
-		},{
-			header: _('At'),
-			flex: 1,
-			sortable: true,
-			dataIndex: 'crontab',
-			renderer: rdr_task_timedelta,
-		},{
-			header: _('Last run'),
-			flex: 3,
-			sortable: true,
-			dataIndex: 'log',
-			renderer: rdr_task_output,
-		}
-	],
-
-	initComponent: function() {
-		this.callParent(arguments);
-	}
-
-})
+	proxy: {
+		type: 'rest',
+		url: '/report',
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success'
+		},
+	},
+	
+	
+});
