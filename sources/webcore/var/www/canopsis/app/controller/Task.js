@@ -105,8 +105,6 @@ Ext.define('canopsis.controller.Task', {
 			item.set('timeLengthUnit',global.commonTs.day)
 			item.set('timeLength',Math.floor(scale))
 		}
-		
-
 	},
 
 	trunc_day_to_day: function(day){
