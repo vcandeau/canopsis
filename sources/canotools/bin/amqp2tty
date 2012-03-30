@@ -63,7 +63,7 @@ signal.signal(signal.SIGTERM, signal_handler)
 amqp = camqp()
 
 try:
-	exchange = int(sys.argv[1])
+	exchange = sys.argv[1]
 except:
 	exchange = amqp.exchange_name_events
 

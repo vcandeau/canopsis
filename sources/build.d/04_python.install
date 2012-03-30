@@ -42,12 +42,6 @@ function install_pylib(){
 	fi
 }
 
-function easy_install_pylib(){
-	echo "Easy install Python Library: $1 ..."
-	$PREFIX/bin/easy_install -H None -f $PREFIX/share/pylibs/ $1 1>> $LOG 2>> $LOG
-	check_code $? "Easy install failed ..."
-}
-
 function build(){
 	cd $SRC_PATH/externals
 	
