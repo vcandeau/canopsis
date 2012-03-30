@@ -29,6 +29,8 @@ from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
 
+from subprocess import Popen
+
 #import protection function
 from libexec.auth import check_auth, get_account
 
@@ -61,7 +63,8 @@ def get_tasks():
 				task_id = 'schedule.%s' % schedule.name
 				last_log = storage.find({'crecord_name': task_id},namespace='task_log',sort=[('timestamp', -1)])
 				#take the latest
-				last_log = last_log[0]
+				if len(last_log) != 0:
+					last_log = last_log[0]
 			except Exception, err:
 				logger.error('Error while fetching last log : %s' % err)
 			
@@ -119,6 +122,13 @@ def post_tasks():
 	except Exception, err:
 		logger.error('Impossible to put (%s)' % err)
 		return HTTPError(403, "Access denied")
+
+	try:
+		output = Popen('service celeryd restart', shell=True)
+	except:
+		logger.error('Unable to reload celeryd')
+	
+	
 
 @delete('/task/:_id',apply=[check_auth])
 def delete_task(_id=None):
