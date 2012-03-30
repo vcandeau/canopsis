@@ -34,7 +34,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global ARCHIVER
-		ARCHIVER = carchiver(namespace='unittest',  autolog=True)
+		ARCHIVER = carchiver(namespace='unittest',  autolog=True, logging_level=logging.DEBUG)
 		ARCHIVER.remove_all()
 
 	def test_02_Check(self):
