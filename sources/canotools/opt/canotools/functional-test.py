@@ -28,6 +28,7 @@ from caccount import caccount
 from pyperfstore import node
 from pyperfstore import mongostore
 from cwebservices import cwebservices
+from ctools import parse_perfdata
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -43,8 +44,10 @@ event_alert = None
 
 def on_alert(body, message):
 	print "Alert: %s" % body
-	global event_alert
-	event_alert = body
+	mrk = message.delivery_info['routing_key']
+	if mrk == rk:
+		global event_alert
+		event_alert = body
 	
 def clean():
 		storage.remove(rk)
@@ -76,7 +79,7 @@ class KnownValues(unittest.TestCase):
 		
 	def test_2_PubState(self):
 		myamqp.publish(event, rk, exchange_name=myamqp.exchange_name_events)
-		time.sleep(3)
+		time.sleep(1)
 		
 	def test_3_Check_amqp2mongodb(self):
 		record = storage.get(rk)
@@ -91,7 +94,7 @@ class KnownValues(unittest.TestCase):
 		if revent['state'] != event['state']:
 			raise Exception('Invalid data ...')
 
-		event['perf_data_array'] = [{'min': 0.0, 'max': 30.0, 'metric': 'mymetric', 'value': 1.0, 'warn': 10.0, 'crit': 20.0, 'unit': 's'}]
+		event['perf_data_array'] = parse_perfdata(event['perf_data'])
 		if event_alert != event:
 			print "event_alert: %s" % event_alert
 			print "event: %s" % event
