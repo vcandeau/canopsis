@@ -128,6 +128,15 @@ class camqp(threading.Thread):
 				self.connected = True
 				self.logger.debug("Channel openned. Ready to send messages")
 				
+				try:
+					## declare exchange
+					self.logger.debug("Declare exchanges")
+					for exchange_name in self.exchanges:
+						self.logger.debug(" + %s" % exchange_name)
+						self.exchanges[exchange_name](self.chan).declare()
+				except Exception, err:
+					self.logger.error("Impossible to declare exchange (%s)" % err)
+				
 			except Exception, err:
 				self.logger.error(err)
 		else:
@@ -187,7 +196,7 @@ class camqp(threading.Thread):
 		if self.connected:
 			if not exchange_name:
 				exchange_name = self.exchange_name
-			
+				
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with producers[self.conn].acquire(block=True) as producer:
 				producer.publish(msg, serializer="json", compression=None, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
