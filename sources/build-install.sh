@@ -287,6 +287,7 @@ function export_env(){
 	export TARGET_DIR="$PREFIX/opt/rabbitmq-server"
 	export SBIN_DIR="$PREFIX/bin/"
 	export MAN_DIR="$PREFIX/share/man/"
+	export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 }
 
 function pkgondemand(){
