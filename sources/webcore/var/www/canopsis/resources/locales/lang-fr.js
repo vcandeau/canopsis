@@ -206,5 +206,13 @@ var i18n={
 	'Please check your form': 'Veuillez vérifier votre formulaire',
 	'Invalid form': 'Formulaire invalide',
 	'Record saved': 'Enregistrement sauvegardé',
-	'Success': 'Succès'
+	'Success': 'Succès',
+	
+	'Briefcase': 'Porte document',
+	'No log found': 'Pas de rapport trouvé',
+	'Download' : 'Télécharger',
+	'At' : 'À',
+	'Last run' : 'Dernière exécution',
+	'Run date' : "Date d'exécution",
+	'Database Id' : 'Identifiant base de donnée',
 }
