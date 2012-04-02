@@ -125,7 +125,6 @@ def post_tasks():
 
 	try:
 		output = subprocess.check_call('service celeryd restart', shell=True)
-		logger.error('------------------ : %s' % output)
 		return {'success' : True}
 	except Exception, err:
 		logger.error('Unable to reload celeryd : %s' % err)
