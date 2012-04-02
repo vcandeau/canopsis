@@ -130,6 +130,8 @@ var i18n={
 	'view':				'vue',
 	'views':			'vues',
 	'View name':		'Nom de la vue',
+	'Confirm' : 		'Confirmation',
+	'Are you sure you want to delete' :	'Êtes vous sur de vouloir supprimer?',
 
 	'Views':			'Vues',
 	'authentification failed':	"L'authentification a échouée",
