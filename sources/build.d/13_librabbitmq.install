@@ -9,7 +9,7 @@ function build(){
 	cd $SRC_PATH/externals
 
 	if [ ! -e $NAME ]; then
-		extract_archive "$NAME.tar.gz"
+		extract_archive "$NAME.tgz"
 	fi
 	cd  $NAME
 
