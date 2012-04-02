@@ -29,7 +29,7 @@ from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
 
-from subprocess import Popen
+import subprocess
 
 #import protection function
 from libexec.auth import check_auth, get_account
@@ -124,9 +124,11 @@ def post_tasks():
 		return HTTPError(403, "Access denied")
 
 	try:
-		output = Popen('service celeryd restart', shell=True)
-	except:
-		logger.error('Unable to reload celeryd')
+		output = subprocess.check_call('service celeryd restart', shell=True)
+		logger.error('------------------ : %s' % output)
+		return {'success' : True}
+	except Exception, err:
+		logger.error('Unable to reload celeryd : %s' % err)
 	
 	
 
