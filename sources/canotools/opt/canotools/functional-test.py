@@ -143,8 +143,12 @@ class KnownValues(unittest.TestCase):
 		
 		if data['crecord_write_time'] != rdata['crecord_write_time']:
 			raise Exception("Webservice don't work ...")
-			
+
+	def test_7_Check_collectd2event(self):
+		records = storage.find({'connector': 'collectd'})
 		
+		if not len(records):
+			raise Exception("Collectd2event don't work ...")
 
 	def test_99_Disconnect(self):
 		clean()
