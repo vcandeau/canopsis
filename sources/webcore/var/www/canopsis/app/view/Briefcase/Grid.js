@@ -37,19 +37,19 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 			renderer: rdr_file_type,
 			dataIndex: 'content_type',
         },{
-			header: _('Create date'),
+			header: _('Creation date'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'crecord_write_time',
 			renderer : rdr_tstodate,
 		},{
 			header: _('Name'),
-			flex: 1,
+			flex: 2,
 			sortable: true,
 			dataIndex: 'file_name',
 		},{
 			header: _('Database Id'),
-			flex: 1,
+			flex: 2,
 			sortable: true,
 			dataIndex: '_id',
 		}
