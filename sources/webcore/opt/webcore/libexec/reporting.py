@@ -131,7 +131,7 @@ def get_list_report():
 	
 	for record in records:
 		dump = record.dump(json=True)
-		data.append({'file_name':dump['file_name'],'_id':dump['_id'],'crecord_write_time':dump['crecord_write_time']})
+		data.append({'file_name':dump['file_name'],'_id':dump['_id'],'crecord_write_time':dump['crecord_write_time'],'content_type':dump['content_type']})
 	
 	return {'total': total, 'success': True, 'data': data}
 
