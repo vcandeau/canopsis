@@ -27,6 +27,7 @@ Ext.define('widgets.list.list' ,{
 	filter: {"source_type":"component"},
 
 	//Default options
+	pageSize: global.pageSize,
 	show_component: true,
 	show_resource: true,
 	show_state: true,
@@ -57,7 +58,7 @@ Ext.define('widgets.list.list' ,{
 			opt_paging: this.paging,
 			filter: this.filter,
 			//autoload: true,
-			pageSize: global.pageSize,
+			pageSize: this.pageSize,
 			remoteSort: true,
 			sorters: [{
 				property : this.default_sort_column,

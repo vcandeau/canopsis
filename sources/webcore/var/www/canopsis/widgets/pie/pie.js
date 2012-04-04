@@ -36,6 +36,7 @@ Ext.define('widgets.pie.pie' ,{
 	autoTitle: true,
 	title_fontSize: 15,
 	
+	pie_size: 60,
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
 	legend_layout: "horizontal",
@@ -105,6 +106,7 @@ Ext.define('widgets.pie.pie' ,{
 					},
 					showInLegend: true,
 					animation: false,
+					size: this.pie_size + '%',
 				}
 			},
 			tooltip: {
