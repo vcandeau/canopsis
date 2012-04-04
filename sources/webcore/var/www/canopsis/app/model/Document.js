@@ -24,6 +24,7 @@ Ext.define('canopsis.model.Document', {
 		{name: '_id'},
 		{name: 'id', mapping:'_id'},
 		{name : 'file_name'},
-		{name: 'crecord_write_time'}
+		{name: 'crecord_write_time'},
+		{name: 'content_type'}
 	],
 });
