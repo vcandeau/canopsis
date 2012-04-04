@@ -89,7 +89,7 @@ def account_setLocale(locale):
 	storage = get_storage(namespace='object')
 	logger.debug("Set %s locale for %s" % (locale, account.user))
 	
-	if locale == 'fr' or locale == 'en':
+	if locale == 'fr' or locale == 'en' or locale == 'ja':
 		account.data['locale'] = locale
 		storage.put(account, account=account)
 		
