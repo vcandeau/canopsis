@@ -210,6 +210,9 @@ var i18n={
 	'Record saved': 'Enregistrement sauvegardé',
 	'Success': 'Succès',
 	
+	'Export active view' : 'Exporter la vue active',
+	'Switch to live reporting' : 'Passer en reporting piloté',
+	
 	'Briefcase': 'Porte document',
 	'No log found': 'Pas de rapport trouvé',
 	'Download' : 'Télécharger',
