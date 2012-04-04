@@ -88,7 +88,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		this.exitButton = this.add({
 			xtype: 'button', 
-			iconCls: 'icon-exit',
+			iconCls: 'icon-close',
 			action: 'exit',
 			tooltip: _('Leave reporting mode')
 		})
