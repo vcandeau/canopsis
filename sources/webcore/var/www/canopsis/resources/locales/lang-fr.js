@@ -213,7 +213,7 @@ var i18n={
 	'Export active view' : 'Exporter la vue active',
 	'Switch to live reporting' : 'Passer en reporting piloté',
 	
-	'Briefcase': 'Porte document',
+	'Briefcase': 'Porte-documents',
 	'No log found': 'Pas de rapport trouvé',
 	'Download' : 'Télécharger',
 	'At' : 'À',

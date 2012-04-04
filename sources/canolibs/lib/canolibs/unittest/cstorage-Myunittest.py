@@ -33,6 +33,10 @@ STORAGE = None
 MYRECORD = None
 ID = None
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
+
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
 		self.anonymous_account = caccount()
