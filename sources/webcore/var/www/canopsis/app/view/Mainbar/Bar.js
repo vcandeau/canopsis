@@ -49,6 +49,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				data: [
 						{"value": 'fr', "text": "Français"},
 						{"value": 'en', "text": "English"},
+						{"value": 'ja', "text": "日本語"},
 				]
 			},
 			iconCls: 'no-icon',
