@@ -177,7 +177,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
 			log.debug("[controller][cgrid] - Remove record ...")
-			grid.store.remove(selection);
+			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete'),
+				function(){
+					grid.store.remove(selection)
+				});
 		}
 
 		if (this.deleteButton) {
