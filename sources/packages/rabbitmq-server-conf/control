@@ -43,6 +43,8 @@ function post_install(){
 	launch_cmd 1 service rabbitmq-server stop
 
 	check_code $CODE "Error in rabbitMQ configurations ..."
+	
+	rm -f $PREFIX/var/log/rabbitmq/*
 }
 
 function pre_remove(){
