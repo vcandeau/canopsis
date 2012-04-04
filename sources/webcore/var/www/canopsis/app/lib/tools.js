@@ -77,10 +77,27 @@ function find_gcd(nums)
 
 // Split AMQP Routing key
 function split_amqp_rk(rk){
-	var rk = rk.split('.')
-	// check
-	if (rk[2] == 'check'){
-		return {source_type: rk[3]  ,component: rk[4], resource: rk[5]}
-	}
-	return {}
+    var srk = rk.split('.')
+
+    if (srk[2] == 'check'){
+        var component
+        var resource
+        if (srk[3] == 'resource'){
+            var expr = /^(\w*)\.(\w*)\.(\w*)\.(\w*)\.(.*)\.([\w\-]*)$/g
+            var result = expr.exec(rk)
+            if (result){
+                component = result[5]
+                resource = result[6]
+            }
+        }else{
+            var expr = /^(\w*)\.(\w*)\.(\w*)\.(\w*)\.(.*)$/g
+            var result = expr.exec(rk)
+            if (result)
+                component = result[5]
+        }
+
+        return {source_type: srk[3]  ,component: component, resource: resource}
+    }
+    return {}
 }
+
