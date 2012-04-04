@@ -29,7 +29,9 @@ from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
 
-from subprocess import Popen
+import subprocess
+import celery.beat
+from celery.schedules import crontab
 
 #import protection function
 from libexec.auth import check_auth, get_account
@@ -118,16 +120,31 @@ def post_tasks():
 		
 	try:
 		storage.put(record, namespace=namespace, account=account)
-		
+		return {'success' : True}
 	except Exception, err:
 		logger.error('Impossible to put (%s)' % err)
 		return HTTPError(403, "Access denied")
-
+	'''
 	try:
-		output = Popen('service celeryd restart', shell=True)
-	except:
-		logger.error('Unable to reload celeryd')
-	
+		#output = subprocess.check_call('service celeryd restart', shell=True)
+		#restart_process = subprocess.Popen(['service', 'celeryd', 'restart'])
+		#restart_process.wait()
+		
+		
+		#Create task dict
+		task_dict = {data['crecord_name']:{'schedule':crontab(**data['crontab']),'args':data['args'],'kwargs':sup_args,'task':data['task']}}
+		logger.error(task_dict)
+		#get celery beat
+		celery_beat = celery.beat.Service()
+		#celery_beat.sync()
+		#get beat scheduler
+		celery_beat_scheduler = celery_beat.get_scheduler()
+		#celery_beat_scheduler.update_from_dict(task_dict)
+		
+		
+	except Exception, err:
+		logger.error('Unable to reload celeryd : %s' % err)
+	'''
 	
 
 @delete('/task/:_id',apply=[check_auth])
