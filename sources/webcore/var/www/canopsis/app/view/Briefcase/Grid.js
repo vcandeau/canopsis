@@ -32,7 +32,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	
 	columns: [
 		{
-			header: _('time'),
+			header: _('Run date'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'crecord_write_time',
@@ -43,7 +43,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 			sortable: true,
 			dataIndex: 'file_name',
 		},{
-			header: _('id'),
+			header: _('Database Id'),
 			flex: 1,
 			sortable: true,
 			dataIndex: '_id',

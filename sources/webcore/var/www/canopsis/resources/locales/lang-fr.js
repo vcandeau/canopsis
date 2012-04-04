@@ -130,6 +130,8 @@ var i18n={
 	'view':				'vue',
 	'views':			'vues',
 	'View name':		'Nom de la vue',
+	'Confirm' : 		'Confirmation',
+	'Are you sure you want to delete' :	'Êtes vous sur de vouloir supprimer?',
 
 	'Views':			'Vues',
 	'authentification failed':	"L'authentification a échouée",
@@ -206,5 +208,16 @@ var i18n={
 	'Please check your form': 'Veuillez vérifier votre formulaire',
 	'Invalid form': 'Formulaire invalide',
 	'Record saved': 'Enregistrement sauvegardé',
-	'Success': 'Succès'
+	'Success': 'Succès',
+	
+	'Export active view' : 'Exporter la vue active',
+	'Switch to live reporting' : 'Passer en reporting piloté',
+	
+	'Briefcase': 'Porte document',
+	'No log found': 'Pas de rapport trouvé',
+	'Download' : 'Télécharger',
+	'At' : 'À',
+	'Last run' : 'Dernière exécution',
+	'Run date' : "Date d'exécution",
+	'Database Id' : 'Identifiant base de donnée',
 }

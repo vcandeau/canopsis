@@ -49,6 +49,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				data: [
 						{"value": 'fr', "text": "Français"},
 						{"value": 'en', "text": "English"},
+						{"value": 'ja', "text": "日本語"},
 				]
 			},
 			iconCls: 'no-icon',
@@ -123,6 +124,14 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					iconCls:'icon-mainbar-edit-group',
 					text: _('Edit groups'),
 					action: 'editGroup'
+				},{
+					//iconCls:'icon-mainbar-edit-group',
+					text: _('Edit task'),
+					action: 'editTask'
+				},{
+					//iconCls:'icon-mainbar-edit-group',
+					text: _('Briefcase'),
+					action: 'openBriefcase'
 				}
 			]
 		} else {
