@@ -120,12 +120,30 @@ def get_report(metaId=None):
 def get_list_report():
 	limit		= int(request.params.get('limit', default=20))
 	start		= int(request.params.get('start', default=0))
+	filter		= request.params.get('filter', default=None)
 	
+	###########account and storage
 	account = get_account()
 	storage = cstorage(account=account, namespace='reports')
 	
-	records = storage.find({}, limit=limit, offset=start,account=account)
-	total = storage.count({}, account=account)
+	###########load filter
+	if filter:
+		try:
+			filter = json.loads(filter)
+		except Exception, err:
+			logger.error("Filter decode: %s" % err)
+			filter = None
+			
+	if isinstance(filter, list):
+		if len(filter) > 0:
+			filter = filter[0]
+		else:
+			logger.error(" + Invalid filter format")
+			filter = {}
+	
+	###########search
+	records = storage.find(filter, limit=limit, offset=start,account=account)
+	total = storage.count(filter, account=account)
 	
 	data = []
 	
