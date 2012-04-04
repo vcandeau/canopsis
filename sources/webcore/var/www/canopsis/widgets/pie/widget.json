@@ -34,6 +34,13 @@
 						"collapsible": false,
 						"items": [
 							{
+								"xtype" : "numberfield",
+								"name" : "pie_size",
+								"fieldLabel": "Pie Size %",
+								"value": 50,
+								"minValue": 1,
+								"maxValue": 100
+                           },{
 								"xtype" : "textfield",
 								"name" : "other_label",
 								"fieldLabel": "Label",
