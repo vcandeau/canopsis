@@ -86,6 +86,10 @@
 	background-image: url(../images/icons/edit.png) !important; 
 }
 
+.icon-close {
+	background-image: url(../images/icons/cross.png) !important; 
+}
+
 .icon-save { 
     background-image: url(../images/icons/save.png) !important; 
 }
