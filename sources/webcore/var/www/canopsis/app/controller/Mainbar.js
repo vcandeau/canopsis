@@ -64,6 +64,12 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="editGroup"]' : {
 				click : this.openGroup,
 			},
+			'Mainbar menuitem[action="editTask"]' : {
+				click : this.editTask,
+			},
+			'Mainbar menuitem[action="openBriefcase"]' : {
+				click : this.openBriefcase,
+			},
 			'Mainbar menuitem[action="newView"]' : {
 				click : this.newView,
 			},
@@ -202,6 +208,14 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Edit view', this.logAuthor);
 		var ctrl = this.getController('Tabs')
 		ctrl.edit_active_view()
+	},
+	
+	editTask : function(){
+		this.getController('Tabs').open_view({ view_id: 'view.task_manager', title: _('Tasks') })
+	},
+	
+	openBriefcase : function(){
+		this.getController('Tabs').open_view({ view_id: 'view.briefcase', title: _('Briefcase') })
 	},
 	
 	reportingMode: function(){

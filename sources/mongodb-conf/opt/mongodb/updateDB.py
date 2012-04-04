@@ -47,7 +47,6 @@ except:
 ##############################update administration views##################################
 record1 = crecord({'_id': 'view._default_.dashboard' }, type='view', name='Dashboard')
 record1.chmod('o+r')
-record1.data['rowHeight'] =  300
 record1.data['items'] = [{'position':{'width': 1,'top': 0, 'left': 0, 'height': 1},'data':{'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'},'id': 'widget-dashboard'}]
 storage.put(record1)
 
@@ -71,6 +70,15 @@ record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'GroupGrid'},'id': 'widget-group-manager'} ]
 storage.put(record1)
 
+###task
+record1 = crecord({'_id': 'view.task_manager' }, type='view', name='Tasks')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'TaskGrid'},'id': 'widget-task-manager'} ]
+storage.put(record1)
+
+###briefcase
+record1 = crecord({'_id': 'view.briefcase' }, type='view', name='Briefcase')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'BriefcaseGrid'},'id': 'widget-briefcase'} ]
+storage.put(record1)
 ############################################################################################
 
 

@@ -123,6 +123,14 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					iconCls:'icon-mainbar-edit-group',
 					text: _('Edit groups'),
 					action: 'editGroup'
+				},{
+					//iconCls:'icon-mainbar-edit-group',
+					text: _('Edit task'),
+					action: 'editTask'
+				},{
+					//iconCls:'icon-mainbar-edit-group',
+					text: _('Briefcase'),
+					action: 'openBriefcase'
 				}
 			]
 		} else {
