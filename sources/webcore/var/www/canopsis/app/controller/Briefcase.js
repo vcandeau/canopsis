@@ -21,7 +21,6 @@
 Ext.define('canopsis.controller.Briefcase', {
 	extend: 'canopsis.lib.controller.cgrid',
 
-
 	views: ['Briefcase.Grid'],
 	stores: ['Document'],
 	models: ['Document'],
