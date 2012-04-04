@@ -30,9 +30,14 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	opt_view_element : true,
 	opt_bar_download: true,
 	
-	columns: [
-		{
-			header: _('Run date'),
+	columns: [{
+			header: '',
+			width: 25,
+			sortable: false,
+			renderer: rdr_file_type,
+			dataIndex: 'content_type',
+        },{
+			header: _('Create date'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'crecord_write_time',
