@@ -227,6 +227,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				lineWidth: this.lineWidth,
 				shadow: false,
 				cursor: 'pointer',
+				turboThreshold: 10,
 				marker: {
 					enabled: false,
 				}
@@ -237,6 +238,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				lineWidth: this.lineWidth,
 				shadow: false,
 				cursor: 'pointer',
+				turboThreshold: 10,
 				marker: {
 					enabled: false,
 				}
