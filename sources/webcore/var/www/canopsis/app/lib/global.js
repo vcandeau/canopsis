@@ -19,6 +19,10 @@
 # ---------------------------------
 */
 var global = {
+	
+	account: undefined,
+	accountCtrl: undefined,
+	
 	reporting : true,
 	
 	state_colors: {
