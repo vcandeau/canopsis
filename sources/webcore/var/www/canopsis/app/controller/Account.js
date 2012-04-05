@@ -38,6 +38,8 @@ Ext.define('canopsis.controller.Account', {
 		this.modelId = 'Account'
 
 		this.callParent(arguments);
+		
+		global.accountCtrl = this
 	},
 	
 	getDashboard: function(){
@@ -53,6 +55,19 @@ Ext.define('canopsis.controller.Account', {
 		ajaxAction(uri, {}, function(){
 			log.debug(' + setDashboard Ok', this.logAuthor);
 		});	
+	},
+	
+	getConfig: function(id){
+		if ( ! global.account[id] ){
+			global.account[id] = global[id]
+		}
+		return global.account[id]
+	},
+	
+	setConfig: function(id, value){
+		global.account[id] = value
+		//Todo
+		return global.account[id]
 	},
 	
 	setLocale: function(language){
