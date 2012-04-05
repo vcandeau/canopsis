@@ -38,15 +38,21 @@ function init_REST_Store(collection, selector, groupField){
 }
 
 //Ajax action
-var ajaxAction = function(uri, params, cb, scope){
-	Ext.Ajax.request({
-		url: uri,
+var ajaxAction = function(url, params, cb, scope, method){
+	if (!method)
+		method = 'GET';
+	
+	var options = {
+		method: method,
+		url: url,
 		scope: scope,
 		success: cb,
+		params: params,
 		failure: function (result, request) {
 			log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-		} 
-	});
+		}
+	}	
+	Ext.Ajax.request(options);
 }
 
 // Create Global "extend" method
