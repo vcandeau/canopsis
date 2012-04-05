@@ -136,7 +136,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				if(this.opt_bar_download){
 					bar_child.push({
 						xtype : 'button',
-						text: _('Download'),
+						//text: _('Download'),
 						iconCls: 'icon-download',
 						action: 'download',
 					})
