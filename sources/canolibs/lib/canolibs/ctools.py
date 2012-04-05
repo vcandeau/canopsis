@@ -162,3 +162,14 @@ def dynmodloads(path=".", subdef=False, pattern=".*"):
 
 	return loaded
 
+###########################################
+
+def Str2Number(string):
+	value = float(string)
+	
+	if int(value) == value:
+		value = int(value)
+		
+	return value
+	
+	
