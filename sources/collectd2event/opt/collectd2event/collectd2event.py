@@ -42,8 +42,8 @@ DAEMON_NAME = "collectd2event"
 DAEMON_TYPE = "gateway"
 
 init 	= cinit()
-#logger 	= init.getLogger(DAEMON_NAME)
-logger 	= init.getLogger(DAEMON_NAME, level='DEBUG')
+#logger 	= init.getLogger(DAEMON_NAME, level='DEBUG')
+logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 ########################################################
