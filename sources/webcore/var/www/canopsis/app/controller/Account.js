@@ -41,38 +41,38 @@ Ext.define('canopsis.controller.Account', {
 		
 		global.accountCtrl = this
 	},
-	
-	getDashboard: function(){
-		if ( ! global.account['dashboard']){
-			global.account['dashboard'] = "view._default_.dashboard"
-		}
-		return global.account['dashboard']
-	},
 
-	setDashboard: function(view_id){
-		global.account['dashboard'] = view_id
-		var uri = '/account/setDashboard/' + view_id
-		ajaxAction(uri, {}, function(){
-			log.debug(' + setDashboard Ok', this.logAuthor);
-		});	
-	},
-	
-	getConfig: function(id){
+	getConfig: function(id, default_value){
+		log.debug(' + getConfig '+id, this.logAuthor);
 		if ( ! global.account[id] ){
-			global.account[id] = global[id]
+			if( global[id] ){
+				global.account[id] = global[id]
+			}else{
+				global.account[id] = default_value
+			}
 		}
 		return global.account[id]
 	},
 	
-	setConfig: function(id, value){
+	setConfig: function(id, value, cb){
+		log.debug(' + setConfig ' + id + ' => ' + value, this.logAuthor);
 		global.account[id] = value
-		//Todo
+		
+		var url = '/account/setConfig/' + id
+		
+		if (! cb){
+			cb = function(){
+				log.debug(' + setConfig Ok', this.logAuthor);
+			}
+		}
+		
+		ajaxAction(url, {value: value}, cb, this, 'POST');
+		
 		return global.account[id]
 	},
 	
-	setLocale: function(language){
-		var uri = '/account/setLocale/' + language
-		ajaxAction(uri, {}, function(){
+	setLocale: function(locale){
+		var cb = function(){
 			log.debug(' + setLocale Ok', this.logAuthor);
 			Ext.MessageBox.show({
 				title: _('Configure language'),
@@ -85,7 +85,9 @@ Ext.define('canopsis.controller.Account', {
 					}
 				}
 			});
-		});			
+		}
+		
+		this.setConfig('locale', locale, cb)	
 	},
 
 	beforeload_EditForm: function(form){
