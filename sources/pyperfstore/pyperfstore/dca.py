@@ -96,6 +96,12 @@ class dca(object):
 				return self.uncompress_ZTSC(values=values)
 			else:
 				return None
+				
+	def get_last_point(self):
+		if self.size != 0:
+			return self.get_values()[self.size-1]
+		else:
+			return []
 
 	def get_values_size(self):
 		return self.storage.size(self.values_id)
