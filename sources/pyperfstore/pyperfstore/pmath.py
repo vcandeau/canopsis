@@ -102,10 +102,51 @@ def vmax(vlist):
 
 def derivs(vlist):
 	return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
+	
+def parse_dst(points, dtype, first_point=[]):
+	logger.debug("Parse Data Source Type %s on %s points" % (dtype, len(points)))
+		
+	if dtype == "DERIVE" or dtype == "COUNTER" or dtype == "ABSOLUTE":
+		if points:
+			rpoints = []
+			values = get_values(points)
+			i=0
+			last_value=0
+			for point in points:
+				value = point[1]
+				
+				timestamp = point[0]
+				previous_timestamp = None
+				
+				if i != 0:
+					value -= points[i-1][1]
+					previous_timestamp = points[i-1][0]
+				elif i == 0 and first_point:
+					value -= first_point[1]
+					previous_timestamp = first_point[0]
+				else:
+					value = 0
+				
+				if previous_timestamp and dtype == "DERIVE":
+					interval = abs(timestamp - previous_timestamp)
+					if interval:
+						value = float(value) / interval
+				
+				if dtype == "ABSOLUTE":
+					value = abs(value)
+					
+				rpoints.append([timestamp, value])
+				i += 1
+				
+			return rpoints
+		
+	return points
 
 def timesplit(points, tsfrom, tsto=None):
 	logger.debug("Time split %s -> %s (%s points)" % (tsfrom, tsto, len(points)))
 
+	before_point= []
+	after_point = []
 	first_point = get_first_value(points)
 	last_point  = get_last_value(points)
 
@@ -120,7 +161,7 @@ def timesplit(points, tsfrom, tsto=None):
 
 		if tsfrom <= first_point[0] and tsto >= last_point[0]:
 			logger.debug("  + No split, use all points")
-			return points
+			return ([], points, [])
 
 		if tsfrom <= first_point[0]:
 			logger.debug("  + %s is before first timestamp's point (%s)" % (tsto, first_point[0]))
@@ -146,7 +187,17 @@ def timesplit(points, tsfrom, tsto=None):
 		logger.debug("  + To:   index=%s" % index_to)
 		logger.debug("     + Points: %s" % points[index_to])
 
-		return points[index_from:index_to+1]
+		try:
+			before_point = points[index_from-1]
+		except:
+			pass
+			
+		try:
+			after_point = points[index_to+1]
+		except:
+			pass
+
+		return (before_point, points[index_from:index_to+1], after_point)
 
 	else:
 		logger.debug("   + Return only one point")
@@ -157,7 +208,7 @@ def timesplit(points, tsfrom, tsto=None):
 		logger.debug("  + Index=%s" % index)
 		logger.debug("     + Point: %s" % points[index])
 
-		return [points[index]]
+		return ([], [points[index]], [])
 
 ## http://www.answermysearches.com/how-to-do-a-simple-linear-regression-in-python/124/
 def linreg(X, Y):
