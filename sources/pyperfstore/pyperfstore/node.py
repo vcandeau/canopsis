@@ -162,7 +162,7 @@ class node(object):
 		except:
 			return False
 
-	def metric_add(self, dn, bunit=None):
+	def metric_add(self, dn, bunit=None, dtype=None):
 		self.logger.debug("Add metric '%s' (%s)" % (dn, bunit))
 
 		if not self.metric_exist(dn=dn):
@@ -173,6 +173,7 @@ class node(object):
 							_id=metric_id,
 							dn=dn,
 							bunit=bunit,
+							dtype=dtype,
 							node=self,
 							retention=self.retention,
 							storage=self.storage,
@@ -215,13 +216,13 @@ class node(object):
 			return []
 	
 
-	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None):
+	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None, dtype=None):
 		_id = self.metric_get_id(dn, _id)
 		
 		self.logger.debug("Push value on metric '%s' (_id: %s)" % (dn, _id))
 		
 		if not _id:
-			_id = self.metric_add(dn=dn, bunit=unit)
+			_id = self.metric_add(dn=dn, bunit=unit, dtype=dtype)
 			
 		if not timestamp:
 			timestamp = int(time.time())
@@ -229,6 +230,16 @@ class node(object):
 			timestamp = int(timestamp)
 			
 		mymetric = self.metric_get(_id=_id)
+		
+		## re-Set dtype
+		if dtype:
+			if mymetric.dtype != dtype:
+				mymetric.dtype = dtype
+				
+		## re-Set bunit
+		if unit:
+			if mymetric.bunit != unit:
+				mymetric.bunit = unit
 
 		mymetric.push_value(value=value, timestamp=timestamp)
 
@@ -273,7 +284,7 @@ class node(object):
 
 			metric = self.metric_get(_id=_id)
 
-			print "    + %s (%s)" % (metric.dn, metric._id)
+			print "    + %s (%s) (%s)" % (metric.dn, metric.dtype, metric._id)
 
 			item = metric.dca_get(metric.current_dca)
 			print "      + Current DCA (%s -> %s),\tPoints: %s" % (item.tstart, item.tstop, item.size )
