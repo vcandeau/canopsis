@@ -160,7 +160,7 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Set dashboard to '+view_id, this.logAuthor);
 		
 		//set new dashboard
-		this.getController('Account').setDashboard(view_id)
+		this.getController('Account').setConfig("dashboard", view_id);
 		
 		var maintabs = Ext.getCmp('main-tabs');
 		
