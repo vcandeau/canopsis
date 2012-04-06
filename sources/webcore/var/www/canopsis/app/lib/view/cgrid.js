@@ -65,6 +65,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			this.features.push(groupingFeature);
 		}*/
 
+		// Set pageSize
+		this.store.pageSize = global.accountCtrl.getConfig('pageSize')
 
 		// Hack
 		if (this.hideHeaders && this.border == false){
