@@ -65,6 +65,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			this.features.push(groupingFeature);
 		}*/
 
+		// Set pageSize
+		this.store.pageSize = global.accountCtrl.getConfig('pageSize')
 
 		// Hack
 		if (this.hideHeaders && this.border == false){
@@ -134,7 +136,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				if(this.opt_bar_download){
 					bar_child.push({
 						xtype : 'button',
-						text: _('Download'),
+						//text: _('Download'),
 						iconCls: 'icon-download',
 						action: 'download',
 					})

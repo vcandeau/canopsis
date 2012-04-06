@@ -59,10 +59,31 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 
 		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 		
+		//--
+		this.tabPanel = Ext.create('Ext.tab.Panel',{
+			layout: 'fit',
+			//xtype: 'tabpanel',
+			plain: true,
+			//deferredRender: false,
+		})
+		
+		
+		if(this.step_list){
+			//var tmp = this.build_step_list(this.step_list)
+			log.debug("Wizard steps fully generated",this.logAuthor)
+			for(var i in this.step_list){
+				this.add_new_step(this.step_list[i])
+			}
+		}
+		
+		this.items = [this.tabPanel]
+		//--
+		
 		this.callParent(arguments);
 		
-		//---------------build the window content---------------
-	
+		this.previousButton.setDisabled(true)
+		/* ----------------------------------------
+
 		//---------tab panel----------
 		this.tabPanel = this.add({
 			layout: 'fit',
@@ -77,9 +98,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			for(var i in this.step_list){
 				this.add_new_step(this.step_list[i])
 			}
-		}
-
-		this.previousButton.setDisabled(true)
+		}*/
 	},
 	
 	afterRender : function(){

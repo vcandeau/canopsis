@@ -54,6 +54,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	tooltip: true,
 	autoTitle: true,
 	
+	marker_symbol: null,
+	marker_radius: 2,
+	
 	title_fontSize: 15,
 	
 	legend_verticalAlign: "bottom",
@@ -63,7 +66,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_borderColor: "#909090",
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
-	maxZoom: 60 * 60, //1 hour
+	maxZoom: 60 * 10, // 10 minutes
 	
 	SeriesType: "area",
 	lineWidth: 1,
@@ -222,6 +225,17 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			series: []
 		}
 
+		// Check marker
+		var marker_enable = false
+		if (this.marker_symbol){
+			marker_enable = true
+		}else{
+			this.marker_symbol = null
+			this.marker_radius = 0
+		}
+		
+
+		// Configure line type
 		if 		(this.SeriesType == "area"){
 			this.options.plotOptions["area"] = {
 				lineWidth: this.lineWidth,
@@ -229,7 +243,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				cursor: 'pointer',
 				turboThreshold: 10,
 				marker: {
-					enabled: false,
+					enabled: marker_enable,
+					symbol: this.marker_symbol,
+					radius: this.marker_radius
 				}
 			}
 			
@@ -240,7 +256,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				cursor: 'pointer',
 				turboThreshold: 10,
 				marker: {
-					enabled: false,
+					enabled: marker_enable,
+					symbol: this.marker_symbol,
+					radius: this.marker_radius
 				}
 			}
 		}

@@ -69,33 +69,22 @@ def account_get_me():
 	
 	return output
 
-#### GET Me
-@get('/account/setDashboard/:_id',apply=[check_auth])
-def account_setDashboard(_id):
+#### POST setConfig
+@post('/account/setConfig/:_id',apply=[check_auth])
+def account_setConfig(_id):
 	account = get_account()
 	storage = get_storage(namespace='object')
 	
-	account.data['dashboard'] = _id
-	storage.put(account, account=account)
+	value = request.params.get('value', default=None)
 	
-	output={'total': 0, 'success': True, 'data': []}
+	logger.debug(" + setConfig '%s' => '%s'" % (_id, value))
 	
-	return output
-	
-#### GET Me
-@get('/account/setLocale/:locale',apply=[check_auth])
-def account_setLocale(locale):
-	account = get_account()
-	storage = get_storage(namespace='object')
-	logger.debug("Set %s locale for %s" % (locale, account.user))
-	
-	if locale == 'fr' or locale == 'en' or locale == 'ja':
-		account.data['locale'] = locale
+	if value:
+		account.data[_id] = value
 		storage.put(account, account=account)
-		
 		output={'total': 0, 'success': True, 'data': []}
 	else:
-		return HTTPError(404, "Locale not found")
+		output={'total': 0, 'success': False, 'data': []}
 	
 	return output
 
