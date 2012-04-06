@@ -27,6 +27,7 @@ function install(){
 	easy_install_pylib xmlrpclib
 	easy_install_pylib pyparsing
 	easy_install_pylib gunicorn
+	easy_install_pylib APScheduler
 
 	# Clean
 	#rm -Rf $PREFIX/.python-eggs/*
