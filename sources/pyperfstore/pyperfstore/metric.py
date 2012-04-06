@@ -23,22 +23,26 @@ import random
 from operator import itemgetter
 
 from pyperfstore.dca import dca
-from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit
+from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit, parse_dst
 
 class metric(object):
-	def __init__(self, _id, storage, node, dn=None, bunit=None, retention=None, point_per_dca=None, rotate_plan=None):
+	def __init__(self, _id, storage, node, dn=None, bunit=None, dtype=None, retention=None, point_per_dca=None, rotate_plan=None):
 		self.logger = logging.getLogger('metric')
 
 		self.logger.debug("Init metric '%s'", _id)
 
 		self.current_dca = None
+		
+		if not dtype:
+			dtype = "GAUGE"
 
 		self._id = _id
 		self.node = node
 		self.node_id = node._id
 		self.dn = dn
 		self.bunit = bunit
-
+		self.dtype = dtype
+		
 		self.point_per_dca = point_per_dca
 		self.auto_point_per_dca = True
 		self.min_point_per_dca = 300 #points
@@ -95,7 +99,8 @@ class metric(object):
 			'interval':	self.interval,
 			'rotate_plan':	self.rotate_plan,
 			'current_dca':	current_dca,
-			'writetime':	time.time()
+			'writetime':	time.time(),
+			'dtype':		self.dtype
 		}
 
 		dump['dca_PLAIN'] = []
@@ -131,7 +136,7 @@ class metric(object):
 		self.point_per_dca	= data['point_per_dca']
 
 		self.node_id		= data['node_id']
-		self.bunit		= data['bunit']
+		self.bunit			= data['bunit']
 		self.rotate_plan	= data['rotate_plan']
 
 		self.interval		= data['interval']
@@ -146,6 +151,11 @@ class metric(object):
 		self.dca_ZTSC		= data['dca_ZTSC']
 
 		self.writetime		= data['writetime']
+		
+		try:
+			self.dtype		= data['dtype']
+		except:
+			pass
 	
 	def save(self):
 		dump = self.dump()
@@ -240,7 +250,7 @@ class metric(object):
 			values = sorted(values, key=itemgetter(0))
 
 			self.logger.debug(" + Split")
-			values = timesplit(values, tstart, tstop)
+			(before_point, values, after_point) = timesplit(values, tstart, tstop)
 
 			if values[0][0] < tstart - 300:
 				## set first value with old data
@@ -248,6 +258,8 @@ class metric(object):
 				del values[0]
 
 		self.logger.debug(" + Return %s points" % len(values))
+		values = parse_dst(values, self.dtype, before_point)
+		
 		return values
 
 
