@@ -68,7 +68,7 @@ Ext.define('canopsis.controller.Tabs', {
 	},
 	
 	open_dashboard: function(){
-		var dashboard_id = this.getController('Account').getDashboard()
+		var dashboard_id = this.getController('Account').getConfig("dashboard", "view._default_.dashboard")
 		log.debug('Open dashboard: ' + dashboard_id, this.logAuthor)
 		return this.open_view({ view_id: dashboard_id, title: _("Dashboard"), closable: false, save: false }, 0)
 	},

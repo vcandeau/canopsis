@@ -33,6 +33,7 @@ from pyperfstore import node
 from pyperfstore import mongostore
 
 from ctools import parse_perfdata
+from ctools import Str2Number
 
 from cinit import cinit
 
@@ -46,6 +47,7 @@ DAEMON_NAME = "amqp2mongodb"
 DAEMON_TYPE = "storage"
 
 init 	= cinit()
+#logger 	= init.getLogger(DAEMON_NAME, level="DEBUG")
 logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
@@ -89,31 +91,40 @@ def on_message(body, msg):
 		logger.error("Impossible to parse event, Dump:\n%s" % body)
 		raise Exception('Impossible to parse event')
 
-	## Try to parse perfdata
+
+	## Metrology
+	timestamp = int(event['timestamp'])
 	perf_data_array = []
 	perf_data = None
+	
+	## Get perfdata
 	try:
-		try:
-			perf_data = str(event['perf_data'])
-		except:
-			perf_data = dict(event['perf_data_array'])
+		perf_data = event['perf_data']
+	except:
+		pass
 		
+	try:
+		perf_data_array = list(event['perf_data_array'])
+	except:
+		pass
+	
+	### Parse perfdata
+	if perf_data:
 		logger.debug(' + perf_data: %s', perf_data)
 		try:
-			if perf_data:
-				timestamp = int(event['timestamp'])
-				perf_data_array = to_perfstore(event_id, perf_data, timestamp)
-			
+			perf_data_array = parse_perfdata(perf_data)
 		except Exception, err:
-			logger.warning("To_perfstore: %s ('%s')" % (err, perf_data))
-				
-	except Exception, err:
-		logger.warning('Invalid perfdata (%s)', err)
-	
+			logger.error("Impossible to parse: %s ('%s')" % (perf_data, err))
 	
 	logger.debug(' + perf_data_array: %s', perf_data_array)
 	event['perf_data_array'] = perf_data_array
 	
+	### Store perfdata	
+	if perf_data_array:
+		try:
+			to_perfstore(event_id, perf_data_array, timestamp)
+		except Exception, err:
+			logger.warning("Impossible to store: %s ('%s')" % (perf_data_array, err))
 	
 	## Archive event
 	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
@@ -147,14 +158,7 @@ def on_message(body, msg):
 
 def to_perfstore(_id, perf_data, timestamp):
 	
-	if isinstance(perf_data, str):
-		try:
-			perf_data = parse_perfdata(perf_data)
-		except Exception, err:
-			raise Exception("Imposible to parse: %s (%s)" % (perf_data, err))
-			
 	if isinstance(perf_data, list):
-
 		try:
 			mynode = node(_id, storage=perfstore, point_per_dca=point_per_dca, rotate_plan=rotate_plan)
 			
@@ -168,21 +172,26 @@ def to_perfstore(_id, perf_data, timestamp):
 			metric = perf['metric']
 			value = perf['value']
 			
+			dtype = None
+			try:
+				dtype = perf['type']
+			except:
+				pass
+			
+			unit = None
 			try:
 				unit =  perf['unit']
-				unit = str(unit)
+				if unit:
+					unit = str(unit)
 			except:
-				unit = None
+				pass
 			
-			if int(value) == value:
-				value = int(value)
-			else:
-				value = float(value)
+			value = Str2Number(value)
 				
-			logger.debug(" + Put metric '%s' (%s %s) for ts %s ..." % (metric, value, unit, timestamp))
+			logger.debug(" + Put metric '%s' (%s %s (%s)) for ts %s ..." % (metric, value, unit, dtype, timestamp))
 
 			try:
-				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp, dtype=dtype)
 			except Exception, err:
 				logger.warning('Impossible to put value in perfstore (%s) (metric=%s, unit=%s, value=%s)', err, metric, unit, value)
 		

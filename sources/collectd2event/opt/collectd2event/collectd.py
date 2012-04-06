@@ -126,13 +126,13 @@ types = {
          'max':None,
          'name':'read',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'write',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'charge':[
@@ -164,13 +164,13 @@ types = {
          'max':None,
          'name':'rx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'tx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'ping_droprate':[
@@ -210,13 +210,13 @@ types = {
          'max':None,
          'name':'rx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'tx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'df':[
@@ -518,13 +518,13 @@ types = {
          'max':None,
          'name':'rx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'tx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'fork_rate':[
@@ -540,13 +540,13 @@ types = {
          'max':None,
          'name':'rx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'tx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'total_sessions':[
@@ -638,13 +638,13 @@ types = {
          'max':None,
          'name':'read',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'write',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'compression':[
@@ -828,13 +828,13 @@ types = {
          'max':None,
          'name':'rx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'tx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'if_dropped':[
@@ -1554,13 +1554,13 @@ types = {
          'max':None,
          'name':'rx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'tx',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'disk_merged':[
@@ -1590,13 +1590,13 @@ types = {
          'max':None,
          'name':'queries',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       },
       {
          'max':None,
          'name':'responses',
          'type':'DERIVE',
-         'min':'0',		 'unit': None
+         'min':'0',		 'unit': 'o'
       }
    ],
    'email_size':[

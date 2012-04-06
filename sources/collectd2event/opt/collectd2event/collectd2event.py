@@ -26,6 +26,7 @@ from pymongo import Connection
 import json
 
 from ctools import parse_perfdata
+from ctools import Str2Number
 from cinit import cinit
 
 import cevent
@@ -41,6 +42,7 @@ DAEMON_NAME = "collectd2event"
 DAEMON_TYPE = "gateway"
 
 init 	= cinit()
+#logger 	= init.getLogger(DAEMON_NAME, level='DEBUG')
 logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
@@ -51,6 +53,8 @@ handler = init.getHandler(logger)
 ########################################################
 	
 def on_message(body, msg):
+	global last_events
+	
 	event_id = msg.delivery_info['routing_key']
 	
 	collectd_info = body.split(' ')
@@ -75,45 +79,61 @@ def on_message(body, msg):
 			logger.debug( " + Raw Values: %s" %		values)
 
 			values = values.split(":")
-			perf_data = ""
+			
+			perf_data_array = []
+			
+			ctype = None
 			try:
 				## Know metric
-				ctype = types[metric]	
-				try:
-					timestamp = values[0]
-					values = values[1:]
-					logger.debug( "   + Timestamp: %s" % timestamp)
-					logger.debug( "   + Values: %s" % values)
-					i=0
-					for value in values:
-						metric = ctype[i]['name']
-						data_type = ctype[i]['type']
-						
-						logger.debug( "     + %s" % metric)
-						logger.debug( "       -> %s (%s)" % (value, data_type))
-						i+=1
-						
-						if perf_data:
-							perf_data += " %s=%s" % (metric, value)
-						else:
-							perf_data = "%s=%s" % (metric, value)
-							
-				except:
-					logger.error("Invalid format of values '%s'" % values)
-				
+				ctype = types[metric]
 			except:
 				try:
-					#resource  += "-%s" % metric
-					timestamp = values[0]
-					value = values[1]
-					logger.debug( "   + Timestamp: %s" % timestamp)
-					logger.debug( "   + Value: %s" % value)
-					perf_data = "%s=%s" % (metric, value)
-
+					ctype = types[metric.split('-')[0]]
+					metric = metric.split('-')[1]
 				except:
-					logger.error("Invalid format of values '%s'" % values)
+					logger.error("Invalid format '%s'" % body)
+					
+			try:
+				timestamp = int(Str2Number(values[0]))
+				values = values[1:]
+				logger.debug( "   + Timestamp: %s" % timestamp)
+				logger.debug( "   + Values: %s" % values)
+				
+			except Exception, err:
+				logger.error("Impossible to get timestamp or values (%s)" % err)
+				
+				
+			if 	ctype:
+				try:	
+					i=0
+					for value in values:
+						name = ctype[i]['name']
+						unit = ctype[i]['unit']
+						vmin = ctype[i]['min']
+						vmax = ctype[i]['max']
+						if name == "value":
+							name = metric
+							
+						if metric != name:
+							name = "%s-%s" % (metric, name)
+							
+						data_type = ctype[i]['type']
+						
+						value = Str2Number(value)
+						
+						logger.debug( "     + %s" % name)
+						logger.debug( "       -> %s (%s)" % (value, data_type))
+						i+=1
+							
+						perf_data_array.append({ 'metric':name, 'value': value, 'type': data_type, 'unit': unit, 'min': vmin, 'max': vmax})
+						
+				except:
+					logger.error("Impossible to parse values '%s'" % values)
 
-			if perf_data:
+
+			if perf_data_array:
+				logger.debug(' + perf_data_array: %s', perf_data_array)
+			
 				event = cevent.forger(
 						connector='collectd',
 						connector_name='collectd2event',
@@ -123,13 +143,14 @@ def on_message(body, msg):
 						source_type='resource',
 						event_type='check',
 						state=0,
-						perf_data=perf_data
+						perf_data_array=perf_data_array
 						)
-						
+							
 				logger.debug("Send Event: %s" % event)
 				## send event on amqp
 				key = cevent.get_routingkey(event)						
 				amqp.publish(event, key, amqp.exchange_name_events)
+						
 				
 		else:
 			logger.error("Invalid collectd Action (%s)" % body)
