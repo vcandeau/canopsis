@@ -172,18 +172,26 @@ def to_perfstore(_id, perf_data, timestamp):
 			metric = perf['metric']
 			value = perf['value']
 			
+			dtype = None
+			try:
+				dtype = perf['type']
+			except:
+				pass
+			
+			unit = None
 			try:
 				unit =  perf['unit']
-				unit = str(unit)
+				if unit:
+					unit = str(unit)
 			except:
-				unit = None
+				pass
 			
 			value = Str2Number(value)
 				
-			logger.debug(" + Put metric '%s' (%s %s) for ts %s ..." % (metric, value, unit, timestamp))
+			logger.debug(" + Put metric '%s' (%s %s (%s)) for ts %s ..." % (metric, value, unit, dtype, timestamp))
 
 			try:
-				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp)
+				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp, dtype=dtype)
 			except Exception, err:
 				logger.warning('Impossible to put value in perfstore (%s) (metric=%s, unit=%s, value=%s)', err, metric, unit, value)
 		
