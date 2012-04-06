@@ -74,6 +74,32 @@
 								"fieldLabel": "Line Width",
 								"minValue": 1,
 								"value": 1
+                           },{
+								"xtype": "combobox",
+								"name": "marker_symbol",
+								"fieldLabel": "Marker",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": null,
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": null, "text": "None"},
+										{"value": "circle", "text": "Circle"},
+										{"value": "square", "text": "Square"},
+										{"value": "diamond", "text": "Diamond"},
+										{"value": "triangle", "text":  "Triangle"},
+										{"value": "triangle-down", "text":  "Triangle Down"}
+									]
+								}
+							},{
+								"xtype" : "numberfield",
+								"name" : "marker_radius",
+								"fieldLabel": "Marker radius",
+								"minValue": 0,
+								"value": 2
                            }]
 					},{
 						"xtype": "fieldset",
@@ -95,7 +121,7 @@
 								"name" : "maxZoom",
 								"fieldLabel": "Max zoom (seconds)",
 								"minValue": 60,
-								"value": 3600
+								"value": 600
                            }					
 						]
 					},{
