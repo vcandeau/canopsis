@@ -16,7 +16,7 @@ def LoadConfig(file):
 			for opt in cp.options(sec):
 				config[name + "." + string.lower(opt)] = string.strip(cp.get(sec, opt))
 	except Exception, err:
-		logger.info('No config file (etc/aps.ini')
+		logger.info('No config file (etc/apsd.ini')
 	return config
 
 
