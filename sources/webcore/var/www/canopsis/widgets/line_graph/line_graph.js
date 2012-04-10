@@ -568,7 +568,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	
  	beforeDestroy : function() {
-		widgets.line_graph.line_graph.superclass.beforeDestroy.call(this);
+		this.callParent(arguments);
 		
  		if (this.chart){
 			this.chart.destroy()
