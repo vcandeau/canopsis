@@ -37,6 +37,7 @@ config = ConfigParser.RawConfigParser()
 config.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 logger = logging.getLogger("perfstore")
+#logger.setLevel(logging.DEBUG)
 
 perfstore = mongostore(mongo_collection='perfdata', mongo_host=config.get("master", "host"), mongo_port=config.getint("master", "port"))
 
@@ -52,17 +53,13 @@ def perfstore_node_get(_id):
 	return {'total': len(output), 'success': True, 'data': output}
 
 
-#### GET@
+#### POST@
 @post('/perfstore/values',apply=[check_auth])
 @post('/perfstore/values/:start/:stop',apply=[check_auth])
 def perfstore_nodes_get_values(start=None, stop=None):
 
 	nodes = request.params.get('nodes', default=None)
 	output = []
-	
-	#logger.debug('WWWAAAZZZZAAA')
-	#for info in request.header:
-	#	logger.debug("%s: %s" (info, request.header[info])
 	
 	if not nodes:
 		logger.warning("Invalid arguments")
@@ -140,7 +137,7 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 	else:
 		start = stop - 86400
 
-	logger.debug(" + node:      %s" % node)
+	logger.debug(" + node:      %s" % _id)
 	logger.debug(" + metrics:   %s" % metrics)
 	logger.debug(" + start:     %s" % start)
 	logger.debug(" + stop:      %s" % stop)
@@ -157,9 +154,9 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 		for metric in metrics:
 			try:
 				values = mynode.metric_get_values(dn=metric, tstart=start, tstop=stop)
-		
 				values = [[x[0] * 1000, x[1]] for x in values]
-				if len(values) > 1:
+
+				if len(values) >= 1:
 					bunit = mynode.metric_get(dn=metric).bunit
 					output.append({'node': _id, 'metric': metric, 'values': values, 'bunit': bunit })
 						
@@ -167,10 +164,4 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 				logger.error(err)
 				
 	return output
-
-
-#@get('/perfstore_chart/:_id')
-#@get('/perfstore_chart/:_id/:start')
-#@get('/perfstore_chart/:_id/:start/:stop')
-#response.content_type = 'image/svg+xml'
 
