@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME="collectd"
-VERSION=5.0
+VERSION=5.1.0
 RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr librabbitmq"
