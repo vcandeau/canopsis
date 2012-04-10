@@ -296,7 +296,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	beforeDestroy : function() {
 		log.debug("Destroy ...", this.logAuthor)
 		this.stopTask()
-		canopsis.lib.view.cwidget.superclass.beforeDestroy.call(this);
+		this.callParent(arguments);
  	}
 
 });
