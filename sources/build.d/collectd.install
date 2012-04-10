@@ -10,7 +10,7 @@ function build(){
 	cd $SRC_PATH/externals
 
 	if [ ! -e $BASE ]; then
-		extract_archive "$BASE.tgz"
+		extract_archive "$BASE.tar.gz"
 	fi
 	cd  $BASE
 
@@ -19,7 +19,7 @@ function build(){
 	#check_code $?
 
 	echo "   + Configure ..."
-	./configure --prefix=$PREFIX --sbindir=$PREFIX/bin --enable-python --enable-amqp --with-python=$PREFIX/bin/python --with-librabbitmq=/opt/canopsis/ 1>> $LOG 2>> $LOG
+	./configure --prefix=$PREFIX --sbindir=$PREFIX/bin --enable-python --enable-amqp --with-python=$PREFIX/bin/python --with-librabbitmq=$PREFIX 1>> $LOG 2>> $LOG
 	check_code $?
 
 	echo "   + Build ..."
