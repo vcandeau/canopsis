@@ -27,7 +27,9 @@ from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit, parse
 
 class metric(object):
 	def __init__(self, _id, storage, node, dn=None, bunit=None, dtype=None, retention=None, point_per_dca=None, rotate_plan=None):
+		
 		self.logger = logging.getLogger('metric')
+		#self.logger.setLevel(logging.DEBUG)
 
 		self.logger.debug("Init metric '%s'", _id)
 
@@ -196,7 +198,7 @@ class metric(object):
 		else:
 			return tstart >= item['tstart'] or tstop >= item['tstart']	
 
-	def get_values(self, tstart, tstop=None):
+	def get_values(self, tstart, tstop=None, raw=False):
 		## TODO: Improve search performance !
 
 		if not tstop:
@@ -258,7 +260,9 @@ class metric(object):
 				del values[0]
 
 		self.logger.debug(" + Return %s points" % len(values))
-		values = parse_dst(values, self.dtype, before_point)
+		
+		if not raw:
+			values = parse_dst(values, self.dtype, before_point)
 		
 		return values
 
@@ -271,7 +275,7 @@ class metric(object):
 		return mydca
 		
 	def dca_rotate(self):
-		self.logger.debug("Rotate DCA")
+		start = time.time()
 
 		if len(self.dca_PLAIN) > self.rotate_plan['PLAIN']:
 			item = self.dca_get(self.dca_PLAIN.pop(0))
@@ -299,6 +303,8 @@ class metric(object):
 				self.logger.debug("   + Purge dca: '%s'" % item._id)
 				#rm dca
 				del self.dca_ZTSC[0]
+				
+		self.logger.info("%s %s Rotate all DCA in %.5f seconds" % (self.node.dn, self.dn, (time.time() - start)))
 		
 
 	def dca_get_max_size(self):

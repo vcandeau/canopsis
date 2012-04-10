@@ -22,6 +22,7 @@ import os, sys, json, logging
 from math import sqrt
 
 logger = logging.getLogger('pmath')
+#logger.setLevel(logging.DEBUG)
 
 # Dichotomie Algo
 # http://python.jpvweb.com/mesrecettespython/doku.php?id=dichotomie
@@ -112,6 +113,7 @@ def parse_dst(points, dtype, first_point=[]):
 			values = get_values(points)
 			i=0
 			last_value=0
+			
 			for point in points:
 				value = point[1]
 				
@@ -130,16 +132,22 @@ def parse_dst(points, dtype, first_point=[]):
 				if previous_timestamp and dtype == "DERIVE":
 					interval = abs(timestamp - previous_timestamp)
 					if interval:
-						value = float(value) / interval
+						value = round(float(value) / interval, 3)
 				
 				if dtype == "ABSOLUTE":
 					value = abs(value)
+				
+				## if new dca start, value = 0 and no first_point, wait second point ...
+				if dtype == "DERIVE" and i == 0 and not first_point:
+					## Drop this point
+					pass
+				else:
+					rpoints.append([timestamp, value])
 					
-				rpoints.append([timestamp, value])
 				i += 1
 				
 			return rpoints
-		
+	
 	return points
 
 def timesplit(points, tsfrom, tsto=None):
@@ -164,23 +172,23 @@ def timesplit(points, tsfrom, tsto=None):
 			return ([], points, [])
 
 		if tsfrom <= first_point[0]:
-			logger.debug("  + %s is before first timestamp's point (%s)" % (tsto, first_point[0]))
+			logger.debug("  + %s is before first timestamp's point (%s)" % (tsfrom, first_point[0]))
 			index_from = 0
 
 		if tsto >= last_point[0]:
-			logger.debug("  + %s is after last timestamp's point (%s)" % (tsfrom, last_point[0]))
+			logger.debug("  + %s is after last timestamp's point (%s)" % (tsto, last_point[0]))
 			index_to = len(points)-1
 
 
 		if index_from == None:
 			(r_from, index_from) = dichot(tsfrom, points)
-			if index_from and index_from + r_from < len(points):
-				index_from += r_from
+			#if index_from and index_from + r_from < len(points):
+			#	index_from += r_from
 
 		if index_to == None:
 			(r_to, index_to) = dichot(tsto, points)
-			if index_to and index_to + r_to < len(points):
-				index_to += r_to
+			#if index_to and index_to + r_to < len(points):
+			#	index_to += r_to
 
 		logger.debug("  + From: index=%s" % index_from)
 		logger.debug("     + Points: %s" % points[index_from])
@@ -196,7 +204,7 @@ def timesplit(points, tsfrom, tsto=None):
 			after_point = points[index_to+1]
 		except:
 			pass
-
+		
 		return (before_point, points[index_from:index_to+1], after_point)
 
 	else:
