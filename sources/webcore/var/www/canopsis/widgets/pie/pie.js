@@ -168,7 +168,7 @@ Ext.define('widgets.pie.pie' ,{
 			
 			// Parse perf_data
 			var perf_data_array = data.perf_data_array
-						
+		
 			for (var index in perf_data_array){
 				
 				var perf_data = perf_data_array[index]
@@ -194,8 +194,11 @@ Ext.define('widgets.pie.pie' ,{
 						other_label += " ("+unit+")"
 					}
 					
-					serie.data.push({ id: metric, name: metric_name, y: value, color: global.default_colors[0] })
-					serie.data.push({ id: 'other', name: other_label, y: max-value, color: global.default_colors[1] })
+					serie.data.push({ id: metric, name: metric_name, y: value, color: global.default_colors[index] })
+				}
+				
+				if (perf_data_array.length == 1){
+					serie.data.push({ id: 'other', name: other_label, y: max-value, color: global.default_colors[index+1] })
 				}
 			}
 			
