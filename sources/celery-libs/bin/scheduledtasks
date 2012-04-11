@@ -44,13 +44,18 @@ def list_mode(account, storage, limit=3):
 	for record in records:
 		print("    + Id: %s" % record._id)
 		print("      + Name: %s" % record.data['name'])
-		print("      + Task: %s" % record.data['task'])
-		if record.data.has_key('crontab'):
-			print("      + Crontab: %s" % record.data['crontab'])
-		if record.data.has_key('timedelta'):
-			print("      + Timedelta: %s" % record.data['timedelta'])
+		print("      + Task: %s" % record.data['kwargs']['task'])
+		print("      + Method: %s" % record.data['kwargs']['method'])
+		if record.data.has_key('cron'):
+			print("      + Cron: %s" % record.data['cron'])
+		if record.data.has_key('inteval'):
+			print("      + Interval: %s" % record.data['interval'])
+		if record.data.has_key('date'):
+			print("      + Date: %s" % record.data['date'])
 		if record.data.has_key('args'):
 			print("      + Args: %s" % record.data['args'])
+		if record.data.has_key('kwargs'):
+			print("      + Kwargs: %s" % record.data['kwargs'])
 	sys.exit()
 
 def main(argv):
@@ -71,7 +76,7 @@ def main(argv):
 	group 		= 'root'
 	mode 		= 'list'
 	limit		= 3
-	namespace	= 'object'
+	namespace	= 'task'
 	file_path 	= False
 
 	for opt, arg in opts:
@@ -134,27 +139,33 @@ def main(argv):
 		storage = cstorage(account, namespace=namespace)
 
 		for task in tasks:
-			timedelta = task.has_key('timedelta')
-			crontab = task.has_key('crontab')
+			cron = task.has_key('cron')
+			date = task.has_key('date')
+			interval = task.has_key('interval')
 
-			if timedelta and crontab:
-				print('Error: Invalid json file (crontab and timedelta in same task)')
+			if cron and date and interval:
+				print('Error: Invalid json file (cron, date and interval in same task)')
 				usage()
 				sys.exit()		
-			if not timedelta and not crontab:
-				print('Error: Invalid json file (must have a crontab or a timedelta at least)')
+			if not cron and not date and not interval:
+				print('Error: Invalid json file (must have a cron, date or a interval at least)')
 				usage()
 				sys.exit()
 
 			print(' :: Task Info')
 			print('    + Name    : ' + task['name'])
-			print('    + Task    : ' + task['task'])
-			if crontab:
-				print("    + Crontab: %s" % task['crontab'])
-			if timedelta:
-				print("    + Timedelta: %s" % task['timedelta'])
+			print('    + Task    : ' + task['kwargs']['task'])
+			print('    + Method  : ' + task['kwargs']['method'])
+			if cron:
+				print("    + Cron: %s" % task['cron'])
+			if date:
+				print("    + Date: %s" % task['date'])
+			if interval:
+				print("    + Interval: %s" % task['interval'])
 			if task.has_key('args'):
-				print("    + Args: %s" % tasl['args'])	
+				print("    + Args: %s" % task['args'])	
+			if task.has_key('kwargs'):
+				print("    + Kwargs: %s" % task['kwargs'])	
 		
 			record 		= crecord()
 			record.type = 'schedule'
