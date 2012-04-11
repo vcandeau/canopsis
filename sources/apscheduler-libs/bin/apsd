@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from apscheduler.scheduler import Scheduler
+from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
 import logging
 import time
 import string
@@ -32,11 +33,15 @@ logger.info('Config: %s' % LoadConfig(config_file))
 sched.configure(LoadConfig(config_file))
 c = {
 	"daemonic": "True",
-	"apscheduler.jobstores.file.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
-	"apscheduler.jobstores.file.database": "canopsis",
-	"apscheduler.jobstores.file.collection": "aps"
+	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
+	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
+	"apscheduler.jobstore.cmongodbjobstore.collection": "aps"
 }
 sched.configure(c)
+'''
+mongoaps = CMongoDBJobStore(database='canopsis', collection='aps')
+sched.add_jobstore(mongoaps,'mongoDB')
+'''
 sched.start()
 
 # Jobs
