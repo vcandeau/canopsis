@@ -5,37 +5,38 @@ import time
 import string
 import ConfigParser
 
-# Read config file
-def LoadConfig(file):
-	config = {}
-	cp = ConfigParser.ConfigParser()
-	try:
-		cp.read(file)
-		for sec in cp.sections():
-			name = string.lower(sec)
-			for opt in cp.options(sec):
-				config[name + "." + string.lower(opt)] = string.strip(cp.get(sec, opt))
-	except Exception, err:
-		logger.info('No config file (etc/apsd.ini')
-	return config
-
-
 # Logger
 logging.basicConfig(filename='var/log/apsd.log', level=logging.DEBUG,
 	format='%(levelname)s[%(asctime)s]: %(message)s')
-logger = logging.getLogger('APS')
+logger = logging.getLogger('APSD')
+
+# Config
+class MyParser(ConfigParser.ConfigParser):
+	def as_dict(self):
+		d = dict(self._sections)
+		for k in d:
+			d[k] = dict(self._defaults, **d[k])
+			d[k].pop('__name__', None)
+		return d
+
+
+config_file = "/opt/canopsis/etc/apsd.ini"
+p = MyParser()
+try:
+	p.read(config_file)
+	config = p.as_dict()
+except Exception, err:
+	logger.info('No config file')
 
 # Init
 sched = Scheduler()
-config_file = "/opt/canopsis/etc/apsd.ini"
-logger.info('Config: %s' % LoadConfig(config_file))
-sched.configure(LoadConfig(config_file))
 c = {
 	"daemonic": "True",
 	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
 	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
 	"apscheduler.jobstore.cmongodbjobstore.collection": "task"
 }
+logger.info('Config: %s' % c)
 sched.configure(c)
 sched.start()
 
