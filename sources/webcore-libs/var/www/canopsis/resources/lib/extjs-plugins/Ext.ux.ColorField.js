@@ -37,7 +37,7 @@ Ext.define('Ext.ux.ColorField', {
     markInvalid : function( msg ) {
         Ext.ux.ColorField.superclass.markInvalid.call(this, msg);
         this.inputEl.setStyle({
-            'background-image': 'url(../resources/themes/images/default/grid/invalid_line.gif)'
+            'background-image': 'url(themes/extjs/themes/images/default/grid/invalid_line.gif)'
         });
     },
     
