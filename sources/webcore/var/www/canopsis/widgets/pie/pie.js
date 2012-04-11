@@ -194,11 +194,13 @@ Ext.define('widgets.pie.pie' ,{
 						other_label += " ("+unit+")"
 					}
 					
-					serie.data.push({ id: metric, name: metric_name, y: value, color: global.default_colors[index] })
+					var color= global.curvesCtrl.getRenderColor(metric_name, index)
+					serie.data.push({ id: metric, name: metric_name, y: value, color: color })
 				}
 				
 				if (perf_data_array.length == 1){
-					serie.data.push({ id: 'other', name: other_label, y: max-value, color: global.default_colors[index+1] })
+					var color= global.curvesCtrl.getRenderColor(metric_name, (index+1))
+					serie.data.push({ id: 'other', name: other_label, y: max-value, color: color })
 				}
 			}
 			
