@@ -194,8 +194,8 @@ Ext.define('widgets.pie.pie' ,{
 						other_label += " ("+unit+")"
 					}
 					
-					var color= global.curvesCtrl.getRenderColor(metric_name, index)
-					serie.data.push({ id: metric, name: metric_name, y: value, color: color })
+					var colors = global.curvesCtrl.getRenderColors(metric_name, index)
+					serie.data.push({ id: metric, name: metric_name, y: value, color: colors[0] })
 				}
 				
 				if (perf_data_array.length == 1){

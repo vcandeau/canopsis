@@ -439,9 +439,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			
 		log.debug('    + legend: '+metric_long_name, this.logAuthor)
 		
-		var color= global.curvesCtrl.getRenderColor(metric_name, serie_index)
+		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index)
 		
-		var serie = {id: serie_id, name: metric_long_name, data: [], color: color}
+		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0] }
+		
+		if (this.SeriesType == "area"){
+			serie['fillColor'] = colors[1]
+			serie['fillOpacity'] = colors[2] / 100
+		}
+		
+		console.log(serie)
 		
 		this.series[serie_id] = serie
 		
