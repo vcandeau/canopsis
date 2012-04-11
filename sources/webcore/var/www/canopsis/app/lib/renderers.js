@@ -35,6 +35,10 @@ var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
 	return "<span class='icon icon-state-"+val+"' />"
 }
 
+var rdr_color = function (val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon' style='background-color: #" + val + ";color: #" + val + ";'/>"
+}
+
 var rdr_state_type = function (val, metadata, record, rowIndex, colIndex, store) {
 	return "<span class='icon icon-state-type-"+val+"' />"
 }
