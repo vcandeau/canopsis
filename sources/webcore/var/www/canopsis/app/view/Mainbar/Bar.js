@@ -95,27 +95,17 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				var menu = this.down('menu[name="Run"]')
 				menu.hide()
 			},this)
+		
+		var menu_build = []
+		var menu_run = []
+		var menu_reporting = []
+		var menu_preferences = []
+		var menu_configuration = []
+
 			
-		//Reporting menu
-		if(global.reporting == true){
-			reporting_menu =[
-				{
-					iconCls: 'icon-mimetype-pdf',
-					text: _('Export active view'),
-					action: 'exportView'
-				},{
-					iconCls: 'icon-mainbar-reporting',
-					text: _('Switch to live reporting'),
-					action: 'reportingMode'
-				}
-			]
-		} else {
-			reporting_menu = []
-		}
-			
-		//root build menu
+		//Root build menu
 		if(global.account.user == 'root' || (global.account.groups.indexOf('root') != -1)){
-			var root_build_option = [
+			menu_build = menu_build.concat([
 				{
 					iconCls:'icon-mainbar-edit-account',
 					text: _('Edit accounts'),
@@ -133,28 +123,104 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					text: _('Briefcase'),
 					action: 'openBriefcase'
 				}
-			]
-		} else {
-			var root_build_option = []
+			]);
 		}
 	
+		//Build menu Curves Admin
+		if(global.account.user == 'root' || (global.account.groups.indexOf('curves_admin') != -1)){
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-colorwheel',
+					text: _('Curves'),
+					action: 'openViewMenu',
+					viewId: 'view.curves'
+				}
+			]);			
+		}
+	
+	
+		//Build menu
+		menu_build = menu_build.concat([
+			{
+				iconCls:'icon-mainbar-edit-view',
+				text: _('Edit active view'),
+				action: 'editView'
+			},{
+				iconCls:'icon-mainbar-new-view',
+				text: _('New view'),
+				action: 'newView'
+			}	
+		]);
+		
+		//Reporting menu
+		menu_reporting = menu_reporting.concat([
+			{
+				iconCls: 'icon-mimetype-pdf',
+				text: _('Export active view'),
+				action: 'exportView'
+			},{
+				iconCls: 'icon-mainbar-reporting',
+				text: _('Switch to live reporting'),
+				action: 'reportingMode'
+			}
+		]);		
+		
+		//Run menu
+		menu_run = menu_run.concat([
+			{
+				iconCls: 'icon-mainbar-dashboard',
+				text: _('Dashboard'),
+				action: 'openDashboard'
+			},{
+				iconCls: 'icon-mainbar-viewdetails',
+				text: _('Components'),
+				action: 'openViewMenu',
+				viewId: 'view.components'
+			},{
+				iconCls: 'icon-mainbar-viewdetails',
+				text: _('Resources'),
+				action: 'openViewMenu',
+				viewId: 'view.resources'
+			},{
+				iconCls: 'icon-mainbar-run',
+				text: _("Views manager"),
+				action: 'openViewsManager'
+			},'-', 
+				this.viewSelector
+		]);
+		
+		//Configuration menu
+		menu_configuration = menu_configuration.concat([
+			{
+				iconCls: 'icon-console',
+				text: _('Show log console'),
+				action: 'showconsole'
+			},{
+				iconCls: 'icon-clear',
+				text: _('Clear tabs cache'),
+				action: 'cleartabscache'
+			},'-',{
+				iconCls: 'icon-logout',
+				text: _('Logout'),
+				action: 'logout'
+			}		
+		]);
+		
+		//Preferences menu
+		menu_preferences= menu_preferences.concat([
+			this.localeSelector,
+			'-',
+			this.dashboardSelector,
+		]);
+	
+	
+		//Set Items
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
 				text: _('ITIL.Build'),
 				menu: {
-					items: [
-							root_build_option,
-							{
-								iconCls:'icon-mainbar-edit-view',
-								text: _('Edit active view'),
-								action: 'editView'
-							},{
-								iconCls:'icon-mainbar-new-view',
-								text: _('New view'),
-								action: 'newView'
-							}
-					],
+					items: menu_build,
 				}
 			},{
 				iconCls: 'icon-mainbar-run',
@@ -162,28 +228,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				menu: {
 					name: 'Run',
 					showSeparator: true,
-					items: [
-							{
-								iconCls: 'icon-mainbar-dashboard',
-								text: _('Dashboard'),
-								action: 'openDashboard'
-							},{
-								iconCls: 'icon-mainbar-viewdetails',
-								text: _('Components'),
-								action: 'openViewMenu',
-								viewId: 'view.components'
-							},{
-								iconCls: 'icon-mainbar-viewdetails',
-								text: _('Resources'),
-								action: 'openViewMenu',
-								viewId: 'view.resources'
-							},{
-								iconCls: 'icon-mainbar-run',
-								text: _("Views manager"),
-								action: 'openViewsManager'
-							},'-', 
-								this.viewSelector
-					],
+					items: menu_run,
 				}
 			},{
 				iconCls: 'icon-mainbar-report',
@@ -191,7 +236,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				menu: {
 					name: 'Report',
 					showSeparator: true,
-					items: reporting_menu,
+					items: menu_reporting,
 				}
 			},'-',{
 				//xtype: 'container',
@@ -216,11 +261,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				iconCls: 'icon-user',
 				flex : 0.2,
 				menu: {
-					items: [
-						this.localeSelector,
-						'-',
-						this.dashboardSelector,
-					]
+					items: menu_preferences
 				}
 
 			},'-',{
@@ -229,24 +270,11 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				menu: {
 					name: 'Preferences',
 					showSeparator: true,
-					items: [
-							{
-								iconCls: 'icon-console',
-								text: _('Show log console'),
-								action: 'showconsole'
-							},{
-								iconCls: 'icon-clear',
-								text: _('Clear tabs cache'),
-								action: 'cleartabscache'
-							},'-',{
-								iconCls: 'icon-logout',
-								text: _('Logout'),
-								action: 'logout'
-							},
-						],
+					items: menu_configuration
 				}
 			}
 		]
+		
 		this.callParent(arguments);
 	}
 

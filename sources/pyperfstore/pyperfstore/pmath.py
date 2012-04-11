@@ -195,15 +195,11 @@ def timesplit(points, tsfrom, tsto=None):
 		logger.debug("  + To:   index=%s" % index_to)
 		logger.debug("     + Points: %s" % points[index_to])
 
-		try:
+		if index_from != 0:
 			before_point = points[index_from-1]
-		except:
-			pass
 			
-		try:
+		if index_to + 1 < len(points):
 			after_point = points[index_to+1]
-		except:
-			pass
 		
 		return (before_point, points[index_from:index_to+1], after_point)
 

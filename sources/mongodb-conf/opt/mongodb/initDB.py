@@ -136,6 +136,16 @@ record1 = crecord({'_id': 'view.group_manager' }, type='view', name='Groups')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'GroupGrid'},'id': 'widget-group-manager'} ]
 storage.put(record1)
 
+### Curves
+record1 = crecord({'_id': 'view.curves' }, type='view', name='Curves')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'CurvesGrid'},'id': 'widget-colors'} ]
+record1.chmod('o+r')
+storage.put(record1)
+group = crecord({'_id': 'group.curves_admin' }, type='group', name='curves_admin')
+group.chmod('o+r')
+storage.put(group)
+
+
 ### View
 record1 = crecord({'_id': 'view.view_manager' }, type='view', name='Views')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'ViewTreePanel'},'id': 'widget-views'} ]

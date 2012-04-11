@@ -180,6 +180,10 @@
     background-image: url(../images/icons/application_view_detail.png) !important; 
 }
 
+.icon-mainbar-colorwheel { 
+    background-image: url(../images/icons/color_wheel.png) !important; 
+}
+
 /* state */
 
 /*.icon-state-0 { 
