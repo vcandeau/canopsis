@@ -30,7 +30,12 @@ sched = Scheduler()
 config_file = "/opt/canopsis/etc/apsd.ini"
 logger.info('Config: %s' % LoadConfig(config_file))
 sched.configure(LoadConfig(config_file))
-c = {"daemonic": "True"}
+c = {
+	"daemonic": "True",
+	"apscheduler.jobstores.file.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
+	"apscheduler.jobstores.file.database": "canopsis",
+	"apscheduler.jobstores.file.collection": "aps"
+}
 sched.configure(c)
 sched.start()
 
