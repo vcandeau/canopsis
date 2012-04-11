@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 from apscheduler.jobstores.mongodb_store import MongoDBJobStore
-from apscheduler.triggers import CronTrigger
+from apscheduler.triggers import CronTrigger,IntervalTrigger,SimpleTrigger
 from apscheduler.job import Job
 
-from datetime import datetime
+from datetime import datetime,timedelta
 
 import logging
 
@@ -41,7 +41,28 @@ class CMongoDBJobStore(MongoDBJobStore):
 					job_dict['runs'] = 0
 				
 				job_dict['coalesce'] = False
-				job_dict['trigger'] = CronTrigger(**job_dict['trigger'])
+				
+				#try to get interval
+				try:
+					if job_dict['interval'] != {}:
+						job_dict['trigger'] = IntervalTrigger(timedelta(**job_dict['interval']))
+				except Exception, err:
+					logger.info('No interval : %s' % err)
+				
+				#try to get simple
+				try:
+					if job_dict['date'] != {}:
+						job_dict['trigger'] = SimpleTrigger( datetime(*job_dict['date']))
+				except Exception, err:
+					logger.info('No simple date: %s' % err)
+				
+				#try to get crontab
+				try:
+					if job_dict['cron'] != {}:
+						job_dict['trigger'] = CronTrigger(**job_dict['cron'])
+				except Exception, err:
+					logger.info('No crontab: %s' % err)
+
 				job_dict['next_run_time'] = job_dict['trigger'].get_next_fire_time(datetime.now())
 				job_dict['args'] = job_dict['args']
 				job_dict['kwargs'] = job_dict['kwargs']
