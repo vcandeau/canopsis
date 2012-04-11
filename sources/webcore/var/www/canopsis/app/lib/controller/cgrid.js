@@ -179,8 +179,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (selection) {
 			log.debug("[controller][cgrid] - Remove record ...")
 			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete'),
-				function(){
-					grid.store.remove(selection)
+				function(btn, text){
+					if (btn == 'yes'){
+						grid.store.remove(selection)
+					}
 				});
 		}
 
