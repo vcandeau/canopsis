@@ -34,7 +34,7 @@ c = {
 	"daemonic": "True",
 	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
 	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
-	"apscheduler.jobstore.cmongodbjobstore.collection": "aps"
+	"apscheduler.jobstore.cmongodbjobstore.collection": "task"
 }
 sched.configure(c)
 sched.start()
