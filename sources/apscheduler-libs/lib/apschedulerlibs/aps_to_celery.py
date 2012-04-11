@@ -32,8 +32,8 @@ def launch_celery_task(*args,**kwargs):
 			del methodargs['task']
 			del methodargs['method']
 			
-			print(args)
-			print(kwargs)
+			#print(args)
+			#print(kwargs)
 			
 			result = task.delay(*args,**methodargs)
 
