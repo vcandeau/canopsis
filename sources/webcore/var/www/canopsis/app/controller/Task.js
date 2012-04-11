@@ -54,7 +54,7 @@ Ext.define('canopsis.controller.Task', {
 
 		if(data.day != undefined)
 			crontab['day_of_week'] = data.day.substring(0,3)
-		record.set('crontab',crontab)
+		record.set('cron',crontab)
 		//------------------------------------------------------
 		
 		return record
@@ -72,7 +72,7 @@ Ext.define('canopsis.controller.Task', {
 		var timeLength = args[2]
 		
 		//--------------get cron---------------
-		var cron = item.get('crontab')
+		var cron = item.get('cron')
 		var hours = cron.hour + ':' + cron.minute
 		
 		//set view
