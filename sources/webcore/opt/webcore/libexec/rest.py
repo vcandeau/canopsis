@@ -160,40 +160,6 @@ def rest_get(namespace, ctype=None, _id=None):
 	#logger.debug(" + Output: "+str(output))
 
 	return output
-
-#### PUT
-@put('/rest/:namespace/:ctype', apply=[check_auth])
-def rest_put(namespace, ctype):
-	#get the session (security)
-	account = get_account()
-	storage = get_storage(namespace=namespace)
-
-	logger.debug("PUT:")
-
-	data = request.body.readline()
-	if not data:
-		HTTPError(400, "No data received")
-
-	
-	data = json.loads(data)
-	data['crecord_type'] = ctype
-	## Clean data
-	_id = None
-	try:
-		_id = data['_id']
-		#del data['_id']
-	except:
-		pass
-
-	logger.debug(" + _id: "+str(_id))
-	logger.debug(" + ctype: "+str(ctype))
-	logger.debug(" + Data: "+str(data))
-
-	record = crecord(raw_record=data)
-
-	#print record.dump()
-
-	storage.put(record, account=account)
 	
 #### POST
 @post('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
@@ -209,8 +175,16 @@ def rest_put(namespace, ctype, _id=None):
 	if not data:
 		return HTTPError(400, "No data received")
 
-	
-	data = json.loads(data)
+	logger.debug(" + data: %s" % data)
+	logger.debug(" + data-type: %s" % type(data))
+		
+	if isinstance(data, str):
+		try:
+			data = json.loads(data)
+		except Exception, err:
+			logger.error("DELETE: Impossible to parse data (%s)" % err)
+			return HTTPError(404, "Impossible to parse data")
+
 	data['crecord_type'] = ctype
 	
 	if not _id:
@@ -238,6 +212,12 @@ def rest_put(namespace, ctype, _id=None):
 	logger.debug(" + _id: "+str(_id))
 	logger.debug(" + ctype: "+str(ctype))
 	logger.debug(" + Data: "+str(data))
+	
+	## Set group
+	if data.has_key('aaa_group'):
+		group = data['aaa_group']
+	else:
+		group = account.group
 
 	update = False
 	if _id:
@@ -258,7 +238,7 @@ def rest_put(namespace, ctype, _id=None):
 
 		record = crecord(raw_record=raw_record)
 		record.chown(account.user)
-		record.chgrp(account.group)
+		record.chgrp(group)
 	try:
 		storage.put(record, namespace=namespace, account=account)
 		
@@ -274,11 +254,22 @@ def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace)
 
+	logger.debug("DELETE:")
 	if not _id:
 		data = request.body.readline()
 		if not data:
 			return HTTPError(400, "No data received")
-		print data
+			
+		logger.debug(" + data: %s" % data)
+		logger.debug(" + data-type: %s" % type(data))
+		
+		if isinstance(data, str):
+			try:
+				data = json.loads(data)
+			except Exception, err:
+				logger.error("DELETE: Impossible to parse data (%s)" % err)
+				return HTTPError(404, "Impossible to parse data")
+
 		_id = None
 		try:
 			_id = str(data['_id'])
@@ -291,10 +282,12 @@ def rest_delete(namespace, ctype, _id=None):
 			pass
 
 	if not _id:
-		return HTTPError(404, "Id not found ...")
+		logger.error("DELETE: No '_id' field in header ...")
+		return HTTPError(404, "No '_id' field in header ...")
 
-	logger.debug("DELETE:")
-	logger.debug(" + _id: "+str(_id))
+
+	logger.debug(" + _id: %s" % _id)
+	
 	try:
 		storage.remove(_id, account=account)
 	except:
