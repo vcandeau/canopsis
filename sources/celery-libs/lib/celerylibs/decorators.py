@@ -1,6 +1,6 @@
 from cinit import cinit
 
-init 		= cinit()
+init 	= cinit()
 logger 	= init.getLogger('Task result to db') 
 
 def simple_decorator(decorator):
@@ -20,7 +20,7 @@ def simple_decorator(decorator):
 def stock_result_in_db(func):
 	def wrapper(*args,**kwargs):
 		try:
-			my_func = func(*args)
+			my_func = func(*args, **kwargs)
 			logger.info('Task successfully done')
 		except Exception, err:
 			function_error = err

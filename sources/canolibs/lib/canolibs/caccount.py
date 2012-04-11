@@ -58,6 +58,9 @@ class caccount(crecord):
 
 
 
+	def get_full_mail(self):
+		return "\"%s %s\" <%s>" % (self.firstname, self.lastname, self.mail)
+
 	def passwd(self, passwd):
 		self.shadowpasswd = hashlib.sha1(str(passwd)).hexdigest()
 

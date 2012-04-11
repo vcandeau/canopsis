@@ -146,6 +146,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_reloadButton: function() {
 		log.debug('[controller][cgrid] - Reload store "'+this.grid.store.storeId+'" of '+this.grid.id);
+		log.debug('[controller][cgrid] - store.proxy.extraParams.filter:')
 		log.dump(this.grid.store.proxy.extraParams.filter)
 		this.grid.store.load()
 	},
@@ -384,22 +385,30 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	
 	_searchRecord : function(){
 		log.debug('[controller][cgrid] - clicked on searchButton');
+		
 		var grid = this.grid;
 		var store = grid.getStore();
 		var search = grid.down('textfield[name=searchField]').getValue();
-		
-		//create an array and give it to store.search
-		var myArray = []
-		for (i in grid.opt_bar_search_field){
-			var tempObj = {}
-			tempObj[grid.opt_bar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
-			myArray.push(tempObj);
+
+		if (search == '' ){
+			store.clearFilter()
+			//store.load()
+		}else{
+			//create an array and give it to store.search
+			var myArray = []
+			for (i in grid.opt_bar_search_field){
+				var tempObj = {}
+				tempObj[grid.opt_bar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
+				myArray.push(tempObj);
+			}
+			
+			store.search(store.getOrFilter(myArray), false);
 		}
-		
-		store.search(store.getOrFilter(myArray), false);
 		
 		if (grid.pagingbar){
 			grid.pagingbar.moveFirst();
+		}else{
+			store.load()
 		}
 	}
 	
