@@ -34,6 +34,7 @@ Ext.define('canopsis.view.Curves.Form', {
 				allowBlank : false
 			}, {
 				xtype: 'colorfield',
+				colors: global.default_colors,
 				fieldLabel: _('Color'),
 				name: 'color',
 				allowBlank : false
