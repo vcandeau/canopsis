@@ -28,6 +28,8 @@ Ext.define('canopsis.model.curve', {
 		{name : 'aaa_group', 		defaultValue: 'curves_admin' },
 		{name : 'aaa_access_group', defaultValue: ['r', 'w'] },
 		{name : 'aaa_access_other', defaultValue: ['r'] },
-		{name : 'color',			defaultValue: undefined },
+		{name : 'line_color',		defaultValue: undefined },
+		{name : 'area_color',		defaultValue: undefined },
+		{name : 'area_opacity',		defaultValue: undefined, type: 'int'},
 		]
 });

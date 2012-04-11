@@ -57,18 +57,32 @@ Ext.define('canopsis.controller.Curves', {
 		}
 	},
 	
-	getRenderColor: function(metric, index) {
+	getRenderColors: function(metric, index) {
 		if (! index)
 			index = 0
 			
-		var color = global.default_colors[index]
+		var line_color = global.default_colors[index]
+		var area_color = line_color
+		var area_opacity = 75
 		
 		var info = this.getRenderInfo(metric)
 		if (info){
-			color = info.get('color')
+			line_color = info.get('line_color')
+			area_color = info.get('area_color')
+			area_opacity = info.get('area_opacity')
 		}
 		
-		return '#' + color
+		if (line_color)
+			line_color = '#' + line_color
+		else
+			line_color = undefined
+			
+		if (area_color)
+			area_color = '#' + area_color
+		else
+			area_color = undefined
+		
+		return [ line_color, area_color, area_opacity]
 	}
   
 });

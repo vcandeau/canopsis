@@ -35,9 +35,22 @@ Ext.define('canopsis.view.Curves.Form', {
 			}, {
 				xtype: 'colorfield',
 				colors: global.default_colors,
-				fieldLabel: _('Color'),
-				name: 'color',
+				fieldLabel: _('Line Color'),
+				name: 'line_color',
 				allowBlank : false
+			},{
+				xtype: 'colorfield',
+				colors: global.default_colors,
+				fieldLabel: _('Area Color'),
+				name: 'area_color',
+				allowBlank : true
+			},{
+				xtype : 'numberfield',
+				name : "area_opacity",
+				fieldLabel: "Area Opacity (%)",
+				minValue: 1,
+				maxValue: 100,
+				value: 75
 			}],
     
 });
