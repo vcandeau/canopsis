@@ -59,7 +59,7 @@ def generate_report(startTime, stopTime,view_name):
 		fromDate = str(date.fromtimestamp(int(startTime) / 1000))
 		toDate = str(date.fromtimestamp(int(stopTime) / 1000))
 		
-		file_name = '%s_From_%s_To_%s' % (record.name,fromDate,toDate)
+		file_name = '%s_From_%s_To_%s.pdf' % (record.name,fromDate,toDate)
 	except  Exception, err:
 		logger.error(err)
 		name_array = view_name.split('.')

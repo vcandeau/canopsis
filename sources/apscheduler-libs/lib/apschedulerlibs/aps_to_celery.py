@@ -1,4 +1,4 @@
-/*
+#!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -16,30 +16,33 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
-# ---------------------------------
-*/
-Ext.define('canopsis.store.Task', {
-    extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Task',
-	
-	storeId: 'store.Task',
+import logging
 
-	autoLoad: true,
-	autoSync: true,
+#from task_reporting import render_pdf
 
-	proxy: {
-		type: 'rest',
-		url: '/rest/task',
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty  : 'total',
-			successProperty: 'success'
-		},
-		writer: {
-			type: 'json',
-			writeAllFields: false,
-		},
-	},
+logger = logging.getLogger("aps_to_celery")
+
+def launch_celery_task(*args,**kwargs):
+	if kwargs.has_key('task') and kwargs.has_key('method'):
+		try:
+			module = __import__(kwargs['task'])
+			exec "task = module.%s" % kwargs['method']
+			
+			methodargs = kwargs
+			del methodargs['task']
+			del methodargs['method']
+			
+			print(args)
+			print(kwargs)
+			
+			result = task.delay(*args,**methodargs)
+
+			return result
+			
+		except Exception, err:
+			logger.error('%s' % err)
+	else:
+		logger.error('No task given')
+		
 	
-});
+	
