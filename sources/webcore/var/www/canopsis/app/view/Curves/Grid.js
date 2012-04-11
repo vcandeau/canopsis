@@ -36,10 +36,22 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 
 	columns: [
 		{
+			header: _('L'),
 			sortable: false,
 			width: 25,
-			dataIndex: 'color',
+			dataIndex: 'line_color',
 			renderer: rdr_color,
+		},{
+			header: _('A'),
+			sortable: false,
+			width: 25,
+			dataIndex: 'area_color',
+			renderer: rdr_color,
+		},{
+			header: _('O'),
+			sortable: false,
+			width: 25,
+			dataIndex: 'area_opacity',
 		},{
 			header: _('Metric'),
 			flex: 2,
