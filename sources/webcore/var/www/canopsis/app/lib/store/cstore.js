@@ -54,6 +54,10 @@ Ext.define('canopsis.lib.store.cstore', {
 		// For first load
 		this.proxy.extraParams.filter = Ext.JSON.encode(this.baseFilter);
    },
+   
+   clearFilter: function(){
+	   this.proxy.extraParams.filter = undefined
+   },
 
    getFilter : function(){
 	   return this.proxy.extraParams.filter
