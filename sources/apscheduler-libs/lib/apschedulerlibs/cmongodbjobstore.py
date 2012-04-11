@@ -24,8 +24,7 @@ from apscheduler.job import Job
 from datetime import datetime
 
 class CMongoDBJobStore(MongoDBJobStore):
-	def new_load_jobs(self):
-		
+	def load_jobs(self):
 		jobs = []
 		for job_dict in self.collection.find():
 			try:
