@@ -85,6 +85,7 @@ function createApplication(){
 			'Keynav',
 			'Task',
 			'Briefcase',
+			'Curves',
 		],
 	
 		//autoCreateViewport: true,
