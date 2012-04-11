@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+from apscheduler.scheduler import Scheduler
+import logging
+import time
+import string
+import ConfigParser
+
+# Read config file
+def LoadConfig(file):
+	config = {}
+	cp = ConfigParser.ConfigParser()
+	try:
+		cp.read(file)
+		for sec in cp.sections():
+			name = string.lower(sec)
+			for opt in cp.options(sec):
+				config[name + "." + string.lower(opt)] = string.strip(cp.get(sec, opt))
+	except Exception, err:
+		logger.info('No config file (etc/apsd.ini')
+	return config
+
+
+# Logger
+logging.basicConfig(filename='var/log/apsd.log', level=logging.DEBUG,
+	format='%(levelname)s[%(asctime)s]: %(message)s')
+logger = logging.getLogger('APS')
+
+# Init
+sched = Scheduler()
+config_file = "/opt/canopsis/etc/apsd.ini"
+logger.info('Config: %s' % LoadConfig(config_file))
+sched.configure(LoadConfig(config_file))
+c = {
+	"daemonic": "True",
+	"apscheduler.jobstore.cmongodbjobstore.class": "apschedulerlibs.cmongodbjobstore:CMongoDBJobStore",
+	"apscheduler.jobstore.cmongodbjobstore.database": "canopsis",
+	"apscheduler.jobstore.cmongodbjobstore.collection": "task"
+}
+sched.configure(c)
+sched.start()
+
+# Jobs
+@sched.interval_schedule(minutes=1)
+def alarm():
+    print "Hello World"
+
+def main_loop():
+    while 1:
+        time.sleep(0.1)
+
+# Main
+if __name__ == '__main__':
+	sched.print_jobs()
+	try:
+		main_loop()
+	except KeyboardInterrupt:
+		logger.info('Exiting by user request')
+		print('Exiting by user request')
+		sched.shutdown()
+	finally:
+		sched.shutdown()
