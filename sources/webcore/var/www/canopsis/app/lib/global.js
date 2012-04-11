@@ -21,9 +21,9 @@
 var global = {
 	
 	account: undefined,
-	accountCtrl: undefined,
 	
-	reporting : true,
+	accountCtrl: undefined,
+	curvesCtrl: undefined,
 	
 	state_colors: {
 		up: '#50b432',
