@@ -439,8 +439,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			
 		log.debug('    + legend: '+metric_long_name, this.logAuthor)
 		
-		var color = global.default_colors[serie_index]
-
+		var color= global.curvesCtrl.getRenderColor(metric_name, serie_index)
+		
 		var serie = {id: serie_id, name: metric_long_name, data: [], color: color}
 		
 		this.series[serie_id] = serie

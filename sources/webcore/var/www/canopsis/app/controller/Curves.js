@@ -65,10 +65,10 @@ Ext.define('canopsis.controller.Curves', {
 		
 		var info = this.getRenderInfo(metric)
 		if (info){
-			color = '#' + info.get('color')
+			color = info.get('color')
 		}
 		
-		return color
+		return '#' + color
 	}
   
 });
