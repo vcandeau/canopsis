@@ -23,6 +23,10 @@ from apscheduler.job import Job
 
 from datetime import datetime
 
+import logging
+
+logger = logging.getLogger('MongoDbStore')
+
 class CMongoDBJobStore(MongoDBJobStore):
 	def load_jobs(self):
 		jobs = []
@@ -31,11 +35,19 @@ class CMongoDBJobStore(MongoDBJobStore):
 				job = Job.__new__(Job)
 				job_dict['id'] = job_dict.pop('_id')
 				
+				if job_dict.has_key('runs'):
+					job_dict['runs'] = job_dict['runs']
+				else:
+					job_dict['runs'] = 0
+				
+				job_dict['coalesce'] = False
 				job_dict['trigger'] = CronTrigger(**job_dict['trigger'])
 				job_dict['next_run_time'] = job_dict['trigger'].get_next_fire_time(datetime.now())
 				job_dict['args'] = job_dict['args']
 				job_dict['kwargs'] = job_dict['kwargs']
 				job_dict['max_runs'] = None
+				job_dict['max_instances'] = 3
+				job_dict['misfire_grace_time'] = 1
 				job.__setstate__(job_dict)
 				jobs.append(job)
 			except Exception:
