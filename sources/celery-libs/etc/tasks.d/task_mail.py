@@ -1,42 +1,136 @@
 from celery.task import task
 from cinit import cinit
 from caccount import caccount
+from cstorage import cstorage
+from cfile import cfile
 from celerylibs import decorators
+
+import re
+import string
+import smtplib
+from email import Encoders
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email.MIMEMultipart import MIMEMultipart
+from email.Utils import formatdate
 
 init 	= cinit()
 logger	= init.getLogger('Mail Task')
 
 @task
 @decorators.stock_result_in_db
-def send(account=None, recipients=None, subject=None, body=None, attachments=None):
+def send(account=None, recipients=None, subject=None, body=None, attachments=None, smtp_host="localhost", smtp_port=25, html=False):
+	"""
+		account		: caccount or nothing for anon
+		recipients	: str("glehee@capensis.fr"), caccount
+					  list of (caccount or string)
+		subject		: str("My Subject")
+		body		: str("My Body")
+		attachments	: cfile, list of cfile
+		smtp_host	: str("localhost")
+		smtp_port	: int(25)
+		html		: allow html into mail body (booleen)
+	"""
+	###########
+	# Account #
+	###########
+	# Defaults
+	account_firstname = ""
+	account_lastname = ""
+	account_mail = ""
+	account_full_mail = ""
+
 	if isinstance(account, caccount):
-		account = caccount(user='root', group='root')
-		mail = account.mail
-		lastname = account.lastname
-		firstname = account.firstname
+		account_firstname = account.firstname
+		account_lastname = account.lastname
+		account_mail = account.mail
+		if not account_lastname and not account_firstname:
+			account_full_mail = "\"%s\" <%s>" % (account_mail.split('@')[0].title(), account_mail)	
+		else:
+			account_full_mail = account.get_full_mail()
+		if not re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$", account_mail):
+			raise ValueError('Invalid Email format')
 	else:
-		mail = "root@localhost"
-		lastname = "root"
-		firstname = "root"
+		raise Exception('Need caccount object in account')
+	
+	##############
+	# Recipients #
+	##############
+	if not recipients:
+		raise ValueError('Give at least one recipient')
 
 	if not isinstance(recipients, list):
 		recipients = [recipients]
 
-	print(recipients)
 	dests = []
 	for dest in recipients:
-		dests.append(dest)	
+		if isinstance(dest, caccount):
+			dest_firstname = dest.firstname
+			dest_lastname =	dest.lastname
+			dest_mail = dest.mail
+			dest_full_mail = dest.get_full_mail()
 
-	if not isinstance(attachments, list):
-		attachments = [attachments]
+			dests.append(dest_full_mail)	
+		elif isinstance(dest, str):
+			if re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$", dest):
+				dest_mail = dest
+				dest_full_mail = "\"%s\" <%s>" % (dest_mail.split('@')[0].title(), dest_mail)
+				dests.append(dest_full_mail)	
+			else:
+				raise ValueError('Invalid Email format')
+		else:
+			raise ValueError('Invalid Email format')
 
-	files = []
-	for file in attachments:
-		files.append(file)
+	dests_str = ', '.join(dests)
 
-	print('-----')
-	print('From		: "%s %s" <%s>' % (firstname, lastname, mail))
-	print('Subject	: %s' % subject)
-	print('Body		: %s' % body)
-	print('To		: %s' % recipients)
-	print('Attach.	: %s' % files)
+	###############
+	# Attachments #
+	###############
+	if attachments:
+		storage = cstorage(account=account, namespace='object')	
+		if not isinstance(attachments, list):
+			attachments = [attachments]
+
+	########
+	# Send #
+	########
+	logger.debug('-----')
+	logger.debug('From: %s' % account_full_mail)
+	logger.debug('To  : %s' % dests_str)
+	logger.debug('-----')
+	logger.debug('Subject: %s' % subject)
+	logger.debug('Body   : %s' % body)
+	logger.debug('Attach.: %s' % attachments)
+	logger.debug('-----')
+
+	msg = MIMEMultipart()
+	msg["From"] = account_full_mail
+	msg["To"] = dests_str
+	msg["Subject"] = subject
+
+	if html:
+		msg.attach(MIMEText(body, 'html'))
+	else:
+		msg.attach(MIMEText(body, 'plain'))
+
+	msg['Date'] = formatdate(localtime=True)
+
+	if attachments:	
+		for file in attachments:
+			part = MIMEBase('application', "octet-stream")
+			if not isinstance(file, cfile):
+				file.__class__ = cfile
+			meta_file = file.get(storage)
+			content_file = meta_file.read()
+			part.set_payload(content_file)
+			Encoders.encode_base64(part)
+			part.add_header('Content-Disposition', 'attachment; filename="%s"' % meta_file.name)
+			part.add_header('Content-Type', meta_file.content_type)
+			msg.attach(part)
+
+	try:
+		server = smtplib.SMTP(smtp_host, smtp_port)
+		server.sendmail(account_full_mail, dests, msg.as_string())
+		server.quit()
+	except Exception, err:
+		return "Error: unable to send email (%s)" % err
