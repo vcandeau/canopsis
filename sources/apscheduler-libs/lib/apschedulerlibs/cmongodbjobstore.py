@@ -44,21 +44,21 @@ class CMongoDBJobStore(MongoDBJobStore):
 				
 				#try to get interval
 				try:
-					if job_dict['interval'] != {}:
+					if job_dict['interval'] != None:
 						job_dict['trigger'] = IntervalTrigger(timedelta(**job_dict['interval']))
 				except Exception, err:
 					logger.info('No interval : %s' % err)
 				
 				#try to get simple
 				try:
-					if job_dict['date'] != {}:
+					if job_dict['date'] != None:
 						job_dict['trigger'] = SimpleTrigger( datetime(*job_dict['date']))
 				except Exception, err:
 					logger.info('No simple date: %s' % err)
 				
 				#try to get crontab
 				try:
-					if job_dict['cron'] != {}:
+					if job_dict['cron'] != None:
 						job_dict['trigger'] = CronTrigger(**job_dict['cron'])
 				except Exception, err:
 					logger.info('No crontab: %s' % err)

@@ -38,11 +38,18 @@ Ext.define('canopsis.controller.Task', {
 	
 	preSave: function(record,data){
 		record.set('task','task_reporting.render_pdf')
-		
+		record.set('func_ref','apschedulerlibs.aps_to_celery:launch_celery_task')
 		//(filename viewname starttime stoptime account wrapper_conf_file)
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
-		record.set('args',[null,data.view,timeLength,null,global.account.user,null])
+		record.set('kwargs',{
+					viewname:data.view,
+					starttime:timeLength,
+					account:global.account.user,
+					task:'task_reporting',
+					method:'render_pdf',
+					_scheduled: data['_id']
+			})
 		record.set('_id',data['_id'])
 		
 		//--------------formating crontab-----------------------
