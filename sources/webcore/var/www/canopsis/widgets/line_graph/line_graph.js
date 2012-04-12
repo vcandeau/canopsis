@@ -441,6 +441,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		log.debug('    + legend: '+metric_long_name, this.logAuthor)
 		
 		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index)
+		var curve = global.curvesCtrl.getRenderInfo(metric_name)
 		
 		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0] }
 		
@@ -449,15 +450,26 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			serie['fillOpacity'] = colors[2] / 100
 		}
 		
-		console.log(serie)
-		
 		this.series[serie_id] = serie
 		
 		var hcserie = this.chart.addSeries(Ext.clone(serie), false, false)
-
+		hcserie.curve = curve
+		
 		this.series_hc[serie_id] = hcserie
 		
 		return hcserie
+	},
+
+	parseValues: function(serie, values){
+		//Do operation on value
+		if (serie.curve) {
+			var invert = serie.curve.get('invert')
+			for (var index in values){
+				if (invert)
+					values[index][1] = - values[index][1]
+			}
+		}
+		return values
 	},
 
 	addDataOnChart: function(data){
@@ -482,6 +494,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 		
 		var serie_id = serie.options.id
+		
+		values = this.parseValues(serie, values)
 		
 		log.debug('  + Add data for '+node+', metric "'+metric_name+'" ...', this.logAuthor)
 		
