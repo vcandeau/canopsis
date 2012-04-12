@@ -5,7 +5,7 @@ from crecord import crecord
 from cstorage import cstorage
 from cfile import cfile
 from datetime import date
-#from celerylibs import decorators
+from celerylibs import decorators
 import os, sys, json
 import time
 
@@ -13,7 +13,7 @@ init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
-#@decorators.stock_result_in_db
+@decorators.stock_result_in_db
 def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None):
 
 	if viewname is None:
