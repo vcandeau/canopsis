@@ -1,4 +1,9 @@
 from cinit import cinit
+from caccount import caccount
+from cstorage import cstorage
+from crecord import crecord
+import time
+
 
 init 	= cinit()
 logger 	= init.getLogger('Task result to db') 
@@ -20,6 +25,13 @@ def simple_decorator(decorator):
 def stock_result_in_db(func):
 	def wrapper(*args,**kwargs):
 		try:
+			task_name = kwargs['_scheduled']
+			del kwargs['_scheduled']
+		except:
+			task_name = None
+			logger.info('Not scheduled task')
+			
+		try:
 			my_func = func(*args, **kwargs)
 			logger.info('Task successfully done')
 		except Exception, err:
@@ -27,29 +39,62 @@ def stock_result_in_db(func):
 			logger.error(err)
 			my_func = None
 
-		# Check if the task was scheduled
-		if 'periodic_task_id' in kwargs:
-			# Get account/storage
-			if isinstance(args[4],unicode):
-				account = caccount(user=args[4])
+
+		# Get account/storage
+		if isinstance(kwargs['account'],unicode):
+			account = caccount(user=kwargs['account'])
+		else:
+			account = kwargs['account']
+			
+		storage = cstorage(account=account, namespace='task_log')
+		taskStorage = cstorage(account=account, namespace='task')
+		
+		timestamp = int(time.time())
+
+		# The function have succeed ?
+		if my_func:
+			if isinstance(my_func, list):
+				data = my_func
 			else:
-				account = args[4]
+				data = [str(my_func)]
 
-			storage = cstorage(account=account, namespace='task_log')
-
-			# The function have succeed ?
-			if my_func:
-				if isinstance(my_func, list):
-					data = my_func
-				else:
-					data = [my_func]
-
-				timestamp = int(time.time())
-				log = {'success': True,'total':1,'output':'Task done','timestamp':timestamp,'data':data}
+			log = {'success': True,'total':1,'output':'Task done','timestamp':timestamp,'data':data}
+		else:
+			log = {'success': False,'total':1,'output':function_error,'timestamp':timestamp}
+		
+		#Put the log
+		try:
+			#if scheduled
+			if task_name is not None:
+				logger.info('Task scheduled')
+				log_record = crecord(log,name=task_name)
+				
+				#Replace last log with this one
+				try:
+					mfilter = {'name':task_name}
+					search = taskStorage.find_one(mfilter)
+					'''
+					dict_record = search.dump()
+					dict_record['log'] = log
+					taskStorage.put(crecord(raw_record=dict_record))
+					'''
+					search.data['log'] = log
+					taskStorage.put(search)
+					logger.info('Task log updated')
+				except Exception, err:
+					logger.error('Error when put log in task_log %s' % err)
+				
 			else:
-				log = {'success': False,'total':1,'output':function_error,'timestamp':timestamp}
-
-			log_record = crecord(log,name=kwargs['periodic_task_id'])
+				logger.info('Not a scheduled task, put log in db')
+				log_record = crecord(log)
+				
+			#put log in storage
 			storage.put(log_record)
+		except Exception, err:
+			logger.error('Error when put log in task_log %s' % err)
+		
+		
+
+				
 		return my_func
 	return wrapper
