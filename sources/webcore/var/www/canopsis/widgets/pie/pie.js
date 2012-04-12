@@ -90,6 +90,7 @@ Ext.define('widgets.pie.pie' ,{
 				renderTo: this.wcontainerId,
 				defaultSeriesType: 'pie',
 				height: this.getHeight(),
+				reflow: false,
 				animation: false,
 				borderColor: "#FFFFFF"
 			},

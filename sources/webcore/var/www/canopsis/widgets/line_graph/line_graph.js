@@ -147,6 +147,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
 				height: this.getHeight(),
+				reflow: false,
 				animation: false,
 				borderColor: "#FFFFFF",
 				events: {
