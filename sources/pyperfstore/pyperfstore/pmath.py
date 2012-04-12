@@ -115,29 +115,39 @@ def parse_dst(points, dtype, first_point=[]):
 			last_value=0
 			
 			for point in points:
+				
 				value = point[1]
-				
 				timestamp = point[0]
+				
 				previous_timestamp = None
+				previous_value = None
 				
+				## Get previous value and timestamp
 				if i != 0:
-					value -= points[i-1][1]
-					previous_timestamp = points[i-1][0]
+					previous_value 		= points[i-1][1]
+					previous_timestamp	= points[i-1][0]
 				elif i == 0 and first_point:
-					value -= first_point[1]
-					previous_timestamp = first_point[0]
-				else:
-					value = 0
+					previous_value		= first_point[1]
+					previous_timestamp	= first_point[0]
+					
+				## Calcul Value
+				if previous_value:
+					if value > previous_value:
+						value -= previous_value
+					else:
+						value = 0
 				
-				if previous_timestamp and dtype == "DERIVE":
+				## Derive
+				if previous_timestamp and dtype == "DERIVE":	
 					interval = abs(timestamp - previous_timestamp)
 					if interval:
 						value = round(float(value) / interval, 3)
 				
+				## Abs
 				if dtype == "ABSOLUTE":
 					value = abs(value)
 				
-				## if new dca start, value = 0 and no first_point, wait second point ...
+				## if new dca start, value = 0 and no first_point: wait second point ...
 				if dtype == "DERIVE" and i == 0 and not first_point:
 					## Drop this point
 					pass
