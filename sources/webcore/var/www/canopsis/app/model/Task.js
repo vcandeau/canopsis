@@ -29,8 +29,8 @@ Ext.define('canopsis.model.Task', {
 		{name : 'crecord_name'},
 		{name : 'args', defaultsValue : []},
 		{name : 'kwargs' ,defaultsValue : {}},
-		{name : 'date', defaultValue: undefined},
-		{name : 'interval', defaultValue: undefined},
+		//{name : 'date', defaultValue: undefined},
+		//{name : 'interval', defaultValue: undefined},
 		{name : 'cron', defaultValue: undefined},
 		{name : 'log'}
 	],
