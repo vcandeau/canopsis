@@ -153,6 +153,8 @@ def rest_get(namespace, ctype=None, _id=None):
 
 			if data:
 				data['id'] = data['_id']
+				if data.has_key('next_run_time'):
+					data['next_run_time'] = str(data['next_run_time'])
 				output.append(data)
 
 	output={'total': total, 'success': True, 'data': output}
