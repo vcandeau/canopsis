@@ -64,7 +64,7 @@ Ext.define('canopsis.view.Task.Form', {
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			value: 'render_pdf',
+			value: 'task_reporting.render_pdf',
 			disabled : true,
 			store: {
 				xtype: 'store',
@@ -150,7 +150,8 @@ Ext.define('canopsis.view.Task.Form', {
 			displayField: 'text',
 			valueField: 'value',
 			value: 1,
-			//disabled: true,
+			disabled: true,
+			hidden:true,
 			store: {
 				xtype: 'store',
 				fields: ['value', 'text'],
@@ -159,7 +160,7 @@ Ext.define('canopsis.view.Task.Form', {
 		})
 		
 		var dayWeekCombo = Ext.widget('combobox',{
-			name: 'day_of_week',
+			name: 'dayWeek',
 			fieldLabel: _('Day of week'),
 			queryMode: 'local',
 			displayField: 'text',
@@ -231,48 +232,34 @@ Ext.define('canopsis.view.Task.Form', {
 		durationCombo.on('change',function(combo,newValue,oldValue){
 			switch(newValue){
 				case 'day':
-					log.debug('day')
-					dayCombo.setDisabled(true)
-					dayWeekCombo.setDisabled(false)
+					dayCombo.hide().setDisabled(true)
+					dayWeekCombo.show().setDisabled(false)
 					monthCombo.setDisabled(true)
 					break;
 				case 'week':
-					log.debug('week')
-					dayCombo.setDisabled(true)
-					dayWeekCombo.setDisabled(false)
+					dayCombo.hide().setDisabled(true)
+					dayWeekCombo.show().setDisabled(false)
 					monthCombo.setDisabled(true)
 					break;
 				case 'month':
-					dayCombo.setDisabled(false)
-					dayWeekCombo.setDisabled(true)
+					dayCombo.show().setDisabled(false)
+					dayWeekCombo.hide().setDisabled(true)
 					monthCombo.setDisabled(true)
 					break;
 				case 'year':
-					dayCombo.setDisabled(false)
-					dayWeekCombo.setDisabled(true)
+					dayCombo.show().setDisabled(false)
+					dayWeekCombo.hide().setDisabled(true)
 					monthCombo.setDisabled(false)
 					break;
 				default:
 					log.debug('Wrong value')
 					break;
 			}
-			
-			
-			/*
-			if(newValue == 'day'){
-				dayCombo.setDisabled(true)
-			} else {
-				if(dayCombo.isDisabled())
-					dayCombo.setDisabled(false)
-			}
-			* */
 		},this)
 		
-		
-
 		//-----------------------Building------------------------
+		this.items = [this.generalOptions,this.timeOptions,this.reportOptions]
         this.callParent();
-        this.add([this.generalOptions,this.timeOptions,this.reportOptions])
     },
     
 });
