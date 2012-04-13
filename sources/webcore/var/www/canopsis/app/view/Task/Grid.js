@@ -41,7 +41,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			header: _('Name'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'name',
+			dataIndex: 'crecord_name',
 		},{
 			header: _('Action'),
 			flex: 1,
