@@ -52,6 +52,11 @@ Ext.define('canopsis.view.Curves.Form', {
 				maxValue: 100,
 				value: 75
 			},{
+				xtype : 'numberfield',
+				name : "zIndex",
+				fieldLabel: _("zIndex"),
+				value: 0
+			},{
 				xtype: 'checkboxfield',
 				fieldLabel: _("Invert values"),
 				name      : 'invert',
