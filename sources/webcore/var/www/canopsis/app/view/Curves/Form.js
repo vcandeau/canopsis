@@ -32,7 +32,32 @@ Ext.define('canopsis.view.Curves.Form', {
 				fieldLabel: _('Metric name'),
 				name: 'metric',
 				allowBlank : false
-			}, {
+			},{
+				xtype: "combobox",
+				name: "dashStyle",
+				fieldLabel: _("Dash style"),
+				queryMode: "local",
+				displayField: "text",
+				valueField: "value",
+				value: 86400,
+				store: {
+					xtype: "store",
+					fields: ["value", "text"],
+					data : [
+						{value: "Solid",			text: _("Solid")},
+						{value: "ShortDash",		text: _("ShortDash")},
+						{value: "ShortDot",			text: _("ShortDot")},
+						{value: "ShortDashDot",		text: _("ShortDashDot")},
+						{value: "ShortDashDotDot",	text: _("ShortDashDotDot")},
+						{value: "Dot",				text: _("Dot")},
+						{value: "Dash",				text: _("Dash")},
+						{value: "LongDash",			text: _("LongDash")},
+						{value: "DashDot",			text: _("DashDot")},
+						{value: "LongDashDot",		text: _("LongDashDot")},
+						{value: "LongDashDotDot",	text: _("LongDashDotDot")},
+						]
+					}
+			},{
 				xtype: 'colorfield',
 				colors: global.default_colors,
 				fieldLabel: _('Line color'),
@@ -51,6 +76,11 @@ Ext.define('canopsis.view.Curves.Form', {
 				minValue: 1,
 				maxValue: 100,
 				value: 75
+			},{
+				xtype : 'numberfield',
+				name : "zIndex",
+				fieldLabel: _("zIndex"),
+				value: 0
 			},{
 				xtype: 'checkboxfield',
 				fieldLabel: _("Invert values"),
