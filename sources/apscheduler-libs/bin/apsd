@@ -4,30 +4,11 @@ from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
 import logging
 import time
 import string
-import ConfigParser
 
 # Logger
-logging.basicConfig(filename='var/log/apsd.log', level=logging.DEBUG,
+logging.basicConfig(filename='/opt/canopsis/var/log/apsd.log', level=logging.DEBUG,
 	format='%(levelname)s[%(asctime)s]: %(message)s')
 logger = logging.getLogger('APSD')
-
-# Config
-class MyParser(ConfigParser.ConfigParser):
-	def as_dict(self):
-		d = dict(self._sections)
-		for k in d:
-			d[k] = dict(self._defaults, **d[k])
-			d[k].pop('__name__', None)
-		return d
-
-
-config_file = "/opt/canopsis/etc/apsd.ini"
-p = MyParser()
-try:
-	p.read(config_file)
-	config = p.as_dict()
-except Exception, err:
-	logger.info('No config file')
 
 # Init
 sched = Scheduler()
@@ -40,7 +21,6 @@ c = {
 logger.info('Config: %s' % c)
 sched.configure(c)
 sched.start()
-
 
 def main_loop():
 	counter = 0
