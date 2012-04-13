@@ -31,5 +31,6 @@ Ext.define('canopsis.model.curve', {
 		{name : 'line_color',		defaultValue: undefined },
 		{name : 'area_color',		defaultValue: undefined },
 		{name : 'area_opacity',		defaultValue: undefined, type: 'int'},
+		{name : 'invert',			defaultValue: false, type: 'boolean' },
 		]
 });
