@@ -38,7 +38,7 @@ Ext.define('canopsis.controller.Task', {
 	
 	preSave: function(record,data){
 		record.set('task','task_reporting.render_pdf')
-		record.set('func_ref','apschedulerlibs.aps_to_celery:launch_celery_task')
+		//record.set('func_ref','apschedulerlibs.aps_to_celery:launch_celery_task')
 		//(filename viewname starttime stoptime account wrapper_conf_file)
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
