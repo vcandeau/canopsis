@@ -13,7 +13,7 @@ init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
-@decorators.stock_result_in_db
+@decorators.log_task
 def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None):
 
 	if viewname is None:

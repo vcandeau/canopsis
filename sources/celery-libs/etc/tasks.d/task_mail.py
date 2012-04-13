@@ -18,7 +18,7 @@ init 	= cinit()
 logger	= init.getLogger('Mail Task')
 
 @task
-@decorators.stock_result_in_db
+@decorators.log_task
 def send(account=None, recipients=None, subject=None, body=None, attachments=None, smtp_host="localhost", smtp_port=25, html=False):
 	"""
 		account		: caccount or nothing for anon
