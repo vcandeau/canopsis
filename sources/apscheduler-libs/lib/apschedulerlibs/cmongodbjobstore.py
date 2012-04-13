@@ -25,11 +25,18 @@ from datetime import datetime,timedelta
 
 import logging
 
+try:
+    import cPickle as pickle
+except ImportError:  # pragma: nocover
+    import pickle
+
 logger = logging.getLogger('MongoDbStore')
 
 class CMongoDBJobStore(MongoDBJobStore):
 	
-	self.mongo_collection_count = None
+	def __init__(self, database='apscheduler', collection='jobs',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
+		MongoDBJobStore.__init__(self,database=database, collection=collection,connection=connection, pickle_protocol=pickle_protocol)
+		self.mongo_collection_count = None
 	
 	def load_jobs(self):
 		#count on first load
@@ -95,7 +102,7 @@ class CMongoDBJobStore(MongoDBJobStore):
 				logger.exception('Unable to restore job "%s"', job_name)
 		self.jobs = jobs
 
-	def check_and_refresh():
+	def check_and_refresh(self):
 		if self.mongo_collection_count:
 			try:
 				count = self.collection.count()
