@@ -32,15 +32,15 @@ def log_task(func):
 		except:
 			task_name = None
 			logger.info('Not scheduled task')
-			
+		
 		try:
-			my_func = func(*args, **kwargs)
-			logger.info('Task successfully done')
+			result = func(*args, **kwargs)
 			success = True
+			logger.info('Task successfully done')
 		except Exception, err:
-			function_error = err
+			success = False
+			function_error = str(err)
 			logger.error(err)
-			my_func = None
 
 		try:
 			# Get account/storage
@@ -59,14 +59,24 @@ def log_task(func):
 
 		# The function have succeed ?
 		if success:
-			if isinstance(my_func, list):
-				data = my_func
+			if isinstance(result, list):
+				data = result
 			else:
-				data = [str(my_func)]
+				data = [str(result)]
 
-			log = {'success': True,'total':1,'output':'Task done','timestamp':timestamp,'data':data}
+			log = {	'success': True,
+					'total': len(data),
+					'output':'Task done',
+					'timestamp': timestamp,
+					'data': data
+					}
 		else:
-			log = {'success': False,'total':1,'output':function_error,'timestamp':timestamp}
+			log = {	'success': False,
+					'total': 0,
+					'output': [ str(function_error) ],
+					'timestamp':timestamp,
+					'data': []
+				  }
 		
 		#Put the log
 		try:
@@ -100,7 +110,7 @@ def log_task(func):
 			logger.error('Error when put log in task_log %s' % err)
 
 		# Publish Amqp event
-		if log['success']:
+		if success:
 			status=1
 		else:
 			status=0
@@ -123,5 +133,5 @@ def log_task(func):
 		amqp.stop()
 		amqp.join()
 	
-		return my_func
+		return log
 	return wrapper
