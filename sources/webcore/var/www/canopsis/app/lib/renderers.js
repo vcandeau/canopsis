@@ -31,6 +31,13 @@ var rdr_tstodate = function (val) {
 	}
 }
 
+var rdr_boolean = function (val, metadata, record, rowIndex, colIndex, store) {	
+	if (val)
+		return "<span class='icon icon-true' />"
+	else
+		return "<span class='icon icon-false' />"
+}
+
 var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
 	return "<span class='icon icon-state-"+val+"' />"
 }
