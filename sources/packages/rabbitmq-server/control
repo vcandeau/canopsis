@@ -13,6 +13,8 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/var/lib/rabbitmq
+	mkdir -p $PREFIX/var/log/rabbitmq
 }
 
 function pre_remove(){
