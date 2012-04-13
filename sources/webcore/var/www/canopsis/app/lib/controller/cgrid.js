@@ -22,6 +22,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	extend: 'Ext.app.Controller',
 
 	allowEdit: true,
+	
+	EditMethod: "window",
 
 	init: function() {
 		log.debug('[controller][cgrid] - '+this.id+' Initialize ...');
@@ -195,23 +197,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_addButton: function(button) {
 		log.debug('[controller][cgrid] - clicked addButton');
 
-		if (this.formXtype) {
-			var main_tabs = Ext.getCmp('main-tabs')
+		this._showForm()
 
-			log.debug("[controller][cgrid] - Create tab '"+this.formXtype+"'")
-			var form = main_tabs.add({
-				title: '*'+ _('New') +' '+this.modelId,
-				xtype: this.formXtype,
-				closable: true,}).show();
-			
-			this._bindFormEvents(form)
-				
-		}
-
-		if (this.addButton) {
+		if (this.addButton)
 			this.addButton(button)
-		}
-		
 	},
 	
 	_saveForm: function(form) {
@@ -284,11 +273,80 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.formXtype) {
 			var id = form.id
 			log.debug("[controller][cgrid][form] - Close '"+id+"'");
-			form.close()
+			
+			if (form.win)
+				form.win.close()
+			else
+				form.close()
 		}
 
 		if (this.cancelForm) {
 			this.cancelForm(form)
+		}
+	},
+	
+	_showForm: function(item) {
+		log.debug('[controller][cgrid][form] - Show form');
+		
+		if (this.showForm)
+			return this.showForm(item)
+		
+		var id = undefined
+		var data = undefined
+		var editing = false
+		
+		// Edit
+		if (item){
+			id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-form'
+			data = item.data
+			editing = true
+		}
+		
+		if (this.formXtype) {
+			if (this.EditMethod == "tab"){
+				// Create new TAB
+				var main_tabs = Ext.getCmp('main-tabs')
+				var tab = Ext.getCmp(id);
+				
+				if (tab) {
+					log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
+					main_tabs.setActiveTab(tab);
+				}else{
+					log.debug("[controller][cgrid] - Create tab '"+this.formXtype+"'")
+					var form = main_tabs.add({
+						id: id,
+						title: '*'+ _('New') +' '+this.modelId,
+						xtype: this.formXtype,
+						EditMethod: this.EditMethod,
+						editing: editing,
+						record: data,
+						closable: true,
+					}).show();
+					form.win = undefined
+				}
+				
+			}else{
+				// Create new Window
+				log.debug("[controller][cgrid] - Create window '"+this.formXtype+"'")
+				var form = Ext.create('widget.' + this.formXtype, {
+					id: id,
+					EditMethod: this.EditMethod,
+					editing: editing,
+					record: data,
+				})
+				
+				var win = Ext.create('widget.window', {
+					title: this.modelId,
+					items: form,
+					closable: true,
+					closeAction: 'destroy',
+				}).show();
+				form.win = win
+			}
+			
+			this._bindFormEvents(form)
+			return form;
+			
 		}
 	},
 
@@ -298,46 +356,22 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		log.debug('[controller][cgrid] - clicked editRecord');
 
-		if (this.formXtype) {
-			var main_tabs = Ext.getCmp('main-tabs')
-			var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
-			var tab = Ext.getCmp(id);
-			if (tab) {
-				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
-				main_tabs.setActiveTab(tab);
-			}else{
-				log.debug("[controller][cgrid] - Create tab '"+id+"'")
-				var form = main_tabs.add({
-					title: _('Edit')+' '+item.raw.crecord_name,
-					recordName: item.internalId,
-					xtype: this.formXtype,
-					editing: true,
-					record : item.data,
-					id: id,
-					closable: true,
-				}).show();
+		var form = this._showForm(item)
 				
-				
-				
+		if (form){
+			if (this.beforeload_EditForm) {
+				this.beforeload_EditForm(form,item)
+			}
 
-				if (this.beforeload_EditForm) {
-					this.beforeload_EditForm(form,item)
-				}
+			form.loadRecord(item);
 
-				form.loadRecord(item);
-
-				if (this.afterload_EditForm) {
-					this.afterload_EditForm(form,item)
-				}
-
-				this._bindFormEvents(form)
-
+			if (this.afterload_EditForm) {
+				this.afterload_EditForm(form,item)
 			}
 		}	
 		
-		if (this.editRecord) {
-			this.editRecord(view, item, index)
-		}
+		if (this.editRecord)
+			this.editRecord(view, item, index)	
 	},
 	
 	_contextMenu : function(view, rec, node, index, e) {
