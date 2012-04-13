@@ -61,6 +61,7 @@
 	<script type="text/javascript" src="resources/lib/jquery/jquery.min.js"></script>
 	<script type="text/javascript" src="resources/lib/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
 	<script type="text/javascript" src="resources/lib/jqGridable/jqGridable.js"></script>
+	<script type="text/javascript" src="resources/lib/jQuery.encoding.digests.sha1.js"></script>
 	
 	<script type="text/javascript" src="resources/lib/jgauge/js/excanvas.min.js"></script>
 	<script type="text/javascript" src="resources/lib/jgauge/js/jQueryRotate.min.js"></script>
@@ -106,6 +107,7 @@
 			appFolder: 'app',
 			controllers: [
 				'Widgets',
+				'Curves'
 			],
 			launch: function() {
 				this.getController('Widgets').on('loaded', this.createView);
