@@ -64,7 +64,7 @@ Ext.define('canopsis.view.Task.Form', {
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			value: 'render_pdf',
+			value: 'task_reporting.render_pdf',
 			disabled : true,
 			store: {
 				xtype: 'store',
@@ -255,23 +255,11 @@ Ext.define('canopsis.view.Task.Form', {
 					log.debug('Wrong value')
 					break;
 			}
-			
-			
-			/*
-			if(newValue == 'day'){
-				dayCombo.setDisabled(true)
-			} else {
-				if(dayCombo.isDisabled())
-					dayCombo.setDisabled(false)
-			}
-			* */
 		},this)
 		
-		
-
 		//-----------------------Building------------------------
+		this.items = [this.generalOptions,this.timeOptions,this.reportOptions]
         this.callParent();
-        this.add([this.generalOptions,this.timeOptions,this.reportOptions])
     },
     
 });
