@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 from apscheduler.scheduler import Scheduler
+from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
 import logging
 import time
 import string
 import ConfigParser
 
 # Logger
-logging.basicConfig(filename='/opt/canopsis/var/log/apsd.log', level=logging.DEBUG,
+logging.basicConfig(filename='var/log/apsd.log', level=logging.DEBUG,
 	format='%(levelname)s[%(asctime)s]: %(message)s')
 logger = logging.getLogger('APSD')
 
@@ -40,9 +41,17 @@ logger.info('Config: %s' % c)
 sched.configure(c)
 sched.start()
 
+
 def main_loop():
-    while 1:
-        time.sleep(0.1)
+	counter = 0
+	while 1:
+		counter += 1
+		if counter >= 60:
+			counter = 0
+			for js in sched._jobstores:
+				if isinstance(sched._jobstores[js], CMongoDBJobStore):
+					sched._jobstores[js].check_and_refresh()
+		time.sleep(0.1)
 
 # Main
 if __name__ == '__main__':
