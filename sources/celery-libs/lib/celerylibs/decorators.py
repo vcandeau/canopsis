@@ -4,7 +4,8 @@ from cstorage import cstorage
 from crecord import crecord
 
 import time
-import amqp
+from camqp import camqp
+import cevent
 
 init 	= cinit()
 logger 	= init.getLogger('Task result to db') 
@@ -27,7 +28,7 @@ def simple_decorator(decorator):
     return new_decorator
 
 @simple_decorator
-def stock_result_in_db(func):
+def log_task(func):
 	def wrapper(*args,**kwargs):
 		try:
 			task_name = kwargs['_scheduled']
@@ -52,7 +53,7 @@ def stock_result_in_db(func):
 				account = kwargs['account']
 		except:
 			logger.info('No account specified in the task')
-			account=account()
+			account = caccount()
 			
 		storage = cstorage(account=account, namespace='task_log')
 		taskStorage = cstorage(account=account, namespace='task')
@@ -103,14 +104,14 @@ def stock_result_in_db(func):
 
 		# Publish Amqp event
 		event = cevent.forger(
-			connector='celery',
-			connector_name='celery2event',
-			event_type='task',
-			**log
+			connector='celery2event',
+			connector_name='celery2event_name',
+			event_type='log',
+			output=log['output']
 			)	
 		logger.debug('Send Event: %s' % event)
 		key = cevent.get_routingkey(event)
-		amqp.publish(event, key, amqp.exchange.name_events)
+		amqp.publish(event, key, amqp.exchange_name_events)
 	
 		return my_func
 	return wrapper
