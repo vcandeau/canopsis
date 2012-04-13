@@ -32,12 +32,13 @@ def log_task(func):
 		except:
 			task_name = None
 			logger.info('Not scheduled task')
-			
+		
 		try:
 			my_func = func(*args, **kwargs)
-			logger.info('Task successfully done')
 			success = True
+			logger.info('Task successfully done')
 		except Exception, err:
+			success = False
 			function_error = err
 			logger.error(err)
 			my_func = None
