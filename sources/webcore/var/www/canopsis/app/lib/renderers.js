@@ -72,15 +72,18 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 
 var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
 	var output = ''
-/*
+	/*
+	if(val.year && val.month && val)
+
+
 	if(val.day_of_week)
 		output += val.day_of_week.toUpperCase() + ' - '
 	if(val.hour)
 		output += val.hour + ' h '
 	if(val.minute)
 		output += val.minute + ' m '
-*/
-	return output
+	*/
+	return val
 }
 
 var rdr_task_output = function(val, metadata, record, rowIndex, colIndex, store) {
