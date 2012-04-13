@@ -40,6 +40,7 @@ def log_task(func):
 		try:
 			my_func = func(*args, **kwargs)
 			logger.info('Task successfully done')
+			success = True
 		except Exception, err:
 			function_error = err
 			logger.error(err)
@@ -61,7 +62,7 @@ def log_task(func):
 		timestamp = int(time.time())
 
 		# The function have succeed ?
-		if my_func:
+		if success:
 			if isinstance(my_func, list):
 				data = my_func
 			else:
