@@ -40,11 +40,6 @@ logger.info('Config: %s' % c)
 sched.configure(c)
 sched.start()
 
-# Jobs
-@sched.interval_schedule(minutes=1)
-def alarm():
-    print "Hello World"
-
 def main_loop():
     while 1:
         time.sleep(0.1)
