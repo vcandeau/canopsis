@@ -29,6 +29,7 @@ def launch_celery_task(*args,**kwargs):
 			exec "task = module.%s" % kwargs['method']
 			
 			methodargs = kwargs
+
 			del methodargs['task']
 			del methodargs['method']
 			
