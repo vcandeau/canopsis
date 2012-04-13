@@ -309,7 +309,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				var tab = Ext.getCmp(id);
 				
 				if (tab) {
-					log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
+					log.debug("[controller][cgrid] - Tab '"+id+"' allready open, just show it")
 					main_tabs.setActiveTab(tab);
 				}else{
 					log.debug("[controller][cgrid] - Create tab '"+this.formXtype+"'")
@@ -326,22 +326,29 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				}
 				
 			}else{
-				// Create new Window
-				log.debug("[controller][cgrid] - Create window '"+this.formXtype+"'")
-				var form = Ext.create('widget.' + this.formXtype, {
-					id: id,
-					EditMethod: this.EditMethod,
-					editing: editing,
-					record: data,
-				})
+				var form = Ext.getCmp(id);
 				
-				var win = Ext.create('widget.window', {
-					title: this.modelId,
-					items: form,
-					closable: true,
-					closeAction: 'destroy',
-				}).show();
-				form.win = win
+				if (form){
+					log.debug("[controller][cgrid] - Window '"+id+"' allready open, just show it")
+					form.win.show();
+				}else{
+					// Create new Window
+					log.debug("[controller][cgrid] - Create window '"+this.formXtype+"'")
+					var form = Ext.create('widget.' + this.formXtype, {
+						id: id,
+						EditMethod: this.EditMethod,
+						editing: editing,
+						record: data,
+					})
+					
+					var win = Ext.create('widget.window', {
+						title: this.modelId,
+						items: form,
+						closable: true,
+						closeAction: 'destroy',
+					}).show();
+					form.win = win
+				}
 			}
 			
 			this._bindFormEvents(form)
