@@ -22,6 +22,9 @@
 	display: block;
 	width: 16px;
 	height: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
 }
 
 .icon-loading { 
@@ -180,8 +183,16 @@
     background-image: url(../images/icons/application_view_detail.png) !important; 
 }
 
-.icon-mainbar-colorwheel { 
-    background-image: url(../images/icons/color_wheel.png) !important; 
+.icon-mainbar-colors { 
+    background-image: url(../images/icons/color_swatch.png) !important; 
+}
+
+.icon-true { 
+    background-image: url(../images/icons/bullet_green.png) !important; 
+}
+
+.icon-false { 
+    background-image: url(../images/icons/bullet_red.png) !important;
 }
 
 /* state */
@@ -192,35 +203,28 @@
 
 .icon-state-0 { 
     background-image: url(../images/states/0.png) !important;
-    background-position:center; 
-    
 }
 
 .icon-state-1 { 
     background-image: url(../images/states/1.png) !important;
-    background-position:center; 
 }
 
 .icon-state-2 { 
     background-image: url(../images/states/2.png) !important;
-    background-position:center; 
 }
 
 .icon-state-3 { 
-    background-image: url(../images/states/1.png) !important;
-    background-position:center; 
+    background-image: url(../images/states/1.png) !important; 
 }
 
 /*  state_type  */
 
 .icon-state-type-0 { 
     background-image: url(../images/icons/tag_orange.png) !important;
-    background-position:center; 
 }
 
 .icon-state-type-1 { 
     background-image: url(../images/icons/tag_green.png) !important;
-    background-position:center; 
 }
 
 

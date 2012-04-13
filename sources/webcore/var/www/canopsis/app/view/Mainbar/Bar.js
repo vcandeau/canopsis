@@ -130,7 +130,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		if(global.account.user == 'root' || (global.account.groups.indexOf('curves_admin') != -1)){
 			menu_build = menu_build.concat([
 				{
-					iconCls: 'icon-mainbar-colorwheel',
+					iconCls: 'icon-mainbar-colors',
 					text: _('Curves'),
 					action: 'openViewMenu',
 					viewId: 'view.curves'
