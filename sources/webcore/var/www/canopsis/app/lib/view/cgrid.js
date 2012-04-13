@@ -44,7 +44,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	
 	opt_confirmation_delete: true,
 	
-	opt_keynav_del: false,
+	opt_keynav_del: undefined,
 
 	opt_view_element : '',
 
@@ -64,6 +64,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			});
 			this.features.push(groupingFeature);
 		}*/
+		
+		// keynav_del
+		if (this.opt_bar_delete && this.opt_keynav_del == undefined)
+			this.opt_keynav_del = true
 
 		// Set pageSize
 		this.store.pageSize = global.accountCtrl.getConfig('pageSize')
