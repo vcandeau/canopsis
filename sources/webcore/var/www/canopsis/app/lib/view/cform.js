@@ -28,25 +28,45 @@ Ext.define('canopsis.lib.view.cform', {
 	title: '',
 	bodyStyle:'padding:5px 5px 0',
 	border: 0,
+	
+	EditMethod: 'tab',
 
 	defaultType: 'textfield',
-	
-	tbar: [{
-			iconCls: 'icon-save',
-			text: _('Save'),
-			action: 'save',
-		},{
-			iconCls: 'icon-cancel',
-			text: _('Cancel'),
-			action: 'cancel',
-		}
-	],
 
 	logAuthor: '[view][cform]',
 
 	initComponent: function(){
-		this.on('beforeclose', this.beforeclose)
-		//this.tbar =  this.bbar;
+		var tbar = [{
+				iconCls: 'icon-save',
+				text: _('Save'),
+				action: 'save',
+			},{
+				iconCls: 'icon-cancel',
+				text: _('Cancel'),
+				action: 'cancel',
+			}
+		];
+		
+		var bbar = [{
+				iconCls: 'icon-cancel',
+				text: _('Cancel'),
+				action: 'cancel',
+			},
+			{xtype: 'tbfill'},
+			{
+				iconCls: 'icon-save',
+				text: _('Save'),
+				action: 'save',
+				pack: 'end',
+			}
+		];
+		
+		if (this.EditMethod == 'tab'){
+			this.on('beforeclose', this.beforeclose)
+			this.tbar =  tbar;
+		}else{
+			this.bbar =  bbar;
+		}
 		this.callParent();
 	},
     
