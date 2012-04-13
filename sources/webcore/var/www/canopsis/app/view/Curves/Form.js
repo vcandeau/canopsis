@@ -29,28 +29,33 @@ Ext.define('canopsis.view.Curves.Form', {
 				name: 'id',
 				hidden: true,
 			},{
-				fieldLabel: _('Metric'),
+				fieldLabel: _('Metric name'),
 				name: 'metric',
 				allowBlank : false
 			}, {
 				xtype: 'colorfield',
 				colors: global.default_colors,
-				fieldLabel: _('Line Color'),
+				fieldLabel: _('Line color'),
 				name: 'line_color',
 				allowBlank : false
 			},{
 				xtype: 'colorfield',
 				colors: global.default_colors,
-				fieldLabel: _('Area Color'),
+				fieldLabel: _('Area color'),
 				name: 'area_color',
 				allowBlank : true
 			},{
 				xtype : 'numberfield',
 				name : "area_opacity",
-				fieldLabel: "Area Opacity (%)",
+				fieldLabel: _("Area opacity")+" (%)",
 				minValue: 1,
 				maxValue: 100,
 				value: 75
+			},{
+				xtype: 'checkboxfield',
+				fieldLabel: _("Invert values"),
+				name      : 'invert',
+				inputValue: true,
 			}],
     
 });
