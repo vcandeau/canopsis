@@ -215,9 +215,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				var record = Ext.create('canopsis.model.'+this.modelId, data);
 				log.debug('[controller][cgrid][form] - Store record in store');
 				record = this._preSave(record,data,form)
+				store.suspendEvents()
 				store.add(record);
 				this._postSave(record,data)
 				log.debug('[controller][cgrid][form] - Reload store');
+				store.resumeEvents()
 				store.load();
 
 				this._cancelForm(form);
