@@ -28,7 +28,7 @@ def simple_decorator(decorator):
     return new_decorator
 
 @simple_decorator
-def log_task(func):
+def log_task(func):	
 	def wrapper(*args,**kwargs):
 		try:
 			task_name = kwargs['_scheduled']
@@ -111,7 +111,14 @@ def log_task(func):
 			)	
 		logger.debug('Send Event: %s' % event)
 		key = cevent.get_routingkey(event)
+		
+		amqp = camqp()
+		amqp.start()
+		
 		amqp.publish(event, key, amqp.exchange_name_events)
+		
+		amqp.stop()
+		amqp.join()
 	
 		return my_func
 	return wrapper
