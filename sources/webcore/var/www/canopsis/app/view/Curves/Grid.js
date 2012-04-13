@@ -48,6 +48,10 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 			dataIndex: 'area_color',
 			renderer: rdr_color,
 		},{
+			header: _('Line style'),
+			sortable: false,
+			dataIndex: 'dashStyle',
+		},{
 			header: _('Area opacity'),
 			sortable: false,
 			//width: 30,
