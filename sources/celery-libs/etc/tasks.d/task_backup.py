@@ -1,9 +1,11 @@
 from celery.task import task
+from celerylibs import decorators
 from subprocess import Popen, PIPE
 from tempfile import mkdtemp
 import logging, os, shutil
 
 @task
+@decorators.log_task
 def mongo(host='localhost', output='/opt/canopsis/var/backups'):
 	logger = logging.getLogger()
 	logger.debug('Mongo Backup start')
