@@ -232,19 +232,26 @@ Ext.define('canopsis.view.Task.Form', {
 			switch(newValue){
 				case 'day':
 					log.debug('day')
-					dayCombo.setDisabled(false)
-					dayWeekCombo.setDisabled(true)
+					dayCombo.setDisabled(true)
+					dayWeekCombo.setDisabled(false)
+					monthCombo.setDisabled(true)
 					break;
 				case 'week':
 					log.debug('week')
-					dayCombo.setDisabled(false)
-					dayWeekCombo.setDisabled(true)
+					dayCombo.setDisabled(true)
+					dayWeekCombo.setDisabled(false)
+					monthCombo.setDisabled(true)
 					break;
 				case 'month':
+					dayCombo.setDisabled(false)
+					dayWeekCombo.setDisabled(true)
+					monthCombo.setDisabled(true)
 					break;
 				case 'year':
+					dayCombo.setDisabled(false)
+					dayWeekCombo.setDisabled(true)
+					monthCombo.setDisabled(false)
 					break;
-					
 				default:
 					log.debug('Wrong value')
 					break;
