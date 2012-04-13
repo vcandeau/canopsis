@@ -32,5 +32,8 @@ Ext.define('canopsis.model.curve', {
 		{name : 'area_color',		defaultValue: undefined },
 		{name : 'area_opacity',		defaultValue: undefined, type: 'int'},
 		{name : 'invert',			defaultValue: false, type: 'boolean' },
+		{name : 'zIndex',			defaultValue: 0, type: 'int'},
+		{name : 'dashStyle',		defaultValue: "Solid" },
+		
 		]
 });
