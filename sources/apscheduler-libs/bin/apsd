@@ -6,7 +6,7 @@ import string
 import ConfigParser
 
 # Logger
-logging.basicConfig(filename='var/log/apsd.log', level=logging.DEBUG,
+logging.basicConfig(filename='/opt/canopsis/var/log/apsd.log', level=logging.DEBUG,
 	format='%(levelname)s[%(asctime)s]: %(message)s')
 logger = logging.getLogger('APSD')
 
