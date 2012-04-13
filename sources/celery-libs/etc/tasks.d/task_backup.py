@@ -40,6 +40,7 @@ def mongo(host='localhost', output='/opt/canopsis/var/backups'):
 	logger.debug('Mongo Backup finished')
 
 @task
+@decorators.log_task
 def config(output='/opt/canopsis/var/backups'):
 	logger = logging.getLogger()
 	logger.debug('Config Backup start')
