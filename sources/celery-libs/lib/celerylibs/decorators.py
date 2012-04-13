@@ -39,7 +39,7 @@ def log_task(func):
 			logger.info('Task successfully done')
 		except Exception, err:
 			success = False
-			function_error = err
+			function_error = str(err)
 			logger.error(err)
 			my_func = None
 
@@ -65,9 +65,9 @@ def log_task(func):
 			else:
 				data = [str(my_func)]
 
-			log = {'success': True,'total':1,'output':'Task done','timestamp':timestamp,'data':data}
+			log = {'success': True,'total':1,'output':'Task done','timestamp': timestamp, 'data': data}
 		else:
-			log = {'success': False,'total':1,'output':function_error,'timestamp':timestamp}
+			log = {'success': False,'total':1,'output': function_error,'timestamp':timestamp}
 		
 		#Put the log
 		try:
