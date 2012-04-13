@@ -53,6 +53,10 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 			//width: 30,
 			dataIndex: 'area_opacity',
 		},{
+			header: _('zIndex'),
+			sortable: false,
+			dataIndex: 'zIndex',
+		},{
 			header: _('Invert'),
 			sortable: false,
 			//width: 30,

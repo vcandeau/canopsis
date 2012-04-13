@@ -448,6 +448,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if (this.SeriesType == "area"){
 			serie['fillColor'] = colors[1]
 			serie['fillOpacity'] = colors[2] / 100
+			serie['zIndex'] = curve.get('zIndex')
 		}
 		
 		this.series[serie_id] = serie
