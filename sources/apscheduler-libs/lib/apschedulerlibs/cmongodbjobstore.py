@@ -112,5 +112,6 @@ class CMongoDBJobStore(MongoDBJobStore):
 			if self.mongo_collection_count < count:
 				try:
 					self.load_jobs()
+					logger.info('New Task added')
 				except Exception, err:
 					logger.error('Reload jobs failed : %s' % err)
