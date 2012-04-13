@@ -160,7 +160,7 @@ Ext.define('canopsis.view.Task.Form', {
 		})
 		
 		var dayWeekCombo = Ext.widget('combobox',{
-			name: 'day_of_week',
+			name: 'dayWeek',
 			fieldLabel: _('Day of week'),
 			queryMode: 'local',
 			displayField: 'text',
