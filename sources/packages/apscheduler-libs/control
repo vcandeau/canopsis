@@ -4,11 +4,11 @@ NAME="apscheduler-libs"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES=""
+REQUIRES="canohome pkgmgr python celery"
 
-P_ARCH="@P_ARCH@"
-P_DIST="@P_DIST@"
-P_DISTVERS="@P_DISTVERS@"
+NO_ARCH=true
+NO_DIST=true
+NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
