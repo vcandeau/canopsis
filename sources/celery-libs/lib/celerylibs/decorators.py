@@ -10,10 +10,6 @@ import cevent
 init 	= cinit()
 logger 	= init.getLogger('Task result to db') 
 
-global amqp
-amqp = camqp()
-amqp.start()
-
 def simple_decorator(decorator):
     def new_decorator(f):
         g = decorator(f)
