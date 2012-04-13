@@ -44,11 +44,15 @@ def stock_result_in_db(func):
 			logger.error(err)
 			my_func = None
 
-		# Get account/storage
-		if isinstance(kwargs['account'],unicode):
-			account = caccount(user=kwargs['account'])
-		else:
-			account = kwargs['account']
+		try:
+			# Get account/storage
+			if isinstance(kwargs['account'],unicode):
+				account = caccount(user=kwargs['account'])
+			else:
+				account = kwargs['account']
+		except:
+			logger.info('No account specified in the task')
+			account=account()
 			
 		storage = cstorage(account=account, namespace='task_log')
 		taskStorage = cstorage(account=account, namespace='task')
