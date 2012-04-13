@@ -37,9 +37,26 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	preSave: function(record,data){
-		record.set('task','task_reporting.render_pdf')
+		log.debug('displaying input before saving')
+		log.dump(data)
+		
+		if(data.month){
+			log.debug('month : ' + data.month)
+		}
+		
+		if(data.dayWeek){
+			log.debug('day of the week : ' + data.dayWeek)
+		}
+		
+		if(data.day){
+			log.debug('day : ' + data.day)
+		}
+		
+		if(data.hours){
+			log.debug('hours : ' + data.hours)
+		}
+		
 		//record.set('func_ref','apschedulerlibs.aps_to_celery:launch_celery_task')
-		//(filename viewname starttime stoptime account wrapper_conf_file)
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
 		record.set('kwargs',{
