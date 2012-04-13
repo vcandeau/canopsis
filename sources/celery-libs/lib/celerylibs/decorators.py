@@ -103,12 +103,18 @@ def log_task(func):
 			logger.error('Error when put log in task_log %s' % err)
 
 		# Publish Amqp event
+		if log['success']:
+			status=1
+		else:
+			status=0
+
 		event = cevent.forger(
-			connector='celery2event',
-			connector_name='celery2event_name',
+			connector='celery',
+			connector_name='task_log',
 			event_type='log',
-			output=log['output']
-			)	
+			output=log['output'],
+			state=status
+			)
 		logger.debug('Send Event: %s' % event)
 		key = cevent.get_routingkey(event)
 		amqp.publish(event, key, amqp.exchange_name_events)
