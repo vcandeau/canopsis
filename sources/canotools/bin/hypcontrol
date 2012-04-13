@@ -6,7 +6,7 @@ if [ "$1" = "start" ]; then
 	service amqp2mongodb start
 	#service amqp2websocket start
 	service celeryd start
-	service apsq start
+	service apsd start
 	service webserver start
 	service collectd2event start
 	service collectd start
