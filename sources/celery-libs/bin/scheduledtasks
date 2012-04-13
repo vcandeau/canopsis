@@ -61,8 +61,8 @@ def list_mode(account, storage, limit=3):
 def main(argv):
 	try:
 		opts, args = getopt.getopt(	sys.argv[1:], 
-									"r:la:u:g:h",
-									["add=", "remove=", "user=", "group=", "limit=", "help"])
+									"n:r:la:u:g:h",
+									["namespace=", "add=", "remove=", "user=", "group=", "limit=", "help"])
 	except getopt.GetoptError, err:
 		print(err)
 		usage()
