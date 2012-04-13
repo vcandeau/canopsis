@@ -2,11 +2,16 @@ from cinit import cinit
 from caccount import caccount
 from cstorage import cstorage
 from crecord import crecord
-import time
 
+import time
+import amqp
 
 init 	= cinit()
 logger 	= init.getLogger('Task result to db') 
+
+global amqp
+amqp = camqp()
+amqp.start()
 
 def simple_decorator(decorator):
     def new_decorator(f):
@@ -67,12 +72,12 @@ def stock_result_in_db(func):
 		
 		#Put the log
 		try:
-			#if scheduled
-			if task_name is not None:
+			# If scheduled
+			if task_name:
 				logger.info('Task scheduled')
 				log_record = crecord(log,name=task_name)
 				
-				#Replace last log with this one
+				# Replace last log with this one
 				try:
 					mfilter = {'name':task_name}
 					search = taskStorage.find_one(mfilter)
@@ -91,13 +96,21 @@ def stock_result_in_db(func):
 				logger.info('Not a scheduled task, put log in db')
 				log_record = crecord(log)
 				
-			#put log in storage
+			# Put log in storage
 			storage.put(log_record)
 		except Exception, err:
 			logger.error('Error when put log in task_log %s' % err)
-		
-		
 
-				
+		# Publish Amqp event
+		event = cevent.forger(
+			connector='celery',
+			connector_name='celery2event',
+			event_type='task',
+			**log
+			)	
+		logger.debug('Send Event: %s' % event)
+		key = cevent.get_routingkey(event)
+		amqp.publish(event, key, amqp.exchange.name_events)
+	
 		return my_func
 	return wrapper
