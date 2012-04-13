@@ -32,6 +32,7 @@ class camqp(threading.Thread):
 		
 		self.logger = logging.getLogger("camqp")
 		
+		
 		self.host=host
 		self.port=port
 		self.userid=userid
@@ -44,7 +45,7 @@ class camqp(threading.Thread):
 		
 		self.amqp_uri = "amqp://%s:%s@%s:%s/%s" % (self.userid, self.password, self.host, self.port, self.virtual_host)
 		
-		#self.logger.setLevel(logging_level)
+		self.logger.setLevel(logging_level)
 		
 		self.exchange_name_events=exchange_name+".events"
 		self.exchange_name_alerts=exchange_name+".alerts"
