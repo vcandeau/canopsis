@@ -38,36 +38,41 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 		{
 			header: _('Line Color'),
 			sortable: false,
+			align: 'center',
 			//width: 25,
 			dataIndex: 'line_color',
 			renderer: rdr_color,
 		},{
 			header: _('Area color'),
 			sortable: false,
+			align: 'center',
 			//width: 25,
 			dataIndex: 'area_color',
 			renderer: rdr_color,
 		},{
 			header: _('Line style'),
 			sortable: false,
+			align: 'center',
 			dataIndex: 'dashStyle',
 		},{
 			header: _('Area opacity'),
 			sortable: false,
-			//width: 30,
+			align: 'center',
 			dataIndex: 'area_opacity',
 		},{
 			header: _('zIndex'),
 			sortable: false,
+			align: 'center',
 			dataIndex: 'zIndex',
 		},{
 			header: _('Invert'),
 			sortable: false,
-			//width: 30,
+			align: 'center',
 			dataIndex: 'invert',
+			renderer: rdr_boolean,
 		},{
 			header: _('Metric name'),
-			flex: 6,
+			flex: 7,
 			sortable: true,
 			dataIndex: 'metric',
 		}
