@@ -28,11 +28,23 @@ import logging
 logger = logging.getLogger('MongoDbStore')
 
 class CMongoDBJobStore(MongoDBJobStore):
+	
+	self.mongo_collection_count = None
+	
 	def load_jobs(self):
+		#count on first load
+		if self.mongo_collection_count == None:
+			self.mongo_collection_count = self.collection.count()
+		
+		#continue standart execution
 		jobs = []
 		for job_dict in self.collection.find():
 			try:
 				job = Job.__new__(Job)
+				
+				#keep memory of id
+				job_dict_id = job_dict['_id']
+				
 				job_dict['id'] = job_dict.pop('_id')
 				
 				if job_dict.has_key('runs'):
@@ -69,9 +81,29 @@ class CMongoDBJobStore(MongoDBJobStore):
 				job_dict['max_runs'] = None
 				job_dict['max_instances'] = 3
 				job_dict['misfire_grace_time'] = 1
+				
+				job_dict['func_ref'] = 'apschedulerlibs.aps_to_celery:launch_celery_task'
+				
 				job.__setstate__(job_dict)
 				jobs.append(job)
+				
+				#change flag to true
+				self.collection.update({'_id':job_dict_id},{"$set":{'loaded':True}},True)
+				
 			except Exception:
 				job_name = job_dict.get('name', '(unknown)')
 				logger.exception('Unable to restore job "%s"', job_name)
 		self.jobs = jobs
+
+	def check_and_refresh():
+		if self.mongo_collection_count:
+			try:
+				count = self.collection.count()
+			except Exception, err:
+				logger.error('Task count failed : %s' % err)
+				
+			if self.mongo_collection_count < count:
+				try:
+					self.load_jobs()
+				except Exception, err:
+					logger.error('Reload jobs failed : %s' % err)
