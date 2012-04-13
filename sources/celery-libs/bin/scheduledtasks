@@ -48,7 +48,7 @@ def list_mode(account, storage, limit=3):
 		print("      + Method: %s" % record.data['kwargs']['method'])
 		if record.data.has_key('cron'):
 			print("      + Cron: %s" % record.data['cron'])
-		if record.data.has_key('inteval'):
+		if record.data.has_key('interval'):
 			print("      + Interval: %s" % record.data['interval'])
 		if record.data.has_key('date'):
 			print("      + Date: %s" % record.data['date'])
