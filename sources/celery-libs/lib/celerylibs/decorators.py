@@ -2,11 +2,17 @@ from cinit import cinit
 from caccount import caccount
 from cstorage import cstorage
 from crecord import crecord
-import time
 
+import time
+from camqp import camqp
+import cevent
 
 init 	= cinit()
 logger 	= init.getLogger('Task result to db') 
+
+global amqp
+amqp = camqp()
+amqp.start()
 
 def simple_decorator(decorator):
     def new_decorator(f):
@@ -22,7 +28,7 @@ def simple_decorator(decorator):
     return new_decorator
 
 @simple_decorator
-def stock_result_in_db(func):
+def log_task(func):
 	def wrapper(*args,**kwargs):
 		try:
 			task_name = kwargs['_scheduled']
@@ -39,12 +45,15 @@ def stock_result_in_db(func):
 			logger.error(err)
 			my_func = None
 
-
-		# Get account/storage
-		if isinstance(kwargs['account'],unicode):
-			account = caccount(user=kwargs['account'])
-		else:
-			account = kwargs['account']
+		try:
+			# Get account/storage
+			if isinstance(kwargs['account'],unicode):
+				account = caccount(user=kwargs['account'])
+			else:
+				account = kwargs['account']
+		except:
+			logger.info('No account specified in the task')
+			account = caccount()
 			
 		storage = cstorage(account=account, namespace='task_log')
 		taskStorage = cstorage(account=account, namespace='task')
@@ -64,12 +73,12 @@ def stock_result_in_db(func):
 		
 		#Put the log
 		try:
-			#if scheduled
-			if task_name is not None:
+			# If scheduled
+			if task_name:
 				logger.info('Task scheduled')
 				log_record = crecord(log,name=task_name)
 				
-				#Replace last log with this one
+				# Replace last log with this one
 				try:
 					mfilter = {'name':task_name}
 					search = taskStorage.find_one(mfilter)
@@ -88,13 +97,21 @@ def stock_result_in_db(func):
 				logger.info('Not a scheduled task, put log in db')
 				log_record = crecord(log)
 				
-			#put log in storage
+			# Put log in storage
 			storage.put(log_record)
 		except Exception, err:
 			logger.error('Error when put log in task_log %s' % err)
-		
-		
 
-				
+		# Publish Amqp event
+		event = cevent.forger(
+			connector='celery2event',
+			connector_name='celery2event_name',
+			event_type='log',
+			output=log['output']
+			)	
+		logger.debug('Send Event: %s' % event)
+		key = cevent.get_routingkey(event)
+		amqp.publish(event, key, amqp.exchange_name_events)
+	
 		return my_func
 	return wrapper

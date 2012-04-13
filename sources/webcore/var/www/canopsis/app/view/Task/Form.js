@@ -70,7 +70,7 @@ Ext.define('canopsis.view.Task.Form', {
 				xtype: 'store',
 				fields: ['value', 'text'],
 				data : [
-					{value: 'render_pdf', text: _('Reporting')},
+					{value: 'task_reporting.render_pdf', text: _('Reporting')},
 				]
 			}
 		})
@@ -104,16 +104,63 @@ Ext.define('canopsis.view.Task.Form', {
 				data : [
 					{value: 'day', text: _('Day')},
 					{value: 'week', text: _('Week')},
-					//{value: 'month', text: _('Month')},
-					//{value: 'year', text: _('Year')}
+					{value: 'month', text: _('Month')},
+					{value: 'year', text: _('Year')}
 				]
 			}
 		})
 		
+		var monthCombo = Ext.widget('combobox',{
+			name: 'month',
+			fieldLabel: _('Month'),
+			queryMode: 'local',
+			displayField: 'text',
+			valueField: 'value',
+			value: 'january',
+			disabled: true,
+			store: {
+				xtype: 'store',
+				fields: ['value', 'text'],
+				data : [
+					{value: 'january', text: _('January')},
+					{value: 'february', text: _('February')},
+					{value: 'march', text: _('March')},
+					{value: 'April', text: _('April')},
+					{value: 'may', text: _('May')},
+					{value: 'june', text: _('June')},
+					{value: 'july', text: _('July')},
+					{value: 'august', text: _('August')},
+					{value: 'septembre', text: _('September')},
+					{value: 'october', text: _('October')},
+					{value: 'november', text: _('November')},
+					{value: 'december', text: _('December')},
+				]
+			}
+		})
+		
+		var dayData = []
+		for(var i = 1; i < 32; i++){
+			dayData.push({value: i, text: i})
+		}
 		
 		var dayCombo = Ext.widget('combobox',{
 			name: 'day',
 			fieldLabel: _('Day'),
+			queryMode: 'local',
+			displayField: 'text',
+			valueField: 'value',
+			value: 1,
+			//disabled: true,
+			store: {
+				xtype: 'store',
+				fields: ['value', 'text'],
+				data : dayData
+			}
+		})
+		
+		var dayWeekCombo = Ext.widget('combobox',{
+			name: 'day_of_week',
+			fieldLabel: _('Day of week'),
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
@@ -123,13 +170,13 @@ Ext.define('canopsis.view.Task.Form', {
 				xtype: 'store',
 				fields: ['value', 'text'],
 				data : [
-					{value: 'monday', text: _('Monday')},
-					{value: 'tuesday', text: _('Tuesday')},
-					{value: 'wednesday', text: _('Wednesday')},
-					{value: 'thursday', text: _('Thursday')},
-					{value: 'friday', text: _('Friday')},
-					{value: 'satursday', text: _('Satursday')},
-					{value: 'sunday', text: _('Sunday')},
+					{value: 'mon', text: _('Monday')},
+					{value: 'tue', text: _('Tuesday')},
+					{value: 'wed', text: _('Wednesday')},
+					{value: 'thu', text: _('Thursday')},
+					{value: 'fri', text: _('Friday')},
+					{value: 'sat', text: _('Satursday')},
+					{value: 'sun', text: _('Sunday')},
 				]
 			}
 		})
@@ -137,16 +184,13 @@ Ext.define('canopsis.view.Task.Form', {
 		var hoursCombo = Ext.widget('timefield',{
 			name: 'hours',
 			fieldLabel: _('Hours'),
-			//value: '9:00 AM',
-			//minValue: '0:00 AM',
-			//maxValue: '11:45 PM',
 			increment: 3,
 			allowBlank: false,
 			submitFormat: 'G:i',
 			//anchor: '100%'
 		})
 			
-		this.timeOptions.add([durationCombo,dayCombo,hoursCombo])
+		this.timeOptions.add([durationCombo,monthCombo,dayWeekCombo,dayCombo,hoursCombo])
 		
 		//---------------------------Report option----------------------
 
@@ -182,14 +226,49 @@ Ext.define('canopsis.view.Task.Form', {
 		this.reportOptions.add(unitCombo,lengthCombo)
 		
 		//-----------------------Binding Events-------------------
+		
+	
 		durationCombo.on('change',function(combo,newValue,oldValue){
+			switch(newValue){
+				case 'day':
+					log.debug('day')
+					dayCombo.setDisabled(true)
+					dayWeekCombo.setDisabled(false)
+					monthCombo.setDisabled(true)
+					break;
+				case 'week':
+					log.debug('week')
+					dayCombo.setDisabled(true)
+					dayWeekCombo.setDisabled(false)
+					monthCombo.setDisabled(true)
+					break;
+				case 'month':
+					dayCombo.setDisabled(false)
+					dayWeekCombo.setDisabled(true)
+					monthCombo.setDisabled(true)
+					break;
+				case 'year':
+					dayCombo.setDisabled(false)
+					dayWeekCombo.setDisabled(true)
+					monthCombo.setDisabled(false)
+					break;
+				default:
+					log.debug('Wrong value')
+					break;
+			}
+			
+			
+			/*
 			if(newValue == 'day'){
 				dayCombo.setDisabled(true)
 			} else {
 				if(dayCombo.isDisabled())
 					dayCombo.setDisabled(false)
 			}
+			* */
 		},this)
+		
+		
 
 		//-----------------------Building------------------------
         this.callParent();
