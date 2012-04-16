@@ -185,11 +185,22 @@ Ext.define('canopsis.view.Task.Form', {
 		var hoursCombo = Ext.widget('timefield',{
 			name: 'hours',
 			fieldLabel: _('Hours'),
-			increment: 3,
+			increment: 1,
 			allowBlank: false,
 			submitFormat: 'G:i',
 			//anchor: '100%'
 		})
+		
+		//carry the _id for rest service update
+		if(this.editing == true){
+			//log.debug('Editing flag catched')
+			var recordId = Ext.widget('textfield',{
+				name: '_id',
+				allowBlank: false,
+				hidden: true,
+			})
+			this.timeOptions.add(recordId)
+		}
 			
 		this.timeOptions.add([durationCombo,monthCombo,dayWeekCombo,dayCombo,hoursCombo])
 		
