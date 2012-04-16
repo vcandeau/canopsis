@@ -79,37 +79,36 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 
 var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
 	var output = ''
-	/*
-	if(val.year && val.month && val)
-
-
-	if(val.day_of_week)
-		output += val.day_of_week.toUpperCase() + ' - '
-	if(val.hour)
-		output += val.hour + ' h '
-	if(val.minute)
-		output += val.minute + ' m '
-	*/
-	return val
+	if(val != undefined){
+		if(val.hour && val.minute){
+			output += val.hour + ':' + val.minute
+		}
+		
+		if(val.month && val.day){
+			output += '   month : ' + global.numberToMonth[val.month] + '  day : ' + val.day 
+		}
+		
+		if(val.day_of_week){
+			output += '   ' + _('day') + ' : ' + _(val.day_of_week)
+		}
+	}
+	return output
 }
 
 var rdr_task_output = function(val, metadata, record, rowIndex, colIndex, store) {
-	log_dict = val[0]
-	
-	if(val[0] != undefined){
-		if(log_dict.success == true)
-			output = _('Success') + ' - '
-		else
-			output = _('Failed') + ' - '
-		
-		output += log_dict.output
-		ts = new Date(log_dict.timestamp * 1000)
-		output += '  |  ' + Ext.Date.format(ts, "Y-m-d H:i:s") + ' '
-		
-		return output
-	}else{
-		return _('No log found')
+	output = ''
+	if(val != undefined){
+		if(val.success)
+			output += _('Success') + ' : ' + _(val.success) + ' | ' 
+		if(val.output)
+			output += _('Task Output') + ' : ' + val.output + ' | ' 
+		if(val.timestamp){
+			ts = new Date(val.timestamp * 1000)
+			output += Ext.Date.format(ts, "Y-m-d H:i:s") 
+		}
 	}
+	return output
+
 }
 
 //Function for rendering export to pdf button, we haven't find another solution
