@@ -260,7 +260,11 @@ Ext.define('canopsis.lib.view.crights' ,{
 	_load : function(record){
 		log.debug('Loading record values', this.logAuthor)
 		
-		this.title = this.title + ' "'+ record.get('crecord_name') +'"'
+		var crecord_name = record.get('crecord_name')
+		
+		if (crecord_name != undefined)
+			this.title = this.title + ' "'+ crecord_name +'"'
+			
 		/*
 		log.debug('a_owner : ',this.logAuthor)
 		log.dump(record.get('aaa_access_owner'))
