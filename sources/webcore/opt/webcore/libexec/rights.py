@@ -36,9 +36,8 @@ logger = logging.getLogger("rights")
 
 #########################################################################
 
-@get('/rights/:crecord_id', apply=[check_auth])
-def get_rights(crecord_id=None):
-	namespace='object'
+@get('/rights/:namespace/:crecord_id', apply=[check_auth])
+def get_rights(namespace,crecord_id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
@@ -50,9 +49,8 @@ def get_rights(crecord_id=None):
 	else:
 		logger.warning('The record doesn\'t exist')
 	
-@put('/rights/:crecord_id', apply=[check_auth])
-def change_rights(crecord_id=None):
-	namespace='object'
+@put('/rights/:namespace/:crecord_id', apply=[check_auth])
+def change_rights(namespace,crecord_id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	

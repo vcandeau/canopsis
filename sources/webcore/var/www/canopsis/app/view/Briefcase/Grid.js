@@ -30,6 +30,8 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	opt_view_element : true,
 	opt_bar_download: true,
 	
+	opt_db_namespace: 'reports',
+	
 	opt_bar_search: true,
 	opt_bar_search_field: ['file_name'],
 	
