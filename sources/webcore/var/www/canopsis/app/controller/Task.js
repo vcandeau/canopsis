@@ -37,10 +37,7 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	preSave: function(record,data){
-		log.debug('displaying input before saving')
 
-		
-		//record.set('func_ref','apschedulerlibs.aps_to_celery:launch_celery_task')
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
 		record.set('kwargs',{
