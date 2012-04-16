@@ -87,16 +87,15 @@ def log_task(func):
 				
 				# Replace last log with this one
 				try:
-					mfilter = {'name':task_name}
+					mfilter = {'crecord_name':task_name}
 					search = taskStorage.find_one(mfilter)
-					'''
-					dict_record = search.dump()
-					dict_record['log'] = log
-					taskStorage.put(crecord(raw_record=dict_record))
-					'''
-					search.data['log'] = log
-					taskStorage.put(search)
-					logger.info('Task log updated')
+
+					if search:
+						search.data['log'] = log
+						taskStorage.put(search)
+						logger.info('Task log updated')
+					else:
+						logger.error('Task not found in db, can\'t update')
 				except Exception, err:
 					logger.error('Error when put log in task_log %s' % err)
 				
