@@ -49,10 +49,13 @@ Ext.define('canopsis.controller.Task', {
 					_scheduled: false
 			})
 			
-		record.set('_id',data['_id'])
-		log.debug('----------------- the id -------------------------')
-		log.dump(data['_id'])
 		
+		//if id set, means update, so carry it to webserver
+		if(data['_id'] != undefined){
+			record.set('_id',data['_id'])
+			record.set('id',data['_id'])
+
+		}
 		//--------------formating crontab-----------------------
 		var time = data.hours.split(':')
 		
@@ -62,22 +65,18 @@ Ext.define('canopsis.controller.Task', {
 		}
 		
 		if(data.month){
-			log.debug('month : ' + data.month)
+			//log.debug('month : ' + data.month)
 			crontab['month'] = data.month
 		}
 		
 		if(data.dayWeek){
-			log.debug('day of the week : ' + data.dayWeek)
+			//log.debug('day of the week : ' + data.dayWeek)
 			crontab['day_of_week'] = data.dayWeek
 		}
 		
 		if(data.day){
-			log.debug('day : ' + data.day)
+			//log.debug('day : ' + data.day)
 			crontab['day'] = data.day
-		}
-		
-		if(data.hours){
-			log.debug('hours : ' + data.hours)
 		}
 
 		record.set('cron',crontab)
@@ -96,8 +95,8 @@ Ext.define('canopsis.controller.Task', {
 		var cron = item.get('cron')
 		var hours = cron.hour + ':' + cron.minute
 		
-		//set record id
-		log.debug('Before editing, the id : ' + item.get('_id'))
+		//set record id for editing (pass to webserver later for update)
+		//log.debug('Before editing, the id : ' + item.get('_id'))
 		item.set('_id',item.get('_id'))
 		
 		//set view
