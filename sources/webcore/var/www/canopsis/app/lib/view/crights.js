@@ -46,6 +46,8 @@ Ext.define('canopsis.lib.view.crights' ,{
 	opt_group_rights : true,
 	opt_others_rights : true,
 	
+	namespace : 'object',
+	
 	data: undefined,
 	
 	initComponent: function() {
@@ -201,7 +203,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		//ajax request
 		Ext.Ajax.request({
-			url: '/rights/' + record.get('_id'),
+			url: '/rights/' + this.namespace +'/' + record.get('_id'),
 			method: 'PUT',
 			params: params,
 			scope: this,

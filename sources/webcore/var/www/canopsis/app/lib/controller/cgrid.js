@@ -207,7 +207,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.dump(selection)
 		//create form
 		if(this.getController('Account').check_record_right(selection,'w')){
-			var crights = Ext.create('canopsis.lib.view.crights',{data:selection})
+			var crights = Ext.create('canopsis.lib.view.crights',{data:selection,namespace:this.grid.opt_db_namespace})
 			//listen to save event to refresh store
 			crights.on('save', function(){grid.store.load()},this)
 		} else {
