@@ -46,7 +46,7 @@ Ext.define('canopsis.controller.Task', {
 					account:global.account.user,
 					task:'task_reporting',
 					method:'render_pdf',
-					_scheduled: false
+					_scheduled: data.crecord_name
 			})
 			
 		
