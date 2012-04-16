@@ -70,6 +70,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this._deleteButton, this)
 			}
 			
+			//edit rights
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rights]')
+			for (i in btns){
+				btns[i].on('click', this._editRights, this)
+			}
+			
 		}
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
@@ -191,6 +197,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if (this.deleteButton) {
 			this.deleteButton(button, grid, selection);
+		}
+	},
+	
+	_editRights: function(){
+		log.debug('Edit rights',this.logAuthor);
+		var grid = this.grid
+		var selection = grid.getSelectionModel().getSelection()[0];
+		log.dump(selection)
+		//create form
+		if(this.getController('Account').check_record_right(selection,'w')){
+			var crights = Ext.create('canopsis.lib.view.crights',{data:selection})
+			//listen to save event to refresh store
+			crights.on('save', function(){grid.store.load()},this)
+		} else {
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
 		}
 	},
 
