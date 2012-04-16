@@ -42,12 +42,12 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			flex: 1,
 			sortable: true,
 			dataIndex: 'crecord_name',
-		},{
+		},/*{
 			header: _('Action'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'func_ref',
-		},{
+		},*/{
 			header: _('At'),
 			flex: 1,
 			sortable: true,
