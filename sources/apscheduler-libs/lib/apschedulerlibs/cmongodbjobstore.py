@@ -31,7 +31,7 @@ except ImportError:  # pragma: nocover
     import pickle
 
 logger = logging.getLogger('MongoDbStore')
-
+logger.setLevel(logging.DEBUG)
 class CMongoDBJobStore(MongoDBJobStore):
 	
 	def __init__(self, database='apscheduler', collection='jobs',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
@@ -109,9 +109,10 @@ class CMongoDBJobStore(MongoDBJobStore):
 			except Exception, err:
 				logger.error('Task count failed : %s' % err)
 				
-			if self.mongo_collection_count < count:
+			if self.mongo_collection_count != count:
 				try:
 					self.load_jobs()
 					logger.info('New Task added')
+					self.mongo_collection_count = count
 				except Exception, err:
 					logger.error('Reload jobs failed : %s' % err)

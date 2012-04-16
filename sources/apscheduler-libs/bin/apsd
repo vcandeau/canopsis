@@ -32,6 +32,7 @@ def main_loop():
 				if isinstance(sched._jobstores[js], CMongoDBJobStore):
 					logger.info('refreshing mongo db store')
 					sched._jobstores[js].check_and_refresh()
+					sched._wakeup.set()
 		time.sleep(0.1)
 
 # Main
