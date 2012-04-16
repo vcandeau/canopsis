@@ -237,7 +237,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 	
 	_editRights: function(){
-		log.debug('[controller][ctree] - Edit rights',this.logAuthor);
+		log.debug('Edit rights',this.logAuthor);
 		var tree = this.tree
 		var selection = tree.getSelectionModel().getSelection()[0];
 		//create form
