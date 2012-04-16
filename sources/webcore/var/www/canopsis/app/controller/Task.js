@@ -91,10 +91,9 @@ Ext.define('canopsis.controller.Task', {
 		}
 		
 		//---------------get args--------------
-		var args = item.get('args')
-		var viewName = args[1]
-		var timeLength = args[2]
-		
+		var kwargs = item.get('kwargs')
+		var viewName = kwargs['viewname']
+		var timeLength = kwargs['starttime']
 		//--------------get cron---------------
 		var cron = item.get('cron')
 		var hours = cron.hour + ':' + cron.minute
@@ -105,9 +104,16 @@ Ext.define('canopsis.controller.Task', {
 		//set right day if exist
 		if(cron.day_of_week != undefined){
 			item.set('every','week')
-			item.set('day',this.trunc_day_to_day(cron.day_of_week))
-		}else{
-			item.set('every','day')
+			item.set('dayWeek',cron.day_of_week)
+		}
+		
+		if(cron.day != undefined){
+			item.set('day',cron.day)
+		}
+		
+		if(cron.month != undefined){
+			item.set('every','year')
+			item.set('month',cron.month)
 		}
 		
 		item.set('hours',hours)
