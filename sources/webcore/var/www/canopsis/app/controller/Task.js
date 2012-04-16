@@ -46,10 +46,12 @@ Ext.define('canopsis.controller.Task', {
 					account:global.account.user,
 					task:'task_reporting',
 					method:'render_pdf',
-					_scheduled: data['_id']
+					_scheduled: false
 			})
 			
 		record.set('_id',data['_id'])
+		log.debug('----------------- the id -------------------------')
+		log.dump(data['_id'])
 		
 		//--------------formating crontab-----------------------
 		var time = data.hours.split(':')
@@ -85,10 +87,6 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	beforeload_EditForm : function(form,item){
-		var user_textfield = Ext.ComponentQuery.query("#" + form.id + " textfield[name=crecord_name]")[0]
-		if (user_textfield){
-			user_textfield.hide()
-		}
 		
 		//---------------get args--------------
 		var kwargs = item.get('kwargs')
@@ -97,6 +95,10 @@ Ext.define('canopsis.controller.Task', {
 		//--------------get cron---------------
 		var cron = item.get('cron')
 		var hours = cron.hour + ':' + cron.minute
+		
+		//set record id
+		log.debug('Before editing, the id : ' + item.get('_id'))
+		item.set('_id',item.get('_id'))
 		
 		//set view
 		item.set('view',viewName)
@@ -134,6 +136,12 @@ Ext.define('canopsis.controller.Task', {
 		} else {
 			item.set('timeLengthUnit',global.commonTs.day)
 			item.set('timeLength',Math.floor(scale))
+		}
+		
+		//hide task name
+		var task_name_field = Ext.ComponentQuery.query("#" + form.id + " textfield[name=crecord_name]")[0]
+		if(task_name_field != undefined){
+			task_name_field.hide()
 		}
 	},
 
