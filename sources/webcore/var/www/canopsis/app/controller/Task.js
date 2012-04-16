@@ -38,23 +38,7 @@ Ext.define('canopsis.controller.Task', {
 	
 	preSave: function(record,data){
 		log.debug('displaying input before saving')
-		log.dump(data)
-		
-		if(data.month){
-			log.debug('month : ' + data.month)
-		}
-		
-		if(data.dayWeek){
-			log.debug('day of the week : ' + data.dayWeek)
-		}
-		
-		if(data.day){
-			log.debug('day : ' + data.day)
-		}
-		
-		if(data.hours){
-			log.debug('hours : ' + data.hours)
-		}
+
 		
 		//record.set('func_ref','apschedulerlibs.aps_to_celery:launch_celery_task')
 		var timeLength = data.timeLength * data.timeLengthUnit
@@ -67,17 +51,36 @@ Ext.define('canopsis.controller.Task', {
 					method:'render_pdf',
 					_scheduled: data['_id']
 			})
+			
 		record.set('_id',data['_id'])
 		
 		//--------------formating crontab-----------------------
 		var time = data.hours.split(':')
+		
 		var crontab = {
 			minute: time[1],
 			hour: time[0]
 		}
+		
+		if(data.month){
+			log.debug('month : ' + data.month)
+			crontab['month'] = data.month
+		}
+		
+		if(data.dayWeek){
+			log.debug('day of the week : ' + data.dayWeek)
+			crontab['day_of_week'] = data.dayWeek
+		}
+		
+		if(data.day){
+			log.debug('day : ' + data.day)
+			crontab['day'] = data.day
+		}
+		
+		if(data.hours){
+			log.debug('hours : ' + data.hours)
+		}
 
-		if(data.day != undefined)
-			crontab['day_of_week'] = data.day.substring(0,3)
 		record.set('cron',crontab)
 		//------------------------------------------------------
 		
