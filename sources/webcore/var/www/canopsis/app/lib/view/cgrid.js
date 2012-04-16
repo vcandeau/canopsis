@@ -42,6 +42,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_bar_search_field: [],
 	opt_bar_time: false,
 	
+	opt_menu_rights: true,
+	
 	opt_confirmation_delete: true,
 	
 	opt_keynav_del: undefined,
@@ -191,6 +193,16 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 							iconCls: 'icon-copy',
 							text: _('Duplicate'),
 							action: 'duplicate',
+						})
+					)
+				}
+				
+				if(this.opt_menu_rights == true){
+					myArray.push(
+						Ext.create('Ext.Action', {
+							iconCls: 'icon-access',
+							text: _('Rights'),
+							action: 'rights',
 						})
 					)
 				}
