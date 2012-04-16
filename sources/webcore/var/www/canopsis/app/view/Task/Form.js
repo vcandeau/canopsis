@@ -185,7 +185,7 @@ Ext.define('canopsis.view.Task.Form', {
 		var hoursCombo = Ext.widget('timefield',{
 			name: 'hours',
 			fieldLabel: _('Hours'),
-			increment: 3,
+			increment: 1,
 			allowBlank: false,
 			submitFormat: 'G:i',
 			//anchor: '100%'

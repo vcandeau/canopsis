@@ -52,13 +52,19 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			flex: 1,
 			sortable: true,
 			dataIndex: 'cron',
-			//renderer: rdr_task_timedelta,
+			renderer: rdr_task_timedelta,
 		},{
 			header: _('Last run'),
 			flex: 3,
 			sortable: true,
 			dataIndex: 'log',
 			renderer: rdr_task_output,
+		},{
+			header: _('Loaded'),
+			flex: 1,
+			//sortable: true,
+			dataIndex: 'loaded',
+			//renderer: rdr_task_output,
 		}
 	],
 
