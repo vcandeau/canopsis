@@ -8,6 +8,8 @@ from celerylibs import decorators
 import re
 import string
 import smtplib
+import socket
+
 from email import Encoders
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -43,7 +45,11 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 	if isinstance(account, caccount):
 		account_firstname = account.firstname
 		account_lastname = account.lastname
-		account_mail = account.mail
+		try:
+			account_mail = account.mail
+		except Exception, err:
+			raise ValueError('Account must have mail to send mail')
+
 		if not account_lastname and not account_firstname:
 			account_full_mail = "\"%s\" <%s>" % (account_mail.split('@')[0].title(), account_mail)	
 		else:
@@ -127,6 +133,12 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 			part.add_header('Content-Disposition', 'attachment; filename="%s"' % meta_file.name)
 			part.add_header('Content-Type', meta_file.content_type)
 			msg.attach(part)
+
+	s = socket.socket()
+	try:
+    	s.connect((smtp_host, smtp_port)) 
+	except Exception, e:
+    	raise Exception('something\'s wrong with %s:%d. Exception type is %s' % (smtp_host, smtp_port, `e`))
 
 	try:
 		server = smtplib.SMTP(smtp_host, smtp_port)
