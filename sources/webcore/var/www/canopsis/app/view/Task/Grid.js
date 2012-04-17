@@ -60,8 +60,9 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			dataIndex: 'loaded',
 		},{
 			header: _('Mailing'),
-			flex: 1,
+			flex: 3,
 			dataIndex: 'mail',
+			renderer: rdr_mail_information
 		}
 	],
 

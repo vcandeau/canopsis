@@ -126,3 +126,14 @@ var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, stor
 		return output
 	}
 }
+
+var rdr_mail_information = function(val, metadata, record, rowIndex, colIndex, store,view){
+	if(val == false)
+		return _('This task is not send by mail')
+		
+	output = ''
+	if(val.recipients != undefined)
+		output += 'Recipients : ' + val.recipients
+		
+	return output
+}
