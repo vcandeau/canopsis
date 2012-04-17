@@ -77,14 +77,21 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		id = put_in_grid_fs(file_path, filename, account)
 		logger.debug('Remove tmp report file')
 		os.remove(file_path)
+
+		
 		
 		if isinstance(mail, dict):
+			#get cfile
+			reportStorage = cstorage(account=account, namespace='reports')
+			meta = reportStorage.get(id)
+			meta.__class__ = cfile
+			
 			try:
 				task_mail.send.subtask(kwargs={
 												"account":account,
-												"recipients":"illusivedata@gmail.com",
 												"subject":"truc",
 												"body":"wazza",
+												"attachments":meta
 												}).delay()
 			except Exception, err:
 				logger.error('Mail delivery failed : %s' % err)
