@@ -1,4 +1,5 @@
 from celery.task import task
+from celery.task.sets import subtask
 from cinit import cinit
 from caccount import caccount
 from crecord import crecord
@@ -6,15 +7,19 @@ from cstorage import cstorage
 from cfile import cfile
 from datetime import date
 from celerylibs import decorators
-import os, sys, json
+import os, sys, json 
 import time
+
+#TEST
+import task_node
+import task_mail
 
 init 	= cinit()
 logger 	= init.getLogger('Reporting Task') 
 
 @task
 @decorators.log_task
-def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None):
+def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None):
 
 	if viewname is None:
 		raise ValueError("task_render_pdf : you must at least provide a viewname")
@@ -72,6 +77,18 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		id = put_in_grid_fs(file_path, filename, account)
 		logger.debug('Remove tmp report file')
 		os.remove(file_path)
+		
+		if isinstance(mail, dict):
+			try:
+				task_mail.send.subtask(kwargs={
+												"account":account,
+												"recipients":"illusivedata@gmail.com",
+												"subject":"truc",
+												"body":"wazza",
+												}).delay()
+			except Exception, err:
+				logger.error('Mail delivery failed : %s' % err)
+			
 		return id
 	except Exception, err:
 		logger.error(err)
