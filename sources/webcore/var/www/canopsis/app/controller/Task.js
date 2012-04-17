@@ -37,9 +37,6 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	preSave: function(record,data){
-		log.dump('-------------------------')
-		log.dump(data)
-		log.dump('-------------------------')
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
 		//--------------------------set kwargs----------------------------
@@ -80,20 +77,17 @@ Ext.define('canopsis.controller.Task', {
 			hour: time[0]
 		}
 		
-		if(data.month){
-			//log.debug('month : ' + data.month)
+		if(data.month)
 			crontab['month'] = data.month
-		}
 		
-		if(data.dayWeek){
-			//log.debug('day of the week : ' + data.dayWeek)
+		
+		if(data.dayWeek)
 			crontab['day_of_week'] = data.dayWeek
-		}
 		
-		if(data.day){
-			//log.debug('day : ' + data.day)
+		
+		if(data.day)
 			crontab['day'] = data.day
-		}
+		
 
 		record.set('cron',crontab)
 		//------------------------------------------------------
