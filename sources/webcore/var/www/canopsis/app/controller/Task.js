@@ -37,10 +37,12 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	preSave: function(record,data){
-
+		log.dump('-------------------------')
+		log.dump(data)
+		log.dump('-------------------------')
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
-		//-----------------------set kwargs----------------------------
+		//--------------------------set kwargs----------------------------
 		var kwargs = {
 					viewname:data.view,
 					starttime:timeLength,
@@ -49,14 +51,18 @@ Ext.define('canopsis.controller.Task', {
 					method:'render_pdf',
 					_scheduled: data.crecord_name
 				}
-				
-		if (data.mail != undefined){
-			var mail = {
-				"recipients":"illusivedata@gmail.com",
-				"subject":"truc",
-				"body":"wazza",
+		
+		//check if a mail must be send
+		if (data.sendMail != undefined){
+			if(data.recipients != ''){
+				log.debug('sendMail is true')
+				var mail = {
+					"recipients":data.recipients,
+					"subject":data.subject,
+					"body":"Scheduled task reporting",
+				}
+				kwargs['mail'] = mail
 			}
-			kwargs['mail'] = mail
 		}
 		
 		record.set('kwargs',kwargs)
@@ -68,7 +74,7 @@ Ext.define('canopsis.controller.Task', {
 			record.set('id',data['_id'])
 
 		}
-		//--------------formating crontab-----------------------
+		//----------------------formating crontab-----------------------
 		var time = data.hours.split(':')
 		
 		var crontab = {
@@ -108,7 +114,6 @@ Ext.define('canopsis.controller.Task', {
 		var hours = cron.hour + ':' + cron.minute
 		
 		//set record id for editing (pass to webserver later for update)
-		//log.debug('Before editing, the id : ' + item.get('_id'))
 		item.set('_id',item.get('_id'))
 		
 		//set view
