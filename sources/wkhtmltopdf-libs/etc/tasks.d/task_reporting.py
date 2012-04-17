@@ -32,7 +32,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	
 	#check if the account is just a name or a real caccount
 	if isinstance(account ,str) or isinstance(account ,unicode):
-		account = caccount(user='root',group='root')
+		account = caccount(user='root',group='root',mail='root@localhost.local')
 		
 	#set stop time
 	if stoptime is None:
@@ -78,14 +78,20 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		logger.debug('Remove tmp report file')
 		os.remove(file_path)
 		
+		#Subtask mail (if needed)
 		if isinstance(mail, dict):
+			#get cfile
 			try:
-				task_mail.send.subtask(kwargs={
-												"account":account,
-												"recipients":"illusivedata@gmail.com",
-												"subject":"truc",
-												"body":"wazza",
-												}).delay()
+				reportStorage = cstorage(account=account, namespace='reports')
+				meta = reportStorage.get(id)
+				meta.__class__ = cfile
+			except Exception, err:
+				logger.error('Error while fetching cfile : %s' % err)
+			
+			try:
+				mail['account'] = account
+				mail['attachments'] = meta
+				task_mail.send.subtask(kwargs=mail).delay()
 			except Exception, err:
 				logger.error('Mail delivery failed : %s' % err)
 			
