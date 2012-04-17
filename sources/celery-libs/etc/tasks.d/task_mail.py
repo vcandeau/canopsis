@@ -136,9 +136,9 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 
 	s = socket.socket()
 	try:
-    	s.connect((smtp_host, smtp_port)) 
+		s.connect((smtp_host, smtp_port)) 
 	except Exception, e:
-    	raise Exception('something\'s wrong with %s:%d. Exception type is %s' % (smtp_host, smtp_port, `e`))
+		raise Exception('something\'s wrong with %s:%d. Exception type is %s' % (smtp_host, smtp_port, `e`))
 
 	try:
 		server = smtplib.SMTP(smtp_host, smtp_port)
