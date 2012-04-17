@@ -24,7 +24,6 @@ Ext.define('canopsis.model.Task', {
 		{name: '_id'},
 		{name: 'id', mapping:'_id'},
 		{name : 'crecord_type', defaultValue: 'schedule'},
-		{name: 'mail'},
 		{name : 'func_ref'},
 		{name : 'loaded', defaultValue:false},
 		{name : 'crecord_name'},
@@ -33,6 +32,18 @@ Ext.define('canopsis.model.Task', {
 		//{name : 'date', defaultValue: undefined},
 		//{name : 'interval', defaultValue: undefined},
 		{name : 'cron', defaultValue: undefined},
-		{name : 'log'}
+		{name : 'log'},
+		{
+		 name: 'mail',
+		 convert: function(value, record) {
+					var kwargs = record.get('kwargs')
+					if(kwargs['mail'] != undefined){
+						var mail = kwargs['mail']
+						return mail
+					}else{
+						return false
+					}
+				}
+		},
 	],
 });
