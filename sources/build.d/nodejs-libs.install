@@ -1,0 +1,36 @@
+NAME="nodejs-libs"
+
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function add_to_cache(){
+	cp $1 $PREFIX/tmp/nodejs-libs
+	chown canopsis:canopsis $PREFIX/tmp/nodejs-libs/$1
+	su - canopsis -c "npm cache add $PREFIX/tmp/nodejs-libs/$1"
+}
+
+function install(){
+	cd $SRC_PATH/externals
+
+	mkdir -p $PREFIX/tmp/nodejs-libs
+	chown canopsis:canopsis $PREFIX/tmp/nodejs-libs
+
+	add_to_cache socket.io-0.9.5.tgz
+	add_to_cache socket.io-client-0.9.5.tgz
+	add_to_cache redis-0.6.7.tgz
+	add_to_cache policyfile-0.0.4.tgz
+	add_to_cache xmlhttprequest-1.2.2.tgz
+	add_to_cache uglify-js-1.2.5.tgz
+	add_to_cache active-x-obfuscator-0.0.1.tgz
+	add_to_cache ws-0.4.13.tgz
+	add_to_cache zeparser-0.0.5.tgz
+	add_to_cache options-0.0.3.tgz
+	add_to_cache commander-0.5.2.tgz
+  check_code $?
+}
+
+function install2(){
+	su - canopsis -c 'npm install socket.io-0.9.5'
+	su - canopsis -c 'npm cache clean'
+	rm -r $PREFIX/tmp/nodejs-libs
+}
