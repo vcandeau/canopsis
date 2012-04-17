@@ -80,17 +80,17 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
 	var output = ''
 	if(val != undefined){
-		if(val.hour && val.minute){
+		if(val.hour && val.minute)
 			output += val.hour + ':' + val.minute
-		}
 		
-		if(val.month && val.day){
-			output += '   month : ' + global.numberToMonth[val.month] + '  day : ' + val.day 
-		}
 		
-		if(val.day_of_week){
-			output += '   ' + _('day') + ' : ' + _(val.day_of_week)
-		}
+		if(val.month && val.day)
+			output += '   |    month : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day 
+		
+		
+		if(val.day_of_week)
+			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week)
+		
 	}
 	return output
 }
@@ -107,8 +107,11 @@ var rdr_task_output = function(val, metadata, record, rowIndex, colIndex, store)
 			output += Ext.Date.format(ts, "Y-m-d H:i:s") 
 		}
 	}
-	return output
-
+	
+	if(output == '')
+		return _('No previous logs')
+	else
+		return output
 }
 
 //Function for rendering export to pdf button, we haven't find another solution
@@ -125,4 +128,15 @@ var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, stor
 		)
 		return output
 	}
+}
+
+var rdr_mail_information = function(val, metadata, record, rowIndex, colIndex, store,view){
+	if(val == false)
+		return _('This task is not send by mail')
+		
+	output = ''
+	if(val.recipients != undefined)
+		output += _('Recipients :') + ' ' + val.recipients
+		
+	return output
 }

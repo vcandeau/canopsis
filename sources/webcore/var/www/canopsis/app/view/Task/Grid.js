@@ -30,14 +30,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 	opt_menu_delete: true,
 
 	columns: [
-	/*	{
-			header: '',
-			//width: 25,
-			flex : 1,
-			sortable: false,
-			//renderer: rdr_crecord_type,
-	        dataIndex: 'crecord_type',
-		},*/{
+		{
 			header: _('Name'),
 			flex: 1,
 			sortable: true,
@@ -56,8 +49,14 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			renderer: rdr_task_output,
 		},{
 			header: _('Loaded'),
-			flex: 1,
+			width: 55,
 			dataIndex: 'loaded',
+			renderer: rdr_boolean
+		},{
+			header: _('Mailing'),
+			flex: 3,
+			dataIndex: 'mail',
+			renderer: rdr_mail_information
 		}
 	],
 

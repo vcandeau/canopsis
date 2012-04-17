@@ -37,18 +37,31 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	preSave: function(record,data){
-
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
-		record.set('kwargs',{
+		//--------------------------set kwargs----------------------------
+		var kwargs = {
 					viewname:data.view,
 					starttime:timeLength,
 					account:global.account.user,
 					task:'task_reporting',
 					method:'render_pdf',
 					_scheduled: data.crecord_name
-			})
-			
+				}
+		
+		//check if a mail must be send
+		if (data.sendMail != undefined){
+			if(data.recipients != '' && data.recipients != undefined){
+				log.debug('sendMail is true')
+				var mail = {
+					"recipients":data.recipients,
+					"subject":data.subject,
+					"body":"Scheduled task reporting",
+				}
+				kwargs['mail'] = mail
+			}
+		}
+		record.set('kwargs',kwargs)
 		
 		//if id set, means update, so carry it to webserver
 		if(data['_id'] != undefined){
@@ -56,7 +69,7 @@ Ext.define('canopsis.controller.Task', {
 			record.set('id',data['_id'])
 
 		}
-		//--------------formating crontab-----------------------
+		//----------------------formating crontab-----------------------
 		var time = data.hours.split(':')
 		
 		var crontab = {
@@ -64,20 +77,17 @@ Ext.define('canopsis.controller.Task', {
 			hour: time[0]
 		}
 		
-		if(data.month){
-			//log.debug('month : ' + data.month)
+		if(data.month)
 			crontab['month'] = data.month
-		}
 		
-		if(data.dayWeek){
-			//log.debug('day of the week : ' + data.dayWeek)
+		
+		if(data.dayWeek)
 			crontab['day_of_week'] = data.dayWeek
-		}
 		
-		if(data.day){
-			//log.debug('day : ' + data.day)
+		
+		if(data.day)
 			crontab['day'] = data.day
-		}
+		
 
 		record.set('cron',crontab)
 		//------------------------------------------------------
@@ -96,7 +106,6 @@ Ext.define('canopsis.controller.Task', {
 		var hours = cron.hour + ':' + cron.minute
 		
 		//set record id for editing (pass to webserver later for update)
-		//log.debug('Before editing, the id : ' + item.get('_id'))
 		item.set('_id',item.get('_id'))
 		
 		//set view
