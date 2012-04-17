@@ -218,6 +218,7 @@ Ext.define('canopsis.view.Task.Form', {
 			name: 'timeLengthUnit',
 			queryMode: 'local',
 			displayField: 'text',
+			width: 90,
 			valueField: 'value',
 			padding: '0 0 5 5',
 			value: global.commonTs.day,
