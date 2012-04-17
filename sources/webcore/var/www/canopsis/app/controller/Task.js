@@ -40,14 +40,26 @@ Ext.define('canopsis.controller.Task', {
 
 		var timeLength = data.timeLength * data.timeLengthUnit
 		
-		record.set('kwargs',{
+		//-----------------------set kwargs----------------------------
+		var kwargs = {
 					viewname:data.view,
 					starttime:timeLength,
 					account:global.account.user,
 					task:'task_reporting',
 					method:'render_pdf',
 					_scheduled: data.crecord_name
-			})
+				}
+				
+		if (data.mail != undefined){
+			var mail = {
+				"recipients":"illusivedata@gmail.com",
+				"subject":"truc",
+				"body":"wazza",
+			}
+			kwargs['mail'] = mail
+		}
+		
+		record.set('kwargs',kwargs)
 			
 		
 		//if id set, means update, so carry it to webserver
