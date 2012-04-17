@@ -87,6 +87,7 @@ class CMongoDBJobStore(MongoDBJobStore):
 				job_dict['kwargs'] = job_dict['kwargs']
 				job_dict['max_runs'] = None
 				job_dict['max_instances'] = 3
+				job_dict['name'] = job_dict['crecord_name']
 				job_dict['misfire_grace_time'] = 1
 				
 				job_dict['func_ref'] = 'apschedulerlibs.aps_to_celery:launch_celery_task'
