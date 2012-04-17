@@ -80,17 +80,17 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
 	var output = ''
 	if(val != undefined){
-		if(val.hour && val.minute){
+		if(val.hour && val.minute)
 			output += val.hour + ':' + val.minute
-		}
 		
-		if(val.month && val.day){
+		
+		if(val.month && val.day)
 			output += '   month : ' + global.numberToMonth[val.month] + '  day : ' + val.day 
-		}
 		
-		if(val.day_of_week){
+		
+		if(val.day_of_week)
 			output += '   ' + _('day') + ' : ' + _(val.day_of_week)
-		}
+		
 	}
 	return output
 }
