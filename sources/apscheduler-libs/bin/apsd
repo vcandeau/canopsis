@@ -5,10 +5,12 @@ import logging
 import time
 import string
 
+from cinit import cinit
+
 # Logger
-logging.basicConfig(filename='/opt/canopsis/var/log/apsd.log', level=logging.DEBUG,
-	format='%(levelname)s[%(asctime)s]: %(message)s')
-logger = logging.getLogger('APSD')
+init 	= cinit()
+logger 	= init.getLogger('apsd')
+handler = init.getHandler(logger)
 
 # Init
 sched = Scheduler()
@@ -28,7 +30,7 @@ sched.start()
 
 def main_loop():
 	counter = 0
-	while 1:
+	while handler.RUN:
 		counter += 1
 		if counter >= refresh_interval*600:
 			logger.info('Refresh Mongodb jobstore')
@@ -46,7 +48,5 @@ if __name__ == '__main__':
 		main_loop()
 	except KeyboardInterrupt:
 		logger.info('Exiting by user request')
-		print('Exiting by user request')
-		sched.shutdown()
-	finally:
-		sched.shutdown()
+		
+	sched.shutdown()
