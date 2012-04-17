@@ -54,7 +54,7 @@ Ext.define('canopsis.controller.Task', {
 		
 		//check if a mail must be send
 		if (data.sendMail != undefined){
-			if(data.recipients != ''){
+			if(data.recipients != '' && data.recipients != undefined){
 				log.debug('sendMail is true')
 				var mail = {
 					"recipients":data.recipients,
@@ -64,9 +64,7 @@ Ext.define('canopsis.controller.Task', {
 				kwargs['mail'] = mail
 			}
 		}
-		
 		record.set('kwargs',kwargs)
-			
 		
 		//if id set, means update, so carry it to webserver
 		if(data['_id'] != undefined){
