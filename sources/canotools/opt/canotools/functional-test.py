@@ -21,6 +21,8 @@
 import unittest
 import time, json, logging, sys
 import cevent
+import uuid
+import re
 from camqp import camqp
 from cstorage import cstorage
 from crecord import crecord
@@ -29,6 +31,8 @@ from pyperfstore import node
 from pyperfstore import mongostore
 from cwebservices import cwebservices
 from ctools import parse_perfdata
+
+from subprocess import Popen
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
@@ -149,6 +153,38 @@ class KnownValues(unittest.TestCase):
 		
 		if not len(records):
 			raise Exception("Collectd2event don't work ...")
+
+	def test_80_Check_Aps(self):
+		account = caccount(user="root", group="root")
+		storage = cstorage(account=account, namespace="task")
+
+		task_uuid = str(uuid.uuid4())	
+
+		data = json.loads('{"name": "%s","interval": {"seconds":1},"args": [],"kwargs":{"task":"task_node","method":"hostname"},"func_ref":"apschedulerlibs.aps_to_celery:launch_celery_task"}' % task_uuid)
+
+		record = crecord(account=account, storage=storage, data=data)
+
+		id = storage.put(record)
+		res = Popen(['service', 'apsd', 'restart'])
+		res.wait()
+
+		time.sleep(1)
+		found = False
+
+		regexp = re.compile('Job "%s \(trigger: interval\[0:00:01\], next run at: (.*)\)" executed successfully' % task_uuid)
+
+		for line in open("var/log/apsd.log"):
+			if regexp.search(line):
+				found = True
+
+		if not found:
+			raise Exception("Task not successfully added or executed")
+
+		storage.remove(id)		
+		res = Popen(['service', 'apsd', 'restart'])
+		res.wait()
+
+		time.sleep(1)
 
 	def test_99_Disconnect(self):
 		clean()
