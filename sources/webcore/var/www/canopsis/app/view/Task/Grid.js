@@ -56,8 +56,9 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			renderer: rdr_task_output,
 		},{
 			header: _('Loaded'),
-			flex: 1,
+			width: 55,
 			dataIndex: 'loaded',
+			renderer: rdr_boolean
 		},{
 			header: _('Mailing'),
 			flex: 3,
