@@ -30,14 +30,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 	opt_menu_delete: true,
 
 	columns: [
-	/*	{
-			header: '',
-			//width: 25,
-			flex : 1,
-			sortable: false,
-			//renderer: rdr_crecord_type,
-	        dataIndex: 'crecord_type',
-		},*/{
+		{
 			header: _('Name'),
 			flex: 1,
 			sortable: true,
