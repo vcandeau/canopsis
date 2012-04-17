@@ -50,6 +50,13 @@ Ext.define('canopsis.view.Task.Form', {
 			layout: 'hbox',
 			collapsible: false,
 		})
+		
+		this.mailingOptions = Ext.widget('fieldset',{
+			xtype: 'fieldset',
+			title: _('Mailing Options'),
+			//layout: 'hbox',
+			collapsible: false,
+		})
 		//-----------------General options----------------------
 		
 		var TaskName = Ext.widget('textfield',{
@@ -237,6 +244,25 @@ Ext.define('canopsis.view.Task.Form', {
 
 		this.reportOptions.add(unitCombo,lengthCombo)
 		
+		//---------------------------Mail option-------------------------
+		var checkmail = Ext.widget('checkboxfield',{
+			boxLabel  : _('Send by mail'),
+			name      : 'sendMail',
+		})
+		
+		var mailRecep = Ext.widget('textfield',{
+				fieldLabel: _('To'),
+				name: 'recipients',
+				//allowBlank: false,
+		})
+		
+		var mailSubject = Ext.widget('textfield',{
+				fieldLabel: _('Subject'),
+				name: 'subject',
+				//allowBlank: false,
+		})
+		
+		this.mailingOptions.add(checkmail,mailRecep,mailSubject)
 		//-----------------------Binding Events-------------------
 		
 	
@@ -269,7 +295,7 @@ Ext.define('canopsis.view.Task.Form', {
 		},this)
 		
 		//-----------------------Building------------------------
-		this.items = [this.generalOptions,this.timeOptions,this.reportOptions]
+		this.items = [this.generalOptions,this.timeOptions,this.reportOptions,this.mailingOptions]
         this.callParent();
     },
     
