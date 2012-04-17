@@ -107,8 +107,11 @@ var rdr_task_output = function(val, metadata, record, rowIndex, colIndex, store)
 			output += Ext.Date.format(ts, "Y-m-d H:i:s") 
 		}
 	}
-	return output
-
+	
+	if(output == '')
+		return _('No previous logs')
+	else
+		return output
 }
 
 //Function for rendering export to pdf button, we haven't find another solution
@@ -133,7 +136,7 @@ var rdr_mail_information = function(val, metadata, record, rowIndex, colIndex, s
 		
 	output = ''
 	if(val.recipients != undefined)
-		output += 'Recipients : ' + val.recipients
+		output += _('Recipients :') + ' ' + val.recipients
 		
 	return output
 }
