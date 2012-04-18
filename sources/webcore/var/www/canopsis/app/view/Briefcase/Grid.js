@@ -45,7 +45,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 			header: _('Creation date'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'crecord_write_time',
+			dataIndex: 'creationTs',
 			renderer : rdr_tstodate,
 		},{
 			header: _('Name'),
