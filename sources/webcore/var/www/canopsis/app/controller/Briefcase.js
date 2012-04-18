@@ -21,7 +21,7 @@
 Ext.define('canopsis.controller.Briefcase', {
 	extend: 'canopsis.lib.controller.cgrid',
 
-	views: ['Briefcase.Grid'],
+	views: ['Briefcase.Grid','Briefcase.Form'],
 	stores: ['Document'],
 	models: ['Document'],
 	
@@ -36,12 +36,12 @@ Ext.define('canopsis.controller.Briefcase', {
 		this.callParent(arguments);
 		
 	},
-	
+	/*
 	_viewElement: function(view, item, index){
 		log.debug('Clicked on element, function viewElement',this.logAuthor);
 		this.getController('Reporting').downloadReport(item.get('_id'))
 	},
-	
+	*/
 	_downloadButton : function(){
 		log.debug('clicked deleteButton',this.logAuthor);
 		var grid = this.grid
