@@ -27,7 +27,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	store : 'Document',	
 	
 	opt_bar_add:false,
-	opt_view_element : true,
+	//opt_view_element : true,
 	opt_bar_download: true,
 	
 	opt_db_namespace: 'reports',
