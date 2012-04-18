@@ -116,21 +116,33 @@ def get_report(metaId=None):
 		logger.error('No report found in gridfs')
 		return HTTPError(404, " Not Found")
 
-@post('/report/:reportId',apply=[check_auth])
-def modify_report(reportId=None):
+@post('/report',apply=[check_auth])
+def modify_report():
+	
+	data = json.loads(request.body.readline())
+	reportId = None
+	file_name = None
+	logger.error(data)
+	try:
+		reportId = data['_id']
+		file_name = data['file_name']
+	except Exception, err:
+		
+		logger.error('New report information not found : %s' % err)
+	
 	if not reportId:
+		logger.error('No report Id specified')
 		return HTTPError(405, " No report Id specified")
 		
-	filename = request.params.get('filename', default=None)
-	
-	if filename:
+	if file_name:
 		###########account and storage
 		account = get_account()
 		storage = cstorage(account=account, namespace='reports')
 		try:
-			document = storage.find_one({'_id':reportId})
+			document = storage.get(reportId)
+			logger.error(document)
 			if document:
-				document.data['filename'] = filename
+				document.data['file_name'] = file_name
 				storage.put(document)
 		except Exception, err:
 			logger.error("Error when updating report %s: %s" % (reportId,err))
