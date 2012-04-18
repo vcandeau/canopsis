@@ -172,7 +172,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 	
 	_save : function(record){
 		log.debug('Saving rights', this.logAuthor)
-		log.dump(this.combo_owner_rights.getValue())
+		//log.dump(this.combo_owner_rights.getValue())
 		
 		//creating params to send
 		var params = {}
