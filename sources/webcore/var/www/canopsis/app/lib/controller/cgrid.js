@@ -24,9 +24,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	allowEdit: true,
 	
 	EditMethod: "window",
+	
+	logAuthor : '[controller][cgrid]',
 
 	init: function() {
-		log.debug('[controller][cgrid] - '+this.id+' Initialize ...');
+		log.debug('Initialize '+this.id+' ...',this.logAuthor);
 
 		var control = {}
 		control[this.listXtype] = {
@@ -43,7 +45,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		this.grid = grid
 		
 
-		log.debug('[controller][cgrid] - Bind events "'+id+'" ...')
+		log.debug('Bind events "'+id+'" ...',this.logAuthor)
 
 		//Bind Dblclick
 		grid.on('selectionchange',	this._selectionchange,	this)
@@ -153,14 +155,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_reloadButton: function() {
-		log.debug('[controller][cgrid] - Reload store "'+this.grid.store.storeId+'" of '+this.grid.id);
-		log.debug('[controller][cgrid] - store.proxy.extraParams.filter:')
+		log.debug('Reload store "'+this.grid.store.storeId+'" of '+this.grid.id ,this.logAuthor);
+		log.debug('store.proxy.extraParams.filter:',this.logAuthor)
 		log.dump(this.grid.store.proxy.extraParams.filter)
 		this.grid.store.load()
 	},
 
 	_selectionchange: function(view, records){
-		log.debug('[controller][cgrid] - selectionchange');
+		log.debug('selectionchange',this.logAuthor);
 		var grid = this.grid
 
 		//Enable delete Button
@@ -175,17 +177,17 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_viewElement: function(view, item, index){
-		log.debug('[controller][cgrid] - clicked on element, function viewElement');
+		log.debug('Clicked on element, function viewElement',this.logAuthor);
 		//add_view_tab(this.grid.opt_view_element, item.data.component, true, {'nodeId' : item.data._id}, true, true,item.data.component)
 	},
 
 	_deleteButton: function(button) {
-		log.debug('[controller][cgrid] - clicked deleteButton');
+		log.debug('Clicked deleteButton',this.logAuthor);
 		var grid = this.grid
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
-			log.debug("[controller][cgrid] - Remove record ...")
+			log.debug("Remove record ...",this.logAuthor)
 			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete'),
 				function(btn, text){
 					if (btn == 'yes'){
@@ -203,7 +205,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		//log.debug('Edit rights',this.logAuthor);
 		var grid = this.grid
 		var selection = grid.getSelectionModel().getSelection()[0];
-		log.dump(selection)
 		//create form
 		if(this.getController('Account').check_record_right(selection,'w')){
 			var crights = Ext.create('canopsis.lib.view.crights',{data:selection,namespace:this.grid.opt_db_namespace})
@@ -215,7 +216,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_addButton: function(button) {
-		log.debug('[controller][cgrid] - clicked addButton');
+		log.debug('Clicked addButton',this.logAuthor);
 
 		this._showForm()
 
@@ -224,21 +225,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_saveForm: function(form) {
-		log.debug('[controller][cgrid][form] - clicked saveForm');
+		log.debug('Clicked saveForm',this.logAuthor);
 
 		var store = this.grid.store;
 
 		if (form.form.isValid()){
 			var data = form.getValues();
 			if (this._validateForm(store, data, form.form)) {
-				log.debug('[controller][cgrid][form] - Form is conform');
+				log.debug('Form is conform',this.logAuthor);
 				var record = Ext.create('canopsis.model.'+this.modelId, data);
-				log.debug('[controller][cgrid][form] - Store record in store');
+				log.debug('Store record in store',this.logAuthor);
 				record = this._preSave(record,data,form)
 				store.suspendEvents()
 				store.add(record);
 				this._postSave(record,data)
-				log.debug('[controller][cgrid][form] - Reload store');
+				log.debug('Reload store',this.logAuthor);
 				store.resumeEvents()
 				store.load();
 
@@ -246,12 +247,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 
 			}else{
-				log.error('[controller][cgrid][form] - Form is not valid !');
+				log.error('Form is not valid !',this.logAuthor);
 				global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
 				return
 			}
 		}else{
-			log.error('[controller][cgrid][form] - Form is not valid !');
+			log.error('Form is not valid !',this.logAuthor);
 			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
 			return
 		}
@@ -273,7 +274,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_preSave: function(record,data,form){
-		log.debug('[controller][cgrid][form] - Pre-Save');
+		log.debug('Pre-Save',this.logAuthor);
 		if (this.preSave){
 			return this.preSave(record,data,form)
 		}else{
@@ -282,7 +283,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_postSave: function(record){
-		log.debug('[controller][cgrid][form] - Post-Save');
+		log.debug('Post-Save',this.logAuthor);
 		if (this.postSave){
 			return this.postSave(record)
 		}else{
@@ -291,10 +292,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_cancelForm : function(form) {
-		log.debug('[controller][cgrid][form] - clicked cancelForm');
+		log.debug('clicked cancelForm',this.logAuthor);
 		if (this.formXtype) {
 			var id = form.id
-			log.debug("[controller][cgrid][form] - Close '"+id+"'");
+			log.debug(" Close '"+id+"'",this.logAuthor);
 			
 			if (form.win)
 				form.win.close()
@@ -308,7 +309,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_showForm: function(item) {
-		log.debug('[controller][cgrid][form] - Show form');
+		log.debug('Show form',this.logAuthor);
 		
 		if (this.showForm)
 			return this.showForm(item)
@@ -331,10 +332,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				var tab = Ext.getCmp(id);
 				
 				if (tab) {
-					log.debug("[controller][cgrid] - Tab '"+id+"' allready open, just show it")
+					log.debug("Tab '"+id+"' allready open, just show it",this.logAuthor)
 					main_tabs.setActiveTab(tab);
 				}else{
-					log.debug("[controller][cgrid] - Create tab '"+this.formXtype+"'")
+					log.debug("Create tab '"+this.formXtype+"'",this.logAuthor)
 					var form = main_tabs.add({
 						id: id,
 						title: '*'+ _('New') +' '+this.modelId,
@@ -351,11 +352,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				var form = Ext.getCmp(id);
 				
 				if (form){
-					log.debug("[controller][cgrid] - Window '"+id+"' allready open, just show it")
+					log.debug("Window '"+id+"' allready open, just show it",this.logAuthor)
 					form.win.show();
 				}else{
 					// Create new Window
-					log.debug("[controller][cgrid] - Create window '"+this.formXtype+"'")
+					log.debug("Create window '"+this.formXtype+"'",this.logAuthor)
 					var form = Ext.create('widget.' + this.formXtype, {
 						id: id,
 						EditMethod: this.EditMethod,
@@ -383,7 +384,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (! this.allowEdit)
 			return
 
-		log.debug('[controller][cgrid] - clicked editRecord');
+		log.debug('Clicked editRecord',this.logAuthor);
 
 		var form = this._showForm(item)
 				
@@ -410,7 +411,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
     },
 	
 	_duplicateRecord: function() {
-		log.debug('[controller][cgrid] - clicked duplicateRecord');
+		log.debug('clicked duplicateRecord',this.logAuthor);
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
 
@@ -419,10 +420,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
 			var tab = Ext.getCmp(id);
 			if (tab) {
-				log.debug("[controller][cgrid] - Tab '"+id+"'allerady open, just show it")
+				log.debug("Tab '"+id+"'allerady open, just show it",this.logAuthor)
 				main_tabs.setActiveTab(tab);
 			}else{
-				log.debug("[controller][cgrid] - Create tab '"+id+"'")
+				log.debug("Create tab '"+id+"'",this.logAuthor)
 				var form = main_tabs.add({
 					title: _('Edit')+' '+item.raw.crecord_name,
 					xtype: this.formXtype,
@@ -447,7 +448,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_searchRecord : function(){
-		log.debug('[controller][cgrid] - clicked on searchButton');
+		log.debug('Clicked on searchButton',this.logAuthor);
 		
 		var grid = this.grid;
 		var store = grid.getStore();
