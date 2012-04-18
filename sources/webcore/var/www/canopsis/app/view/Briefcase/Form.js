@@ -18,37 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.Briefcase', {
-	extend: 'canopsis.lib.controller.cgrid',
+Ext.define('canopsis.view.Briefcase.Form', {
+	extend: 'canopsis.lib.view.cform',
 
-	views: ['Briefcase.Grid'],
-	stores: ['Document'],
-	models: ['Document'],
+	alias: 'widget.BriefcaseForm',
 	
-	logAuthor : '[controller][Briefcase]',
-	
-	init: function() {
-		this.listXtype = 'BriefcaseGrid'
-		this.formXtype = 'BriefcaseForm'
+	initComponent: function(){
+		var filename = Ext.widget('textfield',{
+				fieldLabel: _('File name'),
+				name: 'filename',
+		})
 		
-		this.modelId = 'Document'
+		this.items=[filename]
 		
-		this.callParent(arguments);
-		
+		this.callParent();
 	},
-	
-	_viewElement: function(view, item, index){
-		log.debug('Clicked on element, function viewElement',this.logAuthor);
-		this.getController('Reporting').downloadReport(item.get('_id'))
-	},
-	
-	_downloadButton : function(){
-		log.debug('clicked deleteButton',this.logAuthor);
-		var grid = this.grid
-		var selection = grid.getSelectionModel().getSelection()[0];
-		if (selection) {
-			this.getController('Reporting').downloadReport(selection.get('_id'))
-		}
-	},
-	
-})
+    
+});
