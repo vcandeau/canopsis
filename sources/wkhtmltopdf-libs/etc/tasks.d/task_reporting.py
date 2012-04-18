@@ -100,7 +100,6 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 			
 			try:
 				mail['account'] = account
-				mail['smtp_host'] = "192.168.3.128"
 				mail['attachments'] = meta
 				task_mail.send.subtask(kwargs=mail).delay()
 			except Exception, err:
