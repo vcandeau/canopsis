@@ -90,6 +90,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 			
 			try:
 				mail['account'] = account
+				mail['smtp_host'] = "192.168.3.128"
 				mail['attachments'] = meta
 				task_mail.send.subtask(kwargs=mail).delay()
 			except Exception, err:
@@ -105,6 +106,7 @@ def put_in_grid_fs(file_path, file_name, account):
 	storage = cstorage(account, namespace='reports')
 	report = cfile(storage=storage)
 	report.put_file(file_path, file_name, content_type='application/pdf')
+	report.data['creationTs'] = int(time.time())
 	id = storage.put(report)
 	if not report.check(storage):
 		logger.error('Report not in grid fs')

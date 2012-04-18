@@ -26,6 +26,7 @@ Ext.define('canopsis.model.Document', {
 		{name : 'file_name'},
 		{name: 'crecord_write_time'},
 		{name: 'content_type'},
+		{name: 'creationTs'},
 		
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
