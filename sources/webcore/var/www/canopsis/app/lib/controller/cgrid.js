@@ -201,7 +201,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_editRights: function(){
-		log.debug('Edit rights',this.logAuthor);
+		//log.debug('Edit rights',this.logAuthor);
 		var grid = this.grid
 		var selection = grid.getSelectionModel().getSelection()[0];
 		log.dump(selection)
