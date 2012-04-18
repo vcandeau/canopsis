@@ -49,6 +49,10 @@ class CMongoDBJobStore(MongoDBJobStore):
 			try:
 				job = Job.__new__(Job)
 				
+				if job_dict['owner'] != root:
+					if job_dict['kwargs']['task'] != 'task_reporting':
+						raise ValueError('The owner of this task isn\'t allow to run this task')
+				
 				#keep memory of id
 				job_dict_id = job_dict['_id']
 				
