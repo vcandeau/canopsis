@@ -32,7 +32,17 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 	
 	#check if the account is just a name or a real caccount
 	if isinstance(account ,str) or isinstance(account ,unicode):
-		account = caccount(user='root',group='root',mail='root@localhost.local')
+		root_account = caccount(user='root',group='root',mail='root@localhost.local')
+		root_storage = cstorage(account=root_account, namespace='object')
+		
+		bd_account = root_storage.find_one(mfilter={'_id':'account.%s' % str(account)})
+
+		if isinstance(bd_account, crecord):
+			account = caccount(bd_account)
+			logger.info('Successfuly retrieve right user from db')
+		else:
+			account = caccount(mail='anonymous@localhost.local')
+			logger.info('Anonymous account created')
 		
 	#set stop time
 	if stoptime is None:
