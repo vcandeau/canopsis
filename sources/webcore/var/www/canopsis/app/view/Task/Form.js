@@ -30,17 +30,12 @@ Ext.define('canopsis.view.Task.Form', {
 		this.generalOptions = Ext.widget('fieldset',{
 			xtype: 'fieldset',
 			title: _('General options'),
-			//layout: 'hbox',
 			collapsible: false,
 		})
 		
 		this.timeOptions = Ext.widget('fieldset',{
 			xtype: 'fieldset',
 			title: _('Frequency'),
-		/*	layout: {
-				type: 'hbox',
-				align: 'stretch'
-			},*/
 			collapsible: false,
 		})
 		
@@ -54,7 +49,6 @@ Ext.define('canopsis.view.Task.Form', {
 		this.mailingOptions = Ext.widget('fieldset',{
 			xtype: 'fieldset',
 			title: _('Mailing Options'),
-			//layout: 'hbox',
 			collapsible: false,
 		})
 		//-----------------General options----------------------
@@ -254,13 +248,11 @@ Ext.define('canopsis.view.Task.Form', {
 		var mailRecep = Ext.widget('textfield',{
 				fieldLabel: _('To'),
 				name: 'recipients',
-				//allowBlank: false,
 		})
 		
 		var mailSubject = Ext.widget('textfield',{
 				fieldLabel: _('Subject'),
 				name: 'subject',
-				//allowBlank: false,
 		})
 		
 		this.mailingOptions.add(checkmail,mailRecep,mailSubject)
