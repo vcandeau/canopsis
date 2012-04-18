@@ -36,6 +36,7 @@ Ext.define('canopsis.controller.Briefcase', {
 		this.callParent(arguments);
 		
 	},
+	
 	/*
 	_viewElement: function(view, item, index){
 		log.debug('Clicked on element, function viewElement',this.logAuthor);

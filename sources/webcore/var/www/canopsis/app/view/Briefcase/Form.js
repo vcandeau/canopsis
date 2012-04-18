@@ -24,12 +24,18 @@ Ext.define('canopsis.view.Briefcase.Form', {
 	alias: 'widget.BriefcaseForm',
 	
 	initComponent: function(){
-		var filename = Ext.widget('textfield',{
+		var _id = Ext.widget('textfield',{
 				fieldLabel: _('File name'),
-				name: 'filename',
+				name: '_id',
+				hidden: true
 		})
 		
-		this.items=[filename]
+		var filename = Ext.widget('textfield',{
+				fieldLabel: _('File name'),
+				name: 'file_name',
+		})
+		
+		this.items=[_id,filename]
 		
 		this.callParent();
 	},
