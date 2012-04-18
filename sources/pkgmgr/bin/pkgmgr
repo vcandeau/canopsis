@@ -20,9 +20,20 @@
 
 set -e -o pipefail
 
-############################
-######  Logging Trap  ######
-############################
+######################
+# Check requirements #
+######################
+requires="curl wget awk sed let stty trap md5sum"
+for require in $requires; do
+	command -v $require >/dev/null 2>&1 || { 
+		echo -e >&2 "I require $require but it's not installed.\nAborting."
+		exit 1
+	}
+done
+
+#################
+#  Logging Trap #
+#################
 log_info () {
 	local MESSAGE="$1"
 	if [ $LOG -ge 1 ]; then
@@ -87,9 +98,10 @@ error () {
 	rm -Rf $TMP_FILE
 	exit ${CODE}
 }
-##########################
-##########################
 
+#############
+# Load libs #
+#############
 . $HOME/lib/common.sh 
 . $HOME/lib/pkgmgr/common
 set +e
@@ -114,8 +126,10 @@ set +e
 exit_pending=false
 
 trap '' 2 
-#trap 'on_die' 1 2 3 4 5 6 7 8 10 12 13 14 15 20
 
+#############
+# Functions #
+#############
 curl_settings () {
 	curl_cmd="curl"
 	if [ -n "$HTTP_PROXY" ]; then
@@ -146,7 +160,8 @@ ask_confirmation () {
 		read -p "Do you want to continue [y/N]? "
 		if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 			echo 
-			echo "Abort." && exit 1
+			echo "Abort."
+			exit 1
 		else
 			echo
 		fi
@@ -199,9 +214,9 @@ check_args () {
 	fi
 }
 
-###############
-###   RUN   ###
-###############
+########
+# Main # 
+########
 ACTION=$1
 OPT=$2
 
@@ -263,10 +278,6 @@ if [[ "x$ACTION" =~ ^(xinstall|xreinstall|xinstall-local|xreinstall-local|xupgra
 		pkg_list "$@"
 		echo " :: Following packages will be removed"
 		print_deps "$pkg_list"
-		#echo " :: Resolve dependencies"
-        #echo "    + Following packages will be removed (dependencies inclued)" && print_deps "$pkg_list_deps"
-        #echo "    + Dependencies conflicts"
-		#send_removal_conflicts | while read line ; do echo "      - $line"; done
         ask_confirmation
 		remove_package $pkg_list && exit $?; fi
 	if [ "x$ACTION" = "xupdate" ]; then 
