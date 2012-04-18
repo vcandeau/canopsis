@@ -23,11 +23,11 @@ function create_view () {
 	INFO_ARCH=$(cat $VARLIB_PATH/info | grep "^ARCH|" | tail -n1 | cut -d '|' -f2)
 	INFO_DIST=$(cat $VARLIB_PATH/info | grep "^DIST|" | tail -n1 | cut -d '|' -f2)
 	INFO_DIST_VERS=$(cat $VARLIB_PATH/info | grep "^DIST_VERS|" | tail -n1 | cut -d '|' -f2)
+	_INSTALLED=0
+	_UPTODATE=0
+	_OUTDATED=0
+	_TOTAL=0
 	if [ -z "$LAST_UPDATE" ]; then LAST_UPDATE="Never"; fi
-		echo
-		echo "System     : $INFO_DIST $INFO_DIST_VERS $INFO_ARCH"
-		echo "Repo       : $REPO_URL$REPO_BASE ($REPO_VERS)"
-		echo "Last update: $LAST_UPDATE"
 		echo
 		echo -e "#================================================================================#"
 		echo -e "| Package                     Version                            Status          |"
@@ -40,9 +40,15 @@ function create_view () {
 			L_STATUS=$(db_parse "status" "$line")
 			R_INFO=$(cat $REMOTE_DB_PATH | grep "^$L_PNAME|" | tail -n1)
 
+			if [[ "$L_PNAME" == "pkgmgr" ]]; then
+				PKGMGR_VERS=$L_VERS-$L_REL
+			fi
+
 			if [[ -z "$R_INFO" ]];then
 				L_STATUS="\e[42m \033[0m Installed"
 				echo -e "  $L_PNAME(*)|$L_VERS-$L_REL|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
+				let _INSTALLED++
+				let _TOTAL++
 			else
 				R_VERS=$(db_parse "version" "$R_INFO")
 				R_REL=$(db_parse "release" "$R_INFO")
@@ -59,30 +65,38 @@ function create_view () {
 					L_STATUS="\e[0;101m \033[0m Not Installed"
 					L_VERS_INFO=""
 					R_VERS_INFO=[$R_VERS-$R_REL]
+					let _TOTAL++
 				else
 					if [ "$R_VERS" == "$L_VERS" ]; then
 						if [ "$R_REL" == "$L_REL" ]; then
 							L_STATUS="\e[42m \033[0m Up-to-date"
 							R_VERS_INFO=""
 							L_VERS_INFO=$L_VERS-$L_REL
+							let _UPTODATE++
 						elif [ $REL_CALC == 1 ]; then
 							L_STATUS="\e[43;31m \033[0m New Release"
 							R_VERS_INFO="[$R_VERS-$R_REL]"
 							L_VERS_INFO="$L_VERS-$L_REL -> "
+							let _OUTDATED++
 						elif [ $REL_CALC == 0 ]; then
 							L_STATUS="\e[41m \033[0m Older Release"
 							R_VERS_INFO="[$R_VERS-$R_REL]"
 							L_VERS_INFO="$L_VERS-$L_REL -> "
+							let _OUTDATED++
 						fi
+						let _INSTALLED++
 					elif [ $VER_CALC == 1 ]; then
 						L_STATUS="\e[43;31m \033[0m New Version"
 						R_VERS_INFO=[$R_VERS-$R_REL]
 						L_VERS_INFO="$L_VERS-$L_REL -> "
+						let _OUTDATED++
 					elif [ $VER_CALC == 0 ]; then
 						L_STATUS="\e[41m \033[0m Older Version"
                         R_VERS_INFO=[$R_VERS-$R_REL]
                         L_VERS_INFO="$L_VERS-$L_REL -> "
+						let _OUTDATED++
 					fi
+					let _TOTAL++
 				fi
 				echo -e "  $L_PNAME|$L_VERS_INFO$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
 			fi
@@ -103,6 +117,17 @@ function create_view () {
 				echo -e "  $R_PNAME|$R_VERS_INFO|$L_STATUS" | awk '{ printf "%-30s%-35s%s\n",$1,$2,$3}' FS=\|
 			fi
 		done < "$REMOTE_DB_PATH"
+	echo
+	echo -e ' #==================#'
+	printf ' | %-9s | %4s |' "Installed" "$_INSTALLED"
+	printf "      System      : $INFO_DIST $INFO_DIST_VERS $INFO_ARCH\n"
+	printf ' | %-9s | %4s |' "UpToDate" "$_UPTODATE"
+	printf "      Repo        : $REPO_URL$REPO_BASE ($REPO_VERS)\n"
+	printf ' | %-9s | %4s |' "Outdated" "$_OUTDATED"
+	printf "      Last update : $LAST_UPDATE\n"
+	printf ' | %-9s | %4s |' "Total" "$_TOTAL"
+	printf "      Info        : Pkgmgr $PKGMGR_VERS\n"
+	echo -e ' #==================#'
 	echo
 	log_info "Finished"
 }
