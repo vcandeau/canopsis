@@ -89,7 +89,7 @@ def generate_report(startTime, stopTime,view_name):
 		logger.error(err)
 
 	if fileName:
-		return {'total': 1, 'success': True, 'data': { 'url': '/getReport/' + str(fileName)}}
+		return {'total': 1, 'success': True, 'data': { 'url': '/getReport/' + str(fileName['data'][0])}}
 	else:
 		logger.debug('file not found, error while generating pdf')
 		return {'total': 0, 'success': False, 'data': {}}
@@ -149,6 +149,7 @@ def modify_report():
 		except Exception, err:
 			logger.error("Error when updating report %s: %s" % (reportId,err))
 			return HTTPError(500, "Failed to update report")
+			
 
 @post('/sendreport',apply=[check_auth])
 def send_report():
@@ -173,7 +174,7 @@ def send_report():
 	except Exception, err:
 		logger.error('Error when run subtask mail : %s' % err)
 		return {'success':False,'total':'1','data':{'output':'Mail sending failed'}}
-	
+
 	
 	
 
