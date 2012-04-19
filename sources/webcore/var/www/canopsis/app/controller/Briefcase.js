@@ -90,6 +90,7 @@ Ext.define('canopsis.controller.Briefcase', {
 					},
 					failure: function() {
 						log.debug('Mail request have failed', this.logAuthor)
+						global.notify.notify(_('Failed'),_('Mail not sent, webserver error'),'error')
 					}
 				});
 			}
