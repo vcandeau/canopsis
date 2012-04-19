@@ -73,9 +73,19 @@ Ext.define('canopsis.controller.Briefcase', {
 						request = Ext.JSON.decode(response.responseText)
 						if (request.success){
 							log.debug('Mail have been sent successfuly', this.logAuthor)
-							log.dump(request.data.output)
+							log.info('The server has returned : ' + request.data.output.output)
+							if(request.data.output.success == true){
+								global.notify.notify(
+									_('Mail sent'),
+									_('The mail have been successfuly sent'),
+									undefined,
+									undefined,
+									false
+								)
+							}
 						} else {
 							log.error('Mail have not been sent',this.logAuthor)
+							global.notify.notify(_('Failed'),_('Mail not sent, error with celery task'),'error')
 						}
 					},
 					failure: function() {
