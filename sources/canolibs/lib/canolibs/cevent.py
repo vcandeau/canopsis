@@ -23,7 +23,8 @@ import re
 
 logger = logging.getLogger('cevent')
 
-socket.setdefaulttimeout(1)
+# Change default timeout from 1 to 3 , conflict with gunicorn
+socket.setdefaulttimeout(3)
 
 regexp_ip = re.compile("([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})")
 
