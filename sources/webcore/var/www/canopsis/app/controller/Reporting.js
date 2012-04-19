@@ -42,7 +42,7 @@ Ext.define('canopsis.controller.Reporting', {
 				}
 			},
 			failure: function (result, request) {
-				global.notify.notify('Failed','The report generation have failed','error')
+				global.notify.notify(_('Failed'),_('The report generation have failed'),'error')
 				log.error("Report generation have failed", this.logAuthor)
 			} 
 		});
