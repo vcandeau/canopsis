@@ -150,13 +150,13 @@ def modify_report():
 
 @post('/sendreport',apply=[check_auth])
 def send_report():
-	data = json.loads(request.body.readline())
+	data = request.body.readline()
 	'''
 	reportStorage = cstorage(account=account, namespace='reports')
 	meta = reportStorage.get(id)
 	meta.__class__ = cfile
 	'''
-	return {'success':'true','total':'1','output':'Mail sent'}
+	return {'success':True,'total':'1','data':{'output':'Mail sent'}}
 	
 	
 	

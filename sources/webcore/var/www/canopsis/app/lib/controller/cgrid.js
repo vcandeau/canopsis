@@ -391,7 +391,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
 		if(this.sendMail){
-				this.sendmail(record)
+				this.sendMail(item)
 		}
 	},
 
