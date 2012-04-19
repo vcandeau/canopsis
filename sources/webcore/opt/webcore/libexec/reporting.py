@@ -165,8 +165,7 @@ def send_report():
 	mail = {
 		'account':account,
 		'attachments': meta,
-		'recipients':recipients,
-		'smtp_host':'192.168.3.128'
+		'recipients':recipients
 	}
 	
 	try:
