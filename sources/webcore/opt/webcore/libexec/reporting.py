@@ -40,6 +40,8 @@ from cstorage import get_storage
 from crecord import crecord
 from cfile import cfile
 
+import task_mail
+
 #import protection function
 from libexec.auth import check_auth, get_account
 
@@ -150,13 +152,27 @@ def modify_report():
 
 @post('/sendreport',apply=[check_auth])
 def send_report():
-	data = request.body.readline()
-	'''
+	account = get_account()
 	reportStorage = cstorage(account=account, namespace='reports')
-	meta = reportStorage.get(id)
+
+	recipients = request.params.get('recipients', default=None)
+	_id = request.params.get('_id', default=None)
+	
+	meta = reportStorage.get(_id)
 	meta.__class__ = cfile
-	'''
-	return {'success':True,'total':'1','data':{'output':'Mail sent'}}
+	
+	mail = {
+		'account':account,
+		'attachments': meta,
+		'recipients':recipients,
+	}
+	
+	try:
+		task_mail.send.delay(**mail)
+		return {'success':True,'total':'1','data':{'output':'Mail sent'}}
+	except Exception, err:
+		logger.error('Error when run subtask mail : %s' % err)
+		return {'success':False,'total':'1','data':{'output':'Mail sending failed'}}
 	
 	
 	
