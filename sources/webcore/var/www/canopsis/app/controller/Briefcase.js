@@ -53,28 +53,38 @@ Ext.define('canopsis.controller.Briefcase', {
 	},
 	
 	sendMail : function(record){
-		Ext.Ajax.request({
-			type: 'rest',
-			url: '/sendreport',
-			method: 'POST',
-			reader: {
-				type: 'json',
-				root: 'data',
-				totalProperty  : 'total',
-				successProperty: 'success'
-			},
-			success: function(response){
-				request = Ext.JSON.decode(response.responseText)
-				if (request.success){
-					log.debug('Mail have been sent successfuly', this.logAuthor)
-					log.dump(request.data.output)
-				} else {
-					log.error('Mail have not been sent',this.logAuthor)
-				}
-			},
-			failure: function() {
-				log.debug('Mail request have failed', this.logAuthor)
+		Ext.Msg.prompt('Recipients', 'Please mail recipients:', function(btn, text){
+			if (btn == 'ok'){
+				Ext.Ajax.request({
+					type: 'rest',
+					url: '/sendreport',
+					method: 'POST',
+					params:{
+						'_id':record.get('_id'),
+						'recipients':''
+						},
+					reader: {
+						type: 'json',
+						root: 'data',
+						totalProperty  : 'total',
+						successProperty: 'success'
+					},
+					success: function(response){
+						request = Ext.JSON.decode(response.responseText)
+						if (request.success){
+							log.debug('Mail have been sent successfuly', this.logAuthor)
+							log.dump(request.data.output)
+						} else {
+							log.error('Mail have not been sent',this.logAuthor)
+						}
+					},
+					failure: function() {
+						log.debug('Mail request have failed', this.logAuthor)
+					}
+				});
 			}
 		});
-	}	
+		
+		
+	}
 })
