@@ -45,6 +45,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_db_namespace: 'object',
 	
 	opt_menu_rights: true,
+	opt_menu_send_mail:false,
 	
 	opt_confirmation_delete: true,
 	
@@ -205,6 +206,16 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 							iconCls: 'icon-access',
 							text: _('Rights'),
 							action: 'rights',
+						})
+					)
+				}
+				
+				if(this.opt_menu_send_mail == true){
+					myArray.push(
+						Ext.create('Ext.Action', {
+							//iconCls: 'icon-access',
+							text: _('Send mail'),
+							action: 'sendmail',
 						})
 					)
 				}
