@@ -77,7 +77,7 @@ Ext.define('widgets.list.list' ,{
 		
 			opt_bar: this.bar,
 			opt_bar_search: this.bar_search,
-			opt_bar_search_field: ['component', 'resource'],
+			opt_bar_search_field: ['component', 'resource','output'],
 
 			opt_bar_add: false,
 			opt_bar_duplicate: false,
