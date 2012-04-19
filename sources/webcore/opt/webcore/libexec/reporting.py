@@ -166,11 +166,13 @@ def send_report():
 		'account':account,
 		'attachments': meta,
 		'recipients':recipients,
+		'smtp_host':'192.168.3.128'
 	}
 	
 	try:
-		task_mail.send.delay(**mail)
-		return {'success':True,'total':'1','data':{'output':'Mail sent'}}
+		task = task_mail.send.delay(**mail)
+		output = task.get()
+		return {'success':True,'total':'1','data':{'output':output}}
 	except Exception, err:
 		logger.error('Error when run subtask mail : %s' % err)
 		return {'success':False,'total':'1','data':{'output':'Mail sending failed'}}
