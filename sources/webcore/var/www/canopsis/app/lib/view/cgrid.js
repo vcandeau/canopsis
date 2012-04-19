@@ -213,7 +213,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				if(this.opt_menu_send_mail == true){
 					myArray.push(
 						Ext.create('Ext.Action', {
-							//iconCls: 'icon-access',
+							iconCls: 'icon-mail',
 							text: _('Send by mail'),
 							action: 'sendmail',
 						})

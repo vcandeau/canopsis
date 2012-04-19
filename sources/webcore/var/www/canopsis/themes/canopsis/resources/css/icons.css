@@ -121,6 +121,10 @@
     background-image: url(../images/icons/application_osx_terminal.png) !important; 
 }
 
+.icon-mail { 
+    background-image: url(../images/icons/email.png) !important; 
+}
+
 .icon-clear { 
     background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
 }
