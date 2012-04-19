@@ -61,7 +61,7 @@ Ext.define('canopsis.controller.Briefcase', {
 					method: 'POST',
 					params:{
 						'_id':record.get('_id'),
-						'recipients':''
+						'recipients':text
 						},
 					reader: {
 						type: 'json',
