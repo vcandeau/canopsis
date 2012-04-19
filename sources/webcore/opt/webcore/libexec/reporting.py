@@ -147,6 +147,17 @@ def modify_report():
 		except Exception, err:
 			logger.error("Error when updating report %s: %s" % (reportId,err))
 			return HTTPError(500, "Failed to update report")
+
+@post('/sendreport',apply=[check_auth])
+def send_report():
+	data = json.loads(request.body.readline())
+	'''
+	reportStorage = cstorage(account=account, namespace='reports')
+	meta = reportStorage.get(id)
+	meta.__class__ = cfile
+	'''
+	return {'success':'true','total':'1','output':'Mail sent'}
+	
 	
 	
 
