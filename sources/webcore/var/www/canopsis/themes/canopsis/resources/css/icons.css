@@ -163,6 +163,14 @@
     background-image: url(../images/icons/user_edit.png) !important; 
 }
 
+.icon-mainbar-edit-task { 
+    background-image: url(../images/icons/cog.png) !important; 
+}
+
+.icon-mainbar-briefcase { 
+    background-image: url(../images/icons/briefcase.png) !important; 
+}
+
 .icon-mainbar-new-view { 
     background-image: url(../images/icons/application_add.png) !important; 
 }
