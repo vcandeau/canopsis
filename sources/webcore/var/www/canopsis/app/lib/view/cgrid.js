@@ -214,7 +214,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					myArray.push(
 						Ext.create('Ext.Action', {
 							//iconCls: 'icon-access',
-							text: _('Send mail'),
+							text: _('Send by mail'),
 							action: 'sendmail',
 						})
 					)
