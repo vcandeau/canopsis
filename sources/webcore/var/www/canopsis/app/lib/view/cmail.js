@@ -75,7 +75,12 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	
 	_addUser : function(){
 		log.debug('clicked on adduser',this.logAuthor)
-		
+		var recipientsValue = this.to.getValue()
+		if(recipientsValue == ''){
+			this.to.setValue(this.comboUser.getValue())
+		} else {
+			this.to.setValue(recipientsValue + ',' + this.comboUser.getValue())
+		}
 	},
 	
 	_getValues : function(){
