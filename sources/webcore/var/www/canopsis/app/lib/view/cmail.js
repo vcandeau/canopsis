@@ -25,24 +25,12 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	
 	title: 'Email edition',
 	
-	//isFormField : 'true'
-	
 	bodyHtml : false,
 	
 	attachement : false,
 
 	logAuthor: '[cmail]',
-	/*
-	bbar : [{
-				xtype:'button',
-				text : _('Cancel'),
-				action : 'cancel'
-			},'->',{
-				xtype:'button',
-				text: _('Finish'),
-				action : 'finish'
-			}],
-	*/
+
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 
@@ -53,7 +41,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.bbar.add('->')
 		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),action:'finish',iconCls: 'icon-save',iconAlign:'right'})
 	
-		//--------------------------------------------------
+		//----------------------building reciepients options-----------
 
 		this.recipientsOptions = Ext.widget('container',{
 			xtype: 'fieldset',
@@ -73,8 +61,6 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		})
 		
 		this.comboUser = Ext.widget('combo',{
-				//forceSelection: true,
-				//fieldLabel: _(""),
 				margin : '0 0 0 2',
 				queryMode: 'local',
 				displayField: 'user',
@@ -91,14 +77,14 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		
 		this.recipientsOptions.add([this.to,this.comboUser,this.addUserButton])
 		
-		//---------------------------
+		//---------------------------mail information--------------
 		this.subject = Ext.widget('textfield',{
 				fieldLabel: _('subject'),
 				width: 400,
 				name: 'subject',
 		})
 		
-		//--------------------------
+
 		if(this.bodyHtml == true){
 			this.mailbody = Ext.widget('htmleditor',{
 					fieldLabel: _('body'),
@@ -112,17 +98,15 @@ Ext.define('canopsis.lib.view.cmail' ,{
 					name: 'body',
 			})
 		}
-		//-------------------------- Building-----------------------------
+		//-------------------------- Building window-----------------------------
 		this._form = Ext.create('Ext.form.Panel',{border:false})
 		this._form.add([this.recipientsOptions,this.subject,this.mailbody])
 		this.items = this._form
-		//this.items = [this.to,this.comboUser,this.addUserButton,this.subject,this.mailbody]
+		
 		this.callParent(arguments)
-		log.debug('Show window', this.logAuthor)
 		this.show()
 		
-		
-		//-------------------------- binding events----------------------
+		//-------------------------- Binding events----------------------
 		this.addUserButton.on('click',this._addUser, this)
 		
 		this.cancelButton.on('click',function(){this.close()},this)
@@ -146,9 +130,5 @@ Ext.define('canopsis.lib.view.cmail' ,{
 			this.to.setValue(recipientsValue + ',' + this.comboUser.getValue())
 		}
 	},
-	
-	_getValues : function(){
-		
-	}
 	
 });
