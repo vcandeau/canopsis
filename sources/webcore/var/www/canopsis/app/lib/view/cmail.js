@@ -39,14 +39,14 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		
 		var comboUser = Ext.widget('combo',{
 				//forceSelection: true,
-				fieldLabel: _("Owner"),
+				//fieldLabel: _(""),
 				queryMode: 'local',
 				displayField: 'user',
 				valueField: 'user',
 				store : 'Account'
 			})
 
-		var addUserButton = Ext.widget('combo',{
+		var addUserButton = Ext.widget('button',{
 			xtype : 'button',
 			text : _('Add')
 		})
@@ -62,10 +62,10 @@ Ext.define('canopsis.lib.view.cmail' ,{
 				name: 'body',
 		})
 		//--------------------------
-		this.items = [to,comboUser,subject,body]
+		this.items = [to,comboUser,addUserButton,subject,body]
 		this.callParent(arguments)
 		this.show()
-	}
+	},
 	
 	_getValues : function(){
 		
