@@ -30,7 +30,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	bodyHtml : false,
 
 	logAuthor: '[cmail]',
-	
+	/*
 	bbar : [{
 				xtype:'button',
 				text : _('Cancel'),
@@ -40,9 +40,21 @@ Ext.define('canopsis.lib.view.cmail' ,{
 				text: _('Finish'),
 				action : 'finish'
 			}],
-	
+	*/
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
+
+		//----------------------building bbar----------------
+		this.bbar = Ext.create('Ext.toolbar.Toolbar')
+		
+		this.cancelButton = this.bbar.add({xtype:'button',text:_('Cancel'),action:'cancel',iconCls:'icon-cancel'})
+		this.bbar.add('->')
+		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),action:'finish',iconCls: 'icon-save',iconAlign:'right'})
+		
+		
+		
+		
+		//--------------------------------------------------
 
 		this.recipientsOptions = Ext.widget('container',{
 			xtype: 'fieldset',
@@ -112,16 +124,10 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		//-------------------------- binding events----------------------
 		this.addUserButton.on('click',this._addUser, this)
 		
-		log.dump(this.id)
-		/*
-		var btnCancel = Ext.ComponentQuery.query('#' + this.id + ' button[action=cancel]')
-		log.dump(btnCancel)
-		btnCancel.on('click',function(){this.close},this)
+		this.cancelButton.on('click',function(){this.close()},this)
+
+		this.finishButton.on('click',function(){log.debug('',this.logAuthor)},this)
 		
-		var btnFinish = Ext.ComponentQuery.query('#' + this.id + ' button[action=finish]')
-		log.dump(btnFinish)
-		btnFinish.on('click',function(){log.debug('',this.logAuthor)},this)
-		* */
 	},
 	
 	_addUser : function(){
