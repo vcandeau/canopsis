@@ -420,7 +420,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_contextMenu : function(view, rec, node, index, e) {
-		e.stopEvent();
+		view.select(rec)
 		this.contextMenu.showAt(e.getXY());
 		return false;
     },
