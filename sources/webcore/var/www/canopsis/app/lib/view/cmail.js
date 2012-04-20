@@ -50,10 +50,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.cancelButton = this.bbar.add({xtype:'button',text:_('Cancel'),action:'cancel',iconCls:'icon-cancel'})
 		this.bbar.add('->')
 		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),action:'finish',iconCls: 'icon-save',iconAlign:'right'})
-		
-		
-		
-		
+	
 		//--------------------------------------------------
 
 		this.recipientsOptions = Ext.widget('container',{
@@ -114,7 +111,9 @@ Ext.define('canopsis.lib.view.cmail' ,{
 			})
 		}
 		//-------------------------- Building-----------------------------
-		this.items = [this.recipientsOptions,this.subject,this.mailbody]
+		this._form = Ext.create('Ext.form.Panel',{border:false})
+		this._form.add([this.recipientsOptions,this.subject,this.mailbody])
+		this.items = this._form
 		//this.items = [this.to,this.comboUser,this.addUserButton,this.subject,this.mailbody]
 		this.callParent(arguments)
 		log.debug('Show window', this.logAuthor)
@@ -126,7 +125,12 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		
 		this.cancelButton.on('click',function(){this.close()},this)
 
-		this.finishButton.on('click',function(){log.debug('',this.logAuthor)},this)
+		this.finishButton.on('click',function(){
+				this.fireEvent('finish',this._form.getValues())
+				
+				log.dump(this._form.getValues())
+				this.close()
+			},this)
 		
 	},
 	

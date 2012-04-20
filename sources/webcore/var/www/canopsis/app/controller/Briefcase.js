@@ -53,49 +53,48 @@ Ext.define('canopsis.controller.Briefcase', {
 	},
 	
 	sendMail : function(record){
-		Ext.Msg.prompt('Recipients', 'Please mail recipients:', function(btn, text){
-			if (btn == 'ok'){
-				Ext.Ajax.request({
-					type: 'rest',
-					url: '/sendreport',
-					method: 'POST',
-					params:{
-						'_id':record.get('_id'),
-						'recipients':text
-						},
-					reader: {
-						type: 'json',
-						root: 'data',
-						totalProperty  : 'total',
-						successProperty: 'success'
-					},
-					success: function(response){
-						request = Ext.JSON.decode(response.responseText)
-						if (request.success){
-							log.debug('Mail have been sent successfuly', this.logAuthor)
-							log.info('The server has returned : ' + request.data.output.output)
-							if(request.data.output.success == true){
-								global.notify.notify(
-									_('Mail sent'),
-									_('The mail have been successfuly sent'),
-									undefined,
-									undefined,
-									false
-								)
-							}
-						} else {
-							log.error('Mail have not been sent',this.logAuthor)
-							global.notify.notify(_('Failed'),_('Mail not sent, error with celery task'),'error')
-						}
-					},
-					failure: function() {
-						log.debug('Mail request have failed', this.logAuthor)
-						global.notify.notify(_('Failed'),_('Mail not sent, webserver error'),'error')
+		var cmail = Ext.create('canopsis.lib.view.cmail')
+		//cmail.on('
+	},
+	
+	_ajaxRequest : function(mail){
+		Ext.Ajax.request({
+			type: 'rest',
+			url: '/sendreport',
+			method: 'POST',
+			params:{
+				'_id':record.get('_id'),
+				'recipients':text
+				},
+			reader: {
+				type: 'json',
+				root: 'data',
+				totalProperty  : 'total',
+				successProperty: 'success'
+			},
+			success: function(response){
+				request = Ext.JSON.decode(response.responseText)
+				if (request.success){
+					log.debug('Mail have been sent successfuly', this.logAuthor)
+					log.info('The server has returned : ' + request.data.output.output)
+					if(request.data.output.success == true){
+						global.notify.notify(
+							_('Mail sent'),
+							_('The mail have been successfuly sent'),
+							undefined,
+							undefined,
+							false
+						)
 					}
-				});
+				} else {
+					log.error('Mail have not been sent',this.logAuthor)
+					global.notify.notify(_('Failed'),_('Mail not sent, error with celery task'),'error')
+				}
+			},
+			failure: function() {
+				log.debug('Mail request have failed', this.logAuthor)
+				global.notify.notify(_('Failed'),_('Mail not sent, webserver error'),'error')
 			}
 		});
-		
-		
 	}
 })
