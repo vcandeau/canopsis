@@ -44,6 +44,17 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 		
+		this.recipientsOptions = Ext.widget('fieldset',{
+			xtype: 'fieldset',
+			layout: 'hbox',
+			border: 0,
+			padding : 0,
+			width:500,
+			//title: _('General options'),
+			collapsible: false,
+		})
+		
+		
 		this.to = Ext.widget('textfield',{
 				fieldLabel: _('To'),
 				name: 'to',
@@ -52,20 +63,26 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.comboUser = Ext.widget('combo',{
 				//forceSelection: true,
 				//fieldLabel: _(""),
+				margin : '0 0 0 2',
 				queryMode: 'local',
 				displayField: 'user',
 				valueField: 'user',
+				width : 120,
 				store : 'Account'
 			})
 
 		this.addUserButton = Ext.widget('button',{
 			xtype : 'button',
+			margin : '0 0 0 2',
 			text : _('Add')
 		})
+		
+		this.recipientsOptions.add([this.to,this.comboUser,this.addUserButton])
 		
 		//---------------------------
 		this.subject = Ext.widget('textfield',{
 				fieldLabel: _('subject'),
+				width: 400,
 				name: 'subject',
 		})
 		
@@ -78,11 +95,14 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		}else{
 			this.mailbody = Ext.widget('textareafield',{
 					fieldLabel: _('body'),
+					width: 400,
+					height: 200,
 					name: 'body',
 			})
 		}
 		//-------------------------- Building-----------------------------
-		this.items = [this.to,this.comboUser,this.addUserButton,this.subject,this.mailbody]
+		this.items = [this.recipientsOptions,this.subject,this.mailbody]
+		//this.items = [this.to,this.comboUser,this.addUserButton,this.subject,this.mailbody]
 		this.callParent(arguments)
 		log.debug('Show window', this.logAuthor)
 		this.show()
