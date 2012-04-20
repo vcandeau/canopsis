@@ -37,12 +37,6 @@ Ext.define('canopsis.controller.Briefcase', {
 		
 	},
 	
-	/*
-	_viewElement: function(view, item, index){
-		log.debug('Clicked on element, function viewElement',this.logAuthor);
-		this.getController('Reporting').downloadReport(item.get('_id'))
-	},
-	*/
 	_downloadButton : function(){
 		log.debug('clicked deleteButton',this.logAuthor);
 		var grid = this.grid
@@ -58,7 +52,6 @@ Ext.define('canopsis.controller.Briefcase', {
 	},
 	
 	_ajaxRequest : function(mail){
-		log.dump(mail)
 		Ext.Ajax.request({
 			type: 'rest',
 			url: '/sendreport',
@@ -84,9 +77,6 @@ Ext.define('canopsis.controller.Briefcase', {
 						global.notify.notify(
 							_('Mail sent'),
 							_('The mail have been successfuly sent'),
-							undefined,
-							undefined,
-							false
 						)
 					}
 				} else {
