@@ -158,6 +158,8 @@ def send_report():
 
 	recipients = request.params.get('recipients', default=None)
 	_id = request.params.get('_id', default=None)
+	body = request.params.get('body', default=None)
+	subject = request.params.get('subject', default=None)
 	
 	meta = reportStorage.get(_id)
 	meta.__class__ = cfile
@@ -165,7 +167,9 @@ def send_report():
 	mail = {
 		'account':account,
 		'attachments': meta,
-		'recipients':recipients
+		'recipients':recipients,
+		'subject':subject,
+		'body': body,
 	}
 	
 	try:
