@@ -28,6 +28,8 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	//isFormField : 'true'
 	
 	bodyHtml : false,
+	
+	attachement : false,
 
 	logAuthor: '[cmail]',
 	/*
@@ -67,7 +69,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.to = Ext.widget('textfield',{
 				fieldLabel: _('To'),
 				width: 275,
-				name: 'to',
+				name: 'recipients',
 		})
 		
 		this.comboUser = Ext.widget('combo',{
@@ -76,7 +78,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 				margin : '0 0 0 2',
 				queryMode: 'local',
 				displayField: 'user',
-				valueField: 'user',
+				valueField: 'mail',
 				width : 120,
 				store : 'Account'
 			})
@@ -126,9 +128,10 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.cancelButton.on('click',function(){this.close()},this)
 
 		this.finishButton.on('click',function(){
-				this.fireEvent('finish',this._form.getValues())
-				
-				log.dump(this._form.getValues())
+				var values = this._form.getValues()
+				if(this.attachement)
+					values.attachement = this.attachement
+				this.fireEvent('finish',values)
 				this.close()
 			},this)
 		

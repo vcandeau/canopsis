@@ -53,18 +53,21 @@ Ext.define('canopsis.controller.Briefcase', {
 	},
 	
 	sendMail : function(record){
-		var cmail = Ext.create('canopsis.lib.view.cmail')
-		//cmail.on('
+		var cmail = Ext.create('canopsis.lib.view.cmail',{attachement:record.get('_id')})
+		cmail.on('finish',function(mail){this._ajaxRequest(mail)},this)
 	},
 	
 	_ajaxRequest : function(mail){
+		log.dump(mail)
 		Ext.Ajax.request({
 			type: 'rest',
 			url: '/sendreport',
 			method: 'POST',
 			params:{
-				'_id':record.get('_id'),
-				'recipients':text
+				'_id':mail.attachement,
+				'recipients':mail.recipients,
+				'subject':mail.subject,
+				'body':mail.body
 				},
 			reader: {
 				type: 'json',
