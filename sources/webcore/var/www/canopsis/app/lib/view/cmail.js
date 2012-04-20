@@ -43,10 +43,11 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
-		
-		this.recipientsOptions = Ext.widget('fieldset',{
+
+		this.recipientsOptions = Ext.widget('container',{
 			xtype: 'fieldset',
 			layout: 'hbox',
+			frame: true,
 			border: 0,
 			padding : 0,
 			width:500,
@@ -54,9 +55,9 @@ Ext.define('canopsis.lib.view.cmail' ,{
 			collapsible: false,
 		})
 		
-		
 		this.to = Ext.widget('textfield',{
 				fieldLabel: _('To'),
+				width: 275,
 				name: 'to',
 		})
 		
