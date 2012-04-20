@@ -24,6 +24,8 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	alias: 'widget.crights',
 	
 	title: 'Email edition',
+	
+	//isFormField : 'true'
 
 	logAuthor: '[cmail]',	
 	
@@ -33,6 +35,20 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		var to = Ext.widget('textfield',{
 				fieldLabel: _('TO'),
 				name: 'to',
+		})
+		
+		var comboUser = Ext.widget('combo',{
+				//forceSelection: true,
+				fieldLabel: _("Owner"),
+				queryMode: 'local',
+				displayField: 'user',
+				valueField: 'user',
+				store : 'Account'
+			})
+
+		var addUserButton = Ext.widget('combo',{
+			xtype : 'button',
+			text : _('Add')
 		})
 		
 		//---------------------------
@@ -46,11 +62,13 @@ Ext.define('canopsis.lib.view.cmail' ,{
 				name: 'body',
 		})
 		//--------------------------
-		this.items = [to,subject,body]
+		this.items = [to,comboUser,subject,body]
 		this.callParent(arguments)
 		this.show()
 	}
 	
-	
+	_getValues : function(){
+		
+	}
 	
 });
