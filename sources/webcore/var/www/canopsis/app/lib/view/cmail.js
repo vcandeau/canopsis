@@ -26,6 +26,8 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	title: 'Email edition',
 	
 	//isFormField : 'true'
+	
+	bodyHtml : false,
 
 	logAuthor: '[cmail]',
 	
@@ -68,11 +70,17 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		})
 		
 		//--------------------------
-		this.mailbody = Ext.widget('htmleditor',{
-				fieldLabel: _('body'),
-				name: 'body',
-		})
-		
+		if(this.bodyHtml == true){
+			this.mailbody = Ext.widget('htmleditor',{
+					fieldLabel: _('body'),
+					name: 'body',
+			})
+		}else{
+			this.mailbody = Ext.widget('textareafield',{
+					fieldLabel: _('body'),
+					name: 'body',
+			})
+		}
 		//-------------------------- Building-----------------------------
 		this.items = [this.to,this.comboUser,this.addUserButton,this.subject,this.mailbody]
 		this.callParent(arguments)
@@ -84,7 +92,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.addUserButton.on('click',this._addUser, this)
 		
 		log.dump(this.id)
-		
+		/*
 		var btnCancel = Ext.ComponentQuery.query('#' + this.id + ' button[action=cancel]')
 		log.dump(btnCancel)
 		btnCancel.on('click',function(){this.close},this)
@@ -92,6 +100,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		var btnFinish = Ext.ComponentQuery.query('#' + this.id + ' button[action=finish]')
 		log.dump(btnFinish)
 		btnFinish.on('click',function(){log.debug('',this.logAuthor)},this)
+		* */
 	},
 	
 	_addUser : function(){
