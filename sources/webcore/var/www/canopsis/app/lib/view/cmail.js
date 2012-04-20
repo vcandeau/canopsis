@@ -22,15 +22,31 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	extend: 'Ext.window.Window',
 	
 	alias: 'widget.crights',
+	
+	title: 'Email edition',
 
 	logAuthor: '[cmail]',	
 	
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 		
-		//---------------------------
+		var to = Ext.widget('textfield',{
+				fieldLabel: _('TO'),
+				name: 'to',
+		})
 		
+		//---------------------------
+		var subject = Ext.widget('textfield',{
+				fieldLabel: _('subject'),
+				name: 'subject',
+		})
 		//--------------------------
+		var body = Ext.widget('htmleditor',{
+				fieldLabel: _('body'),
+				name: 'body',
+		})
+		//--------------------------
+		this.items = [to,subject,body]
 		this.callParent(arguments)
 		this.show()
 	}
