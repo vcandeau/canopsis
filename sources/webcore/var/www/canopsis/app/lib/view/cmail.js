@@ -32,12 +32,12 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 		
-		var to = Ext.widget('textfield',{
+		this.to = Ext.widget('textfield',{
 				fieldLabel: _('TO'),
 				name: 'to',
 		})
 		
-		var comboUser = Ext.widget('combo',{
+		this.comboUser = Ext.widget('combo',{
 				//forceSelection: true,
 				//fieldLabel: _(""),
 				queryMode: 'local',
@@ -46,25 +46,36 @@ Ext.define('canopsis.lib.view.cmail' ,{
 				store : 'Account'
 			})
 
-		var addUserButton = Ext.widget('button',{
+		this.addUserButton = Ext.widget('button',{
 			xtype : 'button',
 			text : _('Add')
 		})
 		
 		//---------------------------
-		var subject = Ext.widget('textfield',{
+		this.subject = Ext.widget('textfield',{
 				fieldLabel: _('subject'),
 				name: 'subject',
 		})
+		
 		//--------------------------
-		var body = Ext.widget('htmleditor',{
+		this.mailbody = Ext.widget('htmleditor',{
 				fieldLabel: _('body'),
 				name: 'body',
 		})
+		//-------------------------- binding events----------------------
+		this.addUserButton.on('click',this._addUser, this)
+		
+		
 		//--------------------------
-		this.items = [to,comboUser,addUserButton,subject,body]
+		this.items = [this.to,this.comboUser,this.addUserButton,this.subject,this.mailbody]
 		this.callParent(arguments)
+		log.debug('Show window', this.logAuthor)
 		this.show()
+	},
+	
+	_addUser : function(){
+		log.debug('clicked on adduser',this.logAuthor)
+		
 	},
 	
 	_getValues : function(){
