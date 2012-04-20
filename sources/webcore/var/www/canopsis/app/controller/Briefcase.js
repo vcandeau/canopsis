@@ -76,7 +76,7 @@ Ext.define('canopsis.controller.Briefcase', {
 					if(request.data.output.success == true){
 						global.notify.notify(
 							_('Mail sent'),
-							_('The mail have been successfuly sent'),
+							_('The mail have been successfuly sent')
 						)
 					}
 				} else {
