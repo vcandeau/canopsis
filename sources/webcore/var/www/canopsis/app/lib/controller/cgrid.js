@@ -236,10 +236,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			this.addButton(button)
 	},
 	
-	_saveForm: function(form) {
+	_saveForm: function(form,store) {
 		log.debug('Clicked saveForm',this.logAuthor);
 
-		var store = this.grid.store;
+		if(store == undefined){
+			var store = this.grid.store;
+		}
 
 		if (form.form.isValid()){
 			var data = form.getValues();
