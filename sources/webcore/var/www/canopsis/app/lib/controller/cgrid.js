@@ -374,6 +374,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						title: this.modelId,
 						items: form,
 						closable: true,
+						constrain:true,
+						renderTo: this.grid.id,
 						closeAction: 'destroy',
 					}).show();
 					form.win = win
