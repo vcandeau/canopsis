@@ -230,7 +230,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 					selection.set('crecord_name',new_name)
 					this.tree.store.sync()
 				}
-			},this)
+			},this,undefined,selection.get('crecord_name'))
 		} else {
 			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
 		}
