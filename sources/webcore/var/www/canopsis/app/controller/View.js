@@ -128,7 +128,18 @@ Ext.define('canopsis.controller.View', {
 			}
 		}
 	},	
-		
+	
+	exportButton: function(item){
+		log.debug('Export view',this.logAuthor)
+	/*	var wizard = Ext.create('canopsis.lib.view.cwizard',
+			{
+				step_list: [{
+					title: 'Launch Task'
+					items:[]
+				}]
+			})
+		wizard.show()*/
+	},
 	
 	/////////////////
 	

@@ -38,6 +38,8 @@ Ext.define('canopsis.lib.view.ctree' ,{
 	opt_bar_duplicate: true,
 	opt_bar_reload: true,
 	
+	opt_bar_export: false,
+	
 	opt_menu_rights: true,
 	opt_menu_rename: true,
 
@@ -143,6 +145,16 @@ Ext.define('canopsis.lib.view.ctree' ,{
 						iconCls: 'icon-edit',
 						text: _('Rename'),
 						action: 'rename',
+					})
+				)
+			}
+			
+			if(this.opt_bar_export == true){
+				myArray.push(
+					Ext.create('Ext.Action', {
+						//iconCls: 'icon-edit',
+						text: _('Export View'),
+						action: 'export',
 					})
 				)
 			}

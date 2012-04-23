@@ -202,7 +202,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 					)
 				}
 				
-				if (this.opt_bar_duplicate){
+				if (this.opt_bar_duplicate == true){
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-copy',

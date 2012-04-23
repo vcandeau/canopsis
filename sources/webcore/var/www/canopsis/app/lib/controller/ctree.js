@@ -71,6 +71,12 @@ Ext.define('canopsis.lib.controller.ctree', {
 				btns[i].on('click', this._renameButton, this)
 			}
 			
+			
+			//rename button
+			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=export]')
+			for (i in btns){
+				btns[i].on('click', this._exportButton, this)
+			}
 		}
 		
 		//--------------------toolbar buttons--------------------------
@@ -259,6 +265,16 @@ Ext.define('canopsis.lib.controller.ctree', {
 	_itemDoubleClick : function(record){
 		if(this.itemDoubleClick){
 			this.itemDoubleClick(record)
+		}
+	},
+	
+	_exportButton : function(){
+		log.debug('Export function',this.logAuthor);
+		var tree = this.tree
+		var selection = tree.getSelectionModel().getSelection()[0];
+		
+		if(this.exportButton){
+			this.exportButton(selection)
 		}
 	}
 
