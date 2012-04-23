@@ -202,7 +202,7 @@ Ext.define('canopsis.controller.Task', {
 	
 	//call a window wizard to schedule task with passed argument
 	taskWizard : function(item){
-		form = Ext.create('canopsis.view.Task.Form')
+		form = Ext.create('canopsis.view.Task.Form',{EditMethod: 'window'})
 		store = Ext.getStore('Task')
 		
 		if(item != undefined){
