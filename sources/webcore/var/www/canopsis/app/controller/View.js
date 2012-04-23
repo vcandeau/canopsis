@@ -131,14 +131,7 @@ Ext.define('canopsis.controller.View', {
 	
 	exportButton: function(item){
 		log.debug('Export view',this.logAuthor)
-	/*	var wizard = Ext.create('canopsis.lib.view.cwizard',
-			{
-				step_list: [{
-					title: 'Launch Task'
-					items:[]
-				}]
-			})
-		wizard.show()*/
+		this.getController('Task').taskWizard()
 	},
 	
 	/////////////////
@@ -160,7 +153,7 @@ Ext.define('canopsis.controller.View', {
 				record.set('children',[])
 				
 				this.add_to_home(record,false)
-				
+				h
 			} else {
 				log.debug('cancel new view',this.logAuthor)
 			}
