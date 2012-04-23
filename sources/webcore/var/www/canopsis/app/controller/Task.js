@@ -201,19 +201,26 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	//call a window wizard to schedule task with passed argument
-	taskWizard : function(){
+	taskWizard : function(item){
 		form = Ext.create('canopsis.view.Task.Form')
 		store = Ext.getStore('Task')
-		step_list = {
-				title:'set Task',
-				items:[form]
-			}
 		
-		var window_wizard = Ext.widget('window',{items:[form]})
-		window_wizard.show()
+		if(item != undefined){
+			var viewName = item.get('_id')
+			var combo = form.down('combobox[name=view]')
+			if(combo != undefined)
+				combo.setValue(viewName)
+		}
+		
+		var window_wizard = Ext.widget('window',{
+													title:'Schedule task',
+													items:[form]
+												})
 
-		btns = form.down('button[action=save]')
+		window_wizard.show()
 		
+		//-------------------------binding events-----------------------
+		btns = form.down('button[action=save]')
 		btns.on('click', function(){
 			log.debug('task Wizard save',this.logAuthor)
 			if (form.form.isValid()){
@@ -238,11 +245,7 @@ Ext.define('canopsis.controller.Task', {
 		}, this)
 		
 		btns = form.down('button[action=cancel]')
-		btns.on('click', function(){}, this)
+		btns.on('click', function(){window_wizard.destroy();}, this)
 
 	}
-	
-	
-
-	
 });
