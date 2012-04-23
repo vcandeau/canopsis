@@ -200,17 +200,42 @@ Ext.define('canopsis.controller.Task', {
 		}
 	},
 	
+	//call a window wizard to schedule task with passed argument
 	taskWizard : function(){
 		form = Ext.create('canopsis.view.Task.Form')
+		store = Ext.getStore('Task')
 		step_list = {
 				title:'set Task',
 				items:[form]
 			}
 		
-		window = Ext.create('Ext.window.Window',{items:[form]}).show()
+		var window_wizard = Ext.widget('window',{items:[form]})
+		window_wizard.show()
 
 		btns = form.down('button[action=save]')
-		btns.on('click', function(){}, this)
+		
+		btns.on('click', function(){
+			log.debug('task Wizard save',this.logAuthor)
+			if (form.form.isValid()){
+				var data = form.getValues();
+				if (this._validateForm(store, data, form.form)) {
+					var record = Ext.create('canopsis.model.'+this.modelId, data);
+					record = this._preSave(record,data,form)
+					store.suspendEvents()
+					store.add(record);
+					store.resumeEvents()
+					store.load();
+					global.notify.notify(_('Save'), _('Task saved'))
+				}else{
+					log.error('Form is not valid !',this.logAuthor);
+					global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
+				}
+			}else{
+				log.error('Form is not valid !',this.logAuthor);
+				global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
+			}
+			window_wizard.destroy();
+		}, this)
 		
 		btns = form.down('button[action=cancel]')
 		btns.on('click', function(){}, this)
@@ -218,6 +243,6 @@ Ext.define('canopsis.controller.Task', {
 	}
 	
 	
-	//_saveForm: function(form) {
+
 	
 });
