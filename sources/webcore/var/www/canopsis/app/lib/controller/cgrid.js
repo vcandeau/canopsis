@@ -78,6 +78,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this._editRights, this)
 			}
 			
+			//Rename option
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rename]')
+			for (i in btns){
+				btns[i].on('click', this._rename, this)
+			}
+			
 			//send mail
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=sendmail]')
 			for (i in btns){
@@ -394,6 +400,15 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		item = grid.getSelectionModel().getSelection()[0];
 		if(this.sendMail){
 				this.sendMail(item)
+		}
+	},
+	
+	_rename: function(view, item, index){
+		log.debug('Clicked rename',this.logAuthor)
+		grid = this.grid;
+		item = grid.getSelectionModel().getSelection()[0];
+		if(this.rename){
+				this.rename(item)
 		}
 	},
 

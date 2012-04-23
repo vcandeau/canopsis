@@ -37,6 +37,11 @@ Ext.define('canopsis.controller.Briefcase', {
 		
 	},
 	
+	_viewElement: function(view, item, index){
+     log.debug('Clicked on element, function viewElement',this.logAuthor);
+     this.getController('Reporting').downloadReport(item.get('_id'))
+   },
+	
 	_downloadButton : function(){
 		log.debug('clicked deleteButton',this.logAuthor);
 		var grid = this.grid
@@ -49,6 +54,11 @@ Ext.define('canopsis.controller.Briefcase', {
 	sendMail : function(record){
 		var cmail = Ext.create('canopsis.lib.view.cmail',{attachement:record.get('_id')})
 		cmail.on('finish',function(mail){this._ajaxRequest(mail)},this)
+	},
+	
+	rename : function(item){
+		log.debug(item)
+		this._editRecord(this.grid,item)
 	},
 	
 	_ajaxRequest : function(mail){
