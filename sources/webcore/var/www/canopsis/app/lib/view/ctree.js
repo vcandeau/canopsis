@@ -153,7 +153,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 				myArray.push(
 					Ext.create('Ext.Action', {
 						//iconCls: 'icon-edit',
-						text: _('Export View'),
+						text: _('Schedule export'),
 						action: 'export',
 					})
 				)

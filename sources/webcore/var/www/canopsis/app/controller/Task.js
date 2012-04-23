@@ -198,6 +198,26 @@ Ext.define('canopsis.controller.Task', {
 		}else{
 			return true
 		}
+	},
+	
+	taskWizard : function(){
+		form = Ext.create('canopsis.view.Task.Form')
+		step_list = {
+				title:'set Task',
+				items:[form]
+			}
+		
+		window = Ext.create('Ext.window.Window',{items:[form]}).show()
+
+		btns = form.down('button[action=save]')
+		btns.on('click', function(){}, this)
+		
+		btns = form.down('button[action=cancel]')
+		btns.on('click', function(){}, this)
+
 	}
+	
+	
+	//_saveForm: function(form) {
 	
 });
