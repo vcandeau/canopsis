@@ -162,6 +162,10 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				iconCls: 'icon-mainbar-reporting',
 				text: _('Switch to live reporting'),
 				action: 'reportingMode'
+			},{
+				//iconCls: 'icon-mainbar-reporting',
+				text: _('Schedule active view export'),
+				action: 'ScheduleExportView'
 			}
 		]);		
 		

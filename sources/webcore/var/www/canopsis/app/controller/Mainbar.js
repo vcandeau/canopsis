@@ -79,6 +79,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="reportingMode"]' : {
 				click : this.reportingMode,
 			},
+			'Mainbar menuitem[action="ScheduleExportView"]' : {
+				click : this.ScheduleExportView,
+			},
 			'Mainbar [name="clock"]' : {
 				afterrender : this.setClock,
 			},
@@ -234,4 +237,12 @@ Ext.define('canopsis.controller.Mainbar', {
 		var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id		
 		this.getController('Reporting').launchReport(view_id)
 	},
+	
+	ScheduleExportView : function(){
+		log.debug('Schedule active view export',this.logAuthor)
+		var activetabs = Ext.getCmp('main-tabs').getActiveTab();
+		var record = Ext.create('canopsis.model.Task', activetabs.view);
+		this.getController('Task').taskWizard(record)
+	}
+	
 });
