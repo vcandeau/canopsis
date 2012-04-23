@@ -152,29 +152,6 @@ Ext.define('canopsis.controller.Task', {
 			task_name_field.hide()
 		}
 	},
-
-	trunc_day_to_day: function(day){
-		switch(day)
-		{
-			case 'mon':
-				return 'monday';
-			case 'tue':
-				return 'tuesday';
-			case 'wed':
-				return 'wednesday';
-			case 'thu':
-				return 'thursday';
-			case 'fri':
-				return 'friday';
-			case 'sat':
-				return 'satursday';
-			case 'sun':
-				return 'sunday';
-			default:
-				return undefined
-		}
-		
-	},
 	
 	validateForm: function(store, data, form){
 		if(!form.editing){

@@ -166,7 +166,7 @@ Ext.define('canopsis.view.Task.Form', {
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			value: 'monday',
+			value: 'mon',
 			disabled: true,
 			store: {
 				xtype: 'store',
