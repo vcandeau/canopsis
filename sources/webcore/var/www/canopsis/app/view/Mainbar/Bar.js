@@ -163,7 +163,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				text: _('Switch to live reporting'),
 				action: 'reportingMode'
 			},{
-				//iconCls: 'icon-mainbar-reporting',
+				iconCls: 'icon-mainbar-add-task',
 				text: _('Schedule active view export'),
 				action: 'ScheduleExportView'
 			}

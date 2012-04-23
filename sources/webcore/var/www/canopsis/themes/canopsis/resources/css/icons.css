@@ -147,6 +147,10 @@
     background-image: url(../images/icons/application_cascade.png) !important; 
 }
 
+.icon-mainbar-add-task { 
+    background-image: url(../images/icons/cog_add.png) !important; 
+}
+
 .icon-mainbar-build { 
     background-image: url(../images/icons/application_form_edit.png) !important; 
 }
