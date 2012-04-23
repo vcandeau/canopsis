@@ -131,7 +131,7 @@ Ext.define('canopsis.controller.View', {
 	
 	exportButton: function(item){
 		log.debug('Export view',this.logAuthor)
-		this.getController('Task').taskWizard()
+		this.getController('Task').taskWizard(item)
 	},
 	
 	/////////////////
