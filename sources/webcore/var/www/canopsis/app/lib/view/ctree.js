@@ -152,7 +152,7 @@ Ext.define('canopsis.lib.view.ctree' ,{
 			if(this.opt_bar_export == true){
 				myArray.push(
 					Ext.create('Ext.Action', {
-						//iconCls: 'icon-edit',
+						iconCls: 'icon-mainbar-add-task',
 						text: _('Schedule export'),
 						action: 'export',
 					})

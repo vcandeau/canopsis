@@ -23,7 +23,6 @@ Ext.define('canopsis.view.Task.Form', {
 
 	alias: 'widget.TaskForm',
 	
-	//layout: 'hbox',
 
     initComponent: function(){
 		//----------------fieldSet creation-------------------
@@ -189,12 +188,10 @@ Ext.define('canopsis.view.Task.Form', {
 			increment: 15,
 			allowBlank: false,
 			submitFormat: 'G:i',
-			//anchor: '100%'
 		})
 		
 		//carry the _id for rest service update
 		if(this.editing == true){
-			//log.debug('Editing flag catched')
 			var recordId = Ext.widget('textfield',{
 				name: '_id',
 				allowBlank: false,
