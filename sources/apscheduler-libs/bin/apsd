@@ -21,25 +21,26 @@ c = {
 	"apscheduler.jobstore.cmongodbjobstore.collection": "task"
 }
 
-# Mongojobstore refresh interval in minutes
-refresh_interval = 1
+# Mongojobstore refresh interval in seconds
+refresh_interval = 60
 
 logger.info('Config: %s' % c)
 sched.configure(c)
 sched.start()
 
 def main_loop():
-	counter = 0
+	last_refresh = int(time.time())
+
 	while handler.RUN:
-		counter += 1
-		if counter >= refresh_interval*600:
-			logger.info('Refresh Mongodb jobstore')
-			counter = 0
+		if int(time.time()) >= (last_refresh + refresh_interval):
+			logger.debug('Refresh Mongodb jobstore')
+			last_refresh = int(time.time())
 			for js in sched._jobstores:
 				if isinstance(sched._jobstores[js], CMongoDBJobStore):
 					sched._jobstores[js].check_and_refresh()
 					sched._wakeup.set()
-		time.sleep(0.1)
+
+		time.sleep(1)
 
 # Main
 if __name__ == '__main__':
