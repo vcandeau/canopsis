@@ -195,6 +195,7 @@ def send_report():
 def get_list_report():
 	limit		= int(request.params.get('limit', default=20))
 	start		= int(request.params.get('start', default=0))
+	sort		= request.params.get('sort', default=None)
 	filter		= request.params.get('filter', default=None)
 	
 	###########account and storage
@@ -216,9 +217,23 @@ def get_list_report():
 			logger.error(" + Invalid filter format")
 			filter = {}
 	
+	msort = []
+	if sort:
+		sort = json.loads(sort)
+		for item in sort:
+			direction = 1
+			if str(item['direction']) == "DESC":
+				direction = -1
+
+			msort.append((str(item['property']), direction))
+	
+	
 	###########search
-	records = storage.find(filter, limit=limit, offset=start,account=account)
-	total = storage.count(filter, account=account)
+	try:
+		records = storage.find(filter, sort=msort,limit=limit, offset=start,account=account)
+		total = len(records)
+	except Exception,err:
+		logger.error('Error while fetching records : %s' % err)
 	
 	data = []
 	
