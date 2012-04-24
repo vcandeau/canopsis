@@ -178,8 +178,9 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	runItem : function(item){
-		
-	}
+		log.debug('Clicked on run item',this.logAuthor)
+		log.dump(item)
+	},
 	
 	//call a window wizard to schedule task with passed argument
 	taskWizard : function(item){
