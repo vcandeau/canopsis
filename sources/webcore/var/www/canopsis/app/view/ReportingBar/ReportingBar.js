@@ -29,7 +29,9 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			xtype: 'combobox',
 			store: comboStore,
 			queryMode: 'local',
+			editable:false,
 			displayField: 'name',
+			width:70,
 			valueField: 'value',
 			forceSelection : true,
 			value : _('Day')
@@ -37,7 +39,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		this.combo.setValue(86400)
 		
-		this.add({ xtype: 'tbspacer', width: 400 });
+		//this.add({ xtype: 'tbspacer', width: 400 });
+		this.add({ xtype: 'tbspacer', width: 20 })
 		
 		this.previousButton = this.add({
 			xtype: 'button', 
@@ -51,6 +54,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		this.currentDate = this.add({
 			xtype: 'datefield',
 			name: 'from',
+			editable: false,
+			width: 110,
 			value: today,
 			maxValue: tommorow,
 		})
@@ -61,7 +66,9 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			action: 'next'
 		})
 		
-		this.add('->');
+		//this.add({xtype: 'tbseparator'})
+		this.add({ xtype: 'tbspacer', width: 15 })
+		//this.add('->');
 		
 		if(this.reloadAfterAction == false){
 			this.requestButton = this.add({
