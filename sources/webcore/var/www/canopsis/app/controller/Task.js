@@ -210,6 +210,7 @@ Ext.define('canopsis.controller.Task', {
 					store.resumeEvents()
 					store.load();
 					global.notify.notify(_('Save'), _('Task saved'))
+					window_wizard.destroy();
 				}else{
 					log.error('Form is not valid !',this.logAuthor);
 					global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
@@ -218,7 +219,6 @@ Ext.define('canopsis.controller.Task', {
 				log.error('Form is not valid !',this.logAuthor);
 				global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
 			}
-			window_wizard.destroy();
 		}, this)
 		
 		btns = form.down('button[action=cancel]')
