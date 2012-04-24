@@ -31,18 +31,13 @@ except ImportError:  # pragma: nocover
     import pickle
 
 logger = logging.getLogger('MongoDbStore')
-logger.setLevel(logging.DEBUG)
+
 class CMongoDBJobStore(MongoDBJobStore):
 	
 	def __init__(self, database='apscheduler', collection='jobs',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
 		MongoDBJobStore.__init__(self,database=database, collection=collection,connection=connection, pickle_protocol=pickle_protocol)
-		self.mongo_collection_count = None
 	
 	def load_jobs(self):
-		#count on first load
-		if self.mongo_collection_count == None:
-			self.mongo_collection_count = self.collection.count()
-		
 		#continue standart execution
 		jobs = []
 		for job_dict in self.collection.find():
@@ -108,16 +103,15 @@ class CMongoDBJobStore(MongoDBJobStore):
 		self.jobs = jobs
 
 	def check_and_refresh(self):
-		if self.mongo_collection_count:
+		count = None
+		try:
+			count = self.collection.find({"loaded": False}).count()
+		except Exception, err:
+			logger.error('Task count failed : %s' % err)
+
+		if count:
 			try:
-				count = self.collection.count()
+				self.load_jobs()
+				logger.info('%s New Tasks added/updated' % count)
 			except Exception, err:
-				logger.error('Task count failed : %s' % err)
-				
-			if self.mongo_collection_count != count:
-				try:
-					self.load_jobs()
-					logger.info('New Task added')
-					self.mongo_collection_count = count
-				except Exception, err:
-					logger.error('Reload jobs failed : %s' % err)
+				logger.error('Reload jobs failed : %s' % err)
