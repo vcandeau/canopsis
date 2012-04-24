@@ -51,7 +51,7 @@ Ext.define('canopsis.controller.Briefcase', {
 		}
 	},
 	
-	sendMail : function(record){
+	sendByMail : function(record){
 		var cmail = Ext.create('canopsis.lib.view.cmail',{attachement:record.get('_id')})
 		cmail.on('finish',function(mail){this._ajaxRequest(mail)},this)
 	},
