@@ -140,7 +140,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			dump = this.dumpJqGridable()
 		}
 		
-		log.dump(dump)
+		//log.dump(dump)
 		
 		var store = Ext.data.StoreManager.lookup('View')
 		var record = Ext.create('canopsis.model.view', data)
@@ -267,20 +267,26 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	removeReportingBar : function(){
 		log.debug('removing reporting bar', this.logAuthor)
+		
 		var cmps = this.getCmps()
 		for(var i in cmps){
 			if(cmps[i].reportMode == true){
 				cmps[i].reportMode = false
+				//clean widget
+				if(cmps[i].reportToLive != undefined){
+					cmps[i].reportToLive()
+				}
 			}
 		}
 		
 		if(this.export_toolbar_type == 'window'){
 			this.export_window.destroy()
 		}else{
-			this.startAllTasks()
 			this.removeDocked(this.reportingBar,true)
 			this.reportingBar = undefined
 		}
+		
+		this.startAllTasks()
 	},
 	
 	setReportDate : function(from,to){
@@ -291,7 +297,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		}		
 		
 	},
-	
 	
 	//misc
 	beforeclose: function(tab, object){
