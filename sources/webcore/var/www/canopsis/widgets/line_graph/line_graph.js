@@ -541,6 +541,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		return true		
 	},
 	
+	reportToLive : function(){
+		log.debug('Resume live reporting', this.logAuthor)
+		to = Date.now();
+		from = to - this.time_window;
+		this.doRefresh(from,to)
+	},
+	
 	/*displayFromTs : function(from, to){
 		
 		this.chart.destroy()
