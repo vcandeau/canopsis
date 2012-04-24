@@ -29,6 +29,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 	opt_db_namespace: 'task',
 	
 	opt_menu_delete: true,
+	opt_menu_run_item : true,
 
 	columns: [
 		{
