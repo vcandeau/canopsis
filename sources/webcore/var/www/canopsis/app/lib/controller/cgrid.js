@@ -90,6 +90,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this._sendByMail, this)
 			}
 			
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]')
+			for (i in btns){
+				btns[i].on('click', this._runItem, this)
+			}
+			
 		}
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
@@ -396,7 +401,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 	
-	_sendByMail: function(view, item, index){
+	_sendByMail: function(){
 		log.debug('Clicked sendByMail',this.logAuthor)
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
@@ -405,6 +410,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 	
+	_runItem: function(){
+		log.debug('Clicked sendByMail',this.logAuthor)
+		grid = this.grid;
+		item = grid.getSelectionModel().getSelection()[0];
+		if(this.runItem){
+			this.runItem(item)
+		}
+	},
+		
+		
 	_rename: function(view, item, index){
 		log.debug('Clicked rename',this.logAuthor)
 		grid = this.grid;
