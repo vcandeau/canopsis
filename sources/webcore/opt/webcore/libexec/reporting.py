@@ -49,10 +49,17 @@ logger = logging.getLogger('Reporting')
 
 #########################################################################
 
+@get('/reporting/:startTime/:stopTime/:view_name/:mail',apply=[check_auth])
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
-def generate_report(startTime, stopTime,view_name):
+def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	storage = cstorage(account=account, namespace='object')
+	
+	if(isinstance(mail,str)):
+		try:
+			mail = json.loads(mail)
+		except Exception, err:
+			logger.error('Error while transform string mail to object' % err)
 	
 	#get crecord name of the view (id is really harsh)
 	try:
@@ -82,7 +89,8 @@ def generate_report(startTime, stopTime,view_name):
 										startTime,
 										stopTime,
 										account,
-										"/opt/canopsis/etc/wkhtmltopdf_wrapper.json")
+										"/opt/canopsis/etc/wkhtmltopdf_wrapper.json",
+										mail)
 		result.wait()
 		fileName = result.result
 	except Exception, err:
