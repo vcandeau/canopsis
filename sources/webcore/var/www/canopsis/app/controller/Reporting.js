@@ -10,7 +10,7 @@ Ext.define('canopsis.controller.Reporting', {
 		this.callParent(arguments);
 	},
 		
-	launchReport: function(view_id, from, to){
+	launchReport: function(view_id, from, to,mail){
 		log.debug('Launch Report on view '+ view_id , this.logAuthor);
 		
 		//if no date given
@@ -20,9 +20,15 @@ Ext.define('canopsis.controller.Reporting', {
 		}
 		
 		global.notify.notify(_('Please Wait'),_('Your document is rendering, a popup will ask you where to save in few seconds'))
+	
+		var url = '/reporting/'+ from  + '/' + to  + '/' + view_id
+		
+		if(mail != undefined){
+			url += '/' + mail
+		}
 
 		Ext.Ajax.request({
-			url: '/reporting/'+ from  + '/' + to  + '/' + view_id,
+			url: url,
 			scope: this,
 			success: function(response){
 				var data = Ext.JSON.decode(response.responseText)

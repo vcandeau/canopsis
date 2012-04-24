@@ -179,12 +179,17 @@ Ext.define('canopsis.controller.Task', {
 	
 	runItem : function(item){
 		log.debug('Clicked on run item',this.logAuthor)
-		view_name = item.get('crecord_name')
+		
 		mail = item.get('mail')
+		
+		if(mail != undefined)
+			mail = Ext.encode(mail)
+		
 		options = item.get('kwargs')
+		view_name = options.viewname
 		start_time = options.starttime
 		
-		this.getController('Reporting').launchReport(view_name,start_time)
+		this.getController('Reporting').launchReport(view_name,start_time,undefined,mail)
 	},
 	
 	//call a window wizard to schedule task with passed argument
