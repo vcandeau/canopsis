@@ -73,6 +73,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		fromDate = str(date.fromtimestamp(int(starttime) / 1000))
 		toDate = str(date.fromtimestamp(int(stoptime) / 1000))
 		
+		
 		#get crecord name of the view (id is really harsh)
 		storage = cstorage(account=account, namespace='object')
 		try:
@@ -81,7 +82,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		except:
 			crecord_name = viewname
 		
-		filename = '%s_From_%s_To_%s' % (crecord_name,fromDate,toDate)
+		filename = '%s_From_%s_To_%s' % (crecord_name,fromDate,toDate) + '.pdf'
 		
 	##############################################################################
 	
