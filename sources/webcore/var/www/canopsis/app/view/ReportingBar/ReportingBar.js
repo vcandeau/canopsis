@@ -39,7 +39,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 		
 		this.combo.setValue(86400)
 		
-		//this.add({ xtype: 'tbspacer', width: 400 });
 		this.add({ xtype: 'tbspacer', width: 20 })
 		
 		this.previousButton = this.add({
@@ -66,10 +65,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' ,{
 			action: 'next'
 		})
 		
-		//this.add({xtype: 'tbseparator'})
 		this.add({ xtype: 'tbspacer', width: 15 })
-		//this.add('->');
-		
+
 		if(this.reloadAfterAction == false){
 			this.requestButton = this.add({
 				xtype: 'button', 
