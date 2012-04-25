@@ -23,6 +23,24 @@ Ext.define('canopsis.controller.MetricNavigation', {
 
 	stores: [],
 
+	logAuthor : '[controller][MetricNavigation]',
+
 	views: ['MetricNavigation.MetricNavigation'],
 	
+	init: function() {
+		log.debug('Initialize ...', this.logAuthor);
+
+		this.control({
+			'MetricNavigation' : {
+				afterrender : this._bindMetricNavigation
+			}
+		})
+		
+		this.callParent(arguments);
+	},
+	
+	_bindMetricNavigation : function(panel){
+			log.debug('Binding events', this.logAuthor)
+		
+	}
 })
