@@ -167,6 +167,7 @@ Ext.define('canopsis.view.Task.Form', {
 			valueField: 'value',
 			value: 'mon',
 			disabled: true,
+			hidden:true,
 			store: {
 				xtype: 'store',
 				fields: ['value', 'text'],
@@ -260,7 +261,7 @@ Ext.define('canopsis.view.Task.Form', {
 			switch(newValue){
 				case 'day':
 					dayCombo.hide().setDisabled(true)
-					dayWeekCombo.show().setDisabled(false)
+					dayWeekCombo.hide().setDisabled(true)
 					monthCombo.setDisabled(true)
 					break;
 				case 'week':
