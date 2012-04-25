@@ -141,6 +141,10 @@
 	background-image: url(../images/icons/page_white_add.png) !important;
 }
 
+.icon-run {
+	background-image: url(../images/icons/cog_go.png) !important;
+}
+
 /* Mainbar */
 
 .icon-mainbar-run { 

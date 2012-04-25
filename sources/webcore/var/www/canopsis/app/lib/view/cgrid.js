@@ -236,7 +236,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 				if(this.opt_menu_run_item == true){
 					myArray.push(
 						Ext.create('Ext.Action', {
-							//iconCls: 'icon-mail',
+							iconCls: 'icon-run',
 							text: _('Run now'),
 							action: 'run',
 						})
