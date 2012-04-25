@@ -24,10 +24,25 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	
 	alias: 'widget.MetricNavigation',
 	
+	layout: 'border',
+	
 	initComponent: function() {
 		//first tab element
-		//tabpanel = Ext.create('Ext.tab.Panel',)
+		var config = {
+			region:'west',
+			width:400,
+			collapsible: true,
+			collapseDirection: 'left',
+			
+			items:[{title:'sample'},{title:'sample2'}]
+			
+		}
+		
+		tabPanel = Ext.create('Ext.tab.Panel',config)
+		renderPanel = Ext.create('Ext.panel.Panel',{region:'center'})
 		//panel
+		this.items = [tabPanel,renderPanel]
+		
 		this.callParent(arguments);
 	},
 	
