@@ -86,6 +86,7 @@ function createApplication(){
 			'Task',
 			'Briefcase',
 			'Curves',
+			'MetricNavigation'
 		],
 	
 		//autoCreateViewport: true,
