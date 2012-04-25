@@ -110,14 +110,15 @@ def log_task(func):
 
 		# Publish Amqp event
 		if success:
-			status=1
-		else:
 			status=0
+		else:
+			status=1
 
 		event = cevent.forger(
 			connector='celery',
 			connector_name='task_log',
 			event_type='log',
+			source_type='resource',
 			output=log['output'],
 			state=status
 			)
