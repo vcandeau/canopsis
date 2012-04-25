@@ -47,7 +47,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	exportMode : false,
 	export_from : undefined,
 	export_to : undefined,
-	export_toolbar_type: 'window',
 
 	//Locales
 	locales : {
@@ -220,49 +219,30 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	//Reporting
 	addReportingBar : function() {
-		if(this.export_toolbar_type == 'window'){
-			var config = {
-						width:350,
-						border:false,
-						title:_('Live reporting toolbar'),
-						constrain: true,
-						renderTo : this.id,
-						resizable: false,
-						closable:false
-						}
-			this.reportingBar = Ext.widget('ReportingBar',{reloadAfterAction: true})
-			
-			this.export_window = Ext.widget('window',config)
-			this.export_window.addDocked(this.reportingBar)
-			this.export_window.show()
-			
-			//switch widget to reporting mode
-			var cmps = this.getCmps()
-			for(var i in cmps){
-				if(cmps[i].reportMode == false){
-					cmps[i].reportMode = true
-				}
-			}
-			
-			this.stopAllTasks()
-		}else{
-			if(this.reportingBar == undefined){
-				log.debug('Show reporting bar', this.logAuthor)
-				this.reportingBar = Ext.widget('ReportingBar',{reloadAfterAction: true})
-				this.addDocked(this.reportingBar)
-				
-				//stop refresh and switch widgets to report mode
-				var cmps = this.getCmps()
-				for(var i in cmps){
-					if(cmps[i].reportMode == false){
-						cmps[i].reportMode = true
+		var config = {
+					width:350,
+					border:false,
+					title:_('Live reporting toolbar'),
+					constrain: true,
+					renderTo : this.id,
+					resizable: false,
+					closable:false
 					}
-				}
-				this.stopAllTasks()
-			} else {
-				log.debug('Already in reporting mode',this.logAuthor)
+		this.reportingBar = Ext.widget('ReportingBar',{reloadAfterAction: true})
+		
+		this.export_window = Ext.widget('window',config)
+		this.export_window.addDocked(this.reportingBar)
+		this.export_window.show()
+		
+		//switch widget to reporting mode
+		var cmps = this.getCmps()
+		for(var i in cmps){
+			if(cmps[i].reportMode == false){
+				cmps[i].reportMode = true
 			}
 		}
+		
+		this.stopAllTasks()
 	},
 	
 	removeReportingBar : function(){
@@ -279,13 +259,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 		}
 		
-		if(this.export_toolbar_type == 'window'){
-			this.export_window.destroy()
-		}else{
-			this.removeDocked(this.reportingBar,true)
-			this.reportingBar = undefined
-		}
-		
+		this.export_window.destroy()
+
 		this.startAllTasks()
 	},
 	
