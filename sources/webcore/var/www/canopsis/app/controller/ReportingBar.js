@@ -79,11 +79,15 @@ Ext.define('canopsis.controller.ReportingBar', {
 		var toolbar = this.bar
 		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
 		var startReport =	endReport - toolbar.combo.getValue();
-		log.debug('from : ' + startReport + 'To : ' + endReport,this.logAuthor)
 		//launch tab function
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
 		if(toolbar.currentDate.isValid()){
 			tab.setReportDate(startReport*1000,endReport*1000)
+			log.debug('------------------------Asked Report date-----------------------')
+			log.debug('from : ' + startReport + 'To : ' + endReport,this.logAuthor)
+			log.debug('startReport date is : ' + Ext.Date.format(new Date(startReport*1000), 'Y-m-d H:i:s'),this.logAuthor)
+			log.debug('endReport date is : ' + Ext.Date.format(new Date(endReport*1000), 'Y-m-d H:i:s'),this.logAuthor)
+			log.debug('----------------------------------------------------------------')
 		} else {
 			global.notify.notify(_('Invalid date'),_('The selected date is in futur'))
 		}
