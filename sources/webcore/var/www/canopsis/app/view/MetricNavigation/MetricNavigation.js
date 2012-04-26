@@ -24,10 +24,15 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	
 	alias: 'widget.MetricNavigation',
 	
+	border: false,
+	
 	initComponent: function() {
 		
 		//create cinventory
-		var tab1 = Ext.create('canopsis.lib.form.field.cinventory',{title:_('select metrics'),vertical_multiselect:true})
+		var tab1 = Ext.create('canopsis.lib.form.field.cinventory',{
+																	title:_('select metrics'),
+																	vertical_multiselect:true,
+																	default_padding: '3 0 3 0'})
 		
 		//create toolbar button
 		var toolbar = Ext.create('Ext.toolbar.Toolbar')
@@ -38,6 +43,8 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			action: 'cancel'
 		})
 		
+		toolbar.add('->')
+			
 		this.buttonDisplay = toolbar.add({
 			xtype: 'button', 
 			text: _('Display'),
@@ -49,6 +56,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			region:'west',
 			width: 550,
 			border: false,
+			title : _('Configuration panel'),
 			collapsible: true,
 			collapseDirection: 'left',
 			bbar: toolbar,
@@ -60,8 +68,9 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		config_renderPanel = {
 			region:'center',
 			layout: 'column',
+			margin: '0 0 0 1',
 			title:'renderPanel',
-			//border: '0 1 1 1',
+			border: false,
 			items : [
 			/*			{xtype:'panel',width:350,height:200,border:4},	
 						{xtype:'panel',width:350,height:200,border:4},	
