@@ -29,13 +29,14 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	metrics: true,
 	multiSelect: true,
 	vertical_multiselect: false,
+	default_padding : 5,
 	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']'
 		log.debug('Initialize ...', this.logAuthor)
 		
 		var default_layout = { type: 'hbox', align: 'stretch'}
-		var default_defaults = { padding: 5 }
+		var default_defaults = { padding: this.default_padding }
 		
 		this.items = this.buildView();
 		
