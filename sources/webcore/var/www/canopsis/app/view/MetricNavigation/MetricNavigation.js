@@ -29,34 +29,54 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		//create cinventory
 		var tab1 = Ext.create('canopsis.lib.form.field.cinventory',{title:_('select metrics'),vertical_multiselect:true})
 		
-		//set items
+		//create toolbar button
+		var toolbar = Ext.create('Ext.toolbar.Toolbar')
+		
+		this.buttonCancel = toolbar.add({
+			xtype: 'button', 
+			text: _('Cancel'),
+			action: 'cancel'
+		})
+		
+		this.buttonDisplay = toolbar.add({
+			xtype: 'button', 
+			text: _('Display'),
+			action: 'display'
+		})
+		
+		//create config panel
 		var config_tabPanel = {
 			region:'west',
 			width: 550,
+			border: false,
 			collapsible: true,
 			collapseDirection: 'left',
+			bbar: toolbar,
 			items:[tab1,{title:'sample2'}]
 		}
-		var tabPanel = Ext.create('Ext.tab.Panel',config_tabPanel)
+		this.tabPanel = Ext.create('Ext.tab.Panel',config_tabPanel)
 		
-		var config_renderPanel = {
+		//create render panel
+		config_renderPanel = {
 			region:'center',
 			layout: 'column',
 			title:'renderPanel',
+			//border: '0 1 1 1',
 			items : [
+			/*			{xtype:'panel',width:350,height:200,border:4},	
 						{xtype:'panel',width:350,height:200,border:4},	
 						{xtype:'panel',width:350,height:200,border:4},	
 						{xtype:'panel',width:350,height:200,border:4},	
-						{xtype:'panel',width:350,height:200,border:4},	
-						{xtype:'panel',width:350,height:200,border:4},	
+						{xtype:'panel',width:350,height:200,border:4},	*/
 					]
 		}
+		this.renderPanel = Ext.create('Ext.panel.Panel',config_renderPanel)
 		
-		var renderPanel = Ext.create('Ext.panel.Panel',config_renderPanel)
+		//---------------------building layout----------------------------------
 		
-		var masterpanel = Ext.create('Ext.panel.Panel',{layout:'border',items:[tabPanel,renderPanel]})
+		var masterpanel = Ext.create('Ext.panel.Panel',{layout:'border',items:[this.tabPanel,this.renderPanel]})
 		
-		//building layout
+		
 		this.items = [masterpanel]
 		this.callParent(arguments);
 	},
