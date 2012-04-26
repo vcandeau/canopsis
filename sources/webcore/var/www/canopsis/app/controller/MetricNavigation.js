@@ -44,6 +44,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		log.debug('Binding events', this.logAuthor)
 		this.tabPanel = panel.tabPanel
 		this.renderPanel =  panel.renderPanel
+		this.metricTab = panel.metricTab
 		
 		//-------------------------Button bindings------------------
 		panel.buttonCancel.on('click',this._buttonCancel,this)
@@ -59,6 +60,8 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	
 	_buttonDisplay:function(){
 		log.debug('Click on display button', this.logAuthor)
+		metrics = this.metricTab.getValue()
+		//log.dump(metrics)
 	},
 	
 })

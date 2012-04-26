@@ -29,7 +29,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	initComponent: function() {
 		
 		//create cinventory
-		var tab1 = Ext.create('canopsis.lib.form.field.cinventory',{
+		this.metricTab = Ext.create('canopsis.lib.form.field.cinventory',{
 																	title:_('select metrics'),
 																	vertical_multiselect:true,
 																	default_padding: '3 0 3 0'})
@@ -60,7 +60,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			collapsible: true,
 			collapseDirection: 'left',
 			bbar: toolbar,
-			items:[tab1,{title:'sample2'}]
+			items:[this.metricTab,{title:'sample2'}]
 		}
 		this.tabPanel = Ext.create('Ext.tab.Panel',config_tabPanel)
 		
