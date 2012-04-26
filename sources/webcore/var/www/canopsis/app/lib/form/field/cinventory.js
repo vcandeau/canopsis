@@ -28,6 +28,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 	
 	metrics: true,
 	multiSelect: true,
+	vertical_multiselect: false,
 	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']'
@@ -38,7 +39,7 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		
 		this.items = this.buildView();
 		
-		if (! this.multiSelect){
+		if (! this.multiSelect || this.vertical_multiselect){
 			default_layout.type = 'vbox'
 		}
 		
@@ -142,10 +143,12 @@ Ext.define('canopsis.lib.form.field.cinventory' ,{
 		
 		var selection_height = undefined
 		var selection_flex = 1
+		
 		if (! this.multiSelect){
 			selection_flex = undefined
 			selection_height = 130
 		}
+		
 		
 		this.selection_grid = Ext.create('canopsis.lib.view.cgrid', {
 			title: _("Selection"),
