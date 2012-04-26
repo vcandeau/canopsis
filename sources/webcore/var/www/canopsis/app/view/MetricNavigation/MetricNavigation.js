@@ -66,14 +66,14 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		
 		//create render panel
 		
-		this.renderContent = Ext.create('Ext.panel.Panel',{layout: 'column'})
+		this.renderContent = Ext.create('Ext.panel.Panel',{layout: 'column',border:false,autoScroll: true,})
 		
 		var config_renderPanel = {
 			region:'center',
-			//layout: 'column',
+			layout: 'fit',
 			margin: '0 0 0 1',
 			title:'renderPanel',
-			//border: false,
+			border: false,
 			items : [this.renderContent]
 		}
 		this.renderPanel = Ext.create('Ext.panel.Panel',config_renderPanel)
