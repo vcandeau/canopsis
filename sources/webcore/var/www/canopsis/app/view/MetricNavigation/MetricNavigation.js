@@ -30,15 +30,16 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		var tab1 = Ext.create('canopsis.lib.form.field.cinventory',{title:_('select metrics'),vertical_multiselect:true})
 		
 		//set items
-		var items = [{
-			xtype:'tabpanel',
+		var config_tabPanel = {
 			region:'west',
 			width: 550,
 			collapsible: true,
 			collapseDirection: 'left',
-			items:[tab1,{title:'sample2'}],
-		},{
-			xtype:'panel',
+			items:[tab1,{title:'sample2'}]
+		}
+		var tabPanel = Ext.create('Ext.tab.Panel',config_tabPanel)
+		
+		var config_renderPanel = {
 			region:'center',
 			layout: 'column',
 			title:'renderPanel',
@@ -49,9 +50,11 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 						{xtype:'panel',width:350,height:200,border:4},	
 						{xtype:'panel',width:350,height:200,border:4},	
 					]
-		}]
+		}
 		
-		var masterpanel = Ext.create('Ext.panel.Panel',{layout:'border',items:items})
+		var renderPanel = Ext.create('Ext.panel.Panel',config_renderPanel)
+		
+		var masterpanel = Ext.create('Ext.panel.Panel',{layout:'border',items:[tabPanel,renderPanel]})
 		
 		//building layout
 		this.items = [masterpanel]
