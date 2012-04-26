@@ -389,6 +389,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	onResize: function(){
 		log.debug("onRezize", this.logAuthor)
 		if (this.chart){
+			this.doComponentLayout(this.getWidth(),this.getHeight())
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
 		}
 	},
