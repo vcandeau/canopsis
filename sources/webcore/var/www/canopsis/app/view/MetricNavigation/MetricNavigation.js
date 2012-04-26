@@ -60,24 +60,21 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			collapsible: true,
 			collapseDirection: 'left',
 			bbar: toolbar,
-			items:[this.metricTab,{title:'sample2'}]
+			items:[this.metricTab,{title:'Time period'}]
 		}
 		this.tabPanel = Ext.create('Ext.tab.Panel',config_tabPanel)
 		
 		//create render panel
-		config_renderPanel = {
+		
+		this.renderContent = Ext.create('Ext.panel.Panel',{layout: 'column'})
+		
+		var config_renderPanel = {
 			region:'center',
-			layout: 'column',
+			//layout: 'column',
 			margin: '0 0 0 1',
 			title:'renderPanel',
-			border: false,
-			items : [
-			/*			{xtype:'panel',width:350,height:200,border:4},	
-						{xtype:'panel',width:350,height:200,border:4},	
-						{xtype:'panel',width:350,height:200,border:4},	
-						{xtype:'panel',width:350,height:200,border:4},	
-						{xtype:'panel',width:350,height:200,border:4},	*/
-					]
+			//border: false,
+			items : [this.renderContent]
 		}
 		this.renderPanel = Ext.create('Ext.panel.Panel',config_renderPanel)
 		
