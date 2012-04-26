@@ -41,7 +41,10 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	},
 	
 	_bindMetricNavigation : function(panel){
-			log.debug('Binding events', this.logAuthor)
-			
+		log.debug('Binding events', this.logAuthor)
+		this.tabPanel = panel.tabPanel
+		this.renderPanel =  panel.renderPanel
+		log.dump(this.tabPanel)
+		log.dump(this.renderPanel)
 	}
 })
