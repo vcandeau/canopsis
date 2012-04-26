@@ -22,6 +22,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	extend: 'Ext.app.Controller',
 
 	stores: [],
+	models: [],
 
 	logAuthor : '[controller][MetricNavigation]',
 
@@ -41,6 +42,6 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	
 	_bindMetricNavigation : function(panel){
 			log.debug('Binding events', this.logAuthor)
-		
+			
 	}
 })
