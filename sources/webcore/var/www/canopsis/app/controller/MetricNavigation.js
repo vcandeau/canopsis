@@ -50,8 +50,8 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		//-------------------------Button bindings------------------
 		panel.buttonCancel.on('click',this._buttonCancel,this)
 		panel.buttonDisplay.on('click',this._buttonDisplay,this)
-		//this.tabPanel.on('collapse'
-		//this.tabPanel.on('expand'
+		this.tabPanel.on('collapse',this._refreshLayout,this)
+		this.tabPanel.on('expand',this._refreshLayout,this)
 		
 	},
 	
@@ -75,14 +75,24 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		log.dump(nodes)
 		var config = {
 			nodes:nodes,
-			//time_window:604800
-			width:'40%',
+			extend: 'Ext.container.Container',
+			width:'49%',
 			height:200,
+			layout: 'fit'
 		}
 		var graph = Ext.widget('line_graph',config)
-		//var panel = Ext.create('Ext.container.Container',{width:300,height:200,items:[graph]})
-		//this.renderPanel.add(panel)
 		this.renderContent.add(graph)
+	},
+	
+	_refreshLayout : function(){
+		log.dump(this.renderContent)
+		for(var i=0; i < this.renderContent.items.length; i++){
+				this.renderContent.items.items[i].onResize()
+		}
+	},
+	
+	_get_cmp : function(){
+		return this.renderContent.items.items
 	}
 	
 })
