@@ -161,3 +161,8 @@ storage.put(record1)
 record1 = crecord({'_id': 'view.briefcase' }, type='view', name='Briefcase')
 record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{ 'xtype': 'BriefcaseGrid'},'id': 'widget-briefcase'} ]
 storage.put(record1)
+
+###metric_navigator
+record1 = crecord({'_id': 'view.metric_navigation' }, type='view', name='metric_navigation')
+record1.data['items'] = [ {'position': {'width': 1,'top': 0, 'left': 0, 'height': 1}, 'data':{'xtype': 'MetricNavigation'},'id': 'widget-metric_navigator'} ]
+storage.put(record1)
