@@ -89,14 +89,18 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	},
 	
 	_refreshLayout : function(){
-		log.dump(this.renderContent)
 		for(var i=0; i < this.renderContent.items.length; i++){
 				this.renderContent.items.items[i].onResize()
 		}
 	},
 	
-	_get_cmp : function(){
+	_getCmp : function(){
 		return this.renderContent.items.items
-	}
+	},
+	
+	_set_time : function(){
+		log.debug('Set time period on graphs',this.logAuthor)
+		
+	},
 	
 })
