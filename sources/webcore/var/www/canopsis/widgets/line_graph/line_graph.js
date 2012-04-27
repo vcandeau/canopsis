@@ -600,7 +600,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	}
 	*/
-	
+	processNodes : function(){
+		var post_params = []
+		for (var i in this.nodes){
+			post_params.push({
+				id: this.nodes[i].id,
+				metrics: this.nodes[i].metrics,
+			})
+		}
+		this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+	},
 	
  	beforeDestroy : function() {
 		this.callParent(arguments);
