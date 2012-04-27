@@ -111,7 +111,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		//-------------------some default var------------------
 		var today = new Date()
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000))
-		
+		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000))
 		//-------------------from field-----------------------
 		
 		this.fromHour = fromField.add({
@@ -123,6 +123,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			labelWidth: 50,
 			flex: 1,
 			submitFormat: 'G:i',
+			value:'0:00 AM'
 		})
 		
 		this.fromDate = fromField.add({
@@ -133,7 +134,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			labelWidth: 50,
 			width: 110,
 			margin: '0 0 0 10',
-			value: today,
+			value: yesterday,
 			maxValue: tommorow,
 			flex: 1,
 		})
@@ -150,6 +151,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			//allowBlank: false,
 			flex: 1,
 			submitFormat: 'G:i',
+			value:'0:00 AM'
 		})
 		
 		
@@ -167,14 +169,16 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			flex: 1,
 		})
 		
+		//-------------------Button--------------------------
 		
 		
 		//-------------------Building------------------------
 		var config= {
 				title:_('Period selection'),
 				items:[fromField,toField],
-				//border:false,
+				border:false,
 				//margin:10,
+				padding: 10
 		}
 		this.timePanel = Ext.create('Ext.form.Panel', config)
 		
