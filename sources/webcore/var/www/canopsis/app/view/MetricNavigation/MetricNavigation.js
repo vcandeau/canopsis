@@ -92,22 +92,91 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	
 	createTimePanel : function(){
 		log.debug('Creating time panel', this.logAuthor)
-		var config= {
-				title:_('Period selection'),
-			
-		}
 		
-		this.timePanel = Ext.create('Ext.panel.Panel', config)
-		/*
-		var currentDate = this.add({
+		
+		//----------------fieldSet creation-------------------
+		var fromField = Ext.widget('fieldset',{
+			xtype: 'fieldset',
+			title: _('From'),
+			collapsible: false,
+			layout:'hbox',
+		})
+		
+		var toField = Ext.widget('fieldset',{
+			xtype: 'fieldset',
+			title: _('To'),
+			collapsible: false,
+			layout:'hbox'
+		})
+		//-------------------some default var------------------
+		var today = new Date()
+		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000))
+		
+		//-------------------from field-----------------------
+		
+		this.fromHour = fromField.add({
+			xtype:'timefield',
+			name: 'fromHours',
+			fieldLabel: _('Hour'),
+			increment: 15,
+			//allowBlank: false,
+			labelWidth: 50,
+			flex: 1,
+			submitFormat: 'G:i',
+		})
+		
+		this.fromDate = fromField.add({
 			xtype: 'datefield',
-			name: 'from',
+			name: 'fromDate',
+			editable: false,
+			fieldLabel: _('Date'),
+			labelWidth: 50,
+			width: 110,
+			margin: '0 0 0 10',
+			value: today,
+			maxValue: tommorow,
+			flex: 1,
+		})
+		
+		
+		//--------------------to field------------------------
+		
+		this.toHours = toField.add({
+			xtype:'timefield',
+			name: 'fromHours',
+			fieldLabel: _('Hour'),
+			labelWidth: 50,
+			increment: 15,
+			//allowBlank: false,
+			flex: 1,
+			submitFormat: 'G:i',
+		})
+		
+		
+		
+		this.toDate = toField.add({
+			xtype: 'datefield',
+			name: 'fromDate',
 			editable: false,
 			width: 110,
 			value: today,
+			fieldLabel: _('Date'),
+			labelWidth: 50,
+			margin: '0 0 0 10',
 			maxValue: tommorow,
+			flex: 1,
 		})
-		*/
+		
+		
+		
+		//-------------------Building------------------------
+		var config= {
+				title:_('Period selection'),
+				items:[fromField,toField],
+				//border:false,
+				//margin:10,
+		}
+		this.timePanel = Ext.create('Ext.form.Panel', config)
 		
 		return this.timePanel
 	}
