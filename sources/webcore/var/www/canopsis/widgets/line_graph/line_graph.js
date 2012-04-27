@@ -314,25 +314,28 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			//	var metrics = this.nodes[i].metrics
 				
 			//	log.debug("   + " + node, this.logAuthor)
-			
-			if (this.nodes) {
-				url = this.makeUrl(from, to)
-				this.last_from = to
+			if (this.nodes){
+				if(this.nodes.length != 0){
+					url = this.makeUrl(from, to)
+					this.last_from = to
 
-				Ext.Ajax.request({
-					url: url,
-					scope: this,
-					params: this.post_params,
-					method: 'POST',
-					success: function(response){
-						var data = Ext.JSON.decode(response.responseText)
-						data = data.data
-						this.onRefresh(data)	
-					},
-					failure: function ( result, request) {
-						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-					} 
-				})
+					Ext.Ajax.request({
+						url: url,
+						scope: this,
+						params: this.post_params,
+						method: 'POST',
+						success: function(response){
+							var data = Ext.JSON.decode(response.responseText)
+							data = data.data
+							this.onRefresh(data)	
+						},
+						failure: function ( result, request) {
+							log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+						} 
+					})
+				} else {
+					log.debug('No nodes specified', this.logAuthor)
+				}
 			}
 		}
 	},
