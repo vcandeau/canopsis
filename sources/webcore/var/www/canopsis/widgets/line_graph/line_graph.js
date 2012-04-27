@@ -544,8 +544,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	reportToLive : function(){
 		log.debug('Resume live reporting', this.logAuthor)
-		to = Date.now();
-		from = to - this.time_window;
+		var to = Date.now();
+		var from = to - this.time_window;
 		this.doRefresh(from,to)
 	},
 	
