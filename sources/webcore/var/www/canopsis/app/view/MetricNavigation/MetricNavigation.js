@@ -116,7 +116,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		
 		this.fromHour = fromField.add({
 			xtype:'timefield',
-			name: 'fromHours',
+			name: 'fromHour',
 			fieldLabel: _('Hour'),
 			increment: 15,
 			//allowBlank: false,
@@ -142,9 +142,9 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		
 		//--------------------to field------------------------
 		
-		this.toHours = toField.add({
+		this.toHour = toField.add({
 			xtype:'timefield',
-			name: 'fromHours',
+			name: 'toHour',
 			fieldLabel: _('Hour'),
 			labelWidth: 50,
 			increment: 15,
@@ -158,7 +158,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		
 		this.toDate = toField.add({
 			xtype: 'datefield',
-			name: 'fromDate',
+			name: 'toDate',
 			editable: false,
 			width: 110,
 			value: today,
