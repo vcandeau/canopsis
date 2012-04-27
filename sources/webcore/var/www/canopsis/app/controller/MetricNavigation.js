@@ -42,6 +42,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	
 	_bindMetricNavigation : function(panel){
 		log.debug('Binding events', this.logAuthor)
+		this.panel = panel
 		this.tabPanel = panel.tabPanel
 		this.renderPanel =  panel.renderPanel
 		this.metricTab = panel.metricTab
@@ -67,6 +68,8 @@ Ext.define('canopsis.controller.MetricNavigation', {
 
 		//clean render view
 		this.renderContent.removeAll(true)
+		
+		this._setTime()
 		
 		//add one graph per node
 		for(var i = 0; i < metrics.length; i++){
@@ -100,12 +103,43 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	},
 	
 	_getTimestampPerdiod: function(){
+		log.debug('Get ts from form')
 		
 	},
 	
-	_set_time : function(){
+	_setTime : function(){
 		log.debug('Set time period on graphs',this.logAuthor)
 		
+		//get time values
+		var fromDate = this.panel.fromDate.getValue()
+		var toDate = this.panel.toDate.getValue()
+		var fromHour = this.panel.fromHour.getSubmitData().fromHour
+		var toHour = this.panel.toHour.getSubmitData().toHour
+		
+		//compute from Hour
+		arrayFromHour = fromHour.split(':')
+		fromHour = (arrayFromHour[0] * global.commonTs.hours)+(arrayFromHour[1] * 60)
+		log.debug('from Hour ts : ' + fromHour)
+		
+		//compute to Hour
+		arrayToHour = toHour.split(':')
+		toHour = (arrayToHour[0] * global.commonTs.hours)+(arrayToHour[1] * 60)
+		log.debug('from Hour ts : ' + toHour)
+		
+		log.dump(fromDate)
+		log.dump(toDate)
+		
+		fromDate = Ext.Date.format(fromDate, 'U')
+		toDate =Ext.Date.format(toDate, 'U')
+		
+		var from = parseInt(fromDate) + parseInt(fromHour)
+		var to = parseInt(toDate) + parseInt(toHour)
+		
+		log.dump(fromDate)
+		log.dump(toDate)
+		
+		log.dump(new Date(from*1000))
+		log.dump(new Date(to*1000))
 	},
 	
 })
