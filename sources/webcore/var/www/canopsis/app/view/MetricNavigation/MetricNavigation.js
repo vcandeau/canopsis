@@ -51,6 +51,9 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			action: 'display'
 		})
 		
+		//time selection panel
+		this.createTimePanel()
+		
 		//create config panel
 		var config_tabPanel = {
 			region:'west',
@@ -60,7 +63,7 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 			collapsible: true,
 			collapseDirection: 'left',
 			bbar: toolbar,
-			items:[this.metricTab,{title:'Time period'}]
+			items:[this.metricTab,this.timePanel]
 		}
 		this.tabPanel = Ext.create('Ext.tab.Panel',config_tabPanel)
 		
@@ -87,6 +90,27 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 		this.callParent(arguments);
 	},
 	
+	createTimePanel : function(){
+		log.debug('Creating time panel', this.logAuthor)
+		var config= {
+				title:_('Period selection'),
+			
+		}
+		
+		this.timePanel = Ext.create('Ext.panel.Panel', config)
+		/*
+		var currentDate = this.add({
+			xtype: 'datefield',
+			name: 'from',
+			editable: false,
+			width: 110,
+			value: today,
+			maxValue: tommorow,
+		})
+		*/
+		
+		return this.timePanel
+	}
 	
 	
 })
