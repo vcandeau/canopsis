@@ -64,7 +64,11 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	_buttonDisplay:function(){
 		log.debug('Click on display button', this.logAuthor)
 		metrics = this.metricTab.getValue()
-		//log.dump(metrics)
+
+		//clean render view
+		this.renderContent.removeAll(true)
+		
+		//add one graph per node
 		for(var i = 0; i < metrics.length; i++){
 			log.dump(metrics[i])
 			this._addGraph([metrics[i]])
@@ -72,7 +76,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	},
 	
 	_addGraph : function(nodes){
-		log.dump(nodes)
+		log.debug('Adding graph', this.logAuthor)
 		var config = {
 			nodes:nodes,
 			extend: 'Ext.container.Container',
