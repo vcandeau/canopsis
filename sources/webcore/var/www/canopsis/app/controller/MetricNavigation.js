@@ -79,6 +79,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		log.debug('Adding graph', this.logAuthor)
 		var config = {
 			nodes:nodes,
+			SeriesType: 'line',
 			extend: 'Ext.container.Container',
 			width:'49%',
 			height:200,
@@ -96,6 +97,10 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	
 	_getCmp : function(){
 		return this.renderContent.items.items
+	},
+	
+	_getTimestampPerdiod: function(){
+		
 	},
 	
 	_set_time : function(){
