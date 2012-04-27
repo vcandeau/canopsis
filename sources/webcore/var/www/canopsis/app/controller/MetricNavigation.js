@@ -69,20 +69,25 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		//clean render view
 		this.renderContent.removeAll(true)
 		
-		this._setTime()
+		timePeriod = this._getTime()
 		
 		//add one graph per node
 		for(var i = 0; i < metrics.length; i++){
-			log.dump(metrics[i])
-			this._addGraph([metrics[i]])
+			var item = this._addGraph([metrics[i]])
+			
+			//set time after first render (avoid useless ajax request
+			item.nodes = [metrics[i]]
+			item.processNodes()
+			item._doRefresh(timePeriod.from*1000,timePeriod.to*1000)
 		}
+
 	},
 	
 	_addGraph : function(nodes){
 		log.debug('Adding graph', this.logAuthor)
 		var config = {
-			nodes:nodes,
 			SeriesType: 'line',
+			reportMode:true,
 			extend: 'Ext.container.Container',
 			width:'49%',
 			height:200,
@@ -90,6 +95,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		}
 		var graph = Ext.widget('line_graph',config)
 		this.renderContent.add(graph)
+		return graph
 	},
 	
 	_refreshLayout : function(){
@@ -107,7 +113,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		
 	},
 	
-	_setTime : function(){
+	_getTime : function(){
 		log.debug('Set time period on graphs',this.logAuthor)
 		
 		//get time values
@@ -126,20 +132,16 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		toHour = (arrayToHour[0] * global.commonTs.hours)+(arrayToHour[1] * 60)
 		log.debug('from Hour ts : ' + toHour)
 		
-		log.dump(fromDate)
-		log.dump(toDate)
-		
 		fromDate = Ext.Date.format(fromDate, 'U')
 		toDate =Ext.Date.format(toDate, 'U')
 		
 		var from = parseInt(fromDate) + parseInt(fromHour)
 		var to = parseInt(toDate) + parseInt(toHour)
-		
-		log.dump(fromDate)
-		log.dump(toDate)
-		
+		/*
 		log.dump(new Date(from*1000))
 		log.dump(new Date(to*1000))
+		*/
+		return {from:from,to:to}
 	},
 	
 })
