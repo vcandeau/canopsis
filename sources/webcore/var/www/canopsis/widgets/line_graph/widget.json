@@ -100,10 +100,16 @@
 								"fieldLabel": "Marker radius",
 								"minValue": 0,
 								"value": 2
+                           },{
+								"xtype" : "numberfield",
+								"name" : "maxZoom",
+								"fieldLabel": "Max zoom (seconds)",
+								"minValue": 60,
+								"value": 600
                            }]
 					},{
 						"xtype": "fieldset",
-						"title": "Style",
+						"title": "Graph Style",
 						"collapsible": false,
 						"items": [
 							{
@@ -117,16 +123,26 @@
 								"checked": true,
 								"name": "zoom"
 							},{
+								"xtype" : "colorfield",
+								"name" : "backgroundColor",
+								"fieldLabel": "Background color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "colorfield",
+								"name" : "borderColor",
+								"fieldLabel": "Border color",
+								"value": "FFFFFF"
+                           },{
 								"xtype" : "numberfield",
-								"name" : "maxZoom",
-								"fieldLabel": "Max zoom (seconds)",
-								"minValue": 60,
-								"value": 600
+								"name" : "borderWidth",
+								"fieldLabel": "Border Width",
+								"minValue": 0,
+								"value": 0
                            }					
 						]
 					},{
 						"xtype": "fieldset",
-						"title": "Legend",
+						"title": "Legend Style",
 						"collapsible": false,
 						"items": [
 							{
@@ -140,6 +156,11 @@
 								"fieldLabel": "Font Size",
 								"minValue": 1,
 								"value": 12
+                           },{
+								"xtype" : "colorfield",
+								"name" : "legend_fontColor",
+								"fieldLabel": "Font color",
+								"value": "FFFFFF"
                            },{
 								"xtype" : "numberfield",
 								"name" : "legend_borderWidth",
