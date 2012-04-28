@@ -42,7 +42,7 @@ Ext.define('canopsis.store.Curve', {
 	
 	proxy: {
 		type: 'rest',
-		url: '/rest/curve/curve',
+		url: '/rest/object/curve',
 		reader: {
 			type: 'json',
 			root: 'data',
