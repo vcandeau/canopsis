@@ -197,15 +197,25 @@ Ext.define('widgets.pie.pie' ,{
 					
 					if (max == undefined)
 						max = this.max
-						
-					var metric_long_name = "<b>" + metric_name + "</b>"
+					
+					var colors = global.curvesCtrl.getRenderColors(metric_name, index)
+					var curve = global.curvesCtrl.getRenderInfo(metric_name)
+					
+					// Set Label
+					var label = undefined;
+					if (curve)
+						label = curve.get('label')		
+					if (! label)
+						label = metric_name
+
+					var metric_long_name = "<b>" + label + "</b>"
 					
 					if (unit){
 						metric_long_name += " ("+unit+")"
 						other_label += " ("+unit+")"
 					}
 					
-					var colors = global.curvesCtrl.getRenderColors(metric_name, index)
+
 					serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] })
 				}
 				
