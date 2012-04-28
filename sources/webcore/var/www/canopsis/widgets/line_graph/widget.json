@@ -160,7 +160,7 @@
 								"xtype" : "colorfield",
 								"name" : "legend_fontColor",
 								"fieldLabel": "Font color",
-								"value": "FFFFFF"
+								"value": "3E576F"
                            },{
 								"xtype" : "numberfield",
 								"name" : "legend_borderWidth",
