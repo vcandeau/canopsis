@@ -29,14 +29,13 @@ def launch_celery_task(*args,**kwargs):
 			exec "task = module.%s" % kwargs['method']
 			
 			methodargs = kwargs
-
 			del methodargs['task']
 			del methodargs['method']
 			
-			#print(args)
-			#print(kwargs)
-			
 			result = task.delay(*args,**methodargs)
+			result.get()
+
+			logger.info(result)
 
 			return result
 			
