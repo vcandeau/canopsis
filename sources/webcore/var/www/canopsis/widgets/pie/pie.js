@@ -34,6 +34,10 @@ Ext.define('widgets.pie.pie' ,{
 	other_label: "Free",
 	
 	autoTitle: true,
+	backgroundColor: "#FFFFFF",
+	borderColor: "#FFFFFF",
+	borderWidth: 0,
+	
 	title_fontSize: 15,
 	
 	pie_size: 60,
@@ -44,6 +48,7 @@ Ext.define('widgets.pie.pie' ,{
 	legend_borderColor: "#909090",
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
+	legend_fontColor: "#3E576F",
 	//
 
 	initComponent: function() {
@@ -92,7 +97,9 @@ Ext.define('widgets.pie.pie' ,{
 				height: this.getHeight(),
 				reflow: false,
 				animation: false,
-				borderColor: "#FFFFFF"
+				borderColor: this.borderColor,
+				borderWidth: this.borderWidth,
+				backgroundColor: this.backgroundColor,
 			},
 			exporting: {
 				enabled: false
@@ -112,7 +119,7 @@ Ext.define('widgets.pie.pie' ,{
 			},
 			tooltip: {
 				formatter: function() {
-					return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';
+					return this.point.name + ': '+ Math.round(this.percentage) +' %';
 					}
 			},
 			title: {
@@ -135,7 +142,8 @@ Ext.define('widgets.pie.pie' ,{
 				borderWidth: this.legend_borderWidth,
 				borderColor: this.legend_borderColor,
 				itemStyle: {
-					fontSize: this.legend_fontSize
+					fontSize: this.legend_fontSize,
+					color: this.legend_fontColor
 				}
 			},
 			series: []
@@ -185,18 +193,20 @@ Ext.define('widgets.pie.pie' ,{
 				var metric_name = metric 
 				
 				if (node.metrics.indexOf(metric) != -1 || node.metrics.indexOf('<all>') != -1){
-					var other_label = this.other_label
+					var other_label = "<b>" + this.other_label + "</b>"
 					
 					if (max == undefined)
 						max = this.max
+						
+					var metric_long_name = "<b>" + metric_name + "</b>"
 					
 					if (unit){
-						metric_name += " ("+unit+")"
+						metric_long_name += " ("+unit+")"
 						other_label += " ("+unit+")"
 					}
 					
 					var colors = global.curvesCtrl.getRenderColors(metric_name, index)
-					serie.data.push({ id: metric, name: metric_name, y: value, color: colors[0] })
+					serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] })
 				}
 				
 				if (perf_data_array.length == 1){
