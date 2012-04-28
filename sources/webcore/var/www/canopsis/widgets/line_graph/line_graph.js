@@ -473,7 +473,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		this.series[serie_id] = serie
 		
 		var hcserie = this.chart.addSeries(Ext.clone(serie), false, false)
-		hcserie.curve = curve
+		
+		if (curve)
+			hcserie['invert'] = curve.get('invert')
 		
 		this.series_hc[serie_id] = hcserie
 		
@@ -482,13 +484,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	parseValues: function(serie, values){
 		//Do operation on value
-		if (serie.curve) {
-			var invert = serie.curve.get('invert')
-			for (var index in values){
-				if (invert)
-					values[index][1] = - values[index][1]
-			}
-		}
+		if (serie.invert)
+			for (var index in values)
+				values[index][1] = - values[index][1]
+
 		return values
 	},
 
