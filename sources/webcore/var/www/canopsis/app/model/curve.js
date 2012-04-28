@@ -34,6 +34,7 @@ Ext.define('canopsis.model.curve', {
 		{name : 'invert',			defaultValue: false, type: 'boolean' },
 		{name : 'zIndex',			defaultValue: 0, type: 'int'},
 		{name : 'dashStyle',		defaultValue: "Solid" },
+		{name : 'label',			defaultValue: undefined },
 		
 		]
 });

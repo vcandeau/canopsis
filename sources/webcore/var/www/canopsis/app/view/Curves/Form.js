@@ -33,13 +33,15 @@ Ext.define('canopsis.view.Curves.Form', {
 				name: 'metric',
 				allowBlank : false
 			},{
+				fieldLabel: _('Label'),
+				name: 'label',
+			},{
 				xtype: "combobox",
 				name: "dashStyle",
 				fieldLabel: _("Dash style"),
 				queryMode: "local",
 				displayField: "text",
 				valueField: "value",
-				value: 86400,
 				store: {
 					xtype: "store",
 					fields: ["value", "text"],
