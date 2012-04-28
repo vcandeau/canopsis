@@ -177,7 +177,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			tooltip: {
 				enabled: this.tooltip,
 				formatter: function() {
-					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + this.y;
+					var y = this.y
+					if (this.series.invert)
+						y = - y
+					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + y;
 				}
 			},
 			xAxis: {
