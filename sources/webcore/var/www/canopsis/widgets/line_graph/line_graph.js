@@ -53,6 +53,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend: true,
 	tooltip: true,
 	autoTitle: true,
+	backgroundColor: "#FFFFFF",
+	borderColor: "#FFFFFF",
+	borderWidth: 0,
 	
 	marker_symbol: null,
 	marker_radius: 2,
@@ -66,6 +69,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_borderColor: "#909090",
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
+	legend_fontColor: "#3E576F",
 	maxZoom: 60 * 10, // 10 minutes
 	
 	SeriesType: "area",
@@ -149,7 +153,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				height: this.getHeight(),
 				reflow: false,
 				animation: false,
-				borderColor: "#FFFFFF",
+				borderColor: this.borderColor,
+				borderWidth: this.borderWidth,
+				backgroundColor: this.backgroundColor,
 				events: {
 					redraw: this.checkTimewindow
 				}
@@ -220,7 +226,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				borderWidth: this.legend_borderWidth,
 				borderColor: this.legend_borderColor,
 				itemStyle: {
-					fontSize: this.legend_fontSize
+					fontSize: this.legend_fontSize,
+					color: this.legend_fontColor
 				}
 			},
 			series: []

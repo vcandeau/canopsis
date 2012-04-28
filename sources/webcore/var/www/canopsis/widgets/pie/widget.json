@@ -52,7 +52,30 @@
                            }]
 					},{
 						"xtype": "fieldset",
-						"title": "Legend",
+						"title": "Pie Style",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype" : "colorfield",
+								"name" : "backgroundColor",
+								"fieldLabel": "Background color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "colorfield",
+								"name" : "borderColor",
+								"fieldLabel": "Border color",
+								"value": "FFFFFF"
+                           },{
+								"xtype" : "numberfield",
+								"name" : "borderWidth",
+								"fieldLabel": "Border Width",
+								"minValue": 0,
+								"value": 0
+                           }
+						]
+					},{
+						"xtype": "fieldset",
+						"title": "Legend Style",
 						"collapsible": false,
 						"items": [
 							{
