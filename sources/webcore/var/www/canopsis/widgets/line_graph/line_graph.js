@@ -444,15 +444,22 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			metric_long_name = "(" + metric_long_name + ") "
 		}
 		
-		metric_long_name += "<b>" + metric_name + "</b>"
+		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index)
+		var curve = global.curvesCtrl.getRenderInfo(metric_name)
+
+		// Set Label
+		var label = undefined;
+		if (curve)
+			label = curve.get('label')		
+		if (! label)
+			label = metric_name
+						
+		metric_long_name += "<b>" + label + "</b>"
 		
 		if (bunit)
 			metric_long_name += " ("+bunit+")"
 			
 		log.debug('    + legend: '+metric_long_name, this.logAuthor)
-		
-		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index)
-		var curve = global.curvesCtrl.getRenderInfo(metric_name)
 		
 		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0] }
 		

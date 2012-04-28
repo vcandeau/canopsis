@@ -75,6 +75,11 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 			flex: 7,
 			sortable: true,
 			dataIndex: 'metric',
+		},{
+			header: _('Label'),
+			flex: 7,
+			sortable: true,
+			dataIndex: 'label',
 		}
             
 	],
