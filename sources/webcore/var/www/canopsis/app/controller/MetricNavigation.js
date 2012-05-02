@@ -54,6 +54,9 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		this.tabPanel.on('collapse',this._refreshLayout,this)
 		this.tabPanel.on('expand',this._refreshLayout,this)
 		
+		//------------if nodes specified with creation set it automaticaly-----
+		if(panel.nodes.length != 0)
+			this._addGraph(panel.nodes)
 	},
 	
 	_buttonCancel : function(){
@@ -66,24 +69,26 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		log.debug('Click on display button', this.logAuthor)
 		metrics = this.metricTab.getValue()
 
-		//clean render view
+		this._addGraph(metrics)
+	},
+	
+	_addGraph : function(metrics){
 		this.renderContent.removeAll(true)
 		
 		timePeriod = this._getTime()
 		
 		//add one graph per node
 		for(var i = 0; i < metrics.length; i++){
-			var item = this._addGraph([metrics[i]])
-			
-			//set time after first render (avoid useless ajax request
+			var item = this._createGraph([metrics[i]])
+			//set time after first render (avoid useless ajax request)
 			item.nodes = [metrics[i]]
 			item.processNodes()
 			item._doRefresh(timePeriod.from*1000,timePeriod.to*1000)
 		}
-
+		
 	},
 	
-	_addGraph : function(nodes){
+	_createGraph : function(nodes){
 		log.debug('Adding graph', this.logAuthor)
 		var config = {
 			SeriesType: 'line',
@@ -102,15 +107,6 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		for(var i=0; i < this.renderContent.items.length; i++){
 				this.renderContent.items.items[i].onResize()
 		}
-	},
-	
-	_getCmp : function(){
-		return this.renderContent.items.items
-	},
-	
-	_getTimestampPerdiod: function(){
-		log.debug('Get ts from form')
-		
 	},
 	
 	_getTime : function(){
@@ -137,10 +133,7 @@ Ext.define('canopsis.controller.MetricNavigation', {
 		
 		var from = parseInt(fromDate) + parseInt(fromHour)
 		var to = parseInt(toDate) + parseInt(toHour)
-		/*
-		log.dump(new Date(from*1000))
-		log.dump(new Date(to*1000))
-		*/
+
 		return {from:from,to:to}
 	},
 	

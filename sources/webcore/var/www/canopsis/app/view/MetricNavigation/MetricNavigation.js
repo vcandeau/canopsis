@@ -26,6 +26,8 @@ Ext.define('canopsis.view.MetricNavigation.MetricNavigation', {
 	
 	border: false,
 	
+	nodes : [],
+	
 	initComponent: function() {
 		
 		//create cinventory
