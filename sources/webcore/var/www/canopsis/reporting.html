@@ -48,7 +48,7 @@
 </head>
 <body>
 	
-	<div id='container' style="height: 900px;"></div>
+	<div id='container' style='height:900'></div>
 
 	<!--<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>-->
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
@@ -119,7 +119,10 @@
 					renderTo: 'container',
 					width: 940,
 					view_id : export_view_id,
-					
+					/*
+					autoScale: false,
+					autoScroll: false,
+					*/
 					reportMode : true,
 					exportMode : true,
 					export_from : export_from,
@@ -129,7 +132,31 @@
 					//debug: true,
 					autoshow : true,
 				});	
+
+				//-----------------Hack fix manual height--------------------
 				
+				content.on('loaded',function(){
+					//log.debug('----------------------------------------')
+					var options = $('#' + content.container.id).jqGridable('get_options')
+					//log.dump(options)
+					var rows = options.rows
+					var height = options.widget_height
+					var new_height = rows * height
+					
+					log.debug('height is : ' + rows + ' * ' + height)
+					
+					$('#' + content.container.id).height(new_height)
+					$('#' + content.id).height(new_height)
+					$('body').height(new_height)
+					
+					log.debug('computed height : ' + rows * height)
+					log.debug('new height : ' + document.body.style.height)
+					log.debug('new body height : ' + $('body').height())
+					log.debug('container height : ' + $('#' + content.container.id).height())
+					
+				});
+				
+				//--------------------aware wkhtml that loading is finished----
 				var task = new Ext.util.DelayedTask(function(){
 					window.status = 'ready'
 				});
