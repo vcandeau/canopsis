@@ -136,24 +136,22 @@
 				//-----------------Hack fix manual height--------------------
 				
 				content.on('loaded',function(){
-					//log.debug('----------------------------------------')
 					var options = $('#' + content.container.id).jqGridable('get_options')
 					//log.dump(options)
 					var rows = options.rows
 					var height = options.widget_height
 					var new_height = rows * height
 					
-					log.debug('height is : ' + rows + ' * ' + height)
+					log.debug('[Reporting] height is : ' + rows + ' * ' + height)
 					
 					$('#' + content.container.id).height(new_height)
 					$('#' + content.id).height(new_height)
 					$('body').height(new_height)
 					
-					log.debug('computed height : ' + rows * height)
-					log.debug('new height : ' + document.body.style.height)
-					log.debug('new body height : ' + $('body').height())
-					log.debug('container height : ' + $('#' + content.container.id).height())
-					
+					log.debug('[Reporting] computed height : ' + rows * height)
+					log.debug('[Reporting] new height : ' + document.body.style.height)
+					log.debug('[Reporting] new body height : ' + $('body').height())
+					log.debug('[Reporting] container height : ' + $('#' + content.container.id).height())
 				});
 				
 				//--------------------aware wkhtml that loading is finished----
