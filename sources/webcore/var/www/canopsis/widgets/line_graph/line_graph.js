@@ -466,11 +466,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0] }
 		
+		if (curve)
+			serie['dashStyle'] = curve.get('dashStyle')
+		
 		if (this.SeriesType == "area" && curve){
 			serie['fillColor'] = colors[1]
 			serie['fillOpacity'] = colors[2] / 100
 			serie['zIndex'] = curve.get('zIndex')
-			serie['dashStyle'] = curve.get('dashStyle')
 		}
 		
 		this.series[serie_id] = serie
