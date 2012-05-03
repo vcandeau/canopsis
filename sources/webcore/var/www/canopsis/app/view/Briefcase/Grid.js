@@ -28,7 +28,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	
 	opt_bar_add:false,
 	opt_view_element : true,
-	opt_bar_download: true,
+	//opt_bar_download: true,
 	opt_menu_send_mail:true,
 	
 	opt_menu_rename: true,
@@ -52,14 +52,32 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 			renderer : rdr_tstodate,
 		},{
 			header: _('Name'),
-			flex: 2,
+			flex: 4,
 			sortable: true,
 			dataIndex: 'file_name',
 		},{
-			header: _('Database Id'),
-			flex: 2,
-			sortable: true,
-			dataIndex: '_id',
+			width: 120,
+			dataIndex: 'aaa_owner',
+			text: _('Owner')
+		},{
+			width: 120,
+			dataIndex: 'aaa_group',
+			text: _('Group')
+		},{
+			width: 80,
+			align: 'center',
+			text:  _('Owner'),
+			dataIndex: 'aaa_access_owner',
+		},{
+			width: 60,
+			align: 'center',
+			text: _('Group'),
+			dataIndex: 'aaa_access_group',
+		},{
+			width: 60,
+			align: 'center',
+			text:  _('Others'),
+			dataIndex: 'aaa_access_other',
 		}
 	],
 
