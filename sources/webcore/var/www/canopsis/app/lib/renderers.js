@@ -95,25 +95,6 @@ var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, sto
 	return output
 }
 
-var rdr_task_output = function(val, metadata, record, rowIndex, colIndex, store) {
-	output = ''
-	if(val != undefined){
-		if(val.success)
-			output += _('Success') + ' : ' + _(val.success) + ' | ' 
-		if(val.output)
-			output += _('Task Output') + ' : ' + val.output + ' | ' 
-		if(val.timestamp){
-			ts = new Date(val.timestamp * 1000)
-			output += Ext.Date.format(ts, "Y-m-d H:i:s") 
-		}
-	}
-	
-	if(output == '')
-		return _('No previous logs')
-	else
-		return output
-}
-
 //Function for rendering export to pdf button, we haven't find another solution
 var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, store,view){
 	var id = Ext.id();
