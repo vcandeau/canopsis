@@ -18,24 +18,61 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 
-#from task_reporting import render_pdf
+from cinit import cinit
+from caccount import caccount
+from cstorage import cstorage
+from crecord import crecord
 
-logger = logging.getLogger("aps_to_celery")
+import time
+from camqp import camqp
+import cevent
+
+init 	= cinit()
+logger = init.getLogger('aps')
 
 def launch_celery_task(*args,**kwargs):
 	if kwargs.has_key('task') and kwargs.has_key('method'):
 		try:
+			#----------Get task informations
+			task_name = kwargs['_scheduled']
+			
 			module = __import__(kwargs['task'])
 			exec "task = module.%s" % kwargs['method']
 			
+			#-------------Clear arguments
 			methodargs = kwargs
 			del methodargs['task']
 			del methodargs['method']
+			del kwargs['_scheduled']
 			
-			result = task.delay(*args,**methodargs)
-			result.get()
+			#-------------execute task
+			try:
+				result = task.delay(*args,**methodargs)
+				result.get()
+				
+				success = True
+				logger.info(result)
+			except Exception, err:
+				success = False
+				function_error = str(err)
+				logger.error(err)
 
-			logger.info(result)
+			#------------Get account and storage
+			try:
+				if isinstance(kwargs['account'],unicode):
+					account = caccount(user=kwargs['account'])
+				else:
+					account = kwargs['account']
+				logger.info('Caccount create from passed arguments')
+			except:
+				logger.info('No account specified in the task')
+				account = caccount()
+			
+			storage = cstorage(account=account, namespace='task_log')
+			taskStorage = cstorage(account=account, namespace='task')
+			
+			#-------------Check if function have succeed
+			
 
 			return result
 			
