@@ -231,7 +231,7 @@ def get_list_report():
 	###########search
 	try:
 		records = storage.find(filter, sort=msort,limit=limit, offset=start,account=account)
-		total = len(records)
+		total = storage.count(filter, account=account)
 	except Exception,err:
 		logger.error('Error while fetching records : %s' % err)
 	
