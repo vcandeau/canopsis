@@ -205,7 +205,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
 			log.debug("Remove record ...",this.logAuthor)
-			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete'),
+			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
 				function(btn, text){
 					if (btn == 'yes'){
 						grid.store.remove(selection)
