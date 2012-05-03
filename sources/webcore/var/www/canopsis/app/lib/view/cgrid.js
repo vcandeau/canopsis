@@ -31,6 +31,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_grouping: false,
 	opt_paging: true,
 	
+	opt_multiSelect: false,
+	
 	opt_bar: true,
 	opt_bar_bottom: false,
 	opt_bar_add:true,
@@ -72,6 +74,10 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			this.features.push(groupingFeature);
 		}*/
 		
+		//multi select
+		if(this.opt_multiSelect == true)
+			this.multiSelect = true
+			
 		// keynav_del
 		if (this.opt_bar_delete && this.opt_keynav_del == undefined)
 			this.opt_keynav_del = true
