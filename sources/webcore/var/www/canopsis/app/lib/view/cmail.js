@@ -27,6 +27,8 @@ Ext.define('canopsis.lib.view.cmail' ,{
 	
 	bodyHtml : false,
 	
+	constrain : true,
+	
 	attachement : false,
 
 	logAuthor: '[cmail]',
