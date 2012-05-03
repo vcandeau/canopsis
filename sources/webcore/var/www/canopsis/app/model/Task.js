@@ -34,12 +34,24 @@ Ext.define('canopsis.model.Task', {
 		{name : 'cron', defaultValue: undefined},
 		{name : 'log'},
 		{
+			name : 'log_success',
+			convert : function(value, record) {return record.get('log').success}
+		},
+		{
+			name : 'log_output',
+			convert : function(value, record) {return record.get('log').output}
+		},
+		{
+			name : 'log_last_execution',
+			convert : function(value, record) {return record.get('log').timestamp}
+		},		
+		{
 		 name: 'mail',
 		 convert: function(value, record) {
 					var kwargs = record.get('kwargs')
 					if(kwargs['mail'] != undefined){
 						var mail = kwargs['mail']
-						return mail
+						return true
 					}else{
 						return false
 					}
