@@ -77,7 +77,7 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 	return "<span style='background-color:" + global.default_colors[rowIndex] + ";color:" + global.default_colors[rowIndex] + ";'>__</span>"
 }
 
-var rdr_task_timedelta = function(val, metadata, record, rowIndex, colIndex, store) {	
+var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store) {	
 	var output = ''
 	if(val != undefined){
 		if(val.hour && val.minute)
