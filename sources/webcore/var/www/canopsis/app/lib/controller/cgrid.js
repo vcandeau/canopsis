@@ -209,6 +209,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				function(btn, text){
 					if (btn == 'yes'){
 						grid.store.remove(selection)
+						grid.store.load()
 					}
 				});
 		}
@@ -216,6 +217,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.deleteButton) {
 			this.deleteButton(button, grid, selection);
 		}
+		
+		
 	},
 	
 	_editRights: function(){
