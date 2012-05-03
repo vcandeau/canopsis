@@ -59,7 +59,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		
 		//Binding action for contextMenu
 		if(grid.contextMenu){
-			grid.on('itemcontextmenu', this._contextMenu)
+			grid.on('itemcontextmenu', this._contextMenu,this)
 			
 			//Duplicate button
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=duplicate]')
@@ -454,8 +454,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_contextMenu : function(view, rec, node, index, e) {
-		view.select(rec)
-		this.contextMenu.showAt(e.getXY());
+		//don't auto select if multi selecting
+		var selection = this.grid.getSelectionModel().getSelection()
+		if( selection.length < 2)
+			view.select(rec)
+			
+		this.grid.contextMenu.showAt(e.getXY());
 		return false;
     },
 	
