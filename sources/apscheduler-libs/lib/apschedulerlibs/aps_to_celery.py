@@ -59,10 +59,11 @@ def launch_celery_task(*args,**kwargs):
 
 			#------------Get account and storage
 			try:
-				if isinstance(kwargs['account'],unicode):
+				if isinstance(kwargs['account'],unicode) or isinstance(kwargs['account'],str):
 					account = caccount(user=kwargs['account'])
 				else:
 					account = kwargs['account']
+				logger.error(account)
 				logger.info('Caccount create from passed arguments')
 			except:
 				logger.info('No account specified in the task')
@@ -71,10 +72,83 @@ def launch_celery_task(*args,**kwargs):
 			storage = cstorage(account=account, namespace='task_log')
 			taskStorage = cstorage(account=account, namespace='task')
 			
-			#-------------Check if function have succeed
+			timestamp = int(time.time())
 			
+			#-------------Check if function have succeed
+			if success:
+				if isinstance(result, list):
+					data = result
+				else:
+					data = [str(result)]
 
-			return result
+				log = {	'success': True,
+						'total': len(data),
+						'output':'Task done',
+						'timestamp': timestamp,
+						'data': data
+						}
+				logger.info('Task was a success')
+			else:
+				log = {	'success': False,
+						'total': 0,
+						'output': [ str(function_error) ],
+						'timestamp':timestamp,
+						'data': []
+					  }
+				logger.info('Task have failed')
+				
+			#-----------------Put log in schedule attribut----------------
+			try:
+				mfilter = {'crecord_name':task_name}
+				search = taskStorage.find_one(mfilter)
+
+				if search:
+					search.data['log'] = log
+					taskStorage.put(search)
+					logger.info('Task log updated')
+				else:
+					logger.error('Task not found in db, can\'t update')
+			except Exception, err:
+				logger.error('Error when put log in task_log %s' % err)
+			
+			#-------------------------Put log in db-------------------------
+			try:
+				log_record = crecord(log,name=task_name)
+				storage.put(log_record)
+				logger.info('log put in db')
+			except Exception,err:
+				logger.error('log not added to db, reason : %s' % err)
+			
+			#---------------------Publish amqp event-------------
+			# Publish Amqp event
+			if success:
+				status=0
+			else:
+				status=1
+
+			event = cevent.forger(
+				connector='celery',
+				connector_name='task_log',
+				event_type='log',
+				source_type='resource',
+				output=log['output'],
+				state=status
+				)
+			logger.debug('Send Event: %s' % event)
+			key = cevent.get_routingkey(event)
+			
+			amqp = camqp()
+			amqp.start()
+			
+			amqp.publish(event, key, amqp.exchange_name_events)
+			
+			amqp.stop()
+			amqp.join()
+			
+			logger.info('Amqp event published')
+
+			#--------------------return result-------------------
+			return log
 			
 		except Exception, err:
 			logger.error('%s' % err)
