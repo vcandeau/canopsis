@@ -33,8 +33,19 @@ Ext.define('canopsis.view.Task.Grid' ,{
 
 	columns: [
 		{
+			header: _('Loaded'),
+			width: 55,
+			dataIndex: 'loaded',
+			renderer: rdr_boolean
+		},{
+			header: _('Success'),
+			width: 55,
+			sortable: true,
+			dataIndex: 'log_success',
+			renderer: rdr_boolean
+		},{
 			header: _('Name'),
-			flex: 1,
+			flex: 3,
 			sortable: true,
 			dataIndex: 'crecord_name',
 		},{
@@ -44,34 +55,22 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			dataIndex: 'cron',
 			renderer: rdr_task_crontab,
 		},{
-			header: _('Success'),
-			flex: 3,
-			sortable: true,
-			dataIndex: 'log_success',
-			renderer: rdr_boolean
-		},{
 			header: _('Output'),
 			flex: 3,
 			sortable: true,
 			dataIndex: 'log_output',
-			//renderer: rdr_task_output,
+
 		},{
 			header: _('Last execution'),
-			flex: 3,
+			flex: 1,
 			sortable: true,
 			dataIndex: 'log_last_execution',
 			renderer: rdr_tstodate,
 		},{
-			header: _('Loaded'),
-			width: 55,
-			dataIndex: 'loaded',
-			renderer: rdr_boolean
-		},{
 			header: _('Mailing'),
-			flex: 3,
+			width: 55,
 			dataIndex: 'mail',
 			renderer: rdr_boolean
-			//renderer: rdr_mail_information
 		}
 	],
 
