@@ -52,7 +52,12 @@ Ext.define('canopsis.controller.Briefcase', {
 	},
 	
 	sendByMail : function(record){
-		var cmail = Ext.create('canopsis.lib.view.cmail',{attachement:record.get('_id')})
+		var config = {
+			renderTo:this.grid.id,
+			constrain:true,
+			attachement:record.get('_id')
+		}
+		var cmail = Ext.create('canopsis.lib.view.cmail',config)
 		cmail.on('finish',function(mail){this._ajaxRequest(mail)},this)
 	},
 	
