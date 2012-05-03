@@ -85,7 +85,7 @@ def launch_celery_task(*args,**kwargs):
 						'total': len(data),
 						'output':'Task done',
 						'timestamp': timestamp,
-						'data': data
+						'data': data,
 						}
 				logger.info('Task was a success')
 			else:
@@ -93,7 +93,7 @@ def launch_celery_task(*args,**kwargs):
 						'total': 0,
 						'output': [ str(function_error) ],
 						'timestamp':timestamp,
-						'data': []
+						'data': [],
 					  }
 				logger.info('Task have failed')
 				
@@ -113,6 +113,7 @@ def launch_celery_task(*args,**kwargs):
 			
 			#-------------------------Put log in db-------------------------
 			try:
+				log['task_name'] = task_name
 				log_record = crecord(log,name=task_name)
 				storage.put(log_record)
 				logger.info('log put in db')
