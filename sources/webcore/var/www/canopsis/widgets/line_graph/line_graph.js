@@ -353,7 +353,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	onRefresh: function (data){
 		if (this.chart){
 			log.debug("On refresh", this.logAuthor)
-			
+			for(i in data){
+				log.dump(data[i])
+			}
 			/*if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
 				var i;
@@ -579,8 +581,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		log.debug('Resume live reporting', this.logAuthor)
 		var to = Date.now();
 		var from = to - (this.time_window * 1000);
+		
+		for(i in this.series)
+			this.series[i].pushPoints = false;
+		
 		this.doRefresh(from,to)
-		//this.chart.redraw()
+		this.startTask()
 	},
 	
 	/*displayFromTs : function(from, to){

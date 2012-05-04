@@ -258,10 +258,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				}
 			}
 		}
-		
 		this.export_window.destroy()
 
-		this.startAllTasks()
 	},
 	
 	setReportDate : function(from,to){
