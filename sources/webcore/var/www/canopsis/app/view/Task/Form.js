@@ -183,12 +183,20 @@ Ext.define('canopsis.view.Task.Form', {
 			}
 		})
 		
-		var hoursCombo = Ext.widget('timefield',{
+		//alow 24h/12h basis
+		//var re = /^([01]\d|2[0-3]):?([0-5]\d)(\\s)?(am|pm)?$/
+		
+		//allow only 24h basis
+		var re = /^([01]\d|2[0-3]):?([0-5]\d)$/
+		
+		var hoursField = Ext.widget('textfield',{
 			name: 'hours',
 			fieldLabel: _('Hours'),
-			increment: 15,
+			//increment: 15,
 			allowBlank: false,
-			submitFormat: 'G:i',
+			regex: re,
+			tooltip: _('Enter local time, it will be convert in UTC before sent to server')
+			//submitFormat: 'G:i',
 		})
 		
 		//carry the _id for rest service update
@@ -201,7 +209,7 @@ Ext.define('canopsis.view.Task.Form', {
 			this.timeOptions.add(recordId)
 		}
 			
-		this.timeOptions.add([durationCombo,monthCombo,dayWeekCombo,dayCombo,hoursCombo])
+		this.timeOptions.add([durationCombo,monthCombo,dayWeekCombo,dayCombo,hoursField])
 		
 		//---------------------------Report option----------------------
 

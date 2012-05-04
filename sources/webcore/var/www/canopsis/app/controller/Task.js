@@ -72,10 +72,23 @@ Ext.define('canopsis.controller.Task', {
 		//----------------------formating crontab-----------------------
 		var time = data.hours.split(':')
 		
+		//get offset to get UTC 0 timezone
+		var d = new Date()
+		var offset = d.getTimezoneOffset();
+		
+		log.debug('offset is : ' + offset)
+		
+		//add offset
+		var minute = parseInt(time[1])
+		var hour = parseInt(time[0]) + (offset/60)
+		
 		var crontab = {
-			minute: time[1],
-			hour: time[0]
+			minute: minute,
+			hour: hour
 		}
+		
+		log.debug('crontab is')
+		log.dump(crontab)
 		
 		if(data.month)
 			crontab['month'] = data.month
@@ -103,7 +116,15 @@ Ext.define('canopsis.controller.Task', {
 		var timeLength = kwargs['starttime']
 		//--------------get cron---------------
 		var cron = item.get('cron')
-		var hours = cron.hour + ':' + cron.minute
+		
+		//format time
+		if(cron.minute < 10)
+			var minute = cron.minute + '0'
+		else
+			var minute = cron.minute
+		
+		var hours = cron.hour + ':' + minute
+		item.set('hours',hours)
 		
 		//set record id for editing (pass to webserver later for update)
 		item.set('_id',item.get('_id'))
@@ -125,8 +146,6 @@ Ext.define('canopsis.controller.Task', {
 			item.set('every','year')
 			item.set('month',cron.month)
 		}
-		
-		item.set('hours',hours)
 		
 		//compute timeLength
 		scale = Math.floor(timeLength/global.commonTs.day)
