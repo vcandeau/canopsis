@@ -38,7 +38,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			dataIndex: 'loaded',
 			renderer: rdr_boolean
 		},{
-			header: _('Success'),
+			header: _('Status'),
 			width: 55,
 			sortable: true,
 			dataIndex: 'log_success',
@@ -49,11 +49,11 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			sortable: true,
 			dataIndex: 'crecord_name',
 		},{
-			header: _('At'),
+			header: _('Last execution'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'cron',
-			renderer: rdr_task_crontab,
+			dataIndex: 'log_last_execution',
+			renderer: rdr_tstodate,
 		},{
 			header: _('Output'),
 			flex: 3,
@@ -61,11 +61,16 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			dataIndex: 'log_output',
 
 		},{
-			header: _('Last execution'),
+			header: _('Schedule'),
 			flex: 1,
 			sortable: true,
-			dataIndex: 'log_last_execution',
-			renderer: rdr_tstodate,
+			dataIndex: 'cron',
+			renderer: rdr_task_crontab,
+		},{
+			header: _('Next execution'),
+			flex: 1,
+			sortable: true,
+			dataIndex: 'next_run_time',
 		},{
 			header: _('Mailing'),
 			width: 55,
