@@ -244,10 +244,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		this.stopAllTasks()
 	},
-	
+	/*
 	removeReportingBar : function(){
 		log.debug('removing reporting bar', this.logAuthor)
-		
+		/*
 		var cmps = this.getCmps()
 		for(var i in cmps){
 			if(cmps[i].reportMode == true){
@@ -258,9 +258,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				}
 			}
 		}
+		
 		this.export_window.destroy()
 
-	},
+	},*/
 	
 	setReportDate : function(from,to){
 		log.debug('Send report data for widgets', this.logAuthor)
