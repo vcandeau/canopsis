@@ -78,20 +78,28 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 }
 
 var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store) {	
+
 	var output = ''
 	if(val != undefined){
-		if(val.hour && val.minute)
-			output += val.hour + ':' + val.minute
+		//second condition is if minutes are str and not int
+		if(val.hour != undefined && val.minute != undefined){
+			if(val.minute < 10 && val.minute != '00')
+				var minute = val.minute + '0'
+			else
+				var minute = val.minute
+				
+			output += val.hour + ':' + minute
+		}
 		
-		
-		if(val.month && val.day)
+		if(val.month != undefined && val.day != undefined)
 			output += '   |    month : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day 
 		
 		
-		if(val.day_of_week)
+		if(val.day_of_week != undefined)
 			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week)
-		
+
 	}
+
 	return output
 }
 
