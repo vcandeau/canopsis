@@ -31,6 +31,7 @@ Ext.define('canopsis.model.Task', {
 		{name : 'kwargs' ,defaultsValue : {}},
 		//{name : 'date', defaultValue: undefined},
 		//{name : 'interval', defaultValue: undefined},
+		{name : 'next_run_time'},
 		{name : 'cron', defaultValue: undefined},
 		{name : 'log'},
 		{
