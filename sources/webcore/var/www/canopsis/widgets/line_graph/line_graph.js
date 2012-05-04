@@ -379,6 +379,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			} else {
 				log.debug(' + No data', this.logAuthor)
+				//if report, cleaning the chart
+				if(this.reportMode == true){
+					for(var i in this.chart.series){
+						log.debug('cleaning serie : ' + this.chart.series[i].name)
+						this.chart.series[i].setData([],false)
+					}
+					if(this.chartMessage == undefined){
+						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _("Infortunatly, there is no data for this period") + '</div>', 50, 50).add()
+						log.dump(this.chartMessage)
+					}
+					this.chart.redraw()
+				}
 			}
 		}
 	},
@@ -566,8 +578,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	reportToLive : function(){
 		log.debug('Resume live reporting', this.logAuthor)
 		var to = Date.now();
-		var from = to - this.time_window;
+		var from = to - (this.time_window * 1000);
 		this.doRefresh(from,to)
+		//this.chart.redraw()
 	},
 	
 	/*displayFromTs : function(from, to){
