@@ -353,9 +353,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	onRefresh: function (data){
 		if (this.chart){
 			log.debug("On refresh", this.logAuthor)
-			for(i in data){
-				log.dump(data[i])
-			}
 			/*if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
 				var i;
@@ -381,12 +378,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 			} else {
 				log.debug(' + No data', this.logAuthor)
-				//if report, cleaning the chart
+				//---------if report, cleaning the chart--------
 				if(this.reportMode == true){
-					for(var i in this.chart.series){
-						log.debug('cleaning serie : ' + this.chart.series[i].name)
-						this.chart.series[i].setData([],false)
-					}
+					this.clearGraph()
 					if(this.chartMessage == undefined){
 						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _("Infortunatly, there is no data for this period") + '</div>', 50, 50).add()
 						log.dump(this.chartMessage)
@@ -394,6 +388,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					this.chart.redraw()
 				}
 			}
+		}
+	},
+	
+	clearGraph : function(){
+		for(var i in this.chart.series){
+			log.debug('cleaning serie : ' + this.chart.series[i].name)
+			this.chart.series[i].setData([],false)
 		}
 	},
 	
