@@ -80,29 +80,58 @@ var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, st
 }
 
 var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store) {	
-
-	var output = ''
+	
+	var output = ''	
+	
 	if(val != undefined){
 		//second condition is if minutes are str and not int
 		if(val.hour != undefined && val.minute != undefined){
-			if(parseInt(val.minute) < 10){
-				var minute = new String(val.minute) + '0'
-			}else{
-				var minute = val.minute
-			}
+			var d = new Date()
+			d.setUTCHours(parseInt(val.hour,10))
+			d.setUTCMinutes(parseInt(val.minute,10))
 			
-			output += val.hour + ':' + minute
+			var utc_minutes = d.getUTCMinutes()
+			var utc_hours = d.getUTCHours()
+			var local_minutes = d.getMinutes()
+			var local_hours = d.getHours()
+			
+			//cosmetic
+			if(utc_minutes < 10)
+				utc_minutes = '0' + utc_minutes
+			if(local_minutes < 10)
+				local_minutes = '0' + local_minutes
+			
+			//12h translate
+			if(global.locale == 'fr'){
+				// UTC time
+				output += utc_hours + ':' + utc_minutes +' '
+				//local time
+				output += '(Local: ' + local_hours + ':' + local_minutes +')'
+			} else {
+				//utc AM/PM check
+				if(utc_hours > 12)
+					output += (utc_hours-12) + ':' + utc_minutes + 'pm '
+				else
+					output += utc_hours + ':' + utc_minutes + 'am '
+
+				//local AM/PM check
+				if(local_hours > 12)
+					output += '(Local: ' + (local_hours-12) + ':' + local_minutes + 'pm)'
+				else
+					output += '(Local: ' +local_hours + ':' + local_minutes + 'am)'
+			}
+
 		}
 		
 		if(val.month != undefined && val.day != undefined)
-			output += '   |    month : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day 
+			output += '   |    '+ _('month')+ ' : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day 
 		
 		
 		if(val.day_of_week != undefined)
 			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week)
 
 	}
-
+	
 	return output
 }
 
