@@ -29,9 +29,9 @@ function post_install(){
 	#check if db already exist
 	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
 	then
-		launch_cmd 1 python $PREFIX/opt/mongodb/updateDB.py
+		launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	else
-		launch_cmd 1 python $PREFIX/opt/mongodb/initDB.py
+		launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py init
 	fi
 	
 	#launch_cmd 1 service mongodb stop
