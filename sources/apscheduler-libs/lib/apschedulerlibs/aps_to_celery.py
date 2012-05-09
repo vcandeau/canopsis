@@ -115,6 +115,7 @@ def launch_celery_task(*args,**kwargs):
 				logger.error('Error when put log in task_log %s' % err)
 			
 			#-------------------------Put log in db-------------------------
+			'''
 			try:
 				log['task_name'] = task_name
 				log_record = crecord(result,name=task_name)
@@ -122,7 +123,7 @@ def launch_celery_task(*args,**kwargs):
 				logger.info('log put in db')
 			except Exception,err:
 				logger.error('log not added to db, reason : %s' % err)
-			
+			'''
 			#---------------------Publish amqp event-------------
 			# Publish Amqp event
 			if result['success'] == True:
