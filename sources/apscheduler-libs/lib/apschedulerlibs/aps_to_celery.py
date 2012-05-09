@@ -50,10 +50,10 @@ def launch_celery_task(*args,**kwargs):
 				result = task.delay(*args,**methodargs)
 				result.get()
 				
-				success = True
+				#success = True
 				logger.info(result)
 			except Exception, err:
-				success = False
+				#success = False
 				function_error = str(err)
 				logger.error(err)
 
@@ -75,6 +75,7 @@ def launch_celery_task(*args,**kwargs):
 			timestamp = int(time.time())
 			
 			#-------------Check if function have succeed
+			'''
 			if success:
 				if isinstance(result, list):
 					data = result
@@ -96,6 +97,7 @@ def launch_celery_task(*args,**kwargs):
 						'data': [],
 					  }
 				logger.info('Task have failed')
+			'''
 				
 			#-----------------Put log in schedule attribut----------------
 			try:
@@ -103,7 +105,7 @@ def launch_celery_task(*args,**kwargs):
 				search = taskStorage.find_one(mfilter)
 
 				if search:
-					search.data['log'] = log
+					search.data['log'] = result
 					taskStorage.put(search)
 					logger.info('Task log updated')
 				else:
@@ -114,7 +116,7 @@ def launch_celery_task(*args,**kwargs):
 			#-------------------------Put log in db-------------------------
 			try:
 				log['task_name'] = task_name
-				log_record = crecord(log,name=task_name)
+				log_record = crecord(result,name=task_name)
 				storage.put(log_record)
 				logger.info('log put in db')
 			except Exception,err:
@@ -122,7 +124,7 @@ def launch_celery_task(*args,**kwargs):
 			
 			#---------------------Publish amqp event-------------
 			# Publish Amqp event
-			if success:
+			if result['success'] == True:
 				status=0
 			else:
 				status=1

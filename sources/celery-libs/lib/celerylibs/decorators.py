@@ -26,12 +26,14 @@ def simple_decorator(decorator):
 @simple_decorator
 def log_task(func):	
 	def wrapper(*args,**kwargs):
+		'''
 		try:
 			task_name = kwargs['_scheduled']
 			del kwargs['_scheduled']
 		except:
 			task_name = None
 			logger.info('Not scheduled task')
+		'''
 		
 		try:
 			result = func(*args, **kwargs)
@@ -41,7 +43,7 @@ def log_task(func):
 			success = False
 			function_error = str(err)
 			logger.error(err)
-
+		'''
 		try:
 			# Get account/storage
 			if isinstance(kwargs['account'],unicode):
@@ -54,6 +56,7 @@ def log_task(func):
 			
 		storage = cstorage(account=account, namespace='task_log')
 		taskStorage = cstorage(account=account, namespace='task')
+		'''
 		
 		timestamp = int(time.time())
 
@@ -78,6 +81,7 @@ def log_task(func):
 					'data': []
 				  }
 		
+		'''
 		#Put the log
 		try:
 			# If scheduled
@@ -108,6 +112,7 @@ def log_task(func):
 		except Exception, err:
 			logger.error('Error when put log in task_log %s' % err)
 
+		
 		# Publish Amqp event
 		if success:
 			status=0
@@ -132,6 +137,6 @@ def log_task(func):
 		
 		amqp.stop()
 		amqp.join()
-	
+		'''
 		return log
 	return wrapper
