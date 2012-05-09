@@ -33,6 +33,8 @@ logger = init.getLogger('aps')
 def launch_celery_task(*args,**kwargs):
 	if kwargs.has_key('task') and kwargs.has_key('method'):
 		try:
+			timer_begin = int(time.time())
+			
 			#----------Get task informations
 			task_name = kwargs['_scheduled']
 			
@@ -46,16 +48,19 @@ def launch_celery_task(*args,**kwargs):
 			del kwargs['_scheduled']
 			
 			#-------------execute task
+			success = True
+			
 			try:
 				result = task.delay(*args,**methodargs)
 				result.get()
+				logger.error(result)
 				result = result.result
 				
 				#success = True
 				logger.info(result)
 			except Exception, err:
-				#success = False
-				function_error = str(err)
+				success = False
+				aps_error = str(err)
 				logger.error(err)
 
 			#------------Get account and storage
@@ -64,17 +69,23 @@ def launch_celery_task(*args,**kwargs):
 					account = caccount(user=kwargs['account'])
 				else:
 					account = kwargs['account']
-				logger.error(account)
+				#logger.error(account)
 				logger.info('Caccount create from passed arguments')
-			except:
+			except Exception, err:
 				logger.info('No account specified in the task')
 				account = caccount()
 			
-			storage = cstorage(account=account, namespace='task_log')
-			taskStorage = cstorage(account=account, namespace='task')
+			try:
+				storage = cstorage(account=account, namespace='task_log')
+				taskStorage = cstorage(account=account, namespace='task')
+			except Exception, err:
+				logger.info('Error while fecthing storages : %s' % err)
+				success = False
+				aps_error = str(err)
 			
+			#-------------time operation-------------------
 			timestamp = int(time.time())
-			
+			execution_time = (timestamp - timer_begin)
 			#-------------Check if function have succeed
 			'''
 			if success:
@@ -105,6 +116,9 @@ def launch_celery_task(*args,**kwargs):
 				mfilter = {'crecord_name':task_name}
 				search = taskStorage.find_one(mfilter)
 
+				#add execution time
+				result['duration'] = execution_time
+
 				if search:
 					search.data['log'] = result
 					taskStorage.put(search)
@@ -113,6 +127,8 @@ def launch_celery_task(*args,**kwargs):
 					logger.error('Task not found in db, can\'t update')
 			except Exception, err:
 				logger.error('Error when put log in task_log %s' % err)
+				success = False
+				aps_error = str(err)
 			
 			#-------------------------Put log in db-------------------------
 			'''
@@ -126,20 +142,28 @@ def launch_celery_task(*args,**kwargs):
 			'''
 			#---------------------Publish amqp event-------------
 			# Publish Amqp event
-			if result['success'] == True:
+			if success == True:
 				status=0
+				#result['aps_output'] = 'APS task success'
+				#task_output = result
+				task_output = ('APS : Task success - Celery : %s - Duration : %is' % (result['celery_output'],execution_time))
 			else:
 				status=1
-
+				#result['aps_output'] = aps_error
+				#task_output = result
+				task_output = ('APS : %s - Celery : %s - Duration : %is' % (aps_error,result['celery_output'],execution_time))
+				
 			event = cevent.forger(
 				connector='celery',
 				connector_name='task_log',
 				event_type='log',
 				source_type='resource',
-				output=log['output'],
+				resource=('Task - %s - %s ' %  (task_name,account.user)),
+				output=task_output,
 				state=status
 				)
-			logger.debug('Send Event: %s' % event)
+			
+			logger.info('Send Event: %s' % event)
 			key = cevent.get_routingkey(event)
 			
 			amqp = camqp()
@@ -153,7 +177,7 @@ def launch_celery_task(*args,**kwargs):
 			logger.info('Amqp event published')
 
 			#--------------------return result-------------------
-			return log
+			return result
 			
 		except Exception, err:
 			logger.error('%s' % err)
