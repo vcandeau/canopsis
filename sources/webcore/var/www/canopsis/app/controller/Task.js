@@ -135,17 +135,28 @@ Ext.define('canopsis.controller.Task', {
 		var cron = item.get('cron')
 		
 		//format time
-		if(cron.minute < 10)
-			var minute = cron.minute + '0'
-		else
-			var minute = cron.minute
-			
-		if(cron.hour < 10)
-			var hour = '0' + cron.hour
-		else
-			var hour = cron.hour
+		var d = new Date()
+		d.setUTCHours(parseInt(cron.hour,10))
+		d.setUTCMinutes(parseInt(cron.minute,10))
 		
-		var hours = hour + ':' + minute
+		var minute = d.getMinutes()
+		var hour = d.getHours()
+		
+		//cosmetic
+		if(minute < 10)
+			minute = '0' + minute
+		if(hour < 10)
+			hour = '0' + hour
+		
+		//check 12h / 24h clock
+		if(global.locale == 'fr')
+			var hours = hour + ':' + minute
+		else 
+			if(hour > 12)
+				var hours = (hour-12) + ':' + minute + ' pm'
+			else
+				var hours = hour + ':' + minute + ' am'
+		
 		item.set('hours',hours)
 		
 		//set record id for editing (pass to webserver later for update)
