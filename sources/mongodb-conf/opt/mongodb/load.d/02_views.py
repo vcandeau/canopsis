@@ -31,7 +31,7 @@ storage = get_storage(account=root, namespace='object')
 def init():
 	### Default Dasboard
 	data = {'xtype': 'text', 'text': 'Welcome to Canopsis !'}
-	create_view('_default_.dashboard', 'Dashboard', data)
+	create_view('_default_.dashboard', 'Dashboard', data, autorm=False)
 
 	### Account
 	data = { 'xtype': 'AccountGrid'}
@@ -72,13 +72,17 @@ def init():
 def update():
 	init()
 
-def create_view(_id, name, data, position=None, mod='o+r'):
+def create_view(_id, name, data, position=None, mod='o+r', autorm=True):
 	#Delete old view
 	try:
 		record = storage.get('view.%s' % _id)
-		storage.remove(record)
+		if autorm:
+			storage.remove(record)
+		else:
+			return record
 	except:
 		pass
+		
 	if not position:
 		# fullscreen
 		position = {'width': 1,'top': 0, 'left': 0, 'height': 1}

@@ -30,8 +30,7 @@ logger = None
 def init():
 	storage = cstorage(account=root)
 	
-	#namespaces = ['perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
-	namespaces = []
+	namespaces = ['perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
 	
 	for namespace in namespaces:
 		logger.info(" + Drop '%s' collection" % namespace)
