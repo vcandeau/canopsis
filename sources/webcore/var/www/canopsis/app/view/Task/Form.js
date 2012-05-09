@@ -184,18 +184,18 @@ Ext.define('canopsis.view.Task.Form', {
 		})
 		
 		//alow 24h/12h basis
-		//var re = /^([01]\d|2[0-3]):?([0-5]\d)(\\s)?(am|pm)?$/
+		var re = /^([01]\d|2[0-3]):?([0-5]\d)(\s)?(am|pm)?$/
 		
 		//allow only 24h basis
-		var re = /^([01]\d|2[0-3]):?([0-5]\d)$/
+		//var re = /^([01]\d|2[0-3]):?([0-5]\d)$/
 		
 		var hoursField = Ext.widget('textfield',{
 			name: 'hours',
-			fieldLabel: _('Hours'),
+			fieldLabel: _('Hours (local time)'),
 			//increment: 15,
 			allowBlank: false,
 			regex: re,
-			tooltip: _('Enter local time, it will be convert in UTC before sent to server')
+			//tooltip: _('Enter local time, it will be convert in UTC before sent to server')
 			//submitFormat: 'G:i',
 		})
 		
