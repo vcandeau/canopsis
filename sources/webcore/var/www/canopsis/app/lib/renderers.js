@@ -19,15 +19,17 @@
 # ---------------------------------
 */
 var rdr_tstodate = function (val) {
-	var dval = new Date(parseInt(val)*1000);
-	
-	var dval_day = Ext.Date.format(dval,'Y-m-d')
-	var now_day = Ext.Date.format(new Date(),'Y-m-d')
+	if( val != null ){
+		var dval = new Date(parseInt(val)*1000);
+		
+		var dval_day = Ext.Date.format(dval,'Y-m-d')
+		var now_day = Ext.Date.format(new Date(),'Y-m-d')
 
-	if (dval_day == now_day){
-		return Ext.Date.format(dval,'H:i:s')
-	}else{
-		return Ext.Date.format(dval,'Y-m-d H:i:s')
+		if (dval_day == now_day){
+			return Ext.Date.format(dval,'H:i:s')
+		}else{
+			return Ext.Date.format(dval,'Y-m-d H:i:s')
+		}
 	}
 }
 
@@ -83,11 +85,12 @@ var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store
 	if(val != undefined){
 		//second condition is if minutes are str and not int
 		if(val.hour != undefined && val.minute != undefined){
-			if(val.minute < 10 && val.minute != '00')
-				var minute = val.minute + '0'
-			else
+			if(parseInt(val.minute) < 10){
+				var minute = new String(val.minute) + '0'
+			}else{
 				var minute = val.minute
-				
+			}
+			
 			output += val.hour + ':' + minute
 		}
 		

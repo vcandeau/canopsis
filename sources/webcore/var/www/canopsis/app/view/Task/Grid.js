@@ -55,7 +55,7 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			sortable: true,
 			dataIndex: 'crecord_name',
 		},{
-			header: _('Schedule'),
+			header: _('Schedule (server time)'),
 			flex: 2,
 			sortable: true,
 			dataIndex: 'cron',
