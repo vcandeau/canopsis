@@ -470,36 +470,66 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('clicked duplicateRecord',this.logAuthor);
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
+		
+		var editing = true
 
 		if (this.formXtype) {
-			var main_tabs = Ext.getCmp('main-tabs')
-			var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
-			var tab = Ext.getCmp(id);
-			if (tab) {
-				log.debug("Tab '"+id+"'allerady open, just show it",this.logAuthor)
-				main_tabs.setActiveTab(tab);
-			}else{
-				log.debug("Create tab '"+id+"'",this.logAuthor)
-				var form = main_tabs.add({
-					title: _('Edit')+' '+item.raw.crecord_name,
-					xtype: this.formXtype,
-					id: id,
-					closable: true,}).show();
+			if (this.EditMethod == "tab"){
+				var main_tabs = Ext.getCmp('main-tabs')
+				var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
+				var tab = Ext.getCmp(id);
+				if (tab) {
+					log.debug("Tab '"+id+"'allerady open, just show it",this.logAuthor)
+					main_tabs.setActiveTab(tab);
+				}else{
+					log.debug("Create tab '"+id+"'",this.logAuthor)
+					var form = main_tabs.add({
+						title: _('Edit')+' '+item.raw.crecord_name,
+						xtype: this.formXtype,
+						id: id,
+						closable: true,}).show();
+				}
 				
-
-				if (this.beforeload_DuplicateForm) {
-					this.beforeload_DuplicateForm(form)
+			}else{
+				var form = Ext.getCmp(id);
+				
+				if (form){
+					log.debug("Window '"+id+"' allready open, just show it",this.logAuthor)
+					form.win.show();
+				}else{
+					// Create new Window
+					log.debug("Create window '"+this.formXtype+"'",this.logAuthor)
+					var form = Ext.create('widget.' + this.formXtype, {
+						id: id,
+						EditMethod: this.EditMethod,
+						editing: editing,
+						record: data,
+					})
+					
+					var win = Ext.create('widget.window', {
+						title: this.modelId,
+						items: form,
+						closable: true,
+						constrain:true,
+						renderTo: this.grid.id,
+						closeAction: 'destroy',
+					}).show();
+					form.win = win
 				}
-
-				form.loadRecord(item);
-
-				if (this.afterload_DuplicateForm) {
-					this.afterload_DuplicateForm(form)
-				}
-
-				this._bindFormEvents(form)
-
 			}
+			
+			// load records
+			if (this.beforeload_DuplicateForm) {
+				this.beforeload_DuplicateForm(form)
+			}
+
+			form.loadRecord(item);
+
+			if (this.afterload_DuplicateForm) {
+				this.afterload_DuplicateForm(form)
+			}
+
+			this._bindFormEvents(form)	
 		}
 	},
 	
