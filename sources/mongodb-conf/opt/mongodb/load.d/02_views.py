@@ -30,7 +30,7 @@ storage = get_storage(account=root, namespace='object')
 
 def init():
 	### Default Dasboard
-	data = {'xtype': 'text', 'text': 'Welcome to Canopsis !', 'name': 'Text Cell'}
+	data = {'xtype': 'text', 'text': 'Welcome to Canopsis !'}
 	create_view('_default_.dashboard', 'Dashboard', data)
 
 	### Account
@@ -76,7 +76,6 @@ def create_view(_id, name, data, position=None, mod='o+r'):
 	#Delete old view
 	try:
 		record = storage.get('view.%s' % _id)
-		logger.info(" + Remove view '%s'" % name)
 		storage.remove(record)
 	except:
 		pass

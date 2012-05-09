@@ -29,8 +29,7 @@ logger = None
 
 def init():
 	storage = cstorage(account=root)
-	
-	#namespaces = ['cache', 'events', 'events_log', 'object', 'perfdata', 'perfdata.fs.files', 'perfdata.fs.chunks']
+
 	namespaces = ['cache', 'events', 'events_log', 'object' ]
 	
 	for namespace in namespaces:
