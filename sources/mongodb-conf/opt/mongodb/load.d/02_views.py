@@ -70,10 +70,16 @@ def init():
 	#create_view('metric_navigation', 'Metrics Navigation', data)
 
 def update():
-	pass
-
+	init()
 
 def create_view(_id, name, data, position=None, mod='o+r'):
+	#Delete old view
+	try:
+		record = storage.get('view.%s' % _id)
+		logger.info(" + Remove view '%s'" % name)
+		storage.remove(record)
+	except:
+		pass
 	if not position:
 		# fullscreen
 		position = {'width': 1,'top': 0, 'left': 0, 'height': 1}
