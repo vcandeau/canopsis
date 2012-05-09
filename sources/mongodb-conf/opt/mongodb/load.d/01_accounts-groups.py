@@ -37,16 +37,6 @@ def init():
 		('root','root', 'root', 'Lastname', 'Firstname', ''),
 		('canopsis','canopsis', 'root', 'Psis', 'Cano', '')
 	]
-	
-	###Root directory
-	try:
-		# Check if exist
-		rootdir = storage.get('directory.root')
-	except:
-		logger.info(" + Create root directory")
-		rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
-		rootdir.chmod('o+r')
-		storage.put(rootdir)
 
 	for name in groups:
 		try:
@@ -72,28 +62,37 @@ def init():
 			record.passwd(account[1])
 			storage.put(record)
 		
+
+	###Root directory
+	try:
+		# Check if exist
+		rootdir = storage.get('directory.root')
+	except:
+		logger.info(" + Create root directory")
+		rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+		rootdir.chmod('o+r')
+		storage.put(rootdir)
 	
 	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
 	for record in records:
 		user = record.data['user']
 		
-		if user != "root":
-			try:
-				# Check if exist
-				record = storage.get('directory.root.%s' % user)
-			except:
-				logger.info(" + Create '%s' directory" % user)
-				userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
-				userdir.chown(user)
-				userdir.chgrp(user)
-				userdir.chmod('g-w')
-				userdir.chmod('g-r')
+		try:
+			# Check if exist
+			record = storage.get('directory.root.%s' % user)
+		except:
+			logger.info(" + Create '%s' directory" % user)
+			userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
+			userdir.chown(user)
+			userdir.chgrp(user)
+			userdir.chmod('g-w')
+			userdir.chmod('g-r')
 
-				storage.put(userdir)
-				rootdir.add_children(userdir)
+			storage.put(userdir)
+			rootdir.add_children(userdir)
 
-				storage.put(rootdir)
-				storage.put(userdir)
+			storage.put(rootdir)
+			storage.put(userdir)
 
 
 def update():
