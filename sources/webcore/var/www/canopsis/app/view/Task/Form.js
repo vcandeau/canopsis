@@ -184,7 +184,7 @@ Ext.define('canopsis.view.Task.Form', {
 		})
 		
 		//alow 24h/12h basis
-		var re = /^([01]?\d|2[0-3]):?([0-5]\d)(\s)?(am|pm)?$/
+		var re = /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 		
 		//allow only 24h basis
 		//var re = /^([01]\d|2[0-3]):?([0-5]\d)$/
