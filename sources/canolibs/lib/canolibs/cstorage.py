@@ -577,7 +577,7 @@ class cstorage(object):
 
 ## Cache storage
 STORAGES = {}
-def get_storage(namespace='object', account=None, logging_level=logging.DEBUG):
+def get_storage(namespace='object', account=None, logging_level=logging.INFO):
 	global STORAGES
 	try:
 		return STORAGES[namespace]
