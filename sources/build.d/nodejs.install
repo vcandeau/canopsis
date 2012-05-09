@@ -4,6 +4,8 @@ BASE="node-v$VERSION"
 LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
+FCHECK="$PREFIX/bin/node"
+
 function build(){
 	cd $SRC_PATH/externals
 	if [ ! -e $BASE ]; then
