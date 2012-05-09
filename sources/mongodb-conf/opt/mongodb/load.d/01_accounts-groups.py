@@ -39,41 +39,63 @@ def init():
 	]
 	
 	###Root directory
-	rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
-	rootdir.chmod('o+r')
-	storage.put(rootdir)
+	try:
+		# Check if exist
+		rootdir = storage.get('directory.root')
+	except:
+		logger.info(" + Create root directory")
+		rootdir = crecord({'_id': 'directory.root','id': 'directory.root','expanded':'true'},type='view_directory', name="root directory")
+		rootdir.chmod('o+r')
+		storage.put(rootdir)
 
 	for name in groups:
-		logger.info(" + Create group '%s'" % name)
-		record = crecord({'_id': 'group.%s' % name }, type='group', name=name)
-		record.chmod('o+r')
-		storage.put(record)
+		try:
+			# Check if exist
+			record = storage.get('group.%s' % name)
+		except:
+			logger.info(" + Create group '%s'" % name)
+			record = crecord({'_id': 'group.%s' % name }, type='group', name=name)
+			record.chmod('o+r')
+			storage.put(record)
 		
 	for account in accounts:
 		user = account[0]
-		logger.info(" + Create account '%s'" % user)
+		try:
+			# Check if exist
+			record = storage.get('account.%s' % user)
+		except:
+			logger.info(" + Create account '%s'" % user)
+			
+			record = caccount(user=user, group=account[2])
+			record.firstname = account[4]
+			record.lastname = account[3]
+			record.passwd(account[1])
+			storage.put(record)
 		
-		record = caccount(user=user, group=account[2])
-		record.firstname = account[4]
-		record.lastname = account[3]
-		record.passwd(account[1])
-		storage.put(record)
+	
+	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
+	for record in records:
+		user = record.data['user']
 		
 		if user != "root":
-			userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
-			userdir.chown(user)
-			userdir.chgrp(user)
-			userdir.chmod('g-w')
-			userdir.chmod('g-r')
+			try:
+				# Check if exist
+				record = storage.get('directory.root.%s' % user)
+			except:
+				logger.info(" + Create '%s' directory" % user)
+				userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
+				userdir.chown(user)
+				userdir.chgrp(user)
+				userdir.chmod('g-w')
+				userdir.chmod('g-r')
 
-			storage.put(userdir)
-			rootdir.add_children(userdir)
+				storage.put(userdir)
+				rootdir.add_children(userdir)
 
-			storage.put(rootdir)
-			storage.put(userdir)
+				storage.put(rootdir)
+				storage.put(userdir)
 
 
 def update():
-	pass
-
+	init()
 
