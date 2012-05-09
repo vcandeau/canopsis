@@ -70,21 +70,38 @@ Ext.define('canopsis.controller.Task', {
 
 		}
 		//----------------------formating crontab-----------------------
-		var time = data.hours.split(':')
+		var time = data.hours.split(' ')
 		
-		//get offset to get UTC 0 timezone
+		if(time.length > 1){
+			//---------Format 12h
+			var hour_type = time[1]
+			var clock = time[0]
+			
+			clock = clock.split(':')
+			var minute = parseInt(clock[1],10)
+			var hour = parseInt(clock[0],10)
+			
+			if(hour_type == 'pm'){
+				hour = hour + 12
+			}
+			
+		} else {
+			//--------Format 24h
+			var time = data.hours.split(':')
+			
+			var minute = parseInt(time[1],10)
+			var hour = parseInt(time[0],10)
+		}
+		
+		//apply offset to get utc
 		var d = new Date()
-		var offset = d.getTimezoneOffset();
+		d.setHours(parseInt(hour,10))
+		d.setMinutes(parseInt(minute,10))
 		
-		log.debug('offset is : ' + offset)
-		
-		//add offset
-		var minute = parseInt(time[1])
-		var hour = parseInt(time[0]) + (offset/60)
-		
+		//set crontab
 		var crontab = {
-			minute: minute,
-			hour: hour
+			minute: d.getUTCMinutes(),
+			hour: d.getUTCHours()
 		}
 		
 		log.debug('crontab is')
