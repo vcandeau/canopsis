@@ -90,10 +90,10 @@ var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store
 			d.setUTCHours(parseInt(val.hour,10))
 			d.setUTCMinutes(parseInt(val.minute,10))
 			
-			utc_minutes = d.getUTCMinutes()
-			utc_hours = d.getUTCHours()
-			local_minutes = d.getMinutes()
-			local_hours = d.getHours()
+			var utc_minutes = d.getUTCMinutes()
+			var utc_hours = d.getUTCHours()
+			var local_minutes = d.getMinutes()
+			var local_hours = d.getHours()
 			
 			//cosmetic
 			if(utc_minutes < 10)
