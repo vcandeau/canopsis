@@ -69,14 +69,14 @@ def log_task(func):
 
 			log = {	'success': True,
 					'total': len(data),
-					'output':'Task done',
+					'celery_output': 'Celery Task done',
 					'timestamp': timestamp,
 					'data': data
 					}
 		else:
 			log = {	'success': False,
 					'total': 0,
-					'output': [ str(function_error) ],
+					'celery_output': [ str(function_error) ],
 					'timestamp':timestamp,
 					'data': []
 				  }
