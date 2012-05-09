@@ -49,6 +49,7 @@ def launch_celery_task(*args,**kwargs):
 			try:
 				result = task.delay(*args,**methodargs)
 				result.get()
+				result = result.result
 				
 				#success = True
 				logger.info(result)
