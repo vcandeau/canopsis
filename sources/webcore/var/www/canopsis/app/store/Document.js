@@ -26,6 +26,13 @@ Ext.define('canopsis.store.Document', {
 	autoLoad: true,
 	autoSync: true,
 
+	sorters: [
+        {
+            property : 'creationTs',
+            direction: 'ASC'
+        }
+    ],
+
 	proxy: {
 		type: 'rest',
 		url: '/report',
