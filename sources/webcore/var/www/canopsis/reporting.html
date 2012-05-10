@@ -90,6 +90,7 @@
 	}
 
 	function displayView(){
+		//---------------------load locales------------------
 		log.debug("Loading locale ...", "[app]");
 	
 		var locale = global.account['locale']
@@ -101,6 +102,28 @@
 		Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + locale + '.js'});
 		Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
 		
+		//------------------Add time interval on reporting-------------
+		var from_date = new Date(parseInt(export_from,10))
+		var to_date =  new Date(parseInt(export_to,10))
+		
+		var t = new Ext.Template(
+			'<div name="{id}" style="{style}">',
+				'<span>{from}      {to}</span>',
+			'</div>',
+			{compiled: true}
+		);
+				
+		var document_body = Ext.getBody()
+		
+		t.insertFirst(document_body, {
+			id: 'interval_header',
+			style: 'text-align:center;',
+			from: _('From') + ' ' + Ext.Date.format(from_date, 'Y-m-d'),
+			to: _('To') + ' ' + Ext.Date.format(to_date, 'Y-m-d')
+		});
+
+		//----------------Start app---------------
+
 		log.debug("Start ExtJS application ...", "[app]");
 		
 		var app = Ext.application({
