@@ -37,9 +37,23 @@ config = ConfigParser.RawConfigParser()
 config.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 logger = logging.getLogger("perfstore")
-#logger.setLevel(logging.DEBUG)
 
 perfstore = mongostore(mongo_collection='perfdata', mongo_host=config.get("master", "host"), mongo_port=config.getint("master", "port"))
+
+config.read(os.path.expanduser('~/etc/webserver.conf'))
+pyperfstore_aggregate			= True
+pyperfstore_aggregate_maxpoints	= 500
+pyperfstore_aggregate_method	= "MAX"
+try:
+	pyperfstore_aggregate			= config.getboolean('pyperfstore', "aggregate")
+	pyperfstore_aggregate_maxpoints	= config.getint('pyperfstore', "aggregate_maxpoints")
+	pyperfstore_aggregate_method	= config.get('pyperfstore', "aggregate_method")
+except:
+	pass
+	
+logger.debug(" + pyperfstore_aggregate: %s" % pyperfstore_aggregate)
+logger.debug(" + pyperfstore_aggregate_maxpoints: %s" % pyperfstore_aggregate_maxpoints)
+logger.debug(" + pyperfstore_aggregate_method: %s" % pyperfstore_aggregate_method)
 
 #########################################################################
 
@@ -153,7 +167,15 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 
 		for metric in metrics:
 			try:
-				values = mynode.metric_get_values(dn=metric, tstart=start, tstop=stop)
+				values = mynode.metric_get_values(
+					dn=metric,
+					tstart=start,
+					tstop=stop,
+					aggregate=pyperfstore_aggregate,
+					atype=pyperfstore_aggregate_method,
+					max_points=pyperfstore_aggregate_maxpoints
+					)
+					
 				values = [[x[0] * 1000, x[1]] for x in values]
 
 				if len(values) >= 1:
