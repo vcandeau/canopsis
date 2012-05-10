@@ -94,12 +94,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var title = ""
 		if (this.nodes) {
 			if (this.nodes.length == 1){
-				var info = split_amqp_rk(this.nodes[0].id)
+				var resource = this.nodes[0].resource
+				var component = this.nodes[0].component
+				var source_type = this.nodes[0].source_type
 				
-				if (info.source_type == 'resource')
-					title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
+				if (source_type == 'resource')
+					title = resource + ' ' + _('line_graph.on') + ' ' + component
 				else
-					title = info.component
+					title = component
 			}
 		}
 		this.chartTitle = title	
