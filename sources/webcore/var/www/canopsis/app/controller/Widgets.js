@@ -22,7 +22,7 @@ Ext.define('canopsis.controller.Widgets', {
     extend: 'Ext.app.Controller',
 
     //views: ['Widgets.kpi', 'Widgets.host_header'],
-    stores: ['Widget'],
+    stores: ['Widgets'],
     models: ['Event'],
     
     item_to_translate : ['title','fieldLabel','boxLabel', 'text'],
@@ -31,7 +31,7 @@ Ext.define('canopsis.controller.Widgets', {
 
     init: function() {
 		Ext.Loader.setPath('widgets', './widgets');
-		this.store = this.getStore('Widget');
+		this.store = this.getStore('Widgets');
 		log.debug('parsing Widget store', this.logAuthor);
 		this.store.on('load',function(){
 			this.store.each(function(record){

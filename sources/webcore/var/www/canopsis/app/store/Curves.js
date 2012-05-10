@@ -18,16 +18,42 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.selectors', {
-    extend: 'Ext.data.Model',
+Ext.define('canopsis.store.Curves', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Curve',
+	
+	storeId: 'store.Curve',
+	
+	logAuthor : '[store][curve]',
 
-	fields: [
-		{name: '_id'},
-		{name: 'name'},
-		{name: 'description'},
-		{name: 'filter'},
-		{name: 'category'},
-		{name: 'collection'},
+	autoLoad: true,
+	autoSync: true,
+	
+	sortOnLoad: true,
+	
+	pageSize: 1000,
+	
+	sorters: [
+        {
+            property : 'metric',
+            direction: 'ASC'
+        }
     ],
-
+	
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/curve',
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json',
+		},
+	},
+	
+	
+	
 });
