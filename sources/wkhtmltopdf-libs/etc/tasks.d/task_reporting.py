@@ -112,7 +112,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		if isinstance(mail, dict):
 			#get cfile
 			try:
-				reportStorage = cstorage(account=account, namespace='reports')
+				reportStorage = cstorage(account=account, namespace='files')
 				meta = reportStorage.get(id)
 				meta.__class__ = cfile
 			except Exception, err:
@@ -132,7 +132,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 
 @task
 def put_in_grid_fs(file_path, file_name, account):
-	storage = cstorage(account, namespace='reports')
+	storage = cstorage(account, namespace='files')
 	report = cfile(storage=storage)
 	report.put_file(file_path, file_name, content_type='application/pdf')
 	report.data['creationTs'] = int(time.time())
