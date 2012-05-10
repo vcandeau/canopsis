@@ -24,7 +24,7 @@ import hashlib
 
 from pyperfstore.metric import metric
 from pyperfstore.dca import dca
-from pyperfstore.pmath import aggregate
+from pyperfstore.pmath import aggregate as pmath_aggregate
 
 class node(object):
 	def __init__(self, dn, storage, point_per_dca=None, retention=None, rotate_plan=None):
@@ -192,7 +192,7 @@ class node(object):
 		return metric_id
 
 
-	def metric_get_values(self, tstart, tstop=None, auto_aggregate=True, dn=None, _id=None):
+	def metric_get_values(self, tstart, tstop=None, aggregate=True, max_points=None, atype=None, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
 		if not _id:
 			return []
@@ -209,8 +209,8 @@ class node(object):
 
 		if mymetric:
 			values = mymetric.get_values(tstart, tstop)
-			if auto_aggregate:
-				return aggregate(values)
+			if aggregate:
+				return pmath_aggregate(values, max_points=max_points, atype=atype)
 			else:
 				return values
 		else:
