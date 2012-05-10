@@ -23,7 +23,7 @@ import random
 from operator import itemgetter
 
 from pyperfstore.dca import dca
-from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit, parse_dst
+from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit, parse_dst, fill_interval
 
 class metric(object):
 	def __init__(self, _id, storage, node, dn=None, bunit=None, dtype=None, retention=None, point_per_dca=None, rotate_plan=None):
@@ -59,6 +59,7 @@ class metric(object):
 		self.dca_ZTSC = []
 
 		self.last_push = None
+		self.last_point = []
 
 		self.writetime = None
 
@@ -102,7 +103,8 @@ class metric(object):
 			'rotate_plan':	self.rotate_plan,
 			'current_dca':	current_dca,
 			'writetime':	time.time(),
-			'dtype':		self.dtype
+			'dtype':		self.dtype,
+			'last_point':	self.last_point,
 		}
 
 		dump['dca_PLAIN'] = []
@@ -158,6 +160,11 @@ class metric(object):
 			self.dtype		= data['dtype']
 		except:
 			pass
+			
+		try:
+			self.last_point		= data['last_point']
+		except:
+			pass			
 	
 	def save(self):
 		dump = self.dump()
@@ -186,6 +193,23 @@ class metric(object):
 			item = self.dca_get(item)
 			self.storage.rm(item.values_id)
 			del item
+			
+	def size(self):
+		size = self.storage.size(self._id)
+		
+		raw_self = self.storage.get(self._id)
+		size += self.storage.size(raw_self['current_dca']['id'])
+		
+		for raw in raw_self["dca_PLAIN"]:
+			size += self.storage.size(raw['id'])
+			
+		for raw in raw_self["dca_TSC"]:
+			size += self.storage.size(raw['id'])
+
+		for raw in raw_self["dca_ZTSC"]:
+			size += self.storage.size(raw['id'])
+			
+		return size
 
 	def dca_have_timestamp(self, item, tstart, tstop):
 		if isinstance(item ,dca):
@@ -198,7 +222,7 @@ class metric(object):
 		else:
 			return tstart >= item['tstart'] or tstop >= item['tstart']	
 
-	def get_values(self, tstart, tstop=None, raw=False):
+	def get_values(self, tstart, tstop=None, raw=False, interval=True):
 		## TODO: Improve search performance !
 
 		if not tstop:
@@ -259,11 +283,15 @@ class metric(object):
 				#values[0][0] = tstart
 				del values[0]
 
-		self.logger.debug(" + Return %s points" % len(values))
-		
+		self.logger.debug(" + Return %s raw points" % len(values))
+			
 		if not raw:
 			values = parse_dst(values, self.dtype, before_point)
+			
+		#if interval:
+		#	values = fill_interval(values)
 		
+		self.logger.debug(" + Return %s points" % len(values))
 		return values
 
 
@@ -346,9 +374,16 @@ class metric(object):
 		self.logger.debug(" + Nb ZTSC : %s" % nb_ZTSC)
 
 		self.save()
-		#self.node.save()
 
-	def push_value(self, value, timestamp):
+	def push_value(self, value, timestamp, point_per_dca=None):
+		
+		if point_per_dca:
+			self.auto_point_per_dca = False
+			self.point_per_dca = point_per_dca
+		
+		self.logger.debug(" + Value: %s" % ([timestamp, value]))
+
+		# Push point
 		if not self.current_dca:
 			self.dca_add()
 
@@ -358,7 +393,7 @@ class metric(object):
 			self.dca_add()
 
 		self.current_dca.push(value, timestamp)
-
 		self.last_push = timestamp
-
+				
+		self.last_point = [timestamp, value]
 		self.save()
