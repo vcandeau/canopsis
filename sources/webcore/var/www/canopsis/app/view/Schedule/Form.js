@@ -78,7 +78,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 		var viewCombo = Ext.widget('combobox',{
 			fieldLabel: _('View'),
 			name: 'view',
-			store:  Ext.create('canopsis.store.View', {autoLoad: true}),
+			store:  Ext.create('canopsis.store.Views', {autoLoad: true}),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: false,
