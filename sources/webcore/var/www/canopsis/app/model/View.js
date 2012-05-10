@@ -18,24 +18,28 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.widget', {
+Ext.define('canopsis.model.View', {
     extend: 'Ext.data.Model',
-    fields: [
-		{name : 'name'},
-		{name : 'description',		defaultValue: undefined},
-		{name : 'version',		defaultValue: undefined},
-		{name : 'author',		defaultValue: undefined},
-		{name : 'website',		defaultValue: undefined},
-		{name : 'options',		defaultValue: undefined},
-		{name : 'xtype'},
-		{name : 'colspan',		defaultValue: 1},
-		{name : 'rowspan',		defaultValue: 1},
-		{name : 'refreshInterval', 	defaultValue: undefined},
-		{name : 'nodeId',		defaultValue: undefined},
-		{name : 'title', 		defaultValue: undefined},
-		{name : 'border', 		defaultValue: false},
-		{name : 'rowHeight',		defaultValue: undefined},
-		{name : 'formWidth',		defaultValue: 350},
-		{name : 'locales',		defaultValue: undefined}
-		]
+
+	fields: [
+		{name: '_id'},
+		{name: 'id', mapping:'_id'},
+		{name: 'leaf'},
+		{name: 'crecord_name'},
+		{name: 'nodeId'},
+		{name: 'items'},
+		{name: 'refreshInterval'},
+		{name: 'template', defaultValue: false},
+		{name: 'reporting', defaultValue: false},
+		
+		{name: 'enable'},
+		//{name: 'checked', mapping:'enable'},
+		
+		{name: 'aaa_access_group'},
+		{name: 'aaa_access_other'},
+		{name: 'aaa_access_owner'},
+		{name: 'aaa_group'},
+		{name: 'aaa_owner'},
+    ],
+
 });
