@@ -22,8 +22,8 @@ Ext.define('canopsis.controller.Briefcase', {
 	extend: 'canopsis.lib.controller.cgrid',
 
 	views: ['Briefcase.Grid','Briefcase.Form'],
-	stores: ['Document'],
-	models: ['Document'],
+	stores: ['Files'],
+	models: ['File'],
 	
 	logAuthor : '[controller][Briefcase]',
 	
@@ -31,15 +31,15 @@ Ext.define('canopsis.controller.Briefcase', {
 		this.listXtype = 'BriefcaseGrid'
 		this.formXtype = 'BriefcaseForm'
 		
-		this.modelId = 'Document'
+		this.modelId = 'File'
 		
 		this.callParent(arguments);
 		
 	},
 	
 	_viewElement: function(view, item, index){
-     log.debug('Clicked on element, function viewElement',this.logAuthor);
-     this.getController('Reporting').downloadReport(item.get('_id'))
+		log.debug('Clicked on element, function viewElement',this.logAuthor);
+		this.download(item.get('_id'))
    },
 	
 	_downloadButton : function(){
@@ -47,8 +47,13 @@ Ext.define('canopsis.controller.Briefcase', {
 		var grid = this.grid
 		var selection = grid.getSelectionModel().getSelection()[0];
 		if (selection) {
-			this.getController('Reporting').downloadReport(selection.get('_id'))
+			this.download(selection.get('_id'))
 		}
+	},
+	
+	download : function(id){
+		url = location.protocol + '//' + location.host + '/files/' + id
+		window.open(url,'_newtab');
 	},
 	
 	sendByMail : function(record){
