@@ -394,7 +394,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	clearGraph : function(){
 		for(var i in this.chart.series){
-			log.debug('cleaning serie : ' + this.chart.series[i].name)
+			//log.debug('cleaning serie : ' + this.chart.series[i].name)
 			this.chart.series[i].setData([],false)
 		}
 	},
