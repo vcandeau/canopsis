@@ -69,7 +69,7 @@ def log_task(func):
 
 			log = {	'success': True,
 					'total': len(data),
-					'celery_output': 'Celery Task done',
+					'celery_output': 'Celery task done',
 					'timestamp': timestamp,
 					'data': data
 					}
