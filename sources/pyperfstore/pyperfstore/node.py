@@ -101,7 +101,8 @@ class node(object):
 		self.storage.set(self._id, dump)
 
 	def metric_make_id(self, dn):
-		return self._id.replace('.','-') + "-" + hashlib.md5(dn).hexdigest()
+		#return self._id.replace('.','-') + "-" + hashlib.md5(dn).hexdigest()
+		return hashlib.md5(self._id+"-"+dn).hexdigest()
 
 	def metric_get(self, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
@@ -216,7 +217,7 @@ class node(object):
 			return []
 	
 
-	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None, dtype=None):
+	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None, dtype=None, point_per_dca=None):
 		_id = self.metric_get_id(dn, _id)
 		
 		self.logger.debug("Push value on metric '%s' (_id: %s)" % (dn, _id))
@@ -241,7 +242,7 @@ class node(object):
 			if mymetric.bunit != unit:
 				mymetric.bunit = unit
 
-		mymetric.push_value(value=value, timestamp=timestamp)
+		mymetric.push_value(value=value, timestamp=timestamp, point_per_dca=point_per_dca)
 
 	def metric_remove(self, dn=None, _id=None):
 		self.logger.debug("Remove metric '%s'" % dn)
@@ -273,6 +274,15 @@ class node(object):
 
 		self.logger.debug("Remove node '%s'" % self._id)
 		self.storage.rm(self._id)
+		
+	def size(self):
+		size = self.storage.size(self._id)
+		
+		for _id in self.metrics.keys():
+			item = self.metric_get(_id=_id)
+			size += item.size()
+			
+		return size
 
 	def pretty_print(self):
 		print " + Id: %s" % self._id
@@ -287,27 +297,32 @@ class node(object):
 			print "    + %s (%s) (%s)" % (metric.dn, metric.dtype, metric._id)
 
 			item = metric.dca_get(metric.current_dca)
-			print "      + Current DCA (%s -> %s),\tPoints: %s" % (item.tstart, item.tstop, item.size )
+			
+			bsize = self.storage.size(item._id) / 1024.0
+			print "      + Current DCA (%s -> %s),\tPoints: %s\t%.2f KB" % (item.tstart, item.tstop, item.size, bsize )
 			print ""
 
 			if metric.dca_PLAIN:
 				for item in metric.dca_PLAIN:
 					item = metric.dca_get(item)
-					print "      + %s DCA (%s -> %s),\tPoints: %s" % (item.format, item.tstart, item.tstop, item.size )
+					bsize = self.storage.size(item._id) / 1024.0
+					print "      + %s DCA (%s -> %s),\tPoints: %s\t%.2f KB" % (item.format, item.tstart, item.tstop, item.size, bsize )
 
 				print ""
 
 			if metric.dca_TSC:
 				for item in metric.dca_TSC:
 					item = metric.dca_get(item)
-					print "      + %s DCA (%s -> %s),\tPoints: %s" % (item.format, item.tstart, item.tstop, item.size )
+					bsize = self.storage.size(item._id) / 1024.0
+					print "      + %s DCA (%s -> %s),\tPoints: %s\t%.2f KB" % (item.format, item.tstart, item.tstop, item.size, bsize )
 
 				print ""
 
 			if metric.dca_ZTSC:
 				for item in metric.dca_ZTSC:
 					item = metric.dca_get(item)
-					print "      + %s DCA (%s -> %s),\tPoints: %s" % (item.format, item.tstart, item.tstop, item.size )
+					bsize = self.storage.size(item._id) / 1024.0
+					print "      + %s DCA (%s -> %s),\tPoints: %s\t%.2f KB" % (item.format, item.tstart, item.tstop, item.size, bsize )
 
 				print ""
 
