@@ -242,7 +242,7 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Schedule active view export',this.logAuthor)
 		var activetabs = Ext.getCmp('main-tabs').getActiveTab();
 		var record = Ext.create('canopsis.model.Task', activetabs.view);
-		this.getController('Task').taskWizard(record)
+		this.getController('Task').taskWizard(record,activetabs.id)
 	}
 	
 });

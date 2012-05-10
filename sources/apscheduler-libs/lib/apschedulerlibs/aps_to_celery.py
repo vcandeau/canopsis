@@ -37,6 +37,7 @@ def launch_celery_task(*args,**kwargs):
 			
 			#----------Get task informations
 			task_name = kwargs['_scheduled']
+			celery_task_name = kwargs['task']
 			
 			module = __import__(kwargs['task'])
 			exec "task = module.%s" % kwargs['method']
@@ -158,7 +159,7 @@ def launch_celery_task(*args,**kwargs):
 				connector_name='task_log',
 				event_type='log',
 				source_type='resource',
-				resource=('Task - %s - %s ' %  (task_name,account.user)),
+				resource=('Task.%s.%s.%s' %  (celery_task_name,account.user,task_name)), 
 				output=task_output,
 				state=status
 				)
