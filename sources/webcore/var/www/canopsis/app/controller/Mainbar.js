@@ -241,8 +241,8 @@ Ext.define('canopsis.controller.Mainbar', {
 	ScheduleExportView : function(){
 		log.debug('Schedule active view export',this.logAuthor)
 		var activetabs = Ext.getCmp('main-tabs').getActiveTab();
-		var record = Ext.create('canopsis.model.Task', activetabs.view);
-		this.getController('Task').taskWizard(record,activetabs.id)
+		var record = Ext.create('canopsis.model.Schedule', activetabs.view);
+		this.getController('Schedule').scheduleWizard(record,activetabs.id)
 	}
 	
 });
