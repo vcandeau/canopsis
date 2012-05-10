@@ -25,8 +25,8 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 
 	alias: 'widget.CurvesGrid',
 
-	model: 'curve',
-	store : 'Curve',
+	model: 'Curve',
+	store : 'Curves',
 
 	opt_paging: false,
 	opt_menu_delete: true,

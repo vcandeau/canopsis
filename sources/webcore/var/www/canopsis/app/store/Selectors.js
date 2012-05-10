@@ -18,23 +18,37 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.curve', {
+Ext.define('canopsis.model.Selectors', {
     extend: 'Ext.data.Model',
-    idProperty: '_id',
-    fields: [
-		{name: '_id'},
-		{name : 'metric'},
-		{name : 'crecord_name'},
-		{name : 'aaa_group', 		defaultValue: 'curves_admin' },
-		{name : 'aaa_access_group', defaultValue: ['r', 'w'] },
-		{name : 'aaa_access_other', defaultValue: ['r'] },
-		{name : 'line_color',		defaultValue: undefined },
-		{name : 'area_color',		defaultValue: undefined },
-		{name : 'area_opacity',		defaultValue: undefined, type: 'int'},
-		{name : 'invert',			defaultValue: false, type: 'boolean' },
-		{name : 'zIndex',			defaultValue: 0, type: 'int'},
-		{name : 'dashStyle',		defaultValue: "Solid" },
-		{name : 'label',			defaultValue: undefined },
-		
-		]
+
+	fields: [
+		{name: 'id'},
+		{name: 'state'},
+    ],
+
 });
+
+Ext.define('canopsis.store.Selector', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Selector',
+	
+	storeId: 'store.Selector',
+	
+	//autoLoad: true,
+	
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/selector',
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success'
+		}
+	},
+	/*load: function (){
+		log.debug('View store loaded.')
+		log.dump(this.getById('view.root.dashboard'))
+	},*/
+});
+

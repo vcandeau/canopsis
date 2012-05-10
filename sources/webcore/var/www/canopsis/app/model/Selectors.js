@@ -18,41 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Widget', {
-    extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Widget',
-	
-	storeId: 'store.Widget',
-	
-	logAuthor : '[store][widget]',
+Ext.define('canopsis.model.Selectors', {
+    extend: 'Ext.data.Model',
 
-	autoLoad: true,
-	sortOnLoad: true,
-	
-	constructor: function(config)
-    {    
-        this.callParent(arguments);
-        //this.on('loaded',this.check_translate,this)
-    },
-	
-	sorters: [
-        {
-            property : 'name',
-            direction: 'DESC'
-        }
+	fields: [
+		{name: '_id'},
+		{name: 'name'},
+		{name: 'description'},
+		{name: 'filter'},
+		{name: 'category'},
+		{name: 'collection'},
     ],
-	
-	proxy: {
-		type: 'rest',
-		url: '/ui/widgets',
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty  : 'total',
-			successProperty: 'success'
-		},
-	},
-	
-	
-	
+
 });
