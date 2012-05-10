@@ -102,67 +102,10 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		logger.debug('file not found, error while generating pdf')
 		return {'total': 0, 'success': False, 'data': {}}
 	
-@get('/getReport/:metaId',apply=[check_auth])
-def get_report(metaId=None):
-	account = get_account()
-	storage = cstorage(account=account, namespace='reports')
-
-	meta = storage.get(metaId)
-	meta.__class__ = cfile
-
-	report = meta.get(storage)
-
-	#logger.debug('MetaId  : %s' % metaId)
-	#logger.debug('Filename: %s' % report.name)
-
-	if report:
-		response.headers['Content-Disposition'] = 'attachment; filename="%s"' % report.name
-		response.headers['Content-Type'] = 'application/pdf'
-		try:
-			return report
-		except Exception, err:
-			logger.debug(err)
-	else:
-		logger.error('No report found in gridfs')
-		return HTTPError(404, " Not Found")
-
-@post('/report',apply=[check_auth])
-def modify_report():
-	
-	data = json.loads(request.body.readline())
-	reportId = None
-	file_name = None
-	logger.error(data)
-	try:
-		reportId = data['_id']
-		file_name = data['file_name']
-	except Exception, err:
-		
-		logger.error('New report information not found : %s' % err)
-	
-	if not reportId:
-		logger.error('No report Id specified')
-		return HTTPError(405, " No report Id specified")
-		
-	if file_name:
-		###########account and storage
-		account = get_account()
-		storage = cstorage(account=account, namespace='reports')
-		try:
-			document = storage.get(reportId)
-			logger.error(document)
-			if document:
-				document.data['file_name'] = file_name
-				storage.put(document)
-		except Exception, err:
-			logger.error("Error when updating report %s: %s" % (reportId,err))
-			return HTTPError(500, "Failed to update report")
-			
-
 @post('/sendreport',apply=[check_auth])
 def send_report():
 	account = get_account()
-	reportStorage = cstorage(account=account, namespace='reports')
+	reportStorage = cstorage(account=account, namespace='files')
 
 	recipients = request.params.get('recipients', default=None)
 	_id = request.params.get('_id', default=None)
@@ -187,76 +130,3 @@ def send_report():
 	except Exception, err:
 		logger.error('Error when run subtask mail : %s' % err)
 		return {'success':False,'total':'1','data':{'output':'Mail sending failed'}}
-
-	
-	
-
-@get('/report',apply=[check_auth])
-def get_list_report():
-	limit		= int(request.params.get('limit', default=20))
-	start		= int(request.params.get('start', default=0))
-	sort		= request.params.get('sort', default=None)
-	filter		= request.params.get('filter', default=None)
-	
-	###########account and storage
-	account = get_account()
-	storage = cstorage(account=account, namespace='reports')
-	
-	###########load filter
-	if filter:
-		try:
-			filter = json.loads(filter)
-		except Exception, err:
-			logger.error("Filter decode: %s" % err)
-			filter = None
-			
-	if isinstance(filter, list):
-		if len(filter) > 0:
-			filter = filter[0]
-		else:
-			logger.error(" + Invalid filter format")
-			filter = {}
-	
-	msort = []
-	if sort:
-		sort = json.loads(sort)
-		for item in sort:
-			direction = 1
-			if str(item['direction']) == "DESC":
-				direction = -1
-
-			msort.append((str(item['property']), direction))
-	
-	
-	###########search
-	try:
-		records = storage.find(filter, sort=msort,limit=limit, offset=start,account=account)
-		total = storage.count(filter, account=account)
-	except Exception,err:
-		logger.error('Error while fetching records : %s' % err)
-	
-	data = []
-	
-	for record in records:
-		dump = record.dump(json=True)
-		#cleaning non serializable
-		del dump['data_id']
-		data.append(dump)
-		
-	return {'total': total, 'success': True, 'data': data}
-
-@delete('/report/:metaId',apply=[check_auth])
-def delete_report(metaId=None):
-	account = get_account()
-	storage = cstorage(account=account, namespace='reports')
-	
-	if metaId:
-		try :
-			storage.remove(metaId,account=account)
-		except:
-			logger.error('Failed to remove report')
-			return HTTPError(500, "Failed to remove report")
-		
-	else:
-		logger.error('No report Id specified')
-		return HTTPError(404, " No report Id specified")
