@@ -18,11 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Account', {
+Ext.define('canopsis.store.Accounts', {
     extend: 'canopsis.lib.store.cstore',
     model: 'canopsis.model.Account',
 
-	storeId: 'store.Account',
+	storeId: 'store.Accounts',
 
 	autoLoad: true,
 	autoSync: true,

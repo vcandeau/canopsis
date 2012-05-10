@@ -22,7 +22,7 @@ Ext.define('canopsis.controller.Group', {
 	extend: 'canopsis.lib.controller.cgrid',
     
 	views: ['Group.Grid', 'Group.Form'],
-	stores: ['Group'],
+	stores: ['Groups'],
 	models: ['Group'],
 
 	iconCls: 'icon-crecord_type-group',

@@ -22,7 +22,7 @@ Ext.define('canopsis.controller.Account', {
 	extend: 'canopsis.lib.controller.cgrid',
     
 	views: ['Account.Grid', 'Account.Form'],
-	stores: ['Account'],
+	stores: ['Accounts'],
 	models: ['Account'],
 
 	iconCls: 'icon-crecord_type-account',
