@@ -159,7 +159,7 @@ def launch_celery_task(*args,**kwargs):
 				connector_name='task_log',
 				event_type='log',
 				source_type='resource',
-				resource=('Task.%s.%s.%s' %  (celery_task_name,account.user,task_name)), 
+				resource=('task.%s.%s.%s' %  (celery_task_name,account.user,task_name)), 
 				output=task_output,
 				state=status
 				)
