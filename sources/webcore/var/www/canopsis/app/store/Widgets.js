@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Widget', {
+Ext.define('canopsis.store.Widgets', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Widget',
 	
