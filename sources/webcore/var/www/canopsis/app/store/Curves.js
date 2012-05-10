@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Curve', {
+Ext.define('canopsis.store.Curves', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Curve',
 	
