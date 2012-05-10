@@ -22,7 +22,7 @@ Ext.define('canopsis.controller.Curves', {
     extend: 'canopsis.lib.controller.cgrid',
 
     views: ['Curves.Grid', 'Curves.Form'],
-    stores: ['Curve'],
+    stores: ['Curves'],
     models: ['Curve'],
 
     logAuthor: "[controller][Curves]",
@@ -49,7 +49,7 @@ Ext.define('canopsis.controller.Curves', {
 	getRenderInfo: function(metric) {
 		if (metric){
 			var _id = $.encoding.digests.hexSha1Str(metric);
-			var store = Ext.data.StoreManager.lookup('Curve')
+			var store = Ext.data.StoreManager.lookup('Curves')
 			var info = store.getById(_id)
 			if (info){
 				return info
