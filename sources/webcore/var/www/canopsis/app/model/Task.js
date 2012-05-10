@@ -40,7 +40,7 @@ Ext.define('canopsis.model.Task', {
 		},
 		{
 			name : 'log_output',
-			convert : function(value, record) {return record.get('log').output}
+			convert : function(value, record) {return record.get('log').celery_output + ' (in ' + record.get('log').duration + 's)'}
 		},
 		{
 			name : 'log_last_execution',
