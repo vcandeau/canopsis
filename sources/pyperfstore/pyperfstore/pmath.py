@@ -305,48 +305,33 @@ def aggregate(values, max_points=1450, interval=None, atype='MEAN', agfn=None):
 	logger.debug(" + Nb points: %s" % len(rvalues))
 	return rvalues
 
-def candlestick(values, window=86400):
-	logger.debug("Candlestick")
-
-	logger.debug(" + Window: %s" % window)
-
-	"""first = get_first_value(values)[0]
-	last  = get_last_value(values)[0]
-
-	first = int(first/window)*window
-	last = 	(int(last/window)+1)*window
-
+def fill_interval(points, interval=300):
+	if not len(points):
+		return []
+		
+	npoints = []
 	
-	logger.debug(" + First: %s" % first)
-	logger.debug(" + Last: %s" % last)
+	# Extract first point
+	point = points[0]
+	timestamp = point[0]
+	npoints.append(point)
+	del points[0]
 	
-	rvalues = []
-	index = 0
-	for x in range(first, last-window, window):
-		logger.debug("   + %s -> %s" % (x, x+window))
-		data = values[index:]
-		vdata = []
-		for v in data:
-			if v[0] in range(x, x+window+1):
-				vdata.append(v)
-				index += 1
-			else:
-				break
-
-		rvalues.append(vdata)
-
-	values = []
-	for v in rvalues:
-	"""
-	vopen = get_first_value(values)[1]
-	vclose = get_last_value(values)[1]
-	vhight = vmax(values)
-	vlow = vmin(values)
-	timestamp = values[len(values)-1][0]
-	#values.append([x, vopen, vclose, vlow, vhight])
-	return [timestamp, vopen, vclose, vlow, vhight]
-
-
-	#return values
+	i = 0
+	for point in points:
+		point_interval = point[0] - timestamp
+		
+		if point_interval > 2* interval:
+			# Fill lost insterval
+			for n in range(1, int(point_interval/interval)):
+				npoints.append([timestamp+(n*interval), points[i-1][1]])
+			npoints.append(point)
+		else:
+			npoints.append(point)
+		
+		timestamp = point[0]
+		i+=1
+		
+	return npoints
 		
 
