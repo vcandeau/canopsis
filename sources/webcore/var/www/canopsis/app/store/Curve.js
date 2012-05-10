@@ -20,7 +20,7 @@
 */
 Ext.define('canopsis.store.Curve', {
     extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.curve',
+	model: 'canopsis.model.Curve',
 	
 	storeId: 'store.Curve',
 	
