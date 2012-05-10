@@ -26,7 +26,7 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	alias: 'widget.AccountGrid',
 
 	model: 'Account',
-	store : 'Account',	
+	store : 'Accounts',	
 
 	opt_grouping: true,
 	opt_paging: true,

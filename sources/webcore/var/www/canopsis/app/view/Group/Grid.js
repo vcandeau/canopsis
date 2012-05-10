@@ -24,7 +24,7 @@ Ext.define('canopsis.view.Group.Grid' ,{
 	alias: 'widget.GroupGrid',
 
 	model: 'Group',
-	store : 'Group',	
+	store : 'Groups',	
 	
 	opt_menu_delete: true,
 	opt_menu_rights: false,
