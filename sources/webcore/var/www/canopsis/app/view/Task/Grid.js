@@ -38,38 +38,39 @@ Ext.define('canopsis.view.Task.Grid' ,{
 			dataIndex: 'loaded',
 			renderer: rdr_boolean
 		},{
-			header: _('Status'),
+			header: _('Success'),
 			width: 55,
 			sortable: true,
 			dataIndex: 'log_success',
 			renderer: rdr_boolean
 		},{
 			header: _('Last execution'),
-			flex: 2,
+			flex: 1,
 			sortable: true,
 			dataIndex: 'log_last_execution',
 			renderer: rdr_tstodate,
 		},{
-			header: _('Name'),
-			flex: 3,
+			header: _('Next execution'),
+			flex: 1,
 			sortable: true,
-			dataIndex: 'crecord_name',
+			dataIndex: 'next_run_time',
 		},{
 			header: _('Schedule'),
-			flex: 2,
+			flex: 1,
 			sortable: true,
 			dataIndex: 'cron',
 			renderer: rdr_task_crontab,
 		},{
-			header: _('Next execution'),
+			header: _('Name'),
 			flex: 2,
 			sortable: true,
-			dataIndex: 'next_run_time',
+			dataIndex: 'crecord_name',
 		},{
 			header: _('Output'),
 			flex: 5,
 			sortable: true,
 			dataIndex: 'log_output',
+
 		},{
 			header: _('Mailing'),
 			width: 55,
