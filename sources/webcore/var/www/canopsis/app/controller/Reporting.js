@@ -75,7 +75,7 @@ Ext.define('canopsis.controller.Reporting', {
 	},
 	
 	downloadReport : function(id){
-		url = location.protocol + '//' + location.host + '/getReport/' + id
+		url = location.protocol + '//' + location.host + '/files/' + id
 		window.open(url,'_newtab');
 	},	
 	
