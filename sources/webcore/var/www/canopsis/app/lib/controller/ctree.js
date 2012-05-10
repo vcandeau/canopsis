@@ -256,9 +256,15 @@ Ext.define('canopsis.lib.controller.ctree', {
 		var selection = tree.getSelectionModel().getSelection()[0];
 		//create form
 		if(this.getController('Account').check_record_right(selection,'w')){
-			var crights = Ext.create('canopsis.lib.view.crights',{data:selection})
+			var config = {
+				data:selection,
+				renderTo:tree.id,
+				constrain:true
+			}
+			var crights = Ext.create('canopsis.lib.view.crights',config)
 			//listen to save event to refresh store
 			crights.on('save', function(){tree.store.load()},this)
+			crights.show()
 		} else {
 			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
 		}

@@ -245,7 +245,8 @@ Ext.define('canopsis.controller.Task', {
 	},
 	
 	//call a window wizard to schedule task with passed argument
-	taskWizard : function(item){
+	taskWizard : function(item,renderTo){
+		//temporary hack, check if called by cgrid or ctree
 		form = Ext.create('canopsis.view.Task.Form',{EditMethod: 'window'})
 		store = Ext.getStore('Task')
 		
@@ -258,7 +259,9 @@ Ext.define('canopsis.controller.Task', {
 		
 		var window_wizard = Ext.widget('window',{
 													title:'Schedule task',
-													items:[form]
+													items:[form],
+													constrain : true,
+													renderTo : renderTo
 												})
 
 		window_wizard.show()
