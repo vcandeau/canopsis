@@ -18,18 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Task', {
+Ext.define('canopsis.store.Schedules', {
     extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Task',
+	model: 'canopsis.model.Schedule',
 	
-	storeId: 'store.Task',
+	storeId: 'store.Schedules',
 
 	autoLoad: true,
 	autoSync: true,
 
 	proxy: {
 		type: 'rest',
-		url: '/rest/task/schedule',
+		url: '/rest/object/schedule',
 		reader: {
 			type: 'json',
 			root: 'data',
