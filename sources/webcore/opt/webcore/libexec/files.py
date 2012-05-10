@@ -124,15 +124,15 @@ def delete_file(metaId):
 	try :
 		storage.remove(metaId,account=account)
 	except:
-		logger.error('Failed to remove report')
-		return HTTPError(500, "Failed to remove report")
+		logger.error('Failed to remove file')
+		return HTTPError(500, "Failed to remove file")
 		
 		
 def list_files():
 	limit		= int(request.params.get('limit', default=20))
 	start		= int(request.params.get('start', default=0))
 	sort		= request.params.get('sort', default=None)
-	filter		= request.params.get('filter', default=None)
+	filter		= request.params.get('filter', default={})
 	
 	###########account and storage
 	account = get_account()
@@ -146,7 +146,7 @@ def list_files():
 			filter = json.loads(filter)
 		except Exception, err:
 			logger.error("Filter decode: %s" % err)
-			filter = None
+			filter = {}
 			
 	if isinstance(filter, list):
 		if len(filter) > 0:
@@ -170,8 +170,9 @@ def list_files():
 	try:
 		records = storage.find(filter, sort=msort,limit=limit, offset=start,account=account)
 		total = storage.count(filter, account=account)
-	except Exception,err:
-		logger.error('Error while fetching records : %s' % err)
+	except Exception, err:
+		logger.error('Error while fetching records: %s' % err)
+		return HTTPError(500, "Error while fetching records: %s" % err)
 	
 	data = []
 	
