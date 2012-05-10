@@ -140,7 +140,7 @@ Ext.define('canopsis.controller.View', {
 		Ext.Msg.prompt(_('Directory name'), _('Please enter directory name:'), function(btn, directoryName){
 			if (btn == 'ok'){
 				
-				var record = Ext.create('canopsis.model.view')
+				var record = Ext.create('canopsis.model.View')
 				
 				var directory_id = 'directory.'+ global.account.user + '.' + global.gen_id()
 				
@@ -180,7 +180,7 @@ Ext.define('canopsis.controller.View', {
 					var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
 					
 					//building record
-					var record = Ext.create('canopsis.model.view')
+					var record = Ext.create('canopsis.model.View')
 					record.set('_id', view_id)
 					record.set('id', view_id)
 					record.set('crecord_name',viewName)
