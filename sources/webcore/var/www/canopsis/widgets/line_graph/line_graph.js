@@ -385,7 +385,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					this.clearGraph()
 					if(this.chartMessage == undefined){
 						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _("Infortunatly, there is no data for this period") + '</div>', 50, 50).add()
-						log.dump(this.chartMessage)
 					}
 					this.chart.redraw()
 				}
