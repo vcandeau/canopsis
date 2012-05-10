@@ -18,15 +18,15 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Task.Grid' ,{
+Ext.define('canopsis.view.Schedule.Grid' ,{
 	extend: 'canopsis.lib.view.cgrid',
 
-	alias: 'widget.TaskGrid',
+	alias: 'widget.ScheduleGrid',
 
-	model: 'Task',
-	store : 'Task',	
+	model: 'Schedule',
+	store : 'Schedules',	
 
-	opt_db_namespace: 'task',
+	opt_db_namespace: 'object',
 	
 	opt_menu_delete: true,
 	opt_menu_run_item : true,
