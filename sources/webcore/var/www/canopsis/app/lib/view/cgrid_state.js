@@ -135,7 +135,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		if (! this.store){
 			this.store = Ext.create('canopsis.lib.store.cstore', {
 				//extend: 'canopsis.lib.store.cstore',
-				model: 'canopsis.model.event',
+				model: 'canopsis.model.Event',
 
 				pageSize: this.pageSize,
 
