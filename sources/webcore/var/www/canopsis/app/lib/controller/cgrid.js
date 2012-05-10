@@ -227,9 +227,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var selection = grid.getSelectionModel().getSelection()[0];
 		//create form
 		if(this.getController('Account').check_record_right(selection,'w')){
-			var crights = Ext.create('canopsis.lib.view.crights',{data:selection,namespace:this.grid.opt_db_namespace})
+			var config = {
+				data:selection,
+				namespace:this.grid.opt_db_namespace,
+				renderTo : grid.id,
+				constrain: true
+			}
+			crights = Ext.create('canopsis.lib.view.crights',config)
 			//listen to save event to refresh store
 			crights.on('save', function(){grid.store.load()},this)
+			crights.show()
 		} else {
 			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
 		}
