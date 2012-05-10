@@ -68,7 +68,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 				displayField: 'user',
 				valueField: 'mail',
 				width : 120,
-				store : 'Account'
+				store : 'Accounts'
 			})
 
 		this.addUserButton = Ext.widget('button',{
