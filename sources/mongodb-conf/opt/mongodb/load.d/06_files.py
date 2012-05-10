@@ -37,16 +37,18 @@ def init():
 		storage.drop_namespace(namespace)
 
 def update():
-	storage = cstorage(account=root)
+	#storage = cstorage(account=root)
 	
-	logger.info(" + Update: 'daily -> 201205'")
-	collections = storage.db.collection_names()
-	if 'reports' in collections:
-		logger.info("   + Move records from 'reports' to 'files' ...")
-		records = storage.find({}, account=root, namespace='reports')
-		for record in records:
-			logger.info("     - %s (%s)" % (record._id, record.data['file_name']))
-			storage.put(record, account=root, namespace='files')
-			
-		storage.drop_namespace('reports')
+	#logger.info(" + Update: 'daily -> 201205'")
+	#collections = storage.db.collection_names()
+	#if 'reports' in collections:
+	#	logger.info("   + Move records from 'reports' to 'files' ...")
+	#	records = storage.find({}, account=root, namespace='reports')
+	#	for record in records:
+	#		logger.info("     - %s (%s)" % (record._id, record.data['file_name']))
+	#		storage.put(record, account=root, namespace='files')
+	#		
+	#	storage.drop_namespace('reports')
+	
+	pass
 		
