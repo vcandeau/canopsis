@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.widget', {
+Ext.define('canopsis.model.Widget', {
     extend: 'Ext.data.Model',
     fields: [
 		{name : 'name'},
