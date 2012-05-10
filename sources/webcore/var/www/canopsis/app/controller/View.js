@@ -164,7 +164,7 @@ Ext.define('canopsis.controller.View', {
 		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName){
 			if (btn == 'ok'){		
 				//check if view already exist
-				var store = Ext.data.StoreManager.lookup('View')
+				var store = Ext.data.StoreManager.lookup('Views')
 				var already_exist = store.findBy(
 						function(storeRecord, id){
 								if(storeRecord.get('crecord_name') == viewName){
