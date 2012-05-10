@@ -23,8 +23,8 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 
 	alias: 'widget.BriefcaseGrid',
 
-	model: 'Document',
-	store : 'Document',	
+	model: 'File',
+	store : 'Files',	
 	
 	opt_multiSelect : true,
 	
@@ -35,7 +35,7 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 	
 	opt_menu_rename: true,
 	
-	opt_db_namespace: 'reports',
+	opt_db_namespace: 'files',
 	
 	opt_bar_search: true,
 	opt_bar_search_field: ['file_name'],

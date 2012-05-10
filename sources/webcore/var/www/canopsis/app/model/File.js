@@ -18,31 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Document', {
-    extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Document',
-	
-	//storeId: 'store.Group',
-	autoLoad: true,
-	autoSync: true,
-
-	sorters: [
-        {
-            property : 'creationTs',
-            direction: 'ASC'
-        }
-    ],
-
-	proxy: {
-		type: 'rest',
-		url: '/report',
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty  : 'total',
-			successProperty: 'success'
-		},
-	},
-	
-	
+Ext.define('canopsis.model.File', {
+	extend: 'Ext.data.Model',
+	fields: [
+		{name: '_id'},
+		{name: 'id', mapping:'_id'},
+		{name : 'file_name'},
+		{name: 'crecord_write_time'},
+		{name: 'content_type'},
+		{name: 'creationTs'},
+		
+		{name: 'aaa_access_group'},
+		{name: 'aaa_access_other'},
+		{name: 'aaa_access_owner'},
+		{name: 'aaa_group'},
+		{name: 'aaa_owner'},
+	],
 });
