@@ -22,8 +22,8 @@ Ext.define('canopsis.controller.View', {
     extend: 'canopsis.lib.controller.ctree',
 
     views: ['View.TreePanel'],
-    stores: ['View','TreeStoreView'],
-    model: ['view'],
+    stores: ['Views','TreeStoreViews'],
+    model: ['View'],
     
     logAuthor: '[controller][View]',
 
@@ -33,16 +33,16 @@ Ext.define('canopsis.controller.View', {
 		//this.formXtype = 'GroupForm'
 		this.listXtype = 'ViewTreePanel'
 
-		this.modelId = 'view'
+		this.modelId = 'View'
 		
 		log.debug(' + Load treeStore ...', this.logAuthor);
-		this.treeStore = Ext.data.StoreManager.lookup('TreeStoreView')
+		this.treeStore = Ext.data.StoreManager.lookup('TreeStoreViews')
 		
 		if(!this.treeStore.isLoading()){
 			this.treeStore.load()
 		}
 		
-		this.store = Ext.data.StoreManager.lookup('View')
+		this.store = Ext.data.StoreManager.lookup('Views')
 		
 		this.store.proxy.on('exception', function(proxy, response){
 			console.log(response)
@@ -70,7 +70,7 @@ Ext.define('canopsis.controller.View', {
 			
 		//reload treeStore if view store is update (means that someone have save a 
 		//view, you need to sync those two stores
-		var viewStore = Ext.data.StoreManager.lookup('View')
+		var viewStore = Ext.data.StoreManager.lookup('Views')
 		viewStore.on('write',function(){
 			if(!this.treeStore.isLoading()){
 				this.treeStore.load()

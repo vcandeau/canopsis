@@ -23,8 +23,8 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 
 	alias: 'widget.ViewTreePanel',
 	
-	store : 'TreeStoreView',
-	model : 'view',
+	store : 'TreeStoreViews',
+	model : 'View',
 	
 	leafName : 'view',
 	
