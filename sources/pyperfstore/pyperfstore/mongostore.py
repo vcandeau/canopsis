@@ -25,6 +25,7 @@ from pyperfstore.storage import storage
 from pymongo import Connection
 from bson.errors import InvalidStringData
 from gridfs import GridFS
+from bson import BSON
 
 class mongostore(storage):
 	def __init__(self, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_collection='perfdata', mongo_safe=False):
@@ -44,6 +45,10 @@ class mongostore(storage):
 
 		self.grid = GridFS(self.db, self.mongo_collection+".fs")
 
+	def drop(self):
+		self.db.drop_collection(self.mongo_collection)
+		self.db.drop_collection(self.mongo_collection+".fs.chunks")
+		self.db.drop_collection(self.mongo_collection+".fs.files")
 
 	def set_raw(self, key, value):
 		try:
@@ -94,9 +99,27 @@ class mongostore(storage):
 		except:
 			self.set(key, [ value ])
 
-	def size(self, key):
-		#return int(sys.getsizeof(self.data[key]))		
-		return 1
+	def size(self, key=None):
+		size = 0
+		if key:
+			#TODO: Value is strange ...
+			data = self.get(key)
+			if type(data) == list or type(data) == dict:
+				size = sys.getsizeof(BSON.encode({'_id': key, 'd': data }))
+			else:
+				size = sys.getsizeof(data)
+			pass
+			
+		else:
+			size = self.db.command("collstats", self.mongo_collection)['size']
+			try:
+				size += self.db.command("collstats", self.mongo_collection+".fs.chunks")['size']
+				size += self.db.command("collstats", self.mongo_collection+".fs.files")['size']
+			except:
+				self.logger.warning("Impossible to read GridFS Size")
+				pass
+							
+		return size
 
 	def lock(self, key):
 		self.logger.debug("Lock '%s'" % key)

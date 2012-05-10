@@ -30,6 +30,7 @@ from pyperfstore import memstore
 from pyperfstore import node
 from pyperfstore import metric
 from pyperfstore import dca
+from pyperfstore import pmath
 
 logging.basicConfig(level=logging.INFO,
 	format='%(name)s %(levelname)s %(message)s',
@@ -175,11 +176,11 @@ class KnownValues(unittest.TestCase):
 		if len(values) != 50:
 			raise Exception('Invalid aggregate (len: %s)' % len(values))
 
-	def test_08_candlestick(self):
-		##### DRAFT !
-		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, auto_aggregate=False)
+	#def test_08_candlestick(self):
+	#	##### DRAFT !
+	#	values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, auto_aggregate=False)
 
-		values = pyperfstore.pmath.candlestick(values, window=100)
+	#	values = pyperfstore.pmath.candlestick(values, window=100)
 
 		#if len(values) != 10:
 		#	raise Exception('Invalid candlestick (len: %s)' % len(values))
@@ -192,6 +193,19 @@ class KnownValues(unittest.TestCase):
 		pyperfstore.pmath.timesplit(values, 35, 632)
 		print " + Split %s points %s ms" % ( len(values), ((time.time() - start) * 1000))
 
+
+	def test_10_fill_interval(self):
+		values = [
+			[0, 0],
+			[10, 1],
+			[20, 2],
+			[30, 3],
+			[90, 9],
+		]
+		values = pmath.fill_interval(values, 10)
+		
+		if values != [[0, 0], [10, 1], [20, 2], [30, 3], [40, 3], [50, 3], [60, 3], [70, 3], [80, 3], [90, 9]]:
+			raise Exception('Invalid fill, %s' % values)
 
 	def test_99_Remove(self):
 		global mynode
