@@ -133,7 +133,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 				queryMode: 'local',
 				displayField: 'user',
 				valueField: 'user',
-				store : 'Account'
+				store : 'Accounts'
 			})
 			top_panel.add(this.combo_owner)
 		}
@@ -145,7 +145,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 				queryMode: 'local',
 				displayField: 'crecord_name',
 				valueField: 'crecord_name',
-				store : 'Group'
+				store : 'Groups'
 			})
 			top_panel.add(this.combo_group)
 		}
