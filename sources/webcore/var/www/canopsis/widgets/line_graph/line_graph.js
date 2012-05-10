@@ -163,7 +163,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			global: {
-				useUTC: true
+				useUTC: false
 			},
 			exporting: {
 				enabled: false
@@ -201,11 +201,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					month: '%b %y',
 					year: '%Y'
 				}*/
-				/*labels: {
+				labels: {
 					formatter: function() {
-						return Ext.Date.format(new Date(this.value), tsFormat);
+						var offset = new Date().getTimezoneOffset() * 1000 * 60
+						return Highcharts.dateFormat(this.dateTimeLabelFormat, this.value - offset)
 					}
-				}*/
+				}
 			},
 			yAxis: {
 				title: {
