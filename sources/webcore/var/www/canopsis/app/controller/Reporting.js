@@ -54,10 +54,10 @@ Ext.define('canopsis.controller.Reporting', {
 				var data = Ext.JSON.decode(response.responseText)
 				log.dump(data)
 				if(data.success == true){
-					data = data.data.url
+					var id = data.data.id
 					global.notify.notify(
 						_('Export ready'),
-						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + data + '"  target="_blank">' + _('here') + '</a>',
+						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + '/files/' + id + '"  target="_blank">' + _('here') + '</a>',
 						undefined,
 						undefined,
 						false
