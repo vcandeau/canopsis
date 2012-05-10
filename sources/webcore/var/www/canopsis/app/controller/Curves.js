@@ -23,7 +23,7 @@ Ext.define('canopsis.controller.Curves', {
 
     views: ['Curves.Grid', 'Curves.Form'],
     stores: ['Curve'],
-    models: ['curve'],
+    models: ['Curve'],
 
     logAuthor: "[controller][Curves]",
 
@@ -33,7 +33,7 @@ Ext.define('canopsis.controller.Curves', {
 		this.formXtype = 'CurvesForm'
 		this.listXtype = 'CurvesGrid'
 
-		this.modelId = 'curve'
+		this.modelId = 'Curve'
 
 		this.callParent(arguments);
 		
