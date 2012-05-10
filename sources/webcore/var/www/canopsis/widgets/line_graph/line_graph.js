@@ -385,7 +385,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					this.clearGraph()
 					if(this.chartMessage == undefined){
 						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _("Infortunatly, there is no data for this period") + '</div>', 50, 50).add()
-						log.dump(this.chartMessage)
 					}
 					this.chart.redraw()
 				}
@@ -395,7 +394,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	clearGraph : function(){
 		for(var i in this.chart.series){
-			log.debug('cleaning serie : ' + this.chart.series[i].name)
+			//log.debug('cleaning serie : ' + this.chart.series[i].name)
 			this.chart.series[i].setData([],false)
 		}
 	},

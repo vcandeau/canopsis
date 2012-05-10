@@ -104,7 +104,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 		if(toolbar.currentDate.isValid()){
 			tab.setReportDate(startReport*1000,endReport*1000)
 			log.debug('------------------------Asked Report date-----------------------')
-			log.debug('from : ' + startReport + 'To : ' + endReport,this.logAuthor)
+			log.debug('from : ' + startReport + ' To : ' + endReport,this.logAuthor)
 			log.debug('startReport date is : ' + Ext.Date.format(new Date(startReport*1000), 'Y-m-d H:i:s'),this.logAuthor)
 			log.debug('endReport date is : ' + Ext.Date.format(new Date(endReport*1000), 'Y-m-d H:i:s'),this.logAuthor)
 			log.debug('----------------------------------------------------------------')

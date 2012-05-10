@@ -141,8 +141,8 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		
 		//log.dump(dump)
 		
-		var store = Ext.data.StoreManager.lookup('View')
-		var record = Ext.create('canopsis.model.view', data)
+		var store = Ext.data.StoreManager.lookup('Views')
+		var record = Ext.create('canopsis.model.View', data)
 		
 		if(this.view_id){
 			log.debug('editing view')
