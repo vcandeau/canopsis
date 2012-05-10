@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+import os, time
+os.environ['TZ'] = 'UTC'
+time.tzset()
+
 from apscheduler.scheduler import Scheduler
 from apschedulerlibs.cmongodbjobstore import CMongoDBJobStore
 import logging
-import time
 import string
 
 from cinit import cinit
