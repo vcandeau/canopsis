@@ -54,11 +54,10 @@ def launch_celery_task(*args,**kwargs):
 			try:
 				result = task.delay(*args,**methodargs)
 				result.get()
-				logger.error(result)
 				result = result.result
 				
 				#success = True
-				logger.info(result)
+				#logger.info(result)
 			except Exception, err:
 				success = False
 				aps_error = str(err)
@@ -77,8 +76,7 @@ def launch_celery_task(*args,**kwargs):
 				account = caccount()
 			
 			try:
-				storage = cstorage(account=account, namespace='task_log')
-				taskStorage = cstorage(account=account, namespace='task')
+				storage = cstorage(account=account, namespace='object')
 			except Exception, err:
 				logger.info('Error while fecthing storages : %s' % err)
 				success = False
@@ -115,14 +113,14 @@ def launch_celery_task(*args,**kwargs):
 			#-----------------Put log in schedule attribut----------------
 			try:
 				mfilter = {'crecord_name':task_name}
-				search = taskStorage.find_one(mfilter)
+				search = storage.find_one(mfilter)
 
 				#add execution time
 				result['duration'] = execution_time
 
 				if search:
 					search.data['log'] = result
-					taskStorage.put(search)
+					storage.put(search)
 					logger.info('Task log updated')
 				else:
 					logger.error('Task not found in db, can\'t update')
@@ -181,7 +179,7 @@ def launch_celery_task(*args,**kwargs):
 			return result
 			
 		except Exception, err:
-			logger.error('%s' % err)
+			logger.error('Error in aps running : %s' % err)
 	else:
 		logger.error('No task given')
 		
