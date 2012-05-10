@@ -23,7 +23,7 @@ Ext.define('canopsis.controller.Widgets', {
 
     //views: ['Widgets.kpi', 'Widgets.host_header'],
     stores: ['Widget'],
-    models: ['event'],
+    models: ['Event'],
     
     item_to_translate : ['title','fieldLabel','boxLabel', 'text'],
 
