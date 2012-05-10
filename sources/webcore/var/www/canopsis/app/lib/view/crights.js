@@ -167,7 +167,7 @@ Ext.define('canopsis.lib.view.crights' ,{
 		
 		
 		this.callParent(arguments);
-		this.show()
+		//this.show()
 	},
 	
 	_save : function(record){

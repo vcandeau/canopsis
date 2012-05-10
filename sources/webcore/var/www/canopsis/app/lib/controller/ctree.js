@@ -46,7 +46,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		
 		//------------------Bind Context Menu-----------------------
 		if(tree.contextMenu){
-			tree.on('itemcontextmenu', this._showMenu)
+			tree.on('itemcontextmenu', this._showMenu, this)
 			
 			//Duplicate button
 			var btns = Ext.ComponentQuery.query('#' + tree.contextMenu.id + ' [action=duplicate]')
@@ -190,16 +190,14 @@ Ext.define('canopsis.lib.controller.ctree', {
 		log.debug('[controller][ctree] - clicked deleteButton',this.logAuthor);
 		var tree = this.tree
 		
+		var verification = true
+		
 		var selection = tree.getSelectionModel().getSelection();
 		for(var i in selection){
-			//log.debug('selection')
-			//log.dump(selection[i])
-			//log.dump(selection[i].childNodes.length)
-			
 			if(this.getController('Account').check_record_right(selection[i], 'w')){
 				if(selection[i].childNodes.length > 0){
 					global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'),"error")
-					
+					verification = false
 				} else {
 					var view_id = selection[i].data.id
 					var maintabs = Ext.getCmp('main-tabs');
@@ -207,13 +205,23 @@ Ext.define('canopsis.lib.controller.ctree', {
 					
 					if (tab){
 						global.notify.notify(_('Delete failed'),_('You must close view before delete it'), 'error')
-					}else{
-						selection[i].remove()
+						verification = false
 					}
 				}
 			}
 		}
-		tree.store.sync()
+		
+		if(verification == true){
+			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
+				function(btn, text){
+					if (btn == 'yes'){
+						for(var i in selection){
+							selection[i].remove()
+						}
+					}
+					tree.store.sync()
+				});
+		}
 		
 		if(this.deleteButton){
 			this.deleteButton(button, grid, selection)
@@ -257,8 +265,11 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_showMenu: function(view, rec, node, index, e){
-		view.select(rec)
-		this.contextMenu.showAt(e.getXY());
+		var selection = this.tree.getSelectionModel().getSelection()[0];
+		if( selection.length < 2)
+			view.select(rec)
+			
+		this.tree.contextMenu.showAt(e.getXY());
 		return false;
 	},
 	
