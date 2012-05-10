@@ -19,11 +19,11 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.store.TreeStoreView', {
+Ext.define('canopsis.store.TreeStoreViews', {
     extend: 'canopsis.lib.store.ctreeStore',
-    model: 'canopsis.model.view',
+    model: 'canopsis.model.View',
 	
-	storeId: 'store.TreeStoreView',
+	storeId: 'store.TreeStoreViews',
 	
 	autoLoad : false,
 	autoSync : false,

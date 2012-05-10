@@ -18,28 +18,32 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.view', {
-    extend: 'Ext.data.Model',
-
-	fields: [
-		{name: '_id'},
-		{name: 'id', mapping:'_id'},
-		{name: 'leaf'},
-		{name: 'crecord_name'},
-		{name: 'nodeId'},
-		{name: 'items'},
-		{name: 'refreshInterval'},
-		{name: 'template', defaultValue: false},
-		{name: 'reporting', defaultValue: false},
-		
-		{name: 'enable'},
-		//{name: 'checked', mapping:'enable'},
-		
-		{name: 'aaa_access_group'},
-		{name: 'aaa_access_other'},
-		{name: 'aaa_access_owner'},
-		{name: 'aaa_group'},
-		{name: 'aaa_owner'},
-    ],
-
+Ext.define('canopsis.store.Views', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.View',
+	
+	storeId: 'store.View',
+	
+	autoLoad: true,
+	autoSync: true,
+	
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/view',
+		extraParams: { onlyWritable: 1 },
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty  : 'total',
+			successProperty: 'success',
+		},
+		writer: {
+			type: 'json'
+		},
+	},
+	/*load: function (){
+		log.debug('View store loaded.')
+		log.dump(this.getById('view.root.dashboard'))
+	},*/
 });
+
