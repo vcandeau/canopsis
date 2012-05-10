@@ -269,7 +269,14 @@ def linreg(X, Y):
 	return a, b, RR
 
 
-def aggregate(values, max_points=1450, interval=None, atype='MEAN', agfn=None):
+def aggregate(values, max_points=None, interval=None, atype=None, agfn=None):
+	
+	if not max_points:
+		max_points=1450
+		
+	if not atype:
+		atype = 'MEAN'
+	
 	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
 
 	if len(values) > max_points:
