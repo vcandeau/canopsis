@@ -106,7 +106,7 @@ Ext.define('canopsis.lib.view.cmail' ,{
 		this.items = this._form
 		
 		this.callParent(arguments)
-		this.show()
+		//this.show()
 		
 		//-------------------------- Binding events----------------------
 		this.addUserButton.on('click',this._addUser, this)
