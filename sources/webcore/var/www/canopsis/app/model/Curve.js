@@ -18,42 +18,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.store.Curve', {
-    extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.curve',
-	
-	storeId: 'store.Curve',
-	
-	logAuthor : '[store][curve]',
-
-	autoLoad: true,
-	autoSync: true,
-	
-	sortOnLoad: true,
-	
-	pageSize: 1000,
-	
-	sorters: [
-        {
-            property : 'metric',
-            direction: 'ASC'
-        }
-    ],
-	
-	proxy: {
-		type: 'rest',
-		url: '/rest/object/curve',
-		reader: {
-			type: 'json',
-			root: 'data',
-			totalProperty  : 'total',
-			successProperty: 'success'
-		},
-		writer: {
-			type: 'json',
-		},
-	},
-	
-	
-	
+Ext.define('canopsis.model.Curve', {
+    extend: 'Ext.data.Model',
+    idProperty: '_id',
+    fields: [
+		{name: '_id'},
+		{name : 'metric'},
+		{name : 'crecord_name'},
+		{name : 'aaa_group', 		defaultValue: 'curves_admin' },
+		{name : 'aaa_access_group', defaultValue: ['r', 'w'] },
+		{name : 'aaa_access_other', defaultValue: ['r'] },
+		{name : 'line_color',		defaultValue: undefined },
+		{name : 'area_color',		defaultValue: undefined },
+		{name : 'area_opacity',		defaultValue: undefined, type: 'int'},
+		{name : 'invert',			defaultValue: false, type: 'boolean' },
+		{name : 'zIndex',			defaultValue: 0, type: 'int'},
+		{name : 'dashStyle',		defaultValue: "Solid" },
+		{name : 'label',			defaultValue: undefined },
+		
+		]
 });

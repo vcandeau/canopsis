@@ -37,7 +37,7 @@ Ext.define('canopsis.view.Tabs.wizard' ,{
 				items : [
 				{
 					xtype: "combo",
-					store: 'Widget',
+					store: 'Widgets',
 					forceSelection : true,
 					fieldLabel : _('Type'),
 					name: "xtype",
