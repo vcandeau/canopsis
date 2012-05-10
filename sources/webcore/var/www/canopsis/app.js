@@ -83,7 +83,7 @@ function createApplication(){
 			'Reporting',
 			'ReportingBar',
 			'Keynav',
-			'Task',
+			'Schedule',
 			'Briefcase',
 			'Curves',
 			'MetricNavigation'
