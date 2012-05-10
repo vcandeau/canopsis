@@ -59,6 +59,7 @@ Ext.define('canopsis.controller.Briefcase', {
 		}
 		var cmail = Ext.create('canopsis.lib.view.cmail',config)
 		cmail.on('finish',function(mail){this._ajaxRequest(mail)},this)
+		cmail.show()
 	},
 	
 	rename : function(item){

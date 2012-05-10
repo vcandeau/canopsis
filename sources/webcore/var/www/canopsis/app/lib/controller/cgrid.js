@@ -421,7 +421,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 	
 	_runItem: function(){
-		log.debug('Clicked sendByMail',this.logAuthor)
+		log.debug('Clicked runItem',this.logAuthor)
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
 		if(this.runItem){
