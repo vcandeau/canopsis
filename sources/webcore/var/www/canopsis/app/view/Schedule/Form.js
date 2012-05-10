@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Task.Form', {
+Ext.define('canopsis.view.Schedule.Form', {
 	extend: 'canopsis.lib.view.cform',
 
-	alias: 'widget.TaskForm',
+	alias: 'widget.ScheduleForm',
 	
 
     initComponent: function(){

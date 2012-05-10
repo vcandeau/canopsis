@@ -117,7 +117,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				},{
 					iconCls:'icon-mainbar-edit-task',
 					text: _('Edit schedule'),
-					action: 'editTask'
+					action: 'editSchedule'
 				},{
 					iconCls:'icon-mainbar-briefcase',
 					text: _('Briefcase'),

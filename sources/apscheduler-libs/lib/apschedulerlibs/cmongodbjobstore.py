@@ -34,13 +34,13 @@ logger = logging.getLogger('MongoDbStore')
 
 class CMongoDBJobStore(MongoDBJobStore):
 	
-	def __init__(self, database='apscheduler', collection='jobs',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
+	def __init__(self, database='canopsis', collection='objects',connection=None, pickle_protocol=pickle.HIGHEST_PROTOCOL,**connect_args):
 		MongoDBJobStore.__init__(self,database=database, collection=collection,connection=connection, pickle_protocol=pickle_protocol)
 	
 	def load_jobs(self):
 		#continue standart execution
 		jobs = []
-		for job_dict in self.collection.find():
+		for job_dict in self.collection.find({'crecord_type': 'schedule'}):
 			try:
 				job = Job.__new__(Job)
 				

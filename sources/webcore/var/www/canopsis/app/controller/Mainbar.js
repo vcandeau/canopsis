@@ -64,8 +64,8 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="editGroup"]' : {
 				click : this.openGroup,
 			},
-			'Mainbar menuitem[action="editTask"]' : {
-				click : this.editTask,
+			'Mainbar menuitem[action="editSchedule"]' : {
+				click : this.editSchedule,
 			},
 			'Mainbar menuitem[action="openBriefcase"]' : {
 				click : this.openBriefcase,
@@ -213,8 +213,8 @@ Ext.define('canopsis.controller.Mainbar', {
 		ctrl.edit_active_view()
 	},
 	
-	editTask : function(){
-		this.getController('Tabs').open_view({ view_id: 'view.task_manager', title: _('Tasks') })
+	editSchedule : function(){
+		this.getController('Tabs').open_view({ view_id: 'view.schedule_manager', title: _('Schedules') })
 	},
 	
 	openBriefcase : function(){
