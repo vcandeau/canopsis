@@ -178,7 +178,7 @@ class KnownValues(unittest.TestCase):
 
 	#def test_08_candlestick(self):
 	#	##### DRAFT !
-	#	values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, auto_aggregate=False)
+	#	values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, aggregate=False)
 
 	#	values = pyperfstore.pmath.candlestick(values, window=100)
 
@@ -187,7 +187,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_09_timesplit(self):
 		##### DRAFT !
-		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, auto_aggregate=False)
+		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=1000, aggregate=False)
 
 		start = time.time()
 		pyperfstore.pmath.timesplit(values, 35, 632)
