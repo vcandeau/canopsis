@@ -18,20 +18,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.controller.Task', {
+Ext.define('canopsis.controller.Schedule', {
 	extend: 'canopsis.lib.controller.cgrid',
     
-	views: ['Task.Grid','Task.Form'],
-	stores: ['Task'],
-	models: ['Task'],
+	views: ['Schedule.Grid','Schedule.Form'],
+	stores: ['Schedules'],
+	models: ['Schedule'],
 	
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
-		this.formXtype = 'TaskForm'
-		this.listXtype = 'TaskGrid'
+		this.formXtype = 'ScheduleForm'
+		this.listXtype = 'ScheduleGrid'
 		
-		this.modelId = 'Task'
+		this.modelId = 'Schedule'
 
 		this.callParent(arguments);
 	},
@@ -212,14 +212,14 @@ Ext.define('canopsis.controller.Task', {
 			store.findBy(
 				function(record, id){
 					if(record.get('crecord_name') == data['crecord_name']){
-						log.debug('task already exist exist', this.logAuthor);
+						log.debug('Schedule already exist exist', this.logAuthor);
 						already_exist = true;  // a record with this data exists
 					}
 				}
 			);
 			
 			if (already_exist){
-				global.notify.notify(data['crecord_name'] + ' already exist','you can\'t add the same task twice','error')
+				global.notify.notify(data['crecord_name'] + ' already exist','you can\'t add the same Schedule twice','error')
 				return false
 			}else{
 				return true
@@ -244,11 +244,11 @@ Ext.define('canopsis.controller.Task', {
 		this.getController('Reporting').launchReport(view_name,start_time,undefined,mail)
 	},
 	
-	//call a window wizard to schedule task with passed argument
-	taskWizard : function(item,renderTo){
+	//call a window wizard to schedule Schedule with passed argument
+	scheduleWizard : function(item,renderTo){
 		//temporary hack, check if called by cgrid or ctree
-		form = Ext.create('canopsis.view.Task.Form',{EditMethod: 'window'})
-		store = Ext.getStore('Task')
+		form = Ext.create('canopsis.view.Schedule.Form',{EditMethod: 'window'})
+		store = Ext.getStore('Schedules')
 		
 		if(item != undefined){
 			var viewName = item.get('_id')
@@ -269,7 +269,7 @@ Ext.define('canopsis.controller.Task', {
 		//-------------------------binding events-----------------------
 		btns = form.down('button[action=save]')
 		btns.on('click', function(){
-			log.debug('task Wizard save',this.logAuthor)
+			log.debug('Schedule Wizard save',this.logAuthor)
 			if (form.form.isValid()){
 				var data = form.getValues();
 				if (this._validateForm(store, data, form.form)) {
@@ -279,7 +279,7 @@ Ext.define('canopsis.controller.Task', {
 					store.add(record);
 					store.resumeEvents()
 					store.load();
-					global.notify.notify(_('Save'), _('Task saved'))
+					global.notify.notify(_('Save'), _('Schedule saved'))
 					window_wizard.destroy();
 				}else{
 					log.error('Form is not valid !',this.logAuthor);

@@ -54,8 +54,8 @@ def init():
 	create_view('view_manager', 'Views', data)
 
 	###task
-	data = { 'xtype': 'TaskGrid'}
-	create_view('task_manager', 'Tasks', data)
+	data = { 'xtype': 'ScheduleGrid'}
+	create_view('schedule_manager', 'Schedules', data)
 
 	###briefcase
 	data = { 'xtype': 'BriefcaseGrid'}

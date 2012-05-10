@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Task', {
+Ext.define('canopsis.model.Schedule', {
 	extend: 'Ext.data.Model',	
 	fields: [
 		{name: '_id'},
@@ -29,8 +29,6 @@ Ext.define('canopsis.model.Task', {
 		{name : 'crecord_name'},
 		{name : 'args', defaultsValue : []},
 		{name : 'kwargs' ,defaultsValue : {}},
-		//{name : 'date', defaultValue: undefined},
-		//{name : 'interval', defaultValue: undefined},
 		{name : 'next_run_time'},
 		{name : 'cron', defaultValue: undefined},
 		{name : 'log'},
