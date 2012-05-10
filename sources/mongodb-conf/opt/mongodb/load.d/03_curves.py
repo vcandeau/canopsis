@@ -22,12 +22,42 @@ from caccount import caccount
 from cstorage import get_storage
 from crecord import crecord
 
+import hashlib
+
 ##set root account
 root = caccount(user="root", group="root")
 
+logger = None
+
 def init():
-	pass
+	storage = get_storage(account=root, namespace='object')
+	
+	curves = [
+		{'line_color': 'B7CA79', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 75, 'zIndex': 0, 'area_color': None, 'label': 'Free', 'metric': 'free'},
+		{'line_color': 'B1221C', 'dashStyle': 'Solid', 'invert': True, 'area_opacity': 50, 'zIndex': 0, 'area_color': None, 'label': 'Upload', 'metric': 'if_octets-tx'},
+		{'line_color': 'ABC8E2', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 50, 'zIndex': 0, 'area_color': None, 'label': 'Download', 'metric': 'if_octets-rx'},
+		{'line_color': 'f11f0d', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 0, 'area_color': None, 'label': 'Load longterm', 'metric': 'load-longterm'},
+		{'line_color': 'e97b15', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 1, 'area_color': None, 'label': 'Load midterm', 'metric': 'load-midgterm'},
+		{'line_color': 'f3d30b', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 2, 'area_color': None, 'label': 'Load shortterm', 'metric': 'load-shortterm'},
+		{'line_color': 'e97b15', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 1, 'area_color': None, 'label': 'Load midterm', 'metric': 'load-midterm'},
+		{'line_color': '795344', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 75, 'zIndex': 0, 'area_color': None, 'label': 'Used', 'metric': 'used'},
+		{'line_color': 'f11f0d', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 0, 'area_color': None, 'label': 'Load longterm', 'metric': 'load15'},
+		{'line_color': 'e97b15', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 1, 'area_color': None, 'label': 'Load midterm', 'metric': 'load5'},
+		{'line_color': 'f3d30b', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 2, 'area_color': None, 'label': 'Load shortterm', 'metric': 'load1'},
+	]
+	
+	for curve in curves:
+		_id = hashlib.sha1(curve['metric']).hexdigest().upper()
+		try:
+			storage.get(_id)
+		except:
+			logger.info(" + Create curve '%s'" % curve['metric'])
+			record = crecord(data=curve, _id=_id, name=curve['metric'], type='curve')
+			record.chmod('g+w')
+			record.chmod('o+r')
+			record.chgrp('curves_admin')
+			storage.put(record)
 	
 def update():
-	pass
+	init();
 
