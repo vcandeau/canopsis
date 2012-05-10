@@ -104,21 +104,21 @@ var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store
 			//12h translate
 			if(global.locale == 'fr'){
 				// UTC time
-				output += utc_hours + ':' + utc_minutes +' '
+				output += local_hours + ':' + local_minutes +' '
 				//local time
-				output += '(Local: ' + local_hours + ':' + local_minutes +')'
+				output += '(UTC: ' + utc_hours + ':' + utc_minutes +')'
 			} else {
 				//utc AM/PM check
 				if(utc_hours > 12)
-					output += (utc_hours-12) + ':' + utc_minutes + 'pm '
+					output += (local_hours-12) + ':' + local_minutes + 'pm '
 				else
-					output += utc_hours + ':' + utc_minutes + 'am '
+					output += local_hours + ':' + local_minutes + 'am '
 
 				//local AM/PM check
 				if(local_hours > 12)
-					output += '(Local: ' + (local_hours-12) + ':' + local_minutes + 'pm)'
+					output += '(UTC: ' + (utc_hours-12) + ':' + utc_minutes + 'pm)'
 				else
-					output += '(Local: ' +local_hours + ':' + local_minutes + 'am)'
+					output += '(UTC: ' + utc_hours + ':' + utc_minutes + 'am)'
 			}
 
 		}
