@@ -102,7 +102,9 @@ def on_message(body, msg):
 			except Exception, err:
 				logger.error("Impossible to get timestamp or values (%s)" % err)
 				
-				
+			
+			logger.debug( " + metric: %s" % metric)
+			logger.debug( " + ctype: %s" % ctype)
 			if 	ctype:
 				try:	
 					i=0
@@ -127,8 +129,8 @@ def on_message(body, msg):
 							
 						perf_data_array.append({ 'metric':name, 'value': value, 'type': data_type, 'unit': unit, 'min': vmin, 'max': vmax})
 						
-				except:
-					logger.error("Impossible to parse values '%s'" % values)
+				except Exception, err:
+					logger.error("Impossible to parse values '%s' (%s)" % (values, err))
 
 
 			if perf_data_array:
