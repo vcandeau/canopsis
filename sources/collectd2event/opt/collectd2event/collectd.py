@@ -400,7 +400,8 @@ types = {
          'max':None,
          'name':'value',
          'type':'GAUGE',
-         'min':'U'
+         'min':'U',
+         'unit': None
       }
    ],
    'ps_rss':[
