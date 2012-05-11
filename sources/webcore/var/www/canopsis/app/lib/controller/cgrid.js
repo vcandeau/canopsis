@@ -219,8 +219,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
 					function(btn, text){
 						if (btn == 'yes'){
+							//grid.store.suspendEvents()
 							grid.store.remove(selection)
-							grid.store.load()
+							log.debug('Reload store',this.logAuthor);
+							//grid.store.sync()
+							//grid.store.resumeEvents()
+							//grid.store.load()
 						}
 					});
 			} else {
