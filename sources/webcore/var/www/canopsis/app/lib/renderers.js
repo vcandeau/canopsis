@@ -33,6 +33,20 @@ var rdr_tstodate = function (val) {
 	}
 }
 
+var rdr_utcToLocal = function(val){
+	if( val != undefined && val != '' ){
+		var dval = new Date(val);
+
+		//get time is millisecond
+		var localTime = dval.getTime() / 1000
+
+		//offset is minute
+		var localOffset = dval.getTimezoneOffset() * 60;
+
+		return rdr_tstodate(parseInt(localTime) - parseInt(localOffset))
+	}
+}
+
 var rdr_boolean = function (val, metadata, record, rowIndex, colIndex, store) {	
 	if (val)
 		return "<span class='icon icon-true' />"
