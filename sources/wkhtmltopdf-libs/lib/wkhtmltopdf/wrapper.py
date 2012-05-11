@@ -105,9 +105,9 @@ def run(settings):
 	runscript = "var export_view_id='%s';var export_from=%s;var export_to=%s" % (viewname, starttime, stoptime)
 	opts = ' '.join(opts)
 
-	logger.debug("wkhtmltopdf %s %s %s --window-status %s --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename))
+	logger.debug("wkhtmltopdf %s %s %s --window-status %s -T 21mm --header-line --header-spacing 5 --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename))
 
-	result = Popen("wkhtmltopdf %s %s %s --window-status %s --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename), shell=True)
+	result = Popen("wkhtmltopdf %s %s %s --window-status %s -T 21mm --header-line --header-spacing 5 --cookie-jar %s --run-script \"%s\" 'http://127.0.0.1:8082/static/canopsis/reporting.html' '%s/%s'" % (opts, header, footer, windowstatus, cookiejar, runscript, report_dir, filename), shell=True)
 
 	result.wait()
 	clean_x()
