@@ -9,7 +9,7 @@
 # config: /etc/sysconfig/collectd
 # pidfile: /var/run/collectd.pid
 
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/bin:/usr/sbin:$PATH
+PATH=$PATH:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/bin:/usr/sbin
 
 . /lib/lsb/init-functions
 
