@@ -31,7 +31,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_grouping: false,
 	opt_paging: true,
 	
-	opt_multiSelect: false,
+	opt_multiSelect: true,
 	
 	opt_bar: true,
 	opt_bar_bottom: false,
