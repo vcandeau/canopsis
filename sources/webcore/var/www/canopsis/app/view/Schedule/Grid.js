@@ -54,6 +54,7 @@ Ext.define('canopsis.view.Schedule.Grid' ,{
 			flex: 1,
 			sortable: true,
 			dataIndex: 'next_run_time',
+			renderer: rdr_utcToLocal,
 		},{
 			header: _('Schedule'),
 			flex: 1,
