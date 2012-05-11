@@ -114,9 +114,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if(grid.opt_keynav_del){
 			//log.debug('id of grid is : ' + id);
-			Ext.create('Ext.util.KeyNav', id, {
+			this._keynav = Ext.create('Ext.util.KeyNav', id, {
 						scope: this,
-						del: this._deleteButton
+						del: this._deleteButton,
+						target: id
 			});
 		}
 		
@@ -204,14 +205,31 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
-			log.debug("Remove record ...",this.logAuthor)
-			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
-				function(btn, text){
-					if (btn == 'yes'){
-						grid.store.remove(selection)
-						grid.store.load()
-					}
-				});
+			
+			//check right
+			var ctrlAccount = this.getController('Account')
+			var authorized = true
+			for(var i in selection)
+				if(!ctrlAccount.check_record_right(selection[i],'w'))
+					authorized = false
+			
+			
+			if(authorized == true){
+				log.debug("Remove record ...",this.logAuthor)
+				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
+					function(btn, text){
+						if (btn == 'yes'){
+							//grid.store.suspendEvents()
+							grid.store.remove(selection)
+							log.debug('Reload store',this.logAuthor);
+							//grid.store.sync()
+							//grid.store.resumeEvents()
+							//grid.store.load()
+						}
+					});
+			} else {
+				global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+			}
 		}
 
 		if (this.deleteButton) {
@@ -326,10 +344,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var id = form.id
 			log.debug(" Close '"+id+"'",this.logAuthor);
 			
-			if (form.win)
+			if (form.win){
 				form.win.close()
-			else
+				this._keynav.enable()
+			}else{
 				form.close()
+			}
 		}
 
 		if (this.cancelForm) {
@@ -375,6 +395,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closable: true,
 					}).show();
 					form.win = undefined
+					
+					this._keynav.disable()
 				}
 				
 			}else{
@@ -402,6 +424,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closeAction: 'destroy',
 					}).show();
 					form.win = win
+					this._keynav.disable()
 				}
 			}
 			
@@ -434,8 +457,15 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('Clicked rename',this.logAuthor)
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
-		if(this.rename){
-				this.rename(item)
+		
+		//check rights
+		var ctrl = this.getController('Account')
+		if(ctrl.check_record_right(item,'w')){
+			if(this.rename){
+					this.rename(item)
+			}
+		} else {
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
 		}
 	},
 
@@ -445,22 +475,28 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		log.debug('Clicked editRecord',this.logAuthor);
 
-		var form = this._showForm(item)
-				
-		if (form){
-			if (this.beforeload_EditForm) {
-				this.beforeload_EditForm(form,item)
-			}
+		//check rights
+		var ctrl = this.getController('Account')
+		if(ctrl.check_record_right(item,'w')){
+			var form = this._showForm(item)
+					
+			if (form){
+				if (this.beforeload_EditForm) {
+					this.beforeload_EditForm(form,item)
+				}
 
-			form.loadRecord(item);
+				form.loadRecord(item);
 
-			if (this.afterload_EditForm) {
-				this.afterload_EditForm(form,item)
-			}
-		}	
-		
-		if (this.editRecord)
-			this.editRecord(view, item, index)	
+				if (this.afterload_EditForm) {
+					this.afterload_EditForm(form,item)
+				}
+			}	
+			
+			if (this.editRecord)
+				this.editRecord(view, item, index)
+		} else {
+			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		}
 	},
 	
 	_contextMenu : function(view, rec, node, index, e) {
@@ -522,6 +558,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closeAction: 'destroy',
 					}).show();
 					form.win = win
+					this._keynav.disable()
 				}
 			}
 			
