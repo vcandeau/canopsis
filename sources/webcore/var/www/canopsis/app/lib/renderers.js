@@ -111,13 +111,13 @@ var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store
 				* */
 			} else {
 				//utc AM/PM check
-				if(utc_hours > 12)
+				if(local_hours > 12)
 					output += (local_hours-12) + ':' + local_minutes + ' pm'
 				else
 					output += local_hours + ':' + local_minutes + ' am'
 				/*
 				//local AM/PM check
-				if(local_hours > 12)
+				if(utc_hours > 12)
 					output += '(UTC: ' + (utc_hours-12) + ':' + utc_minutes + 'pm)'
 				else
 					output += '(UTC: ' + utc_hours + ':' + utc_minutes + 'am)'
