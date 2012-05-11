@@ -114,9 +114,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if(grid.opt_keynav_del){
 			//log.debug('id of grid is : ' + id);
-			Ext.create('Ext.util.KeyNav', id, {
+			this._keynav = Ext.create('Ext.util.KeyNav', id, {
 						scope: this,
-						del: this._deleteButton
+						del: this._deleteButton,
+						target: id
 			});
 		}
 		
@@ -326,10 +327,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			var id = form.id
 			log.debug(" Close '"+id+"'",this.logAuthor);
 			
-			if (form.win)
+			if (form.win){
 				form.win.close()
-			else
+				this._keynav.enable()
+			}else{
 				form.close()
+			}
 		}
 
 		if (this.cancelForm) {
@@ -375,6 +378,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closable: true,
 					}).show();
 					form.win = undefined
+					
+					this._keynav.disable()
 				}
 				
 			}else{
@@ -402,6 +407,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closeAction: 'destroy',
 					}).show();
 					form.win = win
+					this._keynav.disable()
 				}
 			}
 			
@@ -522,6 +528,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						closeAction: 'destroy',
 					}).show();
 					form.win = win
+					this._keynav.disable()
 				}
 			}
 			
