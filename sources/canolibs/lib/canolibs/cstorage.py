@@ -398,6 +398,15 @@ class cstorage(object):
 	def drop_namespace(self, namespace):
 		self.db.drop_collection(namespace)
 
+	def get_namespace_size(self, namespace=None):
+		if not namespace:
+			namespace = self.namespace
+		
+		try:
+			return self.db.command("collstats", namespace)['size']
+		except:
+			return 0
+
 	def recursive_get(self, record, depth=0,account=None, namespace=None):
 		depth += 1
 		childs = record.children
