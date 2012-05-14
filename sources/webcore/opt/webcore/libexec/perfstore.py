@@ -161,7 +161,7 @@ def perfstore_get_last_value(_id, metrics):
 			value = metric.last_point
 			value[0] = value[0] * 1000
 			
-			output.append({'node': _id, 'metric': dn, 'values': [value], 'bunit': metric.bunit })
+			output.append({'node': _id, 'metric': dn, 'values': [value], 'bunit': metric.bunit, 'min': metric.min_value, 'max': metric.max_value})
 	
 	return output
 
@@ -194,10 +194,10 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 			metrics = mynode.metric_get_all_dn()
 			logger.debug(" + metrics:   %s" % metrics)
 
-		for metric in metrics:
+		for dn in metrics:
 			try:
 				values = mynode.metric_get_values(
-					dn=metric,
+					dn=dn,
 					tstart=start,
 					tstop=stop,
 					aggregate=pyperfstore_aggregate,
@@ -208,8 +208,9 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 				values = [[x[0] * 1000, x[1]] for x in values]
 
 				if len(values) >= 1:
-					bunit = mynode.metric_get(dn=metric).bunit
-					output.append({'node': _id, 'metric': metric, 'values': values, 'bunit': bunit })
+					metric = mynode.metric_get(dn=dn)
+					bunit = metric.bunit
+					output.append({'node': _id, 'metric': dn, 'values': values, 'bunit': bunit, 'min': metric.min_value, 'max': metric.max_value})
 						
 			except Exception, err:
 				logger.error(err)
