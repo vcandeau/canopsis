@@ -57,6 +57,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	borderColor: "#FFFFFF",
 	borderWidth: 0,
 	
+	showWarnCritLine: true,
+	
 	marker_symbol: null,
 	marker_radius: 2,
 	
@@ -71,7 +73,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_fontSize: 12,
 	legend_fontColor: "#3E576F",
 	maxZoom: 60 * 10, // 10 minutes
-	
+
 	SeriesType: "area",
 	lineWidth: 1,
 	//..
@@ -183,17 +185,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				type: 'datetime',
 				maxZoom: this.maxZoom * 1000,
 				
-				//tickInterval: tickInterval,
-			/*	type: 'datetime',
-				dateTimeLabelFormats:{
-					second: '%H:%M:%S',
-					minute: '%H:%M',
-					hour: '%H:%M',
-					day: '%e. %b',
-					week: '%e. %b',
-					month: '%b %y',
-					year: '%Y'
-				}*/
 				labels: {
 					formatter: function() {
 						var offset = new Date().getTimezoneOffset() * 1000 * 60
@@ -203,8 +194,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			},
 			yAxis: {
 				title: {
-					text: ''
-				}
+					text: null
+				},
         	},
 			plotOptions: {
 				series: {
@@ -494,6 +485,35 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		return values
 	},
 
+	addPlotlines: function(metric_name, value, color){
+		var curve = global.curvesCtrl.getRenderInfo(metric_name)
+		var label = undefined
+		var zindex = 10
+		var width = 2
+		var dashStyle = 'Solid'
+			
+		if (curve){
+			label = curve.get('label')
+			color = global.curvesCtrl.getRenderColors(metric_name, 1)[0]
+			zindex = curve.get('zIndex')
+			dashStyle = curve.get('dashStyle')
+		}
+				
+		if (! label)
+			label = metric_name
+			
+		this.chart.yAxis[0].addPlotLine({
+			value: value,
+			width: width,
+			zIndex: zindex,
+			color: color,
+			dashStyle: dashStyle,
+			label: {
+				text: label,
+			}
+		});
+	},
+
 	addDataOnChart: function(data){
 		var metric_name = data['metric']
 		var values = data['values']
@@ -503,7 +523,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		//log.dump(data)
 
 		var serie = this.getSerie(node, metric_name, bunit)
-		
+				
 		if (! serie){
 			log.error("Impossible to get serie, node: "+node+" metric: "+metric_name, this.logAuthor)
 			return
@@ -513,6 +533,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.error("Impossible to read serie's option", this.logAuthor)
 			log.dump(serie)
 			return
+		}
+		
+		//Add war/crit line if on first serie
+		if (this.chart.series.length == 1 && this.showWarnCritLine){
+			if (data['thld_warn'])
+				this.addPlotlines('pl_warning', data['thld_warn'], 'orange')
+			if (data['thld_crit'])
+				this.addPlotlines('pl_critical', data['thld_crit'], 'red')
+				
+			this.showWarnCritLine = false
 		}
 		
 		var serie_id = serie.options.id
