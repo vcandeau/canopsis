@@ -119,14 +119,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		if (this.nodes){
 			// Clean this.nodes
-			var post_params = []
-			for (var i in this.nodes){
-				post_params.push({
-					id: this.nodes[i].id,
-					metrics: this.nodes[i].metrics,
-				})
-			}
-			this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+			this.processNodes()
 		}
 
 		this.ready();	
@@ -578,66 +571,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		return true		
 	},
 	
-	reportToLive : function(){
-		log.debug('Resume live reporting', this.logAuthor)
-		var to = Date.now();
-		var from = to - (this.time_window * 1000);
-		
-		for(i in this.series)
-			this.series[i].pushPoints = false;
-		
-		this.doRefresh(from,to)
-		this.startTask()
-	},
-	
-	/*displayFromTs : function(from, to){
-		
-		this.chart.destroy()
-		this.reportStart = from
-		this.reportStop = to
-		//log.dump(this.from)
-		this.from = false
-
-		this.createHighchart(this.perfnode)
-		
-		if(this.mytab.mask){
-			this.mytab.mask.show();
-		}
-	},*/
-	
-	//add data on chart
-	/*reporting: function(from, to){
-		this.onRefresh();
-	},
-	
-	findScaleAxe : function(interval){
-		if (interval <= global.commonTs.day){
-			return 'H:i'
-		}else if (interval <= global.commonTs.week){
-			return 'D'
-		}else if (interval <= global.commonTs.month){
-			return 'j M'
-		}else if (interval <= global.commonTs.year){
-			return 'M'
-		} else {
-			return 'Y'
-		}
-	},
-	
-	findTickInterval : function(interval){
-		if (interval <= global.commonTs.day){
-			return global.commonTs.threeHours * 1000
-		}else if (interval <= global.commonTs.week){
-			return global.commonTs.day * 1000
-		}else if (interval <= global.commonTs.month){
-			return global.commonTs.week * 1000
-		}else if (interval <= global.commonTs.year){
-			return global.commonTs.month * 1000
-		} else {
-			return global.commonTs.year * 1000
-		}
-	}
-	*/
 	processNodes : function(){
 		var post_params = []
 		for (var i in this.nodes){
