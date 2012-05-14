@@ -404,11 +404,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var me = this.options.cwidget
 		var now = Date.now()
 		
-		if (! me.shift && this.series.length > 0 && now < (me.last_from + 500)){
-			log.debug('Check Time window', me.logAuthor)
-			
+		if (this.series.length > 0 && now < (me.last_from + 500)){
 			var extremes = this.series[0].xAxis.getExtremes()
-			var data_window = extremes.max - extremes.min
+			var data_window = extremes.dataMax - extremes.dataMin
 			me.shift = data_window > (me.time_window*1000)
 
 			log.debug(' + Data window: '+data_window, me.logAuthor)
