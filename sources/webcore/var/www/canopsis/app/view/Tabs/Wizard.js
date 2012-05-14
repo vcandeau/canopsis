@@ -19,10 +19,10 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.view.Tabs.wizard' ,{
+Ext.define('canopsis.view.Tabs.Wizard' ,{
 	extend: 'canopsis.lib.view.cwizard',
 	
-	title : 'Widget Wizard',
+	title : _('Widget Wizard'),
 	
 	data : undefined,
 	
