@@ -28,6 +28,8 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	],
 
 	// Options
+	opt_allow_edit : true,
+	
 	opt_grouping: false,
 	opt_paging: true,
 	
