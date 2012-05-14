@@ -192,12 +192,17 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	},
 
 	_doRefresh: function(from, to){
-		if (! to || to < 10000000) {
-			to = Date.now();
-		}
-			
-		if (! from || from < 10000000) {
-			from = to - (this.time_window * 1000);
+		if (this.exportMode){
+			from = this.export_from;
+			to = this.export_to;
+		}else{		
+			if (! to || to < 10000000) {
+				to = Date.now();
+			}
+				
+			if (! from || from < 10000000) {
+				from = to - (this.time_window * 1000);
+			}
 		}
 			
 		this.doRefresh(from, to)

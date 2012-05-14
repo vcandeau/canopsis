@@ -217,7 +217,8 @@ class node(object):
 			return []
 	
 
-	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None, dtype=None, point_per_dca=None):
+	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None, dtype=None, point_per_dca=None, min_value=None, max_value=None, thld_warn_value=None, thld_crit_value=None):
+		
 		_id = self.metric_get_id(dn, _id)
 		
 		self.logger.debug("Push value on metric '%s' (_id: %s)" % (dn, _id))
@@ -241,8 +242,25 @@ class node(object):
 		if unit:
 			if mymetric.bunit != unit:
 				mymetric.bunit = unit
+				
+		## re-Set min/max
+		if min_value:
+			mymetric.min_value = min_value
+		if max_value:
+			mymetric.max_value = max_value
+			
+		## re-Set Threshold
+		if thld_warn_value:
+			mymetric.thld_warn_value = thld_warn_value
+		if thld_crit_value:
+			mymetric.thld_crit_value = thld_crit_value
+		
+		## re-Set point/dca
+		if point_per_dca:
+			mymetric.auto_point_per_dca = False
+			mymetric.point_per_dca = point_per_dca		
 
-		mymetric.push_value(value=value, timestamp=timestamp, point_per_dca=point_per_dca)
+		mymetric.push_value(value=value, timestamp=timestamp)
 
 	def metric_remove(self, dn=None, _id=None):
 		self.logger.debug("Remove metric '%s'" % dn)

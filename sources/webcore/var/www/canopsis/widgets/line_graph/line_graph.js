@@ -309,17 +309,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				from = this.last_from;
 				to = Date.now();
 			}
-			
-			if (this.exportMode){
-				from = this.export_from;
-				to = this.export_to;
-			}
 
-			//for (var i in this.nodes){
-			//	var node = this.nodes[i].id
-			//	var metrics = this.nodes[i].metrics
-				
-			//	log.debug("   + " + node, this.logAuthor)
 			if (this.nodes){
 				if(this.nodes.length != 0){
 					url = this.makeUrl(from, to)
