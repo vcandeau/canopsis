@@ -180,7 +180,12 @@ Ext.define('widgets.pie.pie' ,{
 	doRefresh: function(from, to){
 		if (this.nodes){
 			if(this.nodes.length != 0){
-				url = '/perfstore/values'
+				
+				if (this.reportMode || this.exportMode){
+					url = '/perfstore/values/'+from+'/'+to
+				}else{
+					url = '/perfstore/values'
+				}
 				
 				Ext.Ajax.request({
 					url: url,
@@ -223,8 +228,10 @@ Ext.define('widgets.pie.pie' ,{
 				var metric = info['metric']
 				var value = info['values'][0][1]
 				var unit = info['bunit']
+				var max = info['max']
 				
-				var max = this.max
+				if (max == null)
+					max = this.max
 				
 				if (unit == '%' && ! max)
 					max = 100
