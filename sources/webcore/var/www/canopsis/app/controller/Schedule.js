@@ -198,6 +198,17 @@ Ext.define('canopsis.controller.Schedule', {
 			item.set('timeLength',Math.floor(scale))
 		}
 		
+		//set mail
+		var mail_info = kwargs.mail
+		if(mail_info != undefined){
+			if(mail_info.recipients != undefined){
+				item.set('sendMail', true)
+				item.set('recipients',mail_info.recipients)
+				if(mail_info.subject != undefined)
+					item.set('subject',mail_info.subject)
+			}
+		}
+		
 		//hide task name
 		var task_name_field = Ext.ComponentQuery.query("#" + form.id + " textfield[name=crecord_name]")[0]
 		if(task_name_field != undefined){
