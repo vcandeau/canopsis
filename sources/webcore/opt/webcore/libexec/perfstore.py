@@ -87,7 +87,10 @@ def perfstore_nodes_get_values(start=None, stop=None):
 	output = []
 	
 	for node in nodes:
-		output += perfstore_get_values(node['id'], node['metrics'], start, stop)
+		if not start and not stop:
+			output += perfstore_get_last_value(node['id'], node['metrics'])
+		else:
+			output += perfstore_get_values(node['id'], node['metrics'], start, stop)
 
 	
 	output = {'total': len(output), 'success': True, 'data': output}
@@ -140,7 +143,33 @@ def perfstore_getMetric(_id):
 	return output
 
 
+
+def perfstore_get_last_value(_id, metrics):
+	output=[]
+	logger.debug(" + node:      %s" % _id)
+	logger.debug(" + metrics:   %s" % metrics)
+		
+	mynode = node(_id, storage=perfstore)
+	
+	if metrics:
+		if (metrics[0] == "<all>"):
+			metrics = mynode.metric_get_all_dn()
+			logger.debug(" + metrics:   %s" % metrics)
+
+		for dn in metrics:
+			metric = mynode.metric_get(dn=dn)
+			value = metric.last_point
+			value[0] = value[0] * 1000
+			
+			output.append({'node': _id, 'metric': dn, 'values': [value], 'bunit': metric.bunit })
+	
+	return output
+
 def perfstore_get_values(_id, metrics, start=None, stop=None):
+	
+	if start and not stop:
+		stop = start
+	
 	if stop:
 		stop = int(int(stop) / 1000)
 	else:
