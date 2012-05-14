@@ -121,13 +121,21 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 			try:
 				mail['account'] = account
 				mail['attachments'] = meta
-				task_mail.send.subtask(kwargs=mail).delay()
+				result = task_mail.send.subtask(kwargs=mail).delay()
+				result.get()
+				result = result.result
+				
+				#if subtask fail, raise exception
+				if(result['success'] == False):
+					raise Exception, 'Subtask mail have failed : %s' % result['celery_output'][0]
+				
 			except Exception, err:
-				logger.error('Mail delivery failed : %s' % err)
+				raise
 			
 		return id
 	except Exception, err:
 		logger.error(err)
+		raise
 		
 
 @task
