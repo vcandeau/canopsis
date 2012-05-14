@@ -108,13 +108,12 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 		this.bind_buttons()
 		
 		//bind combobox
-		
-
 		if(this.data){
 			this.loadData()
 		} else {
 			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
-			combo[0].on('select',this.add_option_panel,this)
+			if(combo != undefined)
+				combo[0].on('select',this.add_option_panel,this)
 		}
 	},
 	
