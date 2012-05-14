@@ -20,11 +20,14 @@
 
 import collectd
 
-plugin_name = "canopsis_mongodb"
+import json
+plugin_name = "canopsis_rabbitmq"
 
-storage = None
+url = "http://127.0.0.1:55672/api"
 
-namespaces = ['object', 'cache', 'events', 'events_log' ]
+canopsis_exchanges = ['canopsis.events','canopsis.alerts']
+
+opener = None
 
 ### Functions
 def put_value(metric, value, type='gauge'):
@@ -42,32 +45,52 @@ def log(msg):
 ### Callbacks
 def init_callback():
 	log('Init plugin')
-	
-	from cstorage import get_storage
-	from caccount import caccount
 
-	global storage
-	root = caccount(user="root", group="root")
-	storage = get_storage(account=root, namespace='object')
+	import urllib2
+
+	global opener
+	
+	password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+	password_mgr.add_password(None, url, "guest", "guest")
+	handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+	
+	opener = urllib2.build_opener(handler)
 
 def config_callback(config):
 	log('Config plugin')
 
 def read_callback(data=None):
-	for namespace in namespaces:
-		put_value(namespace+"_size", storage.get_namespace_size(namespace))		
-		
-	## Pyperfstore
-	size = storage.get_namespace_size("perfdata.fs.chunks") 
-	size += storage.get_namespace_size("perfdata.fs.files")
-	size += storage.get_namespace_size("perfdata")
-	put_value("perfdata_size", size)
+	f = opener.open(url+"/exchanges")
 	
-	## Briefcase
-	size = storage.get_namespace_size("binaries.chunks") 
-	size += storage.get_namespace_size("binaries.files")
-	size += storage.get_namespace_size("files")
-	put_value("files_size", size)	
+	try:
+		exchanges = json.loads(f.read())
+		for exchange in exchanges:
+			name = exchange['name']
+			if name in canopsis_exchanges:
+				name = name.split('.')[1]
+				
+				try:
+					message_stats_out = exchange['message_stats_out']				
+					put_value('%s_msg_out' % name, message_stats_out['publish'], type='derive')
+					
+				except Exception, err:
+					#log("Impossible to put OUT values of %s (%s)" % (name, err))
+					pass
+					
+				try:
+					message_stats_in  = exchange['message_stats_in']
+					put_value('%s_msg_in' % name, message_stats_in['publish'], type='derive')
+					
+				except Exception, err:
+					#log("Impossible to put IN values of %s (%s)" % (name, err))
+					pass
+				
+	except Exception, err:
+		log("Impossible to read json data (%s)" % err)
+		pass
+		
+	f.close()
+	pass
 	
 
 ### MAIN ###
