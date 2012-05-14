@@ -113,6 +113,13 @@ def on_message(body, msg):
 						unit = ctype[i]['unit']
 						vmin = ctype[i]['min']
 						vmax = ctype[i]['max']
+						
+						if vmin == 'U':
+							vmin = None
+							
+						if vmax == 'U':
+							vmax = None
+						
 						if name == "value":
 							name = metric
 							

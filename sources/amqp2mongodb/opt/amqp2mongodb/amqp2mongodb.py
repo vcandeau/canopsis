@@ -155,6 +155,11 @@ def on_message(body, msg):
 		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
 
 
+def parse_value(data, key, default=None):
+	try:
+		return data[key]
+	except:
+		return default
 
 def to_perfstore(_id, perf_data, timestamp):
 	
@@ -172,26 +177,32 @@ def to_perfstore(_id, perf_data, timestamp):
 			metric = perf['metric']
 			value = perf['value']
 			
-			dtype = None
-			try:
-				dtype = perf['type']
-			except:
-				pass
+			dtype = parse_value(perf, 'type')		
+			unit = parse_value(perf, 'unit')
 			
-			unit = None
-			try:
-				unit =  perf['unit']
-				if unit:
-					unit = str(unit)
-			except:
-				pass
-			
+			if unit:
+				unit = str(unit)
+				
+			vmin = parse_value(perf, 'min')
+			vmax = parse_value(perf, 'max')
+			vwarn = parse_value(perf, 'warn')
+			vcrit = parse_value(perf, 'crit')
+
+			if vmin:
+				vmin = Str2Number(vmin)
+			if vmax:
+				vmax = Str2Number(vmax)
+			if vwarn:
+				vwarn = Str2Number(vwarn)
+			if vcrit:
+				vcrit = Str2Number(vcrit)
+
 			value = Str2Number(value)
 				
 			logger.debug(" + Put metric '%s' (%s %s (%s)) for ts %s ..." % (metric, value, unit, dtype, timestamp))
 
 			try:
-				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp, dtype=dtype)
+				mynode.metric_push_value(dn=metric, unit=unit, value=value, timestamp=timestamp, dtype=dtype, min_value=vmin, max_value=vmax, thld_warn_value=vwarn, thld_crit_value=vcrit)
 			except Exception, err:
 				logger.warning('Impossible to put value in perfstore (%s) (metric=%s, unit=%s, value=%s)', err, metric, unit, value)
 		
