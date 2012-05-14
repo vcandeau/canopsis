@@ -38,10 +38,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	debug: false,
 	
+	dump_with_options : true,
+	
 	autoScale: true,
 	autoDraw: false,
-	wizard: 'canopsis.view.Tabs.wizard',
-	
+	wizard: 'canopsis.view.Tabs.Wizard',
+	view_wizard : 'canopsis.view.Tabs.ViewWizard',
+
 	// Export an report
 	reportMode : false,
 	exportMode : false,
@@ -60,6 +63,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		cancel: _('Cancel'),
 		edit: _('Edit'),
 		duplicate: _('Duplicate'),
+		configure: _('Configure')
 	},
 
 	//Logging
@@ -87,7 +91,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					data = Ext.JSON.decode(response.responseText)
 					this.view = data.data[0]
 					this.dump = this.view.items
-
+					
+					//add view options if exist
+					if(this.view.view_options != undefined)
+						this.view_options = this.view.view_options
+		
 					this.fireEvent('ready', this)
 
 				},
@@ -125,8 +133,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 	setContent: function(){
 		if(this.dump && ! this.displayed){
-			log.dump(this.dump)
 			this.load(this.dump)
+			
+			if(this.view_options != undefined)
+				this.setViewOptions(this.view_options)
+				
 			this.displayed = true
 		}
 	},
@@ -134,7 +145,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	saveView : function(dump){
 		//ajax request with dump sending
 		log.debug('Saving view requested',this.logAuthor)
-		
 		if (dump == undefined){
 			dump = this.dumpJqGridable()
 		}
@@ -156,14 +166,19 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
 			}
 		}
-		record.set('items',dump)
+		record.set('items',dump.widgets)
+		
+		if(dump.view_options != undefined){
+			record.set('view_options',dump.view_options)
+			this.view_options = dump.view_options
+		}
+		
 		record.set('leaf', true)
 		
 		store.add(record)
 		
-		this.dump = dump
+		this.dump = dump.widgets
 		
-		//this.doRedraw()
 		this.startAllTasks();
 		
 		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved'))
@@ -270,6 +285,13 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			cmps[i]._doRefresh(from,to)
 		}		
 		
+	},
+	
+	
+	saveJqGridable: function(){
+		var dump = this.JqgContainer.jqGridable('dump_with_options')
+		this.fireEvent('save', dump)
+		this.viewMode()
 	},
 	
 	//misc

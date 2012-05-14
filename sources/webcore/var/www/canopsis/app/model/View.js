@@ -34,6 +34,7 @@ Ext.define('canopsis.model.View', {
 		
 		{name: 'enable'},
 		//{name: 'checked', mapping:'enable'},
+		{name:'view_options'},
 		
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
