@@ -86,6 +86,11 @@ Ext.define('widgets.pie.pie' ,{
 		this.setOptions();
 		this.createChart();
 		
+		if (this.nodes){
+			// Clean this.nodes
+			this.processNodes()
+		}
+		
 		this.ready();
 	},
 
@@ -161,9 +166,45 @@ Ext.define('widgets.pie.pie' ,{
 		this.chart = new Highcharts.Chart(this.options);
 	},
 	
+	processNodes : function(){
+		var post_params = []
+		for (var i in this.nodes){
+			post_params.push({
+				id: this.nodes[i].id,
+				metrics: this.nodes[i].metrics,
+			})
+		}
+		this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+	},
+	
+	doRefresh: function(from, to){
+		if (this.nodes){
+			if(this.nodes.length != 0){
+				url = '/perfstore/values'
+				
+				Ext.Ajax.request({
+					url: url,
+					scope: this,
+					params: this.post_params,
+					method: 'POST',
+					success: function(response){
+						var data = Ext.JSON.decode(response.responseText)
+						data = data.data
+						this.onRefresh(data)	
+					},
+					failure: function ( result, request) {
+						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
+					} 
+				})
+			} else {
+				log.debug('No nodes specified', this.logAuthor)
+			}
+		}
+	},
+	
 	onRefresh: function(data){
 		if (this.chart && data){
-			
+
 			// Remove old series
 			this.removeSerie()
 			
@@ -172,57 +213,49 @@ Ext.define('widgets.pie.pie' ,{
 				type: 'pie',
 				data: []
 			};
+
+			var other_unit = ""
 			
-			var node = this.nodes[0]
-			
-			// Parse perf_data
-			var perf_data_array = data.perf_data_array
-		
-			for (var index in perf_data_array){
+			for (var index in data) {
+				info = data[index]
 				
-				var perf_data = perf_data_array[index]
+				var node = info['node']
+				var metric = info['metric']
+				var value = info['values'][0][1]
+				var unit = info['bunit']
 				
-				var metric = perf_data['metric']
-				var value = perf_data['value']
-				var max = perf_data['max']
-				var unit = perf_data['unit']
+				var max = this.max
 				
 				if (unit == '%' && ! max)
 					max = 100
-					
-				var metric_name = metric 
 				
-				if (node.metrics.indexOf(metric) != -1 || node.metrics.indexOf('<all>') != -1){
-					var other_label = "<b>" + this.other_label + "</b>"
+				var metric_name = metric
+				
+				var colors = global.curvesCtrl.getRenderColors(metric_name, index)
+				var curve = global.curvesCtrl.getRenderInfo(metric_name)
+				
+				// Set Label
+				var label = undefined;
+				if (curve)
+					label = curve.get('label')		
+				if (! label)
+					label = metric_name
 					
-					if (max == undefined)
-						max = this.max
-					
-					var colors = global.curvesCtrl.getRenderColors(metric_name, index)
-					var curve = global.curvesCtrl.getRenderInfo(metric_name)
-					
-					// Set Label
-					var label = undefined;
-					if (curve)
-						label = curve.get('label')		
-					if (! label)
-						label = metric_name
-
-					var metric_long_name = "<b>" + label + "</b>"
-					
-					if (unit){
-						metric_long_name += " ("+unit+")"
-						other_label += " ("+unit+")"
-					}
-					
-
-					serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] })
+				var metric_long_name = "<b>" + label + "</b>"
+				
+				if (unit){
+					metric_long_name += " ("+unit+")"
+					other_unit += " ("+unit+")"
 				}
 				
-				if (perf_data_array.length == 1){
-					var color= global.curvesCtrl.getRenderColor(metric_name, (index+1))
-					serie.data.push({ id: 'other', name: other_label, y: max-value, color: color })
-				}
+				serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] })
+				
+			}
+			
+			if (data.length == 1){
+				var other_label = "<b>" + this.other_label + "</b>" + other_unit
+				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1)
+				serie.data.push({ id: 'pie_other', name: other_label, y: max-value, color: colors[0] })
 			}
 			
 			if (serie.data){
