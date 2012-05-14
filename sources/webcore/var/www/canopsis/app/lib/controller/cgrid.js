@@ -53,7 +53,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			grid.on('itemdblclick',this._viewElement,this)
 		}
 		else{
-			grid.on('itemdblclick',this._editRecord,this)
+			if(grid.opt_allow_edit == true)
+				grid.on('itemdblclick',this._editRecord,this)
 		}
 		
 		
