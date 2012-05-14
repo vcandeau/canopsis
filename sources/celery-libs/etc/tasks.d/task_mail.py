@@ -47,7 +47,7 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 		account_lastname = account.lastname
 		account_mail = account.mail
 		if not account_mail:
-			raise ValueError('Account must have mail to send mail')
+			raise ValueError('CAccount must have mail to send mail (Fill the mail field)')
 
 
 		if not account_lastname and not account_firstname:

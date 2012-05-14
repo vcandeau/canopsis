@@ -55,9 +55,6 @@ def launch_celery_task(*args,**kwargs):
 				result = task.delay(*args,**methodargs)
 				result.get()
 				result = result.result
-				
-				#success = True
-				#logger.info(result)
 			except Exception, err:
 				success = False
 				aps_error = str(err)
@@ -162,7 +159,7 @@ def launch_celery_task(*args,**kwargs):
 				state=status
 				)
 			
-			logger.info('Send Event: %s' % event)
+			#logger.info('Send Event: %s' % event)
 			key = cevent.get_routingkey(event)
 			
 			amqp = camqp()
