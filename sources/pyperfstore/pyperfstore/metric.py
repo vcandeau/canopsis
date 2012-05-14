@@ -60,7 +60,11 @@ class metric(object):
 
 		self.last_push = None
 		self.last_point = []
-
+		self.min_value = None
+		self.max_value = None
+		self.thld_warn_value = None
+		self.thld_crit_value = None
+		
 		self.writetime = None
 
 		self.retention = retention
@@ -105,6 +109,10 @@ class metric(object):
 			'writetime':	time.time(),
 			'dtype':		self.dtype,
 			'last_point':	self.last_point,
+			'min_value':	self.min_value,
+			'max_value':	self.max_value,
+			'thld_warn_value': self.thld_warn_value,
+			'thld_crit_value': self.thld_crit_value,
 		}
 
 		dump['dca_PLAIN'] = []
@@ -131,6 +139,12 @@ class metric(object):
 
 		return dump
 
+	def load_value(self, dump, key, default=None):
+		try:
+			return dump[key]
+		except:
+			return default		
+
 	def load(self, data):
 		self.logger.debug("Load metric '%s'" % self._id)
 
@@ -156,15 +170,14 @@ class metric(object):
 
 		self.writetime		= data['writetime']
 		
-		try:
-			self.dtype		= data['dtype']
-		except:
-			pass
-			
-		try:
-			self.last_point		= data['last_point']
-		except:
-			pass			
+		self.dtype			= self.load_value(data, 'dtype')			
+		self.last_point		= self.load_value(data, 'last_point')
+		
+		self.min_value		 = self.load_value(data, 'min_value')
+		self.max_value		 = self.load_value(data, 'max_value')
+		self.thld_warn_value = self.load_value(data, 'thld_warn_value')
+		self.thld_crit_value = self.load_value(data, 'thld_crit_value')
+		
 	
 	def save(self):
 		dump = self.dump()
@@ -375,12 +388,7 @@ class metric(object):
 
 		self.save()
 
-	def push_value(self, value, timestamp, point_per_dca=None):
-		
-		if point_per_dca:
-			self.auto_point_per_dca = False
-			self.point_per_dca = point_per_dca
-		
+	def push_value(self, value, timestamp):
 		self.logger.debug(" + Value: %s" % ([timestamp, value]))
 
 		# Push point
