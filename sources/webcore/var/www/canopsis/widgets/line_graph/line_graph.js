@@ -269,8 +269,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.options.chart.zoomType = "x"
 			}
 		}
-		
-		console.log(this.options)
 	},
 
 	createChart: function(){
