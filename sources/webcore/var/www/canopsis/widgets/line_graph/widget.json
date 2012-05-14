@@ -106,7 +106,12 @@
 								"fieldLabel": "Max zoom (seconds)",
 								"minValue": 60,
 								"value": 600
-                           }]
+                           },{
+								"xtype": "checkbox",
+								"fieldLabel": "Warn/Crit threshold lines",
+								"checked": false,
+								"name": "showWarnCritLine"
+						}]
 					},{
 						"xtype": "fieldset",
 						"title": "Graph Style",
