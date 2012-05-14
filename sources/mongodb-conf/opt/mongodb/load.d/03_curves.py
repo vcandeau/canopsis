@@ -44,6 +44,8 @@ def init():
 		{'line_color': 'f11f0d', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 0, 'area_color': None, 'label': 'Load longterm', 'metric': 'load15'},
 		{'line_color': 'e97b15', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 1, 'area_color': None, 'label': 'Load midterm', 'metric': 'load5'},
 		{'line_color': 'f3d30b', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 2, 'area_color': None, 'label': 'Load shortterm', 'metric': 'load1'},
+		{'line_color': 'FF9300', 'dashStyle': 'Dash', 'invert': False, 'area_opacity': 75, 'zIndex': 10, 'area_color': None, 'label': 'Warning', 'metric': 'pl_warning'},
+		{'line_color': 'FF0000', 'dashStyle': 'Dash', 'invert': False, 'area_opacity': 75, 'zIndex': 10, 'area_color': None, 'label': 'Critical', 'metric': 'pl_critical'}
 	]
 	
 	for curve in curves:
