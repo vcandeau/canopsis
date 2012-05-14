@@ -161,7 +161,7 @@ def perfstore_get_last_value(_id, metrics):
 			value = metric.last_point
 			value[0] = value[0] * 1000
 			
-			output.append({'node': _id, 'metric': dn, 'values': [value], 'bunit': metric.bunit, 'min': metric.min_value, 'max': metric.max_value})
+			output.append({'node': _id, 'metric': dn, 'values': [value], 'bunit': metric.bunit, 'min': metric.min_value, 'max': metric.max_value, 'thld_warn': metric.thld_warn_value, 'thld_crit': metric.thld_crit_value})
 	
 	return output
 
@@ -210,7 +210,7 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 				if len(values) >= 1:
 					metric = mynode.metric_get(dn=dn)
 					bunit = metric.bunit
-					output.append({'node': _id, 'metric': dn, 'values': values, 'bunit': bunit, 'min': metric.min_value, 'max': metric.max_value})
+					output.append({'node': _id, 'metric': dn, 'values': values, 'bunit': bunit, 'min': metric.min_value, 'max': metric.max_value, 'thld_warn': metric.thld_warn_value, 'thld_crit': metric.thld_crit_value})
 						
 			except Exception, err:
 				logger.error(err)
