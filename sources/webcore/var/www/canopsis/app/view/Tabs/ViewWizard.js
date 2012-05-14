@@ -35,10 +35,11 @@ Ext.define('canopsis.view.Tabs.ViewWizard' ,{
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
 				items : [{
-					xtype : 'textfield',
-					fieldLabel : _('Title')+ " ("+_('optional')+")",
-					name : 'title'
-					}]
+							"xtype" : "colorfield",
+							"name" : "background",
+							"fieldLabel": "Background color",
+							"value": "FFFFFF"
+                           },]
 				}
 		
 		this.step_list = [step1]
