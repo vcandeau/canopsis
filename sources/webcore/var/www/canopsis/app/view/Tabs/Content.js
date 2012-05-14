@@ -106,6 +106,10 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				} 
 		});
 
+		this.on('beforeRender',function(){
+			if(this.view_options != undefined)
+				this.applyViewOptions(this.view_options)
+			},this)
 
 		this.on('ready', function(){
 			if (this.autoshow){
@@ -125,6 +129,11 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		//create hidden reportingBar
 		log.debug('Creating reporting bar', this.logAuthor)
 		
+	},
+	
+	applyViewOptions : function(options){
+		if(options['background'])
+			this.bodyStyle = { background: '#' + options.background }
 	},
 
 	onResizeWidget: function(cmp){
