@@ -53,8 +53,14 @@ Ext.define('canopsis.controller.Schedule', {
 		if (data.sendMail != undefined){
 			if(data.recipients != '' && data.recipients != undefined){
 				log.debug('sendMail is true')
+				 
+				 var recipients = data.recipients.split(',')
+				 if(recipients.length == 1){
+					 recipients = data.recipients.split(';')
+				 }
+				 
 				var mail = {
-					"recipients":data.recipients,
+					"recipients":recipients,
 					"subject":data.subject,
 					"body":"Scheduled task reporting",
 				}
