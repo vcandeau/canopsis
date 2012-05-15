@@ -49,7 +49,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				data: [
 						{"value": 'fr', "text": "Français"},
 						{"value": 'en', "text": "English"},
-						{"value": 'ja', "text": "日本語"},
+						//{"value": 'ja', "text": "日本語"},
 				]
 			},
 			iconCls: 'no-icon',
@@ -114,14 +114,6 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					iconCls:'icon-mainbar-edit-group',
 					text: _('Edit groups'),
 					action: 'editGroup'
-				},{
-					iconCls:'icon-mainbar-edit-task',
-					text: _('Edit schedule'),
-					action: 'editSchedule'
-				},{
-					iconCls:'icon-mainbar-briefcase',
-					text: _('Briefcase'),
-					action: 'openBriefcase'
 				}
 			]);
 		}
@@ -166,6 +158,14 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				iconCls: 'icon-mainbar-add-task',
 				text: _('Schedule active view export'),
 				action: 'ScheduleExportView'
+			},{
+				iconCls:'icon-mainbar-edit-task',
+				text: _('Edit schedule'),
+				action: 'editSchedule'
+			},{
+				iconCls:'icon-mainbar-briefcase',
+				text: _('Briefcase'),
+				action: 'openBriefcase'
 			}
 		]);		
 		
