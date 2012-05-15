@@ -40,7 +40,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	
 	autoScale: true,
 	autoDraw: false,
-	wizard: 'canopsis.view.Tabs.wizard',
+	wizard: 'canopsis.view.Tabs.Wizard',
 	
 	// Export an report
 	reportMode : false,
