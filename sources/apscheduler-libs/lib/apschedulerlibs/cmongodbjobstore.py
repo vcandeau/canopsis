@@ -100,18 +100,22 @@ class CMongoDBJobStore(MongoDBJobStore):
 			except Exception:
 				job_name = job_dict.get('name', '(unknown)')
 				logger.exception('Unable to restore job "%s"', job_name)
+				
+		logger.info(' + %s jobs loaded' % len(jobs))
 		self.jobs = jobs
 
 	def check_and_refresh(self):
 		count = None
 		try:
-			count = self.collection.find({"loaded": False}).count()
+			count = self.collection.find({ "$and": [{"loaded": False}, {'crecord_type': 'schedule'}]}).count()
+			count += abs(self.collection.find({'crecord_type': 'schedule'}).count() - len(self.jobs))
 		except Exception, err:
 			logger.error('Task count failed : %s' % err)
 
 		if count:
 			try:
+				logger.info('Configuration has changed, reload jobs ...')
 				self.load_jobs()
-				logger.info('%s New Tasks added/updated' % count)
 			except Exception, err:
 				logger.error('Reload jobs failed : %s' % err)
+				
