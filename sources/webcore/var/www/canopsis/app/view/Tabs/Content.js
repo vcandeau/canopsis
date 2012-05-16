@@ -41,6 +41,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	autoScale: true,
 	autoDraw: false,
 	wizard: 'canopsis.view.Tabs.Wizard',
+	view_wizard : 'canopsis.view.Tabs.ViewWizard',
 	
 	// Export an report
 	reportMode : false,
@@ -60,6 +61,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		cancel: _('Cancel'),
 		edit: _('Edit'),
 		duplicate: _('Duplicate'),
+		configure: _('Configure')
 	},
 
 	//Logging
@@ -87,6 +89,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 					data = Ext.JSON.decode(response.responseText)
 					this.view = data.data[0]
 					this.dump = this.view.items
+					
+					if(this.view.view_options != undefined)
+						this.view_options = this.view.view_options
 
 					this.fireEvent('ready', this)
 
@@ -113,10 +118,20 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		this.on('show', this._onShow, this);
 		this.on('hide', this._onHide, this);
 		this.on('resizeWidget', this.onResizeWidget, this);
-
-		//create hidden reportingBar
-		log.debug('Creating reporting bar', this.logAuthor)
 		
+		//Apply view options when loaded
+		this.on('loaded',function(){
+				if(this.view_options)
+					this.applyViewOptions(this.view_options)
+			},this)
+	},
+	
+	applyViewOptions : function(options){
+		log.debug('Apply view options', this.logAuthor)
+		if(options){
+			if(options['background'])
+				this.body.setStyle('background','#' + options['background'])
+		}
 	},
 
 	onResizeWidget: function(cmp){
@@ -139,7 +154,9 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			dump = this.dumpJqGridable()
 		}
 		
-		//log.dump(dump)
+		//get view options
+		if(this.getViewOptions)
+			var view_options = this.getViewOptions()
 		
 		var store = Ext.data.StoreManager.lookup('Views')
 		var record = Ext.create('canopsis.model.View', data)
@@ -157,14 +174,17 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 			}
 		}
 		record.set('items',dump)
+		record.set('view_options', view_options)
 		record.set('leaf', true)
 		
 		store.add(record)
 		
 		this.dump = dump
 		
-		//this.doRedraw()
 		this.startAllTasks();
+		
+		//apply new view style
+		this.applyViewOptions(view_options)
 		
 		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved'))
 	},
