@@ -23,7 +23,6 @@ import random
 import logging
 
 import pyperfstore
-pyperfstore.logging_level = logging.ERROR
 
 from pyperfstore import node
 from pyperfstore import metric
@@ -33,41 +32,59 @@ from pyperfstore import filestore
 from pyperfstore import memstore
 from pyperfstore import mongostore
 
+logging.basicConfig(level=logging.INFO,
+	format='%(name)s %(levelname)s %(message)s',
+)
 
-def bench_store(store, nb=3000):
+rotate_plan = {
+	'PLAIN': 1,
+	'TSC': 0,
+}
+
+def bench_store(store, interval=60, duration=60*60*24, point_per_dca=None):
 	print "Start Bench ..."
-	mynode = node('nagios.Central.check.service.localhost9', storage=store)
+	mynode = node('nagios.Central.check.service.localhost', storage=store, rotate_plan=rotate_plan, point_per_dca=point_per_dca)
 
 	# 1 value / 5 min = 8928 values/month = 107136 values/year
 	timestamp = int(time.time())
 	#timestamp = 1
 	bench_start = timestamp
 	
+	nb = duration / interval
+	
 	start = time.time()
 	for i in range(1,nb+1):
-		mynode.metric_push_value(dn='load1', unit=None, value=random.random(), timestamp=timestamp)
-		mynode.metric_push_value(dn='load5', unit=None, value=random.random(), timestamp=timestamp)
-		mynode.metric_push_value(dn='load15', unit=None, value=random.random(), timestamp=timestamp)
+		mynode.metric_push_value(dn='state', unit=None, value=1, timestamp=timestamp)
+		#mynode.metric_push_value(dn='state-warning', unit=None, value=0, timestamp=timestamp)
+		#mynode.metric_push_value(dn='state-critical', unit=None, value=0, timestamp=timestamp)
+		mynode.metric_push_value(dn='state-downtime', unit=None, value=0, timestamp=timestamp)
+		value = random.random() * 10
+		mynode.metric_push_value(dn='load1', unit=None, value=value, timestamp=timestamp)
+		mynode.metric_push_value(dn='load5', unit=None, value=value, timestamp=timestamp)
+		mynode.metric_push_value(dn='load15', unit=None, value=value, timestamp=timestamp)
 
-		timestamp += 300
+		timestamp += interval
 
 	bench_stop = timestamp
 
 	nb = nb * 3
 	elapsed = time.time() - start
+	
 	print " + WRITE:"
+	print "    + %.2f days" % (duration / (60*60*24))
+	msize = store.size()
+	print "    + %.2f MB (%.2f MB/Year)" % ((msize / 1024.0 / 1024.0), ((msize / float(duration))/ 1024.0 / 1024.0) *  60*60*24*365)
+	#nsize = mynode.size()
+	#print "    + %.2f MB (%.2f MB/Year)" % ((nsize / 1024.0 / 1024.0), ((nsize / float(duration))/ 1024.0 / 1024.0) *  60*60*24*365)
+	#print "    + Delta: %s B" % (msize - nsize)
 	print "    + %s values in %s seconds" % ( nb, elapsed)
 	print "    + %s values per second" % (int(nb/elapsed))
 	print ""
 
-
 	start = time.time()
 
-	tstart = bench_start+1000
-	tstop = bench_stop-350
-
-	print "Get values between %s and %s" % (tstart, tstop)
-	values = mynode.metric_get_values('load1', tstart, tstop)
+	print "Get values between %s and %s" % (bench_start, bench_stop)
+	values = mynode.metric_get_values(dn='load1', tstart=bench_start, tstop=bench_stop)
 
 	nb = len(values)
 
@@ -79,22 +96,36 @@ def bench_store(store, nb=3000):
 
 	start = time.time()
 
-	mynode.remove()
+	mynode.pretty_print()
+
+	#mynode.remove()
 
 	elapsed = time.time() - start
+	
+	size = store.size()
+	
 	print " + REMOVE:"
+	print "    + %.2f MB" % (size / 1024.0 / 1024.0)
 	print "    + %s seconds" % elapsed
 	print ""
 
 
 print "Mongo Store"
-storage = mongostore(mongo_safe=False)
-bench_store(storage)
+storage = mongostore(mongo_safe=False, mongo_collection='pyperfstorebench')
+storage.drop()
 
-print "Files Store"
-storage = filestore(base_path="/tmp/data")
-bench_store(storage)
+day = 10
+point_per_dca=None #auto
 
-print "Memory Store"
-storage = memstore()
-bench_store(storage)
+bench_store(	storage,
+				interval=300,
+				duration=60*60*24*day,
+				point_per_dca=point_per_dca)
+
+#print "Files Store"
+#storage = filestore(base_path="/tmp/data")
+#bench_store(storage)
+
+#print "Memory Store"
+#storage = memstore()
+#bench_store(storage)

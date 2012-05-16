@@ -206,6 +206,12 @@ class KnownValues(unittest.TestCase):
 		
 		if values != [[0, 0], [10, 1], [20, 2], [30, 3], [40, 3], [50, 3], [60, 3], [70, 3], [80, 3], [90, 9]]:
 			raise Exception('Invalid fill, %s' % values)
+			
+	def test_90_Functions(self):
+		dn = mynode.metric_get_all_dn()
+		print "dn:", dn
+		if not dn:
+			raise Exception('Impossible to get dn')
 
 	def test_99_Remove(self):
 		global mynode
