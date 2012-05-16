@@ -131,6 +131,8 @@ var i18n={
 	"you can't add the same user twice": 'Vous ne pouvez pas ajouter le même utilisateur',
 	"you can't add the same view twice": 'Vous ne pouvez pas ajouter la même vue',
 	'Wizard':		'Assistant',
+	'Are you sure you want to delete' : 'Etes-vous sûr de vouloir supprimer',
+	'items' : 'objets',
 
 
 	'aaa access owner':		'',
@@ -155,7 +157,6 @@ var i18n={
 	'views':			'vues',
 	'View name':		'Nom de la vue',
 	'Confirm' : 		'Confirmation',
-	'Are you sure you want to delete' :	'Êtes vous sur de vouloir supprimer?',
 
 	'Views':			'Vues',
 	'authentification failed':	"L'authentification a échouée",
@@ -293,6 +294,7 @@ var i18n={
 	'Mailing' : 'e-mail',
 	'Scheduling' : 'Planification',
 	'File' : 'Fichier',
+	'Schedule export' : 'Planifier un export',
 	
 	'General options' : 'Options générales',
 	'Frequency' : 'Fréquence',

@@ -217,7 +217,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			
 			if(authorized == true){
 				log.debug("Remove record ...",this.logAuthor)
-				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
+				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') +' '+ selection.length + ' ' + _('items') + ' ?',
 					function(btn, text){
 						if (btn == 'yes'){
 							//grid.store.suspendEvents()

@@ -212,7 +212,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 		}
 		
 		if(verification == true){
-			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete ') + selection.length + _(' items ?'),
+			Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _(' items') + ' ?',
 				function(btn, text){
 					if (btn == 'yes'){
 						for(var i in selection){
