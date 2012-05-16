@@ -275,7 +275,7 @@ Ext.define('canopsis.controller.Schedule', {
 		}
 		
 		var window_wizard = Ext.widget('window',{
-													title:'Schedule task',
+													title:_('Scheduling'),
 													items:[form],
 													constrain : true,
 													renderTo : renderTo
