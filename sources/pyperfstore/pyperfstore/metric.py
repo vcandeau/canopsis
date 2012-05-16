@@ -87,17 +87,13 @@ class metric(object):
 		if self.point_per_dca:
 			self.auto_point_per_dca = False
 
-	#def __del__(self):
-	#	#self.save()
-	#	pass
-
 	def dump(self):
 		current_dca = self.current_dca
 		if isinstance(current_dca ,dca):
 			current_dca = current_dca.dump()
 
 		dump = {
-			'id':		self._id,
+			#'id':		self._id,
 			'dn':		self.dn,
 			'node_id':	self.node_id,
 			'bunit':	self.bunit,
@@ -148,7 +144,7 @@ class metric(object):
 	def load(self, data):
 		self.logger.debug("Load metric '%s'" % self._id)
 
-		self._id		= data['id']
+		#self._id		= data['id']
 		self.dn			= data['dn']
 		self.retention		= data['retention']
 		self.point_per_dca	= data['point_per_dca']
@@ -345,7 +341,7 @@ class metric(object):
 				#rm dca
 				del self.dca_ZTSC[0]
 				
-		self.logger.info("%s %s Rotate all DCA in %.5f seconds" % (self.node.dn, self.dn, (time.time() - start)))
+		self.logger.debug("%s %s Rotate all DCA in %.5f seconds" % (self.node.dn, self.dn, (time.time() - start)))
 		
 
 	def dca_get_max_size(self):
