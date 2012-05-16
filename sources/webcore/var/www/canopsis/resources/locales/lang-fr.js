@@ -256,4 +256,31 @@ var i18n={
 	'DashDot' : 'TiretPoint',
 	'LongDashDot' : 'LongTiretPoint',
 	'LongDashDotDot' : 'LongTiretPointPoint',
+	
+	//-------------------------Schedule-------------------------
+	'Loaded' : 'Chargé',
+	'Last execution' : 'Dernière execution',
+	'Next execution' : 'Prochaine execution',
+	'Schedule' : 'Planification',
+	'Mailing' : 'e-mail',
+	
+	'General options' : 'Options générales',
+	'Frequency' : 'Fréquence',
+	'Reporting Options' : 'Options de reporting',
+	'Mailing Options' : "Options d'envoi d'e-mail",
+	'Schedule name' : 'Nom planification',
+	'View' : 'Vue',
+	'Month' : 'Mois',
+	'Day of week' : 'Jour de la semaine',
+	'The last' : 'Le dernier',
+	'Every' : 'Chaque',
+	'Hours (local time)' : 'Heure (heure locale)',
+	
+	'Send by mail' : 'Envoyer par e-mail',
+	'To' : 'à',
+	'Subject' : 'Sujet',
+	
+	
+	
+	
 }
