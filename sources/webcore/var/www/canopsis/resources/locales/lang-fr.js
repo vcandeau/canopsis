@@ -242,12 +242,15 @@ var i18n={
 	'Schedules' : 'Planifications',
 	
 	'Briefcase': 'Porte-documents',
+	'File name' : 'Nom du fichier',
+	'Creation date': 'Date de création',
 	'No log found': 'Pas de rapport trouvé',
 	'Download' : 'Télécharger',
 	'At' : 'À',
 	'Last run' : 'Dernière exécution',
 	'Run date' : "Date d'exécution",
 	'Database Id' : 'Identifiant base de donnée',
+	
 	
 	//-----------------------Reporting bar-----------------
 	'Live reporting toolbar' : 'Barre d\'outil de reporting piloté',
@@ -287,6 +290,8 @@ var i18n={
 	'Next execution' : 'Prochaine execution',
 	'Schedule' : 'Planification',
 	'Mailing' : 'e-mail',
+	'Scheduling' : 'Planification',
+	'File' : 'Fichier',
 	
 	'General options' : 'Options générales',
 	'Frequency' : 'Fréquence',
