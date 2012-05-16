@@ -27,13 +27,17 @@ from pyperfstore.dca import dca
 from pyperfstore.pmath import aggregate as pmath_aggregate
 
 class node(object):
-	def __init__(self, dn, storage, point_per_dca=None, retention=None, rotate_plan=None):
+	def __init__(self, _id, storage, dn=None, point_per_dca=None, retention=None, rotate_plan=None):
 		self.logger = logging.getLogger('node')
 
+		if not dn:
+			dn = _id
+			
 		self.logger.debug("Init node '%s'" % dn)
-
+		
 		self.dn = dn
-		self._id = dn
+		self._id = _id
+		#self._id = hashlib.md5(dn).hexdigest()
 
 		self.retention = retention
 
@@ -53,30 +57,28 @@ class node(object):
 
 	def dump(self):
 		dump = {
-			'id':		self._id,
+			#'id':		self._id,
 			'dn':		self.dn,
 			'retention':	self.retention,
 			'point_per_dca':self.point_per_dca,
 			'rotate_plan':	self.rotate_plan,
 			'metrics':		self.metrics,
-			'metrics_id':	self.metrics_id,
 			'writetime':	time.time()
 		}
 
 		for _id in self.metrics.keys():
 			item = self.metrics[_id]
 			if isinstance(item ,metric):
-				item.save()
-				dump['metrics'][_id] = { 'id': item._id, 'bunit': item.bunit }
+				dump['metrics'][_id] = { 'id': item._id, 'dn': item.dn, 'bunit': item.bunit }
 			else:
-				dump['metrics'][_id] = { 'id': item['id'], 'bunit': item['bunit'] }
+				dump['metrics'][_id] = { 'id': item['id'], 'dn': item['dn'], 'bunit': item['bunit'] }
 			
 		return dump
 
 	def load(self, data):
 		self.logger.debug("Load node '%s'" % self._id)
 
-		self._id		= data['id']
+		#self._id		= data['id']
 		self._dn		= data['dn']
 		self.retention		= data['retention']
 		self.point_per_dca	= data['point_per_dca']
@@ -84,15 +86,6 @@ class node(object):
 		
 		self.writetime		= data['writetime']
 		self.metrics = data['metrics']
-		
-		## For compatibility
-		try:
-			self.metrics_id		= data['metrics_id']
-			
-		except Exception, err:
-			self.logger.warning("Convert Node in new format !")
-			convert_node(self)
-			self.save()
 			
 	def save(self):
 		dump = self.dump()
@@ -106,12 +99,12 @@ class node(object):
 
 	def metric_get(self, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
-		
-		if not _id:
+			
+		try:
+			item = self.metrics[_id]
+		except:
 			self.logger.error("Unknown metric '%s' ... " % dn)
 			return None
-			
-		item = self.metrics[_id]
 
 		if not isinstance(item ,metric):
 			## load metric from store
@@ -120,10 +113,20 @@ class node(object):
 
 		return item
 
-
 	def metric_get_all_dn(self):
-		return [ dn for dn in self.metrics_id.keys() ]
-
+		try:
+			dump = self.dump()
+			dns = [ self.metrics[key]['dn'] for key in dump['metrics'] ]
+		except:
+			## Old format:
+			dns = []
+			self.logger.warning("Convert Node in new format !")
+			for _id in self.metrics.keys():
+				metric = self.metric_get(_id=_id)
+				dns.append(metric.dn)
+			self.save()
+		
+		return dns
 
 	def metric_get_id(self, dn=None, _id=None):
 		if _id:
@@ -132,13 +135,7 @@ class node(object):
 		if not dn:
 			return None
 
-		return self.metric_idBydn(dn)
-
-	def metric_idBydn(self, dn):
-		try:
-			return self.metrics_id[dn]
-		except:
-			return None
+		return self.metric_make_id(dn)
 		
 	def metric_dump(self, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
@@ -150,7 +147,6 @@ class node(object):
 			return item.dump()
 
 		return self.metric_get(_id=_id).dump()
-
 
 	def metric_exist(self, dn=None, _id=None):	
 		_id = self.metric_get_id(dn, _id)
@@ -170,7 +166,7 @@ class node(object):
 			metric_id = self.metric_make_id(dn)
 
 			self.logger.debug(" + Metric ID: '%s'" % metric_id)
-			self.metrics[metric_id] = metric(
+			mymetric = metric(
 							_id=metric_id,
 							dn=dn,
 							bunit=bunit,
@@ -182,15 +178,15 @@ class node(object):
 							rotate_plan=self.rotate_plan,
 						)
 						
-			self.metrics_id[dn] = metric_id
-			
+			mymetric.save()
+			self.metrics[metric_id]	= mymetric
 			self.save()
+			
+			return mymetric
 		else:
 			self.logger.debug(" + Metric allready exist")
-			metric_id = self.metric_get_id(dn=dn)
-		
-		return metric_id
-
+			_id = self.metric_get_id(dn=dn)
+			return metric_get(_id=_id)
 
 	def metric_get_values(self, tstart, tstop=None, aggregate=True, max_points=None, atype=None, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
@@ -215,23 +211,21 @@ class node(object):
 				return values
 		else:
 			return []
-	
 
 	def metric_push_value(self, value, unit=None, timestamp=None, dn=None, _id=None, dtype=None, point_per_dca=None, min_value=None, max_value=None, thld_warn_value=None, thld_crit_value=None):
 		
 		_id = self.metric_get_id(dn, _id)
+		self.logger.debug("Push value on metric '%s'" % dn)
 		
-		self.logger.debug("Push value on metric '%s' (_id: %s)" % (dn, _id))
-		
-		if not _id:
-			_id = self.metric_add(dn=dn, bunit=unit, dtype=dtype)
+		if not self.metric_exist(dn=dn):
+			mymetric = self.metric_add(dn=dn, bunit=unit, dtype=dtype)
+		else:
+			mymetric = self.metric_get(_id=_id)
 			
 		if not timestamp:
 			timestamp = int(time.time())
 		else:
 			timestamp = int(timestamp)
-			
-		mymetric = self.metric_get(_id=_id)
 		
 		## re-Set dtype
 		if dtype:
@@ -276,7 +270,6 @@ class node(object):
 		mymetric.dca_remove_all()
 		self.storage.rm(_id)
 
-		del self.metrics_id[dn]
 		del self.metrics[_id]
 		del mymetric
 	
@@ -343,25 +336,3 @@ class node(object):
 					print "      + %s DCA (%s -> %s),\tPoints: %s\t%.2f KB" % (item.format, item.tstart, item.tstop, item.size, bsize )
 
 				print ""
-
-
-
-def convert_node(node):
-	metrics = {}
-	node.logger.debug("Convert %s" % node._id)
-	for dn in node.metrics.keys():
-		metric_raw = node.metrics[dn]
-		ometric = metric(_id=metric_raw['id'], node=node, storage=node.storage)
-		
-		_id = node.metric_make_id(dn)
-		
-		node.logger.debug(" + %s (%s)" % (dn, _id))
-		
-		ometric._id = _id
-		ometric.save()
-		
-		metrics[_id] = ometric
-
-		node.metrics_id[dn] = _id
-		
-	node.metrics = metrics
