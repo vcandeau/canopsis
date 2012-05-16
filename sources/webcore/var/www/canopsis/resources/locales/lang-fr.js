@@ -215,6 +215,7 @@ var i18n={
 	'Switch to live reporting' : 'Passer en reporting piloté',
 	'Schedule active view export' : 'Programmer l\'export de la vue active',
 	'Edit schedules' : 'Editer les planifications',
+	'Schedules' : 'Planifications',
 	
 	'Briefcase': 'Porte-documents',
 	'No log found': 'Pas de rapport trouvé',
@@ -223,4 +224,29 @@ var i18n={
 	'Last run' : 'Dernière exécution',
 	'Run date' : "Date d'exécution",
 	'Database Id' : 'Identifiant base de donnée',
+	
+	//--------------------------Curves---------------------
+	'Line Color' : 'Couleur ligne',
+	'Area color' : 'Couleur remplissage',
+	'Line style' : 'Type de ligne',
+	'Area opacity' : 'Opacité remplissage',
+	'Invert' : 'Inverser',
+	'Metric name' : 'Nom métrique',
+	'Label' : 'Etiquette',
+	'Dash style' : 'Type pointillé',
+	'Line color' : 'Couleur ligne',
+	'Area opacity (%)' : 'Opacité remplissage (%)',
+	'Invert values' : 'Valeurs inversées',
+	
+	'Solid' : 'Solide',
+	'ShortDash' : 'Tiret court',
+	'ShortDot' : 'Point court',
+	'ShortDashDot' : 'CourtTiretPoint',
+	'ShortDashDotDot' : 'CourtTiretPointPoint',
+	'Dot' : 'Point',
+	'Dash' : 'Tiret',
+	'LongDash' : 'Point long',
+	'DashDot' : 'TiretPoint',
+	'LongDashDot' : 'LongTiretPoint',
+	'LongDashDotDot' : 'LongTiretPointPoint',
 }
