@@ -20,6 +20,30 @@
 */
 
 var i18n={
+	//----------------------repères temporels---------------
+	'Monday' : 'Lundi',
+	'Tuesday' : 'Mardi',
+	'Wednesday' : 'Mercredi',
+	'Thursday' : 'Jeudi',
+	'Friday' : 'Vendredi',
+	'Satursday' : 'Samedi',
+	'Sunday' : 'Dimanche',
+	
+	'January' : 'Janvier',
+	'February' : 'Février',
+	'March' : 'Mars',
+	'April' : 'Avril',
+	'May' : 'Mai',
+	'June' : 'Juin',
+	'July' : 'Juillet',
+	'August' : 'Août',
+	'September' : 'Septembre',
+	'October' : 'Octobre',
+	'November' : 'Novembre',
+	'December': 'Décembre',
+	
+	//-------------------------------------------------------
+	
 	'Language':			'Langue',
 	'Add': 				'Ajouter',
 	'Delete':			'Supprimer',
@@ -161,6 +185,7 @@ var i18n={
 	'Edit active view': 'Édition vue active',
 	'Edit groups':		'Éditer les groupes',
 	'Edit accounts':	'Éditer les comptes',
+	'Curves':			'Courbes',
 	'New view':			'Nouvelle vue',
 	'no title':			'pas de titre',
 	'No title':			'Pas de titre',
@@ -212,12 +237,79 @@ var i18n={
 	
 	'Export active view' : 'Exporter la vue active',
 	'Switch to live reporting' : 'Passer en reporting piloté',
+	'Schedule active view export' : 'Programmer l\'export de la vue active',
+	'Edit schedules' : 'Editer les planifications',
+	'Schedules' : 'Planifications',
 	
 	'Briefcase': 'Porte-documents',
+	'File name' : 'Nom du fichier',
+	'Creation date': 'Date de création',
 	'No log found': 'Pas de rapport trouvé',
 	'Download' : 'Télécharger',
 	'At' : 'À',
 	'Last run' : 'Dernière exécution',
 	'Run date' : "Date d'exécution",
 	'Database Id' : 'Identifiant base de donnée',
+	
+	
+	//-----------------------Reporting bar-----------------
+	'Live reporting toolbar' : 'Barre d\'outil de reporting piloté',
+	'Export this view to pdf' : 'Exporter cette vue au format pdf',
+	'View page in html' : 'Visionner cette page en html',
+	'Leave reporting mode' : 'Quitter le mode reporting',
+	
+	
+	//--------------------------Curves---------------------
+	'Line Color' : 'Couleur ligne',
+	'Area color' : 'Couleur remplissage',
+	'Line style' : 'Type de ligne',
+	'Area opacity' : 'Opacité remplissage',
+	'Invert' : 'Inverser',
+	'Metric name' : 'Nom métrique',
+	'Label' : 'Etiquette',
+	'Dash style' : 'Type pointillé',
+	'Line color' : 'Couleur ligne',
+	'Area opacity (%)' : 'Opacité remplissage (%)',
+	'Invert values' : 'Valeurs inversées',
+	
+	'Solid' : 'Solide',
+	'ShortDash' : 'Tiret court',
+	'ShortDot' : 'Point court',
+	'ShortDashDot' : 'CourtTiretPoint',
+	'ShortDashDotDot' : 'CourtTiretPointPoint',
+	'Dot' : 'Point',
+	'Dash' : 'Tiret',
+	'LongDash' : 'Point long',
+	'DashDot' : 'TiretPoint',
+	'LongDashDot' : 'LongTiretPoint',
+	'LongDashDotDot' : 'LongTiretPointPoint',
+	
+	//-------------------------Schedule-------------------------
+	'Loaded' : 'Chargé',
+	'Last execution' : 'Dernière execution',
+	'Next execution' : 'Prochaine execution',
+	'Schedule' : 'Planification',
+	'Mailing' : 'e-mail',
+	'Scheduling' : 'Planification',
+	'File' : 'Fichier',
+	
+	'General options' : 'Options générales',
+	'Frequency' : 'Fréquence',
+	'Reporting Options' : 'Options de reporting',
+	'Mailing Options' : "Options d'envoi d'e-mail",
+	'Schedule name' : 'Nom planification',
+	'View' : 'Vue',
+	'Month' : 'Mois',
+	'Day of week' : 'Jour de la semaine',
+	'The last' : 'Le dernier',
+	'Every' : 'Chaque',
+	'Hours (local time)' : 'Heure (heure locale)',
+	
+	'Send by mail' : 'Envoyer par e-mail',
+	'To' : 'à',
+	'Subject' : 'Sujet',
+	
+	
+	
+	
 }
