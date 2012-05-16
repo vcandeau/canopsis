@@ -260,6 +260,7 @@ var i18n={
 	
 	
 	//--------------------------Curves---------------------
+	'Curve' : 'Courbe',
 	'Line Color' : 'Couleur ligne',
 	'Area color' : 'Couleur remplissage',
 	'Line style' : 'Type de ligne',
