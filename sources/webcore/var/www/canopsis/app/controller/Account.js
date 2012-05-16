@@ -76,7 +76,7 @@ Ext.define('canopsis.controller.Account', {
 			log.debug(' + setLocale Ok', this.logAuthor);
 			Ext.MessageBox.show({
 				title: _('Configure language'),
-				msg: _("Application must be reload, do you want reload now ?"),
+				msg: _("Application must be reloaded, do you want to reload now ?"),
 				icon: Ext.MessageBox.WARNING,
   				buttons: Ext.Msg.OKCANCEL,
   				fn: function(btn){
