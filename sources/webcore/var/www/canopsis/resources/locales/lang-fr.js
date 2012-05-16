@@ -45,6 +45,8 @@ var i18n={
 	//-------------------------------------------------------
 	
 	'Language':			'Langue',
+	'Configure language' : 'Configuration de la langue',
+	'Application must be reloaded, do you want to reload now ?' : "L'application doit être redémarré, voulez-vous redémarrer maintenant ?",
 	'Add': 				'Ajouter',
 	'Delete':			'Supprimer',
 	'Duplicate':			'Dupliquer',
