@@ -122,7 +122,18 @@ def on_message(body, msg):
 	### Store perfdata	
 	if perf_data_array:
 		try:
-			to_perfstore(event_id, perf_data_array, timestamp)
+			dn = None
+			if event['source_type'] == 'resource':
+				dn = "%s.%s" % (event['component'], event['resource'])
+				
+			elif event['source_type'] == 'component':
+				dn = event['component']
+				
+			to_perfstore(	_id=event_id,
+							perf_data=perf_data_array,
+							timestamp=timestamp,
+							dn=dn)
+							
 		except Exception, err:
 			logger.warning("Impossible to store: %s ('%s')" % (perf_data_array, err))
 	
@@ -161,11 +172,15 @@ def parse_value(data, key, default=None):
 	except:
 		return default
 
-def to_perfstore(_id, perf_data, timestamp):
+def to_perfstore(_id, perf_data, timestamp, dn=None):
 	
 	if isinstance(perf_data, list):
 		try:
-			mynode = node(_id, storage=perfstore, point_per_dca=point_per_dca, rotate_plan=rotate_plan)
+			mynode = node(	_id=_id,
+							dn=dn,
+							storage=perfstore,
+							point_per_dca=point_per_dca,
+							rotate_plan=rotate_plan)
 			
 		except Exception, err:
 			raise Exception("Imposible to init node: %s (%s)" % (_id, err))
