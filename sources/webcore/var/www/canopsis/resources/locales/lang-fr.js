@@ -161,6 +161,7 @@ var i18n={
 	'Edit active view': 'Édition vue active',
 	'Edit groups':		'Éditer les groupes',
 	'Edit accounts':	'Éditer les comptes',
+	'Curves':			'Courbes',
 	'New view':			'Nouvelle vue',
 	'no title':			'pas de titre',
 	'No title':			'Pas de titre',
@@ -212,6 +213,8 @@ var i18n={
 	
 	'Export active view' : 'Exporter la vue active',
 	'Switch to live reporting' : 'Passer en reporting piloté',
+	'Schedule active view export' : 'Programmer l\'export de la vue active',
+	'Edit schedules' : 'Editer les planifications',
 	
 	'Briefcase': 'Porte-documents',
 	'No log found': 'Pas de rapport trouvé',
