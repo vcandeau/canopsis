@@ -225,6 +225,13 @@ var i18n={
 	'Run date' : "Date d'exécution",
 	'Database Id' : 'Identifiant base de donnée',
 	
+	//-----------------------Reporting bar-----------------
+	'Live reporting toolbar' : 'Barre d\'outil de reporting piloté',
+	'Export this view to pdf' : 'Exporter cette vue au format pdf',
+	'View page in html' : 'Visionner cette page en html',
+	'Leave reporting mode' : 'Quitter le mode reporting',
+	
+	
 	//--------------------------Curves---------------------
 	'Line Color' : 'Couleur ligne',
 	'Area color' : 'Couleur remplissage',
