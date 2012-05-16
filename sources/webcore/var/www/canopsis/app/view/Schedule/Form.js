@@ -116,7 +116,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			value: 'january',
+			value: _('January'),
 			disabled: true,
 			store: {
 				xtype: 'store',

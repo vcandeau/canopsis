@@ -20,6 +20,30 @@
 */
 
 var i18n={
+	//----------------------repères temporels---------------
+	'Monday' : 'Lundi',
+	'Tuesday' : 'Mardi',
+	'Wednesday' : 'Mercredi',
+	'Thursday' : 'Jeudi',
+	'Friday' : 'Vendredi',
+	'Satursday' : 'Samedi',
+	'Sunday' : 'Dimanche',
+	
+	'January' : 'Janvier',
+	'February' : 'Février',
+	'March' : 'Mars',
+	'April' : 'Avril',
+	'May' : 'Mai',
+	'June' : 'Juin',
+	'July' : 'Juillet',
+	'August' : 'Août',
+	'September' : 'Septembre',
+	'October' : 'Octobre',
+	'November' : 'Novembre',
+	'December': 'Décembre',
+	
+	//-------------------------------------------------------
+	
 	'Language':			'Langue',
 	'Add': 				'Ajouter',
 	'Delete':			'Supprimer',
