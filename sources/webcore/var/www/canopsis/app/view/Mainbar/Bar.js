@@ -160,7 +160,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				action: 'ScheduleExportView'
 			},{
 				iconCls:'icon-mainbar-edit-task',
-				text: _('Edit schedule'),
+				text: _('Edit schedules'),
 				action: 'editSchedule'
 			},{
 				iconCls:'icon-mainbar-briefcase',

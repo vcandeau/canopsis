@@ -53,7 +53,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 		//-----------------General options----------------------
 		
 		var TaskName = Ext.widget('textfield',{
-				fieldLabel: _('Task name'),
+				fieldLabel: _('Schedule name'),
 				name: 'crecord_name',
 				allowBlank: false,
 		})
@@ -116,7 +116,7 @@ Ext.define('canopsis.view.Schedule.Form', {
 			queryMode: 'local',
 			displayField: 'text',
 			valueField: 'value',
-			value: 'january',
+			value: _('January'),
 			disabled: true,
 			store: {
 				xtype: 'store',

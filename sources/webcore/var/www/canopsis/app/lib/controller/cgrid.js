@@ -417,7 +417,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 					})
 					
 					var win = Ext.create('widget.window', {
-						title: this.modelId,
+						title: _(this.modelId),
 						items: form,
 						closable: true,
 						constrain:true,
