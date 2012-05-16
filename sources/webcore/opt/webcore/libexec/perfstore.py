@@ -185,7 +185,7 @@ def perfstore_get_values(_id, metrics, start=None, stop=None):
 	logger.debug(" + start:     %s" % start)
 	logger.debug(" + stop:      %s" % stop)
 	
-	mynode = node(_id, storage=perfstore)
+	mynode = node(_id=_id, storage=perfstore)
 	
 	output=[]
 	
