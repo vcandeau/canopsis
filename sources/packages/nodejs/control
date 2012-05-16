@@ -6,12 +6,13 @@ RELEASE=0
 DESCRIPTION=""
 REQUIRES=""
 
-P_ARCH="@P_ARCH@"
-P_DIST="@P_DIST@"
-P_DISTVERS="@P_DISTVERS@"
+#P_ARCH="@P_ARCH@"
+#P_DIST="@P_DIST@"
+#P_DISTVERS="@P_DISTVERS@"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
+	mkdir -p $PREFIX/lib/node_modules
 	check_code $? 
 }
 
