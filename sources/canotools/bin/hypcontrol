@@ -10,6 +10,7 @@ if [ "$1" = "start" ]; then
 	service webserver start
 	service collectd2event start
 	service collectd start
+	wkhtmltopdf -h >> /dev/null
 fi
 
 if [ "$1" = "stop" ]; then
