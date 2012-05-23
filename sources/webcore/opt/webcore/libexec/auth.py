@@ -69,7 +69,6 @@ def auth(login=None, password=None):
 	storage = get_storage(namespace='object')
 
 	try:
-		logger.debug('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
 		account = caccount(storage.get(_id, caccount(user=login)))
 		logger.debug(" + Check password ...")
 
