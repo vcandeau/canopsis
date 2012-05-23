@@ -49,7 +49,6 @@ def auth(login=None, password=None):
 		shadow = True
 	
 	#retro compatibility
-	#cryptedKey = request.params.get('authkey', default=False)
 	cryptedKey = request.params.get('cryptedKey', default=False)
 	if cryptedKey:
 		cryptedKey = True

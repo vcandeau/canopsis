@@ -87,7 +87,19 @@ def account_setConfig(_id):
 		output={'total': 0, 'success': False, 'data': []}
 	
 	return output
-
+	
+@get('/account/newAuthKey/',apply=[check_auth])
+def account_newAuthKey():
+	account = get_account()
+	storage = get_storage(namespace='object',account=account)
+	
+	try:
+		account.generate_new_authkey()
+		storage.put(account)
+		return {'total': 0, 'success': True, 'data': []}
+	except:
+		return {'total': 0, 'success': False, 'data': [{'success':False}]}
+	
 #### GET
 @get('/account/:_id',apply=[check_auth])
 @get('/account/',apply=[check_auth])
