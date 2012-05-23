@@ -20,11 +20,24 @@ function post_install(){
 
 	launch_cmd 1 service rabbitmq-server start
 
-	echo "Safe wait ..."
-	sleep 5
+	echo -n "Safe wait ..."
+
+	STATE=1
+	TRY=0
+	while [ $STATE -ne 0 ]; do
+	    if [ $TRY -eq 10 ]; then
+	        break
+	    fi
+	    sleep 1
+	    rabbitmqadmin -H 127.0.0.1 list nodes &> /dev/null
+	    STATE=$?
+	    TRY=$((TRY + 1))
+	    echo -n "."
+	done
+	echo
+	check_code $STATE "Failed to join API ..."
 
 	CODE=0
-
 	echo " + Declare Admin user ..."
 	$PREFIX/bin/rabbitmqadmin -H 127.0.0.1 declare user name=admin password=admin tags=administrator
 	RCODE=$?
