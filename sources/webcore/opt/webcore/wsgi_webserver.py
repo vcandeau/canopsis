@@ -52,7 +52,8 @@ interface	= "0.0.0.0"
 
 session_cookie_expires	= 300
 session_secret			= 'canopsis'
-session_data_dir 		= os.path.expanduser('~/tmp/webcore_cache')
+session_lock_dir		= os.path.expanduser('~/tmp/webcore_cache')
+session_mongo_url		= 'mongodb://localhost:27017/canopsis.beaker'
 root_directory			= os.path.expanduser("~/var/www/")
 
 try:
@@ -87,13 +88,15 @@ dynmodloads("~/opt/webcore/libexec/")
 bottle.debug(debug)
 
 ##Session system with beaker
+
 session_opts = {
-    'session.type': 'file',
+    'session.type': 'mongodb',
     'session.cookie_expires': session_cookie_expires,
-    'session.data_dir': session_data_dir,
+    'session.url' : session_mongo_url,
     'session.auto': True,
 #   'session.timeout': 300,
-    'session.secret': session_secret
+    'session.secret': session_secret,
+    'session.lock_dir' : session_lock_dir,
 }
 
 ## Basic Handler
