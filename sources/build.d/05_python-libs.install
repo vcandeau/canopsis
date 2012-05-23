@@ -22,6 +22,7 @@ function install(){
 	easy_install_pylib gevent
 	easy_install_pylib bottle
 	easy_install_pylib Beaker
+	easy_install_pylib mongodb_beaker
 	easy_install_pylib ws4py
 	easy_install_pylib pysnmp
 	easy_install_pylib xmlrpclib
