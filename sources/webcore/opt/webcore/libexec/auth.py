@@ -69,6 +69,7 @@ def auth(login=None, password=None):
 	storage = get_storage(namespace='object')
 
 	try:
+		logger.debug('EEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
 		account = caccount(storage.get(_id, caccount(user=login)))
 		logger.debug(" + Check password ...")
 
@@ -76,8 +77,8 @@ def auth(login=None, password=None):
 			access = account.check_shadowpasswd(password)
 			
 		elif authkey:
-			logger.debug(" + Valid auth key: %s" % (account.make_authkey()))
-			access = account.check_authkey(password)
+			logger.debug(" + Valid auth key: %s" % (account.make_tmp_authkey()))
+			access = account.check_tmp_authkey(password)
 			
 		else:
 			access = account.check_passwd(password)
