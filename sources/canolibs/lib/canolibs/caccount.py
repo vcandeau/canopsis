@@ -47,7 +47,7 @@ class caccount(crecord):
 			self.group ="anonymous"
 			
 		if not self.authkey:
-			self.authkey = hashlib.sha224(str(getrandbits(1000))).hexdigest()
+			self.authkey = hashlib.sha224(str(getrandbits(512))).hexdigest()
 
 		if self.user:
 			self._id = self.type+"."+self.user	
