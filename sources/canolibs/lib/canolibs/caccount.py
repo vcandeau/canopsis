@@ -82,15 +82,16 @@ class caccount(crecord):
 		
 	def make_shadow(self, passwd):
 		return hashlib.sha1(str(passwd)).hexdigest()
-		
-	def check_tmp_authkey(self, authkey):
+	
+	
+	def check_tmp_cryptedKey(self, authkey):
 		authkey =  str(authkey).upper()
-		if authkey == str(self.make_authkey(self.shadowpasswd)).upper():
+		if authkey == str(self.make_tmp_cryptedKey(self.shadowpasswd)).upper():
 			return True
 		
 		return False
 		
-	def make_tmp_authkey(self, shadow=None):
+	def make_tmp_cryptedKey(self, shadow=None):
 		if not shadow:
 			shadow = self.shadowpasswd
 			

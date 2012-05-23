@@ -60,10 +60,10 @@ def check_report_dir(report_dir):
 def	get_cookie(cookiejar, account):
 	output = Popen("wkhtmltopdf -h >> /dev/null",shell=True)
 	output.wait()
-	authkey = account.make_authkey()
+	authkey = account.make_tmp_cryptedKey()
 	logger.debug(" [WK_WRAPPER] :: Recreate cookie (%s)" % cookiejar)
-	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?authkey=True\" /dev/null" % (cookiejar, account.user, authkey))
-	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?authkey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
+	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey))
+	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
 
 	output.wait()
 	

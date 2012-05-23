@@ -47,10 +47,12 @@ def auth(login=None, password=None):
 	shadow = request.params.get('shadow', default=False)
 	if shadow:
 		shadow = True
-		
-	authkey = request.params.get('authkey', default=False)
-	if authkey:
-		authkey = True
+	
+	#retro compatibility
+	#cryptedKey = request.params.get('authkey', default=False)
+	cryptedKey = request.params.get('cryptedKey', default=False)
+	if cryptedKey:
+		cryptedKey = True
 
 	if not password:
 		password = request.params.get('password', default=None)
@@ -64,7 +66,7 @@ def auth(login=None, password=None):
 	logger.debug(" + Login: "+login)
 	logger.debug(" + Password: "+password)
 	logger.debug("    + is Shadow: "+str(shadow))
-	logger.debug("    + is Authkey: "+str(authkey))
+	logger.debug("    + is cryptedKey: "+str(cryptedKey))
 
 	storage = get_storage(namespace='object')
 
@@ -75,9 +77,9 @@ def auth(login=None, password=None):
 		if shadow:
 			access = account.check_shadowpasswd(password)
 			
-		elif authkey:
-			logger.debug(" + Valid auth key: %s" % (account.make_tmp_authkey()))
-			access = account.check_tmp_authkey(password)
+		elif cryptedKey:
+			logger.debug(" + Valid auth key: %s" % (account.make_tmp_cryptedKey()))
+			access = account.check_tmp_cryptedKey(password)
 			
 		else:
 			access = account.check_passwd(password)
