@@ -20,16 +20,19 @@
 
 #import logging
 from crecord import crecord
+from random import getrandbits
 import hashlib, time
 
 class caccount(crecord):
-	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], *args, **kargs):
+	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], authkey=None, *args, **kargs):
 
 		self.user = user
 		self.owner = user
 		self.group = group
 		self.groups = groups
 		self.shadowpasswd = None
+		
+		self.authkey = authkey
 
 		self.lastname = lastname
 		self.firstname = firstname
@@ -42,6 +45,9 @@ class caccount(crecord):
 
 		if not self.group:
 			self.group ="anonymous"
+			
+		if not self.authkey:
+			self.authkey = hashlib.sha224(str(getrandbits(1000))).hexdigest()
 
 		if self.user:
 			self._id = self.type+"."+self.user	
@@ -74,21 +80,23 @@ class caccount(crecord):
 
 		return False
 		
-	def check_authkey(self, authkey):
+	def make_shadow(self, passwd):
+		return hashlib.sha1(str(passwd)).hexdigest()
+		
+	def check_tmp_authkey(self, authkey):
 		authkey =  str(authkey).upper()
 		if authkey == str(self.make_authkey(self.shadowpasswd)).upper():
 			return True
 		
 		return False
 		
-	def make_shadow(self, passwd):
-		return hashlib.sha1(str(passwd)).hexdigest()
-		
-	def make_authkey(self, shadow=None):
+	def make_tmp_authkey(self, shadow=None):
 		if not shadow:
 			shadow = self.shadowpasswd
 			
 		return hashlib.sha1( str(shadow).upper() + str( int( time.time() / 10)*10 )  ).hexdigest()
+
+	#def get_authkey
 
 	def dump(self):
 		self.name = self.user
@@ -101,6 +109,7 @@ class caccount(crecord):
 			self.data['groups'].insert(0, self.group)
 
 		self.data['shadowpasswd'] = self.shadowpasswd
+		self.data['authkey'] = self.authkey
 		return crecord.dump(self)
 
 	def load(self, dump):
@@ -116,6 +125,8 @@ class caccount(crecord):
 				self.groups.pop(0)
 
 		self.shadowpasswd = self.data['shadowpasswd']
+		if 'authkey' in self.data:
+			self.authkey = self.data['authkey']
 
 	def cat(self):
 		print "Id:\t", self._id
