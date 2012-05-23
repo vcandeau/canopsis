@@ -47,7 +47,7 @@ class caccount(crecord):
 			self.group ="anonymous"
 			
 		if not self.authkey:
-			self.authkey = hashlib.sha224(str(getrandbits(512))).hexdigest()
+			self.generate_new_authkey()
 
 		if self.user:
 			self._id = self.type+"."+self.user	
@@ -97,7 +97,12 @@ class caccount(crecord):
 			
 		return hashlib.sha1( str(shadow).upper() + str( int( time.time() / 10)*10 )  ).hexdigest()
 
-	#def get_authkey
+	def get_authkey(self):
+		return self.authkey
+		
+	def generate_new_authkey(self):
+		self.authkey = hashlib.sha224(str(getrandbits(512))).hexdigest()
+		return self.authkey
 
 	def dump(self):
 		self.name = self.user
