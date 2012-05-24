@@ -204,7 +204,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				text: _('Clear tabs cache'),
 				action: 'cleartabscache'
 			},{
-				iconCls: 'icon-clear',
+				iconCls: 'icon-access',
 				text: _('Authentification key'),
 				action: 'authkey'
 			},'-',{
