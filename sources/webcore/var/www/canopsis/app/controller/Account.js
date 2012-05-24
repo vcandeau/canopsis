@@ -190,13 +190,30 @@ Ext.define('canopsis.controller.Account', {
 		
 	},
 	
-	new_authkey : function(){
-		var new_authkey = 0	
-		
+	//if callback_func != null and ajax success -> callback is call in passed scope with
+	//new key as argument
+	new_authkey : function(callback_func,scope){
 		//------------------------------ajax request----------------------
-		
-		return new_authkey
-		
+		log.debug('Ask webserver for new authentification key',this.logAuthor)
+		Ext.Ajax.request({
+			url: '/account/newAuthKey/',
+			method: 'GET',
+			scope: scope,
+			success: function(response){
+				var object_response = Ext.decode(response.responseText)
+				if(object_response.success == true){
+					if(callback_func)
+						callback_func.call(this,object_response.data.authkey)
+				}else{
+					log.error('Ajax request failed',this.logAuthor)
+					global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
+				}
+			},
+			failure : function(response){
+				log.error('Error while fetching new Authkey',this.logAuthor)
+			}
+		})
 	}
+
 	
 });
