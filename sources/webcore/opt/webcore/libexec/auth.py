@@ -48,10 +48,7 @@ def auth(login=None, password=None):
 	if shadow:
 		shadow = True
 	
-	#retro compatibility
 	cryptedKey = request.params.get('cryptedKey', default=False)
-	if cryptedKey:
-		cryptedKey = True
 
 	if not password:
 		password = request.params.get('password', default=None)
@@ -99,6 +96,54 @@ def auth(login=None, password=None):
 		logger.error(err)
 		
 	return HTTPError(403, "Forbidden")
+
+
+@get('/keyAuth/:login/:key')
+@get('/keyAuth/:login')
+@get('/keyAuth')
+def keyAuth(login=None, key=None):
+	#-----------------------Get info------------------------
+	if not login:
+		login = request.params.get('login', default=None)
+	if not key:
+		key = request.params.get('key', default=None)
+		
+	if not login or not key:
+		return HTTPError(404, "Invalid arguments")
+	
+	#---------------------Get storage/account-------------------
+	_id = "account.%s" % login
+	
+	logger.debug(" + _id: %s" % _id)
+	logger.debug(" + Login: %s" % login)
+	logger.debug(" + key: %s" % key)
+	
+	storage = get_storage(namespace='object')
+
+	try:
+		account = caccount(storage.get(_id, caccount(user=login)))
+	except Exception, err:
+		logger.error('Error while fetching %s : %s' % (_id,err))
+		return HTTPError(403, "There is no account for this login")
+	
+	#---------------------Check key-------------------------
+	if account.check_authkey(key):
+		s = bottle.request.environ.get('beaker.session')
+		s['account_id'] = _id
+		s['account_user'] = login
+		s['auth_on'] = True
+		s.save()
+		
+		logger.debug('Access granted and session open for %s' % _id)
+		
+		output = [account.dump()]
+		return {'total': len(output), 'success': True, 'data': output}
+	else:
+		logger.error('Wrong key given for %s' % _id)
+		return HTTPError(403, "Wrong key, access prohibited")
+	
+	
+
 
 #Access for disconnect and clean session
 @get('/logout')

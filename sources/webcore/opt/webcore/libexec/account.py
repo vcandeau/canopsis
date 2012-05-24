@@ -88,7 +88,7 @@ def account_setConfig(_id):
 	
 	return output
 	
-@get('/account/newAuthKey/',apply=[check_auth])
+@get('/account/getNewAuthKey/',apply=[check_auth])
 def account_newAuthKey():
 	account = get_account()
 	storage = get_storage(namespace='object',account=account)
