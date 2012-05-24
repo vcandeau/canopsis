@@ -27,12 +27,25 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 	
 	constrain: true,
 	
-	//layout : 'hbox',
+	//layout : 'vbox',
 	
 	logAuthor: '[cauthkey]',
 	
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
+		
+		this.helperTemplate = new Ext.Template(
+			'<div name="helper" style="{style}">',
+				'<h2>You can auto Logging in canopsis with this link</h2>',
+				'<div >',
+				'<br />',
+				_('Bookmark me ! :'),
+				'<a href={link}>',
+				'{tinyLink}',
+				'</a></div>',
+			'</div>',
+			{compiled: true}
+		);
 		
 		//-----------------------Build inner form----------------
 		var config = {
@@ -54,15 +67,30 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 			border:false,
 			layout:'hbox',
 			width : config.width + buttonConfig.width,
-			height : 22,
+			margin : 3
+			//height : 22,
 		}
-		this._form = Ext.create('Ext.form.Panel',formConfig)
+		this._form = Ext.create('Ext.panel.Panel',formConfig)
 		this._form.add([this.authkey_field,this.refreshButton])
-		this.items = [this._form]
+		
+		//------------------------build link helper--------------
+		var configHelper = {
+			//height : 200,
+			margin : '20 0 0 0'
+		}
+		this.panelHelper = Ext.create('Ext.panel.Panel',formConfig)
+		
+		
+		this.items = Ext.create('Ext.panel.Panel',{
+				items:[this._form,this.panelHelper],
+				height : 80,
+				border : false
+			})
 		//this.items = [this.authkey_field,this.refreshButton]
 		
 		this.callParent(arguments)
 		
+		this.updateHelper()
 		//-----------------------binding events-------------------
 		this.refreshButton.on('click',this._new_authkey,this)
 	},
@@ -81,10 +109,21 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 	},
 	
 	updateTextBox : function(text){
-		if (text != undefined)
+		if (text != undefined){
 			this.authkey_field.setValue(text)
-		else
+			this.updateHelper()
+		}else{
 			global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
+		}
+	},
+	
+	updateHelper : function(){
+		var url = location.origin + '/' + global.account.authkey
+		this.panelHelper.update(this.helperTemplate.apply({
+				style : 'text-align:center;',
+				link : location.origin + '/' + global.account.authkey,
+				tinyLink : url.slice(0,40) + '...'
+			}))
 	}
 
 });
