@@ -196,12 +196,13 @@ Ext.define('canopsis.controller.Account', {
 		//------------------------------ajax request----------------------
 		log.debug('Ask webserver for new authentification key',this.logAuthor)
 		Ext.Ajax.request({
-			url: '/account/newAuthKey/',
+			url: '/account/getNewAuthKey/',
 			method: 'GET',
 			scope: scope,
 			success: function(response){
 				var object_response = Ext.decode(response.responseText)
 				if(object_response.success == true){
+					global.notify.notify(_('Success'),_('Your authentification key is updated'))
 					if(callback_func)
 						callback_func.call(this,object_response.data.authkey)
 				}else{
