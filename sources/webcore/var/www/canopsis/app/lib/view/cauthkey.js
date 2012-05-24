@@ -44,8 +44,8 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 		
 		var buttonConfig = {
 			tooltip : _('Ask for a new key'),
-			text: 'R',
-			width : 32
+			iconCls: 'icon-reload',
+			width : 26
 		}
 		this.refreshButton = Ext.widget('button',buttonConfig)
 		
