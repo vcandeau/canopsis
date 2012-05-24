@@ -205,11 +205,11 @@ Ext.define('canopsis.controller.Account', {
 					if(callback_func)
 						callback_func.call(this,object_response.data.authkey)
 				}else{
-					log.error('Ajax request failed',this.logAuthor)
-					global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
+					log.error('Ajax output incorrect',this.logAuthor)
 				}
 			},
 			failure : function(response){
+				global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
 				log.error('Error while fetching new Authkey',this.logAuthor)
 			}
 		})
