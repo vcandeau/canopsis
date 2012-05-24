@@ -163,32 +163,37 @@ Ext.define('canopsis.controller.View', {
 	create_new_view: function(){
 		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName){
 			if (btn == 'ok'){		
-				//check if view already exist
-				var store = Ext.data.StoreManager.lookup('Views')
-				var already_exist = store.findBy(
-						function(storeRecord, id){
-								if(storeRecord.get('crecord_name') == viewName){
-									return true;  // a record with this data exists
-								}
-					}, this);
-
-				if(already_exist != -1){
-					Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
-					
-				} else {
-					// Create view					
-					var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
-					
-					//building record
-					var record = Ext.create('canopsis.model.View')
-					record.set('_id', view_id)
-					record.set('id', view_id)
-					record.set('crecord_name',viewName)
-					record.set('leaf', true)
-					
-					this.add_to_home(record,true)
-				}
-
+				
+				Ext.Ajax.request({
+					url: '/ui/view/exist/' + viewName,
+					method: 'GET',
+					scope: this,
+					success: function(response){
+						var text = Ext.decode(response.responseText)
+						if(text.data.exist == true){
+							Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
+						} else {
+							// Create view					
+							var view_id = 'view.'+ global.account.user + '.' + global.gen_id()
+							
+							//building record
+							var record = Ext.create('canopsis.model.View')
+							record.set('_id', view_id)
+							record.set('id', view_id)
+							record.set('crecord_name',viewName)
+							record.set('leaf', true)
+							
+							this.add_to_home(record,true)
+						}
+					},
+					failure : function(response){
+						if(response.status == 403){
+							global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+							log.error(_('Access denied'))
+						}
+					}
+				});
+				
 			} else {
 				log.debug('cancel new view',this.logAuthor)
 			}
