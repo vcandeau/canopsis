@@ -27,6 +27,7 @@ import ConfigParser, os
 
 import bottle
 from bottle import route, run, static_file, redirect
+from libexec.auth import autologin
 
 ## Hack: Prevent "ExtractionError: Can't extract file(s) to egg cache" when 2 process extract egg at the same time ...
 try:
@@ -109,8 +110,15 @@ def favicon():
 	return
 
 @bottle.route('/')
+@bottle.route('/:key')
 @bottle.route('/index.html')
-def index():
+def index(key=None):
+	#autologin
+	if key:
+		if len(key) == 56:
+			logger.debug('key for autologin privided, seach if account match')
+			autologin(key)
+
 	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
 
 ## Gunicorn Hook

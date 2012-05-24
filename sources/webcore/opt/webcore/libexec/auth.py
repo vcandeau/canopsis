@@ -97,6 +97,31 @@ def auth(login=None, password=None):
 		
 	return HTTPError(403, "Forbidden")
 
+@get('/autoLogin/:key')
+def autologin(key=None):
+	if not key:
+		return HTTPError(404, "No key provided")
+	#---------------------Get storage/account-------------------
+	storage = get_storage(namespace='object')
+	
+	mfilter = {
+				'crecord_type':'account',
+				'authkey':key,
+			}
+				
+	foundByKey = storage.find(mfilter=mfilter,account=caccount(user='root'))
+	#-------------------------if found, create session and redirect------------------------
+	if len(foundByKey) == 1:
+		account = caccount(foundByKey[0])
+		s = bottle.request.environ.get('beaker.session')
+		s['account_id'] = account._id
+		s['account_user'] = account.user
+		s['auth_on'] = True
+		s.save()
+		logger.debug('Autologin success, redirecting browser')
+		redirect('/static/canopsis/index.html')
+	else:
+		logger.debug('Autologin failed, no key match the provided one')
 
 @get('/keyAuth/:login/:key')
 @get('/keyAuth/:login')
