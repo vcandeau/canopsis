@@ -188,7 +188,15 @@ Ext.define('canopsis.controller.Account', {
 			log.error(_('Incorrect right option given'),this.logAuthor)
 		}
 		
-	}
+	},
 	
+	new_authkey : function(){
+		var new_authkey = 0	
+		
+		//------------------------------ajax request----------------------
+		
+		return new_authkey
+		
+	}
 	
 });
