@@ -93,16 +93,16 @@ def account_newAuthKey():
 	account = get_account()
 	storage = get_storage(namespace='object',account=account)
 	
-	logger.debug('Chang AuthKey for : %s' % account.user)
+	logger.debug('Change AuthKey for : %s' % account.user)
 	
 	try:
 		account.generate_new_authkey()
 		storage.put(account)
 		logger.debug('New auth key is : %s' % account.get_authkey())
-		return {'total': 0, 'success': True, 'data': [{'authkey': account.get_authkey()}]}
+		return {'total': 0, 'success': True, 'data': {'authkey': account.get_authkey()}}
 	except Exception,err:
 		logger.error('Error while updating auth key : %s' % err)
-		return {'total': 0, 'success': False, 'data': [{'success':False}]}
+		return {'total': 0, 'success': False, 'data': {}}
 	
 #### GET
 @get('/account/:_id',apply=[check_auth])

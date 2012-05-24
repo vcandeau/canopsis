@@ -63,13 +63,28 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 		
 		this.callParent(arguments)
 		
-		this._bindEvents()
+		//-----------------------binding events-------------------
+		this.refreshButton.on('click',this._new_authkey,this)
 	},
 
 
-	_bindEvents : function(){
-		log.debug('Binding Events',this.logAuthor)
+	_new_authkey : function(){
+		log.debug('Asking for a new authentification key',this.logAuthor)
 		
+		Ext.MessageBox.confirm(_('Confirm'), _('If you generate a new authentification key, the old one will NOT work anymore. Do want to update the key now ?'),
+			function(btn, text){
+				if (btn == 'yes')
+					var authkey = global.accountCtrl.new_authkey(this.updateTextBox,this)
+				else 
+					log.debug('cancel new key generation',this.logAuthor)
+			},this)
+	},
+	
+	updateTextBox : function(text){
+		if (text != undefined)
+			this.authkey_field.setValue(text)
+		else
+			global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
 	}
 
 });
