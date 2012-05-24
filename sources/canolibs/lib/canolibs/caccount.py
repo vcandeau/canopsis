@@ -103,7 +103,7 @@ class caccount(crecord):
 		return self.authkey
 		
 	def check_authkey(self,authkey):
-		if authkey == self.get_authkey():
+		if str(authkey).upper() == str(self.get_authkey()).upper():
 			return True
 		else:
 			return False
