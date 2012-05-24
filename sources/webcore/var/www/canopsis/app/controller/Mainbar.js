@@ -37,6 +37,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="cleartabscache"]' : {
 				click : this.cleartabscache,
 			},
+			'Mainbar menuitem[action="authkey"]' : {
+				click : this.authkey,
+			},
 			'Mainbar combobox[action="viewSelector"]' : {
 				select : this.openViewSelector,
 			},
@@ -119,6 +122,12 @@ Ext.define('canopsis.controller.Mainbar', {
 		log.debug('Clear tabs localstore', this.logAuthor);
 		var store = Ext.data.StoreManager.lookup('Tabs');
 		store.proxy.clear();
+	},
+	
+	authkey: function(){
+		log.debug('Show authkey',this.logAuthor)
+		var authkey = Ext.create('canopsis.lib.view.cauthkey')
+		authkey.show()
 	},
 
 	showconsole: function(){
