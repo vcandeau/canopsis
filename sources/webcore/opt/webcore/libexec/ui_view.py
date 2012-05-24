@@ -199,3 +199,21 @@ def tree_update(name='None'):
 		else :
 			logger.error('ParentNode doesn\'t exist')
 
+@get('/ui/view/exist/:name',apply=[check_auth])
+def check_exist(name=None):
+	namespace = 'object'
+	account = get_account()
+	storage = get_storage(namespace=namespace, account=account)
+	
+	mfilter = {'crecord_name':name}
+	
+	try:
+		logger.debug('try to get view')
+		record_child = storage.find_one(mfilter=mfilter, account=account)
+		if record_child:
+			return {"total": 1, "success": True, "data": {'exist' : True}}
+		else:
+			return {"total": 0, "success": True, "data": {'exist' : False}}
+	except Exception,err:
+		logger.error('Error while fetching view : %s' % err)
+		return {"total": 0, "success": False, "data": {}}
