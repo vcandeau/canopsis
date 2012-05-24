@@ -203,8 +203,10 @@ Ext.define('canopsis.controller.Account', {
 				var object_response = Ext.decode(response.responseText)
 				if(object_response.success == true){
 					global.notify.notify(_('Success'),_('Your authentification key is updated'))
+					var authkey = object_response.data.authkey
+					global.account.authkey = authkey
 					if(callback_func)
-						callback_func.call(this,object_response.data.authkey)
+						callback_func.call(this,authkey)
 				}else{
 					log.error('Ajax output incorrect',this.logAuthor)
 				}
