@@ -98,6 +98,8 @@ class caccount(crecord):
 		return hashlib.sha1( str(shadow).upper() + str( int( time.time() / 10)*10 )  ).hexdigest()
 
 	def get_authkey(self):
+		if not self.authkey:
+			return self.generate_new_authkey()
 		return self.authkey
 		
 	def generate_new_authkey(self):
