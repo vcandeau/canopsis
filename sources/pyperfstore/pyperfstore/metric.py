@@ -348,7 +348,10 @@ class metric(object):
 		if not self.auto_point_per_dca and self.point_per_dca:
 			return self.point_per_dca
 
-		max_size = ((self.dca_time_window + 3000) / self.interval)
+		if self.interval:
+			max_size = ((self.dca_time_window + 3000) / self.interval)
+		else:
+			return self.min_point_per_dca
 
 		if max_size > self.max_point_per_dca:
 			max_size = self.max_point_per_dca
