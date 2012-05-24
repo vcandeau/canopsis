@@ -102,6 +102,12 @@ class caccount(crecord):
 			return self.generate_new_authkey()
 		return self.authkey
 		
+	def check_authkey(self,authkey):
+		if authkey == self.get_authkey():
+			return True
+		else:
+			return False
+		
 	def generate_new_authkey(self):
 		self.authkey = hashlib.sha224(str(getrandbits(512))).hexdigest()
 		return self.authkey
