@@ -88,6 +88,27 @@ def account_setConfig(_id):
 	
 	return output
 
+@get('/account/getAuthKey/:dest_account',apply=[check_auth])
+def account_getAuthKey(dest_account):
+	if not dest_account:
+		return HTTPError(404, 'No account specified')
+	
+	#------------------------get accounts----------------------
+	account = get_account()
+	storage = get_storage(namespace='object',account=account)
+	
+	_id = 'account.%s' % dest_account
+	
+	try:
+		aim_account = caccount(storage.get(_id,account=account))
+		
+		return {'total':1,'success':True,'data':{'authkey':aim_account.get_authkey()}}
+	except Exception,err:
+		logger.debug('Error while fetching account : %s' % err)
+		return {'total':0,'success':False,'data':{'output':str(err)}}
+		
+	
+
 @get('/account/getNewAuthKey/:dest_account',apply=[check_auth])
 def account_newAuthKey(dest_account):
 	if not dest_account:
