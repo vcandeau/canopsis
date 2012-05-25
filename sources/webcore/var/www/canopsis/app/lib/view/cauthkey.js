@@ -121,7 +121,10 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 		Ext.MessageBox.confirm(_('Confirm'), _('If you generate a new authentification key, the old one will NOT work anymore. Do want to update the key now ?'),
 			function(btn, text){
 				if (btn == 'yes')
-					global.accountCtrl.new_authkey(this.account,this.updateTextBox,this)
+					if(this.account)
+						global.accountCtrl.new_authkey(this.account,this.updateTextBox,this)
+					else
+						global.accountCtrl.new_authkey(global.account.user,this.updateTextBox,this)
 				else 
 					log.debug('cancel new key generation',this.logAuthor)
 			},this)
