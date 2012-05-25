@@ -22,10 +22,12 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 	extend: 'Ext.window.Window',
 	
 	alias: 'widget.crights',
-	
-	title: _('My Authentification key'),
+
+	title: _('Authentification key'),
 	
 	constrain: true,
+	
+	account : undefined,
 	
 	//layout : 'vbox',
 	
@@ -34,6 +36,11 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 		
+		//set title
+		if(this.account)
+			this.title += ' : ' + this.account
+		
+		/*
 		this.helperTemplate = new Ext.Template(
 			'<div name="helper" style="{style}">',
 				'<h2>You can auto Logging in canopsis with this link</h2>',
@@ -46,12 +53,11 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 			'</div>',
 			{compiled: true}
 		);
-		
+		*/
 		//-----------------------Build inner form----------------
 		var config = {
 			readOnly : true,
 			width : 450,
-			value : global.account.authkey
 		}
 		this.authkey_field = Ext.widget('textfield',config)
 		
@@ -63,15 +69,23 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 		this.refreshButton = Ext.widget('button',buttonConfig)
 		
 		//-------------------------Build form--------------------
+		
+		if (global.account.user == 'root')
+			var form_width = config.width + buttonConfig.width
+		else
+			var form_width = config.width
+		
 		var formConfig = {
 			border:false,
 			layout:'hbox',
-			width : config.width + buttonConfig.width,
+			width : form_width,
 			margin : 3
 			//height : 22,
 		}
 		this._form = Ext.create('Ext.panel.Panel',formConfig)
-		this._form.add([this.authkey_field,this.refreshButton])
+		this._form.add([this.authkey_field])
+		if (global.account.user == 'root')
+			this._form.add(this.refreshButton)
 		
 		//------------------------build link helper--------------
 		var configHelper = {
@@ -80,17 +94,22 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 		}
 		this.panelHelper = Ext.create('Ext.panel.Panel',formConfig)
 		
-		
 		this.items = Ext.create('Ext.panel.Panel',{
-				items:[this._form,this.panelHelper],
-				height : 80,
+				//items:[this._form,this.panelHelper],
+				items:[this._form],
+				height : 28,
 				border : false
 			})
-		//this.items = [this.authkey_field,this.refreshButton]
 		
 		this.callParent(arguments)
 		
-		this.updateHelper()
+		//------------------------set authkey value-------------
+		if(this.account)
+			this.getAccountKey()
+		else
+			this.updateTextBox(global.account.authkey)
+		
+		//this.updateHelper()
 		//-----------------------binding events-------------------
 		this.refreshButton.on('click',this._new_authkey,this)
 	},
@@ -102,7 +121,7 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 		Ext.MessageBox.confirm(_('Confirm'), _('If you generate a new authentification key, the old one will NOT work anymore. Do want to update the key now ?'),
 			function(btn, text){
 				if (btn == 'yes')
-					global.accountCtrl.new_authkey(this.updateTextBox,this)
+					global.accountCtrl.new_authkey(this.account,this.updateTextBox,this)
 				else 
 					log.debug('cancel new key generation',this.logAuthor)
 			},this)
@@ -111,7 +130,7 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 	updateTextBox : function(text){
 		if (text != undefined){
 			this.authkey_field.setValue(text)
-			this.updateHelper()
+			//this.updateHelper()
 		}else{
 			global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
 		}
@@ -124,6 +143,11 @@ Ext.define('canopsis.lib.view.cauthkey' ,{
 				link : location.origin + '/' + global.account.authkey,
 				tinyLink : url.slice(0,40) + '...'
 			}))
+	},
+	
+	getAccountKey : function(){
+		log.debug('Get account Authkey',this.logAuthor)
+		global.accountCtrl.get_authkey(this.account,this.updateTextBox,this)
 	}
 
 });
