@@ -91,6 +91,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this._sendByMail, this)
 			}
 			
+			//authKey
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=authkey]')
+			for (i in btns){
+				btns[i].on('click', this._authkey, this)
+			}
+			
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]')
 			for (i in btns){
 				btns[i].on('click', this._runItem, this)
@@ -442,6 +448,21 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if(this.sendByMail){
 				this.sendByMail(item)
 		}
+	},
+	
+	_authkey: function(){
+		log.debug('Clicked authentification key',this.logAuthor)
+		grid = this.grid;
+		item = grid.getSelectionModel().getSelection()[0];
+		
+		var config = {
+			account: item.get('user'),
+			constrain:true,
+			renderTo: grid.id
+		}
+		
+		var authkey = Ext.create('canopsis.lib.view.cauthkey',config)
+		authkey.show()
 	},
 	
 	_runItem: function(){

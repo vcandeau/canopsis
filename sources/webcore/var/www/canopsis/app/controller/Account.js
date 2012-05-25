@@ -192,19 +192,46 @@ Ext.define('canopsis.controller.Account', {
 	
 	//if callback_func != null and ajax success -> callback is call in passed scope with
 	//new key as argument
-	new_authkey : function(callback_func,scope){
-		//------------------------------ajax request----------------------
-		log.debug('Ask webserver for new authentification key',this.logAuthor)
+	new_authkey : function(account,callback_func,scope){
+		if(account){
+			//------------------------------ajax request----------------------
+			log.debug('Ask webserver for new authentification key',this.logAuthor)
+			Ext.Ajax.request({
+				url: '/account/getNewAuthKey/' + account,
+				method: 'GET',
+				scope: scope,
+				success: function(response){
+					var object_response = Ext.decode(response.responseText)
+					if(object_response.success == true){
+						global.notify.notify(_('Success'),_('Your authentification key is updated'))
+						var authkey = object_response.data.authkey
+						global.account.authkey = authkey
+						if(callback_func)
+							callback_func.call(this,authkey)
+					}else{
+						log.error('Ajax output incorrect',this.logAuthor)
+					}
+				},
+				failure : function(response){
+					global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
+					log.error('Error while fetching new Authkey',this.logAuthor)
+				}
+			})
+		}else{
+			log.error('No account provided for Authkey')
+		}
+	},
+
+	get_authkey : function(account,callback_func,scope){
+		log.debug('Ask webserver for authentification key',this.logAuthor)
 		Ext.Ajax.request({
-			url: '/account/getNewAuthKey/',
+			url: '/account/getAuthKey/' + account,
 			method: 'GET',
 			scope: scope,
 			success: function(response){
 				var object_response = Ext.decode(response.responseText)
 				if(object_response.success == true){
-					global.notify.notify(_('Success'),_('Your authentification key is updated'))
 					var authkey = object_response.data.authkey
-					global.account.authkey = authkey
 					if(callback_func)
 						callback_func.call(this,authkey)
 				}else{
@@ -212,11 +239,9 @@ Ext.define('canopsis.controller.Account', {
 				}
 			},
 			failure : function(response){
-				global.notify.notify(_('Error'),_('An error have occured during the updating process'),'error')
+				global.notify.notify(_('Error'),_('An error have occured during the process'),'error')
 				log.error('Error while fetching new Authkey',this.logAuthor)
 			}
 		})
-	}
-
-	
+	}	
 });
