@@ -52,6 +52,7 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	opt_menu_send_mail:false,
 	opt_menu_rename: false,
 	opt_menu_run_item: false,
+	opt_menu_authKey: false,
 	
 	opt_confirmation_delete: true,
 	
@@ -227,6 +228,16 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 							iconCls: 'icon-access',
 							text: _('Rights'),
 							action: 'rights',
+						})
+					)
+				}
+				
+				if(this.opt_menu_authKey == true){
+					myArray.push(
+						Ext.create('Ext.Action', {
+							iconCls: 'icon-access',
+							text: _('Authentification key'),
+							action: 'authkey',
 						})
 					)
 				}
