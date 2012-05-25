@@ -24,7 +24,22 @@ function post_install(){
 	
 	#launch_cmd 1 service mongodb start
 	launch_cmd 1 mongod -f $PREFIX/etc/mongodb.conf --nojournal --noprealloc --fork
-	sleep 5
+
+        echo -n "Safe wait ..."
+        STATE=1
+        TRY=0
+        while [ $STATE -ne 0 ]; do
+            if [ $TRY -eq 10 ]; then
+                break
+            fi
+            sleep 1
+            echo "show dbs" | mongo &> /dev/null
+            STATE=$?
+            TRY=$((TRY + 1))
+            echo -n "."
+        done
+        echo
+        check_code $STATE "Failed to join MongoDB"
 
 	#check if db already exist
 	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
