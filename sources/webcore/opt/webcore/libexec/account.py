@@ -87,19 +87,32 @@ def account_setConfig(_id):
 		output={'total': 0, 'success': False, 'data': []}
 	
 	return output
+
+@get('/account/getNewAuthKey/:dest_account',apply=[check_auth])
+def account_newAuthKey(dest_account):
+	if not dest_account:
+		return HTTPError(404, 'No account specified')
 	
-@get('/account/getNewAuthKey/',apply=[check_auth])
-def account_newAuthKey():
+	#------------------------get accounts----------------------
 	account = get_account()
 	storage = get_storage(namespace='object',account=account)
 	
-	logger.debug('Change AuthKey for : %s' % account.user)
+	_id = 'account.%s' % dest_account
 	
 	try:
-		account.generate_new_authkey()
-		storage.put(account)
-		logger.debug('New auth key is : %s' % account.get_authkey())
-		return {'total': 0, 'success': True, 'data': {'authkey': account.get_authkey()}}
+		aim_account = caccount(storage.get(_id,account=account))
+	except:
+		logger.debug('aimed account not found')
+		return HTTPError(404, 'Wrong account name or no enough rights')
+	
+	#---------------------generate new key-------------------
+	logger.debug('Change AuthKey for : %s' % aim_account.user)
+	
+	try:
+		aim_account.generate_new_authkey()
+		storage.put(aim_account)
+		logger.debug('New auth key is : %s' % aim_account.get_authkey())
+		return {'total': 0, 'success': True, 'data': {'authkey': aim_account.get_authkey(),'account':aim_account.user}}
 	except Exception,err:
 		logger.error('Error while updating auth key : %s' % err)
 		return {'total': 0, 'success': False, 'data': {}}
