@@ -47,8 +47,10 @@ logger = logging.getLogger('Event')
 @get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource',apply=[check_auth])
 @get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state',apply=[check_auth])
 @get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:output',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:output/:long_output',apply=[check_auth])
+@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data',apply=[check_auth])
+@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data/:perf_data_array',apply=[check_auth])
+@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data/:perf_data_array/:output',apply=[check_auth])
+@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data/:perf_data_array/:output/:long_output',apply=[check_auth])
 def send_event(connector=None,
 				connector_name=None,
 				event_type=None,
@@ -56,6 +58,8 @@ def send_event(connector=None,
 				resource=None,
 				state=None,
 				state_type=None,
+				perf_data=None,
+				perf_data_array=None,
 				output=None,
 				long_output=None
 			):
@@ -99,4 +103,43 @@ def send_event(connector=None,
 	if not long_output:
 		long_output = request.params.get('long_output', default=None)
 		
-	return 'success'
+	if not perf_data:
+		perf_data = request.params.get('perf_data', default=None)
+		
+	if not perf_data_array:
+		perf_data_array = request.params.get('perf_data_array', default=None)
+	
+	#------------------------------forging event----------------------------------
+	
+	event = cevent.forger(
+				connector = connector,
+				connector_name = connector_name,
+				event_type = event_type,
+				source_type = source_type,
+				resource= resource,
+				state = state,
+				state_type = state_type,
+				output = output,
+				long_output = long_output,
+				perf_data = perf_data,
+				perf_data_array = perf_data_array,
+			)
+	
+	logger.debug('The forged event is : ')
+	logger.debug(str(event))
+	
+	#------------------------------AMQP Part--------------------------------------
+	
+	key = cevent.get_routingkey(event)
+	
+	amqp = camqp()
+	amqp.start()
+	
+	amqp.publish(event, key, amqp.exchange_name_events)
+	
+	amqp.stop()
+	amqp.join()
+	
+	logger.debug('Amqp event published')
+	
+	return {'total':1,'success':True,'data':{'event':event}}
