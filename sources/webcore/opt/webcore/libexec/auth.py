@@ -118,10 +118,13 @@ def autologin(key=None):
 		s['account_user'] = account.user
 		s['auth_on'] = True
 		s.save()
-		logger.debug('Autologin success, redirecting browser')
-		redirect('/static/canopsis/index.html')
+		#logger.debug('Autologin success, redirecting browser')
+		#redirect('/static/canopsis/index.html')
+		account = caccount(foundByKey[0])
+		return {'total':1,'data':[account.dump()],'success':True}
 	else:
 		logger.debug('Autologin failed, no key match the provided one')
+		return {'total':0,'data':{},'success':False}
 
 @get('/keyAuth/:login/:key')
 @get('/keyAuth/:login')
@@ -201,6 +204,15 @@ def check_auth(callback):
 		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
 	return do_auth
+
+def browserAutoLogin(key):
+	try:
+		output = autoLogin(key)
+		if output['success']:
+			redirect('/static/canopsis/index.html')
+	except Exception,err:
+		logger.error('Browser autologin error : %s' % err)
+		
 
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):
