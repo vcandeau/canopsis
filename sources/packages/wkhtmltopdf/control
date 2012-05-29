@@ -2,7 +2,7 @@
 
 NAME="wkhtmltopdf"
 VERSION="0.11.0_rc1"
-RELEASE=1
+RELEASE=2
 DESCRIPTION=""
 REQUIRES=""
 
