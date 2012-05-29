@@ -71,7 +71,7 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	launch_cmd 1 python $PREFIX/opt/mongodb/updateDB.py
+	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
 }
 
