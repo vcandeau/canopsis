@@ -39,22 +39,24 @@ logger = logging.getLogger('Event')
 
 ##################################################################################
 
-@get('/sendEvent/',apply=[check_auth])
-@get('/sendEvent/:connector',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data/:perf_data_array',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data/:perf_data_array/:output',apply=[check_auth])
-@get('/sendEvent/:connector/:connector_name/:event_type/:source_type/:resource/:state/:state_type/:perf_data/:perf_data_array/:output/:long_output',apply=[check_auth])
+@post('/sendEvent/',apply=[check_auth])
+@post('/sendEvent/:connector',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array/:output',apply=[check_auth])
+@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array/:output/:long_output',apply=[check_auth])
 def send_event(connector=None,
 				connector_name=None,
 				event_type=None,
 				source_type=None,
+				component=None,
 				resource=None,
 				state=None,
 				state_type=None,
@@ -67,31 +69,43 @@ def send_event(connector=None,
 	if not connector:
 		connector = request.params.get('connector', default=None)
 		if not connector :
+			logger.error('No connector argument')
 			return HTTPError(400, 'Missing connector argument')
 			
 	if not connector_name:
 		connector_name = request.params.get('connector_name', default=None)
 		if not connector_name:
+			logger.error('No connector name argument')
 			return HTTPError(400, 'Missing connector name argument')
 			
 	if not event_type:
 		event_type = request.params.get('event_type', default=None)
 		if not event_type:
+			logger.error('No event_type argument')
 			return HTTPError(400, 'Missing event type argument')
 		
 	if not source_type:
 		source_type = request.params.get('source_type', default=None)
 		if not source_type:
+			logger.error('No source_type argument')
 			return HTTPError(400, 'Missing source type argument')
-		
+	
+	if not component:
+		component = request.params.get('component', default=None)
+		if not component:
+			logger.error('No component argument')
+			return HTTPError(400, 'Missing component argument')
+	
 	if not resource:
 		resource = request.params.get('resource', default=None)
 		if not resource:
+			logger.error('No resource argument')
 			return HTTPError(400, 'Missing resource argument')
 		
 	if not state:
 		state = request.params.get('state', default=None)
 		if not state:
+			logger.error('No state argument')
 			return HTTPError(400, 'Missing state argument')
 		
 	if not state_type:
@@ -116,6 +130,7 @@ def send_event(connector=None,
 				connector_name = connector_name,
 				event_type = event_type,
 				source_type = source_type,
+				component = component,
 				resource= resource,
 				state = state,
 				state_type = state_type,
