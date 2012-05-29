@@ -30,9 +30,9 @@ storage = get_storage(account=root, namespace='object')
 
 def init():
 	### Default Dasboard
-	data = {'xtype': 'text', 'text': 'Welcome to Canopsis !'}
-	create_view('_default_.dashboard', 'Dashboard', data, autorm=False)
-
+	data = [{'position': {'width': 8, 'top': 2, 'left': 8, 'height': 7}, 'data': {'bar_search': False, 'show_last_check': True, 'xtype': 'list', 'pageSize': 100, 'title': 'Resource problems', 'show_source_type': True, 'border': True, 'default_sort_direction': 'DESC', 'scroll': True, 'filter': '{ "$and": [ {"source_type":"resource"}, {"state": { "$ne": 0 }} ]}', 'default_sort_column': 'state', 'paging': False, 'show_resource': True, 'reload': False, 'show_state': True, 'refreshInterval': 300, 'show_output': True, 'show_state_type': True, 'column_sort': True, 'hideHeaders': False, 'show_component': True}, 'id': '1336723949800-5'}, {'position': {'width': 8, 'top': 2, 'left': 0, 'height': 7}, 'data': {'bar_search': False, 'show_last_check': True, 'xtype': 'list', 'pageSize': 100, 'title': 'Component problems', 'show_source_type': True, 'border': True, 'default_sort_direction': 'DESC', 'scroll': True, 'filter': '{ "$and": [ {"source_type":"component"}, {"state": { "$ne" : 0 }} ]}', 'default_sort_column': 'state', 'paging': False, 'show_resource': False, 'reload': False, 'show_state': True, 'refreshInterval': 300, 'show_output': True, 'show_state_type': True, 'column_sort': True, 'hideHeaders': False, 'show_component': True}, 'id': '1336724023524-4'}, {'position': {'width': 4, 'top': 0, 'left': 0, 'height': 2}, 'data': {'refreshInterval': 0, 'title': '', 'border': False, 'xtype': 'text', 'text': '<img src="themes/canopsis/resources/images/logo_canopsis.png" height="100%">'}, 'id': '1336724801997-7'}]
+	create_view('_default_.dashboard', 'Dashboard', data)
+		
 	### Account
 	data = { 'xtype': 'AccountGrid'}
 	create_view('account_manager', 'Accounts', data)
@@ -89,7 +89,14 @@ def create_view(_id, name, data, position=None, mod='o+r', autorm=True):
 		
 	logger.info(" + Create view '%s'" % name)
 	record = crecord({'_id': 'view.%s' % _id }, type='view', name=name)
-	record.data['items'] = [ {'position': position, 'data': data } ]
+	
+	if  isinstance(data, list):
+		record.data['items'] = data
+	elif  isinstance(data, dict):
+		record.data['items'] = [ {'position': position, 'data': data } ]
+	else:
+		raise("Invalide data ...")
+		
 	record.chmod(mod)
 	storage.put(record)
 	return record

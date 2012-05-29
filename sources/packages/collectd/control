@@ -13,7 +13,7 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	mkdir -p $PREFFIX/etc/collectd.d
+	mkdir -p $PREFIX/etc/collectd.d
 }
 
 function pre_remove(){

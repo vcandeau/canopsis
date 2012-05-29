@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="mongodb-conf"
-VERSION=0.1
-RELEASE=1
+VERSION=0.2
+RELEASE=0
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python canolibs mongodb"
 
@@ -24,7 +24,22 @@ function post_install(){
 	
 	#launch_cmd 1 service mongodb start
 	launch_cmd 1 mongod -f $PREFIX/etc/mongodb.conf --nojournal --noprealloc --fork
-	sleep 5
+
+        echo -n "Safe wait ..."
+        STATE=1
+        TRY=0
+        while [ $STATE -ne 0 ]; do
+            if [ $TRY -eq 10 ]; then
+                break
+            fi
+            sleep 1
+            echo "show dbs" | mongo &> /dev/null
+            STATE=$?
+            TRY=$((TRY + 1))
+            echo -n "."
+        done
+        echo
+        check_code $STATE "Failed to join MongoDB"
 
 	#check if db already exist
 	if [ -f  $PREFIX/var/lib/mongodb/canopsis.ns ]
@@ -51,12 +66,14 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
 }
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	launch_cmd 1 python $PREFIX/opt/mongodb/updateDB.py
+	service mongodb start
+	sleep 2
+
+	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
 }
 
