@@ -98,7 +98,7 @@ def auth(login=None, password=None):
 	return HTTPError(403, "Forbidden")
 
 @get('/autoLogin/:key')
-def autologin(key=None):
+def autoLogin(key=None):
 	if not key:
 		return HTTPError(404, "No key provided")
 	#---------------------Get storage/account-------------------
@@ -204,15 +204,6 @@ def check_auth(callback):
 		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
 	return do_auth
-
-def browserAutoLogin(key):
-	try:
-		output = autoLogin(key)
-		if output['success']:
-			redirect('/static/canopsis/index.html')
-	except Exception,err:
-		logger.error('Browser autologin error : %s' % err)
-		
 
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):

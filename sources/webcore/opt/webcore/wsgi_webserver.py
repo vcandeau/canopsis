@@ -27,7 +27,7 @@ import ConfigParser, os
 
 import bottle
 from bottle import route, run, static_file, redirect
-from libexec.auth import browserAutoLogin
+from libexec.auth import autoLogin
 
 ## Hack: Prevent "ExtractionError: Can't extract file(s) to egg cache" when 2 process extract egg at the same time ...
 try:
@@ -117,9 +117,13 @@ def index(key=None):
 	if key:
 		if len(key) == 56:
 			logger.debug('key for autologin privided, seach if account match')
-			browserAutoLogin(key)
-
-	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
+			output = autoLogin(key)
+			if output['success']:
+				logger.info('autoLogin success')
+				redirect('/static/canopsis/index.html')
+			else:
+				logger.info('autoLogin failed')
+				redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
 
 ## Gunicorn Hook
 def on_starting(server):
