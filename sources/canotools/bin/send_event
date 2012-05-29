@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, getopt, json
+import sys, os, getopt, json, urllib2, cookielib
 
 from cstorage import cstorage
 from caccount import caccount
@@ -30,8 +30,9 @@ def usage():
 	print(" Usage: send_event ")
 	print
 	print(" Options:")
+	print("  -s, --server=[SERVER_ADDR]")
+	print("		webserver address (default : localhost:8082)")
 	print("  -a, --authkey=[AUTHKEY]")
-	print
 	print("  -f, --file=[FILE_PATH]")
 	print("		file contraining a json event to send")
 	print("  -j, --json=[JSON]")
@@ -42,8 +43,8 @@ def usage():
 def main(argv):
 	try:
 		opts, args = getopt.getopt(	sys.argv[1:], 
-									"a:f:j:h",
-									["authkey=", "file=", "json=", "help"])
+									"s:a:f:j:h",
+									["server=","authkey=", "file=", "json=", "help"])
 	except getopt.GetoptError, err:
 		print(err)
 		usage()
@@ -53,10 +54,50 @@ def main(argv):
 		usage()
 		sys.exit()
 	
+	#---------------------------option processing----------------------
+	authkey = None
+	server = 'localhost:8082'
+	json_file = None
+	json_string = None
+	
 	for opt, arg in opts:
 		if opt in ('-h', '--help'):
 			usage()
 			sys.exit()
+		if opt in ( '--server','-s'):
+			server = arg
+		if opt in ( '--authkey','-a'):
+			authkey = arg
+		if opt in ( '--file','-f'):
+			json_file = arg
+		if opt in ( '--json','-j'):
+			try:
+				json_string = json.loads(arg)
+			except:
+				print('Bad json string')
+				sys.exit()
+	
+	#---------------------------authentificate-------------------------
+	if not authkey:
+		print('You must provide a authkey to access to webserver')
+		sys.exit()
+		
+	cj = cookielib.CookieJar()
+	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+	print('http://%s/autoLogin/%s' % (server,authkey))
+	r = opener.open('http://%s/autoLogin/%s' % (server,authkey))
+	r = opener.open('http://%s/account/me' % server)
+	
+	try:
+		response = json.loads(r.read())
+	except Exception,err:
+		print('Error: bad response from server %s' % err)
+		
+	if not response['success']:
+		print('Bad authkey, no matching with any user')
+		sys.exit()
+	
+	#-----------------------switch to the right function function-------------
 	
 	
 		
