@@ -69,7 +69,8 @@ def main(argv):
 		if opt in ( '--authkey','-a'):
 			authkey = arg
 		if opt in ( '--file','-f'):
-			json_file = arg
+			file_name, file_extension = os.path.splitext(arg)
+			file_path = arg
 		if opt in ( '--json','-j'):
 			try:
 				json_string = json.loads(arg)
@@ -98,8 +99,33 @@ def main(argv):
 		sys.exit()
 	
 	#------------------------------prepare event-----------------------
+	event = None
 	
-	#if json_string:
+	if json_string:
+		data = json_string
+	
+	if file_path:
+		if file_extension != '.json':
+			print('Error: Invalid file format (Must be .json)')
+			usage()
+			sys.exit()
+			
+		if not os.path.exists(file_path):
+			print('Error: File not found (%s)' % file_path)
+			usage()
+			sys.exit()
+			
+		#------------------read file-------------------	
+		try:
+			event = json.loads(open(file_path, 'r').read())
+		except ValueError:
+			print('Error: Invalid json file')
+			usage()
+			sys.exit()
+			
+		
+		
+		
 	'''
 	data = {
 		'connector':		'connector',
@@ -116,7 +142,8 @@ def main(argv):
 		'perf_data_array':	'perf_data_array',
 	}
 	'''
-	request = urllib2.Request('http://%s/sendEvent/' % server, urllib.urlencode(data))
+	
+	request = urllib2.Request('http://%s/sendEvent/' % server, urllib.urlencode(event))
 	print(str(request))
 	r = opener.open(request)
 	print(r.read())
