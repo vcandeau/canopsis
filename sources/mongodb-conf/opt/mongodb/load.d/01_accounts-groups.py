@@ -35,7 +35,7 @@ def init():
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
 		('root','root', 'root', 'Lastname', 'Firstname', ''),
-		('canopsis','canopsis', 'root', 'Psis', 'Cano', '')
+		('canopsis','canopsis', 'canopsis', 'Psis', 'Cano', '')
 	]
 
 	for name in groups:
