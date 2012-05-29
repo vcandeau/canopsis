@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$1" = "start" ]; then
+function start(){
 	service rabbitmq-server start
 	service mongodb start
 	service amqp2mongodb start
@@ -10,9 +10,9 @@ if [ "$1" = "start" ]; then
 	service webserver start
 	service collectd2event start
 	service collectd start
-fi
+}
 
-if [ "$1" = "stop" ]; then
+function stop(){
 	service collectd stop
 	service collectd2event stop
 	service webserver stop
@@ -21,4 +21,25 @@ if [ "$1" = "stop" ]; then
 	service amqp2mongodb stop
 	service mongodb stop
 	service rabbitmq-server stop
-fi
+
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        sleep 1
+        start
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?
