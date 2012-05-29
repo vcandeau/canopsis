@@ -149,7 +149,15 @@ class KnownValues(unittest.TestCase):
 			raise Exception("Webservice don't work ...")
 
 	def test_7_Check_collectd2event(self):
-		records = storage.find({'connector': 'collectd'})
+
+		print "Wait collectd events ..."
+		i=0
+		while i < 5:
+			records = storage.find({'connector': 'collectd'})
+			if len(records):
+				break
+			i+=1
+			time.sleep(5)
 		
 		if not len(records):
 			raise Exception("Collectd2event don't work ...")
