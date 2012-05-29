@@ -60,10 +60,13 @@ def check_report_dir(report_dir):
 def	get_cookie(cookiejar, account):
 	output = Popen("wkhtmltopdf -h >> /dev/null",shell=True)
 	output.wait()
-	authkey = account.make_tmp_cryptedKey()
+	authkey = account.get_authkey()
 	logger.debug(" [WK_WRAPPER] :: Recreate cookie (%s)" % cookiejar)
-	logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey))
-	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
+	#logger.debug("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey))
+	#output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/auth/%s/%s?cryptedKey=True\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
+
+	logger.error("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey))
+	output = Popen("wkhtmltopdf --load-error-handling ignore --cookie-jar %s \"http://127.0.0.1:8082/keyAuth/%s/%s\" /dev/null" % (cookiejar, account.user, authkey), shell=True)
 
 	output.wait()
 	
