@@ -66,11 +66,14 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	service mongodb stop
 }
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
+	service mongodb start
+	sleep 3
+
 	launch_cmd 1 python $PREFIX/opt/mongodb/filldb.py update
 	check_code $?
 }
