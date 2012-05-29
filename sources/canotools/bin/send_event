@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+# --------------------------------
+# Copyright (c) 2011 "Capensis" [http://www.capensis.com]
+#
+# This file is part of Canopsis.
+#
+# Canopsis is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Canopsis is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
+# ---------------------------------
+
+import sys, os, getopt, json
+
+from cstorage import cstorage
+from caccount import caccount
+from crecord import crecord
+from camqp import camqp
+import cevent
+
+def usage():
+	print(" Usage: send_event canopsis-authkey json_file")
+	print
+	print(" Options:")
+	print("  -u, --user=[USER]")
+	print("		user (Default:root)")
+	print("  -g, --group=[GROUP]")
+	print("		group (Default:root)")
+	print("  -n, --namespace=[NAME]")
+	print("		mongo namespace for scheduled tasks (Default:object)")
+	print("  --limit=[INT]")
+	print("		set number of schedules return list mode (Default:3)")
+	print("  -h, --help")
+	print("		show help")
+
+def main(argv):
+	try:
+		opts, args = getopt.getopt(	sys.argv[1:], 
+									"a:f:j:h",
+									["auth=", "file=", "json=", "help"])
+	except getopt.GetoptError, err:
+		print(err)
+		usage()
+		sys.exit(2)
+
+	if len(opts) < 1:
+		usage()
+		sys.exit()
+	
+	for opt, arg in opts:
+		if opt in ('-h', '--help'):
+			usage()
+			sys.exit()
+	
+	
+		
+
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
