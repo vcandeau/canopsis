@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, getopt, json, urllib2, cookielib
+import sys, os, getopt, json, urllib2, urllib, cookielib
 
 from cstorage import cstorage
 from caccount import caccount
@@ -97,8 +97,29 @@ def main(argv):
 		print('Bad authkey, no matching with any user')
 		sys.exit()
 	
-	#-----------------------switch to the right function function-------------
+	#------------------------------prepare event-----------------------
 	
+	#if json_string:
+	'''
+	data = {
+		'connector':		'connector',
+		'connector_name':	'connector_name',
+		'event_type':		'event_type',
+		'source_type':		'source_type',
+		'component':		'component',
+		'resource':			'resource',	
+		'state':			'state',
+		'state_type':		'state_type',
+		'output':			'output',
+		'long_output':		'long_output',
+		'perf_data':		'perf_data',
+		'perf_data_array':	'perf_data_array',
+	}
+	'''
+	request = urllib2.Request('http://%s/sendEvent/' % server, urllib.urlencode(data))
+	print(str(request))
+	r = opener.open(request)
+	print(r.read())
 	
 		
 
