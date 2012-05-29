@@ -86,7 +86,8 @@ function createApplication(){
 			'Schedule',
 			'Briefcase',
 			'Curves',
-			'MetricNavigation'
+			'MetricNavigation',
+			'Events'
 		],
 	
 		//autoCreateViewport: true,
