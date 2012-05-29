@@ -56,7 +56,7 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 			account_full_mail = "\"%s\" <%s>" % (account_mail.split('@')[0].title(), account_mail)	
 		else:
 			account_full_mail = account.get_full_mail()
-		if not re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$", str(account_mail)):
+		if not re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$", str(account_mail)):
 			raise ValueError('Invalid Email format for sender')
 	else:
 		raise Exception('Need caccount object in account')
@@ -80,7 +80,7 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 
 			dests.append(dest_full_mail)	
 		elif isinstance(dest, str) or isinstance(dest, unicode):
-			if re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$", dest):
+			if re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.([a-zA-Z]{2,6})?$", dest):
 				dest_mail = dest
 				dest_full_mail = "\"%s\" <%s>" % (dest_mail.split('@')[0].title(), dest_mail)
 				dests.append(dest_full_mail)	
