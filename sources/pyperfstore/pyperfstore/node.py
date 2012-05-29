@@ -94,8 +94,8 @@ class node(object):
 		self.storage.set(self._id, dump)
 
 	def metric_make_id(self, dn):
-		#return self._id.replace('.','-') + "-" + hashlib.md5(dn).hexdigest()
-		return hashlib.md5(self._id+"-"+dn).hexdigest()
+		return self._id.replace('.','-') + "-" + hashlib.md5(dn).hexdigest()
+		#return hashlib.md5(self._id+"-"+dn).hexdigest()
 
 	def metric_get(self, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
