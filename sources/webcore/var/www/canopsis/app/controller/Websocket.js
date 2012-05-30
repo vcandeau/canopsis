@@ -39,30 +39,8 @@ Ext.define('canopsis.controller.Websocket', {
 		if (this.autoconnect){
 			this.connect();
 		}
-    },
-
-    connect: function() {
-		log.debug("Connect Websocket  to '"+this.faye_uri+"'...", this.logAuthor)
 		
-		this.faye_client = new Faye.Client(this.faye_uri);
-		this.faye_client.addExtension(this.faye_auth);
-		
-		// Suscribe to channel
-		this.faye_subscription = this.faye_client.subscribe(this.faye_mount+"ui", function(raw) {
-			log.dump(raw);
-		});
-
-		// On connect
-		this.faye_subscription.callback(function() {
-			log.debug("Subscibed.", "[controller][Websocket]");
-		});
-
-		// On error
-		this.faye_subscription.errback(function(error) {
-			log.error("Error when subscribe to channel", "[controller][Websocket]");
-			log.error(error);
-		});
-
+		global.websocketCtrl = this;
     },
     
     faye_auth: {
@@ -81,6 +59,54 @@ Ext.define('canopsis.controller.Websocket', {
 			// Carry on and send the message to the server
 			callback(message);
 		}
+	},
+
+    connect: function() {
+		log.debug("Connect Websocket  to '"+this.faye_uri+"'...", this.logAuthor)
+		
+		this.faye_client = new Faye.Client(this.faye_uri);
+		this.faye_client.addExtension(this.faye_auth);
+		
+		// Subscribe to channel
+		this.faye_subscription = this.faye_client.subscribe(this.faye_mount+"ui", function(raw) {
+			var me = global.websocketCtrl
+			
+			// Route message
+			if (raw.clientId != me.faye_client.getClientId()){
+				if (raw.context == "store")
+					me.receive_ui_event_store(raw)
+			}
+		});
+
+		// On subscribe
+		this.faye_subscription.callback(function() {
+			var me = global.websocketCtrl
+			log.debug("Subscribed.", me.logAuthor);
+		});
+
+		// On error
+		this.faye_subscription.errback(function(error) {
+			var me = global.websocketCtrl
+			log.error("Error when subscribe to channel", me.logAuthor);
+			log.error(error);
+		});
+
+    },
+    
+    /////// Process Events
+	publish_ui_event_store: function(storeId, event) {
+		this.faye_client.publish(this.faye_mount+"ui",{
+			author: global.account._id,
+			clientId: this.faye_client.getClientId(),
+			context: "store",
+			storeId: storeId,
+			event: event,
+		});
+		
+	},
+	
+	receive_ui_event_store:  function(raw) {
+		global.notify.notify(raw.storeId +": have changed !!!")
 	},
 
 });
