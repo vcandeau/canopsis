@@ -150,8 +150,8 @@ def send_event(	routing_key=None):
 				perf_data_array = perf_data_array,
 			)
 	
-	logger.debug('The forged event is : ')
-	logger.debug(str(event))
+	#logger.debug('The forged event is : ')
+	#logger.debug(str(event))
 	
 	#------------------------------AMQP Part--------------------------------------
 	
