@@ -100,7 +100,7 @@ def main(argv):
 		print('Bad authkey, no matching with any user')
 		sys.exit()
 	
-	#------------------------------prepare event-----------------------
+	#------------------------------find event source-----------------------
 	event = None
 	
 	if json_string:
@@ -131,6 +131,7 @@ def main(argv):
 			print('Error: Invalid json stream')
 			sys.exit()
 			
+	#-----------------------------send event-----------------------------
 	if not event:
 		print('Error: No json media found, you must provide file/stream/command')
 		sys.exit()
