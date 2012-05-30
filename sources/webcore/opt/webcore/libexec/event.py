@@ -43,7 +43,6 @@ logger = logging.getLogger('Event')
 @post('/event/:routing_key',apply=[check_auth])
 def send_event(	routing_key=None):
 				
-	routing_key = None
 	connector = None
 	connector_name = None
 	event_type = None
