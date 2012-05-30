@@ -39,19 +39,8 @@ logger = logging.getLogger('Event')
 
 ##################################################################################
 
-@get('/sendEvent/',apply=[check_auth])
-@get('/sendEvent/:routing_key',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array/:output',apply=[check_auth])
-#@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array/:output/:long_output',apply=[check_auth])
+@post('/event/',apply=[check_auth])
+@post('/event/:routing_key',apply=[check_auth])
 def send_event(	routing_key=None):
 				
 	routing_key = None
