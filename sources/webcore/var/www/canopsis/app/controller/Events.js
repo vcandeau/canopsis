@@ -35,7 +35,7 @@ Ext.define('canopsis.controller.Events', {
 		log.debug('Prepare to send events',this.logAuthor)
 		
 		Ext.Ajax.request({
-			url: '/sendEvent/',
+			url: '/event/',
 			method: 'POST',
 			params: event,
 			scope: this,
