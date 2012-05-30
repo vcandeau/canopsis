@@ -39,32 +39,42 @@ logger = logging.getLogger('Event')
 
 ##################################################################################
 
-@post('/sendEvent/',apply=[check_auth])
-@post('/sendEvent/:connector',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array/:output',apply=[check_auth])
-@post('/sendEvent/:connector/:connector_name/:event_type/:source_type/:component/:resource/:state/:state_type/:perf_data/:perf_data_array/:output/:long_output',apply=[check_auth])
-def send_event(connector=None,
-				connector_name=None,
-				event_type=None,
-				source_type=None,
-				component=None,
-				resource=None,
-				state=None,
-				state_type=None,
-				perf_data=None,
-				perf_data_array=None,
-				output=None,
-				long_output=None
-			):
+@post('/event/',apply=[check_auth])
+@post('/event/:routing_key',apply=[check_auth])
+def send_event(	routing_key=None):
+				
+	routing_key = None
+	connector = None
+	connector_name = None
+	event_type = None
+	source_type = None
+	component = None
+	resource = None
+	state = None
+	state_type = None
+	perf_data = None
+	perf_data_array = None
+	output = None
+	long_output = None
+				
+	#--------------------explode routing key----------
+	if routing_key :
+		logger.debug('The routing key is : %s' % str(routing_key))
+		
+		routing_key = routing_key.split('.')
+		if len(routing_key) > 6 or len(routing_key) < 5:
+			logger.error('Bad routing key')
+			return HTTPError(400, 'Bad routing key')
+			
+		connector = routing_key[0]
+		connector_name = routing_key[1]
+		event_type = routing_key[2]
+		source_type = routing_key[3]
+		component = routing_key[4]
+		if routing_key[5]:
+			resource = routing_key[5]
+	
+	
 	#-----------------------get params-------------------
 	if not connector:
 		connector = request.params.get('connector', default=None)
