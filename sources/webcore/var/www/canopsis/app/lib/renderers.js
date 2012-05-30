@@ -35,13 +35,19 @@ var rdr_tstodate = function (val) {
 
 var rdr_utcToLocal = function(val){
 	if( val != undefined && val != '' ){
-		var dval = new Date(val);
-
+		//format date
+		var array_split = val.split(' ')
+		var date = array_split[0].split('-')
+		var hour = array_split[1].split(':')
+		
+		//create date
+		var dval = new Date(date[0],date[1],date[2],hour[0],hour[1],hour[2]);
+		log.dump(dval)
 		//get time is millisecond
-		var localTime = dval.getTime() / 1000
+		var localTime = parseInt(dval.getTime()) / 1000
 
 		//offset is minute
-		var localOffset = dval.getTimezoneOffset() * 60;
+		var localOffset = parseInt(dval.getTimezoneOffset()) * 60;
 
 		return rdr_tstodate(parseInt(localTime) - parseInt(localOffset))
 	}
