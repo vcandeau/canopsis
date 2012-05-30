@@ -123,7 +123,8 @@ def index(key=None):
 				redirect('/static/canopsis/index.html')
 			else:
 				logger.info('autoLogin failed')
-				redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
+
+	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
 
 ## Gunicorn Hook
 def on_starting(server):
