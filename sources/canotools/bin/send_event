@@ -143,7 +143,7 @@ def main(argv):
 	}
 	'''
 	
-	request = urllib2.Request('http://%s/sendEvent/' % server, urllib.urlencode(event))
+	request = urllib2.Request('http://%s/event/' % server, urllib.urlencode(event))
 	print(str(request))
 	r = opener.open(request)
 	print(r.read())
