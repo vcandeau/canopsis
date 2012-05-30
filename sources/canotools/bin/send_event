@@ -82,11 +82,12 @@ def main(argv):
 	#---------------------------authentificate-------------------------
 	if not authkey:
 		print('You must provide a authkey to access to webserver')
+		usage()
 		sys.exit()
 		
 	cj = cookielib.CookieJar()
 	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-	print('http://%s/autoLogin/%s' % (server,authkey))
+	#print('http://%s/autoLogin/%s' % (server,authkey))
 	r = opener.open('http://%s/autoLogin/%s' % (server,authkey))
 	r = opener.open('http://%s/account/me' % server)
 	
@@ -108,12 +109,10 @@ def main(argv):
 	if file_path:
 		if file_extension != '.json':
 			print('Error: Invalid file format (Must be .json)')
-			usage()
 			sys.exit()
 			
 		if not os.path.exists(file_path):
 			print('Error: File not found (%s)' % file_path)
-			usage()
 			sys.exit()
 			
 		#------------------read file-------------------	
@@ -121,7 +120,6 @@ def main(argv):
 			event = json.loads(open(file_path, 'r').read())
 		except ValueError:
 			print('Error: Invalid json file')
-			usage()
 			sys.exit()
 			
 		
@@ -136,24 +134,7 @@ def main(argv):
 	if not event:
 		print('Error: No json media found, you must provide file/stream/command')
 		sys.exit()
-		
-	'''
-	data = {
-		'connector':		'connector',
-		'connector_name':	'connector_name',
-		'event_type':		'event_type',
-		'source_type':		'source_type',
-		'component':		'component',
-		'resource':			'resource',	
-		'state':			'state',
-		'state_type':		'state_type',
-		'output':			'output',
-		'long_output':		'long_output',
-		'perf_data':		'perf_data',
-		'perf_data_array':	'perf_data_array',
-	}
-	'''
-	
+
 	request = urllib2.Request('http://%s/event/' % server, urllib.urlencode(event))
 	r = opener.open(request)
 	print('Webserver have send :')
