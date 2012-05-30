@@ -140,7 +140,6 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 
 	setContent: function(){
 		if(this.dump && ! this.displayed){
-			log.dump(this.dump)
 			this.load(this.dump)
 			this.displayed = true
 		}
@@ -162,7 +161,7 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 		var record = Ext.create('canopsis.model.View', data)
 		
 		if(this.view_id){
-			log.debug('editing view')
+			log.debug('editing view',this.logAuthor)
 			record.set('id',this.view_id)
 			record.set('crecord_name',this.view.crecord_name)
 		} else {
