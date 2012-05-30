@@ -42,7 +42,7 @@ var rdr_utcToLocal = function(val){
 		
 		//create date
 		var dval = new Date(date[0],date[1],date[2],hour[0],hour[1],hour[2]);
-		log.dump(dval)
+
 		//get time is millisecond
 		var localTime = parseInt(dval.getTime()) / 1000
 
