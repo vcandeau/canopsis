@@ -55,6 +55,10 @@ def launch_celery_task(*args,**kwargs):
 				result = task.delay(*args,**methodargs)
 				result.get()
 				result = result.result
+				
+				if not result['success']:
+					raise Exception('Celery task failed')
+				
 			except Exception, err:
 				success = False
 				aps_error = str(err)
