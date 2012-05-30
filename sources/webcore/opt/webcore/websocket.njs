@@ -145,18 +145,19 @@ var faye_auth = {
 			try {
 				// Check auth and open session
 				var authToken = message.ext.authToken;
+				var authId = message.ext.authId;
 				
-				faye_sessions[clientId] = true
-				log.info(clientId + ": Open session");
+				faye_sessions[clientId] = authId
+				log.info("Faye: "+faye_sessions[clientId] + ": Open session ("+clientId+")");
 			} catch (err) {
-				log.error(clientId + ": Impossible to subscribe, please auth ...");
+				log.error("Faye: "+clientId + ": Impossible to subscribe, please auth ...");
 				log.dump(err);
 			}
 		};
 		
 		// Check sessions
 		if (! faye_sessions[clientId]){
-			log.error(clientId + ": Invalid session, please auth ...")
+			log.error("Faye: "+clientId + ": Invalid session, please auth ...")
 			message.error = 'Invalid session, please auth ...';
 		}
 		
@@ -170,11 +171,11 @@ faye_server = new faye.NodeAdapter({mount: '/'});
 
 faye_server.bind('handshake', function(clientId) {
 	faye_nb_client +=1
-	log.info('Faye: Client '+clientId+' connected, '+faye_nb_client+' Client(s) Online.')
+	log.info('Faye: '+clientId+': Connected, '+faye_nb_client+' Client(s) Online.')
 })
 faye_server.bind('disconnect', function(clientId) {
 	faye_nb_client -=1
-	log.info('Faye: Client '+clientId+' disconnected, '+faye_nb_client+' Client(s) Online.')
+	log.info('Faye: '+faye_sessions[clientId]+': Disconnected, '+faye_nb_client+' Client(s) Online.')
 	// Clean sessions
 	try {
 		delete(faye_sessions[clientId])
@@ -184,11 +185,13 @@ faye_server.bind('disconnect', function(clientId) {
 })
 
 faye_server.bind('subscribe', function(clientId, channel) {
-	log.info('Faye: Client '+clientId+' suscribe to '+channel)
+	log.info('Faye: '+faye_sessions[clientId]+': Suscribe to '+channel)
 })
 faye_server.bind('unsubscribe', function(clientId, channel) {
-	log.info('Faye: Client '+clientId+' unsuscribe to '+channel)
+	log.info('Faye: '+faye_sessions[clientId]+': Unsuscribe to '+channel)
 })
 
 faye_server.addExtension(faye_auth);
+
+log.info(" + Listen on "+config.faye.port)
 faye_server.listen(config.faye.port);
