@@ -57,7 +57,8 @@ def main(argv):
 	#---------------------------option processing----------------------
 	authkey = None
 	server = 'localhost:8082'
-	json_file = None
+	file_path = None
+	input_stream = None
 	json_string = None
 	
 	for opt, arg in opts:
@@ -102,7 +103,7 @@ def main(argv):
 	event = None
 	
 	if json_string:
-		data = json_string
+		event = json_string
 	
 	if file_path:
 		if file_extension != '.json':
@@ -124,7 +125,17 @@ def main(argv):
 			sys.exit()
 			
 		
-		
+	#check if input stream
+	if not sys.stdin.isatty():
+		try:
+			event = json.loads(sys.stdin.read())
+		except:
+			print('Error: Invalid json stream')
+			sys.exit()
+			
+	if not event:
+		print('Error: No json media found, you must provide file/stream/command')
+		sys.exit()
 		
 	'''
 	data = {
@@ -144,12 +155,9 @@ def main(argv):
 	'''
 	
 	request = urllib2.Request('http://%s/event/' % server, urllib.urlencode(event))
-	print(str(request))
 	r = opener.open(request)
+	print('Webserver have send :')
 	print(r.read())
-	
-		
-
 
 
 if __name__ == "__main__":
