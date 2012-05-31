@@ -21,14 +21,19 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
-
-echo "Init submodules ..."
-cd ..
-git submodule init
-check_code $? "Impossible to init submodule"
-git submodule update
-check_code $? "Impossible to update submodule"
-cd sources
+if [ -d $SRC_PATH/externals/jqGridable ]; then
+	echo "Copy jqGridable from externals ..."
+	cp -R $SRC_PATH/externals/jqGridable/* $SRC_PATH/webcore-libs/var/www/canopsis/resources/lib/jqGridable/ 
+	check_code $? "Impossible to copy jqGridable"
+else
+	echo "Init submodules ..."
+	cd ..
+	git submodule init
+	check_code $? "Impossible to init submodule"
+	git submodule update
+	check_code $? "Impossible to update submodule"
+	cd sources
+fi
 
 ######################################
 #  functions

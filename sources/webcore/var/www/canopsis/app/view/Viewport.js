@@ -28,6 +28,8 @@ Ext.define('canopsis.view.Viewport', {
 	],
 
 	layout: 'border',
+	
+	logAuthor: '[Viewport]',
 
 	items: [
 		{
@@ -72,13 +74,13 @@ Ext.define('canopsis.view.Viewport', {
 	
 
 	initComponent: function() {
-		log.debug("Render viewport ...", "viewport");
+		log.debug("Render viewport ...", this.logAuthor);
 		this.on('afterrender', this.afterrender, this)
 		this.callParent(arguments);
 	},
 
 	afterrender: function(){
-		log.debug("Viewport rendered", "viewport");
+		log.debug("Viewport rendered", this.logAuthor);
 	}
 		
 });

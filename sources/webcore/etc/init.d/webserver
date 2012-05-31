@@ -1,1 +1,114 @@
-../../bin/webserver-gunicorn
+#!/bin/bash
+set -e
+
+DIR="$HOME/opt/webcore"
+BIN="gunicorn"
+
+PIDF="$HOME/var/run/webserver.pid"
+LOGF="$HOME/var/log/webserver.log"
+
+LL="error"
+
+ABIND="0.0.0.0:8082"
+
+. $HOME/etc/gunicorn.conf
+
+# Use export variable
+if [ "x$GUNICORN_WORKER" == "x" ]; then
+	GUNICORN_WORKER=$(cat /proc/cpuinfo | grep "^processor" | wc -l)
+fi
+	
+APP="wsgi_webserver:app"
+
+GCMD="$BIN -D --pid $PIDF --log-file $LOGF --access-logfile $LOGF --log-level $LL -k gevent -w $GUNICORN_WORKER -b $ABIND $APP"
+
+function start (){
+	cd $DIR
+	$GCMD
+}
+
+function stop (){
+	PID=$(getPid)
+	kill $PID
+	sleep 2
+	if [ $(check) -eq 1 ]; then
+		echo " Failed"
+		exit 1
+	fi
+	echo " Ok"
+}
+
+function check (){
+	PID=$(getPid)
+	echo $(ps ax | grep -E "^ *$PID " | wc -l)
+}
+
+function getPid (){
+	if [ -e $PIDF ]; then
+		PID=$(cat $PIDF | tail -n 1)
+		echo $PID
+	else
+		echo 0
+	fi
+}
+
+function waitPid (){
+	i=0
+	TIMEOUT=10
+    while [ $(getPid) -eq 0 ]; do
+        if [ $i -gt $TIMEOUT ]; then
+            echo 
+            echo "Timeout, Impossible to get pid ..."
+            exit 1
+        fi
+        i=$((i+1))
+        echo -n "."
+        sleep 0.5
+    done
+}
+
+function cmd () {
+	case $1 in
+		start)
+			echo -n "Starting Webserver ..."
+			if [ $(check) -eq 1 ]; then
+				echo " + Already started ..."
+			else
+				start
+				waitPid
+				PID=$(getPid)
+				echo
+				echo " + $PID"
+			fi
+		;;  
+		stop)
+			echo "Stoping Webserver ..."
+			if [ $(check) -eq 1 ]; then
+				PID=$(getPid)
+		                echo -n " + $PID ..."
+				stop
+			else
+				echo " + Not running ..."
+			fi
+		;;
+ 		status)
+			if [ $(check) -eq 1 ]; then
+				echo "Run"
+			else
+				echo "Not running ..."
+				exit 1
+			fi
+		;;  
+
+		restart|reload)
+			cmd stop
+			cmd start	
+		;;  
+		*)  
+			echo >&2 "Usage: $0 <start|stop|restart|status>"
+			exit 1
+		;;  
+    esac
+}
+
+cmd "$1"

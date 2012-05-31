@@ -93,7 +93,7 @@ Ext.define('canopsis.controller.Tabs', {
 			var tab = this.open_view(options)
 			if (! tab){
 				log.debug("Invalid view options:", this.logAuthor)
-				log.dump(options)
+				//log.dump(options)
 			}
 		}
 		
@@ -117,7 +117,7 @@ Ext.define('canopsis.controller.Tabs', {
 		
 		var options = extend(default_options, args)
 		
-		log.debug("Open view tab '"+options.view_id+"'")
+		log.debug("Open view tab '"+options.view_id+"'", this.logAuthor)
 
 		if (options.view_id){
 			var maintabs = Ext.getCmp('main-tabs');
@@ -131,16 +131,16 @@ Ext.define('canopsis.controller.Tabs', {
 			var tab = Ext.getCmp(tab_id);
 
 			if (tab) {
-				log.debug(" - Tab allerady open, just show it")
+				log.debug(" - Tab allerady open, just show it", this.logAuthor)
 				maintabs.setActiveTab(tab);
 			}else{
-				log.debug(" - Create tab ...")
-				log.debug("    - Get view config ("+options.view_id+") ...")
+				log.debug(" - Create tab ...", this.logAuthor)
+				log.debug("    - Get view config ("+options.view_id+") ...", this.logAuthor)
 				
 				var localstore_record = false;
 				if (options.save){
 					// archive tab in store
-					log.debug("Add '"+options.title+"' ('"+options.view_id+"') in localstore ...")
+					log.debug("Add '"+options.title+"' ('"+options.view_id+"') in localstore ...", this.logAuthor)
 					var store = Ext.data.StoreManager.lookup('Tabs');
 					localstore_record = store.add({options: options});
 					store.save();
