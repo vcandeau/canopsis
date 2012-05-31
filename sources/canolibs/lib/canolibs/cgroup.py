@@ -20,11 +20,13 @@
 
 #import logging
 from crecord import crecord
+from caccount import caccount
 
 class cgroup(crecord):
 	def __init__(self, record=None, account_ids=[], *args, **kargs):
 		crecord.__init__(self, *args, **kargs)
 		self.type = 'group'
+		self._id = '%s.%s' % (self.type,str(self.name))
 		self.account_ids = account_ids
 
 	def dump(self,json=False):
@@ -35,5 +37,26 @@ class cgroup(crecord):
 		crecord.load(self, dump)
 		self.account_ids = self.data['account_ids']
 		
+	def add_accounts(self, accounts):
+		if not isinstance(accounts,list):
+			accounts = [accounts]
+			
+		for account in accounts:				
+			if isinstance(account,caccount):
+				if account._id not in self.account_ids:
+					self.account_ids.append(account._id)
+			else:
+				raise ValueError("Account must be caccount")
+				
+	def remove_accounts(self,accounts):
+		if not isinstance(accounts,list):
+			accounts = [accounts]
+			
+		for account in accounts:			
+			if isinstance(account,caccount):
+				if account._id in self.account_ids:
+					self.account_ids.remove(account._id)
+			else:
+				raise ValueError("Account must be caccount")
 		
 			
