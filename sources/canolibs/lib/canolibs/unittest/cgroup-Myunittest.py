@@ -43,7 +43,7 @@ class KnownValues(unittest.TestCase):
 		
 	def test_03_add_accounts(self):
 		GROUP.add_accounts(ACCOUNT)
-		dump = GROUP.dump()
+
 		if ACCOUNT._id not in GROUP.account_ids:
 			raise Exception('Error while add_accounts, account not added')
 		if GROUP._id not in ACCOUNT.groups:
@@ -65,7 +65,7 @@ class KnownValues(unittest.TestCase):
 		
 	def test_06_remove_accounts(self):
 		GROUP.remove_accounts(ACCOUNT)
-		dump = GROUP.dump()
+
 		if ACCOUNT._id in GROUP.account_ids:
 			raise Exception('Error while remove_accounts, account not removed')
 		if GROUP._id in ACCOUNT.groups:
