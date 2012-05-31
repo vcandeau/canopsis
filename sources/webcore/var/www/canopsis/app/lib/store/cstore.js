@@ -32,12 +32,12 @@ Ext.define('canopsis.lib.store.cstore', {
 		update: function(){
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
-					global.websocketCtrl.publish_ui_event_store(this.storeId, 'update')
+					global.websocketCtrl.publish_event('store', this.storeId, 'update')
 		},
 		remove: function(){
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
-					global.websocketCtrl.publish_ui_event_store(this.storeId, 'remove')
+					global.websocketCtrl.publish_event('store', this.storeId, 'remove')
 		},
    },
   

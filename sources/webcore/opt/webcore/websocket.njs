@@ -108,14 +108,17 @@ amqp_connection.addListener('ready', function(){
 log.info("Connect to MongoDB ...")
 var mongodb_server = new mongodb.Server(config.mongodb.host, config.mongodb.port, {})
 var mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server);
+var mongodb_collection_object = undefined
 
 mongodb_client.open(function(err, p_client) {
 	if (err) {
 		log.error(err);
 	} else {
 		log.info(" + Ok")
+		mongodb_collection_object = new mongodb.Collection(mongodb_client, 'object');
 	}
 });
+
 
 /*
 var client = new Db('canopsis', new Server('127.0.0.1', 27017, {}));
@@ -134,6 +137,30 @@ client.open(function(err, pClient) {
 var faye_sessions = {}
 var faye_nb_client = 0
 
+var faye_check_authToken = function (clientId, authId, authToken, faye_callback, faye_message){
+
+	if (mongodb_collection_object) {				
+		mongodb_collection_object.findOne({'_id': authId}, function(err, record){
+			
+			log.info("Faye: Try to auth "+authId+" ("+clientId+") ...");
+			if (err) {
+				log.error(err);
+			} else {
+				if (record.authkey == authToken){
+					faye_sessions[clientId] = authId
+					log.info("Faye: "+faye_sessions[clientId] + ": Open session ("+clientId+")");
+				} else {
+					log.info("Faye: "+clientId + ": Invalid auth (authId: '"+authId+"')");
+					faye_message.error = 'Invalid auth';
+				}
+				faye_callback(faye_message);
+			}
+		});
+	}else{
+		log.warning("Faye: MongoDB not ready.");
+	}
+};
+
 var faye_auth = {
 	incoming: function(message, callback) {
 		var clientId =  message.clientId
@@ -144,13 +171,15 @@ var faye_auth = {
 		if (message.channel == '/meta/subscribe' && ! faye_sessions[clientId]) {
 			try {
 				// Check auth and open session
+				//TODO: Hash token
 				var authToken = message.ext.authToken;
 				var authId = message.ext.authId;
 				
-				faye_sessions[clientId] = authId
-				log.info("Faye: "+faye_sessions[clientId] + ": Open session ("+clientId+")");
+				faye_check_authToken(clientId, authId, authToken, callback, message)
+				return
+				
 			} catch (err) {
-				log.error("Faye: "+clientId + ": Impossible to subscribe, please auth ...");
+				log.error("Faye: "+clientId + ": Impossible to subscribe, please set auth informations...");
 				log.dump(err);
 			}
 		};
@@ -178,6 +207,7 @@ faye_server.bind('disconnect', function(clientId) {
 	log.info('Faye: '+faye_sessions[clientId]+': Disconnected, '+faye_nb_client+' Client(s) Online.')
 	// Clean sessions
 	try {
+		log.info("Faye: "+faye_sessions[clientId] + ": Close session ("+clientId+")");
 		delete(faye_sessions[clientId])
 	} catch (err) {
 		log.error("Invalid session for " + clientId);
