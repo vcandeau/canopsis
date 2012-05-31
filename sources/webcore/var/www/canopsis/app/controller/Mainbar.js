@@ -95,6 +95,19 @@ Ext.define('canopsis.controller.Mainbar', {
 		})
 
 		this.callParent(arguments);
+	
+		// Bind Websocket Events
+		global.websocketCtrl.on("transport_up", function(){
+			var button = Ext.getCmp('Mainbar-menu-Websocket')
+			if (button)
+				button.setIconCls("icon-bullet-green")
+		},this);
+		global.websocketCtrl.on("transport_down", function(){
+			var button = Ext.getCmp('Mainbar-menu-Websocket')
+			if (button)
+				button.setIconCls("icon-bullet-red")
+		},this);
+	
 	},
 
 	onCollapseMainbar: function(){

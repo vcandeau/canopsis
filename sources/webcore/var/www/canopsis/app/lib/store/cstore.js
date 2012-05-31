@@ -28,19 +28,18 @@ Ext.define('canopsis.lib.store.cstore', {
 
 	logAuthor: '[cstore]',
 	
-    //raise an exception if server didn't accept the request
-	//and display a popup if the store is modified
-    /*listeners: {
-		exception: function(proxy, response, operation){
-			Ext.MessageBox.show({
-				title: _('REMOTE EXCEPTION'),
-				msg: this.storeId + ': ' + _('request failed'),
-				icon: Ext.MessageBox.ERROR,
-				buttons: Ext.Msg.OK
-			});
-			log.error(response, this.logAuthor);
+    listeners: {
+		update: function(){
+			if (this.storeId !== 'Tabs')
+				if (global.websocketCtrl)
+					global.websocketCtrl.publish_event('store', this.storeId, 'update')
 		},
-   },*/
+		remove: function(){
+			if (this.storeId !== 'Tabs')
+				if (global.websocketCtrl)
+					global.websocketCtrl.publish_event('store', this.storeId, 'remove')
+		},
+   },
   
    //function for search and filter
    setFilter : function(filter){
