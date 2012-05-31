@@ -107,3 +107,13 @@ function split_amqp_rk(rk){
     return {}
 }
 
+function get_timestamp_utc(date){
+	if (! date)
+		date = new Date();
+		
+	var localTime = parseInt(date.getTime() / 1000);
+	var localOffset = parseInt(date.getTimezoneOffset() * 60);
+
+	return localTime - localOffset;
+}
+
