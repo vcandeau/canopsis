@@ -71,12 +71,11 @@ function createApplication(){
 		appFolder: 'app',
 
 		controllers: [
+			'Websocket',
 			'Mainbar',
 			'Widgets',
 			'View',
-			'WebSocket',
 			'Notify',
-			'LiveEvents',
 			'Account',
 			'Group',
 			'Tabs',
@@ -87,7 +86,7 @@ function createApplication(){
 			'Briefcase',
 			'Curves',
 			'MetricNavigation',
-			'Events'
+			'Events',
 		],
 	
 		//autoCreateViewport: true,
@@ -100,7 +99,7 @@ function createApplication(){
 
 		createViewport: function(){
 			Ext.create('canopsis.view.Viewport');
-			log.debug('Remove mask ...');
+			log.debug('Remove mask ...',"[app]");
 			Ext.get('loading').remove();
 			Ext.get('loading-mask').remove();
 			
