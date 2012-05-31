@@ -149,7 +149,69 @@ class caccount(crecord):
 		print " + Mail:\t", self.mail
 		print " + Group:\t", self.group
 		print " + Groups:\t", self.groups, "\n"
-
+		
+	def add_in_groups(self,groups,storage=None):
+		if not storage:
+			storage = self.storage
+		
+		if not isinstance(groups,list):
+			groups = [groups]
+			
+		#string _id to cgroup
+		group_list = []
+		for group in groups:
+			if isinstance(group,cgroup):
+				group_list.append(group)
+			elif isinstance(group, str):
+				if storage:
+					try:
+						record = storage.get(group)
+						group_list.append(cgroup(record,storage=storage))
+					except Exception,err:
+						raise Exception('Group not found: %s', err)
+												
+		#add to groups
+		for group in group_list:
+				if group._id not in self.groups:
+					self.groups.append(group._id)
+					if self.storage:
+						self.save()
+					
+				if self._id not in group.account_ids:
+					group.account_ids.append(self._id)
+					if group.storage:
+						group.save()
+	
+	def remove_from_groups(self,groups,storage=None):
+		if not storage:
+			storage = self.storage
+		
+		if not isinstance(groups,list):
+				groups = [groups]
+				
+		#string _id to cgroup
+		group_list = []
+		for group in groups:
+			if isinstance(group,cgroup):
+				group_list.append(group)
+			elif isinstance(group, str):
+				if storage:
+					try:
+						record = storage.get(group)
+						group_list.append(cgroup(record,storage=storage))
+					except Exception,err:
+						raise Exception('Group not found: %s', err)
+		#remove groups
+		for group in group_list:
+				if group._id in self.groups:
+					self.groups.remove(group._id)
+					if self.storage:
+						self.save()
+					
+				if self._id in group.account_ids:
+					group.account_ids.remove(self._id)
+					if group.storage:
+						group.save()
 
 #################
 
