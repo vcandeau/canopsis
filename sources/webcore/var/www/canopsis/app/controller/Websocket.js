@@ -29,6 +29,8 @@ Ext.define('canopsis.controller.Websocket', {
     autoconnect: true,
     faye_port: 8085,
     faye_mount: "/",
+    
+    connected: false,
 
     init: function() {
 		var location = document.location.host;
@@ -68,6 +70,19 @@ Ext.define('canopsis.controller.Websocket', {
 		this.faye_client = new Faye.Client(this.faye_uri);
 		this.faye_client.addExtension(this.faye_auth);
 		
+		this.faye_client.bind('transport:down', function() {
+			me = global.websocketCtrl;
+			me.connected = false;
+			log.error("Transport Down", me.logAuthor);
+			me.fireEvent('transport_down', me);
+		});
+		
+		this.faye_client.bind('transport:up', function() {
+			me = global.websocketCtrl;
+			me.connected = true;
+			log.debug("Transport Up", me.logAuthor);
+			me.fireEvent('transport_up', me);
+		});
 		
 		//this.subscribe(this.faye_mount+"ui/"+global.account._id, console.log)
 		this.subscribe(this.faye_mount+"ui/events", this.on_event)
@@ -90,6 +105,7 @@ Ext.define('canopsis.controller.Websocket', {
 		subscription.callback(function() {
 			var me = global.websocketCtrl
 			log.debug("Subscribed to '"+channel+"'.", me.logAuthor);
+			me.fireEvent('subscribe', me, channel);
 		});
 
 		// On error

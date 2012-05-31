@@ -71,10 +71,10 @@ function createApplication(){
 		appFolder: 'app',
 
 		controllers: [
+			'Websocket',
 			'Mainbar',
 			'Widgets',
 			'View',
-			'Websocket',
 			'Notify',
 			'Account',
 			'Group',
@@ -86,7 +86,7 @@ function createApplication(){
 			'Briefcase',
 			'Curves',
 			'MetricNavigation',
-			'Events'
+			'Events',
 		],
 	
 		//autoCreateViewport: true,
