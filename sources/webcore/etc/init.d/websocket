@@ -1,30 +1,17 @@
 #!/bin/bash
 set -e
 
-DIR="$HOME/opt/webcore"
-BIN="gunicorn"
+DIR="$HOME"
+BIN="websocket"
 
-PIDF="$HOME/var/run/webserver.pid"
-LOGF="$HOME/var/log/webserver.log"
-
-LL="error"
-
-ABIND="0.0.0.0:8082"
-
-. $HOME/etc/gunicorn.conf
-
-# Use export variable
-if [ "x$GUNICORN_WORKER" == "x" ]; then
-	GUNICORN_WORKER=$(cat /proc/cpuinfo | grep "^processor" | wc -l)
-fi
-	
-APP="wsgi_webserver:app"
-
-GCMD="$BIN -D --pid $PIDF --log-file $LOGF --access-logfile $LOGF --log-level $LL -k gevent -w $GUNICORN_WORKER -b $ABIND $APP"
+PIDF="$HOME/var/run/websocket.pid"
+LOGF="$HOME/var/log/websocket.log"
 
 function start (){
 	cd $DIR
-	$GCMD
+	$BIN &> $LOGF &
+	PID=$!
+	echo $PID > $PIDF	
 }
 
 function stop (){
@@ -70,7 +57,7 @@ function waitPid (){
 function cmd () {
 	case $1 in
 		start)
-			echo -n "Starting Webserver ..."
+			echo -n "Starting Websocket ..."
 			if [ $(check) -eq 1 ]; then
 				echo " + Already started ..."
 			else
@@ -82,7 +69,7 @@ function cmd () {
 			fi
 		;;  
 		stop)
-			echo "Stoping Webserver ..."
+			echo "Stoping Websocket ..."
 			if [ $(check) -eq 1 ]; then
 				PID=$(getPid)
 		                echo -n " + $PID ..."

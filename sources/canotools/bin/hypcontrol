@@ -7,6 +7,7 @@ function start(){
 	#service amqp2websocket start
 	service celeryd start
 	service apsd start
+	service websocket start
 	service webserver start
 	service collectd2event start
 	service collectd start
@@ -15,6 +16,7 @@ function start(){
 function stop(){
 	service collectd stop
 	service collectd2event stop
+	service websocket stop
 	service webserver stop
 	service apsd stop
 	service celeryd stop

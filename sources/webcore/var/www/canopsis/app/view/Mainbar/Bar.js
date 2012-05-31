@@ -280,6 +280,15 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					showSeparator: true,
 					items: menu_configuration
 				}
+			},{
+				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',
+				id: 'Mainbar-menu-Websocket',
+				flex : 0.2,
+				/*menu: {
+					name: 'Websocket',
+					showSeparator: true,
+					items: menu_configuration
+				}*/
 			}
 		]
 		
