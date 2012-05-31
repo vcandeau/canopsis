@@ -69,25 +69,9 @@ Ext.define('canopsis.controller.Websocket', {
 		this.faye_client.addExtension(this.faye_auth);
 		
 		
-		this.subscribe(this.faye_mount+"ui/"+global.account._id, console.log)
+		//this.subscribe(this.faye_mount+"ui/"+global.account._id, console.log)
 		this.subscribe(this.faye_mount+"ui/events", this.on_event)
 		
-		// Subscribe to own channel
-		/*this.faye_subscription_own = this.faye_client.subscribe(this.faye_mount+"ui/"+global.account._id, function(raw) {
-			var me = global.websocketCtrl
-		});
-		
-		// Subscribe to channel
-		this.faye_subscription = this.faye_client.subscribe(this.faye_mount+"ui", function(raw) {
-			var me = global.websocketCtrl
-			
-			// Route message
-			if (raw.clientId != me.faye_client.getClientId()){
-				if (raw.context == "store")
-					me.receive_ui_event_store(raw)
-			}
-		});*/
-
     },
     
     log_error: function(err){
