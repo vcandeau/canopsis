@@ -45,6 +45,10 @@ class cgroup(crecord):
 			if isinstance(account,caccount):
 				if account._id not in self.account_ids:
 					self.account_ids.append(account._id)
+					
+				if self._id not in account.groups:
+					account.groups.append(self._id)
+					
 			else:
 				raise ValueError("Account must be caccount")
 				
@@ -56,6 +60,9 @@ class cgroup(crecord):
 			if isinstance(account,caccount):
 				if account._id in self.account_ids:
 					self.account_ids.remove(account._id)
+					
+				if self._id in account.groups:
+					account.groups.remove(self._id)
 			else:
 				raise ValueError("Account must be caccount")
 		
