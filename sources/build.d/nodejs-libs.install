@@ -53,6 +53,9 @@ function install(){
 	npm_install faye-websocket 0.4.2
 	npm_install faye 0.8.2
 
+	# Iniparser
+	npm_install iniparser 1.0.5
+
 	rm -R $PREFIX/tmp/nodejs-libs
         check_code $?
 
