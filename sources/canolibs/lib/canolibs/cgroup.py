@@ -37,33 +37,70 @@ class cgroup(crecord):
 		crecord.load(self, dump)
 		self.account_ids = self.data['account_ids']
 		
-	def add_accounts(self, accounts):
+	def add_accounts(self, accounts,storage=None):
+		if not storage:
+			storage = self.storage	
+			
 		if not isinstance(accounts,list):
 			accounts = [accounts]
 			
-		for account in accounts:				
+		#string _id to account
+		account_list = []
+		for account in accounts:
 			if isinstance(account,caccount):
+				account_list.append(account)
+			elif isinstance(account, str):
+				if storage:
+					try:
+						record = storage.get(account)
+						account_list.append(caccount(record,storage=storage))
+					except Exception,err:
+						raise Exception('Account not found: %s', err)
+
+		#add accounts
+		for account in account_list:				
 				if account._id not in self.account_ids:
 					self.account_ids.append(account._id)
+					if self.storage:
+						self.save()
 					
 				if self._id not in account.groups:
 					account.groups.append(self._id)
-					
-			else:
-				raise ValueError("Account must be caccount")
+					print('try autosave')
+					print(account.storage)
+					if account.storage:
+						account.save()
+						print('autosaved !')
 				
-	def remove_accounts(self,accounts):
+	def remove_accounts(self,accounts,storage=None):
+		if not storage:
+			storage = self.storage
+		
 		if not isinstance(accounts,list):
 			accounts = [accounts]
 			
-		for account in accounts:			
+		#string _id to account
+		account_list = []
+		for account in accounts:
 			if isinstance(account,caccount):
-				if account._id in self.account_ids:
-					self.account_ids.remove(account._id)
-					
-				if self._id in account.groups:
-					account.groups.remove(self._id)
-			else:
-				raise ValueError("Account must be caccount")
-		
-			
+				account_list.append(account)
+			elif isinstance(account, str):
+				if storage:
+					try:
+						record = storage.get(account)
+						account_list.append(caccount(record,storage=storage))
+					except Exception,err:
+						raise Exception('Account not found: %s', err)
+						
+		#remove accounts
+		for account in account_list:			
+			if account._id in self.account_ids:
+				self.account_ids.remove(account._id)
+				if self.storage:
+					self.save()
+				
+			if self._id in account.groups:
+				account.groups.remove(self._id)
+				if account.storage:
+					account.save()
+
