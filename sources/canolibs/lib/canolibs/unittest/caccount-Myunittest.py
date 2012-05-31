@@ -22,6 +22,7 @@ import unittest
 
 from caccount import caccount
 from caccount import caccount_get, caccount_getall
+from cgroup import cgroup
 
 from cstorage import cstorage
 
@@ -104,6 +105,10 @@ class KnownValues(unittest.TestCase):
 
 		## But root can ;)
 		STORAGE.remove(ACCOUNT)
+		
+	def test_10_check_addgroup_removegroup(self):
+		group = cgroup(name='mygroup')
+		
 
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
