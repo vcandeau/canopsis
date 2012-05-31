@@ -69,11 +69,9 @@ class cgroup(crecord):
 					
 				if self._id not in account.groups:
 					account.groups.append(self._id)
-					print('try autosave')
-					print(account.storage)
 					if account.storage:
 						account.save()
-						print('autosaved !')
+
 				
 	def remove_accounts(self,accounts,storage=None):
 		if not storage:
