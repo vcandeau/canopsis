@@ -53,6 +53,7 @@ Ext.define('canopsis.controller.Websocket', {
 			if (!message.ext) message.ext = {};
 	
 			// Set the auth token
+			//TODO: Hash token
 			message.ext.authToken = global.account.authkey;
 			message.ext.authId = global.account._id;
 
@@ -67,6 +68,15 @@ Ext.define('canopsis.controller.Websocket', {
 		this.faye_client = new Faye.Client(this.faye_uri);
 		this.faye_client.addExtension(this.faye_auth);
 		
+		
+		this.subscribe(this.faye_mount+"ui/"+global.account._id, console.log)
+		this.subscribe(this.faye_mount+"ui/events", this.on_event)
+		
+		// Subscribe to own channel
+		/*this.faye_subscription_own = this.faye_client.subscribe(this.faye_mount+"ui/"+global.account._id, function(raw) {
+			var me = global.websocketCtrl
+		});
+		
 		// Subscribe to channel
 		this.faye_subscription = this.faye_client.subscribe(this.faye_mount+"ui", function(raw) {
 			var me = global.websocketCtrl
@@ -76,37 +86,51 @@ Ext.define('canopsis.controller.Websocket', {
 				if (raw.context == "store")
 					me.receive_ui_event_store(raw)
 			}
-		});
-
-		// On subscribe
-		this.faye_subscription.callback(function() {
-			var me = global.websocketCtrl
-			log.debug("Subscribed.", me.logAuthor);
-		});
-
-		// On error
-		this.faye_subscription.errback(function(error) {
-			var me = global.websocketCtrl
-			log.error("Error when subscribe to channel", me.logAuthor);
-			log.error(error);
-		});
+		});*/
 
     },
     
-    /////// Process Events
-	publish_ui_event_store: function(storeId, event) {
-		this.faye_client.publish(this.faye_mount+"ui",{
-			author: global.account._id,
-			clientId: this.faye_client.getClientId(),
-			context: "store",
-			storeId: storeId,
-			event: event,
+    log_error: function(err){
+		me = global.websocketCtrl
+		log.error("Faye: "+err.code + ": "+err.message, me.logAuthor);
+	},
+    
+    subscribe: function(channel, on_message){
+		channel = channel.replace("\.", "~");
+		
+		var subscription = this.faye_client.subscribe(channel, function(raw) {
+			on_message(raw)
 		});
 		
+		// On subscribe
+		subscription.callback(function() {
+			var me = global.websocketCtrl
+			log.debug("Subscribed to '"+channel+"'.", me.logAuthor);
+		});
+
+		// On error
+		subscription.errback(function(error) {
+			var me = global.websocketCtrl
+			log.error("Error when subscribe to channel '"+channel+"'", me.logAuthor);
+			me.log_error(error);
+		});
 	},
 	
-	receive_ui_event_store:  function(raw) {
-		global.notify.notify(raw.storeId +": have changed !!!")
+	publish_event: function(type, id, name){
+		this.faye_client.publish(this.faye_mount+"ui/events",{
+			author: global.account._id,
+			clientId: this.faye_client.getClientId(),
+			type: type,
+			id: id,
+			name: name,
+		});
+	},
+	
+	on_event: function(raw){
+		var me = global.websocketCtrl
+		if (raw.clientId != me.faye_client.getClientId()){
+			global.notify.notify(raw.author+" "+raw.name+" "+raw.type+" "+raw.id)
+		}
 	},
 
 });
