@@ -20,7 +20,10 @@
 
 #import logging
 from crecord import crecord
-from caccount import caccount
+try:
+	from caccount import caccount
+except:
+	pass
 
 class cgroup(crecord):
 	def __init__(self, record=None, account_ids=[], *args, **kargs):

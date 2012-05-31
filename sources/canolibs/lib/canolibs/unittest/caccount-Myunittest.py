@@ -53,8 +53,8 @@ class KnownValues(unittest.TestCase):
 		if not ACCOUNT.check_passwd(passwd):
 			raise Exception('Invalid passwd ... (%s)' % passwd)
 
-		authkey = ACCOUNT.make_authkey()
-		if not ACCOUNT.check_authkey(authkey):
+		authkey = ACCOUNT.make_tmp_cryptedKey()
+		if not ACCOUNT.check_tmp_cryptedKey(authkey):
 			raise Exception('Invalid authkey ... (%s)' % authkey)		
 		
 		ACCOUNT.cat()
@@ -108,7 +108,20 @@ class KnownValues(unittest.TestCase):
 		
 	def test_10_check_addgroup_removegroup(self):
 		group = cgroup(name='mygroup')
+		ACCOUNT.add_in_groups(group)
 		
+		if group._id not in ACCOUNT.groups:
+			raise Exception('Error while add_in_groups, group not added')
+		if ACCOUNT._id not in group.account_ids:
+			raise Exception('Error while add_in_groups, account not added to group')
+			
+		ACCOUNT.remove_from_groups(group)
+		
+		if group._id in ACCOUNT.groups:
+			raise Exception('Error while remove_from_groups, group not removed')
+		if ACCOUNT._id in group.account_ids:
+			raise Exception('Error while remove_from_groups, group not removed from account')
+
 
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')

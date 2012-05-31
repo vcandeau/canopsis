@@ -21,6 +21,10 @@
 #import logging
 from crecord import crecord
 from random import getrandbits
+try:
+	from cgroup import cgroup
+except:
+	pass
 import hashlib, time
 
 class caccount(crecord):
