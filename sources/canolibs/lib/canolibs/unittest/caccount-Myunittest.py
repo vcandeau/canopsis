@@ -128,27 +128,29 @@ class KnownValues(unittest.TestCase):
 		account = caccount(user='test', lastname='testify', storage=STORAGE)
 		group = cgroup(name='Mgroup')
 		
-		#print(group.dump())
-		
 		STORAGE.put(account)
 		STORAGE.put(group)
-		
-		#print('THE STORAGE IS %s' % account.storage)
-		#print('CGROUP NAME IS : %s' % group._id)
-		account.add_in_groups(group._id)
 
-		print(STORAGE.get(group._id))
+		account.add_in_groups(group._id)
 		
 		bdd_account = caccount(STORAGE.get(account._id))
 		bdd_group = cgroup(STORAGE.get(group._id))
 		
-		print(bdd_account.dump())
-		print(bdd_group.dump())
-		
 		if group._id not in bdd_account.groups:
-			raise Exception('Group corruption while stock in bdd')
+			raise Exception('Group corruption while stock in bdd after add in group')
 		if account._id not in bdd_group.account_ids:
-			raise Exception('Group corruption while stock in bdd')
+			raise Exception('Group corruption while stock in bdd after add in group')
+			
+		account.remove_from_groups(group._id)
+		
+		bdd_account = caccount(STORAGE.get(bdd_account._id))
+		bdd_group = cgroup(STORAGE.get(bdd_group._id))
+		
+		if group._id in bdd_account.groups:
+			raise Exception('Group corruption while stock in bdd after remove from group')
+		if account._id in bdd_group.account_ids:
+			raise Exception('Group corruption while stock in bdd after remove from group')
+
 			
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
