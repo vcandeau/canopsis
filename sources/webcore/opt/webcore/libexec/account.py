@@ -331,7 +331,7 @@ def account_delete(_id):
 		return HTTPError(404, _id+" Not Found")
 
 ### GROUP
-@get('/account/addToGroup/:group_id/:account_id',apply=[check_auth])
+@post('/account/addToGroup/:group_id/:account_id',apply=[check_auth])
 def add_account_to_group(group_id=None,account_id=None):
 	if not group_id or not account_id:
 		return HTTPError(400, 'Bad request, must specified group and account')
@@ -369,7 +369,7 @@ def add_account_to_group(group_id=None,account_id=None):
 	
 	return {'total' :1, 'success' : True, 'data':[]}
 		
-@get('/account/removeFromGroup/:group_id/:account_id',apply=[check_auth])
+@post('/account/removeFromGroup/:group_id/:account_id',apply=[check_auth])
 def remove_account_from_group(group_id=None,account_id=None):
 	if not group_id or not account_id:
 		return HTTPError(400, 'Bad request, must specified group and account')
