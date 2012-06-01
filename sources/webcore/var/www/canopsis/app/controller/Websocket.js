@@ -84,7 +84,7 @@ Ext.define('canopsis.controller.Websocket', {
 			me.fireEvent('transport_up', me);
 		});
 		
-		//this.subscribe(this.faye_mount+"ui/"+global.account._id, console.log)
+		//this.subscribe(this.faye_mount+"ui/"+global.account._id, this.on_pv)
 		this.subscribe(this.faye_mount+"ui/events", this.on_event)
 		
     },
@@ -97,9 +97,7 @@ Ext.define('canopsis.controller.Websocket', {
     subscribe: function(channel, on_message){
 		channel = channel.replace("\.", "~");
 		
-		var subscription = this.faye_client.subscribe(channel, function(raw) {
-			on_message(raw)
-		});
+		var subscription = this.faye_client.subscribe(channel, on_message);
 		
 		// On subscribe
 		subscription.callback(function() {
@@ -123,14 +121,23 @@ Ext.define('canopsis.controller.Websocket', {
 			type: type,
 			id: id,
 			name: name,
+			timestamp: get_timestamp_utc()
 		});
 	},
 	
 	on_event: function(raw){
 		var me = global.websocketCtrl
 		if (raw.clientId != me.faye_client.getClientId()){
-			global.notify.notify(raw.author+" "+raw.name+" "+raw.type+" "+raw.id)
+			log.debug(raw.author+" "+raw.name+" "+raw.type+" "+raw.id, me.logAuthor)
 		}
 	},
+	
+	on_pv: function(raw){
+		var me = global.websocketCtrl
+		var me = global.websocketCtrl
+		if (raw.clientId != me.faye_client.getClientId()){
+			log.debug("PV: "+raw.author+": "+raw.message, me.logAuthor);
+		}
+	}
 
 });
