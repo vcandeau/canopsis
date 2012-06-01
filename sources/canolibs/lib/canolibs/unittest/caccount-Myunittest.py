@@ -55,13 +55,18 @@ class KnownValues(unittest.TestCase):
 		if not ACCOUNT.check_passwd(passwd):
 			raise Exception('Invalid passwd ... (%s)' % passwd)
 
-		authkey = ACCOUNT.make_tmp_cryptedKey()
-		if not ACCOUNT.check_tmp_cryptedKey(authkey):
-			raise Exception('Invalid authkey ... (%s)' % authkey)		
+		cryptedKey = ACCOUNT.make_tmp_cryptedKey()
+		if not ACCOUNT.check_tmp_cryptedKey(cryptedKey):
+			raise Exception('Invalid cryptedKey ... (%s)' % authkey)		
 		
 		ACCOUNT.cat()
+		
+	def test_04_authkey(self):
+		authkey = ACCOUNT.get_authkey()
+		if not authkey:
+			raise Exception('Invalid authkey ... (%s)' % authkey)
 
-	def test_04_Store(self):
+	def test_05_Store(self):
 		STORAGE.put(ACCOUNT)
 		ACCOUNT.cat()
 	"""
@@ -150,8 +155,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Group corruption while stock in bdd after remove from group')
 		if account._id in bdd_group.account_ids:
 			raise Exception('Group corruption while stock in bdd after remove from group')
-
-			
+	
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 
