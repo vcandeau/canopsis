@@ -22,6 +22,7 @@ import unittest
 
 from caccount import caccount
 from caccount import caccount_get, caccount_getall
+from cgroup import cgroup
 
 from cstorage import cstorage
 
@@ -29,6 +30,7 @@ import hashlib, time
 
 STORAGE = None
 ACCOUNT = None
+GROUP = None
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
@@ -37,6 +39,7 @@ class KnownValues(unittest.TestCase):
 	def test_01_Init(self):
 		global ACCOUNT
 		ACCOUNT = caccount(user="wpain", lastname="Pain", firstname="William", mail="wpain@capensis.fr", group="capensis", groups=['titi', 'tata'])
+		global GROUP
 
 	def test_02_Cat(self):
 		ACCOUNT.cat()
@@ -52,8 +55,8 @@ class KnownValues(unittest.TestCase):
 		if not ACCOUNT.check_passwd(passwd):
 			raise Exception('Invalid passwd ... (%s)' % passwd)
 
-		authkey = ACCOUNT.make_authkey()
-		if not ACCOUNT.check_authkey(authkey):
+		authkey = ACCOUNT.make_tmp_cryptedKey()
+		if not ACCOUNT.check_tmp_cryptedKey(authkey):
 			raise Exception('Invalid authkey ... (%s)' % authkey)		
 		
 		ACCOUNT.cat()
@@ -104,7 +107,49 @@ class KnownValues(unittest.TestCase):
 
 		## But root can ;)
 		STORAGE.remove(ACCOUNT)
+		
+	def test_10_check_addgroup_removegroup(self):
+		GROUP = cgroup(name='mygroup')
+		ACCOUNT.add_in_groups(GROUP)
+		
+		if GROUP._id not in ACCOUNT.groups:
+			raise Exception('Error while add_in_groups, group not added')
+		if ACCOUNT._id not in GROUP.account_ids:
+			raise Exception('Error while add_in_groups, account not added to group')
+			
+		ACCOUNT.remove_from_groups(GROUP)
+		
+		if GROUP._id in ACCOUNT.groups:
+			raise Exception('Error while remove_from_groups, group not removed')
+		if ACCOUNT._id in GROUP.account_ids:
+			raise Exception('Error while remove_from_groups, group not removed from account')
+		
+	def test_11_check_group_func_autosav(self):
+		account = caccount(user='test', lastname='testify', storage=STORAGE)
+		group = cgroup(name='Mgroup')
+		
+		#print(group.dump())
+		
+		STORAGE.put(account)
+		STORAGE.put(group)
+		
+		#print('THE STORAGE IS %s' % account.storage)
+		#print('CGROUP NAME IS : %s' % group._id)
+		account.add_in_groups(group._id)
 
+		print(STORAGE.get(group._id))
+		
+		bdd_account = caccount(STORAGE.get(account._id))
+		bdd_group = cgroup(STORAGE.get(group._id))
+		
+		print(bdd_account.dump())
+		print(bdd_group.dump())
+		
+		if group._id not in bdd_account.groups:
+			raise Exception('Group corruption while stock in bdd')
+		if account._id not in bdd_group.account_ids:
+			raise Exception('Group corruption while stock in bdd')
+			
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 
