@@ -36,18 +36,23 @@ var default_config = {
 
 var log = {
 	info:		function(message, author){
-		this.dump(this.date()+' INFO '+author+' '+message)
+		this.print(this.date()+' INFO '+author+' '+message)
 	},
 	debug:		function(message, author){
-		this.dump(this.date()+' DEBUG '+author+' '+message)
+		if (config.faye.debug)
+			this.print(this.date()+' DEBUG '+author+' '+message)
 	},
 	warning:	function(message, author){
-		this.dump(this.date()+' WARN '+author+' '+message)
+		this.print(this.date()+' WARN '+author+' '+message)
 	},
 	error:		function(message, author){
-		this.dump(this.date()+' ERR '+author+' '+message)
+		this.print(this.date()+' ERR '+author+' '+message)
 	},
 	dump: 		function(message){
+		if (config.faye.debug)
+			console.log(message)
+	},
+	print: 		function(message){
 		console.log(message)
 	},
 	date:		function(){
@@ -200,9 +205,9 @@ var amqp_subscribe_queue = function(faye_channel){
 	log.info("Create Queue '"+queue_name+"'", "amqp")
 	if (! amqp_queues[queue_name]){
 		var queue = amqp_connection.queue(queue_name, {durable: false, exclusive: true}, function(){
-			log.info(" + Ok", "amqp")
+			log.debug(" + Ok", "amqp")
 				
-			log.info("Subscribe Queue '"+queue_name+"'", "amqp")
+			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
 			this.subscribe( {ack:true}, function(message){
 				if (faye_sessions.nbClientByChannel(faye_channel)){
 					//Publish message to Faye channel
@@ -211,9 +216,9 @@ var amqp_subscribe_queue = function(faye_channel){
 				queue.shift()
 			});
 			
-			log.info("Bind '#' on '"+queue_name+"'", "amqp")
+			log.debug("Bind '#' on '"+queue_name+"'", "amqp")
 			this.bind("canopsis.events", "#");
-			this.on('queueBindOk', function() { log.info(" + Ok", "amqp") });
+			this.on('queueBindOk', function() { log.debug(" + Ok", "amqp") });
 			
 			amqp_queues[queue_name] = this;	
 		});
@@ -280,9 +285,6 @@ var faye_sessions = {
 	}
 }
 
-//GLOBAL
-var faye_nb_client = 0
-
 var init_faye = function(callback){
 	
 	var faye_check_authToken = function (clientId, authId, authToken, faye_callback, faye_message){
@@ -290,7 +292,7 @@ var init_faye = function(callback){
 		if (mongodb_collection_object) {				
 			mongodb_collection_object.findOne({'_id': authId}, function(err, record){
 				
-				log.debug("Try to auth "+authId+" ("+clientId+") ...", "faye");
+				log.info("Try to auth "+authId+" ("+clientId+") ...", "faye");
 				if (err) {
 					log.error(err, "mongodb");
 				} else {
@@ -358,14 +360,12 @@ var init_faye = function(callback){
 
 	// Bind handshake event
 	faye_server.bind('handshake', function(clientId) {
-		faye_nb_client +=1
-		log.info(clientId+': Connected, '+faye_nb_client+' Client(s) Online.', "faye")
+		log.debug(clientId+': Connected', "faye")
 	})
 	
 	// Bind disconnect event
 	faye_server.bind('disconnect', function(clientId) {
-		faye_nb_client -=1
-		log.info(faye_sessions.check(clientId)+': Disconnected, '+faye_nb_client+' Client(s) Online.', "faye")
+		log.debug(faye_sessions.check(clientId)+': Disconnected', "faye")
 		// Clean sessions
 		try {
 			faye_sessions.drop(clientId)
@@ -376,19 +376,16 @@ var init_faye = function(callback){
 
 	// Bind subscribe event
 	faye_server.bind('subscribe', function(clientId, channel) {
-		log.info(faye_sessions.check(clientId)+': Suscribe to '+channel, "faye")
 		faye_sessions.subscribe(clientId, channel)
-		
-		log.debug( " + " + faye_sessions.nbClientByChannel(channel) +" client(s) in "+channel, "faye")
+		log.info(faye_sessions.check(clientId)+': Suscribe to '+channel+" ("+faye_sessions.nbClientByChannel(channel)+")", "faye")
 	})
 
 	// Bind unsubscribe event
 	faye_server.bind('unsubscribe', function(clientId, channel) {
-		log.info(faye_sessions.check(clientId)+': Unsuscribe to '+channel, "faye")
 		faye_sessions.unsubscribe(clientId, channel)
-		
 		var nb_clients = faye_sessions.nbClientByChannel(channel)
-		log.debug( " + " + nb_clients +" client(s) in "+channel, "faye")
+		
+		log.info(faye_sessions.check(clientId)+': Unsuscribe to '+channel+" ("+nb_clients+")", "faye")
 		
 		// Close AMQP Queue if nobody connect in next 'config.faye.amqp_timeout' seconds
 		if (nb_clients == 0 && channel.split("/")[1] == "amqp" ){
@@ -417,6 +414,8 @@ var init_faye = function(callback){
 
 read_config(function(){
 	log.debug("Configurations:", "main")
+	config.faye.debug = (config.faye.debug === 'true')
+	
 	log.dump(config)
 	
 	init_mongo(function(){
