@@ -60,7 +60,7 @@ log.info(" + Ok", "main")
 //////////// Config
 var config = {
 	amqp: {},
-	faye: {},
+	faye: { port: 8085, debug: false },
 	mongodb: {}
 };
 	
@@ -168,7 +168,44 @@ var amqp_unsubscribe_queue = function(queue_name){
 }
 
 //////////// FAYE
-var faye_sessions = {}
+var faye_sessions = {
+	sessions: {},
+	channels: {},
+	
+	create: function(id, extra){
+		if (this.check(id))
+			return
+		
+		if (extra == undefined)
+			extra = true
+			
+		log.debug("Create session "+id+" ("+extra+")", "session")
+		this.sessions[id] = extra
+	},
+	
+	drop: function(id){
+		log.debug("Drop session "+id+" ("+this.sessions[id]+")", "session")
+		delete this.sessions[id]
+	},
+	
+	check: function(id){
+		return this.sessions[id]
+	},
+	
+	subscribe: function(id, channel){
+		if (! channels[channel])
+			channels[channel] = [ id ]
+		else
+			channels[channel].push(id)
+	},
+	
+	unsubscribe: function(id, channel){
+		
+	},
+}
+
+
+
 var faye_nb_client = 0
 
 var init_faye = function(callback){
@@ -183,8 +220,7 @@ var init_faye = function(callback){
 					log.error(err, "mongodb");
 				} else {
 					if (record.authkey == authToken){
-						faye_sessions[clientId] = authId
-						log.info(faye_sessions[clientId] + ": Open session ("+clientId+")", "faye");
+						faye_sessions.create(clientId, authId)
 					} else {
 						log.info(clientId + ": Invalid auth (authId: '"+authId+"')", "faye");
 						faye_message.error = 'Invalid auth';
@@ -212,7 +248,7 @@ var init_faye = function(callback){
 			if (message.channel == '/meta/handshake' || message.channel == '/meta/disconnect' || message.channel == '/meta/connect')
 				return callback(message);
 			
-			if (message.channel == '/meta/subscribe' && ! faye_sessions[clientId]) {
+			if (message.channel == '/meta/subscribe' && ! faye_sessions.check(clientId)) {
 				try {
 					// Check auth and open session
 					//TODO: Hash token
@@ -228,10 +264,10 @@ var init_faye = function(callback){
 				}
 			};
 			
-			faye_sessions[faye_server.getClient().getClientId()] = "faye.server"
+			faye_sessions.create(faye_server.getClient().getClientId(), "faye.server");
 			
 			// Check sessions and self message
-			if (! faye_sessions[clientId]){
+			if (! faye_sessions.check(clientId)){
 				log.error(clientId + ": Invalid session, please auth ...", "faye")
 				message.error = 'Invalid session, please auth ...';
 			}
@@ -252,21 +288,20 @@ var init_faye = function(callback){
 	})
 	faye_server.bind('disconnect', function(clientId) {
 		faye_nb_client -=1
-		log.info(faye_sessions[clientId]+': Disconnected, '+faye_nb_client+' Client(s) Online.', "faye")
+		log.info(faye_sessions.check(clientId)+': Disconnected, '+faye_nb_client+' Client(s) Online.', "faye")
 		// Clean sessions
 		try {
-			log.info(faye_sessions[clientId] + ": Close session ("+clientId+")", "faye");
-			delete(faye_sessions[clientId])
+			faye_sessions.drop(clientId)
 		} catch (err) {
 			log.error("Invalid session for " + clientId, "faye");
 		}
 	})
 
 	faye_server.bind('subscribe', function(clientId, channel) {
-		log.info(faye_sessions[clientId]+': Suscribe to '+channel, "faye")
+		log.info(faye_sessions.check(clientId)+': Suscribe to '+channel, "faye")
 	})
 	faye_server.bind('unsubscribe', function(clientId, channel) {
-		log.info(faye_sessions[clientId]+': Unsuscribe to '+channel, "faye")
+		log.info(faye_sessions.check(clientId)+': Unsuscribe to '+channel, "faye")
 	})
 
 	faye_server.addExtension(faye_auth);
