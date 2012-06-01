@@ -243,5 +243,52 @@ Ext.define('canopsis.controller.Account', {
 				log.error('Error while fetching new Authkey',this.logAuthor)
 			}
 		})
-	}	
+	},
+	
+	add_to_group : function(group,account)	{
+		log.debug('Ask webserver adding '+ account +' to '+ 'group',this.logAuthor)
+		if (group.search('group.') == -1)
+			group = 'group.' + group
+		if (account.search('account.') == -1)
+			account = 'account.' + account
+			
+		Ext.Ajax.request({
+			url: '/account/addToGroup/'+ group + '/' + account,
+			method: 'POST',
+			success: function(response){
+				var object_response = Ext.decode(response.responseText)
+				if(object_response.success == true){
+					global.notify.notify(_('Group added'),_('Group successfuly added to secondary groups'))
+				}else{
+					log.error('Ajax output incorrect',this.logAuthor)
+				}
+			},
+			failure : function(response){
+				global.notify.notify(_('Error'),_('An error have occured during the process'),'error')
+				log.error('Error while fetching new Authkey',this.logAuthor)
+			}
+		})
+	},
+	
+	remove_from_group : function(group,account){
+		log.debug('Ask webserver removing '+ account +' from '+ 'group',this.logAuthor)
+		Ext.Ajax.request({
+			url: '/account/removeFromGroup/'+ group + '/' + account,
+			method: 'POST',
+			success: function(response){
+				var object_response = Ext.decode(response.responseText)
+				if(object_response.success == true){
+					global.notify.notify(_('Group removed'),_('Group successfuly removed from secondary groups'))
+				}else{
+					log.error('Ajax output incorrect',this.logAuthor)
+				}
+			},
+			failure : function(response){
+				global.notify.notify(_('Error'),_('An error have occured during the process'),'error')
+				log.error('Error while fetching new Authkey',this.logAuthor)
+			}
+		})
+	},
+	
+	
 });
