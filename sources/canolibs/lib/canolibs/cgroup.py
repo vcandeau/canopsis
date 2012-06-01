@@ -20,7 +20,10 @@
 
 #import logging
 from crecord import crecord
-from caccount import caccount
+try:
+	from caccount import caccount
+except:
+	pass
 
 class cgroup(crecord):
 	def __init__(self, record=None, account_ids=[], *args, **kargs):
@@ -28,6 +31,9 @@ class cgroup(crecord):
 		self.type = 'group'
 		self._id = '%s.%s' % (self.type,str(self.name))
 		self.account_ids = account_ids
+		
+		if isinstance(record, crecord):
+			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
 
 	def dump(self,json=False):
 		self.data['account_ids'] = self.account_ids
@@ -66,11 +72,9 @@ class cgroup(crecord):
 					
 				if self._id not in account.groups:
 					account.groups.append(self._id)
-					print('try autosave')
-					print(account.storage)
 					if account.storage:
 						account.save()
-						print('autosaved !')
+
 				
 	def remove_accounts(self,accounts,storage=None):
 		if not storage:
