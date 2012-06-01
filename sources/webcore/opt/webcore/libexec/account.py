@@ -28,6 +28,7 @@ from caccount import caccount
 from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
+from cgroup import cgroup
 
 #import protection function
 from libexec.auth import check_auth, get_account
@@ -325,3 +326,37 @@ def account_delete(_id):
 		logger.debug('account removed')
 	except:
 		return HTTPError(404, _id+" Not Found")
+
+### GROUP
+@get('/account/addToGroup/:group_id/:account_id',apply=[check_auth])
+def add_account_to_group(group_id=None,account_id=None):
+	if not group_id or not account_id:
+		return HTTPError(400, 'Bad request, must specified group and account')
+	
+	session_account = get_account()
+	storage = get_storage(namespace='object',account=session_account)
+	
+	#get group && account
+	if group_id.find('group.') == -1:
+		group_id = 'group.%s' % group_id
+		
+	if account_id.find('account.') == -1:
+		account_id = 'account.%s' % account_id
+		
+	logger.debug('Try to get %s and %s' % (account_id,group_id))
+		
+	try:
+		account_record = storage.get(account_id,account=session_account)
+		account = caccount(account_record)
+		group_record = storage.get(group_id,account=session_account)
+		group = cgroup(group_record)
+		
+	except Exception,err:
+		logger.error('error while fetching %s and %s : %s' % (account_id,group_id,err))
+		return HTTPError(403, 'Record not found or insufficient rights')
+		
+		group.canopsis
+		
+	
+		
+		
