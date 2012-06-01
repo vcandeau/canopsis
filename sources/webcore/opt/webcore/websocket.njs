@@ -20,20 +20,39 @@
 # ---------------------------------
 */
 
+//####################################################
+//# Default Configurations
+//####################################################
+
+var default_config = {
+	amqp: {},
+	faye: { port: 8085, debug: false, amqp_timeout: 10},
+	mongodb: {}
+};
+
+//####################################################
+//#  Logging
+//####################################################
+
 var log = {
 	info:		function(message, author){
-		this.dump(this.date()+' INFO '+author+' '+message)
+		this.print(this.date()+' INFO '+author+' '+message)
 	},
 	debug:		function(message, author){
-		this.dump(this.date()+' DEBUG '+author+' '+message)
+		if (config.faye.debug)
+			this.print(this.date()+' DEBUG '+author+' '+message)
 	},
 	warning:	function(message, author){
-		this.dump(this.date()+' WARN '+author+' '+message)
+		this.print(this.date()+' WARN '+author+' '+message)
 	},
 	error:		function(message, author){
-		this.dump(this.date()+' ERR '+author+' '+message)
+		this.print(this.date()+' ERR '+author+' '+message)
 	},
 	dump: 		function(message){
+		if (config.faye.debug)
+			console.log(message)
+	},
+	print: 		function(message){
 		console.log(message)
 	},
 	date:		function(){
@@ -41,6 +60,31 @@ var log = {
 		return date
 	}
 };
+
+//####################################################
+//#  Extend object (http://onemoredigit.com/post/1527191998/extending-objects-in-node-js)
+//####################################################
+Object.defineProperty(Object.prototype, "extend", {
+    enumerable: false,
+    value: function(from) {
+        var props = Object.getOwnPropertyNames(from);
+        var dest = this;
+        props.forEach(function(name) {
+            if (name in dest) {
+                var destination = Object.getOwnPropertyDescriptor(from, name);
+                Object.defineProperty(dest, name, destination);
+            }else{
+				// Hack
+				dest[name] = Object.getOwnPropertyDescriptor(from, name).value;
+			}
+        });
+        return this;
+    }
+});
+
+//####################################################
+//#  Load Module
+//####################################################
 
 log.info("Load modules ...", "main")
 try {
@@ -57,12 +101,13 @@ try {
 }
 log.info(" + Ok", "main")
 
-//////////// Config
-var config = {
-	amqp: {},
-	faye: { port: 8085, debug: false },
-	mongodb: {}
-};
+
+//####################################################
+//#  Load Configurations
+//####################################################
+
+//GLOBAL
+var config = {};
 	
 var read_config = function(callback){
 	
@@ -76,8 +121,8 @@ var read_config = function(callback){
 				log.error(err, "config");
 				process.exit(1);
 			} else {
+				config[field] = default_config[field].extend(data[section])
 				log.info("   + Ok", "config")
-				config[field] = data[section]
 				callback()
 			}
 		});	
@@ -97,7 +142,11 @@ var read_config = function(callback){
 	});
 }
 
-//////////// MongoDB
+//####################################################
+//#  Connect to MongoDB
+//####################################################
+
+//GLOBAL
 var mongodb_server = undefined
 var mongodb_client = undefined
 var mongodb_collection_object = undefined
@@ -120,7 +169,11 @@ var init_mongo = function(callback){
 }
 
 
-//////////// AMQP
+//####################################################
+//#  Connect to AMQP Broker
+//####################################################
+
+//GLOBAL
 var amqp_connection = undefined
 
 var init_amqp = function(callback){
@@ -138,36 +191,55 @@ var init_amqp = function(callback){
 	});	
 }
 
+
+//####################################################
+//#  Bind AMQP Queue on Faye channel
+//####################################################
+
+//GLOBAL
 var amqp_queues = {};
 
-var amqp_subscribe_queue = function(queue_name){
+var amqp_subscribe_queue = function(faye_channel){
+	var queue_name = faye_channel.split("/")[2];
 	queue_name = 'websocket_'+queue_name
 	log.info("Create Queue '"+queue_name+"'", "amqp")
-	
-	var queue = amqp_connection.queue(queue_name, {durable: false, exclusive: true}, function(){
-		log.info(" + Ok", "amqp")
+	if (! amqp_queues[queue_name]){
+		var queue = amqp_connection.queue(queue_name, {durable: false, exclusive: true}, function(){
+			log.debug(" + Ok", "amqp")
+				
+			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
+			this.subscribe( {ack:true}, function(message){
+				if (faye_sessions.nbClientByChannel(faye_channel)){
+					//Publish message to Faye channel
+					faye_server.getClient().publish(faye_channel, message);
+				}
+				queue.shift()
+			});
 			
-		log.info("Subscribe Queue '"+queue_name+"'", "amqp")
-		this.subscribe( {ack:true}, function(message){
-			if (faye_server){
-				//Publish message to Faye
-				faye_server.getClient().publish('/amqp/events', message);
-			}
-			queue.shift()
+			log.debug("Bind '#' on '"+queue_name+"'", "amqp")
+			this.bind("canopsis.events", "#");
+			this.on('queueBindOk', function() { log.debug(" + Ok", "amqp") });
+			
+			amqp_queues[queue_name] = this;	
 		});
-		
-		log.info("Bind '#' on '"+queue_name+"'", "amqp")
-		this.bind("canopsis.events", "#");
-		this.on('queueBindOk', function() { log.info(" + Ok", "amqp") });
-		
-		amqp_queues[queue_name] = this
-	});
+	}else{
+		log.info(" + Already exist", "amqp")
+	}
 }
 
-var amqp_unsubscribe_queue = function(queue_name){
+var amqp_unsubscribe_queue = function(faye_channel){
+	var queue_name = faye_channel.split("/")[2];
+	queue_name = 'websocket_'+queue_name
+	log.debug("Close AMQP queue '" + queue_name + "'", "amqp")
+	var queue = amqp_queues[queue_name]
+	queue.destroy()
+	delete amqp_queues[queue_name];
 }
 
-//////////// FAYE
+//####################################################
+//#  Start Faye Server
+//####################################################
+
 var faye_sessions = {
 	sessions: {},
 	channels: {},
@@ -189,24 +261,29 @@ var faye_sessions = {
 	},
 	
 	check: function(id){
+		if (id == faye_server.getClient().getClientId())
+			return "faye.server"
+			
 		return this.sessions[id]
 	},
 	
 	subscribe: function(id, channel){
-		if (! channels[channel])
-			channels[channel] = [ id ]
+		if (! this.channels[channel])
+			this.channels[channel] = [ id ]
 		else
-			channels[channel].push(id)
+			this.channels[channel].push(id)
 	},
 	
 	unsubscribe: function(id, channel){
-		
+		var channels = this.channels[channel]
+		var index = channels.indexOf(id)
+		this.channels[channel] = channels.slice(0,index).concat(channels.slice(index+1, channels.length))
 	},
+	
+	nbClientByChannel: function(channel){
+		return this.channels[channel].length
+	}
 }
-
-
-
-var faye_nb_client = 0
 
 var init_faye = function(callback){
 	
@@ -215,11 +292,12 @@ var init_faye = function(callback){
 		if (mongodb_collection_object) {				
 			mongodb_collection_object.findOne({'_id': authId}, function(err, record){
 				
-				log.debug("Try to auth "+authId+" ("+clientId+") ...", "faye");
+				log.info("Try to auth "+authId+" ("+clientId+") ...", "faye");
 				if (err) {
 					log.error(err, "mongodb");
 				} else {
 					if (record.authkey == authToken){
+						log.info(" + Auth Ok", "faye")
 						faye_sessions.create(clientId, authId)
 					} else {
 						log.info(clientId + ": Invalid auth (authId: '"+authId+"')", "faye");
@@ -228,9 +306,8 @@ var init_faye = function(callback){
 					
 					//Check if is AMQP Channel
 					if (! faye_message.error && faye_message.subscription.split("/")[1] == "amqp"){
-						log.debug("Okay, it's AMQP channel, Open and bind queue ...", "faye")
-						var queue_name = faye_message.subscription.split("/")[2]
-						amqp_subscribe_queue(queue_name)
+						log.debug("Okay, it's AMQP channel", "faye")
+						amqp_subscribe_queue(faye_message.subscription)
 					}
 					
 					faye_callback(faye_message);
@@ -264,8 +341,6 @@ var init_faye = function(callback){
 				}
 			};
 			
-			faye_sessions.create(faye_server.getClient().getClientId(), "faye.server");
-			
 			// Check sessions and self message
 			if (! faye_sessions.check(clientId)){
 				log.error(clientId + ": Invalid session, please auth ...", "faye")
@@ -281,14 +356,16 @@ var init_faye = function(callback){
 	faye_server = new faye.NodeAdapter({mount: '/'});
 	
 
+	// Bind Faye events
 
+	// Bind handshake event
 	faye_server.bind('handshake', function(clientId) {
-		faye_nb_client +=1
-		log.info(clientId+': Connected, '+faye_nb_client+' Client(s) Online.', "faye")
+		log.debug(clientId+': Connected', "faye")
 	})
+	
+	// Bind disconnect event
 	faye_server.bind('disconnect', function(clientId) {
-		faye_nb_client -=1
-		log.info(faye_sessions.check(clientId)+': Disconnected, '+faye_nb_client+' Client(s) Online.', "faye")
+		log.debug(faye_sessions.check(clientId)+': Disconnected', "faye")
 		// Clean sessions
 		try {
 			faye_sessions.drop(clientId)
@@ -297,15 +374,33 @@ var init_faye = function(callback){
 		}
 	})
 
+	// Bind subscribe event
 	faye_server.bind('subscribe', function(clientId, channel) {
-		log.info(faye_sessions.check(clientId)+': Suscribe to '+channel, "faye")
-	})
-	faye_server.bind('unsubscribe', function(clientId, channel) {
-		log.info(faye_sessions.check(clientId)+': Unsuscribe to '+channel, "faye")
+		faye_sessions.subscribe(clientId, channel)
+		log.info(faye_sessions.check(clientId)+': Suscribe to '+channel+" ("+faye_sessions.nbClientByChannel(channel)+")", "faye")
 	})
 
+	// Bind unsubscribe event
+	faye_server.bind('unsubscribe', function(clientId, channel) {
+		faye_sessions.unsubscribe(clientId, channel)
+		var nb_clients = faye_sessions.nbClientByChannel(channel)
+		
+		log.info(faye_sessions.check(clientId)+': Unsuscribe to '+channel+" ("+nb_clients+")", "faye")
+		
+		// Close AMQP Queue if nobody connect in next 'config.faye.amqp_timeout' seconds
+		if (nb_clients == 0 && channel.split("/")[1] == "amqp" ){
+			log.debug(" + Nobody in AMQP Channel, close this AMQP Queue in "+config.faye.amqp_timeout+" sec ...", "faye")
+			setTimeout(function(channel){
+				if (! faye_sessions.nbClientByChannel(channel))
+					amqp_unsubscribe_queue(channel)
+			}, parseInt(config.faye.amqp_timeout)*1000, channel);
+		}
+	})
+
+	// Extend faye_server
 	faye_server.addExtension(faye_auth);
 
+	// Wait Client
 	log.info(" + Listen on "+config.faye.port, "faye")
 	faye_server.listen(parseInt(config.faye.port), {}, function(){
 		log.info("   + Ok", "faye");
@@ -313,9 +408,16 @@ var init_faye = function(callback){
 	});
 }
 
-///////////////////// MAIN
+//####################################################
+//#  Main Program
+//####################################################
 
 read_config(function(){
+	log.debug("Configurations:", "main")
+	config.faye.debug = (config.faye.debug === 'true')
+	
+	log.dump(config)
+	
 	init_mongo(function(){
 		init_amqp(function(){
 			init_faye(function(){
