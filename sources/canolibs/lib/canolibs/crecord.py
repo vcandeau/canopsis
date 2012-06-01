@@ -203,7 +203,8 @@ class crecord(object):
 				return True
 			elif ((account.group == self.group) and ('w' in self.access_group)):
 				return True
-
+			elif ((self.group in account.groups) and ('w' in self.access_group)):
+				return True
 		return False
 	
 	def chown(self, owner):
