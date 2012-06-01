@@ -364,7 +364,8 @@ def add_account_to_group(group_id=None,account_id=None):
 	try:
 		storage.put([group,account])
 	except:
-		return {'total' :1, 'success' : false, 'data':[]}
+		logger.error('Put group/account in db goes wrong')
+		return HTTPError(500, 'Put group/account in db goes wrong')
 	
 	return {'total' :1, 'success' : True, 'data':[]}
 		
@@ -401,7 +402,8 @@ def remove_account_from_group(group_id=None,account_id=None):
 	try:
 		storage.put([group,account])
 	except:
-		return {'total' :1, 'success' : false, 'data':[]}
+		logger.error('Put group/account in db goes wrong')
+		return HTTPError(500, 'Put group/account in db goes wrong')
 	
 	return {'total' :1, 'success' : True, 'data':[]}
 		
