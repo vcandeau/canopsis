@@ -61,6 +61,7 @@ def init():
 			record.firstname = account[4]
 			record.lastname = account[3]
 			record.passwd(account[1])
+			record.generate_new_authkey()
 			storage.put(record)
 		
 
@@ -98,9 +99,17 @@ def init():
 
 def update():
 	init()
+	check_and_create_authkey()
 	update_for_new_ACL()
 	
-
+def check_and_create_authkey():
+	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
+	for record in records:
+		if 'authkey' in record.data:
+			if record.data['authkey'] == None:
+				record.generate_new_authkey()
+		else:
+			record.generate_new_authkey()
 
 def update_for_new_ACL():
 	#Enable ACL , update old record
