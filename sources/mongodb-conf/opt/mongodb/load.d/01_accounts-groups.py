@@ -84,8 +84,8 @@ def init():
 		except:
 			logger.info(" + Create '%s' directory" % user)
 			userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
-			userdir.chown(user)
-			userdir.chgrp(user)
+			userdir.chown('account.%s' % user)
+			userdir.chgrp('group.%s' % user)
 			userdir.chmod('g-w')
 			userdir.chmod('g-r')
 
@@ -98,4 +98,28 @@ def init():
 
 def update():
 	init()
+	update_for_new_ACL()
+	
 
+
+def update_for_new_ACL():
+	#Enable ACL , update old record
+	storage = cstorage(namespace='object',account=root)
+
+	dump = storage.find({})
+
+	for record in dump:
+		if record.owner.find('account.') == -1:
+			record.owner = 'account.%s' % record.owner
+		if record.group.find('group.') == -1:
+			record.group = 'group.%s' % record.group
+		#for caccount
+		if 'groups' in record.data:
+			for group in record.data['groups']:
+				if group.find('group.') == -1:
+					group = 'group.%s' % group
+		#for cgroup
+		if 'account_ids' in record.data:
+			for account in record.data['account_ids']:
+				if account.find('account.') == -1:
+					account = 'account.%s' % account

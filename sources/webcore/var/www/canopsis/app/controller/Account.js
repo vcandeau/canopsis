@@ -140,16 +140,20 @@ Ext.define('canopsis.controller.Account', {
 	//check if user have right on this record
 	check_record_right : function(record,option){
 		var user = global.account._id
+		var group = global.account.aaa_group
 		var groups = global.account.groups
 
 		//root can do everything
-		if(user == 'root'){
+		if(user == 'account.root'){
 			return true
 		}
 		
 		if((option == 'r') || (option == 'w')){
 			if ((user == record.get('aaa_owner')) && (record.data.aaa_access_owner.indexOf(option) > -1)){
 				//log.debug('owner')
+				return true
+			} else if((group == obj.aaa_group) && (obj.aaa_access_group.indexOf(option) > -1)){
+				//log.debug('group')
 				return true
 			} else if((groups.indexOf(record.get('aaa_group')) != -1) && (record.data.aaa_access_group.indexOf(option) > -1)){
 				//log.debug('group')
@@ -162,20 +166,26 @@ Ext.define('canopsis.controller.Account', {
 			log.error(_('Incorrect right option given'),this.logAuthor)
 		}
 	},
-	
+	/*
 	//check if user have right on this obj
 	check_right: function(obj,option){
-		var user = global.account.user
+		var user = global.account._id
+		var group = global.account.aaa_group
 		var groups = global.account.groups
 
 		//root can do everything
-		if(user == 'root'){
+		log.dump('999999999999999999999999999999999999')
+		log.dump'user
+		if(user == 'account.root'){
 			return true
 		}
 		
 		if((option == 'r') || (option == 'w')){
 			if ((user == obj.aaa_owner) && (obj.aaa_access_owner.indexOf(option) > -1)){
 				//log.debug('owner')
+				return true
+			} else if((group == obj.aaa_group) && (obj.aaa_access_group.indexOf(option) > -1)){
+				//log.debug('group')
 				return true
 			} else if((groups.indexOf(obj.aaa_group) != -1) && (obj.aaa_access_group.indexOf(option) > -1)){
 				//log.debug('group')
@@ -189,7 +199,7 @@ Ext.define('canopsis.controller.Account', {
 		}
 		
 	},
-	
+	*/
 	//if callback_func != null and ajax success -> callback is call in passed scope with
 	//new key as argument
 	new_authkey : function(account,callback_func,scope){

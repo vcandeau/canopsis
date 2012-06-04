@@ -49,6 +49,17 @@ def update():
 	#		storage.put(record, account=root, namespace='files')
 	#		
 	#	storage.drop_namespace('reports')
+	update_for_new_ACL()
 	
 	pass
 		
+def update_for_new_ACL():
+	#update briefcase elements
+	storage = cstorage(namespace='files',account=root)
+	dump = storage.find({})
+
+	for record in dump:
+		if record.owner.find('account.') == -1:
+			record.owner = 'account.%s' % record.owner
+		if record.group.find('group.') == -1:
+			record.group = 'group.%s' % record.group
