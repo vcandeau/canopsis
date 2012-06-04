@@ -199,7 +199,7 @@ class crecord(object):
 			if account.user == 'root':
 				return True
 	
-			elif ((account.user == self.owner) and ('w' in self.access_owner)):
+			elif ((account._id == self.owner) and ('w' in self.access_owner)):
 				return True
 			elif ((account.group == self.group) and ('w' in self.access_group)):
 				return True

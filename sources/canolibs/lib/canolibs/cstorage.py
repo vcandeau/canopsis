@@ -86,16 +86,16 @@ class cstorage(object):
 
 		if account.user != "root" or account.group != "root":
 			Read_mfilter = { '$or': [
-				#{'aaa_owner': account._id, 'aaa_access_owner': 'r'},
-				{'aaa_owner': account.user, 'aaa_access_owner': 'r'},
+				{'aaa_owner': account._id, 'aaa_access_owner': 'r'},
+				#{'aaa_owner': account.user, 'aaa_access_owner': 'r'},
 				{'aaa_group': account.group, 'aaa_access_group': 'r'},
 				{'aaa_group': {'$in': account.groups}, 'aaa_access_group': 'r'},
 				{'aaa_access_unauth': 'r'}
 			] }
 	
 			Write_mfilter = { '$or': [
-				#{'aaa_owner': account._id, 'aaa_access_owner': 'w'},
-				{'aaa_owner': account.user, 'aaa_access_owner': 'w'},
+				{'aaa_owner': account._id, 'aaa_access_owner': 'w'},
+				#{'aaa_owner': account.user, 'aaa_access_owner': 'w'},
 				{'aaa_group': account.group, 'aaa_access_group': 'w'},
 				{'aaa_group': {'$in': account.groups}, 'aaa_access_group': 'w'},
 				{'aaa_access_unauth': 'w'}
@@ -153,8 +153,8 @@ class cstorage(object):
 				record.data['data_id'] = data_id
 
 			if not record.owner:
-				#record.owner = account._id
-				record.owner = account.user
+				record.owner = account._id
+				#record.owner = account.user
 			if not record.group:
 				record.group = account.group
 
