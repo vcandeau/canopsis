@@ -186,7 +186,7 @@ def tree_update(name='None'):
 				
 				parentNode.add_children(record)
 				
-				record.chown(account.user)
+				record.chown(account._id)
 				record.chgrp(account.group)
 				record.chmod('g-w')
 				record.chmod('g-r')

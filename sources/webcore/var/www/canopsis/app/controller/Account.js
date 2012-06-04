@@ -139,7 +139,7 @@ Ext.define('canopsis.controller.Account', {
 	
 	//check if user have right on this record
 	check_record_right : function(record,option){
-		var user = global.account.user
+		var user = global.account._id
 		var groups = global.account.groups
 
 		//root can do everything
