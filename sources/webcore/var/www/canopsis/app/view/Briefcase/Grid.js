@@ -60,11 +60,13 @@ Ext.define('canopsis.view.Briefcase.Grid' ,{
 		},{
 			width: 120,
 			dataIndex: 'aaa_owner',
-			text: _('Owner')
+			text: _('Owner'),
+			renderer: rdr_clean_id,
 		},{
 			width: 120,
 			dataIndex: 'aaa_group',
-			text: _('Group')
+			text: _('Group'),
+			renderer: rdr_clean_id,
 		},{
 			width: 80,
 			align: 'center',

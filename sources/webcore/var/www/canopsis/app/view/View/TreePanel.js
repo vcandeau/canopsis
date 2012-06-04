@@ -42,10 +42,12 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 		},{
 			flex: 1,
 			dataIndex: 'aaa_owner',
+			renderer: rdr_clean_id,
 			text: _('Owner')
 		},{
 			flex: 1,
 			dataIndex: 'aaa_group',
+			renderer: rdr_clean_id,
 			text: _('Group')
 		},{
 			width: 80,

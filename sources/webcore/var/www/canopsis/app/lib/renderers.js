@@ -179,3 +179,12 @@ var rdr_mail_information = function(val, metadata, record, rowIndex, colIndex, s
 		
 	return output
 }
+
+var rdr_clean_id = function (val){
+	if (val.search('.') != -1){
+		tmp = val.split('.')
+		val = tmp[1]
+	}
+	
+	return val
+}
