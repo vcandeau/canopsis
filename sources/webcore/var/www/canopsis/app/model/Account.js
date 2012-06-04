@@ -28,7 +28,7 @@ Ext.define('canopsis.model.Account', {
 		{name : 'lastname'},
 		{name : 'user'},
 		{name : 'mail'},
-		//{name : 'aaa_group'},
+		{name : 'aaa_group'},
 		{name : 'groups'},
 		{name : 'passwd'}
 		],
