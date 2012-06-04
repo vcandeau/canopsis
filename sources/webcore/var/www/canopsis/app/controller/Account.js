@@ -166,7 +166,7 @@ Ext.define('canopsis.controller.Account', {
 			log.error(_('Incorrect right option given'),this.logAuthor)
 		}
 	},
-	/*
+	
 	//check if user have right on this obj
 	check_right: function(obj,option){
 		var user = global.account._id
@@ -174,8 +174,6 @@ Ext.define('canopsis.controller.Account', {
 		var groups = global.account.groups
 
 		//root can do everything
-		log.dump('999999999999999999999999999999999999')
-		log.dump'user
 		if(user == 'account.root'){
 			return true
 		}
@@ -199,7 +197,7 @@ Ext.define('canopsis.controller.Account', {
 		}
 		
 	},
-	*/
+	
 	//if callback_func != null and ajax success -> callback is call in passed scope with
 	//new key as argument
 	new_authkey : function(account,callback_func,scope){
