@@ -164,7 +164,7 @@ class caccount(crecord):
 		#string _id to cgroup
 		group_list = []
 		for group in groups:
-			if isinstance(group,cgroup):
+			if isinstance(group,crecord):
 				group_list.append(group)
 			elif isinstance(group, str):
 				if storage:
@@ -196,7 +196,7 @@ class caccount(crecord):
 		#string _id to cgroup
 		group_list = []
 		for group in groups:
-			if isinstance(group,cgroup):
+			if isinstance(group,crecord):
 				group_list.append(group)
 			elif isinstance(group, str):
 				if storage:
