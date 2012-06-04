@@ -24,8 +24,13 @@ Ext.define('canopsis.view.Account.Form', {
 	alias: 'widget.AccountForm',
 
 	iconCls: 'icon-crecord_type-account',
+	
+	logAuthor : '[Controller][Account][Form]',
 
-	items: [{
+	initComponent: function() {
+		log.debug('Initializing...', this.logAuthor)
+		
+		var g_options = [{
 				fieldLabel: _('Login'),
 				name: 'user',
 				allowBlank: false,
@@ -44,12 +49,9 @@ Ext.define('canopsis.view.Account.Form', {
 				name: 'mail',
 				vtype: 'email',
 				allowBlank : true
-			},/*{
-				fieldLabel: _('groups'),
-				name: 'groups'
-			},*/{
+			},{
 				fieldLabel: _('group'),
-				name: 'groups',
+				name: 'aaa_group',
 				store: 'Groups',
 				displayField: 'crecord_name',
 				xtype: 'combobox',
@@ -59,6 +61,30 @@ Ext.define('canopsis.view.Account.Form', {
 				inputType: 'password',
 				name: 'passwd',
 				allowBlank : false
-			}],
+			}]
+			
+		
+		
+		var g_options_panel = Ext.widget('fieldset',{
+				title:_('General options'),
+				//margin : 4,
+				//height : 400,
+				//width : 200,
+				defaultType: 'textfield',
+				items : g_options
+			})
+		
+		var secondary_group = Ext.widget('fieldset',{
+				title:_('Secondary groups'),
+				//margin : 4,
+				//height : 400,
+				//width : 200,
+				//items : [g_options]
+			})
+		
+		this.callParent(arguments);
+		
+		this.add(g_options_panel)
+	},
     
 });
