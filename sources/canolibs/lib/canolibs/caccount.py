@@ -54,7 +54,10 @@ class caccount(crecord):
 			self.generate_new_authkey()
 
 		if self.user:
-			self._id = self.type+"."+self.user	
+			self._id = self.type+"."+self.user
+		
+		if self.group.find('group.') == -1:
+			self.group = 'group.%s' % self.group
 
 		self.access_owner=['r','w']
 		self.access_group=[]
