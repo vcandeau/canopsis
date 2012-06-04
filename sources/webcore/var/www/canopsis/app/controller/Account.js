@@ -152,7 +152,7 @@ Ext.define('canopsis.controller.Account', {
 			if ((user == record.get('aaa_owner')) && (record.data.aaa_access_owner.indexOf(option) > -1)){
 				//log.debug('owner')
 				return true
-			} else if((group == obj.aaa_group) && (obj.aaa_access_group.indexOf(option) > -1)){
+			} else if((group == record.get('aaa_group')) && (record.data.aaa_access_group.indexOf(option) > -1)){
 				//log.debug('group')
 				return true
 			} else if((groups.indexOf(record.get('aaa_group')) != -1) && (record.data.aaa_access_group.indexOf(option) > -1)){
