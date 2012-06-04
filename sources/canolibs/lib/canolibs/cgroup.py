@@ -54,7 +54,7 @@ class cgroup(crecord):
 		#string _id to account
 		account_list = []
 		for account in accounts:
-			if isinstance(account,caccount):
+			if isinstance(account,crecord):
 				account_list.append(account)
 			elif isinstance(account, str):
 				if storage:
@@ -87,7 +87,7 @@ class cgroup(crecord):
 		#string _id to account
 		account_list = []
 		for account in accounts:
-			if isinstance(account,caccount):
+			if isinstance(account,crecord):
 				account_list.append(account)
 			elif isinstance(account, str):
 				if storage:
