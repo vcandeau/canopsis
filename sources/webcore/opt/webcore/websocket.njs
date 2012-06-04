@@ -29,6 +29,7 @@ var default_config = {
 	faye: { port: 8085, debug: false, amqp_timeout: 10},
 	mongodb: {}
 };
+var config = default_config;
 
 //####################################################
 //#  Logging
@@ -200,24 +201,25 @@ var init_amqp = function(callback){
 var amqp_queues = {};
 
 var amqp_subscribe_queue = function(faye_channel){
-	var queue_name = faye_channel.split("/")[2];
-	queue_name = 'websocket_'+queue_name
+	var short_name = faye_channel.split("/")[2];
+	var queue_name = 'websocket_'+short_name
 	log.info("Create Queue '"+queue_name+"'", "amqp")
 	if (! amqp_queues[queue_name]){
 		var queue = amqp_connection.queue(queue_name, {durable: false, exclusive: true}, function(){
 			log.debug(" + Ok", "amqp")
 				
 			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
-			this.subscribe( {ack:true}, function(message){
+			this.subscribe( {ack:true}, function(message, headers, deliveryInfo){
 				if (faye_sessions.nbClientByChannel(faye_channel)){
 					//Publish message to Faye channel
+					message['id'] = deliveryInfo.routingKey
 					faye_server.getClient().publish(faye_channel, message);
 				}
 				queue.shift()
 			});
 			
 			log.debug("Bind '#' on '"+queue_name+"'", "amqp")
-			this.bind("canopsis.events", "#");
+			this.bind("canopsis."+short_name, "#");
 			this.on('queueBindOk', function() { log.debug(" + Ok", "amqp") });
 			
 			amqp_queues[queue_name] = this;	
@@ -230,7 +232,7 @@ var amqp_subscribe_queue = function(faye_channel){
 var amqp_unsubscribe_queue = function(faye_channel){
 	var queue_name = faye_channel.split("/")[2];
 	queue_name = 'websocket_'+queue_name
-	log.debug("Close AMQP queue '" + queue_name + "'", "amqp")
+	log.info("Close AMQP queue '" + queue_name + "'", "amqp")
 	var queue = amqp_queues[queue_name]
 	queue.destroy()
 	delete amqp_queues[queue_name];
