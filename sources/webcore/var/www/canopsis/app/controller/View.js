@@ -153,7 +153,7 @@ Ext.define('canopsis.controller.View', {
 				record.set('children',[])
 				
 				this.add_to_home(record,false)
-				h
+				
 			} else {
 				log.debug('cancel new view',this.logAuthor)
 			}
