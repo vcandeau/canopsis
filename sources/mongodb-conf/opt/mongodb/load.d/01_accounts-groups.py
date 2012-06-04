@@ -103,6 +103,7 @@ def update():
 	update_for_new_ACL()
 	
 def check_and_create_authkey():
+	storage = get_storage(account=root, namespace='object')
 	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
 	for record in records:
 		if 'authkey' in record.data:
@@ -113,7 +114,7 @@ def check_and_create_authkey():
 
 def update_for_new_ACL():
 	#Enable ACL , update old record
-	storage = cstorage(namespace='object',account=root)
+	storage = get_storage(account=root, namespace='object')
 
 	dump = storage.find({})
 
@@ -132,3 +133,5 @@ def update_for_new_ACL():
 			for account in record.data['account_ids']:
 				if account.find('account.') == -1:
 					account = 'account.%s' % account
+					
+	storage.put(dump)
