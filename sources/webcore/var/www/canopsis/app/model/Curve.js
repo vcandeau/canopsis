@@ -36,5 +36,11 @@ Ext.define('canopsis.model.Curve', {
 		{name : 'dashStyle',		defaultValue: "Solid" },
 		{name : 'label',			defaultValue: undefined },
 		
+		{name: 'aaa_access_group'},
+		{name: 'aaa_access_other'},
+		{name: 'aaa_access_owner'},
+		{name: 'aaa_group'},
+		{name: 'aaa_owner'},
+		
 		]
 });
