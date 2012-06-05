@@ -26,10 +26,14 @@ Ext.define('canopsis.view.Account.Form', {
 	iconCls: 'icon-crecord_type-account',
 	
 	logAuthor : '[Controller][Account][Form]',
+	
+	//layout : 'hbox',
 
 	initComponent: function() {
 		log.debug('Initializing...', this.logAuthor)
 		
+		
+		//---------------------------General options-------------------------
 		var g_options = [{
 				fieldLabel: _('Login'),
 				name: 'user',
@@ -67,24 +71,36 @@ Ext.define('canopsis.view.Account.Form', {
 		
 		var g_options_panel = Ext.widget('fieldset',{
 				title:_('General options'),
-				//margin : 4,
-				//height : 400,
-				//width : 200,
 				defaultType: 'textfield',
 				items : g_options
 			})
 		
+		//----------------------- drag and drop-------------------
+		var checkboxModel = Ext.create('Ext.selection.CheckboxModel');
+		this.checkGrid = Ext.create('Ext.grid.Panel', {
+			store: 'Groups',
+			selModel: checkboxModel,
+			columns: [
+				{text: _('Name'), dataIndex: 'crecord_name',flex:1}
+			],
+			columnLines: true,
+			title: _('Groups'),
+			hideHeaders: true,
+			collapsible: true,
+			collapsed : true,
+			name : 'groups',
+			scroll: 'vertical',
+			margin : '4 0 6 0'
+		})
+		
 		var secondary_group = Ext.widget('fieldset',{
 				title:_('Secondary groups'),
-				//margin : 4,
-				//height : 400,
-				//width : 200,
-				//items : [g_options]
+				items: [this.checkGrid],
 			})
 		
 		this.callParent(arguments);
 		
-		this.add(g_options_panel)
+		this.add([g_options_panel,secondary_group])
 	},
     
 });
