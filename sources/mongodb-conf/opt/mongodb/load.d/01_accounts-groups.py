@@ -60,6 +60,8 @@ def init():
 			record = caccount(user=user, group=account[2])
 			record.firstname = account[4]
 			record.lastname = account[3]
+			record.chown(record._id)
+			record.chgrp(record._id)
 			record.passwd(account[1])
 			record.generate_new_authkey()
 			storage.put(record)
