@@ -362,6 +362,7 @@ def account_delete(_id):
 	logger.debug(" + _id: "+str(_id))
 	try:
 		storage.remove(_id, account=account)
+		#storage.remove('directory.root.%s' % _id.split('.')[1], account=account)
 		logger.debug('account removed')
 	except:
 		return HTTPError(404, _id+" Not Found")
