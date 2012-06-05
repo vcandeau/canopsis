@@ -126,9 +126,10 @@ class caccount(crecord):
 		self.data['firstname'] = self.firstname
 		self.data['mail'] = self.mail
 		self.data['groups'] = list(self.groups)
+		'''
 		if self.group:
 			self.data['groups'].insert(0, self.group)
-
+		'''
 		self.data['shadowpasswd'] = self.shadowpasswd
 		self.data['authkey'] = self.authkey
 		return crecord.dump(self)
@@ -140,10 +141,11 @@ class caccount(crecord):
 		self.firstname = self.data['firstname']
 		self.mail = self.data['mail']
 		self.groups = self.data['groups']
-
+		'''
 		if len(self.groups) > 0:
 			if self.groups[0] == self.group:
 				self.groups.pop(0)
+		'''
 
 		self.shadowpasswd = self.data['shadowpasswd']
 		if 'authkey' in self.data:
@@ -167,9 +169,9 @@ class caccount(crecord):
 		#string _id to cgroup
 		group_list = []
 		for group in groups:
-			if isinstance(group,crecord):
+			if isinstance(group,cgroup):
 				group_list.append(group)
-			elif isinstance(group, str):
+			elif isinstance(group, str) or isinstance(group, unicode):
 				if storage:
 					try:
 						record = storage.get(group)
@@ -179,12 +181,12 @@ class caccount(crecord):
 												
 		#add to groups
 		for group in group_list:
-				if group._id not in self.groups:
+				if str(group._id) not in self.groups and unicode(group._id) not in self.groups:
 					self.groups.append(group._id)
 					if self.storage:
 						self.save()
 					
-				if self._id not in group.account_ids:
+				if str(self._id) not in group.account_ids and unicode(self._id) not in group.account_ids:
 					group.account_ids.append(self._id)
 					if group.storage:
 						group.save()
@@ -201,7 +203,7 @@ class caccount(crecord):
 		for group in groups:
 			if isinstance(group,crecord):
 				group_list.append(group)
-			elif isinstance(group, str):
+			elif isinstance(group, str)  and isinstance(group, unicode):
 				if storage:
 					try:
 						record = storage.get(group)
@@ -210,12 +212,12 @@ class caccount(crecord):
 						raise Exception('Group not found: %s', err)
 		#remove groups
 		for group in group_list:
-				if group._id in self.groups:
+				if str(group._id) in self.groups and unicode(group._id) in self.groups:
 					self.groups.remove(group._id)
 					if self.storage:
 						self.save()
 					
-				if self._id in group.account_ids:
+				if str(self._id) in group.account_ids and unicode(self._id) in group.account_ids:
 					group.account_ids.remove(self._id)
 					if group.storage:
 						group.save()
