@@ -69,12 +69,12 @@ class cgroup(crecord):
 		#add accounts
 		for account in account_list:				
 				if account._id not in self.account_ids:
-					self.account_ids.append(account._id)
+					self.account_ids.append(unicode(account._id))
 					if self.storage:
 						self.save()
 					
 				if self._id not in account.groups:
-					account.groups.append(self._id)
+					account.groups.append(unicode(self._id))
 					if account.storage:
 						account.save()
 
