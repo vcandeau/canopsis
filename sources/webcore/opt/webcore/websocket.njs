@@ -232,10 +232,12 @@ var amqp_subscribe_queue = function(faye_channel){
 var amqp_unsubscribe_queue = function(faye_channel){
 	var queue_name = faye_channel.split("/")[2];
 	queue_name = 'websocket_'+queue_name
-	log.info("Close AMQP queue '" + queue_name + "'", "amqp")
 	var queue = amqp_queues[queue_name]
-	queue.destroy()
-	delete amqp_queues[queue_name];
+	if (queue){
+		log.info("Close AMQP queue '" + queue_name + "'", "amqp")
+		queue.destroy()
+		delete amqp_queues[queue_name];
+	}
 }
 
 //####################################################
