@@ -111,6 +111,16 @@ Ext.define('canopsis.controller.Account', {
 		if(form.editing && (record.get('passwd') == '')){
 			delete record.data.passwd
 		}
+		
+		//add groups
+		var record_list = form.checkGrid.getSelectionModel().getSelection()
+		var groups = []
+		for(i in record_list){
+			groups.push(record_list[i].get('crecord_name'))
+		}
+		
+		record.set('groups',groups)
+		
 		return record
 	},
 
