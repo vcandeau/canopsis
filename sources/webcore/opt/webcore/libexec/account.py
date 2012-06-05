@@ -321,6 +321,7 @@ def account_post():
 			
 			#put record
 			logger.debug(' + Save new account')
+			new_account.chown(new_account._id)
 			storage.put(new_account, account=account)
 			
 			#get rootdir
