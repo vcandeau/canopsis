@@ -101,12 +101,12 @@ class cgroup(crecord):
 						
 		#remove accounts
 		for account in account_list:			
-			if account._id in self.account_ids:
+			if unicode(account._id) in self.account_ids:
 				self.account_ids.remove(account._id)
 				if self.storage:
 					self.save()
 				
-			if self._id in account.groups:
+			if unicode(self._id) in account.groups:
 				account.groups.remove(self._id)
 				if account.storage:
 					account.save()

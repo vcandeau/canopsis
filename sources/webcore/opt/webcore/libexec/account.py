@@ -265,6 +265,14 @@ def account_post():
 						except Exception,err:
 							logger.error('Error while searching secondary group: %s',err)
 			
+			#clean secondary groups
+			for group in record.data['groups']:
+				if unicode(group) not in secondary_groups:
+					remove_account_from_group(group,record._id)
+			
+			#get clean account
+			record = storage.get(_id ,account=account)
+			
 			#clean
 			del data['passwd']
 			del data['aaa_group']
@@ -283,9 +291,7 @@ def account_post():
 				logger.debug(' + Update group ...')
 				update_account.chgrp(group)
 			if secondary_groups:
-				logger.debug(' + Update groups ...')
-				#clean
-				update_account.groups = []
+				logger.debug(' + Update groups ...')				
 				update_account.add_in_groups(secondary_groups)
 				logger.debug(update_account.dump())
 
@@ -427,7 +433,12 @@ def remove_account_from_group(group_id=None,account_id=None):
 		return HTTPError(403, 'Record not found or insufficient rights')
 		
 	#remove in group
+	
 	group.remove_accounts(account)
+	
+	logger.debug('------------------------------------')
+	logger.debug(group.account_ids)
+	logger.debug(account.groups)
 	
 	try:
 		storage.put([group,account])
