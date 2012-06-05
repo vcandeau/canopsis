@@ -181,13 +181,13 @@ class caccount(crecord):
 												
 		#add to groups
 		for group in group_list:
-				if str(group._id) not in self.groups and unicode(group._id) not in self.groups:
-					self.groups.append(group._id)
+				if unicode(group._id) not in self.groups:
+					self.groups.append(unicode(group._id))
 					if self.storage:
 						self.save()
 					
-				if str(self._id) not in group.account_ids and unicode(self._id) not in group.account_ids:
-					group.account_ids.append(self._id)
+				if unicode(self._id) not in group.account_ids:
+					group.account_ids.append(unicode(self._id))
 					if group.storage:
 						group.save()
 	
@@ -212,12 +212,12 @@ class caccount(crecord):
 						raise Exception('Group not found: %s', err)
 		#remove groups
 		for group in group_list:
-				if str(group._id) in self.groups and unicode(group._id) in self.groups:
+				if unicode(group._id) in self.groups:
 					self.groups.remove(group._id)
 					if self.storage:
 						self.save()
 					
-				if str(self._id) in group.account_ids and unicode(self._id) in group.account_ids:
+				if unicode(self._id) in group.account_ids:
 					group.account_ids.remove(self._id)
 					if group.storage:
 						group.save()
