@@ -61,9 +61,11 @@ def init():
 			record.firstname = account[4]
 			record.lastname = account[3]
 			record.chown(record._id)
-			record.chgrp(record._id)
+			record.chgrp(record.group)
+			record.chmod('g+r')
 			record.passwd(account[1])
 			record.generate_new_authkey()
+			print(record.dump())
 			storage.put(record)
 		
 
