@@ -43,6 +43,8 @@ class cgroup(crecord):
 		crecord.load(self, dump)
 		if 'account_ids' in self.data:
 			self.account_ids = self.data['account_ids']
+		else:
+			self.account_ids = []
 		
 	def add_accounts(self, accounts,storage=None):
 		if not storage:
