@@ -145,7 +145,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Group corruption while stock in bdd after add in group')
 		if account._id not in bdd_group.account_ids:
 			raise Exception('Group corruption while stock in bdd after add in group')
-			
+		'''
 		account.remove_from_groups(group._id)
 		
 		bdd_account = caccount(STORAGE.get(bdd_account._id))
@@ -155,7 +155,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Group corruption while stock in bdd after remove from group')
 		if account._id in bdd_group.account_ids:
 			raise Exception('Group corruption while stock in bdd after remove from group')
-	
+		'''
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
 
