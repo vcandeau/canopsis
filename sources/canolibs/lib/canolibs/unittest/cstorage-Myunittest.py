@@ -161,7 +161,7 @@ class KnownValues(unittest.TestCase):
 		self.assertRaises(ValueError, STORAGE.remove, record, self.anonymous_account)
 
 		## Change rights
-		record.chgrp('anonymous')
+		record.chgrp('group.anonymous')
 		record.chmod('g+w')
 		STORAGE.put(record)
 
