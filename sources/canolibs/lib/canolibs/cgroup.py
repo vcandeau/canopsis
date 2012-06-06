@@ -43,6 +43,8 @@ class cgroup(crecord):
 		crecord.load(self, dump)
 		if 'account_ids' in self.data:
 			self.account_ids = self.data['account_ids']
+		else:
+			self.account_ids = []
 		
 	def add_accounts(self, accounts,storage=None):
 		if not storage:
@@ -67,12 +69,12 @@ class cgroup(crecord):
 		#add accounts
 		for account in account_list:				
 				if account._id not in self.account_ids:
-					self.account_ids.append(account._id)
+					self.account_ids.append(unicode(account._id))
 					if self.storage:
 						self.save()
 					
 				if self._id not in account.groups:
-					account.groups.append(self._id)
+					account.groups.append(unicode(self._id))
 					if account.storage:
 						account.save()
 
@@ -99,12 +101,12 @@ class cgroup(crecord):
 						
 		#remove accounts
 		for account in account_list:			
-			if account._id in self.account_ids:
+			if unicode(account._id) in self.account_ids:
 				self.account_ids.remove(account._id)
 				if self.storage:
 					self.save()
 				
-			if self._id in account.groups:
+			if unicode(self._id) in account.groups:
 				account.groups.remove(self._id)
 				if account.storage:
 					account.save()

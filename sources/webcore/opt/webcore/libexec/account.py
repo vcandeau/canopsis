@@ -35,6 +35,7 @@ except:
 
 #import protection function
 from libexec.auth import check_auth, get_account
+#
 
 logger = logging.getLogger('Account')
 
@@ -209,7 +210,7 @@ def account_post():
 	account = get_account()
 	root_account = caccount(user="root", group="root")
 	
-	storage = get_storage(namespace='object')
+	storage = get_storage(namespace='object',account=account)
 
 	logger.debug("POST:")
 
@@ -222,23 +223,15 @@ def account_post():
 	## Clean data
 	try:
 		del data['_id']
-	except:
-		pass
-
-	try:
 		del data['id']
-	except:
-		pass
-
-	try:
 		del data['crecord_type']
 	except:
 		pass
 	
 	if data['user']:
-		_id = "account." + str(data['user'])
-
+		#check if already exist
 		update = False
+		_id = "account." + str(data['user'])
 		try:
 			record = storage.get(_id ,account=account)
 			logger.debug('Update account %s' % _id)
@@ -246,61 +239,110 @@ def account_post():
 		except:
 			logger.debug('Create account %s' % _id)
 
+		#-----------------------UPDATE----------------------
 		if update:
-			if data['passwd'] is not None:
-				passwd = str(data['passwd'])
-			else:
-				passwd = None
+			#Get password
+			passwd = str(data['passwd'])
 				
-			group = str(data['groups'])
-
+			#Get group
+			group = str(data['aaa_group'])
+			if group:
+				if group.find('group.') == -1:
+					group = 'group.%s' % group
+					
+			
+			#get secondary groups
+			groups = data['groups']
+			secondary_groups = []
+			if groups:
+				if not isinstance(groups,list):
+					groups = [groups]
+				for one_group in groups:
+					if one_group.find('group.') == -1:
+						one_group = 'group.%s' % one_group
+						try :
+							secondary_groups.append(cgroup(storage.get(one_group,account=account)))
+						except Exception,err:
+							logger.error('Error while searching secondary group: %s',err)
+			
+			#clean secondary groups
+			for one_record in record.data['groups']:
+				if unicode(one_record) not in secondary_groups:
+					remove_account_from_group(one_record,record._id)
+			
+			#get clean account
+			logger.debug('-----------------------------------------')
+			logger.debug('previous record')
+			logger.debug(record.dump())
+			record = storage.get(_id ,account=account)
+			logger.debug('next record')
+			logger.debug(record.dump())
+			logger.debug('-----------------------------------------')
+			#clean
 			del data['passwd']
+			del data['aaa_group']
 			del data['groups']
 
+			#new record
 			for key in dict(data).keys():
 				record.data[key] = data[key]
-
-			update_account = caccount(record)			
+			update_account = caccount(record)
+			
+			#updating
 			if passwd:
-				logger.error(' + Update password ...')
+				logger.debug(' + Update password ...')
 				update_account.passwd(passwd)
 			if group:
 				logger.debug(' + Update group ...')
 				logger.debug(group)
-				logger.debug(type(group))
 				update_account.chgrp(group)
+			if secondary_groups:
+				logger.debug(' + Update groups ...')				
+				update_account.add_in_groups(secondary_groups)
+				logger.debug(update_account.dump())
 
 			storage.put(update_account, account=account)
+			storage.put(secondary_groups, account=account)
 
 		else:
+			#----------------------------CREATION--------------------------
 			logger.debug(' + New account')
-			new_account = caccount(user=data['user'], group=data['groups'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
+			new_account = caccount(user=data['user'], group=data['aaa_group'], lastname=data['lastname'], firstname=data['firstname'], mail=data['mail'])
 
-			
+			#passwd
 			passwd = data['passwd']
 			new_account.passwd(passwd)
 			logger.debug("   + Passwd: '%s'" % passwd)
 
-			#del data['user']
-			#del data['aaa_group']
-			#del data['lastname']
-			#del data['firstname']
-			#del data['mail']
-
-			#logger.debug(' + Set data ...')
-			#for key in dict(data).keys():
-			#	logger.debug("   - '%s': '%s'" % (key, data[key]))
-			#	new_account.data[key] = data[key]
-
+			#secondary groups
+			groups = data['groups']
+			secondary_groups = []
+			if groups:
+				if not isinstance(groups,list):
+					groups = [groups]
+				for one_group in groups:
+					if one_group.find('group.') == -1:
+						one_group = 'group.%s' % one_group
+						try :
+							secondary_groups.append(cgroup(storage.get(one_group,account=account)))
+						except Exception,err:
+							logger.error('Error while searching secondary group: %s',err)
+			
+			new_account.add_in_groups(secondary_groups)
+			storage.put(secondary_groups)
+			
+			#put record
 			logger.debug(' + Save new account')
+			new_account.chown(new_account._id)
 			storage.put(new_account, account=account)
 			
+			#get rootdir
 			logger.debug(' + Create view directory')
-			
 			rootdir = storage.get('directory.root', account=root_account)
+			
 			if rootdir:
 				userdir = crecord({'_id': 'directory.root.%s' % new_account.user,'id': 'directory.root.%s' % new_account.user ,'expanded':'true'}, type='view_directory', name=new_account.user)
-				userdir.chown(new_account.user)
+				userdir.chown(new_account._id)
 				userdir.chgrp(new_account.group)
 				userdir.chmod('g-w')
 				userdir.chmod('g-r')
@@ -310,7 +352,7 @@ def account_post():
 				storage.put(rootdir, account=root_account)
 				storage.put(userdir, account=account)
 			else:
-				logger.error('Imposible to get rootdir')
+				logger.error('Impossible to get rootdir')
 
 	else:
 		logger.warning('WARNING : no user specified ...')
@@ -326,6 +368,7 @@ def account_delete(_id):
 	logger.debug(" + _id: "+str(_id))
 	try:
 		storage.remove(_id, account=account)
+		#storage.remove('directory.root.%s' % _id.split('.')[1], account=account)
 		logger.debug('account removed')
 	except:
 		return HTTPError(404, _id+" Not Found")
@@ -397,6 +440,7 @@ def remove_account_from_group(group_id=None,account_id=None):
 		return HTTPError(403, 'Record not found or insufficient rights')
 		
 	#remove in group
+	
 	group.remove_accounts(account)
 	
 	try:
