@@ -101,4 +101,10 @@ var global = {
 	},
 	
 	untranslated : [],
+	
+	nowjs: {
+		proto: 'http',
+		hostname: location.hostname,
+		port: 8085
+	}
 }
