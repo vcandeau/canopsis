@@ -26,10 +26,7 @@ Ext.define('canopsis.controller.Websocket', {
     
 	logAuthor: "[controller][Websocket]",
 	
-    autoconnect: true,
-    faye_port: 8085,
-    faye_mount: "/",
-    
+    autoconnect: true,    
     connected: false,
 
     init: function() {
@@ -39,28 +36,14 @@ Ext.define('canopsis.controller.Websocket', {
 			this.connect();
 		}
     },
-    
-    faye_auth: {
-		outgoing: function(message, callback) {
-			// Again, leave non-subscribe messages alone
-			if (message.channel !== '/meta/subscribe')
-				return callback(message);
-
-			// Add ext field if it's not present
-			if (!message.ext) message.ext = {};
-	
-			// Set the auth token
-			//TODO: Hash token
-			message.ext.authToken = global.account.authkey;
-			message.ext.authId = global.account._id;
-
-			// Carry on and send the message to the server
-			callback(message);
-		}
-	},
-
+ 
     connect: function() {
 		log.debug("Connect Websocket ...", this.logAuthor)
+
+		if (! now){
+			log.error("Impossible to load NowJS Client.", this.logAuthor)
+			return
+		}
 		
 		now.authToken = global.account.authkey;
 		now.authId = global.account._id;
@@ -82,19 +65,18 @@ Ext.define('canopsis.controller.Websocket', {
 				me.connected = true
 				me.fireEvent('transport_up', me);
 				
-				me.subscribe('ui', 'events', me.on_event);
+				//me.subscribe('ui', 'events', me.on_event);
 			});
 			
 		});		
     },
     
-    log_error: function(err){
-		me = global.websocketCtrl
-		log.error("Faye: "+err.code + ": "+err.message, me.logAuthor);
-	},
-    
     subscribe: function(type, channel, on_message){
 		now.subscribe(type, channel, on_message)
+	},
+
+    unsubscribe: function(type, channel){
+		now.unsubscribe(type, channel)
 	},
 	
 	publish_event: function(type, id, name){
