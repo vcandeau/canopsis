@@ -26,7 +26,7 @@
 
 var default_config = {
 	amqp: {},
-	faye: { port: 8085, debug: false, amqp_timeout: 10},
+	nowjs: { port: 8085, debug: false, socketio_loglevel: 0, heartbeat: 60},
 	mongodb: {}
 };
 var config = default_config;
@@ -40,7 +40,7 @@ var log = {
 		this.print(this.date()+' INFO '+author+' '+message)
 	},
 	debug:		function(message, author){
-		if (config.faye.debug)
+		if (config.nowjs.debug)
 			this.print(this.date()+' DEBUG '+author+' '+message)
 	},
 	warning:	function(message, author){
@@ -50,7 +50,7 @@ var log = {
 		this.print(this.date()+' ERR '+author+' '+message)
 	},
 	dump: 		function(message){
-		if (config.faye.debug)
+		if (config.nowjs.debug)
 			console.log(message)
 	},
 	print: 		function(message){
@@ -90,7 +90,8 @@ Object.defineProperty(Object.prototype, "extend", {
 log.info("Load modules ...", "main")
 try {
 	var mongodb = require('mongodb');
-	var faye   = require('faye');
+	var http = require('http');
+	var nowjs = require("now");
 	var amqp   = require('amqp');
 	var util   = require('util');
 	var iniparser = require('iniparser');
@@ -133,8 +134,8 @@ var read_config = function(callback){
 	read_config_ini(process.env.HOME+'/etc/cstorage.conf', "mongodb", "master", function(){
 		// AMQP
 		read_config_ini(process.env.HOME+'/etc/amqp.conf', "amqp", "master", function(){
-			// FAYE
-			read_config_ini(process.env.HOME+'/etc/webserver.conf', "faye", "faye", function(){
+			// Now
+			read_config_ini(process.env.HOME+'/etc/webserver.conf', "nowjs", "websocket", function(){
 				//Main Callback
 				log.info(" + Ok", "config")
 				callback(config)
@@ -194,15 +195,17 @@ var init_amqp = function(callback){
 
 
 //####################################################
-//#  Bind AMQP Queue on Faye channel
+//#  Bind AMQP Queue on Now group
 //####################################################
 
 //GLOBAL
 var amqp_queues = {};
 
-var amqp_subscribe_queue = function(faye_channel){
-	var short_name = faye_channel.split("/")[2];
-	var queue_name = 'websocket_'+short_name
+var amqp_subscribe_queue = function(queue_name){
+	var short_name = queue_name;
+	var queueId = "amqp-" + queue_name;
+	var queue_name = 'websocket_'+queueId
+	
 	log.info("Create Queue '"+queue_name+"'", "amqp")
 	if (! amqp_queues[queue_name]){
 		var queue = amqp_connection.queue(queue_name, {durable: false, exclusive: true}, function(){
@@ -210,11 +213,8 @@ var amqp_subscribe_queue = function(faye_channel){
 				
 			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
 			this.subscribe( {ack:true}, function(message, headers, deliveryInfo){
-				if (faye_sessions.nbClientByChannel(faye_channel)){
-					//Publish message to Faye channel
-					message['id'] = deliveryInfo.routingKey
-					faye_server.getClient().publish(faye_channel, message);
-				}
+				message['id'] = deliveryInfo.routingKey
+				nowjs.getGroup(queueId).now.on_message(message)
 				queue.shift()
 			});
 			
@@ -229,8 +229,7 @@ var amqp_subscribe_queue = function(faye_channel){
 	}
 }
 
-var amqp_unsubscribe_queue = function(faye_channel){
-	var queue_name = faye_channel.split("/")[2];
+var amqp_unsubscribe_queue = function(queue_name){
 	queue_name = 'websocket_'+queue_name
 	var queue = amqp_queues[queue_name]
 	if (queue){
@@ -240,13 +239,15 @@ var amqp_unsubscribe_queue = function(faye_channel){
 	}
 }
 
+
+
+
 //####################################################
-//#  Start Faye Server
+//#  Start Now Server
 //####################################################
 
-var faye_sessions = {
+var sessions = {
 	sessions: {},
-	channels: {},
 	
 	create: function(id, extra){
 		if (this.check(id))
@@ -264,152 +265,102 @@ var faye_sessions = {
 		delete this.sessions[id]
 	},
 	
-	check: function(id){
-		if (id == faye_server.getClient().getClientId())
-			return "faye.server"
-			
+	check: function(id){			
 		return this.sessions[id]
-	},
-	
-	subscribe: function(id, channel){
-		if (! this.channels[channel])
-			this.channels[channel] = [ id ]
-		else
-			this.channels[channel].push(id)
-	},
-	
-	unsubscribe: function(id, channel){
-		var channels = this.channels[channel]
-		var index = channels.indexOf(id)
-		this.channels[channel] = channels.slice(0,index).concat(channels.slice(index+1, channels.length))
-	},
-	
-	nbClientByChannel: function(channel){
-		return this.channels[channel].length
 	}
 }
 
-var init_faye = function(callback){
-	
-	var faye_check_authToken = function (clientId, authId, authToken, faye_callback, faye_message){
+var init_now = function(callback){
+	var server = http.createServer(function(req, res){});
+	server.listen(parseInt(config.nowjs.port));
 
+	var everyone = nowjs.initialize(server, {socketio: {'log level': config.nowjs.socketio_loglevel}});
+	
+	////////////////// Utils
+	var check_session = function(event){
+		log.debug("Check session for "+event.now.authId+" ("+event.user.clientId+")", "nowjs");
+		if (! sessions.check(event.user.clientId)){
+			log.debug(" + You must auth !", "nowjs");
+			return false
+		}
+		log.debug(" + Ok", "nowjs");
+		return true
+	}
+	
+	var check_authToken = function (clientId, authId, authToken, callback){
 		if (mongodb_collection_object) {				
 			mongodb_collection_object.findOne({'_id': authId}, function(err, record){
-				
-				log.info("Try to auth "+authId+" ("+clientId+") ...", "faye");
+					
 				if (err) {
 					log.error(err, "mongodb");
 				} else {
 					if (record.authkey == authToken){
-						log.info(" + Auth Ok", "faye")
-						faye_sessions.create(clientId, authId)
+						log.info(" + Auth Ok", "nowjs")
+						sessions.create(clientId, authId)
 					} else {
-						log.info(clientId + ": Invalid auth (authId: '"+authId+"')", "faye");
-						faye_message.error = 'Invalid auth';
+						log.info(" + "+clientId + ": Invalid auth (authId: '"+authId+"')", "nowjs");
 					}
 					
-					//Check if is AMQP Channel
-					if (! faye_message.error && faye_message.subscription.split("/")[1] == "amqp"){
-						log.debug("Okay, it's AMQP channel", "faye")
-						amqp_subscribe_queue(faye_message.subscription)
-					}
-					
-					faye_callback(faye_message);
+					callback();
 				}
 			});
 		}else{
-			log.warning("MongoDB not ready.", "faye");
+			log.warning("MongoDB not ready.", "nowjs");
 		}
 	};
-
-	var faye_auth = {
-		incoming: function(message, callback) {
-			var clientId =  message.clientId
-			
-			if (message.channel == '/meta/handshake' || message.channel == '/meta/disconnect' || message.channel == '/meta/connect')
-				return callback(message);
-			
-			if (message.channel == '/meta/subscribe' && ! faye_sessions.check(clientId)) {
-				try {
-					// Check auth and open session
-					//TODO: Hash token
-					var authToken = message.ext.authToken;
-					var authId = message.ext.authId;
-					
-					faye_check_authToken(clientId, authId, authToken, callback, message)
-					return
-					
-				} catch (err) {
-					log.error(clientId + ": Impossible to subscribe, please set auth informations...", "faye");
-					log.dump(err);
-				}
-			};
-			
-			// Check sessions and self message
-			if (! faye_sessions.check(clientId)){
-				log.error(clientId + ": Invalid session, please auth ...", "faye")
-				message.error = 'Invalid session, please auth ...';
-			}
-			
-			callback(message);
-		}
-	};
-
-
-	log.info("Start Faye servers", "faye")
-	faye_server = new faye.NodeAdapter({mount: '/'});
 	
-
-	// Bind Faye events
-
-	// Bind handshake event
-	faye_server.bind('handshake', function(clientId) {
-		log.debug(clientId+': Connected', "faye")
-	})
+	////////////////// RPC
+	everyone.now.auth = function(callback){
+		var clientId = this.user.clientId
+		check_authToken(clientId, this.now.authId, this.now.authToken, callback)
+	}
 	
-	// Bind disconnect event
-	faye_server.bind('disconnect', function(clientId) {
-		log.debug(faye_sessions.check(clientId)+': Disconnected', "faye")
-		// Clean sessions
-		try {
-			faye_sessions.drop(clientId)
-		} catch (err) {
-			log.error("Invalid session for " + clientId, "faye");
+	everyone.now.subscribe = function(type, queue_name, callback){
+		if (check_session(this)){
+			var queueId = type+"-"+queue_name;
+			
+			log.info(this.now.authId + " subscribe to "+queueId, "nowjs");
+			
+			if (type == 'amqp')
+				amqp_subscribe_queue(queue_name)
+				
+			nowjs.getGroup(queueId).addUser(this.user.clientId);
+			nowjs.getGroup(queueId).now.on_message = callback;
 		}
-	})
-
-	// Bind subscribe event
-	faye_server.bind('subscribe', function(clientId, channel) {
-		faye_sessions.subscribe(clientId, channel)
-		log.info(faye_sessions.check(clientId)+': Suscribe to '+channel+" ("+faye_sessions.nbClientByChannel(channel)+")", "faye")
-	})
-
-	// Bind unsubscribe event
-	faye_server.bind('unsubscribe', function(clientId, channel) {
-		faye_sessions.unsubscribe(clientId, channel)
-		var nb_clients = faye_sessions.nbClientByChannel(channel)
-		
-		log.info(faye_sessions.check(clientId)+': Unsuscribe to '+channel+" ("+nb_clients+")", "faye")
-		
-		// Close AMQP Queue if nobody connect in next 'config.faye.amqp_timeout' seconds
-		if (nb_clients == 0 && channel.split("/")[1] == "amqp" ){
-			log.debug(" + Nobody in AMQP Channel, close this AMQP Queue in "+config.faye.amqp_timeout+" sec ...", "faye")
-			setTimeout(function(channel){
-				if (! faye_sessions.nbClientByChannel(channel))
-					amqp_unsubscribe_queue(channel)
-			}, parseInt(config.faye.amqp_timeout)*1000, channel);
-		}
-	})
-
-	// Extend faye_server
-	faye_server.addExtension(faye_auth);
-
-	// Wait Client
-	log.info(" + Listen on "+config.faye.port, "faye")
-	faye_server.listen(parseInt(config.faye.port), {}, function(){
-		log.info("   + Ok", "faye");
-		callback();
+	}
+	
+	////////////////// Binding events
+	nowjs.on("connect", function(){
+		var clientId = this.user.clientId
+		log.info(this.now.authId + " connected ("+clientId+")", "nowjs");
 	});
+
+	nowjs.on("disconnect", function(){
+		var clientId = this.user.clientId
+		log.info(this.now.authId + " disconnected ("+clientId+")", "nowjs");
+		sessions.drop(clientId)
+	});
+	
+	callback()
+}
+
+// Close amqp queue if group is empty
+var heartbeat = function(){
+	nowjs.getGroups(function(groups){
+		for (var i in groups){
+			var group = groups[i]
+			if (group != 'everyone'){
+				nowjs.getGroup(group).count(function(count){
+					log.debug("Group '"+group+"': "+count+" Client(s)", "heartbeat")
+					if (count == 0){
+						log.debug(" + Remove group", "heartbeat")
+						amqp_unsubscribe_queue(group)
+						nowjs.removeGroup(group)
+					}
+				})
+			}
+		}
+	}) 
 }
 
 //####################################################
@@ -418,14 +369,18 @@ var init_faye = function(callback){
 
 read_config(function(){
 	log.debug("Configurations:", "main")
-	config.faye.debug = (config.faye.debug === 'true')
+	config.nowjs.debug = (config.nowjs.debug === 'true')
 	
+	// Force debug
+	//config.nowjs.debug = true
+
 	log.dump(config)
 	
 	init_mongo(function(){
 		init_amqp(function(){
-			init_faye(function(){
+			init_now(function(){
 				log.info("Initialization completed, Ready for action !", "main")
+				setInterval(heartbeat, config.nowjs.heartbeat * 1000);
 			});
 		});
 	});
