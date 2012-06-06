@@ -152,6 +152,8 @@ def account_get(_id=None):
 	
 	#get the session (security)
 	account = get_account()
+	if not check_group_rights(account,'group.account_managing'):
+		return HTTPError(403, 'Insufficient rights')
 
 	limit = int(request.params.get('limit', default=20))
 	page =  int(request.params.get('page', default=0))
@@ -208,6 +210,8 @@ def account_get(_id=None):
 def account_post():
 	#get the session (security)
 	account = get_account()
+	if not check_group_rights(account,'group.account_managing'):
+		return HTTPError(403, 'Insufficient rights')
 	root_account = caccount(user="root", group="root")
 	
 	storage = get_storage(namespace='object',account=account)
@@ -355,6 +359,8 @@ def account_post():
 @delete('/account/:_id',apply=[check_auth])
 def account_delete(_id):
 	account = get_account()
+	if not check_group_rights(account,'group.account_managing'):
+		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object')
 
 	logger.debug("DELETE:")
@@ -369,11 +375,13 @@ def account_delete(_id):
 ### GROUP
 @post('/account/addToGroup/:group_id/:account_id',apply=[check_auth])
 def add_account_to_group(group_id=None,account_id=None):
+	session_account = get_account()
+	if not check_group_rights(session_account,'group.account_managing'):
+		return HTTPError(403, 'Insufficient rights')
+	storage = get_storage(namespace='object',account=session_account)
+	
 	if not group_id or not account_id:
 		return HTTPError(400, 'Bad request, must specified group and account')
-	
-	session_account = get_account()
-	storage = get_storage(namespace='object',account=session_account)
 	
 	#get group && account
 	if group_id.find('group.') == -1:
@@ -407,11 +415,13 @@ def add_account_to_group(group_id=None,account_id=None):
 		
 @post('/account/removeFromGroup/:group_id/:account_id',apply=[check_auth])
 def remove_account_from_group(group_id=None,account_id=None):
+	session_account = get_account()
+	if not check_group_rights(session_account,'group.account_managing'):
+		return HTTPError(403, 'Insufficient rights')
+	storage = get_storage(namespace='object',account=session_account)
+	
 	if not group_id or not account_id:
 		return HTTPError(400, 'Bad request, must specified group and account')
-	
-	session_account = get_account()
-	storage = get_storage(namespace='object',account=session_account)
 	
 	#get group && account
 	if group_id.find('group.') == -1:
@@ -444,4 +454,10 @@ def remove_account_from_group(group_id=None,account_id=None):
 	
 	return {'total' :1, 'success' : True, 'data':[]}
 		
-		
+def check_group_rights(account,group_id):
+	logger.error(account._id)
+	if account._id != 'account.root':
+		if not group_id in account.groups:
+			logger.debug('%s is not in %s' % (account.user,group_id))
+			return False
+	return True

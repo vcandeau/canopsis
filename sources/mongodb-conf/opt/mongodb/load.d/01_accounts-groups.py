@@ -137,5 +137,13 @@ def update_for_new_ACL():
 			for account in record.data['account_ids']:
 				if account.find('account.') == -1:
 					account = 'account.%s' % account
-					
+	
 	storage.put(dump)
+	
+	#add new groups
+	group_view_creation = cgroup(name='view_managing')
+	group_export = cgroup(name='exporting')
+	group_view_reporting = cgroup(name='reporting')
+	group_account_managing = cgroup(name='account_managing')
+	
+	storage.put([group_view_creation,group_export,group_view_reporting])

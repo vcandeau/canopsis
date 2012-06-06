@@ -44,6 +44,7 @@ import task_mail
 
 #import protection function
 from libexec.auth import check_auth, get_account
+from libexec.account import check_group_rights
 
 logger = logging.getLogger('Reporting')
 
@@ -53,6 +54,8 @@ logger = logging.getLogger('Reporting')
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
 def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
+	if not check_group_rights(account,'group.reporting'):
+		return HTTPError(403, 'Insufficient rights')
 	storage = cstorage(account=account, namespace='object')
 	
 	if(isinstance(mail,str)):
@@ -105,6 +108,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 @post('/sendreport',apply=[check_auth])
 def send_report():
 	account = get_account()
+	check_group_rights(account,'group.reporting')
 	reportStorage = cstorage(account=account, namespace='files')
 
 	recipients = request.params.get('recipients', default=None)
