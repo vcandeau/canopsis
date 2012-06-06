@@ -437,10 +437,6 @@ def remove_account_from_group(group_id=None,account_id=None):
 	
 	group.remove_accounts(account)
 	
-	logger.debug('------------------------------------')
-	logger.debug(group.account_ids)
-	logger.debug(account.groups)
-	
 	try:
 		storage.put([group,account])
 	except:
