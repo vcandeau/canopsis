@@ -65,13 +65,13 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	                header: _('group'),
 	                flex: 2,
 	                sortable: false,
-	                dataIndex: 'groups',
-        	},/*{
+	                dataIndex: 'aaa_group',
+        },{
                 	header: _('groups'),
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'groups',
-		}*/
+		}
             
 	],
 

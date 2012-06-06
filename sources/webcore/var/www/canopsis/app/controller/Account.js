@@ -106,11 +106,39 @@ Ext.define('canopsis.controller.Account', {
 
 	},
 	
+	beforeload_EditForm: function(form,item){
+		var store = Ext.getStore('Groups')
+		var groups = item.get('groups')
+		if (groups.length > 0){
+			var groups_records = []
+
+			for(i in groups){
+				record = store.findExact('_id',groups[i])
+				if(record != -1)
+					groups_records.push(store.getAt(record))
+			}
+
+			var selectMethod = form.checkGrid.getSelectionModel()
+			selectMethod.select(groups_records)
+			
+		}
+	},
+	
 	preSave: function(record,data,form){
 		//don't update password if it's empty
 		if(form.editing && (record.get('passwd') == '')){
 			delete record.data.passwd
 		}
+		
+		//add groups
+		var record_list = form.checkGrid.getSelectionModel().getSelection()
+		var groups = []
+		for(i in record_list){
+			groups.push(record_list[i].get('crecord_name'))
+		}
+		
+		record.set('groups',groups)
+		
 		return record
 	},
 
