@@ -31,6 +31,7 @@ from crecord import crecord
 
 #import protection function
 from libexec.auth import check_auth, get_account
+from libexec.account import check_group_rights
 
 logger = logging.getLogger("ui_view")
 
@@ -71,6 +72,7 @@ def tree_get():
 def tree_get():
 	namespace = 'object'
 	account = get_account()
+		
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
 	node = request.params.get('node', default= None)
@@ -92,6 +94,8 @@ def tree_get():
 def tree_delete(name=None):
 	namespace='object'
 	account = get_account()
+	if not check_group_rights(account,'group.view_managing'):
+		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
 	record = storage.get(name, account=account)
@@ -128,6 +132,9 @@ def tree_delete(name=None):
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
+	if not check_group_rights(account,'group.view_managing'):
+		return HTTPError(403, 'Insufficient rights')
+		
 	storage = get_storage(namespace=namespace, account=account)
 	
 	data = json.loads(request.body.readline())
