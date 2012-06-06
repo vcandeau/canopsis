@@ -33,16 +33,11 @@ Ext.define('canopsis.controller.Websocket', {
     connected: false,
 
     init: function() {
-		var location = document.location.host;
-		var host = location.split(":")
-		host = host[0]
-		this.faye_uri = "http://"+host+":"+this.faye_port+this.faye_mount;
-
+		global.websocketCtrl = this;
+		
 		if (this.autoconnect){
 			this.connect();
 		}
-		
-		global.websocketCtrl = this;
     },
     
     faye_auth: {
@@ -65,28 +60,32 @@ Ext.define('canopsis.controller.Websocket', {
 	},
 
     connect: function() {
-		log.debug("Connect Websocket  to '"+this.faye_uri+"'...", this.logAuthor)
+		log.debug("Connect Websocket ...", this.logAuthor)
 		
-		this.faye_client = new Faye.Client(this.faye_uri);
-		this.faye_client.addExtension(this.faye_auth);
-		
-		this.faye_client.bind('transport:down', function() {
-			me = global.websocketCtrl;
-			me.connected = false;
-			log.error("Transport Down", me.logAuthor);
-			me.fireEvent('transport_down', me);
-		});
-		
-		this.faye_client.bind('transport:up', function() {
-			me = global.websocketCtrl;
-			me.connected = true;
-			log.debug("Transport Up", me.logAuthor);
-			me.fireEvent('transport_up', me);
-		});
-		
-		//this.subscribe(this.faye_mount+"ui/"+global.account._id, this.on_pv)
-		this.subscribe(this.faye_mount+"ui/events", this.on_event)
-		
+		now.authToken = global.account.authkey;
+		now.authId = global.account._id;
+
+		now.ready(function(){
+			var me = global.websocketCtrl
+			
+			now.core.socketio.on('disconnect', function(){
+				me.connected = false;
+				me.fireEvent('transport_down', me);
+			})
+			
+			
+			log.debug(" + Connected", me.logAuthor)
+			
+			now.auth(function(){
+				log.debug(" + Authed", me.logAuthor)
+				
+				me.connected = true
+				me.fireEvent('transport_up', me);
+				
+				me.subscribe('ui', 'events', me.on_event);
+			});
+			
+		});		
     },
     
     log_error: function(err){
@@ -94,50 +93,35 @@ Ext.define('canopsis.controller.Websocket', {
 		log.error("Faye: "+err.code + ": "+err.message, me.logAuthor);
 	},
     
-    subscribe: function(channel, on_message){
-		channel = channel.replace("\.", "~");
-		
-		var subscription = this.faye_client.subscribe(channel, on_message);
-		
-		// On subscribe
-		subscription.callback(function() {
-			var me = global.websocketCtrl
-			log.debug("Subscribed to '"+channel+"'.", me.logAuthor);
-			me.fireEvent('subscribe', me, channel);
-		});
-
-		// On error
-		subscription.errback(function(error) {
-			var me = global.websocketCtrl
-			log.error("Error when subscribe to channel '"+channel+"'", me.logAuthor);
-			me.log_error(error);
-		});
+    subscribe: function(type, channel, on_message){
+		now.subscribe(type, channel, on_message)
 	},
 	
 	publish_event: function(type, id, name){
-		this.faye_client.publish(this.faye_mount+"ui/events",{
+		/*this.faye_client.publish(this.faye_mount+"ui/events",{
 			author: global.account._id,
 			clientId: this.faye_client.getClientId(),
 			type: type,
 			id: id,
 			name: name,
 			timestamp: get_timestamp_utc()
-		});
+		});*/
 	},
 	
 	on_event: function(raw){
 		var me = global.websocketCtrl
-		if (raw.clientId != me.faye_client.getClientId()){
+		console.log(raw)
+		/*if (raw.clientId != me.faye_client.getClientId()){
 			log.debug(raw.author+" "+raw.name+" "+raw.type+" "+raw.id, me.logAuthor)
-		}
+		}*/
 	},
 	
 	on_pv: function(raw){
-		var me = global.websocketCtrl
+		/*var me = global.websocketCtrl
 		var me = global.websocketCtrl
 		if (raw.clientId != me.faye_client.getClientId()){
 			log.debug("PV: "+raw.author+": "+raw.message, me.logAuthor);
-		}
+		}*/
 	}
 
 });
