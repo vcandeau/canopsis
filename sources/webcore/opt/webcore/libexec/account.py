@@ -229,10 +229,9 @@ def account_post():
 		pass
 	
 	if data['user']:
-		_id = "account." + str(data['user'])
-
 		#check if already exist
 		update = False
+		_id = "account." + str(data['user'])
 		try:
 			record = storage.get(_id ,account=account)
 			logger.debug('Update account %s' % _id)
@@ -250,6 +249,7 @@ def account_post():
 			if group:
 				if group.find('group.') == -1:
 					group = 'group.%s' % group
+					
 			
 			#get secondary groups
 			groups = data['groups']
@@ -266,13 +266,18 @@ def account_post():
 							logger.error('Error while searching secondary group: %s',err)
 			
 			#clean secondary groups
-			for group in record.data['groups']:
-				if unicode(group) not in secondary_groups:
-					remove_account_from_group(group,record._id)
+			for one_record in record.data['groups']:
+				if unicode(one_record) not in secondary_groups:
+					remove_account_from_group(one_record,record._id)
 			
 			#get clean account
+			logger.debug('-----------------------------------------')
+			logger.debug('previous record')
+			logger.debug(record.dump())
 			record = storage.get(_id ,account=account)
-			
+			logger.debug('next record')
+			logger.debug(record.dump())
+			logger.debug('-----------------------------------------')
 			#clean
 			del data['passwd']
 			del data['aaa_group']
@@ -289,6 +294,7 @@ def account_post():
 				update_account.passwd(passwd)
 			if group:
 				logger.debug(' + Update group ...')
+				logger.debug(group)
 				update_account.chgrp(group)
 			if secondary_groups:
 				logger.debug(' + Update groups ...')				
