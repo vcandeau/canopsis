@@ -40,7 +40,7 @@ Ext.define('canopsis.controller.Websocket', {
     connect: function() {
 		log.debug("Connect Websocket ...", this.logAuthor)
 
-		if (! now){
+		if (typeof(now)=='undefined'){
 			log.error("Impossible to load NowJS Client.", this.logAuthor)
 			return
 		}
@@ -72,7 +72,10 @@ Ext.define('canopsis.controller.Websocket', {
     },
     
     subscribe: function(type, channel, on_message){
-		now.subscribe(type, channel, on_message)
+		now.subscribe(type, channel, function(){
+			cosole.log(this)
+			//on_message
+		})
 	},
 
     unsubscribe: function(type, channel){
