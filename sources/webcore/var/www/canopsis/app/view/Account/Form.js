@@ -64,7 +64,7 @@ Ext.define('canopsis.view.Account.Form', {
 				fieldLabel: _('password'),
 				inputType: 'password',
 				name: 'passwd',
-				allowBlank : false
+				//allowBlank : false
 			}]
 			
 		
@@ -87,7 +87,7 @@ Ext.define('canopsis.view.Account.Form', {
 			title: _('Groups'),
 			hideHeaders: true,
 			collapsible: true,
-			collapsed : true,
+			//collapsed : true,
 			name : 'groups',
 			scroll: 'vertical',
 			margin : '4 0 6 0'
