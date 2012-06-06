@@ -240,33 +240,45 @@ var amqp_unsubscribe_queue = function(queue_name){
 }
 
 
-
-
 //####################################################
 //#  Start Now Server
 //####################################################
 
 var sessions = {
 	sessions: {},
+	clientIds: {}, 
 	
-	create: function(id, extra){
+	create: function(id, authId){
 		if (this.check(id))
 			return
 		
-		if (extra == undefined)
-			extra = true
+		if (authId == undefined){
+			log.error("You must specify authId !", "session")
+			return
+		}
 			
-		log.debug("Create session "+id+" ("+extra+")", "session")
-		this.sessions[id] = extra
+		log.debug("Create session "+id+" ("+authId+")", "session")
+		this.sessions[id] = authId
+		
+		if (this.clientIds[authId])
+			this.clientIds[authId].push(id)
+		else
+			this.clientIds[authId] = [ id ]
 	},
 	
 	drop: function(id){
-		log.debug("Drop session "+id+" ("+this.sessions[id]+")", "session")
+		var authId = this.sessions[id]
+		log.debug("Drop session "+id+" ("+authId+")", "session")
 		delete this.sessions[id]
+		this.clientIds[authId].splice(this.clientIds[authId].indexOf(id), 1)
 	},
 	
-	check: function(id){			
+	check: function(id){
 		return this.sessions[id]
+	},
+	
+	getclientIds: function(authId){
+		return this.clientIds[authId]
 	}
 }
 
@@ -315,7 +327,7 @@ var init_now = function(callback){
 		check_authToken(clientId, this.now.authId, this.now.authToken, callback)
 	}
 	
-	everyone.now.subscribe = function(type, queue_name, callback){
+	everyone.now.subscribe = function(type, queue_name, callback, scope){
 		if (check_session(this)){
 			var queueId = type+"-"+queue_name;
 			
@@ -323,9 +335,54 @@ var init_now = function(callback){
 			
 			if (type == 'amqp')
 				amqp_subscribe_queue(queue_name)
+			
+			var group = nowjs.getGroup(queueId)
+			group.addUser(this.user.clientId);
+			group.getGroup(queueId).now.on_message = callback;
+			//group.getGroup(queueId).now.scope = scope;
+		}
+	}
+
+	everyone.now.unsubscribe = function(type, queue_name){
+		if (check_session(this)){
+			var queueId = type+"-"+queue_name;
+			
+			log.info(this.now.authId + " unsubscribe from "+queueId, "nowjs");
 				
-			nowjs.getGroup(queueId).addUser(this.user.clientId);
-			nowjs.getGroup(queueId).now.on_message = callback;
+			nowjs.getGroup(queueId).removeUser(this.user.clientId);
+		}
+	}
+	
+	everyone.now.publish = function(type, queue_name, message){
+		if (check_session(this)){
+			var queueId = type+"-"+queue_name;
+			var group = nowjs.getGroup(queueId)
+			if (group)
+				group.now.on_message(message)
+		}
+	}
+	
+	everyone.now.direct = function(authId, message){
+		if (check_session(this)){
+			var from_authId = sessions.check(this.user.clientId)
+			var to_clientIds = sessions.getclientIds(authId)
+			
+			log.info(this.now.authId + " send direct message to "+authId, "nowjs");
+			log.debug(" + from_authId:   "+ from_authId , "nowjs");
+			log.debug(" + from_clientId: "+ this.user.clientId , "nowjs");
+			
+			for (var i in to_clientIds){
+				var to_clientId = to_clientIds[i]
+				
+				log.debug(" + to_clientId: "+ to_clientId , "nowjs");
+			
+				if (to_clientId)
+					nowjs.getClient(to_clientId, function(){
+						if (this.now && this.now['on_direct'])
+							this.now.on_direct(message)
+							log.debug("   + Sended" , "nowjs");
+					});
+			}
 		}
 	}
 	
@@ -372,7 +429,7 @@ read_config(function(){
 	config.nowjs.debug = (config.nowjs.debug === 'true')
 	
 	// Force debug
-	//config.nowjs.debug = true
+	config.nowjs.debug = true
 
 	log.dump(config)
 	
