@@ -271,13 +271,8 @@ def account_post():
 					remove_account_from_group(one_record,record._id)
 			
 			#get clean account
-			logger.debug('-----------------------------------------')
-			logger.debug('previous record')
-			logger.debug(record.dump())
 			record = storage.get(_id ,account=account)
-			logger.debug('next record')
-			logger.debug(record.dump())
-			logger.debug('-----------------------------------------')
+
 			#clean
 			del data['passwd']
 			del data['aaa_group']
@@ -294,12 +289,10 @@ def account_post():
 				update_account.passwd(passwd)
 			if group:
 				logger.debug(' + Update group ...')
-				logger.debug(group)
 				update_account.chgrp(group)
 			if secondary_groups:
 				logger.debug(' + Update groups ...')				
 				update_account.add_in_groups(secondary_groups)
-				logger.debug(update_account.dump())
 
 			storage.put(update_account, account=account)
 			storage.put(secondary_groups, account=account)
