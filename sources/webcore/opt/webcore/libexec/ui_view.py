@@ -197,9 +197,9 @@ def tree_update(name='None'):
 				parentNode.add_children(record)
 				
 				record.chown(account._id)
-				record.chgrp(account.group)
-				record.chmod('g-w')
-				record.chmod('g-r')
+				record.chgrp('group.view_managing')
+				#record.chmod('g-w')
+				#record.chmod('g-r')
 				
 				storage.put([record,parentNode],account=account)
 			else:
