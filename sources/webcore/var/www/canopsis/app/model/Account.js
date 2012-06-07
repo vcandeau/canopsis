@@ -28,8 +28,13 @@ Ext.define('canopsis.model.Account', {
 		{name : 'lastname'},
 		{name : 'user'},
 		{name : 'mail'},
-		{name : 'aaa_group'},
 		{name : 'groups' ,type:'array'},
-		{name : 'passwd'}
+		{name : 'passwd'},
+		
+		{name: 'aaa_access_group'},
+		{name: 'aaa_access_other'},
+		{name: 'aaa_access_owner'},
+		{name: 'aaa_group'},
+		{name: 'aaa_owner'},
 		],
 });
