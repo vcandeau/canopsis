@@ -248,7 +248,10 @@ def account_post():
 		#-----------------------UPDATE----------------------
 		if update:
 			#Get password
-			passwd = str(data['passwd'])
+			if data['passwd']:
+				passwd = str(data['passwd'])
+			else:
+				passwd = None
 				
 			#Get group
 			group = str(data['aaa_group'])
