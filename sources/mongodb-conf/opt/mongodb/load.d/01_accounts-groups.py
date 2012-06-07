@@ -65,7 +65,6 @@ def init():
 			record.chmod('g+r')
 			record.passwd(account[1])
 			record.generate_new_authkey()
-			print(record.dump())
 			storage.put(record)
 		
 
