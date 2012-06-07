@@ -23,6 +23,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	border: false,
 	layout : 'fit',
+	
 	nodeId_refresh: true,
 	nodeData: {},
 	nodes: [],
@@ -37,6 +38,9 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	
 	logAuthor: '[widget]',
 
+	wcontainer_layout: 'fit',
+	wcontainer_autoScroll: false,
+	
 	task: false,
 	
 	reportMode : false,
@@ -60,7 +64,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 		this.wcontainerId = this.id+"-content"
 
-		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false, layout: 'fit' });
+		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false, layout: this.wcontainer_layout, autoScroll: this.wcontainer_autoScroll });
 		this.items = this.wcontainer
 		
 		this.wcontainer.on('afterrender', this.afterContainerRender, this)
