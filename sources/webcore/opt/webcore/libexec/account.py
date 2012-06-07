@@ -39,6 +39,8 @@ from libexec.auth import check_auth, get_account
 
 logger = logging.getLogger('Account')
 
+#group who have right to access 
+group_managing_access = 'group.account_managing'
 #########################################################################
 
 #### GET Me
@@ -152,8 +154,8 @@ def account_get(_id=None):
 	
 	#get the session (security)
 	account = get_account()
-	if not check_group_rights(account,'group.account_managing'):
-		return HTTPError(403, 'Insufficient rights')
+	#if not check_group_rights(account,'group.account_managing'):
+	#	return HTTPError(403, 'Insufficient rights')
 
 	limit = int(request.params.get('limit', default=20))
 	page =  int(request.params.get('page', default=0))
@@ -210,7 +212,7 @@ def account_get(_id=None):
 def account_post():
 	#get the session (security)
 	account = get_account()
-	if not check_group_rights(account,'group.account_managing'):
+	if not check_group_rights(account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 	root_account = caccount(user="root", group="root")
 	
@@ -359,7 +361,7 @@ def account_post():
 @delete('/account/:_id',apply=[check_auth])
 def account_delete(_id):
 	account = get_account()
-	if not check_group_rights(account,'group.account_managing'):
+	if not check_group_rights(account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object')
 
@@ -376,7 +378,7 @@ def account_delete(_id):
 @post('/account/addToGroup/:group_id/:account_id',apply=[check_auth])
 def add_account_to_group(group_id=None,account_id=None):
 	session_account = get_account()
-	if not check_group_rights(session_account,'group.account_managing'):
+	if not check_group_rights(session_account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object',account=session_account)
 	
@@ -416,7 +418,7 @@ def add_account_to_group(group_id=None,account_id=None):
 @post('/account/removeFromGroup/:group_id/:account_id',apply=[check_auth])
 def remove_account_from_group(group_id=None,account_id=None):
 	session_account = get_account()
-	if not check_group_rights(session_account,'group.account_managing'):
+	if not check_group_rights(session_account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object',account=session_account)
 	
@@ -455,9 +457,9 @@ def remove_account_from_group(group_id=None,account_id=None):
 	return {'total' :1, 'success' : True, 'data':[]}
 		
 def check_group_rights(account,group_id):
-	logger.error(account._id)
-	if account._id != 'account.root':
-		if not group_id in account.groups:
-			logger.debug('%s is not in %s' % (account.user,group_id))
-			return False
+	#logger.error(account._id)
+	#if account._id != 'account.root':
+	if not group_id in account.groups:
+		logger.debug('%s is not in %s' % (account.user,group_id))
+		return False
 	return True

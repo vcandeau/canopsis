@@ -35,6 +35,9 @@ from libexec.account import check_group_rights
 
 logger = logging.getLogger("ui_view")
 
+#group who have right to access 
+group_managing_access = 'group.view_managing'
+
 #########################################################################
 '''
 @get('/ui/view',	apply=[check_auth])
@@ -94,7 +97,7 @@ def tree_get():
 def tree_delete(name=None):
 	namespace='object'
 	account = get_account()
-	if not check_group_rights(account,'group.view_managing'):
+	if not check_group_rights(account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
@@ -132,7 +135,7 @@ def tree_delete(name=None):
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
-	if not check_group_rights(account,'group.view_managing'):
+	if not check_group_rights(account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 		
 	storage = get_storage(namespace=namespace, account=account)

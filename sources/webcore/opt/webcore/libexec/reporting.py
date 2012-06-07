@@ -48,13 +48,16 @@ from libexec.account import check_group_rights
 
 logger = logging.getLogger('Reporting')
 
+#group who have right to access 
+group_managing_access = 'group.reporting'
+
 #########################################################################
 
 @get('/reporting/:startTime/:stopTime/:view_name/:mail',apply=[check_auth])
 @get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
 def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
-	if not check_group_rights(account,'group.reporting'):
+	if not check_group_rights(account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 	storage = cstorage(account=account, namespace='object')
 	
@@ -108,7 +111,6 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 @post('/sendreport',apply=[check_auth])
 def send_report():
 	account = get_account()
-	check_group_rights(account,'group.reporting')
 	reportStorage = cstorage(account=account, namespace='files')
 
 	recipients = request.params.get('recipients', default=None)
