@@ -103,7 +103,11 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		logger.error(err)
 
 	if fileName:
-		return {'total': 1, 'success': True, 'data': { 'id': str(fileName['data'][0])}}
+		if len(fileName['data']) > 0:
+			return {'total': 1, 'success': True, 'data': { 'id': str(fileName['data'][0])}}
+		else:
+			logger.error('Error while generating pdf : %s' % fileName['celery_output'])
+			return {'total': 0, 'success': False, 'data': {}}
 	else:
 		logger.debug('file not found, error while generating pdf')
 		return {'total': 0, 'success': False, 'data': {}}
