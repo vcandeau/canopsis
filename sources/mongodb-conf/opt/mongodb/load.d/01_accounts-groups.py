@@ -31,7 +31,7 @@ root = caccount(user="root", group="root")
 def init():
 	storage = get_storage(account=root, namespace='object')
 	
-	groups =  ['root', 'canopsis', 'curves_admin']
+	groups =  ['root', 'canopsis', 'curves_admin','view_managing','exporting','reporting','account_managing']
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
@@ -45,7 +45,7 @@ def init():
 			record = storage.get('group.%s' % name)
 		except:
 			logger.info(" + Create group '%s'" % name)
-			record = crecord({'_id': 'group.%s' % name }, type='group', name=name)
+			record = crecord({'_id': 'group.%s' % name }, type='group', name=name, group='group.account_managing')
 			record.chmod('o+r')
 			storage.put(record)
 		
@@ -142,7 +142,7 @@ def update_for_new_rights():
 	
 	#-------------add new groups and update each record type---------------
 	#update view
-	group_view_creation = cgroup(name='view_managing',group='account_managing')
+	group_view_creation = cgroup(name='view_managing',group='group.account_managing')
 	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
 	for record in dump:
 		record.chgrp(group_view_creation._id)
@@ -151,7 +151,7 @@ def update_for_new_rights():
 	storage.put(dump, account=root)
 	
 	#update groups
-	group_export = cgroup(name='exporting',group='account_managing')
+	group_export = cgroup(name='exporting',group='group.account_managing')
 	dump = storage.find({'crecord_type':'schedule'})
 	for record in dump:
 		record.chgrp(group_export._id)
@@ -160,10 +160,10 @@ def update_for_new_rights():
 	storage.put(dump)
 	
 	#updtade reporting
-	group_reporting = cgroup(name='reporting',group='account_managing')
+	group_reporting = cgroup(name='reporting',group='group.account_managing')
 	
 	#update accounts
-	group_account_managing = cgroup(name='account_managing',group='account_managing')
+	group_account_managing = cgroup(name='account_managing',group='group.account_managing')
 	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
 	for record in dump:
 		record.chgrp(group_account_managing._id)
