@@ -142,49 +142,28 @@ def update_for_new_rights():
 	
 	#-------------add new groups and update each record type---------------
 	#update view
-	try:
-		# Check if exist
-		group_view_creation = storage.get('group.view_managing')
-	except:
-		group_view_creation = cgroup(name='view_managing',group='group.account_managing')
-		dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
-		for record in dump:
-			record.chgrp(group_view_creation._id)
-			record.chmod('g+w')
-			record.chmod('g+r')
-		storage.put(dump, account=root)
+	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
+	for record in dump:
+		record.chgrp('group.view_managing')
+		record.chmod('g+w')
+		record.chmod('g+r')
+	storage.put(dump, account=root)
 	
 	#update groups
-	try:
-		# Check if exist
-		group_export = storage.get('group.exporting')
-	except:
-		group_export = cgroup(name='exporting',group='group.account_managing')
-		dump = storage.find({'crecord_type':'schedule'})
-		for record in dump:
-			record.chgrp(group_export._id)
-			record.chmod('g+w')
-			record.chmod('g+r')
-		storage.put(dump)
+	dump = storage.find({'crecord_type':'schedule'})
+	for record in dump:
+		record.chgrp('group.exporting')
+		record.chmod('g+w')
+		record.chmod('g+r')
+	storage.put(dump)
 	
 	#updtade reporting
-	try:
-		# Check if exist
-		group_reporting = storage.get('group.reporting')
-	except:
-		group_reporting = cgroup(name='reporting',group='group.account_managing')
+	group_reporting = cgroup(name='reporting',group='group.account_managing')
 	
 	#update accounts
-	try:
-		# Check if exist
-		group_account_managing = storage.get('group.reporting')
-	except:
-		group_account_managing = cgroup(name='account_managing',group='group.account_managing')
-		dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
-		for record in dump:
-			record.chgrp(group_account_managing._id)
-			record.chmod('g+w')
-			record.chmod('g+r')
-		storage.put(dump)
-	
-	storage.put([group_view_creation,group_export,group_reporting])
+	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
+	for record in dump:
+		record.chgrp('group.account_managing')
+		record.chmod('g+w')
+		record.chmod('g+r')
+	storage.put(dump)
