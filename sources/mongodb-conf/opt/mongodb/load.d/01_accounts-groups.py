@@ -156,13 +156,10 @@ def update_for_new_rights():
 		record.chmod('g+r')
 	storage.put(dump)
 	
-	#updtade reporting
-	group_reporting = cgroup(name='reporting',group='group.account_managing')
-	
 	#update accounts
 	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
 	for record in dump:
-		record.chgrp('group.account_managing')
+		#record.chgrp('group.account_managing')
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump)
