@@ -140,20 +140,17 @@ def update_for_new_rights():
 	
 	storage.put(dump)
 	
-	#add new groups and update each record type
+	#-------------add new groups and update each record type---------------
+	#update view
 	group_view_creation = cgroup(name='view_managing',group='account_managing')
 	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
 	for record in dump:
-		#logger.info(record._id)
 		record.chgrp(group_view_creation._id)
 		record.chmod('g+w')
 		record.chmod('g+r')
-		#logger.info('%s %s' % (record._id,record.group))
-	for record in dump:
-		logger.info('%s %s' % (record._id,record.group))
 	storage.put(dump, account=root)
 	
-
+	#update groups
 	group_export = cgroup(name='exporting',group='account_managing')
 	dump = storage.find({'crecord_type':'schedule'})
 	for record in dump:
@@ -162,8 +159,10 @@ def update_for_new_rights():
 		record.chmod('g+r')
 	storage.put(dump)
 	
+	#updtade reporting
 	group_reporting = cgroup(name='reporting',group='account_managing')
 	
+	#update accounts
 	group_account_managing = cgroup(name='account_managing',group='account_managing')
 	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
 	for record in dump:
