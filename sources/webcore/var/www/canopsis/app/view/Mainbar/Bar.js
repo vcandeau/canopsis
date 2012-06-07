@@ -104,7 +104,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 
 			
 		//Root build menu
-		if(global.account.user == 'root' || (global.account.groups.indexOf('root') != -1)){
+		if(global.account.user == 'root' || global.account.aaa_group == 'group.account_managing' ||(global.account.groups.indexOf('group.account_managing') != -1)){
 			menu_build = menu_build.concat([
 				{
 					iconCls:'icon-mainbar-edit-account',
@@ -119,7 +119,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		}
 	
 		//Build menu Curves Admin
-		if(global.account.user == 'root' || (global.account.groups.indexOf('curves_admin') != -1)){
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.curves_admin' ||(global.account.groups.indexOf('group.curves_admin') != -1)){
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-colors',
@@ -130,44 +130,54 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			]);			
 		}
 	
-	
 		//Build menu
-		menu_build = menu_build.concat([
-			{
-				iconCls:'icon-mainbar-edit-view',
-				text: _('Edit active view'),
-				action: 'editView'
-			},{
-				iconCls:'icon-mainbar-new-view',
-				text: _('New view'),
-				action: 'newView'
-			}	
-		]);
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.view_managing' ||(global.account.groups.indexOf('group.view_managing') != -1)){
+			menu_build = menu_build.concat([
+				{
+					iconCls:'icon-mainbar-edit-view',
+					text: _('Edit active view'),
+					action: 'editView'
+				},{
+					iconCls:'icon-mainbar-new-view',
+					text: _('New view'),
+					action: 'newView'
+				}	
+			]);
+		}
 		
 		//Reporting menu
-		menu_reporting = menu_reporting.concat([
-			{
-				iconCls: 'icon-mimetype-pdf',
-				text: _('Export active view'),
-				action: 'exportView'
-			},{
-				iconCls: 'icon-mainbar-reporting',
-				text: _('Switch to live reporting'),
-				action: 'reportingMode'
-			},{
-				iconCls: 'icon-mainbar-add-task',
-				text: _('Schedule active view export'),
-				action: 'ScheduleExportView'
-			},{
-				iconCls:'icon-mainbar-edit-task',
-				text: _('Edit schedules'),
-				action: 'editSchedule'
-			},{
-				iconCls:'icon-mainbar-briefcase',
-				text: _('Briefcase'),
-				action: 'openBriefcase'
-			}
-		]);		
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.exporting' ||(global.account.groups.indexOf('group.exporting') != -1)){
+			menu_reporting = menu_reporting.concat([
+				{
+					iconCls: 'icon-mimetype-pdf',
+					text: _('Export active view'),
+					action: 'exportView'
+				},{
+					iconCls: 'icon-mainbar-add-task',
+					text: _('Schedule active view export'),
+					action: 'ScheduleExportView'
+				},{
+					iconCls:'icon-mainbar-edit-task',
+					text: _('Edit schedules'),
+					action: 'editSchedule'
+				}
+			])
+		}
+		
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.reporting' ||(global.account.groups.indexOf('group.reporting') != -1)){
+			menu_reporting = menu_reporting.concat([{
+					iconCls: 'icon-mainbar-reporting',
+					text: _('Switch to live reporting'),
+					action: 'reportingMode'
+				}
+			]);
+		}
+		
+		menu_reporting = menu_reporting.concat([{
+			iconCls:'icon-mainbar-briefcase',
+			text: _('Briefcase'),
+			action: 'openBriefcase'
+		}])
 		
 		//Run menu
 		menu_run = menu_run.concat([
@@ -185,12 +195,23 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				text: _('Resources'),
 				action: 'openViewMenu',
 				viewId: 'view.resources'
-			},{
-				iconCls: 'icon-mainbar-run',
-				text: _("Views manager"),
-				action: 'openViewsManager'
-			},'-', 
-				this.viewSelector
+			}
+		])
+		
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.view_managing' ||(global.account.groups.indexOf('group.view_managing') != -1)){
+			menu_run = menu_run.concat(
+				[
+					{
+						iconCls: 'icon-mainbar-run',
+						text: _("Views manager"),
+						action: 'openViewsManager'
+					}
+				]
+			)
+		}
+			
+		menu_run = menu_run.concat([
+			'-', this.viewSelector
 		]);
 		
 		//Configuration menu
