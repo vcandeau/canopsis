@@ -71,15 +71,20 @@ Ext.define('canopsis.controller.Websocket', {
 		});		
     },
     
-    subscribe: function(type, channel, on_message){
-		now.subscribe(type, channel, function(){
-			cosole.log(this)
-			//on_message
-		})
+    subscribe: function(type, channel, on_message, scope){
+		if (this.connected){
+			now.subscribe(type, channel, function(message){
+				if (scope)
+					on_message.apply(scope, [ message ])
+				else
+					on_message(message)
+			})
+		}
 	},
 
     unsubscribe: function(type, channel){
-		now.unsubscribe(type, channel)
+		if (this.connected)
+			now.unsubscribe(type, channel)
 	},
 	
 	publish_event: function(type, id, name){
