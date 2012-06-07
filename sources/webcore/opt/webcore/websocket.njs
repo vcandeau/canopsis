@@ -123,7 +123,11 @@ var read_config = function(callback){
 				log.error(err, "config");
 				process.exit(1);
 			} else {
-				config[field] = default_config[field].extend(data[section])
+				if (data[section])
+					config[field] = default_config[field].extend(data[section])
+				else
+					config[field] = default_config[field]
+					
 				log.info("   + Ok", "config")
 				callback()
 			}
