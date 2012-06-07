@@ -140,7 +140,7 @@ def update_for_new_rights():
 	
 	storage.put(dump)
 	
-	#-------------add new groups and update each record type---------------
+	#---------------------update each record type--------------------
 	#update view
 	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
 	for record in dump:
