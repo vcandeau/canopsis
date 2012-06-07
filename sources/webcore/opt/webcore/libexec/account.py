@@ -459,7 +459,7 @@ def remove_account_from_group(group_id=None,account_id=None):
 def check_group_rights(account,group_id):
 	#logger.error(account._id)
 	if account._id != 'account.root':
-		if not group_id in account.groups:
+		if not group_id in account.groups and group_id != account.group:
 			logger.debug('%s is not in %s' % (account.user,group_id))
 			return False
 	return True
