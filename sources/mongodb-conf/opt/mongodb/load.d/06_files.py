@@ -49,11 +49,11 @@ def update():
 	#		storage.put(record, account=root, namespace='files')
 	#		
 	#	storage.drop_namespace('reports')
-	update_for_new_ACL()
+	update_for_new_rights()
 	
 	pass
 		
-def update_for_new_ACL():
+def update_for_new_rights():
 	#update briefcase elements
 	storage = cstorage(namespace='files',account=root)
 	
