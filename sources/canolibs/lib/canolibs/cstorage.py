@@ -84,7 +84,7 @@ class cstorage(object):
 		Read_mfilter = {}
 		Write_mfilter = {}
 
-		if account._id != "account.root" or account.group != "group.root":
+		if account._id != "account.root" and account.group != "group.root":
 			Read_mfilter = { '$or': [
 				{'aaa_owner': account._id, 'aaa_access_owner': 'r'},
 				#{'aaa_owner': account.user, 'aaa_access_owner': 'r'},
