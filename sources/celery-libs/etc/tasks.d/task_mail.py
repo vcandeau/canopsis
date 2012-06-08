@@ -48,7 +48,7 @@ def send(account=None, recipients=None, subject=None, body=None, attachments=Non
 		account_lastname = account.lastname
 		account_mail = account.mail
 		if not account_mail:
-			logger.warning('CAccount must have mail to send mail (Fill the mail field)')
+			logger.warning('No mail adress (Fill the mail field)')
 			account_mail = '%s@%s' % (account.user,socket.gethostname())
 
 
