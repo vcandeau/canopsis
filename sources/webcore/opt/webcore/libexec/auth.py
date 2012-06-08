@@ -237,3 +237,22 @@ def get_account(_id=None):
 				return session_accounts['anonymous']
 
 	return account
+
+#cache is cool, but when you change rights, cache still have old rights, so reload 
+def reload_account(_id=None):
+	try:
+		logger.debug('Reload Account %s' % _id)
+		account = get_account()
+		storage = get_storage(namespace='object')
+		if _id:	
+			record = storage.get(_id,account=account)
+			account_to_update = caccount(record)
+		else:
+			record = storage.get(account._id, account=account )
+			account_to_update = caccount(record)
+			
+		session_accounts[account_to_update._id] = account_to_update
+		return True
+	except Exception,err:
+		logger.error('Account reloading failed : %s' % err)
+		return False
