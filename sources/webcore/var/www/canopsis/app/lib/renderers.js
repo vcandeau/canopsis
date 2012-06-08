@@ -41,14 +41,13 @@ var rdr_utcToLocal = function(val){
 		var hour = array_split[1].split(':')
 		
 		//create date
-		var dval = new Date(date[0],date[1],date[2],hour[0],hour[1],hour[2]);
+		var dval = new Date(date[0],date[1]-1,date[2],hour[0],hour[1],hour[2]);
 
 		//get time is millisecond
 		var localTime = parseInt(dval.getTime()) / 1000
 
 		//offset is minute
 		var localOffset = parseInt(dval.getTimezoneOffset()) * 60;
-
 		return rdr_tstodate(parseInt(localTime) - parseInt(localOffset))
 	}
 }
