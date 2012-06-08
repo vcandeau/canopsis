@@ -117,3 +117,11 @@ function get_timestamp_utc(date){
 	return localTime - localOffset;
 }
 
+
+function isEmpty(obj) {
+	for(var prop in obj) {
+		if(obj.hasOwnProperty(prop))
+			return false;
+	}
+	return true;
+}

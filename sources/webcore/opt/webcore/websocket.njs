@@ -271,10 +271,14 @@ var sessions = {
 	},
 	
 	drop: function(id){
-		var authId = this.sessions[id]
-		log.debug("Drop session "+id+" ("+authId+")", "session")
-		delete this.sessions[id]
-		this.clientIds[authId].splice(this.clientIds[authId].indexOf(id), 1)
+		if (this.sessions[id]){
+			var authId = this.sessions[id]
+			log.debug("Drop session "+id+" ("+authId+")", "session")
+			delete this.sessions[id]
+			this.clientIds[authId].splice(this.clientIds[authId].indexOf(id), 1)
+		}else{
+			log.warning("Unknown session "+id, "session")
+		}
 	},
 	
 	check: function(id){
