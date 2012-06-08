@@ -41,7 +41,7 @@ var rdr_utcToLocal = function(val){
 		var hour = array_split[1].split(':')
 		
 		//create date
-		var dval = new Date(date[0],date[1],date[2],hour[0],hour[1],hour[2]);
+		var dval = new Date(date[0],date[1]-1,date[2],hour[0],hour[1],hour[2]);
 		
 		return rdr_tstodate(get_timestamp_utc(dval))
 	}
