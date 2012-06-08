@@ -249,14 +249,12 @@ Ext.define('canopsis.controller.Schedule', {
 	runItem : function(item){
 		log.debug('Clicked on run item',this.logAuthor)
 		
-		mail = item.get('mail')
-		
-		if(mail != undefined)
-			mail = Ext.encode(mail)
-		
 		options = item.get('kwargs')
 		view_name = options.viewname
 		start_time = options.starttime
+		mail = options.mail
+		if(mail != undefined)
+			mail = Ext.encode(mail)
 		
 		this.getController('Reporting').launchReport(view_name,start_time,undefined,mail)
 	},
