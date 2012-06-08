@@ -74,7 +74,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			iconCls: 'icon-mainbar-dashboard',
 			id: 'dashboardSelector',
 			action: 'dashboardSelector',
-			store:  Ext.data.StoreManager.lookup('View'),
+			store:  Ext.data.StoreManager.lookup('Views'),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: true,
