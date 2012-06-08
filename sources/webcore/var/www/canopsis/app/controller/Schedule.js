@@ -54,10 +54,13 @@ Ext.define('canopsis.controller.Schedule', {
 			if(data.recipients != '' && data.recipients != undefined){
 				log.debug('sendMail is true')
 				 
-				 var recipients = data.recipients.split(',')
+				 var stripped_recipients = data.recipients.replace(/ /g,'')
+				 var recipients = stripped_recipients.split(',')
 				 if(recipients.length == 1){
-					 recipients = data.recipients.split(';')
+					 recipients = stripped_recipients.split(';')
 				 }
+				 
+				 log.dump(recipients)
 				 
 				var mail = {
 					"recipients":recipients,
