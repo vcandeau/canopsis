@@ -131,9 +131,11 @@ def send_event(	routing_key=None):
 		
 	if not perf_data_array:
 		perf_data_array = request.params.get('perf_data_array', default=None)
-	
+		#if type(perf_data_array) == 'str':
+			#perf_data_array = json.loads(perf_data_array)
+		
 	#------------------------------forging event----------------------------------
-	
+
 	event = cevent.forger(
 				connector = connector,
 				connector_name = connector_name,
@@ -146,11 +148,13 @@ def send_event(	routing_key=None):
 				output = output,
 				long_output = long_output,
 				perf_data = perf_data,
-				perf_data_array = perf_data_array,
+				perf_data_array = json.loads(perf_data_array),
 			)
 	
-	#logger.debug('The forged event is : ')
-	#logger.debug(str(event))
+	logger.debug(type(perf_data_array))
+	logger.debug(perf_data_array)
+	logger.debug('The forged event is : ')
+	logger.debug(str(event))
 	
 	#------------------------------AMQP Part--------------------------------------
 	
