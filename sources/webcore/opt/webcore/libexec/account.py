@@ -34,7 +34,7 @@ except:
 	pass
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import check_auth, get_account, reload_account
 #
 
 logger = logging.getLogger('Account')
@@ -305,6 +305,7 @@ def account_post():
 
 			storage.put(update_account, account=account)
 			storage.put(secondary_groups, account=account)
+			reload_account(update_account._id)
 
 		else:
 			#----------------------------CREATION--------------------------
@@ -460,7 +461,6 @@ def remove_account_from_group(group_id=None,account_id=None):
 	return {'total' :1, 'success' : True, 'data':[]}
 		
 def check_group_rights(account,group_id):
-	#logger.error(account._id)
 	if account._id != 'account.root':
 		if not group_id in account.groups and group_id != account.group:
 			logger.debug('%s is not in %s' % (account.user,group_id))
