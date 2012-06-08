@@ -35,7 +35,7 @@ except:
 
 #import protection function
 from libexec.auth import check_auth, get_account, reload_account,check_group_rights
-#
+
 
 logger = logging.getLogger('Account')
 
@@ -58,7 +58,7 @@ def account_get_me():
 	logger.debug(" + Try to get '%s' ... " % account._id)
 	record = storage.get(account._id, account=account)
 
-	logger.debug("   + Result: '%s'" % record)
+	#logger.debug("   + Result: '%s'" % record)
 	#except Exception, err:
 	#	self.logger.error("Exception !\nReason: %s" % err)
 	#	return HTTPError(404, _id+" Not Found")
