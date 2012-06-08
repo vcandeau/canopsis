@@ -30,9 +30,14 @@ from cstorage import get_storage
 from crecord import crecord
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import check_auth, get_account ,check_group_rights
 
 logger = logging.getLogger("rest")
+
+
+ctype_to_group_access = {
+							'schedule' : 'group.exporting',
+						}
 
 #########################################################################
 
@@ -170,6 +175,11 @@ def rest_put(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
 	storage = get_storage(namespace=namespace)
+	
+	#check rights on specific ctype (check ctype_to_group_access variable below)
+	if ctype in ctype_to_group_access:
+		if not check_group_rights(account,ctype_to_group_access[ctype]):
+			return HTTPError(403, 'Insufficient rights')
 
 	logger.debug("PUT:")
 
