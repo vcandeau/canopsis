@@ -46,15 +46,26 @@ config_filename	= os.path.expanduser('~/etc/webserver.conf')
 config		= ConfigParser.RawConfigParser()
 config.read(config_filename)
 
+mongo_config_file = os.path.expanduser('~/etc/cstorage.conf')
+mongo_config = ConfigParser.RawConfigParser()
+mongo_config.read(mongo_config_file)
+
 ## default config
 port		= 8082
 debug		= True
 interface	= "0.0.0.0"
 
+#mongo config
+
+mongo_host = mongo_config.get("master", "host")
+mongo_port = mongo_config.getint("master", "port")
+mongo_db = mongo_config.get("master", "db")
+
+
 session_cookie_expires	= 300
 session_secret			= 'canopsis'
 session_lock_dir		= os.path.expanduser('~/tmp/webcore_cache')
-session_mongo_url		= 'mongodb://localhost:27017/canopsis.beaker'
+session_mongo_url		= 'mongodb://%s:%s/%s.beaker' % (mongo_host,mongo_port,mongo_db)
 root_directory			= os.path.expanduser("~/var/www/")
 
 try:
