@@ -34,7 +34,7 @@ except:
 	pass
 
 #import protection function
-from libexec.auth import check_auth, get_account, reload_account
+from libexec.auth import check_auth, get_account, reload_account,check_group_rights
 #
 
 logger = logging.getLogger('Account')
