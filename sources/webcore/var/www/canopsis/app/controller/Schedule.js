@@ -54,10 +54,13 @@ Ext.define('canopsis.controller.Schedule', {
 			if(data.recipients != '' && data.recipients != undefined){
 				log.debug('sendMail is true')
 				 
-				 var recipients = data.recipients.split(',')
+				 var stripped_recipients = data.recipients.replace(/ /g,'')
+				 var recipients = stripped_recipients.split(',')
 				 if(recipients.length == 1){
-					 recipients = data.recipients.split(';')
+					 recipients = stripped_recipients.split(';')
 				 }
+				 
+				 log.dump(recipients)
 				 
 				var mail = {
 					"recipients":recipients,
@@ -249,14 +252,12 @@ Ext.define('canopsis.controller.Schedule', {
 	runItem : function(item){
 		log.debug('Clicked on run item',this.logAuthor)
 		
-		mail = item.get('mail')
-		
-		if(mail != undefined)
-			mail = Ext.encode(mail)
-		
 		options = item.get('kwargs')
 		view_name = options.viewname
 		start_time = options.starttime
+		mail = options.mail
+		if(mail != undefined)
+			mail = Ext.encode(mail)
 		
 		this.getController('Reporting').launchReport(view_name,start_time,undefined,mail)
 	},
