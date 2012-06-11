@@ -45,7 +45,7 @@ def init():
 			record = storage.get('group.%s' % name)
 		except:
 			logger.info(" + Create group '%s'" % name)
-			record = crecord({'_id': 'group.%s' % name }, type='group', name=name, group='group.account_managing')
+			record = crecord({'_id': 'group.%s' % name }, type='group', name=name, group='group.CPS_account_admin')
 			record.chmod('o+r')
 			storage.put(record)
 		
