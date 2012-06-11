@@ -45,7 +45,7 @@ class crecord(object):
 		
 		#set admin account
 		if not self.admin_group:
-			self.admin_group = 'CPS_%s_admin' % self.type
+			self.admin_group = 'group.CPS_%s_admin' % self.type
 		
 
 		try:
@@ -80,7 +80,7 @@ class crecord(object):
 			self.admin_group = str(dump['aaa_admin_group'])
 			del dump['aaa_admin_group']
 		else:
-			self.admin_group = 'CPS_%s_admin' % self.type
+			self.admin_group = 'group.CPS_%s_admin' % self.type
 		
 		#security
 		if not self.access_owner:
