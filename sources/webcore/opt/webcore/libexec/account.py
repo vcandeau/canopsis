@@ -365,8 +365,6 @@ def account_post():
 @delete('/account/:_id',apply=[check_auth])
 def account_delete(_id):
 	account = get_account()
-	if not check_group_rights(account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object')
 
 	logger.debug("DELETE:")
