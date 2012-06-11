@@ -62,6 +62,7 @@ def init():
 			record.lastname = account[3]
 			record.chown(record._id)
 			record.chgrp(record.group)
+			record.admin_group = 'group.CPS_account_admin'
 			record.chmod('g+r')
 			record.passwd(account[1])
 			record.generate_new_authkey()
@@ -90,6 +91,7 @@ def init():
 			userdir = crecord({'_id': 'directory.root.%s' % user,'id': 'directory.root.%s' % user ,'expanded':'true'}, type='view_directory', name=user)
 			userdir.chown('account.%s' % user)
 			userdir.chgrp('group.%s' % user)
+			userdir.admin_group = 'group.CPS_view_admin'
 			userdir.chmod('g-w')
 			userdir.chmod('g-r')
 
