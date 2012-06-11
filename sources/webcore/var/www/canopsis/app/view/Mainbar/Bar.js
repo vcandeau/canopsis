@@ -131,7 +131,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		}
 	
 		//Build menu
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
+		//if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
 			menu_build = menu_build.concat([
 				{
 					iconCls:'icon-mainbar-edit-view',
@@ -143,7 +143,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					action: 'newView'
 				}	
 			]);
-		}
+		//}
 		
 		//Reporting menu
 		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_exporting_admin' ||(global.account.groups.indexOf('group.CPS_exporting_admin') != -1)){
@@ -198,7 +198,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			}
 		])
 		
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
+		//if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
 			menu_run = menu_run.concat(
 				[
 					{
@@ -208,7 +208,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					}
 				]
 			)
-		}
+		//}
 			
 		menu_run = menu_run.concat([
 			'-', this.viewSelector

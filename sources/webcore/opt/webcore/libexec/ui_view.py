@@ -96,8 +96,6 @@ def tree_get():
 def tree_delete(name=None):
 	namespace='object'
 	account = get_account()
-	if not check_group_rights(account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
 	
 	record = storage.get(name, account=account)
@@ -134,8 +132,6 @@ def tree_delete(name=None):
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
-	if not check_group_rights(account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
 		
 	storage = get_storage(namespace=namespace, account=account)
 	
