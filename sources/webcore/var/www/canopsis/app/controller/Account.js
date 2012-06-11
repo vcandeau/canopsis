@@ -176,6 +176,12 @@ Ext.define('canopsis.controller.Account', {
 			return true
 		}
 		
+		log.dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
+		log.dump(groups)
+		log.dump(record)
+		log.dump(record.get('aaa_admin_group'))
+		log.dump(groups.indexOf(record.get('aaa_admin_group')))
+		
 		if((option == 'r') || (option == 'w')){
 			if ((user == record.get('aaa_owner')) && (record.data.aaa_access_owner.indexOf(option) > -1)){
 				//log.debug('owner')
@@ -185,6 +191,8 @@ Ext.define('canopsis.controller.Account', {
 				return true
 			} else if((groups.indexOf(record.get('aaa_group')) != -1) && (record.data.aaa_access_group.indexOf(option) > -1)){
 				//log.debug('group')
+				return true
+			} else if((groups.indexOf(record.get('aaa_admin_group')) != -1) || group == record.get('aaa_admin_group')){
 				return true
 			} else {
 				//log.debug('nothing')
@@ -215,6 +223,8 @@ Ext.define('canopsis.controller.Account', {
 				return true
 			} else if((groups.indexOf(obj.aaa_group) != -1) && (obj.aaa_access_group.indexOf(option) > -1)){
 				//log.debug('group')
+				return true
+			} else if((groups.indexOf(obj.aaa_admin_group) != -1) || group == obj.aaa_admin_group ){
 				return true
 			} else {
 				//log.debug('nothing')
