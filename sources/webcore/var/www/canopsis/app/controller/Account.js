@@ -176,12 +176,6 @@ Ext.define('canopsis.controller.Account', {
 			return true
 		}
 		
-		log.dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr')
-		log.dump(groups)
-		log.dump(record)
-		log.dump(record.get('aaa_admin_group'))
-		log.dump(groups.indexOf(record.get('aaa_admin_group')))
-		
 		if((option == 'r') || (option == 'w')){
 			if ((user == record.get('aaa_owner')) && (record.data.aaa_access_owner.indexOf(option) > -1)){
 				//log.debug('owner')
