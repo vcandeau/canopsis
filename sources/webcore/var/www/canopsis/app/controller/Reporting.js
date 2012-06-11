@@ -57,10 +57,7 @@ Ext.define('canopsis.controller.Reporting', {
 					var id = data.data.id
 					global.notify.notify(
 						_('Export ready'),
-						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + '/files/' + id + '"  target="_blank">' + _('here') + '</a>',
-						undefined,
-						undefined,
-						false
+						_('You can get your document') + ' <a href="' + location.protocol + '//' + location.host + '/files/' + id + '"  target="_blank">' + _('here') + '</a>'
 					)
 				}else{
 					global.notify.notify('Failed','The report generation have failed','error')
