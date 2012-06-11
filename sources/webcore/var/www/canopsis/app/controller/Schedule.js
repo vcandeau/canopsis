@@ -142,28 +142,7 @@ Ext.define('canopsis.controller.Schedule', {
 		//--------------get cron---------------
 		var cron = item.get('cron')
 		
-		//format time
-		var d = new Date()
-		d.setUTCHours(parseInt(cron.hour,10))
-		d.setUTCMinutes(parseInt(cron.minute,10))
-		
-		var minute = d.getMinutes()
-		var hour = d.getHours()
-		
-		//cosmetic
-		if(minute < 10)
-			minute = '0' + minute
-		if(hour < 10)
-			hour = '0' + hour
-		
-		//check 12h / 24h clock
-		if(global.locale == 'fr')
-			var hours = hour + ':' + minute
-		else 
-			if(hour > 12)
-				var hours = (hour-12) + ':' + minute + ' pm'
-			else
-				var hours = hour + ':' + minute + ' am'
+		var hours = this.format_time(cron)
 		
 		item.set('hours',hours)
 		
@@ -179,9 +158,8 @@ Ext.define('canopsis.controller.Schedule', {
 			item.set('dayWeek',cron.day_of_week)
 		}
 		
-		if(cron.day != undefined){
+		if(cron.day != undefined)
 			item.set('day',cron.day)
-		}
 		
 		if(cron.month != undefined){
 			item.set('every','year')
@@ -227,28 +205,7 @@ Ext.define('canopsis.controller.Schedule', {
 		//--------------get cron---------------
 		var cron = item.get('cron')
 		
-		//format time
-		var d = new Date()
-		d.setUTCHours(parseInt(cron.hour,10))
-		d.setUTCMinutes(parseInt(cron.minute,10))
-		
-		var minute = d.getMinutes()
-		var hour = d.getHours()
-		
-		//cosmetic
-		if(minute < 10)
-			minute = '0' + minute
-		if(hour < 10)
-			hour = '0' + hour
-		
-		//check 12h / 24h clock
-		if(global.locale == 'fr')
-			var hours = hour + ':' + minute
-		else 
-			if(hour > 12)
-				var hours = (hour-12) + ':' + minute + ' pm'
-			else
-				var hours = hour + ':' + minute + ' am'
+		var hours = this.format_time(cron)
 		
 		item.set('hours',hours)
 		
@@ -396,5 +353,33 @@ Ext.define('canopsis.controller.Schedule', {
 		btns = form.down('button[action=cancel]')
 		btns.on('click', function(){window_wizard.destroy();}, this)
 
-	}
+	},
+
+	format_time : function(cron){
+		//format time
+		var d = new Date()
+		d.setUTCHours(parseInt(cron.hour,10))
+		d.setUTCMinutes(parseInt(cron.minute,10))
+		
+		var minute = d.getMinutes()
+		var hour = d.getHours()
+		
+		//cosmetic
+		if(minute < 10)
+			minute = '0' + minute
+		if(hour < 10)
+			hour = '0' + hour
+		
+		//check 12h / 24h clock
+		if(global.locale == 'fr')
+			var hours = hour + ':' + minute
+		else 
+			if(hour > 12)
+				var hours = (hour-12) + ':' + minute + ' pm'
+			else
+				var hours = hour + ':' + minute + ' am'
+
+		return hours
+	},
+
 });
