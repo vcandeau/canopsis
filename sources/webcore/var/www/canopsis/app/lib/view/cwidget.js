@@ -47,6 +47,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	exportMode : false,
 	
 	titleHeight: 27,
+	barHeight: 27,
 	
 	time_window: global.commonTs.day, //24 hours
 
@@ -117,31 +118,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		}
 	},
 	
-	
-	
-	//display data from timestamp
-	/*_displayFromTs: function(from, to){
-		if(this.displayFromTs){
-			this.stopTask()
-			this.displayFromTs(from, to)
-
-		} else {
-			this.setHtml('widget display data from timestamp ' + from + ' to ' + to)
-		}
-	},*/
-	
-	
-	//launch by reporting.html (reporting dedicated page)
-	/*_reporting: function(from, to){
-		if(this.reporting){
-			log.debug('Starting the report', this.logAuthor)
-			this.reporting(from,to)
-		} else {
-			log.debug('Warning, no reporting function for '+this.id, this.logAuthor)
-			this.setHtml('No reporting mode for this widget')
-		}
-	},*/
-	
 	afterContainerRender: function(){
 		log.debug(' + Ready', this.logAuthor)
 		this.ready();
@@ -150,6 +126,15 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	getHeight: function(){
 		var height = this.callParent();
 		if (this.title){ height -= this.titleHeight }
+	
+		var docks = this.getDockedItems()
+		
+		for (var i in docks)
+			if (docks[i].dock == 'top' || docks[i].dock == 'bottom') { height -= this.barHeight }
+			
+		if (this.border)
+			height -= this.border * 2
+		
 		return height
 	},
 	
@@ -258,49 +243,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		log.debug('setHtmlTpl in div '+this.wcontainerId, this.logAuthor)
 		tpl.overwrite(this.wcontainerId, data)
 	},
-	
-	/*getMetricUnit: function(perfArray){
-		if(perfArray[this.metric]){
-			return perfArray[this.metric].unit;
-		} else {
-			log.debug('the metric is undefined', this.logAuthor);
-			return undefined;
-		}
-	},
-	
-	getHealth: function(data){
-		//nodeId have perfdata ?
-		if (data.perf_data_array){
-			var perfArray = data.perf_data_array		
-			
-			//check the metric
-			if(perfArray[this.metric]){
-				perf = perfArray[this.metric];
-				//metric is already % ?
-				if(perf.unit == "%"){
-					return perf.value;
-				} else {
-					//calculate % from max value if exist
-					if(perf.max){
-						var health = (perf.value / perf.max * 100);
-						return health;
-					} else if (this.metric_max){
-						var health = (perf.value / this.metric_max * 100) ;
-						return health;
-					} else {
-						log.debug('impossible to calculate health (no max value in data)', this.logAuthor);
-						return undefined;
-					}
-				}
-			}else{
-				log.debug('the metric is undefined', this.logAuthor);
-				log.dump(perfArray);
-			}
-		}else{
-			log.debug('impossible to calculate health (no perf_data_array)', this.logAuthor);
-			return undefined;
-		}
-	},*/
 	
 	beforeDestroy : function() {
 		log.debug("Destroy ...", this.logAuthor)

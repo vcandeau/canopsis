@@ -109,14 +109,22 @@ Ext.define('canopsis.controller.Websocket', {
 			// Open one channel by id and distribute messages
 			if (! this.subscribe_cache[id]){
 				this.subscribe_cache[id] = {type: type, channel: channel, subscribers: {} }
+				
 				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
+				
 				var me = this
-				now.subscribe(type, channel, function(message){
+				var callback = function(message){
 					for(var i in me.subscribe_cache[id].subscribers){
 						var s = me.subscribe_cache[id].subscribers[i]
 						s.on_message.apply(s.scope, [ message ])
 					}
-				})
+				}
+				
+				//Register callback
+				now[id] = callback
+				
+				//subscribe to group
+				now.subscribe(type, channel)
 			
 			}else{
 				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
@@ -138,15 +146,25 @@ Ext.define('canopsis.controller.Websocket', {
 				
 				if (isEmpty(this.subscribe_cache[id].subscribers)){
 					log.info("  + Delete cache '"+id+"' and unsubscribe from remote queue", this.logAuthor)
-					delete this.subscribe_cache[id]	
+					delete this.subscribe_cache[id]
+					
+					// Unsubscribe from group
 					now.unsubscribe(type, channel)
+					
+					//Delete callback
+					delete now[id]
 				}
 			}else
 				log.error("  + Invalid queue id '"+id+"'", this.logAuthor)
 		}
 	},
 	
-	publish_event: function(type, id, name){
+	publish_event: function(){
+	},
+	
+	publish: function(type, channel, message){
+		now.publish(type, channel, message);
+		
 		/*this.faye_client.publish(this.faye_mount+"ui/events",{
 			author: global.account._id,
 			clientId: this.faye_client.getClientId(),
