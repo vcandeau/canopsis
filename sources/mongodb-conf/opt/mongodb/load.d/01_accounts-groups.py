@@ -31,7 +31,7 @@ root = caccount(user="root", group="root")
 def init():
 	storage = get_storage(account=root, namespace='object')
 	
-	groups =  ['root', 'canopsis', 'CPS_curve_admin','CPS_view_admin','CPS_exporting_admin','CPS_reporting_admin','CPS_account_admin']
+	groups =  ['root', 'canopsis', 'CPS_curve_admin','CPS_view_admin','CPS_exporting_admin','CPS_reporting_admin','CPS_account_admin','CPS_account_admin']
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
