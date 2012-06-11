@@ -44,7 +44,7 @@
 } 
 
 .icon-download { 
-    background-image: url(../images/icons/disk.png) !important; 
+    background-image: url(../images/icons/disk.png) !important;
 } 
 
 .icon-previous { 
@@ -308,4 +308,14 @@
 
 .icon-mimetype-pdf { 
     background-image: url(../images/icons/page_white_acrobat.png) !important; 
+}
+
+/* Controles */
+
+.icon-control-pause { 
+    background-image: url(../images/icons/control_pause.png) !important; 
+}
+
+.icon-control-play { 
+    background-image: url(../images/icons/control_play.png) !important; 
 }
