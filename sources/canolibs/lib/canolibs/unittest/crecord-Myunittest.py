@@ -22,6 +22,7 @@ import unittest
 import json
 from crecord import crecord
 from caccount import caccount
+from cgroup import cgroup
 
 #storage = cstorage.
 
@@ -133,7 +134,19 @@ class KnownValues(unittest.TestCase):
 		json_output = record1.recursive_dump(json=True)
 		json.dumps(json_output)
 		
+	def test_09_check_admin_rights(self):
+		account = caccount(user='jean')
+		group = cgroup(name='administrator')
+		group.add_accounts(account)
 		
+		record = crecord(admin_group=group._id,group='nothing',owner='refrigerator')
+		
+		check = record.check_write(account)
+		
+		if not check:
+			raise Exception('Admin group are not handle ...')
+		
+
 if __name__ == "__main__":
 	unittest.main(verbosity=1)
 	
