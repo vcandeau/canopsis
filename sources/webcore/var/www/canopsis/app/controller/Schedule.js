@@ -134,6 +134,90 @@ Ext.define('canopsis.controller.Schedule', {
 		return record
 	},
 	
+	beforeload_DuplicateForm : function(form,item){
+		//---------------get args--------------
+		var kwargs = item.get('kwargs')
+		var viewName = kwargs['viewname']
+		var timeLength = kwargs['starttime']
+		//--------------get cron---------------
+		var cron = item.get('cron')
+		
+		//format time
+		var d = new Date()
+		d.setUTCHours(parseInt(cron.hour,10))
+		d.setUTCMinutes(parseInt(cron.minute,10))
+		
+		var minute = d.getMinutes()
+		var hour = d.getHours()
+		
+		//cosmetic
+		if(minute < 10)
+			minute = '0' + minute
+		if(hour < 10)
+			hour = '0' + hour
+		
+		//check 12h / 24h clock
+		if(global.locale == 'fr')
+			var hours = hour + ':' + minute
+		else 
+			if(hour > 12)
+				var hours = (hour-12) + ':' + minute + ' pm'
+			else
+				var hours = hour + ':' + minute + ' am'
+		
+		item.set('hours',hours)
+		
+		//set record id for editing (pass to webserver later for update)
+		item.set('_id',item.get('_id'))
+		
+		//set view
+		item.set('view',viewName)
+		
+		//set right day if exist
+		if(cron.day_of_week != undefined){
+			item.set('every','week')
+			item.set('dayWeek',cron.day_of_week)
+		}
+		
+		if(cron.day != undefined){
+			item.set('day',cron.day)
+		}
+		
+		if(cron.month != undefined){
+			item.set('every','year')
+			item.set('month',cron.month)
+		}
+		
+		//compute timeLength
+		scale = Math.floor(timeLength/global.commonTs.day)
+
+		if(scale >= 365){
+			item.set('timeLengthUnit',global.commonTs.year)
+			item.set('timeLength',Math.floor(scale/365))
+		}else if(scale >= 30){
+			item.set('timeLengthUnit',global.commonTs.month)
+			item.set('timeLength',Math.floor(scale/30))
+		}else if(scale >= 7){
+			item.set('timeLengthUnit',global.commonTs.week)
+			item.set('timeLength',Math.floor(scale/7))
+			log.dump(item)
+		} else {
+			item.set('timeLengthUnit',global.commonTs.day)
+			item.set('timeLength',Math.floor(scale))
+		}
+		
+		//set mail
+		var mail_info = kwargs.mail
+		if(mail_info != undefined){
+			if(mail_info.recipients != undefined){
+				item.set('sendMail', true)
+				item.set('recipients',mail_info.recipients)
+				if(mail_info.subject != undefined)
+					item.set('subject',mail_info.subject)
+			}
+		}
+	},
+	
 	beforeload_EditForm : function(form,item){
 		
 		//---------------get args--------------

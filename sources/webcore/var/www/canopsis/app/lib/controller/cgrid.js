@@ -533,10 +533,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	
 	_duplicateRecord: function() {
 		log.debug('clicked duplicateRecord',this.logAuthor);
-		grid = this.grid;
-		item = grid.getSelectionModel().getSelection()[0];
+		var grid = this.grid;
+		 var item = grid.getSelectionModel().getSelection()[0];
 		
-		var editing = true
+		var editing = false
 
 		if (this.formXtype) {
 			if (this.EditMethod == "tab"){
@@ -584,15 +584,18 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				}
 			}
 			
+			//duplicate
+			var copy = item.copy()
+			
 			// load records
 			if (this.beforeload_DuplicateForm) {
-				this.beforeload_DuplicateForm(form)
+				this.beforeload_DuplicateForm(form,copy)
 			}
 
-			form.loadRecord(item);
+			form.loadRecord(copy);
 
 			if (this.afterload_DuplicateForm) {
-				this.afterload_DuplicateForm(form)
+				this.afterload_DuplicateForm(form,copy)
 			}
 
 			this._bindFormEvents(form)	
