@@ -23,6 +23,7 @@ import unittest
 from cstorage import cstorage
 from crecord import crecord
 from caccount import caccount
+from cgroup import cgroup
 
 import logging
 import time
@@ -224,6 +225,22 @@ class KnownValues(unittest.TestCase):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 		pass
+		
+	def test_20_admin_group_access(self):
+		root_account = caccount(user="root", group="root")
+		storage = STORAGE
+		group = cgroup(name='administrator')
+		record = crecord(_id='test_record',admin_group='group.administrator')
+		account = caccount(user='tk',group='user')
+		
+		storage.put(record,account=root_account)
+		group.add_accounts(account)
+		storage.put(account,account=root_account)
+		
+		try:
+			output= storage.get(record._id,account=account)
+		except:
+			raise Exception('admin group can\'t access all the ressources of his group')
 
 	def test_99_DropNamespace(self):
 		STORAGE.drop_namespace('unittest')
