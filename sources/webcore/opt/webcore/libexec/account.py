@@ -40,7 +40,7 @@ from libexec.auth import check_auth, get_account, reload_account,check_group_rig
 logger = logging.getLogger('Account')
 
 #group who have right to access 
-group_managing_access = 'group.account_managing'
+group_managing_access = 'group.CPS_account_admin'
 #########################################################################
 
 #### GET Me

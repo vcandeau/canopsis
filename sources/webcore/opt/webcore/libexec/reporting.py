@@ -49,7 +49,7 @@ from libexec.account import check_group_rights
 logger = logging.getLogger('Reporting')
 
 #group who have right to access 
-group_managing_access = 'group.exporting'
+group_managing_access = 'group.CPS_exporting_admin'
 
 #########################################################################
 
