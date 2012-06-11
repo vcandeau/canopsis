@@ -89,6 +89,8 @@ class cstorage(object):
 				{'aaa_owner': account._id, 'aaa_access_owner': 'r'},
 				{'aaa_group': account.group, 'aaa_access_group': 'r'},
 				{'aaa_group': {'$in': account.groups}, 'aaa_access_group': 'r'},
+				{'aaa_admin_group':account.group},
+				{'aaa_admin_group':{'$in': account.groups}},
 				{'aaa_access_unauth': 'r'}
 			] }
 	
@@ -96,6 +98,8 @@ class cstorage(object):
 				{'aaa_owner': account._id, 'aaa_access_owner': 'w'},
 				{'aaa_group': account.group, 'aaa_access_group': 'w'},
 				{'aaa_group': {'$in': account.groups}, 'aaa_access_group': 'w'},
+				{'aaa_admin_group':account.group},
+				{'aaa_admin_group':{'$in': account.groups}},
 				{'aaa_access_unauth': 'w'}
 			] }
 
