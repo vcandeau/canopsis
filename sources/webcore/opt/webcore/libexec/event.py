@@ -33,15 +33,19 @@ from camqp import camqp
 import cevent
 
 #import protection function
-from libexec.auth import check_auth, get_account
+from libexec.auth import check_auth, get_account, check_group_rights
 
 logger = logging.getLogger('Event')
 
+group_managing_access = 'group.CPS_event_admin'
 ##################################################################################
 
 @post('/event/',apply=[check_auth])
 @post('/event/:routing_key',apply=[check_auth])
 def send_event(	routing_key=None):
+	
+	if not check_group_rights(account,group_managing_access):
+		return HTTPError(403, 'Insufficient rights')
 				
 	connector = None
 	connector_name = None
