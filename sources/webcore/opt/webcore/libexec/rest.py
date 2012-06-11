@@ -36,7 +36,7 @@ logger = logging.getLogger("rest")
 
 
 ctype_to_group_access = {
-							'schedule' : 'group.exporting',
+							'schedule' : 'group.CPS_exporting_admin',
 						}
 
 #########################################################################
