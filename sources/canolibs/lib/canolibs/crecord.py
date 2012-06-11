@@ -20,11 +20,12 @@
 # ---------------------------------
 
 class crecord(object):
-	def __init__(self, data = {}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None, type='raw'):
+	def __init__(self, data = {}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None,admin_group=None, type='raw'):
 		self.write_time = None
 
 		self.owner=owner
 		self.group=group
+		#self.admin_group=admin_group
 		self.type= type
 		self.access_owner=['r','w']
 		self.access_group=['r']
@@ -41,6 +42,12 @@ class crecord(object):
 			#self.account = account
 			self.owner=account.user
 			self.group=account.group
+		
+		'''
+		#set admin account
+		if not self.admin_group:
+			self.admin_group = 'CPS_%s_admin' % self.type
+		'''
 
 		try:
 			self._id = data['_id']
@@ -70,6 +77,19 @@ class crecord(object):
 		self.parent = dump['parent']
 		self.enable = dump['enable']
 
+		#self.admin_group = str(dump['aaa_admin_group'])
+		
+		#security
+		if not self.access_owner:
+			self.access_owner = []
+		if not self.access_group:
+			self.access_group = []
+		if not self.access_other:
+			self.access_other = []
+		if not self.access_unauth:
+			self.access_unauth = []
+			
+		
 		try:
 			self._id = dump['_id']
 			del dump['_id']
@@ -88,6 +108,8 @@ class crecord(object):
 		del dump['crecord_name']
 		del dump['children']
 		del dump['parent']
+		
+		#del dump['aaa_admin_group']
 
 		self.data = dump.copy()
 
@@ -119,6 +141,8 @@ class crecord(object):
 	
 		dump['parent'] =  self.parent
 		dump['children'] =  self.children
+		
+		#dump['aaa_admin_group'] = self.admin_group
 
 		if json:
 			try:
