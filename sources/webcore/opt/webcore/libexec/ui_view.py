@@ -35,7 +35,7 @@ from libexec.auth import check_auth, get_account, check_group_rights
 logger = logging.getLogger("ui_view")
 
 #group who have right to access 
-group_managing_access = 'group.view_managing'
+group_managing_access = 'group.CPS_view_admin'
 
 #########################################################################
 '''
