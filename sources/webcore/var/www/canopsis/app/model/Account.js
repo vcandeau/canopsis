@@ -34,6 +34,7 @@ Ext.define('canopsis.model.Account', {
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
+		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
 		{name: 'aaa_owner'},
 		],

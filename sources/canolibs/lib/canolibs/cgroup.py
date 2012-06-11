@@ -32,6 +32,9 @@ class cgroup(crecord):
 		self._id = '%s.%s' % (self.type,str(self.name))
 		self.account_ids = account_ids
 		
+		#HACK
+		self.admin_group = 'group.CPS_account_admin'
+		
 		if isinstance(record, crecord):
 			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
 
