@@ -31,7 +31,7 @@ root = caccount(user="root", group="root")
 def init():
 	storage = get_storage(account=root, namespace='object')
 	
-	groups =  ['root', 'canopsis', 'curves_admin','view_managing','exporting','reporting','account_managing']
+	groups =  ['root', 'canopsis', 'CPS_curve_admin','CPS_view_admin','CPS_exporting_admin','CPS_reporting_admin','CPS_account_admin']
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
@@ -143,7 +143,8 @@ def update_for_new_rights():
 	#update view
 	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
 	for record in dump:
-		record.chgrp('group.view_managing')
+		record.chgrp('group.CPS_view_admin')
+		record.admin_group = 'group.CPS_view_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump, account=root)
@@ -151,7 +152,8 @@ def update_for_new_rights():
 	#update groups
 	dump = storage.find({'crecord_type':'schedule'})
 	for record in dump:
-		record.chgrp('group.exporting')
+		record.chgrp('group.CPS_exporting_admin')
+		record.admin_group = 'group.CPS_exporting_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump)
@@ -159,7 +161,8 @@ def update_for_new_rights():
 	#update accounts
 	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
 	for record in dump:
-		#record.chgrp('group.account_managing')
+		record.chgrp('group.CPS_account_admin')
+		record.admin_group = 'group.CPS_account_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump)

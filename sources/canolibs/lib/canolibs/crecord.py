@@ -25,7 +25,7 @@ class crecord(object):
 
 		self.owner=owner
 		self.group=group
-		#self.admin_group=admin_group
+		self.admin_group=admin_group
 		self.type= type
 		self.access_owner=['r','w']
 		self.access_group=['r']
@@ -43,11 +43,10 @@ class crecord(object):
 			self.owner=account.user
 			self.group=account.group
 		
-		'''
 		#set admin account
 		if not self.admin_group:
 			self.admin_group = 'CPS_%s_admin' % self.type
-		'''
+		
 
 		try:
 			self._id = data['_id']
@@ -76,8 +75,12 @@ class crecord(object):
 		self.children = dump['children']
 		self.parent = dump['parent']
 		self.enable = dump['enable']
-
-		#self.admin_group = str(dump['aaa_admin_group'])
+		
+		if 'aaa_admin_group' in dump:
+			self.admin_group = str(dump['aaa_admin_group'])
+			del dump['aaa_admin_group']
+		else:
+			self.admin_group = 'CPS_%s_admin' % self.type
 		
 		#security
 		if not self.access_owner:
@@ -107,9 +110,7 @@ class crecord(object):
 		del dump['crecord_write_time']
 		del dump['crecord_name']
 		del dump['children']
-		del dump['parent']
-		
-		#del dump['aaa_admin_group']
+		del dump['parent']			
 
 		self.data = dump.copy()
 
@@ -142,7 +143,7 @@ class crecord(object):
 		dump['parent'] =  self.parent
 		dump['children'] =  self.children
 		
-		#dump['aaa_admin_group'] = self.admin_group
+		dump['aaa_admin_group'] = self.admin_group
 
 		if json:
 			try:
