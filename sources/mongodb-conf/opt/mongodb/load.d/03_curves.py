@@ -57,7 +57,7 @@ def init():
 			record = crecord(data=curve, _id=_id, name=curve['metric'], type='curve')
 			record.chmod('g+w')
 			record.chmod('o+r')
-			record.chgrp('curves_admin')
+			record.chgrp('group.CPS_curve_admin')
 			storage.put(record)
 	
 def update():

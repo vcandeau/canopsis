@@ -88,7 +88,7 @@ def create_view(_id, name, data, position=None, mod='o+r', autorm=True):
 		position = {'width': 1,'top': 0, 'left': 0, 'height': 1}
 		
 	logger.info(" + Create view '%s'" % name)
-	record = crecord({'_id': 'view.%s' % _id }, type='view', name=name,group='group.view_managing')
+	record = crecord({'_id': 'view.%s' % _id }, type='view', name=name,group='group.CPS_view_admin')
 	
 	if  isinstance(data, list):
 		record.data['items'] = data
