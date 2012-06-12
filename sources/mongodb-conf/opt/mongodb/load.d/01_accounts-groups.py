@@ -31,7 +31,7 @@ root = caccount(user="root", group="root")
 def init():
 	storage = get_storage(account=root, namespace='object')
 	
-	groups =  ['root', 'canopsis', 'CPS_curve_admin','CPS_view_admin','CPS_exporting_admin','CPS_reporting_admin','CPS_account_admin','CPS_event_admin']
+	groups =  ['root', 'canopsis', 'CPS_curve_admin','CPS_view_admin','CPS_schedule_admin','CPS_reporting_admin','CPS_account_admin','CPS_event_admin']
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
@@ -155,8 +155,8 @@ def update_for_new_rights():
 	#update groups
 	dump = storage.find({'crecord_type':'schedule'})
 	for record in dump:
-		record.chgrp('group.CPS_exporting_admin')
-		record.admin_group = 'group.CPS_exporting_admin'
+		record.chgrp('group.CPS_schedule_admin')
+		record.admin_group = 'group.CPS_schedule_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
 	storage.put(dump)
