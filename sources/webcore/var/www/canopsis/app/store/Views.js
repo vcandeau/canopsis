@@ -41,6 +41,13 @@ Ext.define('canopsis.store.Views', {
 			type: 'json'
 		},
 	},
+	
+	constructor: function(config) {
+		 this.callParent(arguments);
+		 //quiet the store, handle by the controller
+		 this.removeListener('write',this.listeners.write,this)
+	}
+	
 	/*load: function (){
 		log.debug('View store loaded.')
 		log.dump(this.getById('view.root.dashboard'))
