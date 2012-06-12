@@ -44,7 +44,7 @@
 } 
 
 .icon-download { 
-    background-image: url(../images/icons/disk.png) !important; 
+    background-image: url(../images/icons/disk.png) !important;
 } 
 
 .icon-previous { 
@@ -308,4 +308,18 @@
 
 .icon-mimetype-pdf { 
     background-image: url(../images/icons/page_white_acrobat.png) !important; 
+}
+
+/* Controles */
+
+.icon-control-pause, .x-tool-pause { 
+    background-image: url(../images/icons/control_pause.png) !important; 
+}
+
+.icon-control-play, .x-tool-play { 
+    background-image: url(../images/icons/control_play.png) !important; 
+}
+
+.icon-control-repeat, .x-tool-repeat { 
+    background-image: url(../images/icons/control_repeat.png) !important; 
 }

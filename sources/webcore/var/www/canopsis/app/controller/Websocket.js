@@ -28,6 +28,9 @@ Ext.define('canopsis.controller.Websocket', {
 	
     autoconnect: true,    
     connected: false,
+    
+    subscribe_cache: {},
+    auto_resubscribe: true,
 
     init: function() {
 		global.websocketCtrl = this;
@@ -53,7 +56,7 @@ Ext.define('canopsis.controller.Websocket', {
 			
 			now.core.socketio.on('disconnect', function(){
 				me.connected = false;
-				me.fireEvent('transport_down', me);
+				me.transport_down();
 			})
 			
 			
@@ -63,7 +66,7 @@ Ext.define('canopsis.controller.Websocket', {
 				log.debug(" + Authed", me.logAuthor)
 				
 				me.connected = true
-				me.fireEvent('transport_up', me);
+				me.transport_up();
 				
 				//me.subscribe('ui', 'events', me.on_event);
 			});
@@ -71,18 +74,97 @@ Ext.define('canopsis.controller.Websocket', {
 		});		
     },
     
-    subscribe: function(type, channel, on_message){
-		now.subscribe(type, channel, function(){
-			cosole.log(this)
-			//on_message
-		})
-	},
-
-    unsubscribe: function(type, channel){
-		now.unsubscribe(type, channel)
+    transport_down: function(){
+		log.info("Transport Down", this.logAuthor)
+		this.fireEvent('transport_down', this);
 	},
 	
-	publish_event: function(type, id, name){
+    transport_up: function(){
+		log.info("Transport Up", this.logAuthor)
+		this.fireEvent('transport_up', this);
+
+		//Re-open channel
+		if (this.subscribe_cache && this.auto_resubscribe){
+			for (var i in this.subscribe_cache){
+				var s = this.subscribe_cache[i]
+				delete this.subscribe_cache[i]
+				
+				for (var j in s.subscribers){
+					var t = s.subscribers[j]
+					this.subscribe(s.type, s.channel, t.on_message, t.scope);
+				}
+			}
+		}
+	},
+    
+    subscribe: function(type, channel, on_message, scope){
+		if (this.connected){
+			if (! scope)
+				scope = this
+			
+			log.info(" + Subscribe to "+type+"."+channel+" ("+scope.id+")", this.logAuthor)
+			
+			id = type+'-'+channel
+			
+			// Open one channel by id and distribute messages
+			if (! this.subscribe_cache[id]){
+				this.subscribe_cache[id] = {type: type, channel: channel, subscribers: {} }
+				
+				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
+				
+				var me = this
+				var callback = function(message){
+					for(var i in me.subscribe_cache[id].subscribers){
+						var s = me.subscribe_cache[id].subscribers[i]
+						s.on_message.apply(s.scope, [ message ])
+					}
+				}
+				
+				//Register callback
+				now[id] = callback
+				
+				//subscribe to group
+				now.subscribe(type, channel)
+			
+			}else{
+				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
+			}
+		
+		}
+	},
+
+    unsubscribe: function(type, channel, scope){
+		if (this.connected){
+			if (! scope)
+				scope = this
+				
+			log.info(" + Unsubscribe to "+type+"."+channel+" ("+scope.id+")", this.logAuthor)
+			
+			id = type+'-'+channel
+			if (this.subscribe_cache[id]){
+				delete this.subscribe_cache[id].subscribers[scope.id]
+				
+				if (isEmpty(this.subscribe_cache[id].subscribers)){
+					log.info("  + Delete cache '"+id+"' and unsubscribe from remote queue", this.logAuthor)
+					delete this.subscribe_cache[id]
+					
+					// Unsubscribe from group
+					now.unsubscribe(type, channel)
+					
+					//Delete callback
+					delete now[id]
+				}
+			}else
+				log.error("  + Invalid queue id '"+id+"'", this.logAuthor)
+		}
+	},
+	
+	publish_event: function(){
+	},
+	
+	publish: function(type, channel, message){
+		now.publish(type, channel, message);
+		
 		/*this.faye_client.publish(this.faye_mount+"ui/events",{
 			author: global.account._id,
 			clientId: this.faye_client.getClientId(),
