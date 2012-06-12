@@ -7,24 +7,39 @@
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript">
 $(function() {
+	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?', function(data) {
 
-	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
-		// Create the chart
-		window.chart = new Highcharts.StockChart({
+		// create the chart
+		chart = new Highcharts.StockChart({
 			chart : {
 				renderTo : 'container'
 			},
 
-			rangeSelector : {
-				selected : 1
+			title: {
+				text: 'AAPL stock price by minute'
 			},
-
-			title : {
-				text : 'AAPL Stock Price'
+			
+			rangeSelector : {
+				buttons : [{
+					type : 'hour',
+					count : 1,
+					text : '1h'
+				}, {
+					type : 'day',
+					count : 1,
+					text : '1D'
+				}, {
+					type : 'all',
+					count : 1,
+					text : 'All'
+				}],
+				selected : 1,
+				inputEnabled : false
 			},
 			
 			series : [{
 				name : 'AAPL',
+				type: 'candlestick',
 				data : data,
 				tooltip: {
 					valueDecimals: 2
@@ -32,15 +47,14 @@ $(function() {
 			}]
 		});
 	});
-
 });
 
 		</script>
 	</head>
 	<body>
+<div id="container" style="height: 500px; min-width: 500px"></div>
+
 <script src="../../js/highstock.js"></script>
 <script src="../../js/modules/exporting.js"></script>
-
-<div id="container" style="height: 500px; min-width: 500px"></div>
 	</body>
 </html>
