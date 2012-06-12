@@ -75,6 +75,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	maxZoom: 60 * 10, // 10 minutes
 
 	SeriesType: "area",
+	SeriePercent: false,
 	lineWidth: 1,
 	//..
 	
@@ -175,7 +176,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				enabled: this.tooltip,
 				formatter: function() {
 					var y = this.y
-					if (this.series.invert)
+					if (this.series.options.invert)
 						y = - y
 					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + y;
 				}
@@ -232,6 +233,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			this.marker_radius = 0
 		}
 		
+		// Ymax
+		if (this.SeriePercent){
+			this.options.yAxis.max = 100
+			//this.options.yAxis.title.text = 'pct'
+		}
 
 		// Configure line type
 		if 		(this.SeriesType == "area"){
@@ -409,7 +415,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 	},
 	
-	getSerie: function(node, metric_name, bunit){
+	getSerie: function(node, metric_name, bunit, min, max){
 		var serie_id = node + '.' +metric_name
 
 		//var serie = this.chart.get(serie_id)
@@ -453,10 +459,12 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			
 		log.debug('    + legend: '+metric_long_name, this.logAuthor)
 		
-		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0] }
+		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0], min: min, max: max}
 		
-		if (curve)
+		if (curve){
 			serie['dashStyle'] = curve.get('dashStyle')
+			serie['invert'] = curve.get('invert')
+		}
 		
 		if (this.SeriesType == "area" && curve){
 			serie['fillColor'] = colors[1]
@@ -466,11 +474,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		this.series[serie_id] = serie
 		
-		var hcserie = this.chart.addSeries(Ext.clone(serie), false, false)
+		this.chart.addSeries(Ext.clone(serie), false, false)
 		
-		if (curve)
-			hcserie['invert'] = curve.get('invert')
-		
+		var hcserie = this.chart.get(serie_id)
+				
 		this.series_hc[serie_id] = hcserie
 		
 		return hcserie
@@ -478,7 +485,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	parseValues: function(serie, values){
 		//Do operation on value
-		if (serie.invert)
+		if (this.SeriePercent && serie.options.max > 0)
+			for (var index in values)
+				values[index][1] = getPct(values[index][1], serie.options.max)
+		
+		if (serie.options.invert)
 			for (var index in values)
 				values[index][1] = - values[index][1]
 
@@ -519,10 +530,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		var values = data['values']
 		var bunit = data['bunit']
 		var node = data['node']
-		
+		var min = data['min']
+		var max = data['max']		
 		//log.dump(data)
 
-		var serie = this.getSerie(node, metric_name, bunit)
+		var serie = this.getSerie(node, metric_name, bunit, min, max)
 				
 		if (! serie){
 			log.error("Impossible to get serie, node: "+node+" metric: "+metric_name, this.logAuthor)
@@ -534,13 +546,21 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.dump(serie)
 			return
 		}
-		
+
 		//Add war/crit line if on first serie
 		if (this.chart.series.length == 1 && this.showWarnCritLine){
-			if (data['thld_warn'])
-				this.addPlotlines('pl_warning', data['thld_warn'], 'orange')
-			if (data['thld_crit'])
-				this.addPlotlines('pl_critical', data['thld_crit'], 'red')
+			if (data['thld_warn']){
+				var value = data['thld_warn']
+				if (this.SeriePercent && serie.options.max > 0)
+						value = getPct(value, serie.options.max)
+				this.addPlotlines('pl_warning', value, 'orange')
+			}
+			if (data['thld_crit']){
+				var value = data['thld_crit']
+				if (this.SeriePercent && serie.options.max > 0)
+						value = getPct(value, serie.options.max)
+				this.addPlotlines('pl_critical', value, 'red')
+			}
 				
 			this.showWarnCritLine = false
 		}
