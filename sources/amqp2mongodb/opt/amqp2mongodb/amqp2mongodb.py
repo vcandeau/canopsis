@@ -154,7 +154,7 @@ def on_message(body, msg):
 			## Event to Alert
 			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
-	elif event['event_type'] == 'trap':
+	elif event['event_type'] == 'trap' or event['event_type'] == 'comment':
 		## passthrough
 		archiver.store_event(event_id, event)
 		archiver.log_event(event_id, event)
