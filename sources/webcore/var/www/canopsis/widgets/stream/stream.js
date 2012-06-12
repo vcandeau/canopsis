@@ -125,7 +125,9 @@ Ext.define('widgets.stream.stream' ,{
 					this.add_events(data);
 				}
 				
-				this.subscribe();
+				if (! this.reportMode )
+					this.subscribe();
+					
 				this.ready();
 			},
 		});
