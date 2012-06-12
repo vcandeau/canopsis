@@ -63,6 +63,49 @@ var log = {
 };
 
 //####################################################
+//#  Build Event and rk
+//####################################################
+
+var build_event = function(event){
+
+	if (! event.component){
+		//event.component = 
+		log.error("Missing 'component' field", "build_event")
+		return undefined
+	}
+	
+	if (! event.resource)
+		event.source_type = 'component'
+	else
+		event.source_type = 'resource'
+	
+	if (! event.state)
+		event.state = 0
+
+	if (! event.event_type)
+		event.event_type = 'log'
+		
+	if (! event.output)
+		event.output = ''
+		
+	if (! event.connector_name)	
+		event.connector_name = 'canopsis'
+		
+	event.connector = 'websocket'
+	event.timestamp = parseInt(new Date().getTime() / 1000)
+	
+	return event
+};
+
+var build_rk = function(event){
+	//<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]
+	if (event.source_type == 'resource')
+		return event.connector +"."+ event.connector_name +"."+ event.event_type +"."+ event.source_type +"."+ event.component +"."+ event.resource + "." + new Date().getTime()
+	else
+		return event.connector +"."+ event.connector_name +"."+ event.event_type +"."+ event.source_type +"."+ event.component + "." + new Date().getTime()
+}
+
+//####################################################
 //#  Extend object (http://onemoredigit.com/post/1527191998/extending-objects-in-node-js)
 //####################################################
 Object.defineProperty(Object.prototype, "extend", {
@@ -204,6 +247,7 @@ var init_amqp = function(callback){
 
 //GLOBAL
 var amqp_queues = {};
+var amqp_exchanges = {};
 
 var amqp_subscribe_queue = function(queue_name){
 	var short_name = queue_name;
@@ -218,7 +262,8 @@ var amqp_subscribe_queue = function(queue_name){
 			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
 			this.subscribe( {ack:true}, function(message, headers, deliveryInfo){
 				message['id'] = deliveryInfo.routingKey
-				nowjs.getGroup(queueId).now.on_message(message)
+				//nowjs.getGroup(queueId).now.on_message(message)
+				nowjs.getGroup(queueId).now[queueId](message)
 				queue.shift()
 			});
 			
@@ -240,6 +285,18 @@ var amqp_unsubscribe_queue = function(queue_name){
 		log.info("Close AMQP queue '" + queue_name + "'", "amqp")
 		queue.destroy()
 		delete amqp_queues[queue_name];
+	}
+}
+
+var amqp_publish = function(exchange, rk, message){
+	if(amqp_connection){
+		if (! amqp_exchanges[exchange]){
+			log.info("Open exchange '"+exchange+"'", "amqp")
+			amqp_exchanges[exchange] = amqp_connection.exchange(exchange, {type: "topic", durable: true, auto_delete: false});
+		}
+		
+		log.info("Publish message to '"+rk+"@"+exchange+"'", "amqp")
+		amqp_exchanges[exchange].publish(rk, message, {contentType: 'application/json'});
 	}
 }
 
@@ -271,10 +328,14 @@ var sessions = {
 	},
 	
 	drop: function(id){
-		var authId = this.sessions[id]
-		log.debug("Drop session "+id+" ("+authId+")", "session")
-		delete this.sessions[id]
-		this.clientIds[authId].splice(this.clientIds[authId].indexOf(id), 1)
+		if (this.sessions[id]){
+			var authId = this.sessions[id]
+			log.debug("Drop session "+id+" ("+authId+")", "session")
+			delete this.sessions[id]
+			this.clientIds[authId].splice(this.clientIds[authId].indexOf(id), 1)
+		}else{
+			log.warning("Unknown session "+id, "session")
+		}
 	},
 	
 	check: function(id){
@@ -331,7 +392,7 @@ var init_now = function(callback){
 		check_authToken(clientId, this.now.authId, this.now.authToken, callback)
 	}
 	
-	everyone.now.subscribe = function(type, queue_name, callback, scope){
+	everyone.now.subscribe = function(type, queue_name){
 		if (check_session(this)){
 			var queueId = type+"-"+queue_name;
 			
@@ -342,8 +403,6 @@ var init_now = function(callback){
 			
 			var group = nowjs.getGroup(queueId)
 			group.addUser(this.user.clientId);
-			group.now.on_message = callback;
-			//group.now.scope = scope;
 		}
 	}
 
@@ -360,9 +419,22 @@ var init_now = function(callback){
 	everyone.now.publish = function(type, queue_name, message){
 		if (check_session(this)){
 			var queueId = type+"-"+queue_name;
-			var group = nowjs.getGroup(queueId)
-			if (group)
-				group.now.on_message(message)
+			
+			if (type == 'amqp'){
+				var event = build_event(message)
+				if (event){
+					event.clientId = this.user.clientId
+					event.authorId = sessions.check(this.user.clientId)
+					var rk = build_rk(event)
+					amqp_publish('canopsis.events', rk, event)
+				}else{
+					log.error('Invalid event.', 'nowjs')
+				}
+			}else{
+				var group = nowjs.getGroup(queueId)
+				if (group)
+					group.now.on_message(message)
+			}
 		}
 	}
 	

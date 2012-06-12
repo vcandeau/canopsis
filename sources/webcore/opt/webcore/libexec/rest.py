@@ -101,19 +101,21 @@ def rest_get(namespace, ctype=None, _id=None):
 	
 	storage = get_storage(namespace=namespace)
 
+	mfilter = {}
 	if isinstance(filter, list):
 		if len(filter) > 0:
-			filter = filter[0]
+			mfilter = filter[0]
 		else:
 			logger.error(" + Invalid filter format")
-			filter = {}
+			
+	elif isinstance(filter, dict):
+		mfilter = filter
 
 	total = 0
-	mfilter = {}
+	
 	records = []
 	if ctype:
-		if filter:
-			mfilter = filter
+		if mfilter:
 			mfilter['crecord_type'] = ctype
 		else:
 			mfilter = {'crecord_type': ctype}
