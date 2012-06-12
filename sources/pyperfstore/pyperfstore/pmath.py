@@ -20,6 +20,7 @@
 
 import os, sys, json, logging
 from math import sqrt
+from datetime import date
 
 logger = logging.getLogger('pmath')
 #logger.setLevel(logging.DEBUG)
@@ -162,6 +163,7 @@ def parse_dst(points, dtype, first_point=[]):
 
 def timesplit(points, tsfrom, tsto=None):
 	logger.debug("Time split %s -> %s (%s points)" % (tsfrom, tsto, len(points)))
+	logger.debug("Time split %s -> %s" % (date.fromtimestamp(tsfrom),date.fromtimestamp(tsto)))
 
 	before_point= []
 	after_point = []
@@ -269,20 +271,20 @@ def linreg(X, Y):
 	return a, b, RR
 
 
-def aggregate(values, max_points=None, interval=None, atype=None, agfn=None):
+def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None):
 	
 	if not max_points:
 		max_points=1450
 		
+	if not time_interval:
+		time_interval = int(round(len(values) / max_points))
+		
 	if not atype:
 		atype = 'MEAN'
 	
-	logger.debug("Aggregate %s points (max: %s)" % (len(values), max_points))
+	logger.debug("Aggregate %s points (max: %s, time interval: %s)" % (len(values), max_points, time_interval))
 
-	if len(values) > max_points:
-		if not interval:
-			interval = int(round(len(values) / max_points))
-	else:
+	if len(values) < max_points:
 		logger.debug(" + Useless")
 		return values
 
@@ -300,15 +302,39 @@ def aggregate(values, max_points=None, interval=None, atype=None, agfn=None):
 		else:
 			agfn = vmean
 
-	logger.debug(" + Interval: %s" % interval)
+	logger.debug(" + Interval: %s" % time_interval)
 
-	rvalues=[]
+	time_interval = int(time_interval)
+
+	'''
 	for x in range(0, len(values), interval):
 		sample = values[x:x+interval]
 		value = agfn(sample)
 		timestamp = sample[len(sample)-1][0]
  		rvalues.append([timestamp, value])
+	'''
+	rvalues=[]
+	values_to_aggregate = []
+	tmp_interval = 0
+	last_interval = values[0][0]
+	for value in values:
+		#compute interval
+		new_interval = tmp_interval + (value[0] - last_interval )
 
+		if new_interval < time_interval:
+			tmp_interval = new_interval
+			last_interval = value[0]
+			values_to_aggregate.append(value)
+		else:
+			#aggregate
+			sample = agfn(values_to_aggregate)
+			timestamp = values_to_aggregate[len(values_to_aggregate) -1][0]
+			rvalues.append([timestamp, sample])
+			#new interval
+			last_interval = value[0]
+			tmp_interval = 0
+			values_to_aggregate = [value]
+	
 	logger.debug(" + Nb points: %s" % len(rvalues))
 	return rvalues
 
