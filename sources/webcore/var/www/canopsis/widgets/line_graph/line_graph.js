@@ -64,6 +64,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	title_fontSize: 15,
 	
+	chart_type: 'line',
+	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
 	legend_layout: "horizontal",
@@ -73,6 +75,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_fontSize: 12,
 	legend_fontColor: "#3E576F",
 	maxZoom: 60 * 10, // 10 minutes
+	
+	interval : global.commonTs.hours,
 
 	SeriesType: "area",
 	lineWidth: 1,
@@ -147,6 +151,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
+				type: this.chart_type,
 				height: this.getHeight(),
 				reflow: false,
 				animation: false,
@@ -183,6 +188,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			xAxis: {
 				//min: Date.now() - (this.time_window * 1000),
 				type: 'datetime',
+				/*
 				maxZoom: this.maxZoom * 1000,
 				
 				labels: {
@@ -190,7 +196,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 						var offset = new Date().getTimezoneOffset() * 1000 * 60
 						return Highcharts.dateFormat(this.dateTimeLabelFormat, this.value - offset)
 					}
-				}
+				}*/
 			},
 			yAxis: {
 				title: {
@@ -305,6 +311,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				if(this.nodes.length != 0){
 					url = this.makeUrl(from, to)
 					this.last_from = to
+
+					log.dump('-------------------PARAMS--------------')
+					log.dump(this.post_params)
 
 					Ext.Ajax.request({
 						url: url,
@@ -599,7 +608,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				metrics: this.nodes[i].metrics,
 			})
 		}
-		this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+		this.post_params = { 'nodes': Ext.JSON.encode(post_params),'interval':3600 }
 	},
 	
  	beforeDestroy : function() {

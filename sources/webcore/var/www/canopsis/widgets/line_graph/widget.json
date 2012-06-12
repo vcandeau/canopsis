@@ -35,6 +35,22 @@
 						"items": [
 							{
 								"xtype": "combobox",
+								"name": "chart_type",
+								"fieldLabel": "Chart type",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "line",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "line", "text": "Line graph"},
+										{"value": "column", "text": "Bar graph"}
+									]
+								}
+							},{
+								"xtype": "combobox",
 								"name": "time_window",
 								"fieldLabel": "Time window",
 								"queryMode": "local",
