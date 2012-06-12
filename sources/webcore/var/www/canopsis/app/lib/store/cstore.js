@@ -40,13 +40,9 @@ Ext.define('canopsis.lib.store.cstore', {
 					global.websocketCtrl.publish_event('store', this.storeId, 'remove')
 		},
 		write: function(store, operation,option){
-			if(operation.action == "create"){
-				log.dump('--------------------------------------')
-				log.dump(store)
-				log.dump(operation)
-				log.dump(option)
+			if(operation.action == "create")
 				global.notify.notify(_('Success'), _('Record saved'))
-			}
+			
 		}
    },
   
