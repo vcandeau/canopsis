@@ -39,6 +39,15 @@ Ext.define('canopsis.lib.store.cstore', {
 				if (global.websocketCtrl)
 					global.websocketCtrl.publish_event('store', this.storeId, 'remove')
 		},
+		write: function(store, operation,option){
+			if(operation.action == "create"){
+				log.dump('--------------------------------------')
+				log.dump(store)
+				log.dump(operation)
+				log.dump(option)
+				global.notify.notify(_('Success'), _('Record saved'))
+			}
+		}
    },
   
    //function for search and filter
