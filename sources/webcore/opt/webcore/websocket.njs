@@ -88,10 +88,11 @@ var build_event = function(event){
 	if (! event.output)
 		event.output = ''
 		
+	if (! event.connector_name)	
+		event.connector_name = 'canopsis'
+		
 	event.connector = 'websocket'
-	event.connector_name = 'canopsis'
 	event.timestamp = parseInt(new Date().getTime() / 1000)
-	event.state_type = 0
 	
 	return event
 };
@@ -422,6 +423,8 @@ var init_now = function(callback){
 			if (type == 'amqp'){
 				var event = build_event(message)
 				if (event){
+					event.clientId = this.user.clientId
+					event.authorId = sessions.check(this.user.clientId)
 					var rk = build_rk(event)
 					amqp_publish('canopsis.events', rk, event)
 				}else{
