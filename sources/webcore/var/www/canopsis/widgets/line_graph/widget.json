@@ -69,6 +69,11 @@
 									]
 								}
 							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Calcul Percent",
+								"checked": false,
+								"name": "SeriePercent"
+							},{
 								"xtype" : "numberfield",
 								"name" : "lineWidth",
 								"fieldLabel": "Line Width",
