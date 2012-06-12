@@ -63,6 +63,19 @@ function createApplication(){
 	Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + locale + '.js'});
 
 	//set_Ext_locale(lang)
+	
+	//Answer to every error
+	Ext.Ajax.on('requestexception', function (conn, response, options) {
+		if (response.status === 403) {
+			global.notify.notify(_('Server error'),_('You have no sufficient rights'),'error')
+		}
+		if (response.status === 500) {
+			global.notify.notify(_('Server error'),_('Unexpected server error'),'error')
+		}
+		if (response.status === 404) {
+			global.notify.notify(_('Server error'),_('The ressource you was looking for cannot be found'),'error')
+		}
+	});
 
 	log.debug("Start ExtJS application ...", "[app]");
 
@@ -102,8 +115,9 @@ function createApplication(){
 			log.debug('Remove mask ...',"[app]");
 			Ext.get('loading').remove();
 			Ext.get('loading-mask').remove();
-			
 		}
+		
+		
 	});
 
 	log.debug("Application started", "[app]");
