@@ -7,29 +7,47 @@
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript">
 $(function() {
-	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
+	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?', function(data) {
 
-		// Create the chart
-		window.chart = new Highcharts.StockChart({
+		// create the chart
+		chart = new Highcharts.StockChart({
 			chart : {
 				renderTo : 'container'
 			},
 
+			title: {
+				text: 'AAPL stock price by minute'
+			},
+			
+			xAxis: {
+				gapGridLineWidth: 0
+			},
+			
 			rangeSelector : {
-				selected : 1
+				buttons : [{
+					type : 'hour',
+					count : 1,
+					text : '1h'
+				}, {
+					type : 'day',
+					count : 1,
+					text : '1D'
+				}, {
+					type : 'all',
+					count : 1,
+					text : 'All'
+				}],
+				selected : 1,
+				inputEnabled : false
 			},
-
-			title : {
-				text : 'AAPL Stock Price'
-			},
-
+			
 			series : [{
-				name : 'AAPL Stock Price',
+				name : 'AAPL',
+				type: 'area',
 				data : data,
-				type : 'areaspline',
-				threshold : null,
-				tooltip : {
-					valueDecimals : 2
+				gapSize: 5,
+				tooltip: {
+					valueDecimals: 2
 				},
 				fillColor : {
 					linearGradient : {
@@ -39,7 +57,8 @@ $(function() {
 						y2: 1
 					},
 					stops : [[0, Highcharts.getOptions().colors[0]], [1, 'rgba(0,0,0,0)']]
-				}
+				},
+				threshold: null
 			}]
 		});
 	});
@@ -48,9 +67,9 @@ $(function() {
 		</script>
 	</head>
 	<body>
+<div id="container" style="height: 500px; min-width: 500px"></div>
+
 <script src="../../js/highstock.js"></script>
 <script src="../../js/modules/exporting.js"></script>
-
-<div id="container" style="height: 500px; min-width: 500px"></div>
 	</body>
 </html>
