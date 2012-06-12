@@ -146,13 +146,20 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 		//}
 		
 		//Reporting menu
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_exporting_admin' ||(global.account.groups.indexOf('group.CPS_exporting_admin') != -1)){
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_reporting_admin' ||(global.account.groups.indexOf('group.CPS_reporting_admin') != -1)){
 			menu_reporting = menu_reporting.concat([
 				{
 					iconCls: 'icon-mimetype-pdf',
 					text: _('Export active view'),
 					action: 'exportView'
-				},{
+				}
+			])
+		}
+		
+		
+		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_schedule_admin' ||(global.account.groups.indexOf('group.CPS_schedule_admin') != -1)){
+			menu_reporting = menu_reporting.concat([
+				{
 					iconCls: 'icon-mainbar-add-task',
 					text: _('Schedule active view export'),
 					action: 'ScheduleExportView'
