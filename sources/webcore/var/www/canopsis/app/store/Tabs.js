@@ -33,6 +33,9 @@ Ext.define('canopsis.store.Tabs', {
 		type: 'localstorage',
 		id: 'canopsis.store.tabs'
 	},
+	
+	//HACK :we don't want this store to talk everytime
+	listeners: {},
 
 	autoLoad: false,
 	autoSync: true,

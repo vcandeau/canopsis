@@ -299,6 +299,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 				this._cancelForm(form);
 
+				//global.notify.notify(_('Success'), _('Record saved'))
 
 			}else{
 				log.error('Form is not valid !',this.logAuthor);
@@ -313,10 +314,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		if (this.saveForm) {
 			this.saveForm(form)
-		}
-
-		global.notify.notify(_('Success'), _('Record saved'))
-			
+		}			
 	},
 	
 	_validateForm: function(store, data, form) {
