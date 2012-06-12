@@ -125,3 +125,15 @@ function isEmpty(obj) {
 	}
 	return true;
 }
+
+function getPct(value, max, decimal){
+	if (! decimal)
+		decimal = 2
+	
+	if (max == 0)
+		return 100
+		
+	var div = Math.pow(10, decimal)
+	
+	return Math.round(((100 * value) / max) * div) / div
+}
