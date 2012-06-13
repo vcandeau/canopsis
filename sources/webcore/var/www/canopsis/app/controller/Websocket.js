@@ -113,10 +113,10 @@ Ext.define('canopsis.controller.Websocket', {
 				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
 				
 				var me = this
-				var callback = function(message){
+				var callback = function(message, rk){
 					for(var i in me.subscribe_cache[id].subscribers){
 						var s = me.subscribe_cache[id].subscribers[i]
-						s.on_message.apply(s.scope, [ message ])
+						s.on_message.apply(s.scope, [ message, rk ])
 					}
 				}
 				

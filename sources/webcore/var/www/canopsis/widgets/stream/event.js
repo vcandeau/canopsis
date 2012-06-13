@@ -92,8 +92,10 @@ Ext.define('widgets.stream.event' ,{
 	el_time: undefined,
 	
 	initComponent: function() {
-		if (this.raw.id)
-			this.id = this.stream.id + '.' + this.raw.id;
+		
+		this.id = this.stream.id + "." + this.id
+		
+		log.debug("Create event: "+this.id, this.logAuthor)
 		
 		this.event_id = this.raw.id;
 		this.timestamp = parseInt(this.raw.timestamp);
@@ -103,6 +105,12 @@ Ext.define('widgets.stream.event' ,{
 		this.callParent(arguments);
 	},
 
+	get_rk: function(){
+		if (this.raw.source_type == 'resource')
+			return this.raw.connector +"."+ this.raw.connector_name +"."+ this.raw.event_type +"."+ this.raw.source_type +"."+ this.raw.component +"."+ this.raw.resource
+		else
+			return this.raw.connector +"."+ this.raw.connector_name +"."+ this.raw.event_type +"."+ this.raw.source_type +"."+ this.raw.component
+	},
 	
 	build: function(raw){
 		if (! raw)
