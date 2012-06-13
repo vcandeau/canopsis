@@ -302,18 +302,30 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if (this.chart){
 			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
 
-			if (! this.reportMode && this.last_from){
-				from = this.last_from;
-				to = Date.now();
+			if(this.chart_type == 'column'){
+				new_from = getMidnight(from)
+				new_to = getMidnight(to)
+
+				if((to - from) <= global.commonTs.day)
+					to = Date.now()
 			}
+
+			if(this.chart_type == 'line'){
+				if (! this.reportMode && this.last_from){
+					from = this.last_from;
+					to = Date.now();
+				}
+			}
+
+			log.debug(" + Do Refresh "+ new Date(from)+" -> "+new Date(to), this.logAuthor)
 
 			if (this.nodes){
 				if(this.nodes.length != 0){
 					url = this.makeUrl(from, to)
 					this.last_from = to
 
-					log.dump('-------------------PARAMS--------------')
-					log.dump(this.post_params)
+					//log.dump('-------------------PARAMS--------------')
+					//log.dump(this.post_params)
 
 					Ext.Ajax.request({
 						url: url,
@@ -618,6 +630,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			this.chart.destroy()
 			log.debug(" + Chart Destroyed", this.logAuthor)
 		}
- 	}
+ 	},
 
 });
