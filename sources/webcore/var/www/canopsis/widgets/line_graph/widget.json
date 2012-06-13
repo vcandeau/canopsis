@@ -35,6 +35,22 @@
 						"items": [
 							{
 								"xtype": "combobox",
+								"name": "chart_type",
+								"fieldLabel": "Chart type",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": null,
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": null, "text": "Line graph"},
+										{"value": "column", "text": "Bar graph"}
+									]
+								}
+							},{
+								"xtype": "combobox",
 								"name": "time_window",
 								"fieldLabel": "Time window",
 								"queryMode": "local",
@@ -50,6 +66,25 @@
 										{"value": 604800, "text": "1 week"},
 										{"value": 2629800, "text": "1 month"},
 										{"value": 31557600, "text": "1 year"}
+									]
+								}
+							},{
+								"xtype": "combobox",
+								"name": "aggregate_method",
+								"fieldLabel": "Aggregation Method",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "MEAN",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "MAX", "text": "Max"},
+										{"value": "MIN", "text": "Min"},
+										{"value": "LAST", "text": "Last"},
+										{"value": "FIRST", "text": "First"},
+										{"value": "MEAN", "text": "Mean"}
 									]
 								}
 							},{

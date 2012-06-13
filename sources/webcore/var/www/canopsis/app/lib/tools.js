@@ -117,7 +117,6 @@ function get_timestamp_utc(date){
 	return localTime - localOffset;
 }
 
-
 function isEmpty(obj) {
 	for(var prop in obj) {
 		if(obj.hasOwnProperty(prop))
@@ -137,3 +136,12 @@ function getPct(value, max, decimal){
 	
 	return Math.round(((100 * value) / max) * div) / div
 }
+
+function getMidnight(timestamp){
+	var time = new Date(timestamp)
+	var new_time = timestamp - (time.getHours() * global.commonTs.hours * 1000)
+	//floor to hour, time / hour * hour
+	new_time = parseInt(new_time / (global.commonTs.hours * 1000)) * (global.commonTs.hours * 1000)
+	return new_time
+}
+
