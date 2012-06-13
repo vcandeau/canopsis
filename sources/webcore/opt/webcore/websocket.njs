@@ -132,6 +132,7 @@ Object.defineProperty(Object.prototype, "extend", {
 
 log.info("Load modules ...", "main")
 try {
+	//var fs = require('fs');
 	var mongodb = require('mongodb');
 	var http = require('http');
 	var nowjs = require("now");
@@ -198,25 +199,84 @@ var read_config = function(callback){
 //GLOBAL
 var mongodb_server = undefined
 var mongodb_client = undefined
-var mongodb_collection_object = undefined
+var mongodb_collections = {}
 
 var init_mongo = function(callback){
 	log.info("Connect to MongoDB ...", "mongodb")
 	mongodb_server = new mongodb.Server(config.mongodb.host, parseInt(config.mongodb.port), {})
 	mongodb_client = new mongodb.Db(config.mongodb.db, mongodb_server);
-	mongodb_collection_object = undefined
 
 	mongodb_client.open(function(err, p_client) {
 		if (err) {
 			log.error(err, "mongodb");
 		} else {
 			log.info(" + Ok", "mongodb")
-			mongodb_collection_object = new mongodb.Collection(mongodb_client, 'object');
 			callback()
 		}
 	});
 }
 
+var mongodb_getCollection = function(name){
+	if (mongodb_collections[name])
+		return mongodb_collections[name]
+		
+	mongodb_collections[name] = new mongodb.Collection(mongodb_client, name);
+	return mongodb_collections[name]
+}
+
+// Ex: mongodb_find('object', {'crecord_type': 'account'}, { 'limit': 1 }, ['id'], console.log)
+var mongodb_find = function(collection_name, filter, options, callback, callback_err){
+	if (! options)
+		options = {}
+	
+	if (mongodb_client){
+		mongodb_getCollection(collection_name).find(filter, options).toArray(function(err, records){
+			if (err){
+				log.error("Find "+collection_name+" "+filter+":", "mongodb");
+				log.error(err, "mongodb");
+				if (callback_err)
+					return callback_err(err)
+			}else
+				return callback(records)
+		});
+	}else{
+		callback_err()
+	}		
+}
+
+var mongodb_findOne = function(collection_name, filter, options, callback, callback_err){
+	if (!options)
+		options = {}
+		
+	if (mongodb_client){
+		mongodb_getCollection(collection_name).findOne(filter, options, function(err, record){
+			if (err){
+				log.error("FindOne "+collection_name+" "+filter+":", "mongodb");
+				log.error(err, "mongodb");
+				if (callback_err)
+					return callback_err(err)
+			}else
+				return callback(record)
+		});
+	}else{
+		callback_err()
+	}
+}
+
+var mongodb_count = function(collection_name, filter, callback, callback_err){		
+	if (mongodb_client)
+		mongodb_getCollection(collection_name).count(filter, function(err, count){
+			if (err){
+				log.error("count "+collection_name+" "+filter+":", "mongodb");
+				log.error(err, "mongodb");
+				if (callback_err)
+					return callback_err(err)
+			}else
+				return callback(count)
+		});
+			
+	return 0
+}
 
 //####################################################
 //#  Connect to AMQP Broker
@@ -347,11 +407,12 @@ var sessions = {
 	}
 }
 
+var everyone = undefined
 var init_now = function(callback){
 	var server = http.createServer(function(req, res){});
 	server.listen(parseInt(config.nowjs.port));
 
-	var everyone = nowjs.initialize(server, {socketio: {'log level': config.nowjs.socketio_loglevel}});
+	everyone = nowjs.initialize(server, {socketio: {'log level': config.nowjs.socketio_loglevel}});
 	
 	////////////////// Utils
 	var check_session = function(event){
@@ -365,28 +426,22 @@ var init_now = function(callback){
 	}
 	
 	var check_authToken = function (clientId, authId, authToken, callback){
-		if (mongodb_collection_object) {				
-			mongodb_collection_object.findOne({'_id': authId}, function(err, record){
-					
-				if (err) {
-					log.error(err, "mongodb");
+		if (mongodb_client) {
+			mongodb_findOne('object', {'_id': authId}, {'fields': ['authkey']}, function(record){			
+				if (record.authkey == authToken){
+					log.info(" + Auth Ok", "nowjs")
+					sessions.create(clientId, authId)
 				} else {
-					if (record.authkey == authToken){
-						log.info(" + Auth Ok", "nowjs")
-						sessions.create(clientId, authId)
-					} else {
-						log.info(" + "+clientId + ": Invalid auth (authId: '"+authId+"')", "nowjs");
-					}
-					
-					callback();
-				}
+					log.info(" + "+clientId + ": Invalid auth (authId: '"+authId+"')", "nowjs");
+				}	
+				callback();
 			});
 		}else{
 			log.warning("MongoDB not ready.", "nowjs");
 		}
 	};
 	
-	////////////////// RPC
+	////////////////// RPC	
 	everyone.now.auth = function(callback){
 		var clientId = this.user.clientId
 		check_authToken(clientId, this.now.authId, this.now.authToken, callback)
@@ -497,6 +552,22 @@ var heartbeat = function(){
 }
 
 //####################################################
+//#  Stream helper
+//####################################################
+// TODO: split this file in external files .....
+
+var stream_getComments = function(referer, limit, callback){
+	log.debug("getComments for '"+referer+"'", "widget-stream")
+	mongodb_find('events_log', { "$and": [{"referer": referer }, {"event_type": "comment"} ]}, { 'limit': limit, 'sort': {"timestamp": 1} }, callback)
+}
+
+var stream_countComments = function(referer, callback){
+	log.debug("countComments for '"+referer+"'", "widget-stream")
+	mongodb_count('events_log', { "$and": [{"referer": referer }, {"event_type": "comment"} ]}, callback)
+}
+
+
+//####################################################
 //#  Main Program
 //####################################################
 
@@ -514,6 +585,9 @@ read_config(function(){
 			init_now(function(){
 				log.info("Initialization completed, Ready for action !", "main")
 				setInterval(heartbeat, config.nowjs.heartbeat * 1000);
+				
+				everyone.now.stream_getComments = stream_getComments;
+				everyone.now.stream_countComments = stream_countComments;
 			});
 		});
 	});
