@@ -321,7 +321,7 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 		#compute interval
 		new_interval = tmp_interval + (value[0] - last_interval )
 
-		if new_interval < time_interval:
+		if new_interval <= time_interval:
 			tmp_interval = new_interval
 			last_interval = value[0]
 			values_to_aggregate.append(value)
