@@ -120,7 +120,7 @@ Ext.define('widgets.stream.stream' ,{
 				
 				if (data.length > 0){
 					for (var i in data)
-						data[i] = Ext.create('widgets.stream.event', {raw: data[i], stream: this})
+						data[i] = Ext.create('widgets.stream.event', {id: data[i]['_id'], raw: data[i], stream: this})
 					
 					this.add_events(data);
 				}
@@ -200,13 +200,13 @@ Ext.define('widgets.stream.stream' ,{
 		}
 	},
 	
-	on_event: function(raw){
+	on_event: function(raw, rk){
 		
 		//Only hard state
 		if (raw.state_type == 0 && this.hard_state_only)
 			return
-		
-		var event = Ext.create('widgets.stream.event', {raw: raw, stream: this})
+
+		var event = Ext.create('widgets.stream.event', {id: rk, raw: raw, stream: this})
 		
 		if (event.raw.event_type == 'comment'){
 			var to_event = this.wcontainer.getComponent(this.id + "." + event.raw.referer)

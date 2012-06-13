@@ -321,9 +321,7 @@ var amqp_subscribe_queue = function(queue_name){
 				
 			log.debug("Subscribe Queue '"+queue_name+"'", "amqp")
 			this.subscribe( {ack:true}, function(message, headers, deliveryInfo){
-				message['id'] = deliveryInfo.routingKey
-				//nowjs.getGroup(queueId).now.on_message(message)
-				nowjs.getGroup(queueId).now[queueId](message)
+				nowjs.getGroup(queueId).now[queueId](message, deliveryInfo.routingKey)
 				queue.shift()
 			});
 			
