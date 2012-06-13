@@ -41,15 +41,29 @@ def dichot(x, L, comp=cmp, key=lambda c: c):
 def in_range(value, start, stop):
 	return value >= start and value < stop
 
-def get_first_value(points):
+def get_first_point(points):
 	if len(points):
 		return points[0]
 	else:
 		return None
 
-def get_last_value(points):
+def get_last_point(points):
 	if len(points):
 		return points[len(points)-1]
+	else:
+		return None
+
+def get_first_value(points):
+	point = get_first_point(points)
+	if point:
+		return point[1]
+	else:
+		return None
+
+def get_last_value(points):
+	point = get_last_point(points)
+	if point:
+		return point[1]
 	else:
 		return None
 
@@ -167,8 +181,8 @@ def timesplit(points, tsfrom, tsto=None):
 
 	before_point= []
 	after_point = []
-	first_point = get_first_value(points)
-	last_point  = get_last_value(points)
+	first_point = get_first_point(points)
+	last_point  = get_last_point(points)
 
 	logger.debug("  + Data: %s -> %s (%s points)" % (first_point[0], last_point[0], len(points)))
 
@@ -282,7 +296,7 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 	if not atype:
 		atype = 'MEAN'
 	
-	logger.debug("Aggregate %s points (max: %s, time interval: %s)" % (len(values), max_points, time_interval))
+	logger.debug("Aggregate %s points (max: %s, time interval: %s, method: %s)" % (len(values), max_points, time_interval, atype))
 
 	if len(values) < max_points:
 		logger.debug(" + Useless")
