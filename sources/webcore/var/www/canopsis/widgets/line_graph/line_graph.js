@@ -273,10 +273,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			}
 		}
 
-		log.dump('----------------------------------------')
-		log.dump(this.options.plotOptions)
-		log.dump(this.options)
-
 		//specifique options to add
 		if(this.exportMode){
 			this.options.plotOptions.series['enableMouseTracking'] = false;
@@ -313,20 +309,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
 
 			if(this.chart_type == 'column'){
-				new_from = getMidnight(from)
-				new_to = getMidnight(to)
+				if(!this.last_form){
+					new_from = getMidnight(from)
+					new_to = getMidnight(to)
 
-				if((to - from) <= global.commonTs.day)
-					to = Date.now()
-					
-			}
-
-			if(this.chart_type == 'line'){
-				if (! this.reportMode && this.last_from){
-					from = this.last_from;
-					to = Date.now();
+					if((to - from) <= global.commonTs.day)
+						to = Date.now()
 				}
 			}
+
+			if (! this.reportMode && this.last_from){
+				from = this.last_from;
+				to = Date.now();
+			}
+		
 
 			log.debug(" + Do Refresh "+ new Date(from)+" -> "+new Date(to), this.logAuthor)
 
@@ -334,9 +330,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				if(this.nodes.length != 0){
 					url = this.makeUrl(from, to)
 					this.last_from = to
-
-					//log.dump('-------------------PARAMS--------------')
-					//log.dump(this.post_params)
 
 					Ext.Ajax.request({
 						url: url,
