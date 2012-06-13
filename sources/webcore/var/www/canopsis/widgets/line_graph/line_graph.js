@@ -424,6 +424,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		log.debug('  + Create Serie:', this.logAuthor)
 	
+		if (this.SeriePercent && max > 0)
+			bunit = "%"
+	
 		var serie_index = this.chart.series.length
 		
 		log.debug('    + serie id: '+serie_id, this.logAuthor)
