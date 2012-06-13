@@ -174,26 +174,14 @@ Ext.define('widgets.stream.event' ,{
 				items: [ this.comment_form ],
 			});
 			
-			// Gets comments
-			Ext.Ajax.request({
-				url: "/rest/events_log",
-				scope: this,
-				method: 'GET', 
-				params: {
-					limit: this.stream.max_comment,
-					filter: '{ "$and": [{"referer": "'+this.event_id+'"}, {"event_type": "comment"} ]}',
-					sort: '[{"property":"timestamp", "direction":"DESC"}]'
-				},
-				success: function(response){
-					var data = Ext.JSON.decode(response.responseText)
-					data = data.data
-					data.reverse()
-					if (data.length > 0)
-						for (var i in data)
-							this.comment(Ext.create('widgets.stream.event', {raw: data[i], stream: this}));
-				},
+			var me = this
+			now.stream_getComments(this.event_id, this.stream.max_comment, function(records){
+				log.debug(records.length+" comments for '"+me.event_id+"'", me.logAuthor)
+				if (records.length > 0)
+					for (var i in records)
+							me.comment(Ext.create('widgets.stream.event', {raw: records[i], stream: me.stream}));
 			});
-			
+				
 		}
 	},
 	
