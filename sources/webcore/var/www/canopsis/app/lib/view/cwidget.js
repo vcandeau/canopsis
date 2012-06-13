@@ -70,10 +70,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		
 		this.wcontainer.on('afterrender', this.afterContainerRender, this)
 		
-		this.on('afterlayout', function(){
+		/*this.on('afterlayout', function(){
 			log.debug('SetHeight of wcontainer', this.logAuthor)
 			this.wcontainer.setHeight(this.getHeight())
-		}, this)
+		}, this)*/
 		
 		this.callParent(arguments);
 
