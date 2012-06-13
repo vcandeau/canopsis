@@ -206,13 +206,14 @@ Ext.define('widgets.stream.stream' ,{
 		if (raw.state_type == 0 && this.hard_state_only)
 			return
 
-		var event = Ext.create('widgets.stream.event', {id: rk, raw: raw, stream: this})
+		var event = Ext.create('widgets.stream.event', {id: rk+"."+raw.timestamp, raw: raw, stream: this})
 		
 		if (event.raw.event_type == 'comment'){
 			var to_event = this.wcontainer.getComponent(this.id + "." + event.raw.referer)
 			if (to_event){
 				log.debug("Add comment for "+ event.raw.referer,this.logAuthor)
 				to_event.comment(event)
+				to_event.show_comments()
 			}else{
 				log.error("Impossible to find event to comment '"+event.raw.referer+"'",this.logAuthor)
 			}
