@@ -92,7 +92,8 @@ Ext.define('widgets.stream.event' ,{
 	el_time: undefined,
 	
 	initComponent: function() {
-		this.id = this.stream.id + '.' + this.raw.id;
+		if (this.raw.id)
+			this.id = this.stream.id + '.' + this.raw.id;
 		
 		this.event_id = this.raw.id;
 		this.timestamp = parseInt(this.raw.timestamp);
@@ -124,9 +125,6 @@ Ext.define('widgets.stream.event' ,{
 	
 	afterRender: function(){
 		this.callParent(arguments);
-		
-		this.ori_height = this.getHeight()
-		//log.info("Original height: "+this.ori_height, this.logAuthor)
 		
 		var el = this.getEl()
 		
@@ -168,19 +166,23 @@ Ext.define('widgets.stream.event' ,{
 			});
 				
 			this.comments_container = Ext.create('Ext.container.Container', {
-				renderTo: this.id+"-comments",
-				layout: { type: 'vbox', align : 'stretch'},
-				height: 40,
+				layout: "anchor",
 				items: [ this.comment_form ],
 			});
+				
+			this.comments_container.on('afterRender', function(){	
+				var me = this
+				now.stream_getComments(this.event_id, this.stream.max_comment, function(records){
+					log.debug(records.length+" comments for '"+me.event_id+"'", me.logAuthor)
+					if (records.length > 0)
+						for (var i in records)
+								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
+								
+						me.comments_container.insert(0, records)
+				});
+			}, this);
 			
-			var me = this
-			now.stream_getComments(this.event_id, this.stream.max_comment, function(records){
-				log.debug(records.length+" comments for '"+me.event_id+"'", me.logAuthor)
-				if (records.length > 0)
-					for (var i in records)
-							me.comment(Ext.create('widgets.stream.event', {raw: records[i], stream: me.stream}));
-			});
+			this.comments_container.render(this.id+"-comments");
 				
 		}
 	},
@@ -195,25 +197,21 @@ Ext.define('widgets.stream.event' ,{
 	},
 	
 	comment: function(event){
-		this.create_comments_container();
-		
-		log.debug("Insert comment", this.logAuthor)
-		var nb = this.comments_container.items.length
-		this.comments_container.insert(nb-1, event)
-		
-		log.debug(" + Adjust conatainer size", this.logAuthor)
-		var event_height = event.getHeight()
-		
-		//Clean before
-		if (this.comments_container.items.length > (this.stream.max_comment+1)){
-			log.debug(" + Remove first comment", this.logAuthor)
-			var item = this.comments_container.getComponent(0)
-			event_height -= item.getHeight()
-			this.comments_container.remove(item.id, true)
+		if (! this.comments_container){
+			this.show_comments();
+		}else{			
+			log.debug("Insert comment", this.logAuthor)
+			var nb = this.comments_container.items.length
+			this.comments_container.insert(nb-1, event)
+			
+			//Clean before
+			if (this.comments_container.items.length > (this.stream.max_comment+1)){
+				log.debug(" + Remove first comment", this.logAuthor)
+				var item = this.comments_container.getComponent(0)
+				this.comments_container.remove(item.id, true)
+			}
+			
 		}
-		
-		this.comments_container.setHeight(this.comments_container.getHeight() + event_height)
-		this.setHeight(this.getHeight() + event_height)
 	},
 	
 	time: function(timestamp){
@@ -263,27 +261,22 @@ Ext.define('widgets.stream.event' ,{
 		log.debug("Show comments", this.logAuthor)
 		this.el_comments.show()
 		
-		this.create_comments_container();
-		
 		this.el_btn_exp_comments.removeCls('icon-plus')
 		this.el_btn_exp_comments.addCls('icon-minus')
-		
-		var ysize = this.ori_height + this.comments_container.getHeight()
-		log.debug(" + Adjust container size to "+ysize, this.logAuthor)
-		this.setHeight(ysize)
+	
+		this.create_comments_container();
 		
 		this.comment_form.getForm().findField('message').focus()
 	},
 	
 	hide_comments: function(){
+		this.el_comments.setVisibilityMode(Ext.Element.DISPLAY);
+		
 		log.debug("Hide comments", this.logAuthor)
 		this.el_comments.hide()
 		
 		this.el_btn_exp_comments.addCls('icon-plus')
 		this.el_btn_exp_comments.removeCls('icon-minus')
-		
-		log.debug(" + Adjust container size to "+this.ori_height, this.logAuthor)
-		this.setHeight(this.ori_height)
 	},
 	
  	beforeDestroy: function() {

@@ -212,7 +212,6 @@ Ext.define('widgets.stream.stream' ,{
 			var to_event = this.wcontainer.getComponent(this.id + "." + event.raw.referer)
 			if (to_event){
 				log.debug("Add comment for "+ event.raw.referer,this.logAuthor)
-				to_event.show_comments()
 				to_event.comment(event)
 			}else{
 				log.error("Impossible to find event to comment '"+event.raw.referer+"'",this.logAuthor)
