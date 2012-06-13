@@ -96,7 +96,7 @@ Ext.define('widgets.stream.event' ,{
 		this.event_id = this.id;
 		this.id = this.stream.id + "." + this.id
 		
-		log.debug("Create event: "+this.id, this.logAuthor)
+		//log.debug("Create event: "+this.id, this.logAuthor)
 		
 		
 		this.timestamp = parseInt(this.raw.timestamp);
