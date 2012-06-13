@@ -64,7 +64,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	title_fontSize: 15,
 	
-	chart_type: 'line',
+	chart_type: 'area',
 	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
@@ -152,7 +152,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
-				type: this.chart_type,
+				//type: this.chart_type,
 				height: this.getHeight(),
 				reflow: false,
 				animation: false,
@@ -230,6 +230,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			series: []
 		}
 
+		//graph type (for column)
+		if(this.chart_type){
+			this.options.chart.type = this.chart_type
+		}
+
 		// Check marker
 		var marker_enable = false
 		if (this.marker_symbol){
@@ -267,6 +272,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			}
 		}
+
+		log.dump('----------------------------------------')
+		log.dump(this.options.plotOptions)
+		log.dump(this.options)
 
 		//specifique options to add
 		if(this.exportMode){
