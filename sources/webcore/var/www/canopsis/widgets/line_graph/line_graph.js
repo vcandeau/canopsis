@@ -64,6 +64,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	title_fontSize: 15,
 	
+	chart_type: 'area',
+	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
 	legend_layout: "horizontal",
@@ -73,6 +75,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend_fontSize: 12,
 	legend_fontColor: "#3E576F",
 	maxZoom: 60 * 10, // 10 minutes
+	
+	interval : global.commonTs.hours,
+	aggregate_method : 'MAX',
 
 	SeriesType: "area",
 	SeriePercent: false,
@@ -148,6 +153,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
+				//type: this.chart_type,
 				height: this.getHeight(),
 				reflow: false,
 				animation: false,
@@ -184,6 +190,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			xAxis: {
 				//min: Date.now() - (this.time_window * 1000),
 				type: 'datetime',
+				/*
 				maxZoom: this.maxZoom * 1000,
 				
 				labels: {
@@ -191,7 +198,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 						var offset = new Date().getTimezoneOffset() * 1000 * 60
 						return Highcharts.dateFormat(this.dateTimeLabelFormat, this.value - offset)
 					}
-				}
+				}*/
 			},
 			yAxis: {
 				title: {
@@ -222,6 +229,11 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			series: []
+		}
+
+		//graph type (for column)
+		if(this.chart_type){
+			this.options.chart.type = this.chart_type
 		}
 
 		// Check marker
@@ -302,10 +314,23 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		if (this.chart){
 			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
 
+			if(this.chart_type == 'column'){
+				if(!this.last_form){
+					new_from = getMidnight(from)
+					new_to = getMidnight(to)
+
+					if((to - from) <= global.commonTs.day)
+						to = Date.now()
+				}
+			}
+
 			if (! this.reportMode && this.last_from){
 				from = this.last_from;
 				to = Date.now();
 			}
+		
+
+			log.debug(" + Do Refresh "+ new Date(from)+" -> "+new Date(to), this.logAuthor)
 
 			if (this.nodes){
 				if(this.nodes.length != 0){
@@ -622,7 +647,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				metrics: this.nodes[i].metrics,
 			})
 		}
-		this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+		this.post_params = { 
+			'nodes': Ext.JSON.encode(post_params),
+			'aggregate_method' : this.aggregate_method
+			}
+		
+		if(this.chart_type == 'column')
+			this.post_params.interval = this.refreshInterval
 	},
 	
  	beforeDestroy : function() {
@@ -632,6 +663,6 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			this.chart.destroy()
 			log.debug(" + Chart Destroyed", this.logAuthor)
 		}
- 	}
+ 	},
 
 });
