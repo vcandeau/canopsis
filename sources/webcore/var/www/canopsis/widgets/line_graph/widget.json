@@ -70,6 +70,25 @@
 								}
 							},{
 								"xtype": "combobox",
+								"name": "aggregate_method",
+								"fieldLabel": "Aggregation Method",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "MEAN",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "MAX", "text": "Max"},
+										{"value": "MIN", "text": "Min"},
+										{"value": "LAST", "text": "Last"},
+										{"value": "FIRST", "text": "First"},
+										{"value": "MEAN", "text": "Mean"}
+									]
+								}
+							},{
+								"xtype": "combobox",
 								"name": "SeriesType",
 								"fieldLabel": "Series Type",
 								"queryMode": "local",
