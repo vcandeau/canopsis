@@ -77,6 +77,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	maxZoom: 60 * 10, // 10 minutes
 	
 	interval : global.commonTs.hours,
+	aggregate_method : 'MAX',
 
 	SeriesType: "area",
 	lineWidth: 1,
@@ -621,7 +622,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				metrics: this.nodes[i].metrics,
 			})
 		}
-		this.post_params = { 'nodes': Ext.JSON.encode(post_params)}
+		this.post_params = { 
+			'nodes': Ext.JSON.encode(post_params),
+			'aggregate_method' : this.aggregate_method
+			}
 		
 		if(this.chart_type == 'column')
 			this.post_params.interval = this.refreshInterval
