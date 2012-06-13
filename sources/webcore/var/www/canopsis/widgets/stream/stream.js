@@ -175,10 +175,21 @@ Ext.define('widgets.stream.stream' ,{
 			
 	},
 	
+	TabOnShow: function(){
+		this.doLayout();
+		this.purge_queue();
+		this.callParent();
+	},
+	
 	process_queue: function(){
 		// Check burst
-		if ( ! this.in_burst() && this.queue.length){
-			log.debug("Purge event's queue", this.logAuthor)
+		if ( ! this.in_burst())
+			this.purge_queue();
+	},
+	
+	purge_queue: function(){
+		if (this.queue.length){
+			log.debug("Purge event's queue ("+this.queue.length+")", this.logAuthor)
 			// Back to normal, purge queue
 			this.add_events(this.queue)
 			this.queue = []
@@ -213,14 +224,15 @@ Ext.define('widgets.stream.stream' ,{
 			if (to_event){
 				log.debug("Add comment for "+ event.raw.referer,this.logAuthor)
 				to_event.comment(event)
-				to_event.show_comments()
+				if (this.isVisible())
+					to_event.show_comments()
 			}else{
-				log.error("Impossible to find event to comment '"+event.raw.referer+"'",this.logAuthor)
+				log.debug("Impossible to find event '"+event.raw.referer+"' from container, maybe not displayed ?",this.logAuthor)
 			}
 				
 		}else{
-			// Detect Burst
-			if (this.in_burst()){
+			// Detect Burst or hidden
+			if (this.in_burst() || this.isHidden()){
 				this.queue.push(event)
 				
 				//Clean queue
@@ -254,6 +266,7 @@ Ext.define('widgets.stream.stream' ,{
 	
  	beforeDestroy : function() {
 		this.unsubscribe();
+		this.wcontainer.removeAll(true)
 		
 		this.callParent(arguments);
  	}
