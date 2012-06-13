@@ -308,6 +308,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 				if((to - from) <= global.commonTs.day)
 					to = Date.now()
+					
 			}
 
 			if(this.chart_type == 'line'){
@@ -620,7 +621,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				metrics: this.nodes[i].metrics,
 			})
 		}
-		this.post_params = { 'nodes': Ext.JSON.encode(post_params),'interval':3600 }
+		this.post_params = { 'nodes': Ext.JSON.encode(post_params)}
+		
+		if(this.chart_type == 'column')
+			this.post_params.interval = this.refreshInterval
 	},
 	
  	beforeDestroy : function() {
