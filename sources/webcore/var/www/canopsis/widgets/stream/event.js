@@ -93,23 +93,17 @@ Ext.define('widgets.stream.event' ,{
 	
 	initComponent: function() {
 		
+		this.event_id = this.id;
 		this.id = this.stream.id + "." + this.id
 		
-		log.debug("Create event: "+this.id, this.logAuthor)
+		//log.debug("Create event: "+this.id, this.logAuthor)
 		
-		this.event_id = this.raw.id;
+		
 		this.timestamp = parseInt(this.raw.timestamp);
 				
 		this.html = this.build();
 		
 		this.callParent(arguments);
-	},
-
-	get_rk: function(){
-		if (this.raw.source_type == 'resource')
-			return this.raw.connector +"."+ this.raw.connector_name +"."+ this.raw.event_type +"."+ this.raw.source_type +"."+ this.raw.component +"."+ this.raw.resource
-		else
-			return this.raw.connector +"."+ this.raw.connector_name +"."+ this.raw.event_type +"."+ this.raw.source_type +"."+ this.raw.component
 	},
 	
 	build: function(raw){
@@ -201,7 +195,10 @@ Ext.define('widgets.stream.event' ,{
 		var message = this.comment_form.getForm().getValues().message
 		this.comment_form.getForm().findField('message').reset()
 		
-		this.stream.publish_comment(this.event_id, this.raw, message, this)
+		if (this.event_id)
+			this.stream.publish_comment(this.event_id, this.raw, message, this)
+		else
+			log.error("Invalid event_id: '"+this.event_id+"'", this.logAuthor)
 	},
 	
 	comment: function(event){

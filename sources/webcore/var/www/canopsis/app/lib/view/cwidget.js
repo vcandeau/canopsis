@@ -70,10 +70,10 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		
 		this.wcontainer.on('afterrender', this.afterContainerRender, this)
 		
-		/*this.on('afterlayout', function(){
+		this.on('afterrender', function(){
 			log.debug('SetHeight of wcontainer', this.logAuthor)
 			this.wcontainer.setHeight(this.getHeight())
-		}, this)*/
+		}, this)
 		
 		this.callParent(arguments);
 
@@ -126,7 +126,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	getHeight: function(){
 		var height = this.callParent();
 		if (this.title){ height -= this.titleHeight }
-	
+		
 		var docks = this.getDockedItems()
 		
 		if (docks){
