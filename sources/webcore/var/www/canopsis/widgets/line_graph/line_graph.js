@@ -82,6 +82,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	SeriesType: "area",
 	SeriePercent: false,
 	lineWidth: 1,
+	
+	//trends
+	data_trends: [],
+	
 	//..
 	
 	initComponent: function() {
@@ -188,17 +192,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			xAxis: {
-				//min: Date.now() - (this.time_window * 1000),
 				type: 'datetime',
-				/*
-				maxZoom: this.maxZoom * 1000,
-				
-				labels: {
-					formatter: function() {
-						var offset = new Date().getTimezoneOffset() * 1000 * 60
-						return Highcharts.dateFormat(this.dateTimeLabelFormat, this.value - offset)
-					}
-				}*/
+				tickmarkPlacement: 'on',
 			},
 			yAxis: {
 				title: {
@@ -374,6 +369,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				var i;
 				for (i in data){
 					this.addDataOnChart(data[i])
+					//add/refresh trend lines
+					this.addTrendLines(data[i])
 				}
 				
 				//Disable no data message
@@ -637,6 +634,57 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 
 		return true		
+	},
+	
+	addTrendLines: function(data){
+		log.debug(' + Trend line',this.logAuthor)
+		var referent_serie = this.series_hc[data.node + '.' + data.metric]
+		var trend_id = data.node + '.' + data.metric + "-TREND"
+		
+		//get the trend line
+		var trend_line = this.chart.get(trend_id)
+		
+		//update/create the trend line
+		if(trend_line){
+			log.debug('  +  Trend line found : ' + trend_id,this.logAuthor)
+
+			//add data
+			for(var i in data.values)
+				this.data_trends[trend_id].push(data.values[i])
+				
+			//slice data (follow referent serie length)
+			this.data_trends[trend_id].splice(0, data.values.length)
+			
+			//set data
+			trend_line.setData(fitData(this.data_trends[trend_id]).data,false)
+		}else{
+			log.debug('  +  Trend line not found : ' + trend_id,this.logAuthor)
+			log.debug('  +  Create it',this.logAuthor)
+			//color
+			var color = undefined
+			if (referent_serie.options.color)
+				color = referent_serie.options.color
+
+			//serie
+			var serie = {
+				id: trend_id,
+				type:'line', 
+				name: data.metric + "-TREND",
+				data: [],
+				marker: {enabled:false},
+				dashStyle: 'ShortDot',
+				//lineWidth: 1
+			}
+			if(color)
+				serie['color'] = color
+			
+			//push the trendline in hichart, load trend data
+			this.chart.addSeries(Ext.clone(serie), false, false)
+			var hcserie = this.chart.get(trend_id)
+			log.debug('  +  set data',this.logAuthor)
+			hcserie.setData(fitData(data.values).data,false)
+			this.data_trends[trend_id] = Ext.clone(data.values)
+		}
 	},
 	
 	processNodes : function(){
