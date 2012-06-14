@@ -656,8 +656,16 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			if(this.shift)
 				this.data_trends[trend_id].splice(0, data.values.length)
 			
+			//compute data
+			var line = fitData(this.data_trends[trend_id]).data
+			
+			//trunc value
+			for(var i in line){
+				line[i][1] = Math.floor(line[i][1] * 1000) /1000
+			}
+			
 			//set data
-			trend_line.setData(fitData(this.data_trends[trend_id]).data,false)
+			trend_line.setData(line,false)
 		}else{
 			log.debug('  +  Trend line not found : ' + trend_id,this.logAuthor)
 			log.debug('  +  Create it',this.logAuthor)
@@ -693,9 +701,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			//push the trendline in hichart, load trend data
 			this.chart.addSeries(Ext.clone(serie), false, false)
 			var hcserie = this.chart.get(trend_id)
-			log.debug('  +  set data',this.logAuthor)
-			hcserie.setData(fitData(data.values).data,false)
+			
 			this.data_trends[trend_id] = Ext.clone(data.values)
+			var line = fitData(this.data_trends[trend_id]).data
+			
+			//trunc value
+			for(var i in line){
+				line[i][1] = Math.floor(line[i][1] * 1000) /1000
+			}
+
+			log.debug('  +  set data',this.logAuthor)
+			hcserie.setData(line,false)
+			
 		}
 	},
 	
