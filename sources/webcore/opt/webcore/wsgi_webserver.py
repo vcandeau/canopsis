@@ -51,16 +51,12 @@ mongo_config = ConfigParser.RawConfigParser()
 mongo_config.read(mongo_config_file)
 
 ## default config
-port		= 8082
 debug		= True
-interface	= "0.0.0.0"
 
 #mongo config
-
 mongo_host = mongo_config.get("master", "host")
 mongo_port = mongo_config.getint("master", "port")
 mongo_db = mongo_config.get("master", "db")
-
 
 session_cookie_expires	= 300
 session_secret			= 'canopsis'
@@ -70,9 +66,7 @@ root_directory			= os.path.expanduser("~/var/www/")
 
 try:
 	## get config
-	port					= config.getint('server', "port")
 	debug					= config.getboolean('server', "debug")
-	interface				= config.get('server', "interface")
 	root_directory			= os.path.expanduser(config.get('server', "root_directory"))
 
 	session_cookie_expires	= config.getint('session', "cookie_expires")
@@ -81,12 +75,6 @@ try:
 
 except Exception, err:
 	print "Error when reading '%s' (%s)" % (config_filename, err)
-
-try:
-	process = int(sys.argv[1])
-	port = port + (process - 1)
-except:
-	pass
 
 ## Logger
 if debug:
@@ -137,13 +125,9 @@ def index(key=None):
 
 	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
 
-## Gunicorn Hook
-def on_starting(server):
-    logger.info("#################-> on_starting")
-
-
 ## App
 try:
 	app = SessionMiddleware(bottle.app(), session_opts)
+	
 except Exception, err:
 	logger.info("Stop dameon (%s)" % err)

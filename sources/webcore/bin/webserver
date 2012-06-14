@@ -1,1 +1,6 @@
-../opt/webcore/webserver.py
+#!/bin/bash
+
+. $HOME/etc/gunicorn.conf
+
+cd $DIR
+exec gunicorn --debug --log-level debug -k gevent -w 1 -b $ABIND $APP 
