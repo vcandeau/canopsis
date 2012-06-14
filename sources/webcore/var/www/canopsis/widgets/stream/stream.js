@@ -175,10 +175,21 @@ Ext.define('widgets.stream.stream' ,{
 			
 	},
 	
+	TabOnShow: function(){
+		this.doLayout();
+		this.purge_queue();
+		this.callParent();
+	},
+	
 	process_queue: function(){
 		// Check burst
-		if ( ! this.in_burst() && this.queue.length){
-			log.debug("Purge event's queue", this.logAuthor)
+		if ( ! this.in_burst())
+			this.purge_queue();
+	},
+	
+	purge_queue: function(){
+		if (this.queue.length){
+			log.debug("Purge event's queue ("+this.queue.length+")", this.logAuthor)
 			// Back to normal, purge queue
 			this.add_events(this.queue)
 			this.queue = []
@@ -206,20 +217,22 @@ Ext.define('widgets.stream.stream' ,{
 		if (raw.state_type == 0 && this.hard_state_only)
 			return
 
-		var event = Ext.create('widgets.stream.event', {id: rk, raw: raw, stream: this})
+		var event = Ext.create('widgets.stream.event', {id: rk+"."+raw.timestamp, raw: raw, stream: this})
 		
 		if (event.raw.event_type == 'comment'){
 			var to_event = this.wcontainer.getComponent(this.id + "." + event.raw.referer)
 			if (to_event){
 				log.debug("Add comment for "+ event.raw.referer,this.logAuthor)
 				to_event.comment(event)
+				if (this.isVisible())
+					to_event.show_comments()
 			}else{
-				log.error("Impossible to find event to comment '"+event.raw.referer+"'",this.logAuthor)
+				log.debug("Impossible to find event '"+event.raw.referer+"' from container, maybe not displayed ?",this.logAuthor)
 			}
 				
 		}else{
-			// Detect Burst
-			if (this.in_burst()){
+			// Detect Burst or hidden
+			if (this.in_burst() || this.isHidden()){
 				this.queue.push(event)
 				
 				//Clean queue
@@ -253,6 +266,7 @@ Ext.define('widgets.stream.stream' ,{
 	
  	beforeDestroy : function() {
 		this.unsubscribe();
+		this.wcontainer.removeAll(true)
 		
 		this.callParent(arguments);
  	}

@@ -183,7 +183,7 @@ var read_config = function(callback){
 		// AMQP
 		read_config_ini(process.env.HOME+'/etc/amqp.conf', "amqp", "master", function(){
 			// Now
-			read_config_ini(process.env.HOME+'/etc/webserver.conf', "nowjs", "websocket", function(){
+			read_config_ini(process.env.HOME+'/etc/websocket.conf', "nowjs", "master", function(){
 				//Main Callback
 				log.info(" + Ok", "config")
 				callback(config)
@@ -574,7 +574,7 @@ read_config(function(){
 	config.nowjs.debug = (config.nowjs.debug === 'true')
 	
 	// Force debug
-	config.nowjs.debug = true
+	//config.nowjs.debug = true
 
 	log.dump(config)
 	
