@@ -85,6 +85,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	//trends
 	data_trends: [],
+	trend_lines : false,
 	
 	//..
 	
@@ -370,7 +371,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				for (i in data){
 					this.addDataOnChart(data[i])
 					//add/refresh trend lines
-					this.addTrendLines(data[i])
+					if(this.trend_lines)
+						this.addTrendLines(data[i])
 				}
 				
 				//Disable no data message
