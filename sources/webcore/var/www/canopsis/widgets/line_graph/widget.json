@@ -1,5 +1,5 @@
 [{
-	"name":  "Graph",
+	"name":  "Line Graph",
 	"version": 0.1,
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
@@ -273,7 +273,20 @@
 									]
 								}
 							}]
-					}]
+					},{
+						"xtype": "fieldset",
+						"title": "Trend lines",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable trend lines",
+								"checked": false,
+								"name": "trend_lines"
+							}
+						]
+					}
+			]
 						
 		}, {
 			"title": "Choose Metrics",

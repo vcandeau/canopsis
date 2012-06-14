@@ -85,6 +85,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	//trends
 	data_trends: [],
+	trend_lines : false,
 	
 	//..
 	
@@ -370,7 +371,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				for (i in data){
 					this.addDataOnChart(data[i])
 					//add/refresh trend lines
-					this.addTrendLines(data[i])
+					if(this.trend_lines)
+						this.addTrendLines(data[i])
 				}
 				
 				//Disable no data message
@@ -653,13 +655,33 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.data_trends[trend_id].push(data.values[i])
 				
 			//slice data (follow referent serie length)
-			this.data_trends[trend_id].splice(0, data.values.length)
+			if(this.shift)
+				this.data_trends[trend_id].splice(0, data.values.length)
+			
+			//compute data
+			var line = fitData(this.data_trends[trend_id]).data
+			
+			//trunc value
+			for(var i in line){
+				line[i][1] = Math.floor(line[i][1] * 1000) /1000
+			}
 			
 			//set data
-			trend_line.setData(fitData(this.data_trends[trend_id]).data,false)
+			trend_line.setData(line,false)
 		}else{
 			log.debug('  +  Trend line not found : ' + trend_id,this.logAuthor)
 			log.debug('  +  Create it',this.logAuthor)
+			
+			//name
+			var curve = global.curvesCtrl.getRenderInfo(data.metric)
+
+			// Set Label
+			var label = undefined;
+			if (curve)
+				label = curve.get('label') + "-TREND"
+			else
+				label = data.metric + "-TREND"
+			
 			//color
 			var color = undefined
 			if (referent_serie.options.color)
@@ -669,7 +691,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var serie = {
 				id: trend_id,
 				type:'line', 
-				name: data.metric + "-TREND",
+				name: label,
 				data: [],
 				marker: {enabled:false},
 				dashStyle: 'ShortDot',
@@ -681,9 +703,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			//push the trendline in hichart, load trend data
 			this.chart.addSeries(Ext.clone(serie), false, false)
 			var hcserie = this.chart.get(trend_id)
-			log.debug('  +  set data',this.logAuthor)
-			hcserie.setData(fitData(data.values).data,false)
+			
 			this.data_trends[trend_id] = Ext.clone(data.values)
+			var line = fitData(this.data_trends[trend_id]).data
+			
+			//trunc value
+			for(var i in line){
+				line[i][1] = Math.floor(line[i][1] * 1000) /1000
+			}
+
+			log.debug('  +  set data',this.logAuthor)
+			hcserie.setData(line,false)
+			
 		}
 	},
 	
