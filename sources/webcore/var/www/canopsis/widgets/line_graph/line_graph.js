@@ -653,13 +653,25 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				this.data_trends[trend_id].push(data.values[i])
 				
 			//slice data (follow referent serie length)
-			this.data_trends[trend_id].splice(0, data.values.length)
+			if(this.shift)
+				this.data_trends[trend_id].splice(0, data.values.length)
 			
 			//set data
 			trend_line.setData(fitData(this.data_trends[trend_id]).data,false)
 		}else{
 			log.debug('  +  Trend line not found : ' + trend_id,this.logAuthor)
 			log.debug('  +  Create it',this.logAuthor)
+			
+			//name
+			var curve = global.curvesCtrl.getRenderInfo(data.metric)
+
+			// Set Label
+			var label = undefined;
+			if (curve)
+				label = curve.get('label') + "-TREND"
+			else
+				label = data.metric + "-TREND"
+			
 			//color
 			var color = undefined
 			if (referent_serie.options.color)
@@ -669,7 +681,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var serie = {
 				id: trend_id,
 				type:'line', 
-				name: data.metric + "-TREND",
+				name: label,
 				data: [],
 				marker: {enabled:false},
 				dashStyle: 'ShortDot',
