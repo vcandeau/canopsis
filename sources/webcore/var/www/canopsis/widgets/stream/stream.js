@@ -101,35 +101,24 @@ Ext.define('widgets.stream.stream' ,{
 		*/
 		
 		// Get history
-		var filter = '{"event_type": {"$ne": "comment"}}'
+		/*var filter = '{"event_type": {"$ne": "comment"}}'
 		if (this.hard_state_only)
 			filter = '{ "$and": [{"state_type": 1 }, '+filter+']}'
+		*/
 		
-		Ext.Ajax.request({
-			url: "/rest/events_log",
-			scope: this,
-			method: 'GET', 
-			params: {
-				limit: this.max,
-				filter: filter,
-				sort: '[{"property":"timestamp", "direction":"DESC"}]'
-			},
-			success: function(response){
-				var data = Ext.JSON.decode(response.responseText)
-				data = data.data
-				
-				if (data.length > 0){
-					for (var i in data)
-						data[i] = Ext.create('widgets.stream.event', {id: this.get_event_id(data[i]), raw: data[i], stream: this})
+		// Load history
+		var me = this
+		now.stream_getHistory(this.max, function(records){
+			log.debug("Load "+records.length+" events", me.logAuthor)
+				if (records.length > 0)
+					for (var i in records)
+							records[i] = Ext.create('widgets.stream.event', {id: me.get_event_id(records[i]), raw: records[i], stream: me});
+					me.add_events(records);
 					
-					this.add_events(data);
-				}
-				
-				if (! this.reportMode )
-					this.subscribe();
+				if (! me.reportMode )
+					me.subscribe();
 					
-				this.ready();
-			},
+				me.ready();
 		});
 		
 	},
@@ -213,10 +202,13 @@ Ext.define('widgets.stream.stream' ,{
 	
 	get_event_id: function(raw){
 		var id = undefined
-		if (raw['event_id'])
+		if (raw['_id'])
+			id = raw['_id']
+			
+		/*else if (raw['event_id'])
 			id = raw['event_id']
-		id += "." + raw['timestamp']
-		
+			id += "." + raw['timestamp']*/
+			
 		return id
 	},
 	
