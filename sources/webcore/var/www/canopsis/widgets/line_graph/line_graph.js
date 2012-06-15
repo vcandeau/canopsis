@@ -65,7 +65,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	
 	title_fontSize: 15,
 	
-	chart_type: 'area',
+	chart_type: 'line',
 	
 	legend_verticalAlign: "bottom",
 	legend_align: "center",
