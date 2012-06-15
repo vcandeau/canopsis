@@ -199,14 +199,10 @@ Ext.define('canopsis.lib.controller.ctree', {
 					global.notify.notify(_('Directory not empty'),_('The directory must be empty if you want to remove it'),"error")
 					verification = false
 				} else {
-					var view_id = selection[i].data.id
-					var maintabs = Ext.getCmp('main-tabs');
-					var tab = Ext.getCmp(view_id + '.tab');
+					if(this.checkOpen)
+						if(this.checkOpen(selection[0].data.id))
+							verification = false
 					
-					if (tab){
-						global.notify.notify(_('Delete failed'),_('You must close view before delete it'), 'error')
-						verification = false
-					}
 				}
 			}
 		}
