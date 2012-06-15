@@ -188,7 +188,7 @@ class node(object):
 			_id = self.metric_get_id(dn=dn)
 			return metric_get(_id=_id)
 
-	def metric_get_values(self, tstart, tstop=None, aggregate=True, max_points=None, atype=None, dn=None, _id=None,time_interval=None):
+	def metric_get_values(self, tstart, tstop=None, aggregate=True, max_points=None, atype=None, dn=None, _id=None,time_interval=None,use_window_ts=None):
 		_id = self.metric_get_id(dn, _id)
 		if not _id:
 			return []
@@ -206,7 +206,7 @@ class node(object):
 		if mymetric:
 			values = mymetric.get_values(tstart, tstop)
 			if aggregate:
-				return pmath_aggregate(values, max_points=max_points, atype=atype, time_interval=time_interval)
+				return pmath_aggregate(values, max_points=max_points, atype=atype, time_interval=time_interval,use_window_ts=use_window_ts)
 			else:
 				return values
 		else:
