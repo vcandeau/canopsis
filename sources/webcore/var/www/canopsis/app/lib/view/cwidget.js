@@ -49,6 +49,8 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	barHeight: 27,
 	
 	time_window: global.commonTs.day, //24 hours
+	
+	lastRefresh: undefined,
 
 	//PollNodeInfo: true,
 
@@ -194,8 +196,11 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 				from = to - (this.time_window * 1000);
 			}
 		}
-			
-		this.doRefresh(from, to)
+		
+		
+		var done = this.doRefresh(from, to)
+		if (done != false)
+			this.lastRefresh = Date.now()
 	},
 	
 	doRefresh: function(from, to){
