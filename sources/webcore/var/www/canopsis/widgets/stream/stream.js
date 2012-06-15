@@ -60,6 +60,41 @@ Ext.define('widgets.stream.stream' ,{
 							xtype: 'tbtext',
 							text: this.title,
 							//baseCls: "x-panel-header-text-container"
+						},{
+							xtype: 'tbtext',
+							text: "<img src='widgets/stream/logo/ui.png' height='19' width='19'></img>",
+						},{
+							xtype: "combobox",
+							id: this.id + '-state',
+							queryMode: "local",
+							displayField: "text",
+							valueField: "value",
+							width: 60,
+							value: 0,
+							store: {
+								xtype: "store",
+								fields: ["value", "text"],
+								data : [
+									{value: 0, text: "Ok"},
+									{value: 1, text: "Warnign"},
+									{value: 2, text: "Critical"},
+								]
+							}
+						},{
+							xtype: 'textfield',
+							emptyText: _('Leave a') + " " +_("event")+ ' ?',
+							id: this.id + '-message',
+							width: 300,
+							listeners: {
+								specialkey: {
+									fn: function(field, e){
+										if (e.getKey() == e.ENTER)
+											this.publish_event()
+									},
+									scope: this
+								}
+
+							},
 						},
 						'->',{
 							iconCls:'icon-control-repeat',
@@ -137,6 +172,28 @@ Ext.define('widgets.stream.stream' ,{
 	unsubscribe: function(){
 		// Unsubscribe
 		global.websocketCtrl.unsubscribe('amqp', this.amqp_queue, this);
+	},
+	
+	publish_event: function(){
+		var toolbar = this.getDockedItems()[0] 
+
+		var message = toolbar.getComponent(this.id + '-message').getValue()
+		toolbar.getComponent(this.id + '-message').reset()
+		
+		var state= toolbar.getComponent(this.id + '-state').getValue()
+		
+		var event_raw = {
+				'connector_name': 'widget-stream',
+				'source_type': 'component',
+				'event_type': 'user',
+				'component': global.account.id,
+				'output': message,
+				'author': global.account.firstname + " " + global.account.lastname,
+				'state': state,
+				'state_type': 1,
+			}
+					
+		global.websocketCtrl.publish('amqp', 'events', event_raw)
 	},
 	
 	publish_comment: function(event_id, raw, message, orievent){
