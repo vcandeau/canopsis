@@ -92,9 +92,10 @@ Ext.define('widgets.stream.event' ,{
 	el_time: undefined,
 	
 	initComponent: function() {
-		
-		this.event_id = this.id;
-		this.id = this.stream.id + "." + this.id
+		if (this.id){
+			this.event_id = this.id;
+			this.id = this.stream.id + "." + this.id
+		}
 		
 		log.debug("Create event: "+this.id, this.logAuthor)
 		
