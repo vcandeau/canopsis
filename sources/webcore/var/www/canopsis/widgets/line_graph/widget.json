@@ -40,12 +40,12 @@
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
-								"value": null,
+								"value": line,
 								"store": {
 									"xtype": "store",
 									"fields": ["value", "text"],
 									"data" : [
-										{"value": null, "text": "Line graph"},
+										{"value": "line", "text": "Line graph"},
 										{"value": "column", "text": "Bar graph"}
 									]
 								}
@@ -323,3 +323,4 @@
 					}]
 		}]
 }]
+
