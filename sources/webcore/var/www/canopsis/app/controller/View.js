@@ -235,6 +235,18 @@ Ext.define('canopsis.controller.View', {
 		}else{
 			log.debug('Impossible to add view, root directory not found ....',this.logAuthor)
 		}
+	},
+    
+    checkOpen : function(view_id){
+		var maintabs = Ext.getCmp('main-tabs');
+		var tab = Ext.getCmp(view_id + '.tab');
+
+		if (tab){
+			global.notify.notify(_('Warning'),'You must close view before renaming','error')
+			return true
+		}else{
+			return false
+		}
 	}
     
 });

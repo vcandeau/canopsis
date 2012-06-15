@@ -238,6 +238,11 @@ Ext.define('canopsis.lib.controller.ctree', {
 	_renameButton: function(){
 		var tree = this.tree
 		var selection = tree.getSelectionModel().getSelection()[0];
+		
+		if(this.checkOpen)
+			if(this.checkOpen(selection.data.id))
+					return
+		
 		if(this.getController('Account').check_record_right(selection,'w')){
 			Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, new_name){
 				if (btn == 'ok'){
@@ -271,7 +276,7 @@ Ext.define('canopsis.lib.controller.ctree', {
 	},
 
 	_showMenu: function(view, rec, node, index, e){
-		var selection = this.tree.getSelectionModel().getSelection()[0];
+		var selection = this.tree.getSelectionModel().getSelection();
 		if( selection.length < 2)
 			view.select(rec)
 			
