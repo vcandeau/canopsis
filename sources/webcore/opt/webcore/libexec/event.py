@@ -44,6 +44,8 @@ group_managing_access = 'group.CPS_event_admin'
 @post('/event/:routing_key',apply=[check_auth])
 def send_event(	routing_key=None):
 	
+	account = get_account()
+	
 	if not check_group_rights(account,group_managing_access):
 		return HTTPError(403, 'Insufficient rights')
 				
