@@ -19,6 +19,9 @@
 # ---------------------------------
 
 import sys, os, signal, json
+
+sys.path.append(os.path.expanduser('~/lib/canolibs'))
+
 from pwd import getpwnam
 from cinit import cinit
 
@@ -32,8 +35,6 @@ RUN = False
 myamqp = None
 transportDispatcher = None
 mibs = {}
-
-sys.path.append(os.path.expanduser('~/lib/canolibs'))
 
 from camqp import camqp
 
