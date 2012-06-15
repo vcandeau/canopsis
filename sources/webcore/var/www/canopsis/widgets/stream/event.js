@@ -176,11 +176,12 @@ Ext.define('widgets.stream.event' ,{
 				var me = this
 				now.stream_getComments(this.event_id, this.stream.max_comment, function(records){
 					log.debug(records.length+" comments for '"+me.event_id+"'", me.logAuthor)
-					if (records.length > 0)
+					if (records.length > 0){
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 								
 						me.comments_container.insert(0, records)
+					}
 				});
 			}, this);
 			
