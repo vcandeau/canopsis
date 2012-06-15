@@ -131,7 +131,7 @@ def main(argv):
 			print('Error: Invalid json stream')
 			sys.exit()
 			
-	#-----------------------------send event-----------------------------
+	#-----------------------------prepare event-----------------------------
 	if not event:
 		print('Error: No json media found, you must provide file/stream/command')
 		sys.exit()
@@ -139,6 +139,12 @@ def main(argv):
 	if event['perf_data_array']:
 		event['perf_data_array'] = json.dumps(event['perf_data_array'])
 
+	event['connector'] = 'Cli'
+	
+	if not event['connector_name']:
+		event['connector_name'] = 'Send_event'
+
+	#-----------------------------send event-----------------------------
 	request = urllib2.Request('http://%s/event/' % server,urllib.urlencode(event))
 	r = opener.open(request)
 	print('Webserver have send :')
