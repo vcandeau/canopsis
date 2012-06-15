@@ -88,6 +88,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	data_trends: [],
 	trend_lines : false,
 	trend_lines_type : 'ShortDot',
+	use_window_ts: false,
 	//..
 	
 	initComponent: function() {
@@ -743,6 +744,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		
 		if(this.chart_type == 'column')
 			this.post_params.interval = this.refreshInterval
+			
+		if(this.use_window_ts)
+			this.post_params.use_window_ts = this.use_window_ts
 	},
 	
  	beforeDestroy : function() {
