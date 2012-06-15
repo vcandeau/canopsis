@@ -26,6 +26,7 @@ Ext.define('widgets.pie.pie' ,{
 	logAuthor: '[pie]',
 	
 	options: {},
+	chartTitle: null,
 	chart: undefined,
 	serie: undefined,
 	
