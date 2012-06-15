@@ -104,11 +104,6 @@
 									]
 								}
 							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Calcul Percent",
-								"checked": false,
-								"name": "SeriePercent"
-							},{
 								"xtype" : "numberfield",
 								"name" : "lineWidth",
 								"fieldLabel": "Line Width",
@@ -146,12 +141,29 @@
 								"fieldLabel": "Max zoom (seconds)",
 								"minValue": 60,
 								"value": 600
-                           },{
+                           }]
+					},{
+						"xtype": "fieldset",
+						"title": "Extra",
+						"collapsible": false,
+						"items": [
+							{
 								"xtype": "checkbox",
 								"fieldLabel": "Warn/Crit threshold lines",
 								"checked": false,
 								"name": "showWarnCritLine"
-						}]
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Calcul Percent",
+								"checked": false,
+								"name": "SeriePercent"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable trend lines",
+								"checked": false,
+								"name": "trend_lines"
+							}
+						]
 					},{
 						"xtype": "fieldset",
 						"title": "Graph Style",
