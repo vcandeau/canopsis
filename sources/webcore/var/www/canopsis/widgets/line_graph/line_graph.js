@@ -229,7 +229,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 		}
 
 		//graph type (for column)
-		if(this.chart_type){
+		if(this.chart_type == 'column'){
 			this.options.chart.type = this.chart_type
 		}
 
