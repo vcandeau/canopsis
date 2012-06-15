@@ -285,7 +285,7 @@ def linreg(X, Y):
 	return a, b, RR
 
 
-def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None):
+def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None, use_window_ts=False):
 	
 	if not max_points:
 		max_points=1450
@@ -329,24 +329,23 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 	'''
 	rvalues=[]
 	values_to_aggregate = []
-	tmp_interval = 0
-	last_interval = values[0][0]
+	timeWindow_ts = values[0][0]
+	next_timeWindow_ts = values[0][0] + time_interval
 	for value in values:
 		#compute interval
-		new_interval = tmp_interval + (value[0] - last_interval )
-
-		if new_interval <= time_interval:
-			tmp_interval = new_interval
-			last_interval = value[0]
+		if value[0] <= next_timeWindow_ts:
 			values_to_aggregate.append(value)
 		else:
 			#aggregate
-			sample = agfn(values_to_aggregate)
-			timestamp = values_to_aggregate[len(values_to_aggregate) -1][0]
+			sample = round(agfn(values_to_aggregate),2)
+			if use_window_ts:
+				timestamp = timeWindow_ts
+			else:
+				timestamp = values_to_aggregate[len(values_to_aggregate) -1][0]
 			rvalues.append([timestamp, sample])
 			#new interval
-			last_interval = value[0]
-			tmp_interval = 0
+			timeWindow_ts = next_timeWindow_ts
+			next_timeWindow_ts = value[0] + time_interval
 			values_to_aggregate = [value]
 	
 	logger.debug(" + Nb points: %s" % len(rvalues))
