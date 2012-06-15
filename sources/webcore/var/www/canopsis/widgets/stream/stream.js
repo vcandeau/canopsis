@@ -58,10 +58,6 @@ Ext.define('widgets.stream.stream' ,{
 					items: [
 						{
 							xtype: 'tbtext',
-							text: this.title,
-							//baseCls: "x-panel-header-text-container"
-						},{
-							xtype: 'tbtext',
 							text: "<img src='widgets/stream/logo/ui.png' height='19' width='19'></img>",
 						},{
 							xtype: "combobox",
@@ -121,8 +117,6 @@ Ext.define('widgets.stream.stream' ,{
 					]
 				});
 		}
-		
-		this.title = undefined
 			
 		this.callParent(arguments);
 	},
