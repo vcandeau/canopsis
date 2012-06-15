@@ -172,6 +172,14 @@ def on_message(body, msg):
 
 		## Event to Alert
 		amqp.publish(event, event_id, amqp.exchange_name_alerts)
+		
+	elif event['event_type'] == 'user' :
+		## passthrough
+		_id = archiver.log_event(event_id, event)
+		event['_id'] = _id
+
+		## Event to Alert
+		amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	else:
 		logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
