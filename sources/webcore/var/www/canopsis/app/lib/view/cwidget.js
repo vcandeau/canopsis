@@ -46,7 +46,6 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	reportMode : false,
 	exportMode : false,
 	
-	titleHeight: 27,
 	barHeight: 27,
 	
 	time_window: global.commonTs.day, //24 hours
@@ -70,7 +69,7 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 		
 		this.wcontainer.on('afterrender', this.afterContainerRender, this)
 		
-		this.on('afterrender', function(){
+		this.wcontainer.on('afterrender', function(){
 			log.debug('SetHeight of wcontainer', this.logAuthor)
 			this.wcontainer.setHeight(this.getHeight())
 		}, this)
@@ -125,16 +124,15 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 
 	getHeight: function(){
 		var height = this.callParent();
-		if (this.title){ height -= this.titleHeight }
-		
+	
 		var docks = this.getDockedItems()
-		
+
 		if (docks){
 			height -= docks.length * 2
 			for (var i in docks)
 				if (docks[i].dock == 'top' || docks[i].dock == 'bottom') { height -= this.barHeight }
 		}
-			
+		
 		if (this.border)
 			height -= this.border * 2
 		
