@@ -152,7 +152,7 @@ Ext.define('widgets.stream.event' ,{
 					margin: 3,
 					items: [{
 						xtype: 'textfield',
-						emptyText: 'Leave a comment ?',
+						emptyText: _('Leave a') + " " +_("comment")+ ' ?',
 						name: 'message',
 						listeners: {
 							specialkey: {
