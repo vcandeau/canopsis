@@ -338,14 +338,16 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 		else:
 			#aggregate
 			sample = round(agfn(values_to_aggregate),2)
+			
 			if use_window_ts:
 				timestamp = timeWindow_ts
 			else:
-				timestamp = values_to_aggregate[len(values_to_aggregate) -1][0]
+				timestamp = values_to_aggregate[0][0]
+				
 			rvalues.append([timestamp, sample])
 			#new interval
 			timeWindow_ts = next_timeWindow_ts
-			next_timeWindow_ts = value[0] + time_interval
+			next_timeWindow_ts = timeWindow_ts + time_interval
 			values_to_aggregate = [value]
 	
 	logger.debug(" + Nb points: %s" % len(rvalues))
