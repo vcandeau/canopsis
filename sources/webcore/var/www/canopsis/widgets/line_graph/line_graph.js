@@ -662,10 +662,8 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var line = fitData(this.data_trends[trend_id]).data
 			
 			//trunc value
-			for(var i in line){
-				line[i][1] = Math.floor(line[i][1] * 1000) /1000
-			}
-			
+			line = this.truncValueArray(line)
+
 			//set data
 			trend_line.setData(line,false)
 		}else{
@@ -708,14 +706,19 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var line = fitData(this.data_trends[trend_id]).data
 			
 			//trunc value
-			for(var i in line){
-				line[i][1] = Math.floor(line[i][1] * 1000) /1000
-			}
+			line = this.truncValueArray(line)
 
 			log.debug('  +  set data',this.logAuthor)
 			hcserie.setData(line,false)
 			
 		}
+	},
+	
+	truncValueArray : function(value_array){
+		for(var i in value_array){
+			value_array[i][1] = Math.floor(value_array[i][1] * 1000) /1000
+		}
+		return value_array
 	},
 	
 	processNodes : function(){
