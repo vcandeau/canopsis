@@ -137,7 +137,11 @@ def tree_update(name='None'):
 	
 	data = json.loads(request.body.readline())
 
-	record_parent = storage.get(data['parentId'], account=account)
+	try:
+		record_parent = storage.get(data['parentId'], account=account)
+	except:
+		return HTTPError(403, "You don't have right on the parent record")
+	
 	try:
 		logger.debug('try to get the children record')
 		record_child = storage.get(data['_id'], account=account)
