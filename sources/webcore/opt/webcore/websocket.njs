@@ -563,7 +563,10 @@ var stream_countComments = function(referer, callback){
 	log.debug("countComments for '"+referer+"'", "widget-stream")
 	mongodb_count('events_log', { "$and": [{"referer": referer }, {"event_type": "comment"} ]}, callback)
 }
-
+var stream_getHistory= function(limit, callback){
+	log.debug("getHistory", "widget-stream")
+	mongodb_find('events_log', { "$and": [{"state_type": 1 }, {"event_type": {"$ne": "comment"}}]} , { 'limit': limit, 'sort': {"timestamp": -1} }, callback)	
+}
 
 //####################################################
 //#  Main Program
@@ -585,6 +588,7 @@ read_config(function(){
 				setInterval(heartbeat, config.nowjs.heartbeat * 1000);
 				
 				everyone.now.stream_getComments = stream_getComments;
+				everyone.now.stream_getHistory = stream_getHistory;
 				everyone.now.stream_countComments = stream_countComments;
 			});
 		});
