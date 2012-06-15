@@ -6,6 +6,7 @@
 	"xtype": "stream",
 	"description": "Display live stream",
 	"refreshInterval": 60,
+	"border" : true,
 	"locales": ["fr"],
 	"options": []
 }]

@@ -285,6 +285,43 @@
 									]
 								}
 							}]
+					},{
+						"xtype": "fieldset",
+						"title": "Trend lines",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable trend lines",
+								"checked": false,
+								"name": "trend_lines"
+							},{
+								"xtype": "combobox",
+								"name": "trend_lines_type",
+								"fieldLabel": "Legend layout",
+								"queryMode": "local",
+								"displayField": "text",
+								"valueField": "value",
+								"value": "ShortDot",
+								"store": {
+									"xtype": "store",
+									"fields": ["value", "text"],
+									"data" : [
+										{"value": "ShortDot", "text": "ShortDot"},
+										{"value": "Solid", "text": "Solid"},
+										{"value": "ShortDash", "text": "ShortDash"},
+										{"value": "ShortDashDot", "text": "ShortDashDot"},
+										{"value": "ShortDashDotDot", "text": "ShortDashDotDot"},
+										{"value": "Dot", "text": "Dot"},
+										{"value": "Dash", "text": "Dash"},
+										{"value": "LongDash", "text": "LongDash"},
+										{"value": "DashDot", "text": "DashDot"},
+										{"value": "LongDashDot", "text": "LongDashDot"},
+										{"value": "LongDashDotDot", "text": "LongDashDotDot"}		
+								]
+							}
+							}
+						]
 					}
 			]
 						
