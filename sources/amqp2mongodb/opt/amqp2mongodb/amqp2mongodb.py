@@ -72,6 +72,11 @@ def on_message(body, msg):
 	event_id = msg.delivery_info['routing_key']
 	logger.debug("Check event: %s" % event_id)
 	
+	if not event_id:
+		logger.error("Invalid routing-key '%s'" % event_id)
+		logger.error(msg)
+		raise Exception("Invalid routing-key '%s'" % event_id)
+		
 	## Check event format
 	try:
 		if isinstance(body, str) or isinstance(body, unicode):
@@ -119,7 +124,7 @@ def on_message(body, msg):
 	logger.debug(' + perf_data_array: %s', perf_data_array)
 	event['perf_data_array'] = perf_data_array
 	
-	### Store perfdata	
+	### Store perfdata
 	if perf_data_array:
 		try:
 			dn = None
@@ -139,8 +144,11 @@ def on_message(body, msg):
 	
 	## Archive event
 	if   event['event_type'] == 'check' or event['event_type'] == 'clock':
-
-		if archiver.check_event(event_id, event):
+		
+		_id = archiver.check_event(event_id, event)
+		if _id:
+			event['_id'] = _id
+			
 			## Event to Alert
 			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
@@ -150,14 +158,17 @@ def on_message(body, msg):
 
 		## Alert only non-ok state
 		if event['state'] != 0:
-			archiver.log_event(event_id, event)
+			_id = archiver.log_event(event_id, event)
+			event['_id'] = _id
+			
 			## Event to Alert
 			amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	elif event['event_type'] == 'trap' or event['event_type'] == 'comment':
 		## passthrough
 		archiver.store_event(event_id, event)
-		archiver.log_event(event_id, event)
+		_id = archiver.log_event(event_id, event)
+		event['_id'] = _id
 
 		## Event to Alert
 		amqp.publish(event, event_id, amqp.exchange_name_alerts)
