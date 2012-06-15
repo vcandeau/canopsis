@@ -87,7 +87,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	//trends
 	data_trends: [],
 	trend_lines : false,
-	
+	trend_lines_type : 'ShortDot',
 	//..
 	
 	initComponent: function() {
@@ -691,7 +691,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				name: label,
 				data: [],
 				marker: {enabled:false},
-				dashStyle: 'ShortDot',
+				dashStyle: this.trend_lines_type,
 				//lineWidth: 1
 			}
 			if(color)
