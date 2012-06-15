@@ -169,8 +169,14 @@ Ext.define('widgets.stream.stream' ,{
 	},
 	
 	publish_event: function(){
-		var toolbar = this.getDockedItems()[0] 
-
+		var toolbar = 0
+		
+		if (this.title)
+			toolbar = this.getDockedItems()[1]
+		else
+			toolbar = this.getDockedItems()[0]
+			
+		console.log(toolbar)
 		var message = toolbar.getComponent(this.id + '-message').getValue()
 		toolbar.getComponent(this.id + '-message').reset()
 		
