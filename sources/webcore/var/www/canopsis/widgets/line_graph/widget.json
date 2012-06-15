@@ -40,7 +40,7 @@
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
-								"value": line,
+								"value": "line",
 								"store": {
 									"xtype": "store",
 									"fields": ["value", "text"],
