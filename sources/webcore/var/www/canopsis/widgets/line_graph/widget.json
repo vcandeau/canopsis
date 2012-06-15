@@ -165,7 +165,7 @@
 							},{
 								"xtype": "combobox",
 								"name": "trend_lines_type",
-								"fieldLabel": "Legend layout",
+								"fieldLabel": "Trend line type",
 								"queryMode": "local",
 								"displayField": "text",
 								"valueField": "value",
