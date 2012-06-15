@@ -66,6 +66,11 @@ def get_last_value(points):
 		return point[1]
 	else:
 		return None
+		
+def delta(points):
+	vfirst = get_first_value(points)
+	vlast = get_last_value(points)
+	return vlast - vfirst
 
 def median(vlist):
     values = sorted(vlist)
@@ -314,6 +319,8 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 			agfn = vmin
 		elif atype == 'MAX':
 			agfn = vmax
+		elif atype == 'DELTA':
+			agfn = delta
 		else:
 			agfn = vmean
 
