@@ -285,22 +285,23 @@ def linreg(X, Y):
 	return a, b, RR
 
 
-def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None, use_window_ts=False):
+def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None, mode=None):
+	
+	if not mode:
+		mode = 'by_point'
+	elif mode != 'by_point':
+		mode = 'by_interval'
 	
 	if not max_points:
 		max_points=1450
 		
-	if not time_interval:
-		time_interval = int(round(len(values) / max_points))
-		
+	if time_interval:
+		time_interval = int(time_interval)
+				
 	if not atype:
 		atype = 'MEAN'
 	
-	logger.debug("Aggregate %s points (max: %s, time interval: %s, method: %s)" % (len(values), max_points, time_interval, atype))
-
-	if len(values) < max_points:
-		logger.debug(" + Useless")
-		return values
+	logger.debug("Aggregate %s points (max: %s, time interval: %s, method: %s, mode: %s)" % (len(values), max_points, time_interval, atype, mode))
 
 	if not agfn:
 		if   atype == 'MEAN':
@@ -318,38 +319,52 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 
 	logger.debug(" + Interval: %s" % time_interval)
 
-	time_interval = int(time_interval)
-
-	'''
-	for x in range(0, len(values), interval):
-		sample = values[x:x+interval]
-		value = agfn(sample)
-		timestamp = sample[len(sample)-1][0]
- 		rvalues.append([timestamp, value])
-	'''
 	rvalues=[]
-	values_to_aggregate = []
-	timeWindow_ts = values[0][0]
-	next_timeWindow_ts = values[0][0] + time_interval
-	for value in values:
-		#compute interval
-		if value[0] <= next_timeWindow_ts:
-			values_to_aggregate.append(value)
-		else:
-			#aggregate
-			sample = round(agfn(values_to_aggregate),2)
-			
-			if use_window_ts:
-				timestamp = timeWindow_ts
-			else:
-				timestamp = values_to_aggregate[0][0]
-				
-			rvalues.append([timestamp, sample])
-			#new interval
-			timeWindow_ts = next_timeWindow_ts
-			next_timeWindow_ts = timeWindow_ts + time_interval
-			values_to_aggregate = [value]
 	
+	if mode == 'by_point':
+		if len(values) < max_points:
+			logger.debug(" + Useless")
+			return values
+		
+		interval = int(round(len(values) / max_points))
+		logger.debug(" + point interval: %s" % interval)
+		
+		for x in range(0, len(values), interval):
+			sample = values[x:x+interval]
+			value = agfn(sample)
+			timestamp = sample[len(sample)-1][0]
+			rvalues.append([timestamp, value])
+		
+	elif mode == 'by_interval':
+		
+		values_to_aggregate = []
+		
+		start = values[0][0]
+		# modulo interval
+		start -= start % time_interval
+		
+		stop = start + time_interval
+		for value in values:
+			#compute interval
+			if value[0] < stop:
+				values_to_aggregate.append(value)
+			else:
+				#aggregate
+				#timestamp = values_to_aggregate[0][0]
+				logger.debug("   + %s -> %s (%s points)" % (start, stop, len(values_to_aggregate)))
+				timestamp = stop
+				agvalue = round(agfn(values_to_aggregate),2)
+				point = [timestamp, agvalue]
+				logger.debug("     + Point: %s" % point)
+				rvalues.append(point)
+			
+				#Set next interval
+				start = stop
+				stop = start + time_interval
+				
+				# Push value
+				values_to_aggregate = [value]
+		
 	logger.debug(" + Nb points: %s" % len(rvalues))
 	return rvalues
 
