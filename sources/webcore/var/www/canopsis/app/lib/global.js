@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+var now = undefined
+
 var global = {
 	
 	account: undefined,
