@@ -309,6 +309,14 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	doRefresh: function(from, to){
 		if (this.chart){
+			
+			//If bar chart, wait full insterval
+			if (this.lastRefresh)
+				if (Date.now() < this.lastRefresh+(this.refreshInterval*1000) && this.chart_type == 'column'){
+					log.debug(" +  Wait for refresh", this.logAuthor)
+					return false
+				}
+			
 			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
 
 			if(this.chart_type == 'column'){
