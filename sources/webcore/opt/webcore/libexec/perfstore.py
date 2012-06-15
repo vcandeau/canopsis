@@ -183,17 +183,15 @@ def perfstore_get_values(_id, metrics, start=None, stop=None, time_interval=None
 		start = int(int(start) / 1000)
 	else:
 		start = stop - 86400
-		
+
 	if time_interval:
-		max_points = 24
-	else:
-		max_points = pyperfstore_aggregate_maxpoints
+		time_interval = int(time_interval)
+		
+	max_points = pyperfstore_aggregate_maxpoints
 		
 	if not aggregate_method:
 		aggregate_method = pyperfstore_aggregate_method
 	
-	
-
 	logger.debug(" + node:      %s" % _id)
 	logger.debug(" + metrics:   %s" % metrics)
 	logger.debug(" + start:     %s" % start)
@@ -201,6 +199,11 @@ def perfstore_get_values(_id, metrics, start=None, stop=None, time_interval=None
 	logger.debug('Aggregate:')
 	logger.debug(' + max_points : %s' % max_points)
 	logger.debug(' + interval : %s' % time_interval)
+	
+	if (time_interval):
+		start -= start % time_interval
+		stop -= stop % time_interval
+		max_points = int( round((stop - start) / time_interval + 0.5) )
 	
 	mynode = node(_id=_id, storage=perfstore)
 	
@@ -222,8 +225,7 @@ def perfstore_get_values(_id, metrics, start=None, stop=None, time_interval=None
 					aggregate=pyperfstore_aggregate,
 					atype=aggregate_method,
 					max_points=max_points,
-					time_interval=time_interval,
-					use_window_ts=use_window_ts
+					time_interval=time_interval
 					)
 					
 				values = [[x[0] * 1000, x[1]] for x in values]
