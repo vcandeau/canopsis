@@ -169,12 +169,16 @@ class KnownValues(unittest.TestCase):
 
 
 	def test_07_aggregate(self):
-		##### DRAFT !
-		values = mynode.metric_get_values(dn='load1', tstart=1, tstop=100)
-		values = pyperfstore.pmath.aggregate(values, max_points=50)
+		ori_values = mynode.metric_get_values(dn='load1', tstart=1, tstop=100)
+		values = pyperfstore.pmath.aggregate(ori_values, max_points=50)
 
 		if len(values) != 50:
-			raise Exception('Invalid aggregate (len: %s)' % len(values))
+			raise Exception('Invalid aggregate by points (len: %s)' % len(values))
+			
+		values = pyperfstore.pmath.aggregate(ori_values, time_interval=10, mode='by_interval')
+		if len(values) != 10:
+			raise Exception('Invalid aggregate by interval (len: %s)' % len(values))		
+		
 
 	#def test_08_candlestick(self):
 	#	##### DRAFT !

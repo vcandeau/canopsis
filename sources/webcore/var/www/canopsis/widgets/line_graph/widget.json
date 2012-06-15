@@ -88,11 +88,6 @@
 									]
 								}
 							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Use time window timestamp",
-								"checked": false,
-								"name": "use_window_ts"
-							},{
 								"xtype": "combobox",
 								"name": "SeriesType",
 								"fieldLabel": "Series Type",
