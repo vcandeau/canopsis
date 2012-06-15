@@ -90,10 +90,11 @@ class carchiver(object):
 		
 		self.store_event(_id, event)
 
+		mid = None
 		if changed and self.autolog:
-			self.log_event(_id, event)			
+			mid = self.log_event(_id, event)			
 
-		return changed
+		return mid
 		
 	def merge_perf_data(self, old_event, new_event):
 				
@@ -131,6 +132,7 @@ class carchiver(object):
 		record._id = _id + '.' + str(time.time())
 
 		self.storage.put(record, namespace=self.namespace_log, account=self.account)
+		return record._id
 
 	def get_logs(self, _id, start=None, stop=None):
 		return self.storage.find({'event_id': _id}, namespace=self.namespace_log, account=self.account)
