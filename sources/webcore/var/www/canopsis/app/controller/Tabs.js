@@ -45,8 +45,11 @@ Ext.define('canopsis.controller.Tabs', {
 		});
 
 		this.store = Ext.data.StoreManager.lookup('Tabs');
-		//this.store.proxy.id = this.store.proxy.id + '.' + global.account.user;
-		//this.store.load();
+		
+		if (!Ext.isIE){
+			this.store.proxy.id = this.store.proxy.id + '.' + global.account.user;
+			this.store.load();
+		}
 	},
 	
 	clearTabsCache: function(){
