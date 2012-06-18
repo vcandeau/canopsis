@@ -139,7 +139,7 @@ function start(){
 		fi
 
 		if [ $SUDO -eq 1 ]; then
-			CMD="sudo -n $CMD"
+			CMD="sudo HOME=$HOME LD_LIBRARY_PATH=$LD_LIBRARY_PATH -n $CMD"
 			nohup $CMD 1>> $LOG 2>> $LOG &
 			## get child process
 			sleep 1
