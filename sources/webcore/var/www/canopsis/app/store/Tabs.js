@@ -24,20 +24,42 @@ Ext.define('canopsis.store.Tabs.model', {
 
 });
 
-Ext.define('canopsis.store.Tabs', {
-	extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.store.Tabs.model',
-	id: 'Tabs',
+if (Ext.isIE){
+		Ext.define('canopsis.store.Tabs', {
+		extend: 'canopsis.lib.store.cstore',
+		model: 'canopsis.store.Tabs.model',
+		id: 'Tabs',
+		
+		proxy: {
+			type: 'memory',
+			reader: {
+				type: 'json'
+			}
+		},
 
-	proxy: {
-		type: 'localstorage',
-		id: 'canopsis.store.tabs'
-	},
+		//HACK :we don't want this store to talk everytime
+		listeners: {},
 
-	//HACK :we don't want this store to talk everytime
-	listeners: {},
+		autoLoad: false,
+		autoSync: false
+	});
+	
+}else{
+	Ext.define('canopsis.store.Tabs', {
+		extend: 'canopsis.lib.store.cstore',
+		model: 'canopsis.store.Tabs.model',
+		id: 'Tabs',
 
-	autoLoad: false,
-	autoSync: true
-});
+		proxy: {
+			type: 'localstorage',
+			id: 'canopsis.store.tabs'
+		},
+		
+		//HACK :we don't want this store to talk everytime
+		listeners: {},
+
+		autoLoad: false,
+		autoSync: true
+	});
+}
 

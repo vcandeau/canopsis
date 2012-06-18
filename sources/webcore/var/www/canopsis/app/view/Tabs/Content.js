@@ -302,6 +302,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		if (this.localstore_record) {
 			//remove from store
 			log.debug('Remove this tab from localstore ...', this.logAuthor);
+			
 			var store = Ext.data.StoreManager.lookup('Tabs');
 			store.remove(this.localstore_record);
 			store.save();
