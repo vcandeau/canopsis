@@ -38,14 +38,14 @@ Ext.define('canopsis.controller.Widgets', {
 				log.debug('loading ' + record.data.xtype, this.logAuthor);
 				var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
 				Ext.require(name);
-				/*if (record.data.locales) {
+				if (record.data.locales) {
 					if (record.data.locales.indexOf(global.locale) >= 0) {
 						log.debug(' + loading locale ' + global.locale + ' ...', this.logAuthor);
 						var name = 'widgets.' + record.data.xtype + '.locales.lang-' + global.locale;
 						//Ext.require(name);
 						Ext.Loader.syncRequire(name);
 					}
-				}*/
+				}
 			}, this);
 
 			//translate the store
