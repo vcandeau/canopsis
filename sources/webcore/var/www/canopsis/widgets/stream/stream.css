@@ -52,10 +52,10 @@
 }
 .widget-stream .event .afooter {
 	height: 10px;
-	/*width: 200px;*/
+	width: 100%;
 	margin-top: 10px;
 	font-size: 12;
-	float: right;
+	/*float: right;*/
 	/*background-color: #EAECFF;*/
 }
 
@@ -89,12 +89,27 @@
 	background-color: #EDEDED;
 }
 
-.widget-stream .icon-plus { 
+.widget-stream .icon-comment {
+	float: left;
+    cursor: hand;
+}
+
+.widget-stream .comment-counter{
+	float: left;
+	padding-left: 3px;
+	font-size: 10;
+	color: grey;
+	cursor: hand;
+}
+
+.widget-stream .icon-plus {
+	float: right;
     background-image: url(icons/bullet_toggle_plus.png) !important;
     cursor: hand;
 }
 
-.widget-stream .icon-minus { 
+.widget-stream .icon-minus {
+	float: right;
     background-image: url(icons/bullet_toggle_minus.png) !important;
     cursor: hand;
 }

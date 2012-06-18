@@ -223,6 +223,10 @@
     background-image: url(../images/icons/bullet_red.png) !important;
 }
 
+.icon-comment { 
+    background-image: url(../images/icons/comment.png) !important;
+}
+
 /* state */
 
 /*.icon-state-0 { 
