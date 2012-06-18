@@ -132,8 +132,7 @@ Ext.define('canopsis.controller.Mainbar', {
 
 	cleartabscache: function() {
 		log.debug('Clear tabs localstore', this.logAuthor);
-		var store = Ext.data.StoreManager.lookup('Tabs');
-		store.proxy.clear();
+		this.getController('Tabs').clearTabsCache();
 	},
 
 	authkey: function() {
