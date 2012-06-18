@@ -148,7 +148,7 @@ def perfstore_getMetric(_id):
 
 @get('/perfstore/get_all_nodes',apply=[check_auth])
 def perstore_all_nodes():
-	index = perfstore.get_index()
+	index = perfstore.get_all_nodes()
 	return {'success': True,'data' : index,'total' : len(index)}
 
 @get('/perfstore/get_all_metrics',apply=[check_auth])
