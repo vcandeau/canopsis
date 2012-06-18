@@ -666,14 +666,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			if(this.shift)
 				this.data_trends[trend_id].splice(0, data.values.length)
 			
-			//compute data
-			var line = fitData(this.data_trends[trend_id]).data
-			
-			//trunc value
-			line = this.truncValueArray(line)
+			if(this.data_trends[trend_id].length > 2){
+				//compute data
+				var line = fitData(this.data_trends[trend_id]).data
+				
+				//trunc value
+				line = this.truncValueArray(line)
 
-			//set data
-			trend_line.setData(line,false)
+				//set data
+				trend_line.setData(line,false)
+			} else {
+				log.debug('  +  not enough data to draw trend line')
+			}
 		}else{
 			log.debug('  +  Trend line not found : ' + trend_id,this.logAuthor)
 			log.debug('  +  Create it',this.logAuthor)
@@ -711,14 +715,18 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			var hcserie = this.chart.get(trend_id)
 			
 			this.data_trends[trend_id] = Ext.clone(data.values)
-			var line = fitData(this.data_trends[trend_id]).data
 			
-			//trunc value
-			line = this.truncValueArray(line)
+			if(this.data_trends[trend_id].length >2){
+				var line = fitData(this.data_trends[trend_id]).data
+				
+				//trunc value
+				line = this.truncValueArray(line)
 
-			log.debug('  +  set data',this.logAuthor)
-			hcserie.setData(line,false)
-			
+				log.debug('  +  set data',this.logAuthor)
+				hcserie.setData(line,false)
+			}else{
+				log.debug('  +  not enough data to draw trend line')
+			}
 		}
 	},
 	
