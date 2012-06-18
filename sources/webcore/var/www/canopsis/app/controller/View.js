@@ -45,7 +45,6 @@ Ext.define('canopsis.controller.View', {
 		this.store = Ext.data.StoreManager.lookup('Views');
 
 		this.store.proxy.on('exception', function(proxy, response) {
-			console.log(response);
 			log.error('Error in request', this.logAuthor);
 			var message = Ext.String.format(
 				'{0}<br>{1}: {2}',

@@ -44,9 +44,13 @@ Ext.define('canopsis.controller.Tabs', {
 			}
 		});
 
-		var store = Ext.data.StoreManager.lookup('Tabs');
-		store.proxy.id = store.proxy.id + '.' + global.account.user;
-		store.load();
+		this.store = Ext.data.StoreManager.lookup('Tabs');
+		//this.store.proxy.id = this.store.proxy.id + '.' + global.account.user;
+		//this.store.load();
+	},
+	
+	clearTabsCache: function(){
+		this.store.proxy.clear();
 	},
 
 	doRedraw: function() {
@@ -74,15 +78,14 @@ Ext.define('canopsis.controller.Tabs', {
 	},
 
 	open_saved_view: function() {
-		var store = Ext.data.StoreManager.lookup('Tabs');
 		var views = [];
 
-		store.each(function(record) {
+		this.store.each(function(record) {
 			var options = record.get('options');
 			views.push(options);
 		}, this);
 
-		store.proxy.clear();
+		this.store.proxy.clear();
 
 		log.debug('Load saved tabs:', this.logAuthor);
 		for (var i in views) {
@@ -141,9 +144,8 @@ Ext.define('canopsis.controller.Tabs', {
 				if (options.save) {
 					// archive tab in store
 					log.debug("Add '" + options.title + "' ('" + options.view_id + "') in localstore ...", this.logAuthor);
-					var store = Ext.data.StoreManager.lookup('Tabs');
-					localstore_record = store.add({options: options});
-					store.save();
+					localstore_record = this.store.add({options: options});
+					this.store.save();
 				}
 
 				var tab = {

@@ -35,7 +35,7 @@ Ext.define('canopsis.controller.Reporting', {
 
 		//if no date given
 		if (to == undefined) {
-			to = Date.now();
+			to = Ext.Date.now();
 			if (from)
 				from = to - (from * 1000);
 			else

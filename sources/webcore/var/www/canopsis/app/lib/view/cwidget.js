@@ -189,7 +189,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			to = this.export_to;
 		}else {
 			if (! to || to < 10000000) {
-				to = Date.now();
+				to = Ext.Date.now();
 			}
 
 			if (! from || from < 10000000) {
@@ -200,7 +200,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 		var done = this.doRefresh(from, to);
 		if (done != false)
-			this.lastRefresh = Date.now();
+			this.lastRefresh = Ext.Date.now();
 	},
 
 	doRefresh: function(from, to) {

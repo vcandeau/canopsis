@@ -35,6 +35,9 @@ Ext.define('canopsis.controller.Websocket', {
     init: function() {
 		global.websocketCtrl = this;
 
+		/*if (Ext.isIE)
+			this.autoconnect = false*/
+
 		if (this.autoconnect) {
 			this.connect();
 		}
@@ -177,7 +180,7 @@ Ext.define('canopsis.controller.Websocket', {
 
 	on_event: function(raw) {
 		var me = global.websocketCtrl;
-		console.log(raw);
+		//console.log(raw);
 		/*if (raw.clientId != me.faye_client.getClientId()){
 			log.debug(raw.author+" "+raw.name+" "+raw.type+" "+raw.id, me.logAuthor)
 		}*/

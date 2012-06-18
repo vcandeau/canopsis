@@ -313,7 +313,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 			//If bar chart, wait full insterval
 			if (this.lastRefresh)
-				if (Date.now() < this.lastRefresh + (this.refreshInterval * 1000) && this.chart_type == 'column') {
+				if (Ext.Date.now() < this.lastRefresh + (this.refreshInterval * 1000) && this.chart_type == 'column') {
 					log.debug(' +  Wait for refresh', this.logAuthor);
 					return false;
 				}
@@ -326,13 +326,13 @@ Ext.define('widgets.line_graph.line_graph' , {
 					new_to = getMidnight(to);
 
 					if ((to - from) <= global.commonTs.day)
-						to = Date.now();
+						to = Ext.Date.now();
 				}
 			}
 
 			if (! this.reportMode && this.last_from) {
 				from = this.last_from;
-				to = Date.now();
+				to = Ext.Date.now();
 			}
 
 
@@ -416,7 +416,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	checkTimewindow: function() {
 		var me = this.options.cwidget;
-		var now = Date.now();
+		var now = Ext.Date.now();
 
 		if (this.series.length > 0 && now < (me.last_from + 500)) {
 			var extremes = this.series[0].xAxis.getExtremes();
