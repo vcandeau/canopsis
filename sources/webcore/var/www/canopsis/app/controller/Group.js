@@ -20,7 +20,7 @@
 */
 Ext.define('canopsis.controller.Group', {
 	extend: 'canopsis.lib.controller.cgrid',
-    
+
 	views: ['Group.Grid', 'Group.Form'],
 	stores: ['Groups'],
 	models: ['Group'],
@@ -34,17 +34,17 @@ Ext.define('canopsis.controller.Group', {
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
-		this.formXtype = 'GroupForm'
-		this.listXtype = 'GroupGrid'
+		this.formXtype = 'GroupForm';
+		this.listXtype = 'GroupGrid';
 
-		this.modelId = 'Group'
+		this.modelId = 'Group';
 
 		this.callParent(arguments);
 	},
 
-	preSave: function(record){
-		record.data.id = 'group.' + record.data.crecord_name
-		return record
+	preSave: function(record) {
+		record.data.id = 'group.' + record.data.crecord_name;
+		return record;
 	}
-	
+
 });

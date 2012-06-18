@@ -21,14 +21,14 @@
 Ext.define('canopsis.store.Files', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.File',
-	
+
 	//storeId: 'store.Group',
 	autoLoad: true,
 	autoSync: true,
 
 	sorters: [
         {
-            property : 'creationTs',
+            property: 'creationTs',
             direction: 'ASC'
         }
     ],
@@ -39,10 +39,9 @@ Ext.define('canopsis.store.Files', {
 		reader: {
 			type: 'json',
 			root: 'data',
-			totalProperty  : 'total',
+			totalProperty: 'total',
 			successProperty: 'success'
-		},
-	},
-	
-	
+		}
+	}
+
 });

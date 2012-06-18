@@ -18,11 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.LiveSearch.Grid' ,{
+Ext.define('canopsis.view.LiveSearch.Grid' , {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.LiveGrid',
 
-	store : 'Inventory',
+	store: 'Inventory',
 	id: 'LiveGrid',
 
 	requires: [
@@ -31,20 +31,20 @@ Ext.define('canopsis.view.LiveSearch.Grid' ,{
 		'Ext.toolbar.TextItem'
 	],
 
-	title : '',
+	title: '',
 	//iconCls: 'icon-grid',
 	//frame: true,
-	features: [Ext.create('Ext.grid.feature.Grouping',{
+	features: [Ext.create('Ext.grid.feature.Grouping', {
         groupHeaderTpl: 'Source type: {source_type}'
     })],
 
 	border: false,
- 
-	columns : [
-				{header : 'type', dataIndex : 'source_type', flex : 1},
-				{header : 'name', dataIndex : '_id', flex : 1},
+
+	columns: [
+				{header: 'type', dataIndex: 'source_type', flex: 1},
+				{header: 'name', dataIndex: '_id', flex: 1}
 	],
- 
+
 	initComponent: function() {
 		this.callParent(arguments);
 	}

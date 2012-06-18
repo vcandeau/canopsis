@@ -18,12 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cwidget' ,{
+Ext.define('canopsis.lib.view.cwidget' , {
 	extend: 'Ext.panel.Panel',
 
 	border: false,
-	layout : 'fit',
-	
+	layout: 'fit',
+
 	nodeId_refresh: true,
 	nodeData: {},
 	nodes: [],
@@ -35,224 +35,224 @@ Ext.define('canopsis.lib.view.cwidget' ,{
 	refreshInterval: 0,
 
 	baseUrl: '/rest/events/event/',
-	
+
 	logAuthor: '[widget]',
 
 	wcontainer_layout: 'fit',
 	wcontainer_autoScroll: false,
-	
+
 	task: false,
-	
-	reportMode : false,
-	exportMode : false,
-	
+
+	reportMode: false,
+	exportMode: false,
+
 	barHeight: 27,
-	
+
 	time_window: global.commonTs.day, //24 hours
-	
+
 	lastRefresh: undefined,
 
 	//PollNodeInfo: true,
 
 	initComponent: function() {
 
-		this.logAuthor = "["+this.id+"]"
+		this.logAuthor = '['+ this.id + ']';
 
-		log.debug('InitComponent '+this.id+' (reportMode: '+this.reportMode+', exportMode: '+this.exportMode+')', this.logAuthor)
+		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
 
-		if (this.title == ''){
+		if (this.title == '') {
 			this.title = false;
 		}
 
-		this.wcontainerId = this.id+"-content"
+		this.wcontainerId = this.id + '-content';
 
 		this.wcontainer = Ext.create('Ext.container.Container', { id: this.wcontainerId, border: false, layout: this.wcontainer_layout, autoScroll: this.wcontainer_autoScroll });
-		this.items = this.wcontainer
-		
-		this.wcontainer.on('afterrender', this.afterContainerRender, this)
-		
-		this.wcontainer.on('afterrender', function(){
-			log.debug('SetHeight of wcontainer', this.logAuthor)
-			this.wcontainer.setHeight(this.getHeight())
-		}, this)
-		
+		this.items = this.wcontainer;
+
+		this.wcontainer.on('afterrender', this.afterContainerRender, this);
+
+		this.wcontainer.on('afterrender', function() {
+			log.debug('SetHeight of wcontainer', this.logAuthor);
+			this.wcontainer.setHeight(this.getHeight());
+		}, this);
+
 		this.callParent(arguments);
 
-		this.uri = '/rest/events/event'
+		this.uri = '/rest/events/event';
 
 		if (this.reportMode) {
-			this.refreshInterval = false
+			this.refreshInterval = false;
 		}
-		
+
 		//Compatibility
-		if (this.nodes){
-			if (this.nodes.length > 0){
-				log.debug('Nodes:', this.logAuthor)
-				log.dump(this.nodes)
-				this.nodeId = this.nodes[0].id
-				this.metrics = this.nodes[0].metrics
+		if (this.nodes) {
+			if (this.nodes.length > 0) {
+				log.debug('Nodes:', this.logAuthor);
+				log.dump(this.nodes);
+				this.nodeId = this.nodes[0].id;
+				this.metrics = this.nodes[0].metrics;
 			}
 		}
-		
+
 		//if reporting
-		if(this.exportMode){
+		if (this.exportMode) {
 			//this._reporting(this.reportStartTs,this.reportStopTs)
 			//this._reporting(reportStart,reportStop)
 			//this.uri += '/' + this.nodeId;
-			
+
 			/*if (this.nodeId){
 				log.debug(' + NodeId: '+this.nodeId, this.logAuthor)
 				this.on('afterrender', this._doRefresh, this);
 			}*/
-			
+
 			//this._doRefresh()
-			
-		}else{
-			if (this.refreshInterval){				
-				log.debug(' + Refresh Interval: '+this.refreshInterval, this.logAuthor)
+
+		}else {
+			if (this.refreshInterval) {
+				log.debug(' + Refresh Interval: ' + this.refreshInterval, this.logAuthor);
 				this.task = {
 					run: this._doRefresh,
 					interval: this.refreshInterval * 1000,
 					scope: this
-				}
+				};
 			}
 		}
 	},
-	
-	afterContainerRender: function(){
-		log.debug(' + Ready', this.logAuthor)
+
+	afterContainerRender: function() {
+		log.debug(' + Ready', this.logAuthor);
 		this.ready();
 	},
 
-	getHeight: function(){
+	getHeight: function() {
 		var height = this.callParent();
-	
-		var docks = this.getDockedItems()
 
-		if (docks){
-			height -= docks.length * 2
+		var docks = this.getDockedItems();
+
+		if (docks) {
+			height -= docks.length * 2;
 			for (var i in docks)
 				if (docks[i].dock == 'top' || docks[i].dock == 'bottom') { height -= this.barHeight }
 		}
-		
+
 		if (this.border)
-			height -= this.border * 2
-		
-		return height
+			height -= this.border * 2;
+
+		return height;
 	},
-	
-	ready: function(){
-		if (this.task){
+
+	ready: function() {
+		if (this.task) {
 			this.startTask();
-		}else{
+		}else {
 			this._doRefresh();
 		}
 	},
-	
-	startTask: function(){
+
+	startTask: function() {
 		if (! this.reportMode) {
-			if (this.task){
-				log.debug('Start task, interval:  '+this.refreshInterval+' seconds', this.logAuthor)
-				Ext.TaskManager.start(this.task)
-			}else{
-				this._doRefresh()
+			if (this.task) {
+				log.debug('Start task, interval:  ' + this.refreshInterval + ' seconds', this.logAuthor);
+				Ext.TaskManager.start(this.task);
+			}else {
+				this._doRefresh();
 			}
 		}
 	},
 
-	stopTask: function(){
-		if (this.task){
-			log.debug('Stop task', this.logAuthor)
-			Ext.TaskManager.stop(this.task)
+	stopTask: function() {
+		if (this.task) {
+			log.debug('Stop task', this.logAuthor);
+			Ext.TaskManager.stop(this.task);
 		}
 	},
-	
+
 	/*
 	dblclick: function(){
 	},
 	*/
 
-	TabOnShow: function(){
-		log.debug('Show', this.logAuthor)
+	TabOnShow: function() {
+		log.debug('Show', this.logAuthor);
 		if (! this.isDisabled())
-			this.startTask()
+			this.startTask();
 	},
 
-	TabOnHide: function(){
-		log.debug('Hide', this.logAuthor)
-		this.stopTask()
+	TabOnHide: function() {
+		log.debug('Hide', this.logAuthor);
+		this.stopTask();
 	},
 
-	_doRefresh: function(from, to){
-		if (this.exportMode){
+	_doRefresh: function(from, to) {
+		if (this.exportMode) {
 			from = this.export_from;
 			to = this.export_to;
-		}else{		
+		}else {
 			if (! to || to < 10000000) {
 				to = Date.now();
 			}
-				
+
 			if (! from || from < 10000000) {
 				from = to - (this.time_window * 1000);
 			}
 		}
-		
-		
-		var done = this.doRefresh(from, to)
+
+
+		var done = this.doRefresh(from, to);
 		if (done != false)
-			this.lastRefresh = Date.now()
-	},
-	
-	doRefresh: function(from, to){
-		this.getNodeInfo()
+			this.lastRefresh = Date.now();
 	},
 
-	_onRefresh: function(data){
-		this.data = data
-		this.onRefresh(data)
+	doRefresh: function(from, to) {
+		this.getNodeInfo();
 	},
 
-	onRefresh: function(data){
-		log.debug("onRefresh", this.logAuthor)
+	_onRefresh: function(data) {
+		this.data = data;
+		this.onRefresh(data);
 	},
 
-	onResize: function(){
-		log.debug("onRezize", this.logAuthor)
+	onRefresh: function(data) {
+		log.debug('onRefresh', this.logAuthor);
 	},
 
-	getNodeInfo: function(){
-		if (this.nodeId){
+	onResize: function() {
+		log.debug('onRezize', this.logAuthor);
+	},
+
+	getNodeInfo: function() {
+		if (this.nodeId) {
 			Ext.Ajax.request({
 				url: this.uri + '/' + this.nodeId,
 				scope: this,
-				success: function(response){
-					var data = Ext.JSON.decode(response.responseText)
-					data = data.data[0]
-					this._onRefresh(data)
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+					data = data.data[0];
+					this._onRefresh(data);
 				},
-				failure: function (result, request) {
-					log.error("Impossible to get Node informations, Ajax request failed ... ("+request.url+")", this.logAuthor)
-				} 
+				failure: function(result, request) {
+					log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+				}
 			});
 		}
-		
+
 	},
 
-	setHtml: function(html){
-		log.debug('setHtml in widget', this.logAuthor)
-		this.wcontainer.removeAll()
-		this.wcontainer.add({html: html, border: false})
+	setHtml: function(html) {
+		log.debug('setHtml in widget', this.logAuthor);
+		this.wcontainer.removeAll();
+		this.wcontainer.add({html: html, border: false});
 		this.wcontainer.doLayout();
 	},
 
-	setHtmlTpl: function(tpl, data){
-		log.debug('setHtmlTpl in div '+this.wcontainerId, this.logAuthor)
-		tpl.overwrite(this.wcontainerId, data)
+	setHtmlTpl: function(tpl, data) {
+		log.debug('setHtmlTpl in div ' + this.wcontainerId, this.logAuthor);
+		tpl.overwrite(this.wcontainerId, data);
 	},
-	
-	beforeDestroy : function() {
-		log.debug("Destroy ...", this.logAuthor)
-		this.stopTask()
+
+	beforeDestroy: function() {
+		log.debug('Destroy ...', this.logAuthor);
+		this.stopTask();
 		this.callParent(arguments);
  	}
 

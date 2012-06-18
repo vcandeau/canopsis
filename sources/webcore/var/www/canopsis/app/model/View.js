@@ -23,7 +23,7 @@ Ext.define('canopsis.model.View', {
 
 	fields: [
 		{name: '_id'},
-		{name: 'id', mapping:'_id'},
+		{name: 'id', mapping: '_id'},
 		{name: 'leaf'},
 		{name: 'crecord_name'},
 		{name: 'nodeId'},
@@ -31,17 +31,17 @@ Ext.define('canopsis.model.View', {
 		{name: 'refreshInterval'},
 		{name: 'template', defaultValue: false},
 		{name: 'reporting', defaultValue: false},
-		
+
 		{name: 'enable'},
 		//{name: 'checked', mapping:'enable'},
-		{name:'view_options'},
-		
+		{name: 'view_options'},
+
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'},
-    ],
+		{name: 'aaa_owner'}
+    ]
 
 });
