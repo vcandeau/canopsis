@@ -176,7 +176,6 @@ Ext.define('widgets.stream.stream' , {
 		else
 			toolbar = this.getDockedItems()[0];
 
-		console.log(toolbar);
 		var message = toolbar.getComponent(this.id + '-message').getValue();
 		toolbar.getComponent(this.id + '-message').reset();
 
