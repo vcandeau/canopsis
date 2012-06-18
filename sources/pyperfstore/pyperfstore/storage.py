@@ -69,7 +69,13 @@ class storage(object):
 
 	def size(self, key):
 		## Todo
-		return 0		
+		return 0
+		
+	def get_all_nodes(self):
+		return []
+		
+	def get_all_metrics(self):
+		return []
 
 	def lock(self, key):
 		self.logger.debug("Lock '%s'" % key)
