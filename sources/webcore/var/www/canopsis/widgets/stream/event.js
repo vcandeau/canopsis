@@ -52,7 +52,8 @@ widget_stream_event_template =  Ext.create('Ext.XTemplate',
 					"<span class='output'>{output}</span><br> <span class='long_output'>{long_output}</span>",
 					'<tpl if="referer == undefined">',
 						"<div class='afooter'>",
-								"<span id='{event_Component_id}-expend-comments' class='icon icon-plus' />",
+								"<span class='icon icon-comment'></span><div class='comment-counter' id='{event_Component_id}-nbcomment'></div>",
+								"<span id='{event_Component_id}-expend-comments' class='icon icon-plus'></span>",
 						"</div>",
 					'</tpl>',
 				"</div>",
@@ -90,6 +91,9 @@ Ext.define('widgets.stream.event' ,{
 	el_comments: undefined,
 	el_btn_exp_comments: undefined,
 	el_time: undefined,
+	
+	el_nbcomment: undefined,
+	nbcomment: 0,
 	
 	initComponent: function() {
 		if (this.id){
@@ -133,14 +137,19 @@ Ext.define('widgets.stream.event' ,{
 		//Get elements
 		this.el_comments = el.getById(this.id + '-comments-td')
 		this.el_btn_exp_comments = el.getById(this.id + '-expend-comments')
+		this.el_nbcomment= el.getById(this.id + '-nbcomment')
 		this.el_time = el.getById(this.id + '-time')
+		
+		this.init_comment_counter();
 		
 		this.bindEvents();
 	},
 
 	bindEvents: function(){
-		if (this.el_btn_exp_comments)
-			this.el_btn_exp_comments.on('click', this.toggle_comments, this)
+		if (this.el_btn_exp_comments){
+			this.el_btn_exp_comments.on('click', this.toggle_comments, this);
+			this.el_nbcomment.on('click', this.toggle_comments, this);
+		}
 	},
 	
 	create_comments_container: function(){
@@ -177,6 +186,8 @@ Ext.define('widgets.stream.event' ,{
 				now.stream_getComments(this.event_id, this.stream.max_comment, function(records){
 					log.debug(records.length+" comments for '"+me.event_id+"'", me.logAuthor)
 					if (records.length > 0){
+						me.init_comment_counter();
+						
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 								
@@ -209,6 +220,8 @@ Ext.define('widgets.stream.event' ,{
 			log.debug("Insert comment", this.logAuthor)
 			var nb = this.comments_container.items.length
 			this.comments_container.insert(nb-1, event)
+			this.nbcomment += 1
+			this.update_comment_counter()
 			
 			//Clean before
 			if (this.comments_container.items.length > (this.stream.max_comment+1)){
@@ -219,6 +232,7 @@ Ext.define('widgets.stream.event' ,{
 			
 		}
 	},
+	
 	
 	time: function(timestamp){
 		
@@ -253,6 +267,19 @@ Ext.define('widgets.stream.event' ,{
 				if (event.event_id) //check if not a form
 					event.update_time()
 			}
+	},
+	
+	init_comment_counter: function(){
+		var me = this;
+		now.stream_countComments(this.event_id, function(count){
+			me.nbcomment = count
+			me.update_comment_counter()
+		});
+	},
+	
+	update_comment_counter: function(){
+		if (this.el_nbcomment)
+			this.el_nbcomment.update(this.nbcomment + " " + _("comment(s)"))
 	},
 	
 	toggle_comments: function(){	

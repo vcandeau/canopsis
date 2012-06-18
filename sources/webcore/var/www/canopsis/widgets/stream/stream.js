@@ -65,14 +65,14 @@ Ext.define('widgets.stream.stream' ,{
 							queryMode: "local",
 							displayField: "text",
 							valueField: "value",
-							width: 60,
+							width: 70,
 							value: 0,
 							store: {
 								xtype: "store",
 								fields: ["value", "text"],
 								data : [
 									{value: 0, text: "Ok"},
-									{value: 1, text: "Warnign"},
+									{value: 1, text: "Warning"},
 									{value: 2, text: "Critical"},
 								]
 							}
