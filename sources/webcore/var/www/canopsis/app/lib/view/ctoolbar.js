@@ -19,26 +19,26 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.lib.view.ctoolbar' ,{
+Ext.define('canopsis.lib.view.ctoolbar' , {
 	extend: 'Ext.window.Window',
-	alias : 'widget.ctoolbar',
-	title : 'toolbar',
+	alias: 'widget.ctoolbar',
+	title: 'toolbar',
 	//height: 10,
 	closeAction: 'destroy',
     width: 200,
     //layout: 'fit',
-    resizable : false,
-	
+    resizable: false,
+
 	initComponent: function() {
 		this.callParent(arguments);
-		
-		this.toolbar = Ext.widget('toolbar',{dock: 'top'})
-		this.addDocked(this.toolbar)
+
+		this.toolbar = Ext.widget('toolbar', {dock: 'top'});
+		this.addDocked(this.toolbar);
 	},
-	
+
 	//take extjs element and push it in docked bar
-	add : function(element){
-		this.toolbar.add(element)
+	add: function(element) {
+		this.toolbar.add(element);
 	}
-	
-})
+
+});

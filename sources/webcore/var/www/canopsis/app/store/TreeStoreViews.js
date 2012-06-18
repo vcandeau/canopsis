@@ -22,12 +22,12 @@
 Ext.define('canopsis.store.TreeStoreViews', {
     extend: 'canopsis.lib.store.ctreeStore',
     model: 'canopsis.model.View',
-	
+
 	storeId: 'store.TreeStoreViews',
-	
-	autoLoad : false,
-	autoSync : false,
-	
+
+	autoLoad: false,
+	autoSync: false,
+
 	clearOnLoad: true,
 	/*
 	root:{
@@ -35,31 +35,32 @@ Ext.define('canopsis.store.TreeStoreViews', {
 	},
 	*/
 	//defaultRootId : 'directory.root',
-	
+
 	proxy: {
-			type: 'rest',
-			url: '/ui/view',
-			reader: {
-				type: 'json',
-				//root: 'data',
-				//totalProperty  : 'total',
-				//successProperty: 'success',
-			},
-			writer: {
-				type: 'json'
-			},
+		type: 'rest',
+		url: '/ui/view',
+		reader: {
+			type: 'json'
+			//root: 'data',
+			//totalProperty  : 'total',
+			//successProperty: 'success',
 		},
-		listeners: {
-			move: function( node, oldParent, newParent, index, options ) {
+		writer: {
+			type: 'json'
+		}
+	},
+
+	listeners: {
+		move: function(node, oldParent, newParent, index, options ) {
 				this.sync();
-			},
-		},
-		
-		
+		}
+	},
+
+
 	//--------------FIX , because without this in 4.0.7 you can't refresh !--------
 	//http://www.sencha.com/forum/showthread.php?151674-4.0.7-Tree-Store-Bug&highlight=treestore
 	//http://www.sencha.com/forum/showthread.php?151211-Reloading-TreeStore-adds-all-records-to-store-getRemovedRecords
-   load : function(options) {
+   load: function(options) {
 		options = options || {};
 		options.params = options.params || {};
 
@@ -70,7 +71,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 		// create one for them.
 		if (!node) {
 			node = me.setRootNode({
-						expanded : true
+						expanded: true
 					});
 		}
 
@@ -93,7 +94,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 		}
 
 		Ext.applyIf(options, {
-					node : node
+					node: node
 				});
 		options.params[me.nodeParam] = node ? node.getId() : 'root';
 
@@ -103,7 +104,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 
 		return me.callParent([options]);
 	},
-	
+
 	setRootNode: function(root) {
         var me = this;
 
@@ -134,6 +135,6 @@ Ext.define('canopsis.store.TreeStoreViews', {
         }*/
 
         return root;
-    },
-	
+    }
+
 });

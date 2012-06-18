@@ -23,24 +23,23 @@ Ext.define('canopsis.model.Curve', {
     idProperty: '_id',
     fields: [
 		{name: '_id'},
-		{name : 'metric'},
-		{name : 'crecord_name'},
-		{name : 'aaa_group', 		defaultValue: 'curves_admin' },
-		{name : 'aaa_access_group', defaultValue: ['r', 'w'] },
-		{name : 'aaa_access_other', defaultValue: ['r'] },
-		{name : 'line_color',		defaultValue: undefined },
-		{name : 'area_color',		defaultValue: undefined },
-		{name : 'area_opacity',		defaultValue: undefined, type: 'int'},
-		{name : 'invert',			defaultValue: false, type: 'boolean' },
-		{name : 'zIndex',			defaultValue: 0, type: 'int'},
-		{name : 'dashStyle',		defaultValue: "Solid" },
-		{name : 'label',			defaultValue: undefined },
-		
+		{name: 'metric'},
+		{name: 'crecord_name'},
+		{name: 'aaa_group', defaultValue: 'curves_admin' },
+		{name: 'aaa_access_group', defaultValue: ['r', 'w'] },
+		{name: 'aaa_access_other', defaultValue: ['r'] },
+		{name: 'line_color',	defaultValue: undefined },
+		{name: 'area_color',	defaultValue: undefined },
+		{name: 'area_opacity',	defaultValue: undefined, type: 'int'},
+		{name: 'invert',	defaultValue: false, type: 'boolean' },
+		{name: 'zIndex',	defaultValue: 0, type: 'int'},
+		{name: 'dashStyle',	defaultValue: 'Solid' },
+		{name: 'label',	defaultValue: undefined },
+
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'},
-		
-		]
+		{name: 'aaa_owner'}
+	]
 });

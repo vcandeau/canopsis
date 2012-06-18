@@ -18,18 +18,18 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Schedule.Grid' ,{
+Ext.define('canopsis.view.Schedule.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	alias: 'widget.ScheduleGrid',
 
 	model: 'Schedule',
-	store : 'Schedules',	
+	store: 'Schedules',
 
 	opt_db_namespace: 'object',
-	
+
 	opt_menu_delete: true,
-	opt_menu_run_item : true,
+	opt_menu_run_item: true,
 	opt_bar_duplicate: true,
 
 	columns: [
@@ -49,29 +49,29 @@ Ext.define('canopsis.view.Schedule.Grid' ,{
 			flex: 1,
 			sortable: true,
 			dataIndex: 'log_last_execution',
-			renderer: rdr_tstodate,
+			renderer: rdr_tstodate
 		},{
 			header: _('Next execution'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'next_run_time',
-			renderer: rdr_utcToLocal,
+			renderer: rdr_utcToLocal
 		},{
 			header: _('Schedule'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'cron',
-			renderer: rdr_task_crontab,
+			renderer: rdr_task_crontab
 		},{
 			header: _('Name'),
 			flex: 2,
 			sortable: true,
-			dataIndex: 'crecord_name',
+			dataIndex: 'crecord_name'
 		},{
 			header: _('Output'),
 			flex: 5,
 			sortable: true,
-			dataIndex: 'log_output',
+			dataIndex: 'log_output'
 
 		},{
 			header: _('Mailing'),
@@ -85,4 +85,4 @@ Ext.define('canopsis.view.Schedule.Grid' ,{
 		this.callParent(arguments);
 	}
 
-})
+});

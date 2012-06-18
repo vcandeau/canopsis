@@ -18,9 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Menu.View' ,{
+Ext.define('canopsis.view.Menu.View' , {
 	extend: 'Ext.tree.Panel',
-	alias : 'widget.MenuView',
+	alias: 'widget.MenuView',
 
 	//cls: 'x-main-menu',
 	//collapsedCls: 'x-main-menu',

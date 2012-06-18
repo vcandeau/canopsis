@@ -18,46 +18,46 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Tabs.Content' ,{
+Ext.define('canopsis.view.Tabs.Content' , {
 	extend: 'Ext.jq.Gridable',
-	
-	alias : 'widget.TabsContent',
+
+	alias: 'widget.TabsContent',
 
 	logAuthor: '[view][tabs][content]',
 
 	autoScroll: true,
-		
+
 	autoshow: true,
 	displayed: false,
 
 	items: [],
-	
+
 	//Ext.jq.Gridable
-	spotlight : true,
-	contextMenu : true,
-	
+	spotlight: true,
+	contextMenu: true,
+
 	debug: false,
-	
+
 	autoScale: true,
 	autoDraw: false,
 	wizard: 'canopsis.view.Tabs.Wizard',
-	view_wizard : 'canopsis.view.Tabs.ViewWizard',
-	
+	view_wizard: 'canopsis.view.Tabs.ViewWizard',
+
 	// Export an report
-	reportMode : false,
-	exportMode : false,
-	export_from : undefined,
-	export_to : undefined,
+	reportMode: false,
+	exportMode: false,
+	export_from: undefined,
+	export_to: undefined,
 
 	//Locales
-	locales : {
+	locales: {
 		save: _('Save'),
 		column: _('Add column'),
-		row : _('Add row'),
-		editMode : _('Edit mode'),
-		viewMode : _('View mode'),
-		removeAll : _('Remove all'),
-		del : _('Delete'),
+		row: _('Add row'),
+		editMode: _('Edit mode'),
+		viewMode: _('View mode'),
+		removeAll: _('Remove all'),
+		del: _('Delete'),
 		cancel: _('Cancel'),
 		edit: _('Edit'),
 		duplicate: _('Duplicate'),
@@ -65,203 +65,203 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 	},
 
 	//Logging
-	log: function(message){
-		log.debug(message, this.logAuthor)
+	log: function(message) {
+		log.debug(message, this.logAuthor);
 	},
 
     //Init
 	initComponent: function() {
 		this.callParent(arguments);
-				
-		log.debug("Display view '"+this.view_id+"' ...", this.logAuthor)
-		
+
+		log.debug("Display view '" + this.view_id + "' ...", this.logAuthor);
+
 		this.options = {
-			reportMode : this.reportMode,
-			exportMode : this.exportMode,
-			export_from : this.export_from,
-			export_to : this.export_to
-		}
+			reportMode: this.reportMode,
+			exportMode: this.exportMode,
+			export_from: this.export_from,
+			export_to: this.export_to
+		};
 
 		Ext.Ajax.request({
-				url: '/rest/object/view/'+this.view_id,
+				url: '/rest/object/view/' + this.view_id,
 				scope: this,
-				success: function(response){
-					data = Ext.JSON.decode(response.responseText)
-					this.view = data.data[0]
-					this.dump = this.view.items
-					
-					if(this.view.view_options != undefined)
-						this.view_options = this.view.view_options
+				success: function(response) {
+					data = Ext.JSON.decode(response.responseText);
+					this.view = data.data[0];
+					this.dump = this.view.items;
 
-					this.fireEvent('ready', this)
+					if (this.view.view_options != undefined)
+						this.view_options = this.view.view_options;
+
+					this.fireEvent('ready', this);
 
 				},
-				failure: function (result, request) {
-						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-						log.error("Close tab, maybe not exist ...", this.logAuthor)
+				failure: function(result, request) {
+						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+						log.error('Close tab, maybe not exist ...', this.logAuthor);
 						this.close();
-				} 
+				}
 		});
 
 
-		this.on('ready', function(){
-			if (this.autoshow){
-				this.setContent()
+		this.on('ready', function() {
+			if (this.autoshow) {
+				this.setContent();
 			}
-		}, this)
-		
-		this.on('save', this.saveView, this)
+		}, this);
 
-		this.on('beforeclose', this.beforeclose)
-		
+		this.on('save', this.saveView, this);
+
+		this.on('beforeclose', this.beforeclose);
+
 		//binding event to save resources
 		this.on('show', this._onShow, this);
 		this.on('hide', this._onHide, this);
 		this.on('resizeWidget', this.onResizeWidget, this);
-		
+
 		//Apply view options when loaded
-		this.on('loaded',function(){
-				if(this.view_options)
-					this.applyViewOptions(this.view_options)
-			},this)
+		this.on('loaded', function() {
+				if (this.view_options)
+					this.applyViewOptions(this.view_options);
+			},this);
 	},
-	
-	applyViewOptions : function(options){
-		log.debug('Apply view options', this.logAuthor)
-		if(options){
-			if(options['background'])
-				this.body.setStyle('background','#' + options['background'])
+
+	applyViewOptions: function(options) {
+		log.debug('Apply view options', this.logAuthor);
+		if (options) {
+			if (options['background'])
+				this.body.setStyle('background', '#' + options['background']);
 		}
 	},
 
-	onResizeWidget: function(cmp){
-		cmp.onResize()
+	onResizeWidget: function(cmp) {
+		cmp.onResize();
 	},
 
-	setContent: function(){
-		if(this.dump && ! this.displayed){
-			this.load(this.dump)
-			this.displayed = true
+	setContent: function() {
+		if (this.dump && ! this.displayed) {
+			this.load(this.dump);
+			this.displayed = true;
 		}
 	},
-	
-	saveView : function(dump){
+
+	saveView: function(dump) {
 		//ajax request with dump sending
-		log.debug('Saving view requested',this.logAuthor)
-		
-		if (dump == undefined){
-			dump = this.dumpJqGridable()
+		log.debug('Saving view requested', this.logAuthor);
+
+		if (dump == undefined) {
+			dump = this.dumpJqGridable();
 		}
-		
+
 		//get view options
-		if(this.getViewOptions)
-			var view_options = this.getViewOptions()
-		
-		var store = Ext.data.StoreManager.lookup('Views')
-		var record = Ext.create('canopsis.model.View', data)
-		
-		if(this.view_id){
-			log.debug('editing view',this.logAuthor)
-			record.set('id',this.view_id)
-			record.set('crecord_name',this.view.crecord_name)
+		if (this.getViewOptions)
+			var view_options = this.getViewOptions();
+
+		var store = Ext.data.StoreManager.lookup('Views');
+		var record = Ext.create('canopsis.model.View', data);
+
+		if (this.view_id) {
+			log.debug('editing view', this.logAuthor);
+			record.set('id', this.view_id);
+			record.set('crecord_name', this.view.crecord_name);
 		} else {
-			log.debug('new view')
-			if(this.options.viewName){
-				viewName = this.options.viewName
-				record.set('crecord_name',this.options.viewName)
-				record.set('id','view.'+ global.account.user + '.' + viewName.replace(/ /g,"_"))
+			log.debug('new view');
+			if (this.options.viewName) {
+				viewName = this.options.viewName;
+				record.set('crecord_name', this.options.viewName);
+				record.set('id', 'view.' + global.account.user + '.' + viewName.replace(/ /g, '_'));
 			}
 		}
-		record.set('items',dump)
-		record.set('view_options', view_options)
-		record.set('leaf', true)
-		
-		store.add(record)
-		
-		this.dump = dump
-		
+		record.set('items', dump);
+		record.set('view_options', view_options);
+		record.set('leaf', true);
+
+		store.add(record);
+
+		this.dump = dump;
+
 		this.startAllTasks();
-		
+
 		//apply new view style
-		this.applyViewOptions(view_options)
-		
-		global.notify.notify(_('View') +' '+ record.get('crecord_name'), _('Saved'))
+		this.applyViewOptions(view_options);
+
+		global.notify.notify(_('View') + ' ' + record.get('crecord_name'), _('Saved'));
 	},
-	
+
 	//Binding
-	_onShow: function(){
-		log.debug('Show tab '+this.id, this.logAuthor)
-		var cmps = this.getCmps()
-		for(var i in cmps){
-			if (cmps[i].TabOnShow){
-				cmps[i].TabOnShow()
+	_onShow: function() {
+		log.debug('Show tab ' + this.id, this.logAuthor);
+		var cmps = this.getCmps();
+		for (var i in cmps) {
+			if (cmps[i].TabOnShow) {
+				cmps[i].TabOnShow();
 			}
 		}
 	},
 
-	_onHide: function(){
-		log.debug('Hide tab '+this.id, this.logAuthor)
-		var cmps = this.getCmps()
-		for(var i in cmps){
-			if (cmps[i].TabOnHide){
-				cmps[i].TabOnHide()
+	_onHide: function() {
+		log.debug('Hide tab ' + this.id, this.logAuthor);
+		var cmps = this.getCmps();
+		for (var i in cmps) {
+			if (cmps[i].TabOnHide) {
+				cmps[i].TabOnHide();
 			}
 		}
 	},
-	
-	editMode: function(){
-		if (! this.edit){
+
+	editMode: function() {
+		if (! this.edit) {
 			this.stopAllTasks();
 			this.callParent(arguments);
 		}
 	},
-	
-	startAllTasks: function(){
-		log.debug('Start all tasks', this.logAuthor)
-		var cmps = this.getCmps()
-		for(var i in cmps){
-			if (cmps[i].startTask){
-				cmps[i].startTask()
-			}
-		}		
-	},
-	
-	stopAllTasks: function(){
-		log.debug('Stop all tasks', this.logAuthor)
-		var cmps = this.getCmps()
-		for(var i in cmps){
-			if (cmps[i].stopTask){
-				cmps[i].stopTask()
-			}
-		}		
-	},
-	
-	//Reporting
-	addReportingBar : function() {
-		var config = {
-					width:350,
-					border:false,
-					title:_('Live reporting toolbar'),
-					constrain: true,
-					renderTo : this.id,
-					resizable: false,
-					closable:false
-					}
-		this.reportingBar = Ext.widget('ReportingBar',{reloadAfterAction: true})
-		
-		this.export_window = Ext.widget('window',config)
-		this.export_window.addDocked(this.reportingBar)
-		this.export_window.show()
-		
-		//switch widget to reporting mode
-		var cmps = this.getCmps()
-		for(var i in cmps){
-			if(cmps[i].reportMode == false){
-				cmps[i].reportMode = true
+
+	startAllTasks: function() {
+		log.debug('Start all tasks', this.logAuthor);
+		var cmps = this.getCmps();
+		for (var i in cmps) {
+			if (cmps[i].startTask) {
+				cmps[i].startTask();
 			}
 		}
-		
-		this.stopAllTasks()
+	},
+
+	stopAllTasks: function() {
+		log.debug('Stop all tasks', this.logAuthor);
+		var cmps = this.getCmps();
+		for (var i in cmps) {
+			if (cmps[i].stopTask) {
+				cmps[i].stopTask();
+			}
+		}
+	},
+
+	//Reporting
+	addReportingBar: function() {
+		var config = {
+					width: 350,
+					border: false,
+					title: _('Live reporting toolbar'),
+					constrain: true,
+					renderTo: this.id,
+					resizable: false,
+					closable: false
+					};
+		this.reportingBar = Ext.widget('ReportingBar', {reloadAfterAction: true});
+
+		this.export_window = Ext.widget('window', config);
+		this.export_window.addDocked(this.reportingBar);
+		this.export_window.show();
+
+		//switch widget to reporting mode
+		var cmps = this.getCmps();
+		for (var i in cmps) {
+			if (cmps[i].reportMode == false) {
+				cmps[i].reportMode = true;
+			}
+		}
+
+		this.stopAllTasks();
 	},
 	/*
 	removeReportingBar : function(){
@@ -277,42 +277,42 @@ Ext.define('canopsis.view.Tabs.Content' ,{
 				}
 			}
 		}
-		
+
 		this.export_window.destroy()
 
 	},*/
-	
-	setReportDate : function(from,to){
-		log.debug('Send report data for widgets', this.logAuthor)
-		var cmps = this.getCmps()
-		for(var i in cmps){
-			cmps[i]._doRefresh(from,to)
-		}		
-		
+
+	setReportDate: function(from,to) {
+		log.debug('Send report data for widgets', this.logAuthor);
+		var cmps = this.getCmps();
+		for (var i in cmps) {
+			cmps[i]._doRefresh(from, to);
+		}
+
 	},
-	
+
 	//misc
-	beforeclose: function(tab, object){
+	beforeclose: function(tab, object) {
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
 			Ext.getCmp('main-tabs').setActiveTab(old_tab);
 		}
-		
-		if (this.localstore_record){
+
+		if (this.localstore_record) {
 			//remove from store
-			log.debug("Remove this tab from localstore ...", this.logAuthor)
+			log.debug('Remove this tab from localstore ...', this.logAuthor);
 			var store = Ext.data.StoreManager.lookup('Tabs');
 			store.remove(this.localstore_record);
 			store.save();
 		}
 	},
 
- 	beforeDestroy : function() {
-		log.debug("Destroy items ...", this.logAuthor)
+ 	beforeDestroy: function() {
+		log.debug('Destroy items ...', this.logAuthor);
 		canopsis.view.Tabs.Content.superclass.beforeDestroy.call(this);
- 		log.debug(this.id + " Destroyed.", this.logAuthor)
- 	},
- 	
- 
+ 		log.debug(this.id + ' Destroyed.', this.logAuthor);
+ 	}
+
+
 });

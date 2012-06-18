@@ -22,15 +22,15 @@
 function _(text, context) {
 	if (typeof(i18n) != 'undefined') {
 		if (context)
-			if(i18n[context + '.' + text])
-				return i18n[context + '.' + text]
+			if (i18n[context + '.' + text])
+				return i18n[context + '.' + text];
 
-		if(i18n[text])
-			return i18n[text]
-			
-		if(global.locale != 'en' && (global.log.level > 4))
-			global.untranslated.push(text)
+		if (i18n[text])
+			return i18n[text];
+
+		if (global.locale != 'en' && (global.log.level > 4))
+			global.untranslated.push(text);
 	}
-	
-	return text
+
+	return text;
 }

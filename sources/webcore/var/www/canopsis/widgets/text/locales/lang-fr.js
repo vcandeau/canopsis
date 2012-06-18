@@ -19,5 +19,5 @@
 # ---------------------------------
 */
 
-i18n['text.Inner text'] = 'Texte intérieur'
+i18n['text.Inner text'] = 'Texte intérieur';
 

@@ -18,24 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.View.TreePanel' ,{
+Ext.define('canopsis.view.View.TreePanel' , {
 	extend: 'canopsis.lib.view.ctree',
 
 	alias: 'widget.ViewTreePanel',
-	
-	store : 'TreeStoreViews',
-	model : 'View',
-	
-	leafName : 'view',
-	
-	reporting : true,
+
+	store: 'TreeStoreViews',
+	model: 'View',
+
+	leafName: 'view',
+
+	reporting: true,
 	opt_bar_export: true,
-	
+
 	initComponent: function() {
-		
-		
+
+
 		this.columns = [{
-			xtype: 'treecolumn', 
+			xtype: 'treecolumn',
 			text: _('Name'),
 			flex: 5,
 			dataIndex: 'crecord_name'
@@ -52,37 +52,37 @@ Ext.define('canopsis.view.View.TreePanel' ,{
 		},{
 			width: 80,
 			align: 'center',
-			text:  _('Owner'),
-			dataIndex: 'aaa_access_owner',
+			text: _('Owner'),
+			dataIndex: 'aaa_access_owner'
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Group'),
-			dataIndex: 'aaa_access_group',
+			dataIndex: 'aaa_access_group'
 		},{
 			width: 60,
 			align: 'center',
-			text:  _('Others'),
-			dataIndex: 'aaa_access_other',
-		}]
-		
-		if(global.reporting == true){
+			text: _('Others'),
+			dataIndex: 'aaa_access_other'
+		}];
+
+		if (global.reporting == true) {
 			this.columns.push({
 				width: 20,
 				renderer: rdr_export_button
-			})
+			});
 		}
-		
+
 		this.columns.push({
 				width: 16
-			})
-		
+			});
+
 		this.callParent(arguments);
-		
+
 	},
-	
-	export_pdf : function(view){
-		this.fireEvent('exportPdf',view)
+
+	export_pdf: function(view) {
+		this.fireEvent('exportPdf', view);
 	}
-	
+
 });

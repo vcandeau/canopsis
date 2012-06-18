@@ -35,74 +35,74 @@ Ext.define('canopsis.controller.Tabs', {
 				//add: this.on_add,
 				//remove: this.on_remove,
 				afterrender: function() {
-						if (! this.tabpanel_rendered){
-							this.open_dashboard()
-							this.open_saved_view()
-							this.tabpanel_rendered = true
-						}
-					},
-			},
+					if (! this.tabpanel_rendered) {
+						this.open_dashboard();
+						this.open_saved_view();
+						this.tabpanel_rendered = true;
+					}
+				}
+			}
 		});
 
 		var store = Ext.data.StoreManager.lookup('Tabs');
-		store.proxy.id = store.proxy.id + '.' + global.account.user
+		store.proxy.id = store.proxy.id + '.' + global.account.user;
 		store.load();
 	},
-	
-	doRedraw: function(){
+
+	doRedraw: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.doRedraw()
+		tab.doRedraw();
 	},
 
-  	on_tabchange: function(tabPanel, new_tab, old_tab, object){
+  	on_tabchange: function(tabPanel, new_tab, old_tab, object) {
 		//log.debug('Tabchange', this.logAuthor);
-		tabPanel.old_tab = old_tab
+		tabPanel.old_tab = old_tab;
 	},
-	
-	reload_active_view: function(){
-		log.debug('Reload active view', this.logAuthor)
+
+	reload_active_view: function() {
+		log.debug('Reload active view', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.removeAll()
-		tab.displayed = false
-		tab.setContent()
+		tab.removeAll();
+		tab.displayed = false;
+		tab.setContent();
 	},
-	
-	open_dashboard: function(){
-		var dashboard_id = this.getController('Account').getConfig("dashboard", "view._default_.dashboard")
-		log.debug('Open dashboard: ' + dashboard_id, this.logAuthor)
-		return this.open_view({ view_id: dashboard_id, title: _("Dashboard"), closable: false, save: false }, 0)
+
+	open_dashboard: function() {
+		var dashboard_id = this.getController('Account').getConfig('dashboard', 'view._default_.dashboard');
+		log.debug('Open dashboard: ' + dashboard_id, this.logAuthor);
+		return this.open_view({ view_id: dashboard_id, title: _('Dashboard'), closable: false, save: false }, 0);
 	},
-	
-	open_saved_view: function(){
+
+	open_saved_view: function() {
 		var store = Ext.data.StoreManager.lookup('Tabs');
-		var views = []
-		
+		var views = [];
+
 		store.each(function(record) {
 			var options = record.get('options');
-			views.push(options)
-		}, this)
-		
-		store.proxy.clear();
-		
-		log.debug('Load saved tabs:',  this.logAuthor);
-		for (var i in views){
-			var options = views[i]
-			log.debug(' + ' + options.title + '('+options.view_id+')',  this.logAuthor);			
-			options.autoshow = false
+			views.push(options);
+		}, this);
 
-			var tab = this.open_view(options)
-			if (! tab){
-				log.debug("Invalid view options:", this.logAuthor)
+		store.proxy.clear();
+
+		log.debug('Load saved tabs:', this.logAuthor);
+		for (var i in views) {
+			var options = views[i];
+			log.debug(' + ' + options.title + '(' + options.view_id + ')', this.logAuthor);
+			options.autoshow = false;
+
+			var tab = this.open_view(options);
+			if (! tab) {
+				log.debug('Invalid view options:', this.logAuthor);
 				//log.dump(options)
 			}
 		}
-		
+
 		var maintabs = Ext.getCmp('main-tabs');
 		maintabs.setActiveTab(0);
 	},
 
-	open_view : function(args, index){
-		
+	open_view: function(args, index) {
+
 		//default options
 		var default_options = {
 			title: _('no title'),
@@ -112,35 +112,35 @@ Ext.define('canopsis.controller.Tabs', {
 			save: true,
 			tab_id: undefined,
 			index: undefined,
-			iconCls: 'icon-bullet-orange',
-		}
-		
-		var options = extend(default_options, args)
-		
-		log.debug("Open view tab '"+options.view_id+"'", this.logAuthor)
+			iconCls: 'icon-bullet-orange'
+		};
 
-		if (options.view_id){
+		var options = extend(default_options, args);
+
+		log.debug("Open view tab '" + options.view_id + "'", this.logAuthor);
+
+		if (options.view_id) {
 			var maintabs = Ext.getCmp('main-tabs');
-			
-			if(options.tab_id){
-				var tab_id = options.view_id + options.tab_id +'.tab'
+
+			if (options.tab_id) {
+				var tab_id = options.view_id + options.tab_id + '.tab';
 			} else {
-				var tab_id = options.view_id +'.tab'
+				var tab_id = options.view_id + '.tab';
 			}
-			
+
 			var tab = Ext.getCmp(tab_id);
 
 			if (tab) {
-				log.debug(" - Tab allerady open, just show it", this.logAuthor)
+				log.debug(' - Tab allerady open, just show it', this.logAuthor);
 				maintabs.setActiveTab(tab);
-			}else{
-				log.debug(" - Create tab ...", this.logAuthor)
-				log.debug("    - Get view config ("+options.view_id+") ...", this.logAuthor)
-				
+			}else {
+				log.debug(' - Create tab ...', this.logAuthor);
+				log.debug('    - Get view config (' + options.view_id + ') ...', this.logAuthor);
+
 				var localstore_record = false;
-				if (options.save){
+				if (options.save) {
 					// archive tab in store
-					log.debug("Add '"+options.title+"' ('"+options.view_id+"') in localstore ...", this.logAuthor)
+					log.debug("Add '" + options.title + "' ('" + options.view_id + "') in localstore ...", this.logAuthor);
 					var store = Ext.data.StoreManager.lookup('Tabs');
 					localstore_record = store.add({options: options});
 					store.save();
@@ -149,19 +149,19 @@ Ext.define('canopsis.controller.Tabs', {
 				var tab = {
 					title: _(options.title),
 					id: tab_id,
-					iconCls: [ options.iconCls ],
+					iconCls: [options.iconCls],
 					view_id: options.view_id,
 					xtype: 'TabsContent',
 					closable: options.closable,
 					options: options.options,
 					autoshow: options.autoshow,
-					localstore_record: localstore_record,
-				}
-				
-				if (index != undefined){
-					tab = maintabs.insert(index, tab)
-				}else{
-					tab = maintabs.add(tab)
+					localstore_record: localstore_record
+				};
+
+				if (index != undefined) {
+					tab = maintabs.insert(index, tab);
+				}else {
+					tab = maintabs.add(tab);
 				}
 
 				if (options.autoshow) {
@@ -172,34 +172,34 @@ Ext.define('canopsis.controller.Tabs', {
 			}
 		}
 	},
-	
-	save_active_view : function(){
-		
+
+	save_active_view: function() {
+
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		var right = this.getController('Account').check_right(tab.view,'w')
-		if(right == true){
-			tab.saveJqGridable()
-		}else{
-			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		var right = this.getController('Account').check_right(tab.view, 'w');
+		if (right == true) {
+			tab.saveJqGridable();
+		}else {
+			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}
 	},
-	
-	create_new_view : function(){
-		this.getController('View').create_new_view()
+
+	create_new_view: function() {
+		this.getController('View').create_new_view();
 	},
-	
-	edit_active_view : function(){
+
+	edit_active_view: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		var right = this.getController('Account').check_right(tab.view,'w')
-		if(right == true){
+		var right = this.getController('Account').check_right(tab.view, 'w');
+		if (right == true) {
 			tab.editMode();
-		}else{
-			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+		}else {
+			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}
-	},
-	
+	}
+
   	/*on_add: function(component, index, object){
-		log.debug('Added', this.logAuthor);	
+		log.debug('Added', this.logAuthor);
 	},
 
 	on_remove: function(component, object){

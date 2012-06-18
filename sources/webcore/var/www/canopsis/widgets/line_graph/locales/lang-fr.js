@@ -21,32 +21,32 @@
 
 i18n['line_graph.on'] = 'sur';
 i18n['line_graph.Auto title (if one node)'] = 'Titre automatique (si un noeud)';
-i18n["line_graph.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance"
-i18n['line_graph.Time window'] = 'Fenêtre de temps'
-i18n['line_graph.Series Type'] = 'Type de séries'
-i18n['line_graph.Line Width'] = 'Largeur de la ligne'
-i18n['line_graph.Enable legend'] = 'Afficher la légende'
-i18n['line_graph.Legend vertical alignement'] = 'Alignement vertical de la légende'
-i18n['line_graph.Legend horizontal alignement'] = 'Alignement horizontal de la légende'
-i18n['line_graph.Legend layout'] = 'Disposition de la légende'
+i18n["line_graph.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance";
+i18n['line_graph.Time window'] = 'Fenêtre de temps';
+i18n['line_graph.Series Type'] = 'Type de séries';
+i18n['line_graph.Line Width'] = 'Largeur de la ligne';
+i18n['line_graph.Enable legend'] = 'Afficher la légende';
+i18n['line_graph.Legend vertical alignement'] = 'Alignement vertical de la légende';
+i18n['line_graph.Legend horizontal alignement'] = 'Alignement horizontal de la légende';
+i18n['line_graph.Legend layout'] = 'Disposition de la légende';
 
-i18n['Marker'] = 'Repère'
-i18n['Marker radius'] = 'Rayon du repère'
-i18n['Max zoom (seconds)'] = 'Zoom max (secondes)'
-i18n['Warn/Crit threshold lines'] = 'Warn/Crit lignes de seuils'
+i18n['Marker'] = 'Repère';
+i18n['Marker radius'] = 'Rayon du repère';
+i18n['Max zoom (seconds)'] = 'Zoom max (secondes)';
+i18n['Warn/Crit threshold lines'] = 'Warn/Crit lignes de seuils';
 
-i18n['line_graph.1 hour'] = '1 heure'
-i18n['line_graph.1 day'] = '1 jour'
-i18n['line_graph.1 week'] = '1 semaine'
-i18n['line_graph.1 month'] = '1 mois'
-i18n['line_graph.1 year'] = '1 année'
+i18n['line_graph.1 hour'] = '1 heure';
+i18n['line_graph.1 day'] = '1 jour';
+i18n['line_graph.1 week'] = '1 semaine';
+i18n['line_graph.1 month'] = '1 mois';
+i18n['line_graph.1 year'] = '1 année';
 
-i18n['line_graph.Area'] = 'Zone'
-i18n['line_graph.Line'] = 'Ligne'
+i18n['line_graph.Area'] = 'Zone';
+i18n['line_graph.Line'] = 'Ligne';
 
-i18n['None'] = 'Aucun'
-i18n['Circle'] = 'Cercle'
-i18n['Square'] = 'Carré'
-i18n['Diamond'] = 'Diamant'
-i18n['Triangle'] = 'Triangle'
-i18n['Triangle Down'] = 'Triangle inversé'
+i18n['None'] = 'Aucun';
+i18n['Circle'] = 'Cercle';
+i18n['Square'] = 'Carré';
+i18n['Diamond'] = 'Diamant';
+i18n['Triangle'] = 'Triangle';
+i18n['Triangle Down'] = 'Triangle inversé';

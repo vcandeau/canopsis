@@ -19,54 +19,54 @@
 # ---------------------------------
 */
 Ext.define('canopsis.model.Schedule', {
-	extend: 'Ext.data.Model',	
+	extend: 'Ext.data.Model',
 	fields: [
 		{name: '_id'},
-		{name: 'id', mapping:'_id'},
-		{name : 'crecord_type', defaultValue: 'schedule'},
-		{name : 'func_ref'},
-		{name : 'loaded', defaultValue:false},
-		{name : 'crecord_name'},
-		{name : 'args', defaultsValue : []},
-		{name : 'kwargs' ,defaultsValue : {}},
-		{name : 'next_run_time'},
-		{name : 'cron', defaultValue: undefined},
-		{name : 'log'},
+		{name: 'id', mapping: '_id'},
+		{name: 'crecord_type', defaultValue: 'schedule'},
+		{name: 'func_ref'},
+		{name: 'loaded', defaultValue: false},
+		{name: 'crecord_name'},
+		{name: 'args', defaultsValue: []},
+		{name: 'kwargs' , defaultsValue: {}},
+		{name: 'next_run_time'},
+		{name: 'cron', defaultValue: undefined},
+		{name: 'log'},
 		{
-			name : 'log_success',
-			convert : function(value, record) {return record.get('log').success}
+			name: 'log_success',
+			convert: function(value, record) {return record.get('log').success}
 		},
 		{
-			name : 'log_output',
-			convert : function(value, record) {
-				var celery = record.get('log').celery_output
-				var duration = record.get('log').duration
-				if(celery != undefined && duration != undefined){
-					return celery + ' (in ' + duration + 's)'
+			name: 'log_output',
+			convert: function(value, record) {
+				var celery = record.get('log').celery_output;
+				var duration = record.get('log').duration;
+				if (celery != undefined && duration != undefined) {
+					return celery + ' (in ' + duration + 's)';
 				}
 			}
 		},
 		{
-			name : 'log_last_execution',
-			convert : function(value, record) {return record.get('log').timestamp}
-		},		
+			name: 'log_last_execution',
+			convert: function(value, record) {return record.get('log').timestamp}
+		},
 		{
 		 name: 'mail',
 		 convert: function(value, record) {
-					var kwargs = record.get('kwargs')
-					if(kwargs['mail'] != undefined){
-						var mail = kwargs['mail']
-						return true
-					}else{
-						return false
+					var kwargs = record.get('kwargs');
+					if (kwargs['mail'] != undefined) {
+						var mail = kwargs['mail'];
+						return true;
+					}else {
+						return false;
 					}
 				}
 		},
-		
+
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'},
-	],
+		{name: 'aaa_owner'}
+	]
 });

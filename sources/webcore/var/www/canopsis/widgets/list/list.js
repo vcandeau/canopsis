@@ -18,13 +18,13 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.list.list' ,{
+Ext.define('widgets.list.list' , {
 	extend: 'canopsis.lib.view.cwidget',
-	
-	alias : 'widget.list',
-	
+
+	alias: 'widget.list',
+
 	//don't work
-	filter: {"source_type":"component"},
+	filter: {'source_type': 'component'},
 
 	//Default options
 	pageSize: global.pageSize,
@@ -35,7 +35,7 @@ Ext.define('widgets.list.list' ,{
 	show_source_type: true,
 	show_last_check: true,
 	show_output: true,
-	
+
 	paging: true,
 	bar_search: true,
 	reload: true,
@@ -43,17 +43,17 @@ Ext.define('widgets.list.list' ,{
 	hideHeaders: false,
 	scroll: true,
 	column_sort: true,
-	
-	default_sort_column : 'state',
-	default_sort_direction : 'DESC',
+
+	default_sort_column: 'state',
+	default_sort_direction: 'DESC',
 	//..
-	
+
 	afterContainerRender: function() {
-		
+
 		if (this.reload || this.bar_search) { this.bar = true } else { this.bar = false }
-	
+
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
-			exportMode : this.exportMode,
+			exportMode: this.exportMode,
 			//border: (this.title || this.fullmode) ? false : true,
 			opt_paging: this.paging,
 			filter: this.filter,
@@ -61,7 +61,7 @@ Ext.define('widgets.list.list' ,{
 			pageSize: this.pageSize,
 			remoteSort: true,
 			sorters: [{
-				property : this.default_sort_column,
+				property: this.default_sort_column,
 				direction: this.default_sort_direction
 			}],
 
@@ -72,20 +72,20 @@ Ext.define('widgets.list.list' ,{
 			opt_show_source_type: this.show_source_type,
 			opt_show_last_check: this.show_last_check,
 			opt_show_output: this.show_output,
-			
-			opt_column_sortable : this.column_sort,
-		
+
+			opt_column_sortable: this.column_sort,
+
 			opt_bar: this.bar,
 			opt_bar_search: this.bar_search,
-			opt_bar_search_field: ['component', 'resource','output'],
+			opt_bar_search_field: ['component', 'resource', 'output'],
 
 			opt_bar_add: false,
 			opt_bar_duplicate: false,
 			opt_bar_reload: this.reload,
 			opt_bar_delete: false,
 			hideHeaders: this.hideHeaders,
-			scroll: this.scroll 
-			
+			scroll: this.scroll
+
 			//opt_view_element:'view.ComponentDetails'
 
 		});
@@ -93,18 +93,18 @@ Ext.define('widgets.list.list' ,{
 		// Bind buttons
 		this.ctrl = Ext.create('canopsis.lib.controller.cgrid');
 		this.on('afterrender', function() {
-			this.ctrl._bindGridEvents(this.grid)
+			this.ctrl._bindGridEvents(this.grid);
 		}, this);
-		
+
 		this.wcontainer.removeAll();
 		this.wcontainer.add(this.grid);
-		
+
 		this.ready();
 	},
-	
-	doRefresh: function(from, to){
+
+	doRefresh: function(from, to) {
 		if (this.grid)
-			this.grid.store.load()
-	},
-	
+			this.grid.store.load();
+	}
+
 });
