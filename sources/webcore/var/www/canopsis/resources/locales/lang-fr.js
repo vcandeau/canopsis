@@ -312,9 +312,5 @@ var i18n={
 	
 	'Send by mail' : 'Envoyer par e-mail',
 	'To' : 'à',
-	'Subject' : 'Sujet',
-	
-	
-	
-	
+	'Subject' : 'Sujet'
 }

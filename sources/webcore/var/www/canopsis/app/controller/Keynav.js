@@ -24,64 +24,64 @@ Ext.define('canopsis.controller.Keynav', {
 	logAuthor: '[controller][Keynav]',
 
 	init: function() {
-		log.debug('Map keynav', this.logAuthor)
-		
+		log.debug('Map keynav', this.logAuthor);
+
 		this.map = Ext.create('Ext.util.KeyMap', Ext.getBody(), [
 			{
 				key: Ext.EventObject.N,
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
-					event.stopEvent()
+					event.stopEvent();
 					// New view
-					log.debug('ctrl + n', this.logAuthor)	
+					log.debug('ctrl + n', this.logAuthor);
 				}
 			},{
 				key: Ext.EventObject.R,
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
-					event.stopEvent()
+					event.stopEvent();
 					// Reload view
-					log.debug('ctrl + r', this.logAuthor)
-					
-					var ctrl = this.getController('Tabs')
-					ctrl.reload_active_view()
-		
+					log.debug('ctrl + r', this.logAuthor);
+
+					var ctrl = this.getController('Tabs');
+					ctrl.reload_active_view();
+
 				}
 			},{
 				key: Ext.EventObject.E,
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
-					event.stopEvent()
+					event.stopEvent();
 					// Edit view
-					log.debug('ctrl + e', this.logAuthor)
+					log.debug('ctrl + e', this.logAuthor);
 
-					var ctrl = this.getController('Tabs')
-					ctrl.edit_active_view()
+					var ctrl = this.getController('Tabs');
+					ctrl.edit_active_view();
 				}
 			},{
 				key: Ext.EventObject.S,
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
-					event.stopEvent()
+					event.stopEvent();
 					// Save view
-					log.debug('ctrl + s', this.logAuthor)
-					
-					var ctrl = this.getController('Tabs')
-					ctrl.save_active_view()
+					log.debug('ctrl + s', this.logAuthor);
+
+					var ctrl = this.getController('Tabs');
+					ctrl.save_active_view();
 				}
 			},{
 				key: Ext.EventObject.F,
 				ctrl: true,
 				scope: this,
 				fn: function(key, event) {
-					event.stopEvent()
+					event.stopEvent();
 					// Search view
-					log.debug('ctrl + f', this.logAuthor)
-	
+					log.debug('ctrl + f', this.logAuthor);
+
 					/*if (this.win) {
 						this.win.show();
 					} else {
@@ -104,6 +104,6 @@ Ext.define('canopsis.controller.Keynav', {
 		]);
 
 		this.callParent(arguments);
-	},
+	}
 
 });

@@ -19,8 +19,8 @@
 # ---------------------------------
 */
 Ext.define('canopsis.store.Accounts', {
-    extend: 'canopsis.lib.store.cstore',
-    model: 'canopsis.model.Account',
+	extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Account',
 
 	storeId: 'store.Accounts',
 
@@ -34,13 +34,13 @@ Ext.define('canopsis.store.Accounts', {
 		reader: {
 			type: 'json',
 			root: 'data',
-			totalProperty  : 'total',
+			totalProperty: 'total',
 			successProperty: 'success'
 		},
 		writer: {
 			type: 'json',
-			writeAllFields: false,
-		},
+			writeAllFields: false
+		}
 	}
-	
+
 });

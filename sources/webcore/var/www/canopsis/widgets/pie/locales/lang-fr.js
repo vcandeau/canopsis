@@ -21,15 +21,15 @@
 
 i18n['pie.on'] = 'sur';
 i18n['pie.Auto title (if one node)'] = 'Titre automatique (si un noeud)';
-i18n["pie.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance"
-i18n['pie.Time window'] = 'Fenêtre de temps'
-i18n['pie.Series Type'] = 'Type de séries'
-i18n['pie.Line Width'] = 'Largeur de la ligne'
-i18n['pie.Enable legend'] = 'Afficher la légende'
-i18n['pie.Legend vertical alignement'] = 'Alignement vertical de la légende'
-i18n['pie.Legend horizontal alignement'] = 'Alignement horizontal de la légende'
-i18n['pie.Legend layout'] = 'Disposition de la légende'
-i18n['pie.Pie Size %'] = 'Taille en %'
-i18n['pie.Pie'] = 'Camembert'
-i18n['pie.Pie Style'] = 'Style du Camembert'
-i18n['pie.Lgend Style'] = 'Style de la légende'
+i18n["pie.Total (by default use 'max' field of perfdata)"] = "Total (par défaut utilise le champ 'max' des données de performance";
+i18n['pie.Time window'] = 'Fenêtre de temps';
+i18n['pie.Series Type'] = 'Type de séries';
+i18n['pie.Line Width'] = 'Largeur de la ligne';
+i18n['pie.Enable legend'] = 'Afficher la légende';
+i18n['pie.Legend vertical alignement'] = 'Alignement vertical de la légende';
+i18n['pie.Legend horizontal alignement'] = 'Alignement horizontal de la légende';
+i18n['pie.Legend layout'] = 'Disposition de la légende';
+i18n['pie.Pie Size %'] = 'Taille en %';
+i18n['pie.Pie'] = 'Camembert';
+i18n['pie.Pie Style'] = 'Style du Camembert';
+i18n['pie.Lgend Style'] = 'Style de la légende';

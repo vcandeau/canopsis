@@ -22,96 +22,96 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	extend: 'Ext.app.Controller',
 
 	allowEdit: true,
-	
-	EditMethod: "window",
-	
-	logAuthor : '[controller][cgrid]',
+
+	EditMethod: 'window',
+
+	logAuthor: '[controller][cgrid]',
 
 	init: function() {
-		log.debug('Initialize '+this.id+' ...',this.logAuthor);
+		log.debug('Initialize ' + this.id + ' ...', this.logAuthor);
 
-		var control = {}
+		var control = {};
 		control[this.listXtype] = {
 		                afterrender: this._bindGridEvents
-		}
+		};
 		this.control(control);
 
 		this.callParent(arguments);
 
 	},
-   
-	_bindGridEvents: function(grid) {
-		var id = grid.id
-		this.grid = grid
-		
 
-		log.debug('Bind events "'+id+'" ...',this.logAuthor)
+	_bindGridEvents: function(grid) {
+		var id = grid.id;
+		this.grid = grid;
+
+
+		log.debug('Bind events "' + id + '" ...', this.logAuthor);
 
 		//Bind Dblclick
-		grid.on('selectionchange',	this._selectionchange,	this)
-		if(grid.opt_view_element){
-			grid.on('itemdblclick',this._viewElement,this)
+		grid.on('selectionchange',	this._selectionchange,	this);
+		if (grid.opt_view_element) {
+			grid.on('itemdblclick', this._viewElement, this);
 		}
-		else{
-			if(grid.opt_allow_edit == true)
-				grid.on('itemdblclick',this._editRecord,this)
+		else {
+			if (grid.opt_allow_edit == true)
+				grid.on('itemdblclick', this._editRecord, this);
 		}
-		
-		
+
+
 		//Binding action for contextMenu
-		if(grid.contextMenu){
-			grid.on('itemcontextmenu', this._contextMenu,this)
-			
+		if (grid.contextMenu) {
+			grid.on('itemcontextmenu', this._contextMenu, this);
+
 			//Duplicate button
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=duplicate]')
-			for (i in btns){
-				btns[i].on('click', this._duplicateRecord, this)
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=duplicate]');
+			for (i in btns) {
+				btns[i].on('click', this._duplicateRecord, this);
 			}
 			//DeleteButton
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=delete]')
-			for (i in btns){
-				btns[i].on('click', this._deleteButton, this)
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=delete]');
+			for (i in btns) {
+				btns[i].on('click', this._deleteButton, this);
 			}
-			
+
 			//edit rights
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rights]')
-			for (i in btns){
-				btns[i].on('click', this._editRights, this)
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rights]');
+			for (i in btns) {
+				btns[i].on('click', this._editRights, this);
 			}
-			
+
 			//Rename option
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rename]')
-			for (i in btns){
-				btns[i].on('click', this._rename, this)
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=rename]');
+			for (i in btns) {
+				btns[i].on('click', this._rename, this);
 			}
-			
+
 			//send by mail
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=sendByMail]')
-			for (i in btns){
-				btns[i].on('click', this._sendByMail, this)
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=sendByMail]');
+			for (i in btns) {
+				btns[i].on('click', this._sendByMail, this);
 			}
-			
+
 			//authKey
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=authkey]')
-			for (i in btns){
-				btns[i].on('click', this._authkey, this)
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=authkey]');
+			for (i in btns) {
+				btns[i].on('click', this._authkey, this);
 			}
-			
-			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]')
-			for (i in btns){
-				btns[i].on('click', this._runItem, this)
+
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]');
+			for (i in btns) {
+				btns[i].on('click', this._runItem, this);
 			}
-			
+
 		}
 		//search buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]')
-		for (i in btns){
-			btns[i].on('click', this._searchRecord, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
+		for (i in btns) {
+			btns[i].on('click', this._searchRecord, this);
 		}
-		
+
 		//bind keynav
-		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]')
-		for (i in textfields){
+		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
+		for (i in textfields) {
 				var textfield = textfields[i];
 				Ext.create('Ext.util.KeyNav', textfield.id, {
 					scope: this,
@@ -119,7 +119,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				});
 		}
 
-		if(grid.opt_keynav_del){
+		if (grid.opt_keynav_del) {
 			//log.debug('id of grid is : ' + id);
 			this._keynav = Ext.create('Ext.util.KeyNav', id, {
 						scope: this,
@@ -127,508 +127,508 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						target: id
 			});
 		}
-		
+
 		//Duplicate buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]')
-		for (i in btns){
-			btns[i].on('click', this._duplicateRecord, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=duplicate]');
+		for (i in btns) {
+			btns[i].on('click', this._duplicateRecord, this);
 		}
 
 		// Add buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]')
-		for (i in btns){
-			btns[i].on('click', this._addButton, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=add]');
+		for (i in btns) {
+			btns[i].on('click', this._addButton, this);
 		}
 
 		// Delete buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=delete]')
-		for (i in btns){
-			btns[i].on('click', this._deleteButton, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=delete]');
+		for (i in btns) {
+			btns[i].on('click', this._deleteButton, this);
 		}
 
 		// Reload buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]')
-		for (i in btns){
-			btns[i].on('click', this._reloadButton, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=reload]');
+		for (i in btns) {
+			btns[i].on('click', this._reloadButton, this);
 		}
-		
+
 		// Download buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=download]')
-		for (i in btns){
-			btns[i].on('click', this._downloadButton, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=download]');
+		for (i in btns) {
+			btns[i].on('click', this._downloadButton, this);
 		}
 
 		//this._reloadButton(grid)
-		
+
 	},
 
 	_bindFormEvents: function(form) {
-		var id = form.id
-		log.debug('[controller][cgrid][form] - Bind events on "'+id+'" ...')
+		var id = form.id;
+		log.debug('[controller][cgrid][form] - Bind events on "' + id + '" ...');
 
 		// Save buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]')
-		for (i in btns){
-			btns[i].on('click', function(){ this._saveForm(form) }, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=save]');
+		for (i in btns) {
+			btns[i].on('click', function() { this._saveForm(form) }, this);
 		}
 
 		// Cancel buttons
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]')
-		for (i in btns){
-			btns[i].on('click', function(){ this._cancelForm(form) }, this)
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=cancel]');
+		for (i in btns) {
+			btns[i].on('click', function() { this._cancelForm(form) }, this);
 		}
 	},
 
 	_reloadButton: function() {
-		log.debug('Reload store "'+this.grid.store.storeId+'" of '+this.grid.id ,this.logAuthor);
-		log.debug('store.proxy.extraParams.filter:',this.logAuthor)
-		log.dump(this.grid.store.proxy.extraParams.filter)
-		this.grid.store.load()
+		log.debug('Reload store "' + this.grid.store.storeId + '" of ' + this.grid.id, this.logAuthor);
+		log.debug('store.proxy.extraParams.filter:', this.logAuthor);
+		log.dump(this.grid.store.proxy.extraParams.filter);
+		this.grid.store.load();
 	},
 
-	_selectionchange: function(view, records){
-		log.debug('selectionchange',this.logAuthor);
-		var grid = this.grid
+	_selectionchange: function(view, records) {
+		log.debug('selectionchange', this.logAuthor);
+		var grid = this.grid;
 
 		//Enable delete Button
-		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]')
-		for (i in btns){
+		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]');
+		for (i in btns) {
 			btns[i].setDisabled(records.length === 0);
 		}
 
 		if (this.selectionchange) {
-			this.selectionchange(view, records)
+			this.selectionchange(view, records);
 		}
 	},
-	
-	_viewElement: function(view, item, index){
-		log.debug('Clicked on element, function viewElement',this.logAuthor);
+
+	_viewElement: function(view, item, index) {
+		log.debug('Clicked on element, function viewElement', this.logAuthor);
 		//add_view_tab(this.grid.opt_view_element, item.data.component, true, {'nodeId' : item.data._id}, true, true,item.data.component)
 	},
 
 	_deleteButton: function(button) {
-		log.debug('Clicked deleteButton',this.logAuthor);
-		var grid = this.grid
+		log.debug('Clicked deleteButton', this.logAuthor);
+		var grid = this.grid;
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
-			
+
 			//check right
-			var ctrlAccount = this.getController('Account')
-			var authorized = true
-			for(var i in selection)
-				if(!ctrlAccount.check_record_right(selection[i],'w'))
-					authorized = false
-			
-			
-			if(authorized == true){
-				log.debug("Remove record ...",this.logAuthor)
-				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') +' '+ selection.length + ' ' + _('items') + ' ?',
-					function(btn, text){
-						if (btn == 'yes'){
+			var ctrlAccount = this.getController('Account');
+			var authorized = true;
+			for (var i in selection)
+				if (!ctrlAccount.check_record_right(selection[i], 'w'))
+					authorized = false;
+
+
+			if (authorized == true) {
+				log.debug('Remove record ...', this.logAuthor);
+				Ext.MessageBox.confirm(_('Confirm'), _('Are you sure you want to delete') + ' ' + selection.length + ' ' + _('items') + ' ?',
+					function(btn, text) {
+						if (btn == 'yes') {
 							//grid.store.suspendEvents()
-							grid.store.remove(selection)
-							log.debug('Reload store',this.logAuthor);
+							grid.store.remove(selection);
+							log.debug('Reload store', this.logAuthor);
 							//grid.store.sync()
 							//grid.store.resumeEvents()
 							//grid.store.load()
 						}
 					});
 			} else {
-				global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+				global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 			}
 		}
 
 		if (this.deleteButton) {
 			this.deleteButton(button, grid, selection);
 		}
-		
-		
+
+
 	},
-	
-	_editRights: function(){
+
+	_editRights: function() {
 		//log.debug('Edit rights',this.logAuthor);
-		var grid = this.grid
+		var grid = this.grid;
 		var selection = grid.getSelectionModel().getSelection()[0];
 		//create form
-		if(this.getController('Account').check_record_right(selection,'w')){
+		if (this.getController('Account').check_record_right(selection, 'w')) {
 			var config = {
-				data:selection,
-				namespace:this.grid.opt_db_namespace,
-				renderTo : grid.id,
+				data: selection,
+				namespace: this.grid.opt_db_namespace,
+				renderTo: grid.id,
 				constrain: true
-			}
-			crights = Ext.create('canopsis.lib.view.crights',config)
+			};
+			crights = Ext.create('canopsis.lib.view.crights', config);
 			//listen to save event to refresh store
-			crights.on('save', function(){grid.store.load()},this)
-			crights.show()
+			crights.on('save', function() {grid.store.load()},this);
+			crights.show();
 		} else {
-			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}
 	},
 
 	_addButton: function(button) {
-		log.debug('Clicked addButton',this.logAuthor);
+		log.debug('Clicked addButton', this.logAuthor);
 
-		this._showForm()
+		this._showForm();
 
 		if (this.addButton)
-			this.addButton(button)
+			this.addButton(button);
 	},
-	
-	_saveForm: function(form,store) {
-		log.debug('Clicked saveForm',this.logAuthor);
 
-		if(store == undefined){
+	_saveForm: function(form,store) {
+		log.debug('Clicked saveForm', this.logAuthor);
+
+		if (store == undefined) {
 			var store = this.grid.store;
 		}
 
-		if (form.form.isValid()){
+		if (form.form.isValid()) {
 			var data = form.getValues();
 			if (this._validateForm(store, data, form.form)) {
-				log.debug('Form is conform',this.logAuthor);
-				var record = Ext.create('canopsis.model.'+this.modelId, data);
-				log.debug('Store record in store',this.logAuthor);
-				record = this._preSave(record,data,form)
-				store.suspendEvents()
+				log.debug('Form is conform', this.logAuthor);
+				var record = Ext.create('canopsis.model.' + this.modelId, data);
+				log.debug('Store record in store', this.logAuthor);
+				record = this._preSave(record, data, form);
+				store.suspendEvents();
 				store.add(record);
-				this._postSave(record,data)
-				log.debug('Reload store',this.logAuthor);
-				store.resumeEvents()
+				this._postSave(record, data);
+				log.debug('Reload store', this.logAuthor);
+				store.resumeEvents();
 				store.load();
 
 				this._cancelForm(form);
 
 				//global.notify.notify(_('Success'), _('Record saved'))
 
-			}else{
-				log.error('Form is not valid !',this.logAuthor);
-				global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
-				return
+			}else {
+				log.error('Form is not valid !', this.logAuthor);
+				global.notify.notify(_('Invalid form'), _('Please check your form'), 'error');
+				return;
 			}
-		}else{
-			log.error('Form is not valid !',this.logAuthor);
-			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error')
-			return
+		}else {
+			log.error('Form is not valid !', this.logAuthor);
+			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error');
+			return;
 		}
 
 		if (this.saveForm) {
-			this.saveForm(form)
-		}			
+			this.saveForm(form);
+		}
 	},
-	
+
 	_validateForm: function(store, data, form) {
-		if (this.validateForm){
+		if (this.validateForm) {
 			return this.validateForm(store, data, form);
-		}else{
+		}else {
 			return true;
 		}
 	},
 
-	_preSave: function(record,data,form){
-		log.debug('Pre-Save',this.logAuthor);
-		if (this.preSave){
-			return this.preSave(record,data,form)
-		}else{
-			return record
+	_preSave: function(record,data,form) {
+		log.debug('Pre-Save', this.logAuthor);
+		if (this.preSave) {
+			return this.preSave(record, data, form);
+		}else {
+			return record;
 		}
 	},
 
-	_postSave: function(record){
-		log.debug('Post-Save',this.logAuthor);
-		if (this.postSave){
-			return this.postSave(record)
-		}else{
-			return record
+	_postSave: function(record) {
+		log.debug('Post-Save', this.logAuthor);
+		if (this.postSave) {
+			return this.postSave(record);
+		}else {
+			return record;
 		}
 	},
 
-	_cancelForm : function(form) {
-		log.debug('clicked cancelForm',this.logAuthor);
+	_cancelForm: function(form) {
+		log.debug('clicked cancelForm', this.logAuthor);
 		if (this.formXtype) {
-			var id = form.id
-			log.debug(" Close '"+id+"'",this.logAuthor);
-			
-			if (form.win){
-				form.win.close()
-				this._keynav.enable()
-			}else{
-				form.close()
+			var id = form.id;
+			log.debug(" Close '" + id + "'", this.logAuthor);
+
+			if (form.win) {
+				form.win.close();
+				this._keynav.enable();
+			}else {
+				form.close();
 			}
 		}
 
 		if (this.cancelForm) {
-			this.cancelForm(form)
+			this.cancelForm(form);
 		}
 	},
-	
+
 	_showForm: function(item) {
-		log.debug('Show form',this.logAuthor);
-		
+		log.debug('Show form', this.logAuthor);
+
 		if (this.showForm)
-			return this.showForm(item)
-		
-		var id = undefined
-		var data = undefined
-		var editing = false
-		
+			return this.showForm(item);
+
+		var id = undefined;
+		var data = undefined;
+		var editing = false;
+
 		// Edit
-		if (item){
-			id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-form'
-			data = item.data
-			editing = true
+		if (item) {
+			id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g, '-') + '-form';
+			data = item.data;
+			editing = true;
 		}
-		
+
 		if (this.formXtype) {
-			if (this.EditMethod == "tab"){
+			if (this.EditMethod == 'tab') {
 				// Create new TAB
-				var main_tabs = Ext.getCmp('main-tabs')
+				var main_tabs = Ext.getCmp('main-tabs');
 				var tab = Ext.getCmp(id);
-				
+
 				if (tab) {
-					log.debug("Tab '"+id+"' allready open, just show it",this.logAuthor)
+					log.debug("Tab '" + id + "' allready open, just show it", this.logAuthor);
 					main_tabs.setActiveTab(tab);
-				}else{
-					log.debug("Create tab '"+this.formXtype+"'",this.logAuthor)
+				}else {
+					log.debug("Create tab '" + this.formXtype + "'", this.logAuthor);
 					var form = main_tabs.add({
 						id: id,
-						title: '*'+ _('New') +' '+this.modelId,
+						title: '*' + _('New') + ' ' + this.modelId,
 						xtype: this.formXtype,
 						EditMethod: this.EditMethod,
 						editing: editing,
 						record: data,
-						closable: true,
+						closable: true
 					}).show();
-					form.win = undefined
-					
-					this._keynav.disable()
+					form.win = undefined;
+
+					this._keynav.disable();
 				}
-				
-			}else{
+
+			}else {
 				var form = Ext.getCmp(id);
-				
-				if (form){
-					log.debug("Window '"+id+"' allready open, just show it",this.logAuthor)
+
+				if (form) {
+					log.debug("Window '" + id + "' allready open, just show it", this.logAuthor);
 					form.win.show();
-				}else{
+				}else {
 					// Create new Window
-					log.debug("Create window '"+this.formXtype+"'",this.logAuthor)
+					log.debug("Create window '" + this.formXtype + "'", this.logAuthor);
 					var form = Ext.create('widget.' + this.formXtype, {
 						id: id,
 						EditMethod: this.EditMethod,
 						editing: editing,
-						record: data,
-					})
-					
+						record: data
+					});
+
 					var win = Ext.create('widget.window', {
 						title: _(this.modelId),
 						items: form,
 						closable: true,
-						constrain:true,
+						constrain: true,
 						renderTo: this.grid.id,
-						closeAction: 'destroy',
+						closeAction: 'destroy'
 					}).show();
-					form.win = win
-					this._keynav.disable()
+					form.win = win;
+					this._keynav.disable();
 				}
 			}
-			
-			this._bindFormEvents(form)
+
+			this._bindFormEvents(form);
 			return form;
-			
+
 		}
 	},
-	
-	_sendByMail: function(){
-		log.debug('Clicked sendByMail',this.logAuthor)
+
+	_sendByMail: function() {
+		log.debug('Clicked sendByMail', this.logAuthor);
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
-		if(this.sendByMail){
-				this.sendByMail(item)
+		if (this.sendByMail) {
+				this.sendByMail(item);
 		}
 	},
-	
-	_authkey: function(){
-		log.debug('Clicked authentification key',this.logAuthor)
+
+	_authkey: function() {
+		log.debug('Clicked authentification key', this.logAuthor);
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
-		
+
 		var config = {
 			account: item.get('user'),
-			constrain:true,
+			constrain: true,
 			renderTo: grid.id
-		}
-		
-		var authkey = Ext.create('canopsis.lib.view.cauthkey',config)
-		authkey.show()
+		};
+
+		var authkey = Ext.create('canopsis.lib.view.cauthkey', config);
+		authkey.show();
 	},
-	
-	_runItem: function(){
-		log.debug('Clicked runItem',this.logAuthor)
+
+	_runItem: function() {
+		log.debug('Clicked runItem', this.logAuthor);
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
-		if(this.runItem){
-			this.runItem(item)
+		if (this.runItem) {
+			this.runItem(item);
 		}
 	},
-		
-		
-	_rename: function(view, item, index){
-		log.debug('Clicked rename',this.logAuthor)
+
+
+	_rename: function(view, item, index) {
+		log.debug('Clicked rename', this.logAuthor);
 		grid = this.grid;
 		item = grid.getSelectionModel().getSelection()[0];
-		
+
 		//check rights
-		var ctrl = this.getController('Account')
-		if(ctrl.check_record_right(item,'w')){
-			if(this.rename){
-					this.rename(item)
+		var ctrl = this.getController('Account');
+		if (ctrl.check_record_right(item, 'w')) {
+			if (this.rename) {
+					this.rename(item);
 			}
 		} else {
-			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}
 	},
 
 	_editRecord: function(view, item, index) {
 		if (! this.allowEdit)
-			return
+			return;
 
-		log.debug('Clicked editRecord',this.logAuthor);
+		log.debug('Clicked editRecord', this.logAuthor);
 
 		//check rights
-		var ctrl = this.getController('Account')
-		if(ctrl.check_record_right(item,'w')){
-			var form = this._showForm(item)
-					
-			if (form){
+		var ctrl = this.getController('Account');
+		if (ctrl.check_record_right(item, 'w')) {
+			var form = this._showForm(item);
+
+			if (form) {
 				if (this.beforeload_EditForm) {
-					this.beforeload_EditForm(form,item)
+					this.beforeload_EditForm(form, item);
 				}
 
 				form.loadRecord(item);
 
 				if (this.afterload_EditForm) {
-					this.afterload_EditForm(form,item)
+					this.afterload_EditForm(form, item);
 				}
-			}	
-			
+			}
+
 			if (this.editRecord)
-				this.editRecord(view, item, index)
+				this.editRecord(view, item, index);
 		} else {
-			global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
+			global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 		}
 	},
-	
-	_contextMenu : function(view, rec, node, index, e) {
+
+	_contextMenu: function(view, rec, node, index, e) {
 		//don't auto select if multi selecting
-		var selection = this.grid.getSelectionModel().getSelection()
-		if( selection.length < 2)
-			view.select(rec)
-			
+		var selection = this.grid.getSelectionModel().getSelection();
+		if (selection.length < 2)
+			view.select(rec);
+
 		this.grid.contextMenu.showAt(e.getXY());
 		return false;
     },
-	
+
 	_duplicateRecord: function() {
-		log.debug('clicked duplicateRecord',this.logAuthor);
+		log.debug('clicked duplicateRecord', this.logAuthor);
 		var grid = this.grid;
 		 var item = grid.getSelectionModel().getSelection()[0];
-		
-		var editing = false
+
+		var editing = false;
 
 		if (this.formXtype) {
-			if (this.EditMethod == "tab"){
-				var main_tabs = Ext.getCmp('main-tabs')
-				var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g,'-') + '-tab'
+			if (this.EditMethod == 'tab') {
+				var main_tabs = Ext.getCmp('main-tabs');
+				var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g, '-') + '-tab';
 				var tab = Ext.getCmp(id);
 				if (tab) {
-					log.debug("Tab '"+id+"'allerady open, just show it",this.logAuthor)
+					log.debug("Tab '" + id + "'allerady open, just show it", this.logAuthor);
 					main_tabs.setActiveTab(tab);
-				}else{
-					log.debug("Create tab '"+id+"'",this.logAuthor)
+				}else {
+					log.debug("Create tab '" + id + "'", this.logAuthor);
 					var form = main_tabs.add({
-						title: _('Edit')+' '+item.raw.crecord_name,
+						title: _('Edit') + ' ' + item.raw.crecord_name,
 						xtype: this.formXtype,
 						id: id,
-						closable: true,}).show();
+						closable: true }).show();
 				}
-				
-			}else{
+
+			}else {
 				var form = Ext.getCmp(id);
-				
-				if (form){
-					log.debug("Window '"+id+"' allready open, just show it",this.logAuthor)
+
+				if (form) {
+					log.debug("Window '" + id + "' allready open, just show it", this.logAuthor);
 					form.win.show();
-				}else{
+				}else {
 					// Create new Window
-					log.debug("Create window '"+this.formXtype+"'",this.logAuthor)
+					log.debug("Create window '" + this.formXtype + "'", this.logAuthor);
 					var form = Ext.create('widget.' + this.formXtype, {
 						id: id,
 						EditMethod: this.EditMethod,
 						editing: editing,
-						record: data,
-					})
-					
+						record: data
+					});
+
 					var win = Ext.create('widget.window', {
 						title: this.modelId,
 						items: form,
 						closable: true,
-						constrain:true,
+						constrain: true,
 						renderTo: this.grid.id,
-						closeAction: 'destroy',
+						closeAction: 'destroy'
 					}).show();
-					form.win = win
-					this._keynav.disable()
+					form.win = win;
+					this._keynav.disable();
 				}
 			}
-			
+
 			//duplicate
-			var copy = item.copy()
-			
+			var copy = item.copy();
+
 			// load records
 			if (this.beforeload_DuplicateForm) {
-				this.beforeload_DuplicateForm(form,copy)
+				this.beforeload_DuplicateForm(form, copy);
 			}
 
 			form.loadRecord(copy);
 
 			if (this.afterload_DuplicateForm) {
-				this.afterload_DuplicateForm(form,copy)
+				this.afterload_DuplicateForm(form, copy);
 			}
 
-			this._bindFormEvents(form)	
+			this._bindFormEvents(form);
 		}
 	},
-	
-	_searchRecord : function(){
-		log.debug('Clicked on searchButton',this.logAuthor);
-		
+
+	_searchRecord: function() {
+		log.debug('Clicked on searchButton', this.logAuthor);
+
 		var grid = this.grid;
 		var store = grid.getStore();
 		var search = grid.down('textfield[name=searchField]').getValue();
 
-		if (search == '' ){
-			store.clearFilter()
+		if (search == '') {
+			store.clearFilter();
 			//store.load()
-		}else{
+		}else {
 			//create an array and give it to store.search
-			var myArray = []
-			for (i in grid.opt_bar_search_field){
-				var tempObj = {}
-				tempObj[grid.opt_bar_search_field[i]] = { "$regex" : ".*"+search+".*", "$options" : "i"};
+			var myArray = [];
+			for (i in grid.opt_bar_search_field) {
+				var tempObj = {};
+				tempObj[grid.opt_bar_search_field[i]] = { '$regex' : '.*'+ search + '.*', '$options' : 'i'};
 				myArray.push(tempObj);
 			}
-			
+
 			store.search(store.getOrFilter(myArray), false);
 		}
-		
-		if (grid.pagingbar){
+
+		if (grid.pagingbar) {
 			grid.pagingbar.moveFirst();
-		}else{
-			store.load()
+		}else {
+			store.load();
 		}
 	}
-	
-	
-	
+
+
+
 });

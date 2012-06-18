@@ -23,20 +23,20 @@ Ext.define('canopsis.controller.Notify', {
 
     opacity: 0.8,
     history: false,
-    logAuthor : '[controller][cnotify]',
+    logAuthor: '[controller][cnotify]',
 
     init: function() {
-		global.notify = this
+		global.notify = this;
 		log.debug('[controller][cnotify] - Initialize ...');
 		this.callParent(arguments);
     },
 
-    notify: function(title, text, type, icon,hide,closer,sticker){
-		if(type == undefined){var type=undefined}
-		if(icon == undefined){var icon=undefined}
-		if(hide == undefined){var hide=true}
-		if(closer == undefined){var closer=true}
-		if(sticker == undefined){var sticker=false}
+    notify: function(title, text, type, icon,hide,closer,sticker) {
+		if (type == undefined) {var type = undefined}
+		if (icon == undefined) {var icon = undefined}
+		if (hide == undefined) {var hide = true}
+		if (closer == undefined) {var closer = true}
+		if (sticker == undefined) {var sticker = false}
 		$.pnotify({
 			pnotify_title: title,
 			pnotify_text: text,
@@ -48,7 +48,7 @@ Ext.define('canopsis.controller.Notify', {
 			pnotify_hide: hide,
 			pnotify_closer: closer,
 			pnotify_sticker: sticker
-		})
+		});
 		log.debug('Display notification', this.logAuthor);
 	}
 });

@@ -18,24 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.text.text' ,{
+Ext.define('widgets.text.text' , {
 	extend: 'canopsis.lib.view.cwidget',
-	
-	alias : 'widget.text',
+
+	alias: 'widget.text',
 
 	initComponent: function() {
-		this.nodeId = false
-		this.refreshInterval = 0
-		
+		this.nodeId = false;
+		this.refreshInterval = 0;
+
 		this.callParent(arguments);
 	},
 
-	doRefresh: function (){
-		if (this.text){
+	doRefresh: function() {
+		if (this.text) {
 			this.setHtml(this.text);
-		}else{
-			this.setHtml("");
+		}else {
+			this.setHtml('');
 		}
 	}
-	
+
 });

@@ -21,39 +21,37 @@
 Ext.define('canopsis.store.Curves', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Curve',
-	
+
 	storeId: 'store.Curve',
-	
-	logAuthor : '[store][curve]',
+
+	logAuthor: '[store][curve]',
 
 	autoLoad: true,
 	autoSync: true,
-	
+
 	sortOnLoad: true,
-	
+
 	pageSize: 1000,
-	
+
 	sorters: [
         {
-            property : 'metric',
+            property: 'metric',
             direction: 'ASC'
         }
     ],
-	
+
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/curve',
 		reader: {
 			type: 'json',
 			root: 'data',
-			totalProperty  : 'total',
+			totalProperty: 'total',
 			successProperty: 'success'
 		},
 		writer: {
-			type: 'json',
-		},
-	},
-	
-	
-	
+			type: 'json'
+		}
+	}
+
 });

@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cgrid_state' ,{
+Ext.define('canopsis.lib.view.cgrid_state' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	store: false,
@@ -28,8 +28,8 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 	opt_paging: false,
 	opt_bar: false,
-	
-	opt_column_sortable : false,
+
+	opt_column_sortable: false,
 
 	opt_show_state_type: true,
 	opt_show_component: false,
@@ -39,12 +39,12 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	opt_show_source_type: true,
 	opt_show_last_check: true,
 	opt_show_output: true,
-	
+
 	opt_show_row_background: true,
 
 	opt_bar_delete: false,
 	opt_bar_add: false,
-	
+
 	border: false,
 
 	namespace: 'events',
@@ -52,17 +52,17 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 	pageSize: 100,
 
 	sorters: [{
-			property : 'state',
+			property: 'state',
 			direction: 'DESC'
 		}],
 
 	columns: [],
 
 	initComponent: function() {
-		this.columns = []
+		this.columns = [];
 
 		//set columns
-		if(this.opt_show_source_type){
+		if (this.opt_show_source_type) {
 			this.columns.push({
 				header: ' ',
 				width: 25,
@@ -73,8 +73,8 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 				renderer: rdr_source_type
 				});
 		}
-	
-		if(this.opt_show_state_type){
+
+		if (this.opt_show_state_type) {
 			this.columns.push({
 				header: 'ST',
 				sortable: this.opt_column_sortable,
@@ -84,7 +84,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		if(this.opt_show_state){
+		if (this.opt_show_state) {
 			this.columns.push({
 				header: _('S'),
 				sortable: this.opt_column_sortable,
@@ -94,7 +94,7 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		if(this.opt_show_last_check){
+		if (this.opt_show_last_check) {
 			this.columns.push({
 				header: _('Last check'),
 				sortable: this.opt_column_sortable,
@@ -104,35 +104,35 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 			});
 		}
 
-		if(this.opt_show_component){
+		if (this.opt_show_component) {
 			this.columns.push({
 				header: _('Component'),
 				flex: 1,
 				sortable: this.opt_column_sortable,
-				dataIndex: 'component',
+				dataIndex: 'component'
 			});
 		}
 
-		if(this.opt_show_resource){
+		if (this.opt_show_resource) {
 			this.columns.push({
 				header: _('Resource'),
 				flex: 1,
 				sortable: this.opt_column_sortable,
-				dataIndex: 'resource',
+				dataIndex: 'resource'
 			});
 		}
 
-		if(this.opt_show_output){
+		if (this.opt_show_output) {
 			this.columns.push({
 				header: _('Output'),
 				flex: 4,
 				sortable: this.opt_column_sortable,
-				dataIndex: 'output',
+				dataIndex: 'output'
 			});
-		}			
+		}
 
 		//store
-		if (! this.store){
+		if (! this.store) {
 			this.store = Ext.create('canopsis.lib.store.cstore', {
 				//extend: 'canopsis.lib.store.cstore',
 				model: 'canopsis.model.Event',
@@ -145,13 +145,13 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 
 				proxy: {
 					type: 'rest',
-					url: '/rest/'+this.namespace+'/event',
+					url: '/rest/' + this.namespace + '/event',
 					reader: {
 						type: 'json',
 						root: 'data',
-						totalProperty  : 'total',
+						totalProperty: 'total',
 						successProperty: 'success'
-					},
+					}
 				}
 			});
 
@@ -165,36 +165,36 @@ Ext.define('canopsis.lib.view.cgrid_state' ,{
 		}
 
 		this.viewConfig = {
-			stripeRows: false,
-		}
+			stripeRows: false
+		};
 
-		if (this.opt_show_row_background){
+		if (this.opt_show_row_background) {
 			this.viewConfig.getRowClass = this.coloringRow;
 		}
-			
+
 		this.callParent(arguments);
 	},
-	
-	coloringRow : function(record,index,rowParams,store){
+
+	coloringRow: function(record,index,rowParams,store) {
 		state = record.get('state');
-		if (state == 0){
-			return 'row-background-ok'
-		} else if (state == 1){
-			return 'row-background-warning'
-		} else if (state == 2){
-			return 'row-background-error'
+		if (state == 0) {
+			return 'row-background-ok';
+		} else if (state == 1) {
+			return 'row-background-warning';
+		} else if (state == 2) {
+			return 'row-background-error';
 		} else {
-			return 'row-background-unknown'
+			return 'row-background-unknown';
 		}
 	},
 
-	load_services_of_host: function(hostname){
-		this.store.proxy.extraParams = {"filter": '{"component":"'+ hostname +'", "source_type": "resource"}'};
+	load_services_of_host: function(hostname) {
+		this.store.proxy.extraParams = {'filter': '{"component":"' + hostname + '", "source_type": "resource"}'};
 		this.store.load();
 	},
 
-	load_host: function(hostname){
-		this.store.proxy.extraParams = {"filter": '{"component":"'+ hostname +'"}'};
+	load_host: function(hostname) {
+		this.store.proxy.extraParams = {'filter': '{"component":"' + hostname + '"}'};
 		this.store.load();
 	}
 

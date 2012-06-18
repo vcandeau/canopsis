@@ -28,7 +28,7 @@ Ext.define('canopsis.model.Event', {
 		{name: 'event_type'},
 		{name: 'source_type'},
 		{name: 'component'},
-		{name: 'resource'},	
+		{name: 'resource'},
 		{name: 'timestamp'},
 		{name: 'state'},
 		{name: 'state_type'},
@@ -37,6 +37,6 @@ Ext.define('canopsis.model.Event', {
 		{name: 'perf_data'},
 		{name: 'perf_data_array'},
 		{name: 'id'}
-	],
+	]
 
 });

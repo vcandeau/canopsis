@@ -28,7 +28,7 @@ Ext.define('canopsis.view.Viewport', {
 	],
 
 	layout: 'border',
-	
+
 	logAuthor: '[Viewport]',
 
 	items: [
@@ -39,7 +39,7 @@ Ext.define('canopsis.view.Viewport', {
 			height: 27,
 			items: [{
 						xtype: 'Mainbar',
-						height: 26,
+						height: 26
 					}],
 			xtype: 'panel',
 			border: false,
@@ -50,37 +50,37 @@ Ext.define('canopsis.view.Viewport', {
 				height: 5,
 				listeners: {
 					mouseover: {
-						element : 'el',
-						fn : function(){ Ext.getCmp('region-north').expand(); }
-					},
+						element: 'el',
+						fn: function() { Ext.getCmp('region-north').expand(); }
+					}
 				}
 			 }),
-			  
+
 			listeners: {
 				dblclick: {
-					element : 'body',
-					fn : function(){ Ext.getCmp('region-north').collapse(); }
-				},
-			},
-	 
+					element: 'body',
+					fn: function() { Ext.getCmp('region-north').collapse(); }
+				}
+			}
+
 		},{
 			region: 'center',
 			border: false,
 			xtype: 'TabsView',
-			id: 'main-tabs',
+			id: 'main-tabs'
 
-		},
+		}
 	],
-	
+
 
 	initComponent: function() {
-		log.debug("Render viewport ...", this.logAuthor);
-		this.on('afterrender', this.afterrender, this)
+		log.debug('Render viewport ...', this.logAuthor);
+		this.on('afterrender', this.afterrender, this);
 		this.callParent(arguments);
 	},
 
-	afterrender: function(){
-		log.debug("Viewport rendered", this.logAuthor);
+	afterrender: function() {
+		log.debug('Viewport rendered', this.logAuthor);
 	}
-		
+
 });

@@ -18,14 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Tabs.View' ,{
+Ext.define('canopsis.view.Tabs.View' , {
 	extend: 'Ext.tab.Panel',
-	alias : 'widget.TabsView',
+	alias: 'widget.TabsView',
 
 	activeTab: 0, // index or id
 	bodyBorder: false,
 	componentCls: 'cps-headertabs',
-	plain: true,
-		
+	plain: true
+
 });
 

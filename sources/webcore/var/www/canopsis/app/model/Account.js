@@ -22,20 +22,20 @@ Ext.define('canopsis.model.Account', {
     extend: 'Ext.data.Model',
     fields: [
 		{name: '_id'},
-		{name: 'id', mapping:'_id'},
-		{name : 'crecord_type'},
-		{name : 'firstname'},
-		{name : 'lastname'},
-		{name : 'user'},
-		{name : 'mail'},
-		{name : 'groups' ,type:'array'},
-		{name : 'passwd'},
-		
+		{name: 'id', mapping: '_id'},
+		{name: 'crecord_type'},
+		{name: 'firstname'},
+		{name: 'lastname'},
+		{name: 'user'},
+		{name: 'mail'},
+		{name: 'groups' , type: 'array'},
+		{name: 'passwd'},
+
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_admin_group'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'},
-		],
+		{name: 'aaa_owner'}
+	]
 });

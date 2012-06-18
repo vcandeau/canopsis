@@ -18,11 +18,11 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.empty.empty' ,{
+Ext.define('widgets.empty.empty' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias : 'widget.empty',
-	
-	
-	
+	alias: 'widget.empty'
+
+
+
 });

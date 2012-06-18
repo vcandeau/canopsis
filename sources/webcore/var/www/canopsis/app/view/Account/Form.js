@@ -24,83 +24,83 @@ Ext.define('canopsis.view.Account.Form', {
 	alias: 'widget.AccountForm',
 
 	iconCls: 'icon-crecord_type-account',
-	
-	logAuthor : '[Controller][Account][Form]',
-	
+
+	logAuthor: '[Controller][Account][Form]',
+
 	//layout : 'hbox',
 
 	initComponent: function() {
-		log.debug('Initializing...', this.logAuthor)
-		
-		
+		log.debug('Initializing...', this.logAuthor);
+
+
 		//---------------------------General options-------------------------
 		var g_options = [{
 				fieldLabel: _('Login'),
 				name: 'user',
 				allowBlank: false,
 				regex: /^[A-Za-z0-9_]+$/,
-				regexText: _("Invalid login") + ", "+_("use alphanumeric characters only") + "<br/>([A-Za-z0-9_])"
+				regexText: _('Invalid login') + ', '+ _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
 			},{
 				fieldLabel: _('First Name'),
 				name: 'firstname',
-				allowBlank : false
+				allowBlank: false
 			}, {
 				fieldLabel: _('Last Name'),
 				name: 'lastname',
-				allowBlank : false
+				allowBlank: false
 			},{
 				fieldLabel: _('E-mail'),
 				name: 'mail',
 				vtype: 'email',
-				allowBlank : true
+				allowBlank: true
 			},{
 				fieldLabel: _('group'),
 				name: 'aaa_group',
 				store: 'Groups',
 				displayField: 'crecord_name',
 				xtype: 'combobox',
-				allowBlank : false
+				allowBlank: false
 			},{
 				fieldLabel: _('password'),
 				inputType: 'password',
-				name: 'passwd',
+				name: 'passwd'
 				//allowBlank : false
-			}]
-			
-		
-		
-		var g_options_panel = Ext.widget('fieldset',{
-				title:_('General options'),
+			}];
+
+
+
+		var g_options_panel = Ext.widget('fieldset', {
+				title: _('General options'),
 				defaultType: 'textfield',
-				items : g_options
-			})
-		
+				items: g_options
+			});
+
 		//----------------------- drag and drop-------------------
 		var checkboxModel = Ext.create('Ext.selection.CheckboxModel');
 		this.checkGrid = Ext.create('Ext.grid.Panel', {
 			store: 'Groups',
 			selModel: checkboxModel,
 			columns: [
-				{text: _('Name'), dataIndex: 'crecord_name',flex:1}
+				{text: _('Name'), dataIndex: 'crecord_name', flex: 1}
 			],
 			columnLines: true,
 			title: _('Groups'),
 			hideHeaders: true,
 			collapsible: true,
 			//collapsed : true,
-			name : 'groups',
+			name: 'groups',
 			scroll: 'vertical',
-			margin : '4 0 6 0'
-		})
-		
-		var secondary_group = Ext.widget('fieldset',{
-				title:_('Secondary groups'),
-				items: [this.checkGrid],
-			})
-		
+			margin: '4 0 6 0'
+		});
+
+		var secondary_group = Ext.widget('fieldset', {
+				title: _('Secondary groups'),
+				items: [this.checkGrid]
+			});
+
 		this.callParent(arguments);
-		
-		this.add([g_options_panel,secondary_group])
-	},
-    
+
+		this.add([g_options_panel, secondary_group]);
+	}
+
 });

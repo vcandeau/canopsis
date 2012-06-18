@@ -18,24 +18,24 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-var now = undefined
+var now = undefined;
 
 var global = {
-	
+
 	account: undefined,
-	
+
 	accountCtrl: undefined,
 	curvesCtrl: undefined,
 	websocketCtrl: undefined,
-	
+
 	state_colors: {
 		up: '#50b432',
 		down: '#ed241b',
 		unreachable: '#f0f0ff',
-		ok : '#50b432',
+		ok: '#50b432',
 		warning: '#ed941b',
 		critical: '#ed241b',
-		unknown: '#f0f0ff' 
+		unknown: '#f0f0ff'
 	},
 	log: {
 		/* 0: none, 1: info, 2: error, 3: error + warning, 4: error + warning + debug, 5: error + warning + debug + dump */
@@ -50,7 +50,7 @@ var global = {
 	default_locale: 'en',
 	locale: 'en',
 
-	default_colors:[
+	default_colors: [
 		'4572A7', 'AA4643', '89A54E', '80699B',
 		'3D96AE', 'DB843D', '92A8CD', 'A47D7C',
 		'B0CC99', '677E52', 'B7CA79', 'F6E8B1',
@@ -72,22 +72,22 @@ var global = {
 		'C3D9E0', '310000', 'FF0000', 'FF5900',
 		'FF9300', '7D0000', '85C630', '53872A'
 	],
-	
-	gen_id: function(){
+
+	gen_id: function() {
 			var timestamp = new Date().getTime();
-			return timestamp + '-' + Math.floor(Math.random()*10)
+			return timestamp + '-' + Math.floor(Math.random() * 10);
 	},
-	
-	commonTs:{
+
+	commonTs: {
 		hours: 3600,
 		threeHours: 10800,
 		day: 86400,
 		week: 604800,
-		month : 2629800,
-		year : 31557600
+		month: 2629800,
+		year: 31557600
 	},
-	
-	numberToMonth:{
+
+	numberToMonth: {
 		1: _('January'),
 		2: _('February'),
 		3: _('March'),
@@ -99,14 +99,14 @@ var global = {
 		9: _('September'),
 		10: _('October'),
 		11: _('November'),
-		12: _('December'),
+		12: _('December')
 	},
-	
-	untranslated : [],
-	
+
+	untranslated: [],
+
 	nowjs: {
 		proto: 'http',
 		hostname: location.hostname,
 		port: 8085
 	}
-}
+};
