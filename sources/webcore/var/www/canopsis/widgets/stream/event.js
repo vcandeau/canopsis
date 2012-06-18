@@ -250,9 +250,10 @@ Ext.define('widgets.stream.event' ,{
 		if (elapsed > 60)
 			elapsed_text = parseInt(elapsed/60) +" mins ago"
 		if (elapsed > 3600)
-			elapsed_text = parseInt(elapsed/3600) +" hours ago"
+			elapsed_text = rdr_tstodate(timestamp)
+		/*	elapsed_text = parseInt(elapsed/3600) +" hours ago"
 		if (elapsed > 86400)
-			elapsed_text = parseInt(elapsed/86400) +" days ago"
+			elapsed_text = parseInt(elapsed/86400) +" days ago"*/
 			
 		return elapsed_text
 	},
