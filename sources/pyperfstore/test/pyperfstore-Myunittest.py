@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import unittest, sys
+import unittest, sys,json
 import logging
 import time
 import random
@@ -210,6 +210,24 @@ class KnownValues(unittest.TestCase):
 		
 		if values != [[0, 0], [10, 1], [20, 2], [30, 3], [40, 3], [50, 3], [60, 3], [70, 3], [80, 3], [90, 9]]:
 			raise Exception('Invalid fill, %s' % values)
+			
+	def test_11_get_all_nodes_and_metrics(self):
+		records = storage.get_all_nodes()
+		if not records:
+			raise Exception('Impossible to get nodes')
+		print('')
+		print('nodes are :')
+		for r in records:
+			print(r)
+		
+		records = storage.get_all_metrics()
+		if not records:
+			raise Exception('Impossible to get metrics')
+		print('')
+		print('metrics are :')
+		for r in records:
+			print(r)
+		print('')
 			
 	def test_90_Functions(self):
 		dn = mynode.metric_get_all_dn()
