@@ -140,11 +140,7 @@ Ext.define('widgets.stream.event' ,{
 		this.el_nbcomment= el.getById(this.id + '-nbcomment')
 		this.el_time = el.getById(this.id + '-time')
 		
-		var me = this;
-		now.stream_countComments(this.event_id, function(count){
-			me.nbcomment = count
-			me.update_comment_counter()
-		});
+		this.init_comment_counter();
 		
 		this.bindEvents();
 	},
@@ -190,6 +186,8 @@ Ext.define('widgets.stream.event' ,{
 				now.stream_getComments(this.event_id, this.stream.max_comment, function(records){
 					log.debug(records.length+" comments for '"+me.event_id+"'", me.logAuthor)
 					if (records.length > 0){
+						me.init_comment_counter();
+						
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 								
@@ -269,6 +267,14 @@ Ext.define('widgets.stream.event' ,{
 				if (event.event_id) //check if not a form
 					event.update_time()
 			}
+	},
+	
+	init_comment_counter: function(){
+		var me = this;
+		now.stream_countComments(this.event_id, function(count){
+			me.nbcomment = count
+			me.update_comment_counter()
+		});
 	},
 	
 	update_comment_counter: function(){
