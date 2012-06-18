@@ -63,6 +63,24 @@ class memstore(storage):
 
 	def size(self, key):
 		return int(sys.getsizeof(self.data[key]))		
+		
+	def get_all_nodes(self):
+		index = []
+		for key,value in self.data.items():
+			if isinstance(value,dict):
+				if 'metrics' in value:
+					index.append(key)
+		return index
+		
+	def get_all_metrics(self):
+		index = []
+		for key,value in self.data.items():
+			if isinstance(value,dict):
+				if 'dn' in value and not 'metrics' in value:
+					index.append({'node':value['node_id'],'metric':value['dn']})
+		return index
+		
+		
 
 	def lock(self, key):
 		self.logger.debug("Lock '%s'" % key)

@@ -134,7 +134,7 @@ class mongostore(storage):
 												{'d.dn':{'$exists' : True}},
 												{ 'd.metrics' : {'$exists' : False}}
 											]}, sort =[('_id',ASCENDING)]):
-			index.append('%s.%s' % (record['d']['node_id'],record['d']['dn']))
+			index.append({'node':record['d']['node_id'],'metric':record['d']['dn']})
 		return index
 		
 	def lock(self, key):
