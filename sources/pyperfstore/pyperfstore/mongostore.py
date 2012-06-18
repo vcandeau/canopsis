@@ -22,6 +22,7 @@ import os, sys, json, logging
 
 from pyperfstore.storage import storage
 
+from pymongo import ASCENDING
 from pymongo import Connection
 from bson.errors import InvalidStringData
 from gridfs import GridFS
@@ -121,6 +122,21 @@ class mongostore(storage):
 							
 		return size
 
+	def get_all_nodes(self):
+		index = []
+		for record in self.collection.find({ 'd.metrics' : {'$exists' : True}}):
+			index.append(record['_id'])
+		return index
+		
+	def get_all_metrics(self):
+		index = []
+		for record in self.collection.find({'$and' : [
+												{'d.dn':{'$exists' : True}},
+												{ 'd.metrics' : {'$exists' : False}}
+											]}, sort =[('_id',ASCENDING)]):
+			index.append('%s.%s' % (record['d']['node_id'],record['d']['dn']))
+		return index
+		
 	def lock(self, key):
 		self.logger.debug("Lock '%s'" % key)
 		## Todo
