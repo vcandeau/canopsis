@@ -72,7 +72,7 @@ Ext.define('widgets.stream.stream' ,{
 								fields: ["value", "text"],
 								data : [
 									{value: 0, text: "Ok"},
-									{value: 1, text: "Warnign"},
+									{value: 1, text: "Warning"},
 									{value: 2, text: "Critical"},
 								]
 							}
