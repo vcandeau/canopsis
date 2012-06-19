@@ -22,7 +22,7 @@ Ext.define('canopsis.view.LiveSearch.View', {
     extend: 'Ext.form.Panel',
     alias: 'widget.LiveSearch',
 
-	store : ['Inventory'],
+	store: ['Inventory'],
 
 	layout: {
 			type: 'vbox',
@@ -54,35 +54,35 @@ Ext.define('canopsis.view.LiveSearch.View', {
 			items: [{
 				flex: 1,
 				//name: 'firstName',
-				itemId : 'source_name',
-				fieldLabel: _('Source Name'),
+				itemId: 'source_name',
+				fieldLabel: _('Source Name')
 			},{
 				flex: 1,
 				//name: 'lastName',
-				itemId : 'type',
+				itemId: 'type',
 				fieldLabel: _('Type'),
 				margins: '0 0 0 5'
 			},{
 				flex: 1,
 				//name: 'lastName',
-				itemId : 'source_type',
+				itemId: 'source_type',
 				fieldLabel: _('Source type'),
 				margins: '0 0 0 5'
 			},{
 				flex: 1,
 				//name: 'lastName',
-				itemId : 'component',
+				itemId: 'component',
 				fieldLabel: _('Component'),
 				margins: '0 0 0 5'
 			},{
-				xtype : 'button',
+				xtype: 'button',
 				flex: 1,
-				text : 'search',
-				itemId : 'LiveSearchButton',
+				text: 'search',
+				itemId: 'LiveSearchButton',
 				margins: '0 0 0 5'
 			}]
 		}, {
-			xtype : 'LiveGrid',
+			xtype: 'LiveGrid'
 			/*
 			xtype: 'grid',
 			flex: 1,
@@ -95,8 +95,8 @@ Ext.define('canopsis.view.LiveSearch.View', {
 			/*store : Ext.create('Ext.data.Store', {
 				fields: ['name']
 			})*/
-				
-		}],
+
+		}]
 /*
 		buttons: [{
 			text: _('Cancel'),

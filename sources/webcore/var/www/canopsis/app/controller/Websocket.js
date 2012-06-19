@@ -23,148 +23,151 @@ Ext.define('canopsis.controller.Websocket', {
 
     views: [],
     stores: [],
-    
-	logAuthor: "[controller][Websocket]",
-	
-    autoconnect: true,    
+
+	logAuthor: '[controller][Websocket]',
+
+    autoconnect: true,
     connected: false,
-    
+
     subscribe_cache: {},
     auto_resubscribe: true,
 
     init: function() {
 		global.websocketCtrl = this;
-		
-		if (this.autoconnect){
+
+		/*if (Ext.isIE)
+			this.autoconnect = false*/
+
+		if (this.autoconnect) {
 			this.connect();
 		}
     },
- 
-    connect: function() {
-		log.debug("Connect Websocket ...", this.logAuthor)
 
-		if (typeof(now)=='undefined'){
-			log.error("Impossible to load NowJS Client.", this.logAuthor)
-			return
+    connect: function() {
+		log.debug('Connect Websocket ...', this.logAuthor);
+
+		if (typeof(now) == 'undefined') {
+			log.error('Impossible to load NowJS Client.', this.logAuthor);
+			return;
 		}
-		
+
 		now.authToken = global.account.authkey;
 		now.authId = global.account._id;
 
-		now.ready(function(){
-			var me = global.websocketCtrl
-			
-			now.core.socketio.on('disconnect', function(){
+		now.ready(function() {
+			var me = global.websocketCtrl;
+
+			now.core.socketio.on('disconnect', function() {
 				me.connected = false;
 				me.transport_down();
-			})
-			
-			
-			log.debug(" + Connected", me.logAuthor)
-			
-			now.auth(function(){
-				log.debug(" + Authed", me.logAuthor)
-				
-				me.connected = true
+			});
+
+
+			log.debug(' + Connected', me.logAuthor);
+
+			now.auth(function() {
+				log.debug(' + Authed', me.logAuthor);
+
+				me.connected = true;
 				me.transport_up();
-				
+
 				//me.subscribe('ui', 'events', me.on_event);
 			});
-			
-		});		
+
+		});
     },
-    
-    transport_down: function(){
-		log.info("Transport Down", this.logAuthor)
+
+    transport_down: function() {
+		log.info('Transport Down', this.logAuthor);
 		this.fireEvent('transport_down', this);
 	},
-	
-    transport_up: function(){
-		log.info("Transport Up", this.logAuthor)
+
+    transport_up: function() {
+		log.info('Transport Up', this.logAuthor);
 		this.fireEvent('transport_up', this);
 
 		//Re-open channel
-		if (this.subscribe_cache && this.auto_resubscribe){
-			for (var i in this.subscribe_cache){
+		if (this.subscribe_cache && this.auto_resubscribe) {
+			for (var i in this.subscribe_cache) {
 				var s = this.subscribe_cache[i]
-				delete this.subscribe_cache[i]
-				
-				for (var j in s.subscribers){
-					var t = s.subscribers[j]
+				delete this.subscribe_cache[i];
+
+				for (var j in s.subscribers) {
+					var t = s.subscribers[j];
 					this.subscribe(s.type, s.channel, t.on_message, t.scope);
 				}
 			}
 		}
 	},
-    
-    subscribe: function(type, channel, on_message, scope){
-		if (this.connected){
+
+    subscribe: function(type, channel, on_message, scope) {
+		if (this.connected) {
 			if (! scope)
-				scope = this
-			
-			log.info(" + Subscribe to "+type+"."+channel+" ("+scope.id+")", this.logAuthor)
-			
-			id = type+'-'+channel
-			
+				scope = this;
+
+			log.info(' + Subscribe to '+ type + '.'+ channel + ' ('+ scope.id + ')', this.logAuthor);
+
+			id = type + '-' + channel;
+
 			// Open one channel by id and distribute messages
-			if (! this.subscribe_cache[id]){
-				this.subscribe_cache[id] = {type: type, channel: channel, subscribers: {} }
-				
-				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
-				
-				var me = this
-				var callback = function(message, rk){
-					for(var i in me.subscribe_cache[id].subscribers){
-						var s = me.subscribe_cache[id].subscribers[i]
-						s.on_message.apply(s.scope, [ message, rk ])
+			if (! this.subscribe_cache[id]) {
+				this.subscribe_cache[id] = {type: type, channel: channel, subscribers: {} };
+
+				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope };
+
+				var me = this;
+				var callback = function(message, rk) {
+					for (var i in me.subscribe_cache[id].subscribers) {
+						var s = me.subscribe_cache[id].subscribers[i];
+						s.on_message.apply(s.scope, [message, rk]);
 					}
 				}
-				
+
 				//Register callback
-				now[id] = callback
-				
+				now[id] = callback;
+
 				//subscribe to group
-				now.subscribe(type, channel)
-			
-			}else{
-				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope }
+				now.subscribe(type, channel);
+
+			}else {
+				this.subscribe_cache[id].subscribers[scope.id] = { on_message: on_message, scope: scope };
 			}
-		
+
 		}
 	},
 
-    unsubscribe: function(type, channel, scope){
-		if (this.connected){
+    unsubscribe: function(type, channel, scope) {
+		if (this.connected) {
 			if (! scope)
-				scope = this
-				
-			log.info(" + Unsubscribe to "+type+"."+channel+" ("+scope.id+")", this.logAuthor)
-			
-			id = type+'-'+channel
-			if (this.subscribe_cache[id]){
-				delete this.subscribe_cache[id].subscribers[scope.id]
-				
-				if (isEmpty(this.subscribe_cache[id].subscribers)){
-					log.info("  + Delete cache '"+id+"' and unsubscribe from remote queue", this.logAuthor)
-					delete this.subscribe_cache[id]
-					
+				scope = this;
+
+			log.info(' + Unsubscribe to '+ type + '.'+ channel + ' ('+ scope.id + ')', this.logAuthor);
+
+			id = type + '-' + channel;
+			if (this.subscribe_cache[id]) {
+				delete this.subscribe_cache[id].subscribers[scope.id];
+
+				if (isEmpty(this.subscribe_cache[id].subscribers)) {
+					log.info("  + Delete cache '" + id + "' and unsubscribe from remote queue", this.logAuthor)
+					delete this.subscribe_cache[id];
+
 					// Unsubscribe from group
 					now.unsubscribe(type, channel)
-					
+
 					//Delete callback
-					delete now[id]
+					delete now[id];
 				}
 			}else
-				log.error("  + Invalid queue id '"+id+"'", this.logAuthor)
+				log.error("  + Invalid queue id '" + id + "'", this.logAuthor);
 		}
 	},
-	
-	publish_event: function(){
+
+	publish_event: function() {
 	},
-	
-	publish: function(type, channel, message){
+
+	publish: function(type, channel, message) {
 		now.publish(type, channel, message);
-		
+
 		/*this.faye_client.publish(this.faye_mount+"ui/events",{
 			author: global.account._id,
 			clientId: this.faye_client.getClientId(),
@@ -174,16 +177,16 @@ Ext.define('canopsis.controller.Websocket', {
 			timestamp: get_timestamp_utc()
 		});*/
 	},
-	
-	on_event: function(raw){
-		var me = global.websocketCtrl
-		console.log(raw)
+
+	on_event: function(raw) {
+		var me = global.websocketCtrl;
+		//console.log(raw);
 		/*if (raw.clientId != me.faye_client.getClientId()){
 			log.debug(raw.author+" "+raw.name+" "+raw.type+" "+raw.id, me.logAuthor)
 		}*/
 	},
-	
-	on_pv: function(raw){
+
+	on_pv: function(raw) {
 		/*var me = global.websocketCtrl
 		var me = global.websocketCtrl
 		if (raw.clientId != me.faye_client.getClientId()){

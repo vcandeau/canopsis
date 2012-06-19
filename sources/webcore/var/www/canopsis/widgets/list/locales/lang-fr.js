@@ -19,18 +19,18 @@
 # ---------------------------------
 */
 
-i18n['list.Enable search field'] = 'Afficher le champ de recherche'
-i18n['list.Enable reload button'] = 'Afficher le bouton de rafraîchissement'
-i18n['list.Enable scroll'] = 'Afficher la barre de défilement'
-i18n['list.Hide headers'] = 'Cacher les en-têtes'
-i18n['list.Enable pagging'] = 'Activer la pagination'
-i18n['list.Source type icon'] = "Type d'icone source"
-i18n['list.State type'] = "Type d'état"
-i18n['list.State'] = 'Etat'
-i18n['list.Last check\'s time'] = 'Heure de dernier contrôle'
-i18n['list.Plugin\'s output'] = 'Sortie du plugin'
-i18n['list.Column sortable'] = 'Colonne triable'
-i18n['list.Default sorting'] = 'Tri par défaut'
-i18n['list.Default column'] = 'Colonne par défaut'
-i18n['list.Default direction'] = 'sens par défaut'
+i18n['list.Enable search field'] = 'Afficher le champ de recherche';
+i18n['list.Enable reload button'] = 'Afficher le bouton de rafraîchissement';
+i18n['list.Enable scroll'] = 'Afficher la barre de défilement';
+i18n['list.Hide headers'] = 'Cacher les en-têtes';
+i18n['list.Enable pagging'] = 'Activer la pagination';
+i18n['list.Source type icon'] = "Type d'icone source";
+i18n['list.State type'] = "Type d'état";
+i18n['list.State'] = 'Etat';
+i18n['list.Last check\'s time'] = 'Heure de dernier contrôle';
+i18n['list.Plugin\'s output'] = 'Sortie du plugin';
+i18n['list.Column sortable'] = 'Colonne triable';
+i18n['list.Default sorting'] = 'Tri par défaut';
+i18n['list.Default column'] = 'Colonne par défaut';
+i18n['list.Default direction'] = 'sens par défaut';
 

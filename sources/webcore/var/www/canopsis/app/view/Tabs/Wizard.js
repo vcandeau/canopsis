@@ -19,41 +19,41 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.view.Tabs.Wizard' ,{
+Ext.define('canopsis.view.Tabs.Wizard' , {
 	extend: 'canopsis.lib.view.cwizard',
-	
-	title : _('Widget Wizard'),
-	
-	data : undefined,
-	
-	logAuthor : '[widget wizard]',
+
+	title: _('Widget Wizard'),
+
+	data: undefined,
+
+	logAuthor: '[widget wizard]',
 
 	initComponent: function() {
-		
+
 		//----------------------Build wizard options
 		var step1 = {
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
-				items : [
+				items: [
 				{
-					xtype: "combo",
+					xtype: 'combo',
 					store: 'Widgets',
-					forceSelection : true,
-					fieldLabel : _('Type'),
-					name: "xtype",
+					forceSelection: true,
+					fieldLabel: _('Type'),
+					name: 'xtype',
 					displayField: 'name',
 					valueField: 'xtype',
 					//value: 'empty',
-					allowBlank:false,
+					allowBlank: false
 				},{
-					xtype : 'textfield',
-					fieldLabel : _('Title')+ " ("+_('optional')+")",
-					name : 'title'
+					xtype: 'textfield',
+					fieldLabel: _('Title') + ' ('+ _('optional') + ')',
+					name: 'title'
 				},{
-					xtype: "checkbox",
-					fieldLabel: _("Show border"),
+					xtype: 'checkbox',
+					fieldLabel: _('Show border'),
 					checked: false,
-					name: "border"
+					name: 'border'
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
@@ -61,30 +61,30 @@ Ext.define('canopsis.view.Tabs.Wizard' ,{
 					value: 0,
 					minValue: 0
 				}]
-		}
-		
-		this.step_list = [step1]
+		};
+
+		this.step_list = [step1];
 
 		this.callParent(arguments);
-		
+
 	},
-	
-	cancel_button: function(){
-		log.debug('cancel button',this.logAuthor)
-		this.fireEvent('cancel',this.widgetId)
-		this.close()
+
+	cancel_button: function() {
+		log.debug('cancel button', this.logAuthor);
+		this.fireEvent('cancel', this.widgetId);
+		this.close();
 	},
-	
-	finish_button: function(){
-		log.debug('save button',this.logAuthor)
-		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
-		if(combo[0].isValid()){
-			var variables = this.get_variables()
-			this.fireEvent('save',this.widgetId, variables)
-			this.close()
+
+	finish_button: function() {
+		log.debug('save button', this.logAuthor);
+		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
+		if (combo[0].isValid()) {
+			var variables = this.get_variables();
+			this.fireEvent('save', this.widgetId, variables);
+			this.close();
 		}
-	},
-	
-	
+	}
+
+
 
 });

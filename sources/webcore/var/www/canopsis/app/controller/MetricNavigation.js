@@ -24,117 +24,116 @@ Ext.define('canopsis.controller.MetricNavigation', {
 	stores: [],
 	models: [],
 
-	logAuthor : '[controller][MetricNavigation]',
+	logAuthor: '[controller][MetricNavigation]',
 
 	views: ['MetricNavigation.MetricNavigation'],
-	
+
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.control({
 			'MetricNavigation' : {
-				afterrender : this._bindMetricNavigation
+				afterrender: this._bindMetricNavigation
 			}
-		})
-		
+		});
+
 		this.callParent(arguments);
 	},
-	
-	_bindMetricNavigation : function(panel){
-		log.debug('Binding events', this.logAuthor)
-		this.panel = panel
-		this.tabPanel = panel.tabPanel
-		this.renderPanel =  panel.renderPanel
-		this.metricTab = panel.metricTab
-		this.renderContent = panel.renderContent
-		
-		//-------------------------Button bindings------------------
-		panel.buttonCancel.on('click',this._buttonCancel,this)
-		panel.buttonDisplay.on('click',this._buttonDisplay,this)
-		this.tabPanel.on('collapse',this._refreshLayout,this)
-		this.tabPanel.on('expand',this._refreshLayout,this)
-		
-		//------------if nodes specified with creation set it automaticaly-----
-		if(panel.nodes.length != 0)
-			this._addGraph(panel.nodes)
-	},
-	
-	_buttonCancel : function(){
-		log.debug('Click on cancel button', this.logAuthor)
-		tab = Ext.getCmp('main-tabs').getActiveTab()
-		tab.close()
-	},
-	
-	_buttonDisplay:function(){
-		log.debug('Click on display button', this.logAuthor)
-		metrics = this.metricTab.getValue()
 
-		this._addGraph(metrics)
+	_bindMetricNavigation: function(panel) {
+		log.debug('Binding events', this.logAuthor);
+		this.panel = panel;
+		this.tabPanel = panel.tabPanel;
+		this.renderPanel = panel.renderPanel;
+		this.metricTab = panel.metricTab;
+		this.renderContent = panel.renderContent;
+
+		//-------------------------Button bindings------------------
+		panel.buttonCancel.on('click', this._buttonCancel, this);
+		panel.buttonDisplay.on('click', this._buttonDisplay, this);
+		this.tabPanel.on('collapse', this._refreshLayout, this);
+		this.tabPanel.on('expand', this._refreshLayout, this);
+
+		//------------if nodes specified with creation set it automaticaly-----
+		if (panel.nodes.length != 0)
+			this._addGraph(panel.nodes);
 	},
-	
-	_addGraph : function(metrics){
-		this.renderContent.removeAll(true)
-		
-		timePeriod = this._getTime()
-		
+
+	_buttonCancel: function() {
+		log.debug('Click on cancel button', this.logAuthor);
+		tab = Ext.getCmp('main-tabs').getActiveTab();
+		tab.close();
+	},
+
+	_buttonDisplay: function() {
+		log.debug('Click on display button', this.logAuthor);
+		metrics = this.metricTab.getValue();
+
+		this._addGraph(metrics);
+	},
+
+	_addGraph: function(metrics) {
+		this.renderContent.removeAll(true);
+
+		timePeriod = this._getTime();
+
 		//add one graph per node
-		for(var i = 0; i < metrics.length; i++){
-			var item = this._createGraph([metrics[i]])
+		for (var i = 0; i < metrics.length; i++) {
+			var item = this._createGraph([metrics[i]]);
 			//set time after first render (avoid useless ajax request)
-			item.nodes = [metrics[i]]
-			item.processNodes()
-			item._doRefresh(timePeriod.from*1000,timePeriod.to*1000)
+			item.nodes = [metrics[i]];
+			item.processNodes();
+			item._doRefresh(timePeriod.from * 1000, timePeriod.to * 1000);
 		}
-		
+
 	},
-	
-	_createGraph : function(nodes){
-		log.debug('Adding graph', this.logAuthor)
+
+	_createGraph: function(nodes) {
+		log.debug('Adding graph', this.logAuthor);
 		var config = {
 			SeriesType: 'line',
-			reportMode:true,
+			reportMode: true,
 			extend: 'Ext.container.Container',
-			width:'49%',
-			height:200,
+			width: '49%',
+			height: 200,
 			layout: 'fit'
-		}
-		var graph = Ext.widget('line_graph',config)
-		this.renderContent.add(graph)
-		return graph
+		};
+		var graph = Ext.widget('line_graph', config);
+		this.renderContent.add(graph);
+		return graph;
 	},
-	
-	_refreshLayout : function(){
-		for(var i=0; i < this.renderContent.items.length; i++){
-				this.renderContent.items.items[i].onResize()
-		}
-	},
-	
-	_getTime : function(){
-		log.debug('Set time period on graphs',this.logAuthor)
-		
-		//get time values
-		var fromDate = this.panel.fromDate.getValue()
-		var toDate = this.panel.toDate.getValue()
-		var fromHour = this.panel.fromHour.getSubmitData().fromHour
-		var toHour = this.panel.toHour.getSubmitData().toHour
-		
-		//compute from Hour
-		arrayFromHour = fromHour.split(':')
-		fromHour = (arrayFromHour[0] * global.commonTs.hours)+(arrayFromHour[1] * 60)
-		log.debug('from Hour ts : ' + fromHour)
-		
-		//compute to Hour
-		arrayToHour = toHour.split(':')
-		toHour = (arrayToHour[0] * global.commonTs.hours)+(arrayToHour[1] * 60)
-		log.debug('from Hour ts : ' + toHour)
-		
-		fromDate = Ext.Date.format(fromDate, 'U')
-		toDate =Ext.Date.format(toDate, 'U')
-		
-		var from = parseInt(fromDate) + parseInt(fromHour)
-		var to = parseInt(toDate) + parseInt(toHour)
 
-		return {from:from,to:to}
+	_refreshLayout: function() {
+		for (var i = 0; i < this.renderContent.items.length; i++) {
+				this.renderContent.items.items[i].onResize();
+		}
 	},
-	
-})
+
+	_getTime: function() {
+		log.debug('Set time period on graphs', this.logAuthor);
+
+		//get time values
+		var fromDate = this.panel.fromDate.getValue();
+		var toDate = this.panel.toDate.getValue();
+		var fromHour = this.panel.fromHour.getSubmitData().fromHour;
+		var toHour = this.panel.toHour.getSubmitData().toHour;
+
+		//compute from Hour
+		arrayFromHour = fromHour.split(':');
+		fromHour = (arrayFromHour[0] * global.commonTs.hours) + (arrayFromHour[1] * 60);
+		log.debug('from Hour ts : ' + fromHour);
+
+		//compute to Hour
+		arrayToHour = toHour.split(':');
+		toHour = (arrayToHour[0] * global.commonTs.hours) + (arrayToHour[1] * 60);
+		log.debug('from Hour ts : ' + toHour);
+
+		fromDate = Ext.Date.format(fromDate, 'U');
+		toDate = Ext.Date.format(toDate, 'U');
+
+		var from = parseInt(fromDate) + parseInt(fromHour);
+		var to = parseInt(toDate) + parseInt(toHour);
+
+		return {from: from, to: to};
+	}
+});

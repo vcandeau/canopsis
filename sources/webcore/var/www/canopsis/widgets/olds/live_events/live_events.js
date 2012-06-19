@@ -18,12 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.live_events.live_events' ,{
+Ext.define('widgets.live_events.live_events' , {
 	extend: 'canopsis.lib.view.cwidget',
-	
-	alias : 'widget.live_events',
 
-	initComponent: function() {	
+	alias: 'widget.live_events',
+
+	initComponent: function() {
 
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
 			border: (this.title || this.fullmode) ? false : true,
@@ -34,8 +34,8 @@ Ext.define('widgets.live_events.live_events' ,{
 		this.refreshInterval = 0;
 		this.callParent(arguments);
 
-		//adding grid to widget 
+		//adding grid to widget
 		this.removeAll();
-		this.add(this.grid);	
-	},
+		this.add(this.grid);
+	}
 });

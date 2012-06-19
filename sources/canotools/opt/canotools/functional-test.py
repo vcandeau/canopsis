@@ -98,6 +98,8 @@ class KnownValues(unittest.TestCase):
 		if revent['state'] != event['state']:
 			raise Exception('Invalid data ...')
 
+		del event_alert['_id']
+
 		event['perf_data_array'] = parse_perfdata(event['perf_data'])
 		if event_alert != event:
 			print "event_alert: %s" % event_alert

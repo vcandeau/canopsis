@@ -18,6 +18,8 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 -->
+
+<!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -56,14 +58,19 @@
 	<script type="text/javascript">
 		Ext.require([
 			'Ext.form.Panel',
-			'Ext.util.KeyNav',
+			'Ext.util.KeyNav'
 		]);
 
 		Ext.onReady(function(){
-			Ext.fly('canopsislocale').on('load', function(){ build_form(); })
+			Ext.fly('canopsislocale').on('load', function(){
+				build_form();
+			})
 
 			Ext.fly('extlocale').set({src:'resources/lib/extjs/locale/ext-lang-' + global.default_locale + '.js'});
 			Ext.fly('canopsislocale').set({src:'resources/locales/lang-' + global.default_locale + '.js'});
+			
+			if (Ext.isIE)
+				build_form();
 		});
 	
 		//function to return parameters in the url
@@ -89,7 +96,7 @@
 					winform.getForm().submit({
 						method: 'GET',
 						params: {
-							cryptedKey: 'True',
+							cryptedKey: 'True'
 						},
 						success: function(form, action) {
 							var param = getURLParameter('url');	
@@ -107,7 +114,7 @@
 							form.submit({
 								method: 'GET',
 								params: {
-									shadow: 'True',
+									shadow: 'True'
 								},
 								success: function(form, action) {
 									var param = getURLParameter('url');	
@@ -169,7 +176,7 @@
 					id: 'submitbutton',
 					submitOnEnter : false,
 					handler : submit_function
-				}],			
+				}]	
 			});
 		
 			var nav = Ext.create('Ext.util.KeyNav', Ext.getDoc(), {

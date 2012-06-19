@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Account.Grid' ,{
+Ext.define('canopsis.view.Account.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	controllerId: 'Account',
@@ -26,7 +26,7 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	alias: 'widget.AccountGrid',
 
 	model: 'Account',
-	store : 'Accounts',	
+	store: 'Accounts',
 
 	opt_grouping: true,
 	opt_paging: true,
@@ -40,39 +40,39 @@ Ext.define('canopsis.view.Account.Grid' ,{
 	                width: 25,
 	                sortable: false,
 			renderer: rdr_crecord_type,
-	                dataIndex: 'crecord_type',
+	                dataIndex: 'crecord_type'
         	},{
         	        header: _('Login'),
 	                flex: 2,
 	                sortable: true,
-                	dataIndex: 'user',
+                	dataIndex: 'user'
 		},{
 	                header: _('First name'),
 	                flex: 2,
 	                sortable: false,
-                	dataIndex: 'firstname',
+                	dataIndex: 'firstname'
 		},{
 	                header: _('Last name'),
-	                flex : 2,
+	                flex: 2,
 	                sortable: false,
-	                dataIndex: 'lastname',
+	                dataIndex: 'lastname'
 		},{
                 	header: _('email'),
 	                flex: 2,
 	                sortable: false,
-                	dataIndex: 'mail',
+                	dataIndex: 'mail'
 		},{
 	                header: _('group'),
 	                flex: 2,
 	                sortable: false,
-	                dataIndex: 'aaa_group',
+	                dataIndex: 'aaa_group'
         },{
                 	header: _('groups'),
 	                flex: 2,
 	                sortable: false,
-	                dataIndex: 'groups',
+	                dataIndex: 'groups'
 		}
-            
-	],
+
+	]
 
 });

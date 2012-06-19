@@ -21,94 +21,94 @@
 Ext.define('canopsis.controller.Briefcase', {
 	extend: 'canopsis.lib.controller.cgrid',
 
-	views: ['Briefcase.Grid','Briefcase.Form'],
+	views: ['Briefcase.Grid', 'Briefcase.Form'],
 	stores: ['Files'],
 	models: ['File'],
-	
-	logAuthor : '[controller][Briefcase]',
-	
+
+	logAuthor: '[controller][Briefcase]',
+
 	init: function() {
-		this.listXtype = 'BriefcaseGrid'
-		this.formXtype = 'BriefcaseForm'
-		
-		this.modelId = 'File'
-		
+		this.listXtype = 'BriefcaseGrid';
+		this.formXtype = 'BriefcaseForm';
+
+		this.modelId = 'File';
+
 		this.callParent(arguments);
-		
+
 	},
-	
-	_viewElement: function(view, item, index){
-		log.debug('Clicked on element, function viewElement',this.logAuthor);
-		this.download(item.get('_id'))
+
+	_viewElement: function(view, item, index) {
+		log.debug('Clicked on element, function viewElement', this.logAuthor);
+		this.download(item.get('_id'));
    },
-	
-	_downloadButton : function(){
-		log.debug('clicked deleteButton',this.logAuthor);
-		var grid = this.grid
+
+	_downloadButton: function() {
+		log.debug('clicked deleteButton', this.logAuthor);
+		var grid = this.grid;
 		var selection = grid.getSelectionModel().getSelection()[0];
 		if (selection) {
-			this.download(selection.get('_id'))
+			this.download(selection.get('_id'));
 		}
 	},
-	
-	download : function(id){
-		url = location.protocol + '//' + location.host + '/files/' + id
-		window.open(url,'_newtab');
+
+	download: function(id) {
+		url = location.protocol + '//' + location.host + '/files/' + id;
+		window.open(url, '_newtab');
 	},
-	
-	sendByMail : function(record){
+
+	sendByMail: function(record) {
 		var config = {
-			renderTo:this.grid.id,
-			constrain:true,
-			attachement:record.get('_id')
-		}
-		var cmail = Ext.create('canopsis.lib.view.cmail',config)
-		cmail.on('finish',function(mail){this._ajaxRequest(mail)},this)
-		cmail.show()
+			renderTo: this.grid.id,
+			constrain: true,
+			attachement: record.get('_id')
+		};
+		var cmail = Ext.create('canopsis.lib.view.cmail', config);
+		cmail.on('finish', function(mail) {this._ajaxRequest(mail)},this);
+		cmail.show();
 	},
-	
-	rename : function(item){
-		log.debug(item)
-		this._editRecord(this.grid,item)
+
+	rename: function(item) {
+		log.debug(item);
+		this._editRecord(this.grid, item);
 	},
-	
-	_ajaxRequest : function(mail){
+
+	_ajaxRequest: function(mail) {
 		Ext.Ajax.request({
 			type: 'rest',
 			url: '/sendreport',
 			method: 'POST',
-			params:{
-				'_id':mail.attachement,
-				'recipients':mail.recipients,
-				'subject':mail.subject,
-				'body':mail.body
+			params: {
+				'_id': mail.attachement,
+				'recipients': mail.recipients,
+				'subject': mail.subject,
+				'body': mail.body
 				},
 			reader: {
 				type: 'json',
 				root: 'data',
-				totalProperty  : 'total',
+				totalProperty: 'total',
 				successProperty: 'success'
 			},
-			success: function(response){
-				request = Ext.JSON.decode(response.responseText)
-				if (request.success){
-					log.debug('Mail have been sent successfuly', this.logAuthor)
-					log.info('The server has returned : ' + request.data.output.output)
-					if(request.data.output.success == true){
+			success: function(response) {
+				request = Ext.JSON.decode(response.responseText);
+				if (request.success) {
+					log.debug('Mail have been sent successfuly', this.logAuthor);
+					log.info('The server has returned : ' + request.data.output.output);
+					if (request.data.output.success == true) {
 						global.notify.notify(
 							_('Mail sent'),
 							_('The mail have been successfuly sent')
-						)
+						);
 					}
 				} else {
-					log.error('Mail have not been sent',this.logAuthor)
-					global.notify.notify(_('Failed'),_('Mail not sent, error with celery task'),'error')
+					log.error('Mail have not been sent', this.logAuthor);
+					global.notify.notify(_('Failed'), _('Mail not sent, error with celery task'), 'error');
 				}
 			},
 			failure: function() {
-				log.debug('Mail request have failed', this.logAuthor)
-				global.notify.notify(_('Failed'),_('Mail not sent, webserver error'),'error')
+				log.debug('Mail request have failed', this.logAuthor);
+				global.notify.notify(_('Failed'), _('Mail not sent, webserver error'), 'error');
 			}
 		});
 	}
-})
+});

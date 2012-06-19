@@ -21,38 +21,36 @@
 Ext.define('canopsis.store.Widgets', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Widget',
-	
+
 	storeId: 'store.Widget',
-	
-	logAuthor : '[store][widget]',
+
+	logAuthor: '[store][widget]',
 
 	autoLoad: true,
 	sortOnLoad: true,
-	
+
 	constructor: function(config)
-    {    
+    {
         this.callParent(arguments);
         //this.on('loaded',this.check_translate,this)
     },
-	
+
 	sorters: [
         {
-            property : 'name',
+            property: 'name',
             direction: 'DESC'
         }
     ],
-	
+
 	proxy: {
 		type: 'rest',
 		url: '/ui/widgets',
 		reader: {
 			type: 'json',
 			root: 'data',
-			totalProperty  : 'total',
+			totalProperty: 'total',
 			successProperty: 'success'
-		},
-	},
-	
-	
-	
+		}
+	}
+
 });

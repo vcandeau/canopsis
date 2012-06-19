@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cgrid' ,{
+Ext.define('canopsis.lib.view.cgrid' , {
 	extend: 'Ext.grid.Panel',
 
 	requires: [
@@ -28,46 +28,46 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 	],
 
 	// Options
-	opt_allow_edit : true,
-	
+	opt_allow_edit: true,
+
 	opt_grouping: false,
 	opt_paging: true,
-	
+
 	opt_multiSelect: true,
-	
+
 	opt_bar: true,
 	opt_bar_bottom: false,
-	opt_bar_add:true,
-	opt_bar_download:false,
+	opt_bar_add: true,
+	opt_bar_download: false,
 	opt_bar_duplicate: false,
-	opt_bar_reload:true,
-	opt_bar_delete:true,
+	opt_bar_reload: true,
+	opt_bar_delete: true,
 	opt_bar_search: false,
 	opt_bar_search_field: [],
 	opt_bar_time: false,
-	
+
 	opt_db_namespace: 'object',
-	
+
 	opt_menu_rights: true,
-	opt_menu_send_mail:false,
+	opt_menu_send_mail: false,
 	opt_menu_rename: false,
 	opt_menu_run_item: false,
 	opt_menu_authKey: false,
-	
+
 	opt_confirmation_delete: true,
-	
+
 	opt_keynav_del: undefined,
 
-	opt_view_element : '',
+	opt_view_element: '',
 
 	features: [],
-	
-	title : '',
+
+	title: '',
 
 	border: false,
-	
-	exportMode : false,
- 
+
+	exportMode: false,
+
 	initComponent: function() {
 		/*if (this.opt_grouping){
 			var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
@@ -76,199 +76,199 @@ Ext.define('canopsis.lib.view.cgrid' ,{
 			});
 			this.features.push(groupingFeature);
 		}*/
-		
+
 		//multi select
-		if(this.opt_multiSelect == true)
-			this.multiSelect = true
-			
+		if (this.opt_multiSelect == true)
+			this.multiSelect = true;
+
 		// keynav_del
 		if (this.opt_bar_delete && this.opt_keynav_del == undefined)
-			this.opt_keynav_del = true
+			this.opt_keynav_del = true;
 
 		// Set pageSize
-		this.store.pageSize = global.accountCtrl.getConfig('pageSize')
+		this.store.pageSize = global.accountCtrl.getConfig('pageSize');
 
 		// Hack
-		if (this.hideHeaders && this.border == false){
-			this.bodyStyle = { 'border-width': 0 }
+		if (this.hideHeaders && this.border == false) {
+			this.bodyStyle = { 'border-width': 0 };
 		}
 
 		//------------------Option docked bar--------------
-		if(this.exportMode){
-			this.border = false
+		if (this.exportMode) {
+			this.border = false;
 			//this.hideHeaders = true
-		}else{
-			if (this.opt_bar){
+		}else {
+			if (this.opt_bar) {
 				var bar_child = [];
 
-				if(this.opt_bar_add){
+				if (this.opt_bar_add) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-add',
 						//cls: 'x-btn-default-toolbar-small',
 						text: _('Add'),
-						action: 'add',
-					})
+						action: 'add'
+					});
 				}
-				if(this.opt_bar_duplicate){
+				if (this.opt_bar_duplicate) {
 					bar_child.push({
 						xtype: 'button',
-						iconCls: 'icon-copy', 
+						iconCls: 'icon-copy',
 						text: _('Duplicate'),
-						action: 'duplicate',
-					})
+						action: 'duplicate'
+					});
 				}
-				if(this.opt_bar_reload){
+				if (this.opt_bar_reload) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-reload',
 						text: _('Reload'),
-						action: 'reload',
-					})
+						action: 'reload'
+					});
 				}
-				if(this.opt_bar_delete){
+				if (this.opt_bar_delete) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-delete',
 						text: _('Delete'),
 						disabled: true,
-						action: 'delete',
-					})
+						action: 'delete'
+					});
 				}
-				if(this.opt_bar_search){
+				if (this.opt_bar_search) {
 					bar_child.push({xtype: 'tbfill'});
 					bar_child.push({
 						xtype: 'textfield',
 						name: 'searchField',
 						hideLabel: true,
 						width: 200,
-						pack: 'end',
-					})
+						pack: 'end'
+					});
 					bar_child.push({
-						xtype : 'button',
+						xtype: 'button',
 						action: 'search',
 						//text: _('Search'),
 						iconCls: 'icon-search',
-						pack: 'end',
-					})
+						pack: 'end'
+					});
 				}
-				
-				if(this.opt_bar_download){
+
+				if (this.opt_bar_download) {
 					bar_child.push({
-						xtype : 'button',
+						xtype: 'button',
 						//text: _('Download'),
 						iconCls: 'icon-download',
-						action: 'download',
-					})
+						action: 'download'
+					});
 				}
-				
+
 				//creating toolbar
-				if(this.opt_bar_bottom){
+				if (this.opt_bar_bottom) {
 					this.bbar = Ext.create('Ext.toolbar.Toolbar', {
-						items: bar_child,
+						items: bar_child
 					});
-				}else{
+				}else {
 					this.tbar = Ext.create('Ext.toolbar.Toolbar', {
-						items: bar_child,
+						items: bar_child
 					});
 				}
-				
+
 			}
-			
+
 			//--------------------Paging toolbar -----------------
-			if (this.opt_paging){
+			if (this.opt_paging) {
 				this.pagingbar = Ext.create('Ext.PagingToolbar', {
 					store: this.store,
 					displayInfo: false,
-					emptyMsg: "No topics to display",
+					emptyMsg: 'No topics to display'
 				});
-			
+
 				this.bbar = this.pagingbar;
 				this.bbar.items.items[10].hide();
-				
+
 			}
-			
+
 			//--------------------Context menu---------------------
-			if (this.opt_bar){
+			if (this.opt_bar) {
 				var myArray = [];
-				
-				if(this.opt_bar_delete){
+
+				if (this.opt_bar_delete) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-delete',
 							text: _('Delete'),
-							action: 'delete',
+							action: 'delete'
 						})
-					)
+					);
 				}
-				
-				if(this.opt_menu_rename == true){
+
+				if (this.opt_menu_rename == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-edit',
 							text: _('Rename'),
-							action: 'rename',
+							action: 'rename'
 						})
-					)
+					);
 				}
-				
-				if (this.opt_bar_duplicate == true){
+
+				if (this.opt_bar_duplicate == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-copy',
 							text: _('Duplicate'),
-							action: 'duplicate',
+							action: 'duplicate'
 						})
-					)
+					);
 				}
-				
-				if(this.opt_menu_rights == true){
+
+				if (this.opt_menu_rights == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-access',
 							text: _('Rights'),
-							action: 'rights',
+							action: 'rights'
 						})
-					)
+					);
 				}
-				
-				if(this.opt_menu_authKey == true){
+
+				if (this.opt_menu_authKey == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-access',
 							text: _('Authentification key'),
-							action: 'authkey',
+							action: 'authkey'
 						})
-					)
+					);
 				}
-				
-				if(this.opt_menu_send_mail == true){
+
+				if (this.opt_menu_send_mail == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-mail',
 							text: _('Send by mail'),
-							action: 'sendByMail',
+							action: 'sendByMail'
 						})
-					)
+					);
 				}
-				
-				if(this.opt_menu_run_item == true){
+
+				if (this.opt_menu_run_item == true) {
 					myArray.push(
 						Ext.create('Ext.Action', {
 							iconCls: 'icon-run',
 							text: _('Run now'),
-							action: 'run',
+							action: 'run'
 						})
-					)
+					);
 				}
-				
-				if (myArray.length != 0){
-					this.contextMenu = Ext.create('Ext.menu.Menu',{
-						items : myArray,
+
+				if (myArray.length != 0) {
+					this.contextMenu = Ext.create('Ext.menu.Menu', {
+						items: myArray
 					});
 				}
-				
-				
+
+
 			}
 		}
 

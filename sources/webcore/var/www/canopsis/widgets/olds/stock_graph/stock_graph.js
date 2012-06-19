@@ -21,28 +21,28 @@
 
 // initComponent -> doRefresh -> get_config -> createHighchartConfig -> doRefresh -> addDataOnChart
 
-Ext.define('widgets.stock_graph.stock_graph' ,{
+Ext.define('widgets.stock_graph.stock_graph' , {
 	extend: 'widgets.line_graph.line_graph',
 
-	alias : 'widget.stock_graph',
+	alias: 'widget.stock_graph',
 
 	logAuthor: '[stock_graph]',
 
 	time_window: global.commonTs.year,
 
-	setOptions: function(){
+	setOptions: function() {
 		this.callParent();
 		this.options.tooltip.formatter = undefined;
 
 		//this.options.xAxis.maxZoom = 60 * 5 * 1000 //5 minutes
 
 		this.options.rangeSelector = {
-			selected : 0,
-			inputEnabled : false
-		}
+			selected: 0,
+			inputEnabled: false
+		};
 	},
 
-	createChart: function(){
+	createChart: function() {
 		this.chart = new Highcharts.StockChart(this.options);
-	},
+	}
 });

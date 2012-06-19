@@ -18,76 +18,76 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Briefcase.Grid' ,{
+Ext.define('canopsis.view.Briefcase.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	alias: 'widget.BriefcaseGrid',
 
 	model: 'File',
-	store : 'Files',	
-	
-	opt_multiSelect : true,
-	
-	opt_bar_add:false,
-	opt_view_element : true,
+	store: 'Files',
+
+	opt_multiSelect: true,
+
+	opt_bar_add: false,
+	opt_view_element: true,
 	//opt_bar_download: true,
 	//opt_menu_send_mail:true,
-	
+
 	opt_menu_rename: true,
-	
+
 	opt_db_namespace: 'files',
-	
+
 	opt_bar_search: true,
 	opt_bar_search_field: ['file_name'],
-	
+
 	columns: [{
 			header: '',
 			width: 25,
 			sortable: false,
 			renderer: rdr_file_type,
-			dataIndex: 'content_type',
+			dataIndex: 'content_type'
         },{
 			header: _('Creation date'),
 			flex: 1,
 			sortable: true,
 			dataIndex: 'creationTs',
-			renderer : rdr_tstodate,
+			renderer: rdr_tstodate
 		},{
 			header: _('Name'),
 			flex: 4,
 			sortable: true,
-			dataIndex: 'file_name',
+			dataIndex: 'file_name'
 		},{
 			width: 120,
 			dataIndex: 'aaa_owner',
 			text: _('Owner'),
-			renderer: rdr_clean_id,
+			renderer: rdr_clean_id
 		},{
 			width: 120,
 			dataIndex: 'aaa_group',
 			text: _('Group'),
-			renderer: rdr_clean_id,
+			renderer: rdr_clean_id
 		},{
 			width: 80,
 			align: 'center',
-			text:  _('Owner'),
-			dataIndex: 'aaa_access_owner',
+			text: _('Owner'),
+			dataIndex: 'aaa_access_owner'
 		},{
 			width: 60,
 			align: 'center',
 			text: _('Group'),
-			dataIndex: 'aaa_access_group',
+			dataIndex: 'aaa_access_group'
 		},{
 			width: 60,
 			align: 'center',
-			text:  _('Others'),
-			dataIndex: 'aaa_access_other',
+			text: _('Others'),
+			dataIndex: 'aaa_access_other'
 		}
 	],
 
 	initComponent: function() {
 		this.callParent(arguments);
-	},
-	
-	
-})
+	}
+
+
+});
