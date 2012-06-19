@@ -122,20 +122,38 @@ class mongostore(storage):
 							
 		return size
 
-	def get_all_nodes(self):
-		index = []
-		for record in self.collection.find({ 'd.metrics' : {'$exists' : True}}):
-			index.append({'node':record['_id'],'dn':record['d']['dn']})
-		return index
+	def get_all_nodes(self,limit=None,offset=None):
+		nodes = []
 		
-	def get_all_metrics(self):
-		index = []
-		for record in self.collection.find({'$and' : [
+		raw_output = self.collection.find({ 'd.metrics' : {'$exists' : True}})
+		total = raw_output.count()
+		if raw_output and limit:
+			raw_output = raw_output.limit(int(limit))
+		if raw_output and offset:
+			raw_output = raw_output.skip(int(offset))
+		
+		for record in raw_output:
+			nodes.append({'node':record['_id'],'dn':record['d']['dn']})
+
+		return {'total':total,'data':nodes}
+		
+	def get_all_metrics(self,limit=None,offset=None):
+		nodes = []
+		
+		raw_output = self.collection.find({'$and' : [
 												{'d.dn':{'$exists' : True}},
 												{ 'd.metrics' : {'$exists' : False}}
-											]}, sort =[('_id',ASCENDING)]):
-			index.append({'node':record['d']['node_id'],'metric':record['d']['dn']})
-		return index
+											]}, sort =[('_id',ASCENDING)])
+		total = raw_output.count()
+		if raw_output and limit:
+			raw_output = raw_output.limit(int(limit))
+		if raw_output and offset:
+			raw_output = raw_output.skip(int(offset))
+			
+		for record in raw_output:
+			nodes.append({'node':record['d']['node_id'],'metric':record['d']['dn']})
+		
+		return {'total':total,'data':nodes}
 		
 	def lock(self, key):
 		self.logger.debug("Lock '%s'" % key)
