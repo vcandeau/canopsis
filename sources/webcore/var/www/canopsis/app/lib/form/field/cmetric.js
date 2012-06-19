@@ -141,6 +141,8 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			opt_bar_reload: true,
 			opt_bar_delete: false,
 			opt_paging: true,
+			
+			opt_simple_search : true,
 
 			opt_bar_search_field: ['dn'],
 			
