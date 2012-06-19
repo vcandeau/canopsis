@@ -125,7 +125,7 @@ class mongostore(storage):
 	def get_all_nodes(self):
 		index = []
 		for record in self.collection.find({ 'd.metrics' : {'$exists' : True}}):
-			index.append(record['_id'])
+			index.append({'node':record['_id'],'dn':record['d']['dn']})
 		return index
 		
 	def get_all_metrics(self):
