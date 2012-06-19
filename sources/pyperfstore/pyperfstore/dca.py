@@ -125,8 +125,12 @@ class dca(object):
 			self.full = True
 
 	def compress_TSC(self, values=None):
-		self.logger.debug("Timestamp compression")
-
+		#self.format = "PLAIN"
+		self.logger.debug("TSC: Timestamp compression")
+		
+		if not values:
+			values = self.storage.get_raw(self.values_id)
+	
 		bsize = self.get_values_size()
 
 		if self.format != "PLAIN":
@@ -138,9 +142,6 @@ class dca(object):
 		i = 0
 		offset = self.tstart
 		previous_interval = None
-
-		if not values:
-			values = self.get_values()
 
 		#self.logger.debug(values)
 
@@ -184,14 +185,16 @@ class dca(object):
 		self.storage.set_raw(self.values_id, values)
 
 	def uncompress_TSC(self, values=None):
-		self.logger.debug("Timestamp uncompression")
+		self.logger.debug("TSC: Timestamp uncompression")
 
 		#if self.format != "TSC":
 		#	self.logger.error(" + Invalid TSC format")
 		#	raise ValueError("Invalid TSC format")
 
+		#self.format = "TSC"
+		
 		if not values:
-			values = self.get_values()
+			values = self.storage.get_raw(self.values_id)
 		
 		unpacker.feed(values)
 		values = list(unpacker.unpack())
@@ -226,30 +229,22 @@ class dca(object):
 				values[i] = [ timestamp, point ]
 		
 		#self.format = "PLAIN"
-		#self.values = values
-
 		return values
 
 	def compress_ZTSC(self, values=None):
-		if self.format == "PLAIN":
-			self.compress_TSC()
-
-		self.logger.debug("Zlib Timestamp compression")
-
+		self.logger.debug("ZTSC: Zlib Timestamp compression")
+		
 		if not values:
 			values = self.storage.get_raw(self.values_id)
-
-		self.logger.debug(" + Json encode and compress it")
-		
-		#values = json.dumps(values)
-		#values = values.replace(' ', '')
-		#values = msgpack.packb(values)
+			
+		if self.format == "PLAIN":
+			self.compress_TSC(values)
 
 		bsize = self.get_values_size()
 
 		self.logger.debug(" + Zlib compression")
-		values = zlib.compress(values, 9)
-
+		values = zlib.compress(str(values), 9)
+		
 		asize = sys.getsizeof(values)
 
 		ratio = int(((bsize-asize)*100)/bsize)
@@ -263,7 +258,7 @@ class dca(object):
 		self.storage.set_raw(self.values_id, values)
 
 	def uncompress_ZTSC(self, values=None):
-		self.logger.debug("Zlib Timestamp uncompression")
+		self.logger.debug("ZTSC: Zlib Timestamp uncompression")
 
 		#if self.format != "ZTSC":
 		#	self.logger.error(" + Invalid ZTSC format")
@@ -272,12 +267,9 @@ class dca(object):
 		if not values:
 			values = self.storage.get_raw(self.values_id)
 		
-		values = zlib.decompress(values)
-		#values = json.loads(values)
-		#values = list(msgpack.unpackb(values))
-
+		values = str(zlib.decompress(values))
 		#self.format = "TSC"
-
 		values = self.uncompress_TSC(values)
-
+		#self.format = "PLAIN"
+		
 		return values
