@@ -18,26 +18,26 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.states.states' ,{
+Ext.define('widgets.states.states' , {
 	extend: 'canopsis.lib.view.cwidget',
-	
-	alias : 'widget.states',
+
+	alias: 'widget.states',
 
 	initComponent: function() {
-		
+
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
-			exportMode : this.exportMode,
-			border: (this.title || this.fullmode) ? false : true,
+			exportMode: this.exportMode,
+			border: (this.title || this.fullmode) ? false : true
 		});
 
 		this.callParent(arguments);
 
-		//adding grid to widget 
+		//adding grid to widget
 		this.removeAll();
-		this.add(this.grid);	
+		this.add(this.grid);
 	},
-	
-	onRefresh: function(data){
-		this.grid.load_services_of_host(data.component)
-	},
+
+	onRefresh: function(data) {
+		this.grid.load_services_of_host(data.component);
+	}
 });

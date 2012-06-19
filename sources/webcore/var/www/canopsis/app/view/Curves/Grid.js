@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Curves.Grid' ,{
+Ext.define('canopsis.view.Curves.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	controllerId: 'Curves',
@@ -26,13 +26,13 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 	alias: 'widget.CurvesGrid',
 
 	model: 'Curve',
-	store : 'Curves',
+	store: 'Curves',
 
 	opt_paging: false,
 	opt_menu_delete: true,
 	opt_bar_duplicate: true,
 	opt_bar_search: true,
-	opt_bar_search_field: [ 'metric' ],
+	opt_bar_search_field: ['metric'],
 
 	columns: [
 		{
@@ -41,47 +41,47 @@ Ext.define('canopsis.view.Curves.Grid' ,{
 			align: 'center',
 			//width: 25,
 			dataIndex: 'line_color',
-			renderer: rdr_color,
+			renderer: rdr_color
 		},{
 			header: _('Area color'),
 			sortable: false,
 			align: 'center',
 			//width: 25,
 			dataIndex: 'area_color',
-			renderer: rdr_color,
+			renderer: rdr_color
 		},{
 			header: _('Line style'),
 			sortable: false,
 			align: 'center',
-			dataIndex: 'dashStyle',
+			dataIndex: 'dashStyle'
 		},{
 			header: _('Area opacity'),
 			sortable: false,
 			align: 'center',
-			dataIndex: 'area_opacity',
+			dataIndex: 'area_opacity'
 		},{
 			header: _('zIndex'),
 			sortable: false,
 			align: 'center',
-			dataIndex: 'zIndex',
+			dataIndex: 'zIndex'
 		},{
 			header: _('Invert'),
 			sortable: false,
 			align: 'center',
 			dataIndex: 'invert',
-			renderer: rdr_boolean,
+			renderer: rdr_boolean
 		},{
 			header: _('Metric name'),
 			flex: 7,
 			sortable: true,
-			dataIndex: 'metric',
+			dataIndex: 'metric'
 		},{
 			header: _('Label'),
 			flex: 7,
 			sortable: true,
-			dataIndex: 'label',
+			dataIndex: 'label'
 		}
-            
-	],
+
+	]
 
 });

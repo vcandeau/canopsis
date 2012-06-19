@@ -18,173 +18,173 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-var rdr_tstodate = function (val) {
-	if( val != null ){
-		var dval = new Date(parseInt(val)*1000);
-		
-		var dval_day = Ext.Date.format(dval,'Y-m-d')
-		var now_day = Ext.Date.format(new Date(),'Y-m-d')
+var rdr_tstodate = function(val) {
+	if (val != null) {
+		var dval = new Date(parseInt(val) * 1000);
 
-		if (dval_day == now_day){
-			return Ext.Date.format(dval,'H:i:s')
-		}else{
-			return Ext.Date.format(dval,'Y-m-d H:i:s')
+		var dval_day = Ext.Date.format(dval, 'Y-m-d');
+		var now_day = Ext.Date.format(new Date(), 'Y-m-d');
+
+		if (dval_day == now_day) {
+			return Ext.Date.format(dval, 'H:i:s');
+		}else {
+			return Ext.Date.format(dval, 'Y-m-d H:i:s');
 		}
 	}
-}
+};
 
-var rdr_utcToLocal = function(val){
-	if( val != undefined && val != '' ){
+var rdr_utcToLocal = function(val) {
+	if (val != undefined && val != '') {
 		//format date
-		var array_split = val.split(' ')
-		var date = array_split[0].split('-')
-		var hour = array_split[1].split(':')
-		
+		var array_split = val.split(' ');
+		var date = array_split[0].split('-');
+		var hour = array_split[1].split(':');
+
 		//create date
-		var dval = new Date(date[0],date[1]-1,date[2],hour[0],hour[1],hour[2]);
-		
-		return rdr_tstodate(get_timestamp_utc(dval))
-	}
-}
+		var dval = new Date(date[0], date[1] - 1, date[2], hour[0], hour[1], hour[2]);
 
-var rdr_boolean = function (val, metadata, record, rowIndex, colIndex, store) {	
+		return rdr_tstodate(get_timestamp_utc(dval));
+	}
+};
+
+var rdr_boolean = function(val, metadata, record, rowIndex, colIndex, store) {
 	if (val)
-		return "<span class='icon icon-true' />"
+		return "<span class='icon icon-true' />";
 	else
-		return "<span class='icon icon-false' />"
-}
+		return "<span class='icon icon-false' />";
+};
 
-var rdr_status = function (val, metadata, record, rowIndex, colIndex, store) {
-	return "<span class='icon icon-state-"+val+"' />"
-}
+var rdr_status = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-state-" + val + "' />";
+};
 
-var rdr_color = function (val, metadata, record, rowIndex, colIndex, store) {
-	return "<span class='icon' style='background-color: #" + val + ";color: #" + val + ";'/>"
-}
+var rdr_color = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon' style='background-color: #" + val + ';color: #' + val + ";'/>";
+};
 
-var rdr_state_type = function (val, metadata, record, rowIndex, colIndex, store) {
-	return "<span class='icon icon-state-type-"+val+"' />"
-}
+var rdr_state_type = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-state-type-" + val + "' />";
+};
 
-var rdr_source_type = function (val, metadata, record, rowIndex, colIndex, store) {
-	return "<span class='icon icon-crecord_type-"+val+"' />"
-}
+var rdr_source_type = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span class='icon icon-crecord_type-" + val + "' />";
+};
 
-var rdr_crecord_type = function (val, metadata, record, rowIndex, colIndex, store) {
-	if (val != ''){
-		return "<span class='icon icon-crecord_type-"+val+"' />"
+var rdr_crecord_type = function(val, metadata, record, rowIndex, colIndex, store) {
+	if (val != '') {
+		return "<span class='icon icon-crecord_type-" + val + "' />";
 	}
-}
+};
 
-var rdr_file_type = function (val, metadata, record, rowIndex, colIndex, store) {
-	var split = val.split('/')
-	if(split.length > 0){
-		return "<span class='icon icon-mimetype-"+split[split.length - 1]+"' />"
+var rdr_file_type = function(val, metadata, record, rowIndex, colIndex, store) {
+	var split = val.split('/');
+	if (split.length > 0) {
+		return "<span class='icon icon-mimetype-" + split[split.length - 1] + "' />";
 	}
-}
+};
 
-var rdr_havePerfdata = function (val, metadata, record, rowIndex, colIndex, store) {
-	if (val != ''){
+var rdr_havePerfdata = function(val, metadata, record, rowIndex, colIndex, store) {
+	if (val != '') {
 		return "<span class='icon icon-perfdata'/>";
 	}
-}
+};
 
-var rdr_widget_preview = function (val, metadata, record, rowIndex, colIndex, store) {	
-	return "<span style='background-color:" + global.default_colors[rowIndex] + ";color:" + global.default_colors[rowIndex] + ";'>__</span>"
-}
+var rdr_widget_preview = function(val, metadata, record, rowIndex, colIndex, store) {
+	return "<span style='background-color:" + global.default_colors[rowIndex] + ';color:' + global.default_colors[rowIndex] + ";'>__</span>";
+};
 
-var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store) {	
-	
-	var output = ''	
-	
-	if(val != undefined){
+var rdr_task_crontab = function(val, metadata, record, rowIndex, colIndex, store) {
+
+	var output = '';
+
+	if (val != undefined) {
 		//second condition is if minutes are str and not int
-		if(val.hour != undefined && val.minute != undefined){
-			var d = new Date()
-			d.setUTCHours(parseInt(val.hour,10))
-			d.setUTCMinutes(parseInt(val.minute,10))
-			
-			var utc_minutes = d.getUTCMinutes()
-			var utc_hours = d.getUTCHours()
-			var local_minutes = d.getMinutes()
-			var local_hours = d.getHours()
-			
+		if (val.hour != undefined && val.minute != undefined) {
+			var d = new Date();
+			d.setUTCHours(parseInt(val.hour, 10));
+			d.setUTCMinutes(parseInt(val.minute, 10));
+
+			var utc_minutes = d.getUTCMinutes();
+			var utc_hours = d.getUTCHours();
+			var local_minutes = d.getMinutes();
+			var local_hours = d.getHours();
+
 			//cosmetic
-			if(utc_minutes < 10)
-				utc_minutes = '0' + utc_minutes
-			if(local_minutes < 10)
-				local_minutes = '0' + local_minutes
-			
+			if (utc_minutes < 10)
+				utc_minutes = '0' + utc_minutes;
+			if (local_minutes < 10)
+				local_minutes = '0' + local_minutes;
+
 			//12h translate
-			if(global.locale == 'fr'){
+			if (global.locale == 'fr') {
 				// UTC time
-				output += local_hours + ':' + local_minutes +' '
+				output += local_hours + ':' + local_minutes + ' ';
 				/*
 				//local time
 				output += '(UTC: ' + utc_hours + ':' + utc_minutes +')'
 				* */
 			} else {
 				//utc AM/PM check
-				if(local_hours > 12)
-					output += (local_hours-12) + ':' + local_minutes + ' pm'
+				if (local_hours > 12)
+					output += (local_hours - 12) + ':' + local_minutes + ' pm';
 				else
-					output += local_hours + ':' + local_minutes + ' am'
+					output += local_hours + ':' + local_minutes + ' am';
 				/*
 				//local AM/PM check
 				if(utc_hours > 12)
 					output += '(UTC: ' + (utc_hours-12) + ':' + utc_minutes + 'pm)'
 				else
 					output += '(UTC: ' + utc_hours + ':' + utc_minutes + 'am)'
-					* 
+					*
 				*/
 			}
 
 		}
-		
-		if(val.month != undefined && val.day != undefined)
-			output += '   |    '+ _('month')+ ' : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day 
-		
-		
-		if(val.day_of_week != undefined)
-			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week)
+
+		if (val.month != undefined && val.day != undefined)
+			output += '   |    ' + _('month') + ' : ' + global.numberToMonth[val.month] + ' |  day : ' + val.day;
+
+
+		if (val.day_of_week != undefined)
+			output += '   |   ' + _('day') + ' : ' + _(val.day_of_week);
 
 	}
-	
-	return output
-}
+
+	return output;
+};
 
 //Function for rendering export to pdf button, we haven't find another solution
-var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, store,view){
+var rdr_export_button = function(val, metadata, record, rowIndex, colIndex, store,view) {
 	var id = Ext.id();
-	if(record.get('leaf')){
-		var output = ''
+	if (record.get('leaf')) {
+		var output = '';
 		output += Ext.String.format(
 			'<div style="{0}" class="{1}" onclick="Ext.getCmp(\'{2}\').ownerCt.export_pdf(\'{3}\')"></div>',
 			'height:16px;width:16px;',
 			'icon-mimetype-pdf',
 			view.id,
 			record.get('_id')
-		)
-		return output
+		);
+		return output;
 	}
-}
+};
 
-var rdr_mail_information = function(val, metadata, record, rowIndex, colIndex, store,view){
-	if(val == false)
-		return _('This task is not send by mail')
-		
-	output = ''
-	if(val.recipients != undefined)
-		output += _('Recipients :') + ' ' + val.recipients
-		
-	return output
-}
+var rdr_mail_information = function(val, metadata, record, rowIndex, colIndex, store,view) {
+	if (val == false)
+		return _('This task is not send by mail');
 
-var rdr_clean_id = function (val){
-	if (val.search('.') != -1){
-		tmp = val.split('.')
-		val = tmp[1]
+	output = '';
+	if (val.recipients != undefined)
+		output += _('Recipients :') + ' ' + val.recipients;
+
+	return output;
+};
+
+var rdr_clean_id = function(val) {
+	if (val.search('.') != -1) {
+		tmp = val.split('.');
+		val = tmp[1];
 	}
-	
-	return val
-}
+
+	return val;
+};

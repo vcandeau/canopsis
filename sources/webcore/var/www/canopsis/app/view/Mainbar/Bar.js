@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Mainbar.Bar' ,{
+Ext.define('canopsis.view.Mainbar.Bar' , {
 	extend: 'Ext.toolbar.Toolbar',
 
 	alias: 'widget.Mainbar',
@@ -27,99 +27,99 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 
 	layout: {
 		type: 'hbox',
-		align: 'stretch',
+		align: 'stretch'
 		//padding: 5
 	},
 
 	baseCls: 'Mainbar',
 
 	initComponent: function() {
-		
+
 		this.localeSelector = Ext.create('Ext.form.field.ComboBox', {
 			id: 'localeSelector',
 			action: 'localeSelector',
-			queryMode: "local",
-			displayField: "text",
-			valueField: "value",
-			fieldLabel: _("Language"),
+			queryMode: 'local',
+			displayField: 'text',
+			valueField: 'value',
+			fieldLabel: _('Language'),
 			value: global.locale,
 			store: {
-				xtype: "store",
-				fields: ["value", "text"],
+				xtype: 'store',
+				fields: ['value', 'text'],
 				data: [
-						{"value": 'fr', "text": "Français"},
-						{"value": 'en', "text": "English"},
+						{'value': 'fr', 'text': 'Français'},
+						{'value': 'en', 'text': 'English'}
 						//{"value": 'ja', "text": "日本語"},
 				]
 			},
-			iconCls: 'no-icon',
+			iconCls: 'no-icon'
 			//iconCls:'icon-mainbar-edit-view',
 		});
-		
+
 		this.viewSelector = Ext.create('Ext.form.field.ComboBox', {
 			id: 'viewSelector',
 			action: 'viewSelector',
-			store:  Ext.create('canopsis.store.Views', {autoLoad: false}),
+			store: Ext.create('canopsis.store.Views', {autoLoad: false}),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: false,
 			hideLabel: true,
 			minChars: 2,
 			queryMode: 'remote',
-			emptyText: _('Select a view')+' ...',
-			width: 200,
+			emptyText: _('Select a view') + ' ...',
+			width: 200
 		});
-		
+
 		this.dashboardSelector = Ext.create('Ext.form.field.ComboBox', {
 			iconCls: 'icon-mainbar-dashboard',
 			id: 'dashboardSelector',
 			action: 'dashboardSelector',
-			store:  Ext.data.StoreManager.lookup('Views'),
+			store: Ext.data.StoreManager.lookup('Views'),
 			displayField: 'crecord_name',
 			valueField: 'id',
 			typeAhead: true,
 			//hideLabel: true,
-			fieldLabel: _("Dashboard"),
+			fieldLabel: _('Dashboard'),
 			minChars: 2,
 			queryMode: 'local',
-			emptyText: _('Select a view')+' ...',
+			emptyText: _('Select a view') + ' ...',
 			value: global.account['dashboard'],
 			width: 200,
 			iconCls: 'no-icon'
 			// Bug ...
 			//iconCls: 'icon-mainbar-dashboard',
 		});
-		
-		// Hide  menu when item are selected
-		this.viewSelector.on('select',function(){
-				var menu = this.down('menu[name="Run"]')
-				menu.hide()
-			},this)
-		
-		var menu_build = []
-		var menu_run = []
-		var menu_reporting = []
-		var menu_preferences = []
-		var menu_configuration = []
 
-			
+		// Hide  menu when item are selected
+		this.viewSelector.on('select', function() {
+				var menu = this.down('menu[name="Run"]');
+				menu.hide();
+			},this);
+
+		var menu_build = [];
+		var menu_run = [];
+		var menu_reporting = [];
+		var menu_preferences = [];
+		var menu_configuration = [];
+
+
 		//Root build menu
-		if(global.account.user == 'root' || global.account.aaa_group == 'group.CPS_account_admin' ||(global.account.groups.indexOf('group.CPS_account_admin') != -1)){
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_account_admin' || (global.account.groups.indexOf('group.CPS_account_admin') != -1)) {
 			menu_build = menu_build.concat([
 				{
-					iconCls:'icon-mainbar-edit-account',
+					iconCls: 'icon-mainbar-edit-account',
 					text: _('Edit accounts'),
 					action: 'editAccount'
 				},{
-					iconCls:'icon-mainbar-edit-group',
+					iconCls: 'icon-mainbar-edit-group',
 					text: _('Edit groups'),
 					action: 'editGroup'
 				}
 			]);
 		}
-	
+
 		//Build menu Curves Admin
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_curve_admin' ||(global.account.groups.indexOf('group.CPS_curve_admin') != -1)){
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_curve_admin' || (global.account.groups.indexOf('group.CPS_curve_admin') != -1)) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-colors',
@@ -127,51 +127,51 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 					action: 'openViewMenu',
 					viewId: 'view.curves'
 				}
-			]);			
+			]);
 		}
-	
+
 		//Build menu
 		//if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
 			menu_build = menu_build.concat([
 				{
-					iconCls:'icon-mainbar-edit-view',
+					iconCls: 'icon-mainbar-edit-view',
 					text: _('Edit active view'),
 					action: 'editView'
 				},{
-					iconCls:'icon-mainbar-new-view',
+					iconCls: 'icon-mainbar-new-view',
 					text: _('New view'),
 					action: 'newView'
-				}	
+				}
 			]);
 		//}
-		
+
 		//Reporting menu
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_reporting_admin' ||(global.account.groups.indexOf('group.CPS_reporting_admin') != -1)){
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_reporting_admin' || (global.account.groups.indexOf('group.CPS_reporting_admin') != -1)) {
 			menu_reporting = menu_reporting.concat([
 				{
 					iconCls: 'icon-mimetype-pdf',
 					text: _('Export active view'),
 					action: 'exportView'
 				}
-			])
+			]);
 		}
-		
-		
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_schedule_admin' ||(global.account.groups.indexOf('group.CPS_schedule_admin') != -1)){
+
+
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_schedule_admin' || (global.account.groups.indexOf('group.CPS_schedule_admin') != -1)) {
 			menu_reporting = menu_reporting.concat([
 				{
 					iconCls: 'icon-mainbar-add-task',
 					text: _('Schedule active view export'),
 					action: 'ScheduleExportView'
 				},{
-					iconCls:'icon-mainbar-edit-task',
+					iconCls: 'icon-mainbar-edit-task',
 					text: _('Edit schedules'),
 					action: 'editSchedule'
 				}
-			])
+			]);
 		}
-		
-		if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_reporting_admin' ||(global.account.groups.indexOf('group.CPS_reporting_admin') != -1)){
+
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_reporting_admin' || (global.account.groups.indexOf('group.CPS_reporting_admin') != -1)) {
 			menu_reporting = menu_reporting.concat([{
 					iconCls: 'icon-mainbar-reporting',
 					text: _('Switch to live reporting'),
@@ -179,13 +179,13 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				}
 			]);
 		}
-		
+
 		menu_reporting = menu_reporting.concat([{
-			iconCls:'icon-mainbar-briefcase',
+			iconCls: 'icon-mainbar-briefcase',
 			text: _('Briefcase'),
 			action: 'openBriefcase'
-		}])
-		
+		}]);
+
 		//Run menu
 		menu_run = menu_run.concat([
 			{
@@ -203,24 +203,24 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				action: 'openViewMenu',
 				viewId: 'view.resources'
 			}
-		])
-		
+		]);
+
 		//if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
 			menu_run = menu_run.concat(
 				[
 					{
 						iconCls: 'icon-mainbar-run',
-						text: _("Views manager"),
+						text: _('Views manager'),
 						action: 'openViewsManager'
 					}
 				]
-			)
+			);
 		//}
-			
+
 		menu_run = menu_run.concat([
 			'-', this.viewSelector
 		]);
-		
+
 		//Configuration menu
 		menu_configuration = menu_configuration.concat([
 			{
@@ -235,28 +235,28 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				iconCls: 'icon-access',
 				text: _('Authentification key'),
 				action: 'authkey'
-			},'-',{
+			},'-', {
 				iconCls: 'icon-logout',
 				text: _('Logout'),
 				action: 'logout'
-			}		
+			}
 		]);
-		
+
 		//Preferences menu
-		menu_preferences= menu_preferences.concat([
+		menu_preferences = menu_preferences.concat([
 			this.localeSelector,
 			'-',
-			this.dashboardSelector,
+			this.dashboardSelector
 		]);
-	
-	
+
+
 		//Set Items
 		this.items = [
 			{
 				iconCls: 'icon-mainbar-build',
 				text: _('ITIL.Build'),
 				menu: {
-					items: menu_build,
+					items: menu_build
 				}
 			},{
 				iconCls: 'icon-mainbar-run',
@@ -264,7 +264,7 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				menu: {
 					name: 'Run',
 					showSeparator: true,
-					items: menu_run,
+					items: menu_run
 				}
 			},{
 				iconCls: 'icon-mainbar-report',
@@ -272,37 +272,37 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 				menu: {
 					name: 'Report',
 					showSeparator: true,
-					items: menu_reporting,
+					items: menu_reporting
 				}
-			},'-',{
+			},'-', {
 				//xtype: 'container',
 				//html: "<div class='cps-title' >Canopsis</div>",
 				xtype: 'tbtext',
 				text: 'Canopsis',
 				cls: 'cps-title',
-				flex : 1
+				flex: 1
 			},/*{
 				xtype : 'container',
 				width : 300
 			},*/{
-				xtype : 'container',
-				name : 'clock',
-				align : 'strech',
-				flex : 4
-			},'->',{
 				xtype: 'container',
-				html: "<div class='cps-account' >"+global.account.firstname+" "+global.account.lastname+"</div>",
-				flex:2.3
+				name: 'clock',
+				align: 'strech',
+				flex: 4
+			},'->', {
+				xtype: 'container',
+				html: "<div class='cps-account' >" + global.account.firstname + ' '+ global.account.lastname + '</div>',
+				flex: 2.3
 			},{
 				iconCls: 'icon-user',
-				flex : 0.2,
+				flex: 0.2,
 				menu: {
 					items: menu_preferences
 				}
 
-			},'-',{
+			},'-', {
 				iconCls: 'icon-preferences',
-				flex : 0.2,
+				flex: 0.2,
 				menu: {
 					name: 'Preferences',
 					showSeparator: true,
@@ -311,15 +311,15 @@ Ext.define('canopsis.view.Mainbar.Bar' ,{
 			},{
 				iconCls: (global.websocketCtrl.connected) ? 'icon-bullet-green' : 'icon-bullet-red',
 				id: 'Mainbar-menu-Websocket',
-				flex : 0.2,
+				flex: 0.2
 				/*menu: {
 					name: 'Websocket',
 					showSeparator: true,
 					items: menu_configuration
 				}*/
 			}
-		]
-		
+		];
+
 		this.callParent(arguments);
 	}
 

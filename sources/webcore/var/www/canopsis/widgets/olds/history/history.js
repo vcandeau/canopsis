@@ -18,33 +18,33 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.history.history' ,{
+Ext.define('widgets.history.history' , {
 	extend: 'canopsis.lib.view.cwidget',
-	
-	alias : 'widget.history',
+
+	alias: 'widget.history',
 
 	initComponent: function() {
-	
+
 		this.grid = Ext.create('canopsis.lib.view.cgrid_state', {
-			exportMode : this.exportMode,
+			exportMode: this.exportMode,
 			border: (this.title || this.fullmode) ? false : true,
 			namespace: 'events_log',
 			opt_paging: true,
 			pageSize: global.pageSize,
 			sorters: [{
-				property : 'timestamp',
+				property: 'timestamp',
 				direction: 'DESC'
-			}],
+			}]
 		});
 
 		this.callParent(arguments);
 
-		//adding grid to widget 
+		//adding grid to widget
 		this.removeAll();
-		this.add(this.grid);	
+		this.add(this.grid);
 	},
-	
-	onRefresh: function(data){
-		this.grid.load_host(data.component)
-	},
+
+	onRefresh: function(data) {
+		this.grid.load_host(data.component);
+	}
 });

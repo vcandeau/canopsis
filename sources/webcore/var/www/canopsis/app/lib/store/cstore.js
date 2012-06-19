@@ -20,70 +20,70 @@
 */
 Ext.define('canopsis.lib.store.cstore', {
     extend: 'Ext.data.Store',
-    
+
     pageSize: global.pageSize,
-    remoteSort : true,
-    
-    baseFilter : false,
+    remoteSort: true,
+
+    baseFilter: false,
 
 	logAuthor: '[cstore]',
-	
+
     listeners: {
-		update: function(){
+		update: function() {
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
-					global.websocketCtrl.publish_event('store', this.storeId, 'update')
+					global.websocketCtrl.publish_event('store', this.storeId, 'update');
 		},
-		remove: function(){
+		remove: function() {
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
-					global.websocketCtrl.publish_event('store', this.storeId, 'remove')
+					global.websocketCtrl.publish_event('store', this.storeId, 'remove');
 		},
-		write: function(store, operation,option){
-			if(operation.action == "create")
-				global.notify.notify(_('Success'), _('Record saved'))
-			
+		write: function(store, operation,option) {
+			if (operation.action == 'create')
+				global.notify.notify(_('Success'), _('Record saved'));
+
 		}
    },
-  
+
    //function for search and filter
-   setFilter : function(filter){
-		log.debug('Setting base store filter', this.logAuthor)
-		if(typeof(filter) == 'object'){
+   setFilter: function(filter) {
+		log.debug('Setting base store filter', this.logAuthor);
+		if (typeof(filter) == 'object') {
 			this.baseFilter = filter;
-		}else{
+		}else {
 			this.baseFilter = Ext.JSON.decode(filter);
 		}
 
 		// For first load
 		this.proxy.extraParams.filter = Ext.JSON.encode(this.baseFilter);
    },
-   
-   clearFilter: function(){
+
+   clearFilter: function() {
 		if (this.baseFilter)
 			this.proxy.extraParams.filter = Ext.JSON.encode(this.baseFilter);
 		else
-			delete this.proxy.extraParams["filter"]
+			delete this.proxy.extraParams['filter'];
    },
 
-   getFilter : function(){
-	   return this.proxy.extraParams.filter
-   },
-   
-   getOrFilter: function(filter){
-	return {"$or" : filter};
+   getFilter: function() {
+	   return this.proxy.extraParams.filter;
    },
 
-   getAndFilter: function(filter){
-	return {"$and" : filter};
+   getOrFilter: function(filter) {
+	return {'$or' : filter};
    },
 
-   search : function(filter, autoLoad){
+   getAndFilter: function(filter) {
+	return {'$and' : filter};
+   },
+
+   search: function(filter, autoLoad) {
 		if (autoLoad == undefined)
 			autoLoad = true;
-	   
-		log.debug('Building filter request', this.logAuthor)
-		if(this.baseFilter){
+
+		log.debug('Building filter request', this.logAuthor);
+		if (this.baseFilter) {
 			var newObject = this.baseFilter;
 			newObject = this.getAndFilter([newObject, filter]);
 		} else {
@@ -93,9 +93,8 @@ Ext.define('canopsis.lib.store.cstore', {
 		this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
 		log.debug('Filter: ' + this.proxy.extraParams.filter, this.logAuthor);
 
-		if (autoLoad){
+		if (autoLoad) {
 			this.load();
 		}
-   },
-   	
+   }
 });

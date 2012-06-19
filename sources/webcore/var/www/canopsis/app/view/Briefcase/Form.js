@@ -22,22 +22,22 @@ Ext.define('canopsis.view.Briefcase.Form', {
 	extend: 'canopsis.lib.view.cform',
 
 	alias: 'widget.BriefcaseForm',
-	
-	initComponent: function(){
-		var _id = Ext.widget('textfield',{
+
+	initComponent: function() {
+		var _id = Ext.widget('textfield', {
 				fieldLabel: _('File name'),
 				name: '_id',
 				hidden: true
-		})
-		
-		var filename = Ext.widget('textfield',{
+		});
+
+		var filename = Ext.widget('textfield', {
 				fieldLabel: _('File name'),
-				name: 'file_name',
-		})
-		
-		this.items=[_id,filename]
-		
+				name: 'file_name'
+		});
+
+		this.items = [_id, filename];
+
 		this.callParent();
-	},
-    
+	}
+
 });

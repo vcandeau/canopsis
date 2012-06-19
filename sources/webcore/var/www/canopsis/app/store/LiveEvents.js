@@ -22,7 +22,7 @@ Ext.define('canopsis.store.LiveEvents', {
 	extend: 'canopsis.lib.store.cstore',
 
 	model: 'canopsis.model.Event',
-	
+
 	storeId: 'store.LiveEvents',
 
 	/*sorters: [{
@@ -30,5 +30,5 @@ Ext.define('canopsis.store.LiveEvents', {
 		direction: 'DESC'
 	}],*/
 
-	data : []
+	data: []
 });

@@ -18,45 +18,45 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.pie.pie' ,{
+Ext.define('widgets.pie.pie' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias : 'widget.pie',
-	
+	alias: 'widget.pie',
+
 	logAuthor: '[pie]',
-	
+
 	initComponent: function() {
 		this.callParent(arguments);
-		
+
 	},
-	
-	onRefresh: function(data){
+
+	onRefresh: function(data) {
 		this.uri += '/' + this.nodeId;
-		if (this.chart){
-			if (data.perf_data_array){
-				this.parseData(data.perf_data_array)
+		if (this.chart) {
+			if (data.perf_data_array) {
+				this.parseData(data.perf_data_array);
 			}
-		}else{
+		}else {
 			this.createHighchart(data);
 		}
 	},
-	
-	createHighchart: function(data){
+
+	createHighchart: function(data) {
 		this.setOptions();
 
-		var title = "";
-		if (data.resource){
+		var title = '';
+		if (data.resource) {
 			title = data.resource + ' on ';
 		}
-		if (data.component){
+		if (data.component) {
 			title += data.component;
 		}
 		this.options.title.text = title;
-		
-		log.debug(" + set title: '"+title+"'", this.logAuthor)
-		
-		if (data.perf_data_array){
-			this.parseData(data.perf_data_array)
+
+		log.debug(" + set title: '" + title + "'", this.logAuthor);
+
+		if (data.perf_data_array) {
+			this.parseData(data.perf_data_array);
 		}
 
 		this.chart = new Highcharts.Chart(this.options);
@@ -65,13 +65,13 @@ Ext.define('widgets.pie.pie' ,{
 
 	parseData: function(perf_data) {
 		//log.dump(perf_data)
-	
-		if (this.chart){
+
+		if (this.chart) {
 			var serie = this.chart.get('pie');
-			serie.remove()
+			serie.remove();
 		}
 
-		this.options.series = []
+		this.options.series = [];
 
 		var serie = {
 			id: 'pie',
@@ -79,53 +79,53 @@ Ext.define('widgets.pie.pie' ,{
 			data: []
 		};
 
-		if (this.metric){
-			log.debug(" + Use one metric: '"+this.metric+"'", this.logAuthor)
-			metric = perf_data[this.metric]
+		if (this.metric) {
+			log.debug(" + Use one metric: '" + this.metric + "'", this.logAuthor);
+			metric = perf_data[this.metric];
 
 			var metric_max = metric.max;
-			if (this.metric_max){
-				log.debug(" + Set max to: "+this.metric_max, this.logAuthor)
+			if (this.metric_max) {
+				log.debug(' + Set max to: '+ this.metric_max, this.logAuthor);
 				metric_max = this.metric_max;
 			}
 
-			serie.data.push({ name: 'Free', y: metric_max-metric.value, color: global.default_colors[0] })
-			serie.data.push({ name: metric.metric, y: metric.value, color: global.default_colors[1]})
-		}else{
-			log.debug(" + Use Multiple metrics", this.logAuthor)
+			serie.data.push({ name: 'Free', y: metric_max - metric.value, color: global.default_colors[0] });
+			serie.data.push({ name: metric.metric, y: metric.value, color: global.default_colors[1]});
+		}else {
+			log.debug(' + Use Multiple metrics', this.logAuthor);
 			var index;
 			var total = 0;
-			for (index in perf_data){
-				metric = perf_data[index]
-				total += metric.value			
+			for (index in perf_data) {
+				metric = perf_data[index];
+				total += metric.value;
 			}
-			if (total == 0){ total = 1 }
-			log.debug("   + Total: "+total, this.logAuthor)
+			if (total == 0) { total = 1 }
+			log.debug('   + Total: '+ total, this.logAuthor);
 
 			var i = 0;
-			for (index in perf_data){
-				log.debug("   + Push metric: '"+index+"'", this.logAuthor)
-				var metric = perf_data[index]
-				var color = global.default_colors[i]
-				serie.data.push({ name: metric.metric, y: Math.round(metric.value / total), color: color })
-				i+=1;
+			for (index in perf_data) {
+				log.debug("   + Push metric: '" + index + "'", this.logAuthor);
+				var metric = perf_data[index];
+				var color = global.default_colors[i];
+				serie.data.push({ name: metric.metric, y: Math.round(metric.value / total), color: color });
+				i += 1;
 			}
 		}
 
-		this.options.series.push(serie)
-		if (this.chart){
-			this.chart.addSeries(serie)
+		this.options.series.push(serie);
+		if (this.chart) {
+			this.chart.addSeries(serie);
 		}
 	},
 
-	setOptions: function(){
+	setOptions: function() {
 		this.options = {
 			chart: {
 				renderTo: this.divId,
 				defaultSeriesType: 'pie',
 				height: this.divHeight,
 				animation: false,
-				borderColor: "#FFFFFF"
+				borderColor: '#FFFFFF'
 			},
 			exporting: {
 				enabled: false
@@ -139,12 +139,12 @@ Ext.define('widgets.pie.pie' ,{
 						enabled: false
 					},
 					showInLegend: true,
-					animation: false,
+					animation: false
 				}
 			},
 			tooltip: {
 				formatter: function() {
-					return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';
+					return '<b>' + this.point.name + '</b>: ' + Math.round(this.percentage) + ' %';
 					}
 			},
 			title: {
@@ -152,21 +152,21 @@ Ext.define('widgets.pie.pie' ,{
 				floating: true
 			},
 			symbols: [],
-			credits: {	
+			credits: {
 				enabled: false
 			},
 			series: []
-		}
+		};
 
 		//specifique options to add
-		if(this.exportMode){
+		if (this.exportMode) {
 			this.options.plotOptions.pie.enableMouseTracking = false;
-			this.options.plotOptions.tooltip = {}
+			this.options.plotOptions.tooltip = {};
 			this.options.plotOptions.pie.shadow = false;
 		}
 
 	}
-	
-	
-	
+
+
+
 });

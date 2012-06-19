@@ -18,10 +18,10 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cwizard' ,{
+Ext.define('canopsis.lib.view.cwizard' , {
 	extend: 'Ext.window.Window',
 
-	alias : 'widget.ViewBuilderWizard',
+	alias: 'widget.ViewBuilderWizard',
 
 	title: _('Wizard'),
 	closable: false,
@@ -32,56 +32,56 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 	layout: 'fit',
 	bodyStyle: 'padding: 5px;',
 	labelWidth: 200,
-	
+
 	constrain: true,
 	constrainHeader: true,
-	
-	edit : false,
-	
+
+	edit: false,
+
 	step_list: [{
 			title: _("i'm empty !"),
 			html: _('you must give an object to fill me')
 		}],
 
 	initComponent: function() {
-		this.logAuthor = '[Wizard '+ this.id+']'
-		log.debug('Create Wizard "' + this.title + '"' ,this.logAuthor)
-		
-		
+		this.logAuthor = '[Wizard ' + this.id + ']';
+		log.debug('Create Wizard "' + this.title + '"' , this.logAuthor);
+
+
 		//-----------------buttons--------------------------
-		
-		this.bbar = Ext.create('Ext.toolbar.Toolbar')
 
-		this.cancelButton = this.bbar.add({xtype:'button',text:_('Cancel'),action:'cancel',iconCls:'icon-cancel'})
-		this.bbar.add('->')
-		this.previousButton = this.bbar.add({xtype:'button',text:_('Previous'),action:'previous',disabled:true,iconCls:'icon-previous'})
-		this.nextButton = this.bbar.add({xtype:'button',text:_('Next'),action:'next',disabled:true,iconCls:'icon-next',iconAlign:'right'})
+		this.bbar = Ext.create('Ext.toolbar.Toolbar');
 
-		this.finishButton = this.bbar.add({xtype:'button',text:_('Finish'),action:'finish',iconCls: 'icon-save',iconAlign:'right'})
-		
+		this.cancelButton = this.bbar.add({xtype: 'button', text: _('Cancel'), action: 'cancel', iconCls: 'icon-cancel'});
+		this.bbar.add('->');
+		this.previousButton = this.bbar.add({xtype: 'button', text: _('Previous'), action: 'previous', disabled: true, iconCls: 'icon-previous'});
+		this.nextButton = this.bbar.add({xtype: 'button', text: _('Next'), action: 'next', disabled: true, iconCls: 'icon-next', iconAlign: 'right'});
+
+		this.finishButton = this.bbar.add({xtype: 'button', text: _('Finish'), action: 'finish', iconCls: 'icon-save', iconAlign: 'right'});
+
 		//--
-		this.tabPanel = Ext.create('Ext.tab.Panel',{
+		this.tabPanel = Ext.create('Ext.tab.Panel', {
 			layout: 'fit',
 			//xtype: 'tabpanel',
-			plain: true,
+			plain: true
 			//deferredRender: false,
-		})
-		
-		
-		if(this.step_list){
+		});
+
+
+		if (this.step_list) {
 			//var tmp = this.build_step_list(this.step_list)
-			log.debug("Wizard steps fully generated",this.logAuthor)
-			for(var i in this.step_list){
-				this.add_new_step(this.step_list[i])
+			log.debug('Wizard steps fully generated', this.logAuthor);
+			for (var i in this.step_list) {
+				this.add_new_step(this.step_list[i]);
 			}
 		}
-		
-		this.items = [this.tabPanel]
+
+		this.items = [this.tabPanel];
 		//--
-		
+
 		this.callParent(arguments);
-		
-		this.previousButton.setDisabled(true)
+
+		this.previousButton.setDisabled(true);
 		/* ----------------------------------------
 
 		//---------tab panel----------
@@ -91,7 +91,7 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			plain: true,
 			deferredRender: false,
 		})
-		
+
 		if(this.step_list){
 			//var tmp = this.build_step_list(this.step_list)
 			log.debug("Wizard steps fully generated",this.logAuthor)
@@ -100,61 +100,61 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			}
 		}*/
 	},
-	
-	afterRender : function(){
+
+	afterRender: function() {
 		//needed
 		this.callParent(arguments);
-		this.tabPanel.setActiveTab(0)
-		this.bind_buttons()
-		
+		this.tabPanel.setActiveTab(0);
+		this.bind_buttons();
+
 		//bind combobox
-		if(this.data){
-			this.loadData()
+		if (this.data) {
+			this.loadData();
 		} else {
-			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
-			if(combo.length != 0)
-				combo[0].on('select',this.add_option_panel,this)
+			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
+			if (combo.length != 0)
+				combo[0].on('select', this.add_option_panel, this);
 		}
 	},
-	
-	
-	bind_buttons: function(){
-		log.debug("binding buttons",this.logAuthor)
+
+
+	bind_buttons: function() {
+		log.debug('binding buttons', this.logAuthor);
 		//---------------------previous button--------------------
-		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=previous]')
-		for (i in btns){
-			btns[i].on('click', this.previous_button, this)
+		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=previous]');
+		for (i in btns) {
+			btns[i].on('click', this.previous_button, this);
 		}
 		//---------------------next button--------------------
-		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=next]')
-		for (i in btns){
-			btns[i].on('click', this.next_button, this)
+		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=next]');
+		for (i in btns) {
+			btns[i].on('click', this.next_button, this);
 		}
 		//---------------------cancel button--------------------
-		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=cancel]')
-		for (i in btns){
-			btns[i].on('click', this.cancel_button, this)
+		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=cancel]');
+		for (i in btns) {
+			btns[i].on('click', this.cancel_button, this);
 		}
 		//---------------------finish button-------------------
-		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]')
-		for (i in btns){
-			btns[i].on('click', this.finish_button, this)
+		var btns = Ext.ComponentQuery.query('#' + this.id + ' [action=finish]');
+		for (i in btns) {
+			btns[i].on('click', this.finish_button, this);
 		}
-		
-		this.tabPanel.on('tabchange',this.update_button,this)
+
+		this.tabPanel.on('tabchange', this.update_button, this);
 	},
-	
-	add_new_step: function(step){
-		log.debug('Dumping step before adding')
-		log.dump(step)
-		step.bodyPadding = 10
-		step.autoScroll = true
-		
-		step.defaults = { labelWidth: this.labelWidth }
-		
-		if (step.items.length == 1){
-			step.layout = 'fit'
-			step.bodyPadding = 5
+
+	add_new_step: function(step) {
+		log.debug('Dumping step before adding');
+		log.dump(step);
+		step.bodyPadding = 10;
+		step.autoScroll = true;
+
+		step.defaults = { labelWidth: this.labelWidth };
+
+		if (step.items.length == 1) {
+			step.layout = 'fit';
+			step.bodyPadding = 5;
 		}
 
 		//adding some style
@@ -166,160 +166,160 @@ Ext.define('canopsis.lib.view.cwizard' ,{
 			item.border = false
 		}*/
 		//adding to center panel
-		return this.tabPanel.add(step)
+		return this.tabPanel.add(step);
 	},
-	
-	loadData : function(){
-		this.edit = true
-		if(this.data.xtype){
-			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
 
-			combo[0].setValue(this.data.xtype)
-			var list_tab = this.add_option_panel()
-			combo[0].setDisabled(true)
+	loadData: function() {
+		this.edit = true;
+		if (this.data.xtype) {
+			var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
+
+			combo[0].setValue(this.data.xtype);
+			var list_tab = this.add_option_panel();
+			combo[0].setDisabled(true);
 		}
-		
-		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]')
 
-		for(var i in ext_element){
-			var elem = ext_element[i]
+		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]');
+
+		for (var i in ext_element) {
+			var elem = ext_element[i];
 			//log.debug('the element is : ' + elem.name)
 			//log.debug('the new value is : ' + this.data[elem.name])
-			if(this.data[elem.name] != undefined){
-				elem.setValue(this.data[elem.name])
+			if (this.data[elem.name] != undefined) {
+				elem.setValue(this.data[elem.name]);
 			}
 		}
 	},
 
-	reset_steps : function(){
-		var tab_childs = this.tabPanel.items.items
-		var tab_length = tab_childs.length
-		
+	reset_steps: function() {
+		var tab_childs = this.tabPanel.items.items;
+		var tab_length = tab_childs.length;
+
 		//log.debug('child panel : ' + tab_length)
 		//log.debug('step list length :' + this.step_list.length)
-		
-		var tab_to_remove = []
-		
-		for(var i = this.step_list.length; i < tab_length; i++){
-			tab_to_remove.push(tab_childs[i])
+
+		var tab_to_remove = [];
+
+		for (var i = this.step_list.length; i < tab_length; i++) {
+			tab_to_remove.push(tab_childs[i]);
 		}
 
-		for(var i in tab_to_remove){
-			this.tabPanel.remove(tab_to_remove[i])
+		for (var i in tab_to_remove) {
+			this.tabPanel.remove(tab_to_remove[i]);
 		}
 	},
-	
-	
 
-	get_variables : function(){
-		var output = {}
-		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]')
-		for (var i in ext_element){
-			var name = ext_element[i].name
-			var value = ext_element[i].getValue()
-			output[name] = value
+
+
+	get_variables: function() {
+		var output = {};
+		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]');
+		for (var i in ext_element) {
+			var name = ext_element[i].name;
+			var value = ext_element[i].getValue();
+			output[name] = value;
 		}
-		return output
+		return output;
 	},
 
-	add_option_panel : function() {
-		output = []
-		this.reset_steps()
-		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]')
-		if(combo[0].isValid()){
-			var store = combo[0].getStore()
-			var record = store.findRecord('xtype',combo[0].getValue())
-			
-			this.set_default_values(record)
-			
-			var options = record.get('options')
+	add_option_panel: function() {
+		output = [];
+		this.reset_steps();
+		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
+		if (combo[0].isValid()) {
+			var store = combo[0].getStore();
+			var record = store.findRecord('xtype', combo[0].getValue());
+
+			this.set_default_values(record);
+
+			var options = record.get('options');
 			//log.debug('the selected widget have the following options',this.logAuthor)
 			//log.dump(options)
-			if(options){
-				for(var i in options){
+			if (options) {
+				for (var i in options) {
 					for (var j in options[i].items)
 						if (options[i].items[j].xtype == 'fieldset')
-							options[i].items[j].defaults = { labelWidth: this.labelWidth }
-							
-					output.push(this.add_new_step(options[i]))
+							options[i].items[j].defaults = { labelWidth: this.labelWidth };
+
+					output.push(this.add_new_step(options[i]));
 				}
 			}
-			this.update_button()
+			this.update_button();
 		}
-		return output
+		return output;
 	},
-	
-	set_default_values: function(record){
-		log.debug('set defaults value to wizard', this.logAuthor)
-		var elements = Ext.ComponentQuery.query('#' + this.id + ' [name]')
-		for(var i in elements){
-			var element = elements[i]
+
+	set_default_values: function(record) {
+		log.debug('set defaults value to wizard', this.logAuthor);
+		var elements = Ext.ComponentQuery.query('#' + this.id + ' [name]');
+		for (var i in elements) {
+			var element = elements[i];
 			//don't reset xtype
-			if(element.name != "xtype"){
-				var value = record.get(element.name)
-				if(value != undefined){
+			if (element.name != 'xtype') {
+				var value = record.get(element.name);
+				if (value != undefined) {
 					//log.debug('setting value :' + value)
 					//log.debug('to : ' + element.name)
-					element.setValue(value)
+					element.setValue(value);
 				}
 			}
 		}
 	},
 	//----------------------button action functions-----------------------
-	previous_button: function(){
-		log.debug('previous button',this.logAuthor)
-		panel = this.tabPanel
-		active_tab = this.tabPanel.getActiveTab()
-		panel.setActiveTab(panel.items.indexOf(active_tab) - 1)
-		this.update_button()
-	},
-	
-	next_button: function(){
-		log.debug('next button',this.logAuthor)
-		
-		var panel = this.tabPanel
-		var active_tab = panel.getActiveTab()
-		var index = panel.items.indexOf(active_tab)
-		
-		panel.setActiveTab(index + 1)
-		this.update_button()
+	previous_button: function() {
+		log.debug('previous button', this.logAuthor);
+		panel = this.tabPanel;
+		active_tab = this.tabPanel.getActiveTab();
+		panel.setActiveTab(panel.items.indexOf(active_tab) - 1);
+		this.update_button();
 	},
 
-	update_button:function(){
-		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id)
+	next_button: function() {
+		log.debug('next button', this.logAuthor);
+
+		var panel = this.tabPanel;
+		var active_tab = panel.getActiveTab();
+		var index = panel.items.indexOf(active_tab);
+
+		panel.setActiveTab(index + 1);
+		this.update_button();
+	},
+
+	update_button: function() {
+		var activeTabIndex = this.tabPanel.items.findIndex('id', this.tabPanel.getActiveTab().id);
 		var tabCount = this.tabPanel.items.length;
 
-		if(activeTabIndex == 0){
-			this.previousButton.setDisabled(true)
+		if (activeTabIndex == 0) {
+			this.previousButton.setDisabled(true);
 		} else {
-			this.previousButton.setDisabled(false)
+			this.previousButton.setDisabled(false);
 		}
-		
-		if(activeTabIndex == (tabCount - 1)){
-			this.nextButton.setDisabled(true)
-			if(!this.edit){
-				this.finishButton.setDisabled(false)
+
+		if (activeTabIndex == (tabCount - 1)) {
+			this.nextButton.setDisabled(true);
+			if (!this.edit) {
+				this.finishButton.setDisabled(false);
 			}
 		} else {
-			this.nextButton.setDisabled(false)
-			if(!this.edit){
-				this.finishButton.setDisabled(true)
+			this.nextButton.setDisabled(false);
+			if (!this.edit) {
+				this.finishButton.setDisabled(true);
 			}
 		}
 	},
-	
-	cancel_button: function(){
-		log.debug('cancel button',this.logAuthor)
-		this.fireEvent('cancel')
-		this.close()
+
+	cancel_button: function() {
+		log.debug('cancel button', this.logAuthor);
+		this.fireEvent('cancel');
+		this.close();
 	},
-	
-	finish_button: function(){
-		log.debug('save button',this.logAuthor)
-		var variables = this.get_variables()
-		log.debug(variables)
-		this.fireEvent('save', variables)
-		this.close()
-	},
-	
+
+	finish_button: function() {
+		log.debug('save button', this.logAuthor);
+		var variables = this.get_variables();
+		log.debug(variables);
+		this.fireEvent('save', variables);
+		this.close();
+	}
+
 });

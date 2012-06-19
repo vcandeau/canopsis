@@ -24,10 +24,10 @@
 //											-> createChart
 
 
-Ext.define('widgets.line_graph.line_graph' ,{
+Ext.define('widgets.line_graph.line_graph' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias : 'widget.line_graph',
+	alias: 'widget.line_graph',
 
 	layout: 'fit',
 
@@ -40,9 +40,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 	options: {},
 	chart: false,
-	
+
 	params: {},
-	
+
 	metrics: [],
 
 	chartTitle: null,
@@ -54,93 +54,93 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	legend: true,
 	tooltip: true,
 	autoTitle: true,
-	backgroundColor: "#FFFFFF",
-	borderColor: "#FFFFFF",
+	backgroundColor: '#FFFFFF',
+	borderColor: '#FFFFFF',
 	borderWidth: 0,
-	
+
 	showWarnCritLine: true,
-	
+
 	marker_symbol: null,
 	marker_radius: 2,
-	
+
 	title_fontSize: 15,
-	
+
 	chart_type: 'line',
-	
-	legend_verticalAlign: "bottom",
-	legend_align: "center",
-	legend_layout: "horizontal",
+
+	legend_verticalAlign: 'bottom',
+	legend_align: 'center',
+	legend_layout: 'horizontal',
 	legend_backgroundColor: null,
-	legend_borderColor: "#909090",
+	legend_borderColor: '#909090',
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
-	legend_fontColor: "#3E576F",
+	legend_fontColor: '#3E576F',
 	maxZoom: 60 * 10, // 10 minutes
-	
-	interval : global.commonTs.hours,
-	aggregate_method : 'MAX',
 
-	SeriesType: "area",
+	interval: global.commonTs.hours,
+	aggregate_method: 'MAX',
+
+	SeriesType: 'area',
 	SeriePercent: false,
 	lineWidth: 1,
-	
+
 	//trends
 	data_trends: [],
-	trend_lines : false,
-	trend_lines_type : 'ShortDot',
+	trend_lines: false,
+	trend_lines_type: 'ShortDot',
 	use_window_ts: false,
 	//..
-	
+
 	initComponent: function() {
 		//Set title
 		if (this.autoTitle) {
 			this.setchartTitle();
-			this.title = ''
-		}else{
-			if (! this.border){
-				this.chartTitle = this.title
-				this.title = ''
+			this.title = '';
+		}else {
+			if (! this.border) {
+				this.chartTitle = this.title;
+				this.title = '';
 			}
 		}
 		this.callParent(arguments);
 	},
 
-	setchartTitle: function(){
-		var title = ""
+	setchartTitle: function() {
+		var title = '';
 		if (this.nodes) {
-			if (this.nodes.length == 1){
-				var resource = this.nodes[0].resource
-				var component = this.nodes[0].component
-				var source_type = this.nodes[0].source_type
-				
+			if (this.nodes.length == 1) {
+				var resource = this.nodes[0].resource;
+				var component = this.nodes[0].component;
+				var source_type = this.nodes[0].source_type;
+
 				if (source_type == 'resource')
-					title = resource + ' ' + _('line_graph.on') + ' ' + component
+					title = resource + ' ' + _('line_graph.on') + ' ' + component;
 				else
-					title = component
+					title = component;
 			}
 		}
-		this.chartTitle = title	
+		this.chartTitle = title;
 	},
-	
-	afterContainerRender: function(){
-		log.debug("Initialize line_graph", this.logAuthor)
-		log.debug(' + Time window: '+this.time_window, this.logAuthor)
-		
-		this.series = {}
-		this.series_hc = {}
-		
+
+	afterContainerRender: function() {
+		log.debug('Initialize line_graph', this.logAuthor);
+		log.debug(' + Time window: ' + this.time_window, this.logAuthor);
+
+		this.series = {};
+		this.series_hc = {};
+
 		this.setOptions();
 		this.createChart();
-		
-		if (this.nodes){
+
+		if (this.nodes) {
 			// Clean this.nodes
-			this.processNodes()
+			this.processNodes();
 		}
 
-		this.ready();	
+		this.ready();
 	},
 
-	setOptions: function(){
+	setOptions: function() {
 		//----------find the right scale and tickinterval for xAxis------------
 		/*if (this.reportStop && this.reportStart){
 			var timestampInterval = (this.reportStop/1000) - (this.reportStart/1000)
@@ -154,9 +154,9 @@ Ext.define('widgets.line_graph.line_graph' ,{
 
 		this.options = {
 			reportMode: this.reportMode,
-			
+
 			cwidget: this,
-			
+
 			chart: {
 				renderTo: this.wcontainerId,
 				defaultSeriesType: this.SeriesType,
@@ -188,20 +188,20 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			tooltip: {
 				enabled: this.tooltip,
 				formatter: function() {
-					var y = this.y
+					var y = this.y;
 					if (this.series.options.invert)
-						y = - y
+						y = - y;
 					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + y;
 				}
 			},
 			xAxis: {
 				type: 'datetime',
-				tickmarkPlacement: 'on',
+				tickmarkPlacement: 'on'
 			},
 			yAxis: {
 				title: {
 					text: null
-				},
+				}
         	},
 			plotOptions: {
 				series: {
@@ -210,7 +210,7 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			symbols: [],
-			credits: {	
+			credits: {
 				enabled: false
 			},
 			legend: {
@@ -227,31 +227,31 @@ Ext.define('widgets.line_graph.line_graph' ,{
 				}
 			},
 			series: []
-		}
+		};
 
 		//graph type (for column)
-		if(this.chart_type == 'column'){
-			this.options.chart.type = this.chart_type
+		if (this.chart_type == 'column') {
+			this.options.chart.type = this.chart_type;
 		}
 
 		// Check marker
-		var marker_enable = false
-		if (this.marker_symbol){
-			marker_enable = true
-		}else{
-			this.marker_symbol = null
-			this.marker_radius = 0
+		var marker_enable = false;
+		if (this.marker_symbol) {
+			marker_enable = true;
+		}else {
+			this.marker_symbol = null;
+			this.marker_radius = 0;
 		}
-		
+
 		// Ymax
-		if (this.SeriePercent){
-			this.options.yAxis.max = 100
+		if (this.SeriePercent) {
+			this.options.yAxis.max = 100;
 			//this.options.yAxis.title.text = 'pct'
 		}
 
 		// Configure line type
-		if 		(this.SeriesType == "area"){
-			this.options.plotOptions["area"] = {
+		if (this.SeriesType == 'area') {
+			this.options.plotOptions['area'] = {
 				lineWidth: this.lineWidth,
 				shadow: false,
 				cursor: 'pointer',
@@ -261,10 +261,10 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					symbol: this.marker_symbol,
 					radius: this.marker_radius
 				}
-			}
-			
-		}else if (this.SeriesType == "line"){
-			this.options.plotOptions["line"] = {
+			};
+
+		}else if (this.SeriesType == 'line') {
+			this.options.plotOptions['line'] = {
 				lineWidth: this.lineWidth,
 				shadow: false,
 				cursor: 'pointer',
@@ -274,99 +274,99 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					symbol: this.marker_symbol,
 					radius: this.marker_radius
 				}
-			}
+			};
 		}
 
 		//specifique options to add
-		if(this.exportMode){
+		if (this.exportMode) {
 			this.options.plotOptions.series['enableMouseTracking'] = false;
-		}else{
-			if (this.zoom){
-				this.options.chart.zoomType = "x"
+		}else {
+			if (this.zoom) {
+				this.options.chart.zoomType = 'x';
 			}
 		}
 	},
 
-	createChart: function(){
+	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
-		this.chartMessage = this.chart.renderer.text(_("Waiting data") + " ...", 50, 50).add()
+		this.chartMessage = this.chart.renderer.text(_('Waiting data') + ' ...', 50, 50).add();
 	},
-	
+
 	////////////////////// CORE
 
-	makeUrl: function(from, to){
-		var url = '/perfstore/values'
-		
-		if (! to){
-			url += '/' + from
+	makeUrl: function(from, to) {
+		var url = '/perfstore/values';
+
+		if (! to) {
+			url += '/' + from;
 		}
 
-		if (from && to){
-			url += '/' + from + '/' + to
+		if (from && to) {
+			url += '/' + from + '/' + to;
 		}
-	
-		return url;	
+
+		return url;
 	},
 
-	doRefresh: function(from, to){
-		if (this.chart){
-			
+	doRefresh: function(from, to) {
+		if (this.chart) {
+
 			//If bar chart, wait full insterval
 			if (this.lastRefresh)
-				if (Date.now() < this.lastRefresh+(this.refreshInterval*1000) && this.chart_type == 'column'){
-					log.debug(" +  Wait for refresh", this.logAuthor)
-					return false
+				if (Ext.Date.now() < this.lastRefresh + (this.refreshInterval * 1000) && this.chart_type == 'column') {
+					log.debug(' +  Wait for refresh', this.logAuthor);
+					return false;
 				}
-			
-			log.debug(" + Do Refresh "+from+" -> "+to, this.logAuthor)
 
-			if(this.chart_type == 'column'){
-				if(!this.last_form){
-					new_from = getMidnight(from)
-					new_to = getMidnight(to)
+			log.debug(' + Do Refresh '+ from + ' -> '+ to, this.logAuthor);
 
-					if((to - from) <= global.commonTs.day)
-						to = Date.now()
+			if (this.chart_type == 'column') {
+				if (!this.last_form) {
+					new_from = getMidnight(from);
+					new_to = getMidnight(to);
+
+					if ((to - from) <= global.commonTs.day)
+						to = Ext.Date.now();
 				}
 			}
 
-			if (! this.reportMode && this.last_from){
+			if (! this.reportMode && this.last_from) {
 				from = this.last_from;
-				to = Date.now();
+				to = Ext.Date.now();
 			}
-		
 
-			log.debug(" + Do Refresh "+ new Date(from)+" -> "+new Date(to), this.logAuthor)
 
-			if (this.nodes){
-				if(this.nodes.length != 0){
-					url = this.makeUrl(from, to)
-					this.last_from = to
+			log.debug(' + Do Refresh '+ new Date(from) + ' -> '+ new Date(to), this.logAuthor);
+
+			if (this.nodes) {
+				if (this.nodes.length != 0) {
+					url = this.makeUrl(from, to);
+					this.last_from = to;
 
 					Ext.Ajax.request({
 						url: url,
 						scope: this,
 						params: this.post_params,
 						method: 'POST',
-						success: function(response){
-							var data = Ext.JSON.decode(response.responseText)
-							data = data.data
-							this.onRefresh(data)	
+						success: function(response) {
+							var data = Ext.JSON.decode(response.responseText);
+							data = data.data;
+							this.onRefresh(data);
 						},
-						failure: function ( result, request) {
-							log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-						} 
-					})
+						failure: function(result, request) {
+							log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+						}
+					});
 				} else {
-					log.debug('No nodes specified', this.logAuthor)
+					log.debug('No nodes specified', this.logAuthor);
 				}
 			}
 		}
 	},
 
-	onRefresh: function (data){
-		if (this.chart){
-			log.debug("On refresh", this.logAuthor)
+	onRefresh: function(data) {
+		if (this.chart) {
+			log.debug('On refresh', this.logAuthor);
 			/*if (this.reportMode){
 				log.debug(' + Clean series', this.logAuthor)
 				var i;
@@ -375,179 +375,179 @@ Ext.define('widgets.line_graph.line_graph' ,{
 					this.addDataOnChart({'metric': metric, 'values': [] })
 				}
 			}*/
-			
-			if(data.length > 0){
+
+			if (data.length > 0) {
 				var i;
-				for (i in data){
-					this.addDataOnChart(data[i])
+				for (i in data) {
+					this.addDataOnChart(data[i]);
 					//add/refresh trend lines
-					if(this.trend_lines)
-						this.addTrendLines(data[i])
+					if (this.trend_lines)
+						this.addTrendLines(data[i]);
 				}
-				
+
 				//Disable no data message
-				if (this.chartMessage){
+				if (this.chartMessage) {
 					this.chartMessage.destroy();
-					this.chartMessage = undefined
+					this.chartMessage = undefined;
 				}
-				
+
 				this.chart.redraw();
 
 			} else {
-				log.debug(' + No data', this.logAuthor)
+				log.debug(' + No data', this.logAuthor);
 				//---------if report, cleaning the chart--------
-				if(this.reportMode == true){
-					this.clearGraph()
-					if(this.chartMessage == undefined){
-						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _("Infortunatly, there is no data for this period") + '</div>', 50, 50).add()
+				if (this.reportMode == true) {
+					this.clearGraph();
+					if (this.chartMessage == undefined) {
+						this.chartMessage = this.chart.renderer.text('<div style="margin:auto;">' + _('Infortunatly, there is no data for this period') + '</div>', 50, 50).add();
 					}
-					this.chart.redraw()
+					this.chart.redraw();
 				}
 			}
 		}
 	},
-	
-	clearGraph : function(){
-		for(var i in this.chart.series){
+
+	clearGraph: function() {
+		for (var i in this.chart.series) {
 			//log.debug('cleaning serie : ' + this.chart.series[i].name)
-			this.chart.series[i].setData([],false)
+			this.chart.series[i].setData([], false);
 		}
 	},
-	
-	checkTimewindow: function(){
-		var me = this.options.cwidget
-		var now = Date.now()
-		
-		if (this.series.length > 0 && now < (me.last_from + 500)){
-			var extremes = this.series[0].xAxis.getExtremes()
-			var data_window = extremes.dataMax - extremes.dataMin
-			me.shift = data_window > (me.time_window*1000)
 
-			log.debug(' + Data window: '+data_window, me.logAuthor)
-			log.debug('   + Shift: '+me.shift, me.logAuthor)
-		}	
+	checkTimewindow: function() {
+		var me = this.options.cwidget;
+		var now = Ext.Date.now();
+
+		if (this.series.length > 0 && now < (me.last_from + 500)) {
+			var extremes = this.series[0].xAxis.getExtremes();
+			var data_window = extremes.dataMax - extremes.dataMin;
+			me.shift = data_window > (me.time_window * 1000);
+
+			log.debug(' + Data window: ' + data_window, me.logAuthor);
+			log.debug('   + Shift: ' + me.shift, me.logAuthor);
+		}
 	},
 
-	onResize: function(){
-		log.debug("onRezize", this.logAuthor)
+	onResize: function() {
+		log.debug('onRezize', this.logAuthor);
 		if (this.chart)
 			this.chart.setSize(this.getWidth(), this.getHeight() , false);
 	},
-	
-	dblclick: function(){
-		if (this.chart && ! this.isDisabled()){
-			if (this.chart.xAxis){
-				this.chart.xAxis[0].setExtremes(null, null, true, false)
-				try{
+
+	dblclick: function() {
+		if (this.chart && ! this.isDisabled()) {
+			if (this.chart.xAxis) {
+				this.chart.xAxis[0].setExtremes(null, null, true, false);
+				try {
 					this.chart.toolbar.remove('zoom');
-				}catch(err){
-					log.debug("Toolbar zoom doesn't exist", this.logAuthor)
+				}catch (err) {
+					log.debug("Toolbar zoom doesn't exist", this.logAuthor);
 				}
 			}
 		}
 	},
-	
-	getSerie: function(node, metric_name, bunit, min, max){
-		var serie_id = node + '.' +metric_name
+
+	getSerie: function(node, metric_name, bunit, min, max) {
+		var serie_id = node + '.' + metric_name;
 
 		//var serie = this.chart.get(serie_id)
-		var serie = this.series_hc[serie_id]
+		var serie = this.series_hc[serie_id];
 		if (serie) { return serie }
 
-		log.debug('  + Create Serie:', this.logAuthor)
-	
-		if (this.SeriePercent && max > 0)
-			bunit = "%"
-	
-		var serie_index = this.chart.series.length
-		
-		log.debug('    + serie id: '+serie_id, this.logAuthor)
-		log.debug('    + serie index: '+serie_index, this.logAuthor)
-		log.debug('    + bunit: '+bunit, this.logAuthor)
+		log.debug('  + Create Serie:', this.logAuthor);
 
-		var metric_long_name = ''
-		
-		if (this.nodes.length != 1){
-			var info = split_amqp_rk(node)
-			
-			metric_long_name = info.component
+		if (this.SeriePercent && max > 0)
+			bunit = '%';
+
+		var serie_index = this.chart.series.length;
+
+		log.debug('    + serie id: ' + serie_id, this.logAuthor);
+		log.debug('    + serie index: ' + serie_index, this.logAuthor);
+		log.debug('    + bunit: ' + bunit, this.logAuthor);
+
+		var metric_long_name = '';
+
+		if (this.nodes.length != 1) {
+			var info = split_amqp_rk(node);
+
+			metric_long_name = info.component;
 			if (info.source_type == 'resource')
-				metric_long_name += " - " + info.resource 
-			
-			metric_long_name = "(" + metric_long_name + ") "
+				metric_long_name += ' - ' + info.resource;
+
+			metric_long_name = '(' + metric_long_name + ') ';
 		}
-		
-		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index)
-		var curve = global.curvesCtrl.getRenderInfo(metric_name)
+
+		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index);
+		var curve = global.curvesCtrl.getRenderInfo(metric_name);
 
 		// Set Label
 		var label = undefined;
 		if (curve)
-			label = curve.get('label')		
+			label = curve.get('label');
 		if (! label)
-			label = metric_name
-						
-		metric_long_name += "<b>" + label + "</b>"
-		
+			label = metric_name;
+
+		metric_long_name += '<b>' + label + '</b>';
+
 		if (bunit)
-			metric_long_name += " ("+bunit+")"
-			
-		log.debug('    + legend: '+metric_long_name, this.logAuthor)
-		
-		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0], min: min, max: max}
-		
-		if (curve){
-			serie['dashStyle'] = curve.get('dashStyle')
-			serie['invert'] = curve.get('invert')
+			metric_long_name += ' ('+ bunit + ')';
+
+		log.debug('    + legend: ' + metric_long_name, this.logAuthor);
+
+		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0], min: min, max: max};
+
+		if (curve) {
+			serie['dashStyle'] = curve.get('dashStyle');
+			serie['invert'] = curve.get('invert');
 		}
-		
-		if (this.SeriesType == "area" && curve){
-			serie['fillColor'] = colors[1]
-			serie['fillOpacity'] = colors[2] / 100
-			serie['zIndex'] = curve.get('zIndex')
+
+		if (this.SeriesType == 'area' && curve) {
+			serie['fillColor'] = colors[1];
+			serie['fillOpacity'] = colors[2] / 100;
+			serie['zIndex'] = curve.get('zIndex');
 		}
-		
-		this.series[serie_id] = serie
-		
-		this.chart.addSeries(Ext.clone(serie), false, false)
-		
-		var hcserie = this.chart.get(serie_id)
-				
-		this.series_hc[serie_id] = hcserie
-		
-		return hcserie
+
+		this.series[serie_id] = serie;
+
+		this.chart.addSeries(Ext.clone(serie), false, false);
+
+		var hcserie = this.chart.get(serie_id);
+
+		this.series_hc[serie_id] = hcserie;
+
+		return hcserie;
 	},
 
-	parseValues: function(serie, values){
+	parseValues: function(serie, values) {
 		//Do operation on value
 		if (this.SeriePercent && serie.options.max > 0)
 			for (var index in values)
-				values[index][1] = getPct(values[index][1], serie.options.max)
-		
+				values[index][1] = getPct(values[index][1], serie.options.max);
+
 		if (serie.options.invert)
 			for (var index in values)
-				values[index][1] = - values[index][1]
+				values[index][1] = - values[index][1];
 
-		return values
+		return values;
 	},
 
-	addPlotlines: function(metric_name, value, color){
-		var curve = global.curvesCtrl.getRenderInfo(metric_name)
-		var label = undefined
-		var zindex = 10
-		var width = 2
-		var dashStyle = 'Solid'
-			
-		if (curve){
-			label = curve.get('label')
-			color = global.curvesCtrl.getRenderColors(metric_name, 1)[0]
-			zindex = curve.get('zIndex')
-			dashStyle = curve.get('dashStyle')
+	addPlotlines: function(metric_name, value, color) {
+		var curve = global.curvesCtrl.getRenderInfo(metric_name);
+		var label = undefined;
+		var zindex = 10;
+		var width = 2;
+		var dashStyle = 'Solid';
+
+		if (curve) {
+			label = curve.get('label');
+			color = global.curvesCtrl.getRenderColors(metric_name, 1)[0];
+			zindex = curve.get('zIndex');
+			dashStyle = curve.get('dashStyle');
 		}
-				
+
 		if (! label)
-			label = metric_name
-			
+			label = metric_name;
+
 		this.chart.yAxis[0].addPlotLine({
 			value: value,
 			width: width,
@@ -555,215 +555,215 @@ Ext.define('widgets.line_graph.line_graph' ,{
 			color: color,
 			dashStyle: dashStyle,
 			label: {
-				text: label,
+				text: label
 			}
 		});
 	},
 
-	addDataOnChart: function(data){
-		var metric_name = data['metric']
-		var values = data['values']
-		var bunit = data['bunit']
-		var node = data['node']
-		var min = data['min']
-		var max = data['max']		
+	addDataOnChart: function(data) {
+		var metric_name = data['metric'];
+		var values = data['values'];
+		var bunit = data['bunit'];
+		var node = data['node'];
+		var min = data['min'];
+		var max = data['max'];
 		//log.dump(data)
 
-		var serie = this.getSerie(node, metric_name, bunit, min, max)
-				
-		if (! serie){
-			log.error("Impossible to get serie, node: "+node+" metric: "+metric_name, this.logAuthor)
-			return
+		var serie = this.getSerie(node, metric_name, bunit, min, max);
+
+		if (! serie) {
+			log.error('Impossible to get serie, node: '+ node + ' metric: '+ metric_name, this.logAuthor);
+			return;
 		}
-		
-		if (! serie.options){
-			log.error("Impossible to read serie's option", this.logAuthor)
-			log.dump(serie)
-			return
+
+		if (! serie.options) {
+			log.error("Impossible to read serie's option", this.logAuthor);
+			log.dump(serie);
+			return;
 		}
 
 		//Add war/crit line if on first serie
-		if (this.chart.series.length == 1 && this.showWarnCritLine){
-			if (data['thld_warn']){
-				var value = data['thld_warn']
+		if (this.chart.series.length == 1 && this.showWarnCritLine) {
+			if (data['thld_warn']) {
+				var value = data['thld_warn'];
 				if (this.SeriePercent && serie.options.max > 0)
-						value = getPct(value, serie.options.max)
-				this.addPlotlines('pl_warning', value, 'orange')
+						value = getPct(value, serie.options.max);
+				this.addPlotlines('pl_warning', value, 'orange');
 			}
-			if (data['thld_crit']){
-				var value = data['thld_crit']
+			if (data['thld_crit']) {
+				var value = data['thld_crit'];
 				if (this.SeriePercent && serie.options.max > 0)
-						value = getPct(value, serie.options.max)
-				this.addPlotlines('pl_critical', value, 'red')
+						value = getPct(value, serie.options.max);
+				this.addPlotlines('pl_critical', value, 'red');
 			}
-				
-			this.showWarnCritLine = false
+
+			this.showWarnCritLine = false;
 		}
-		
-		var serie_id = serie.options.id
-		
-		values = this.parseValues(serie, values)
-		
-		log.debug('  + Add data for '+node+', metric "'+metric_name+'" ...', this.logAuthor)
-		
-		if (values.length <= 0){
-			log.debug('   + No data', this.logAuthor)
-			if (this.reportMode){
-				if (serie.visible){
+
+		var serie_id = serie.options.id;
+
+		values = this.parseValues(serie, values);
+
+		log.debug('  + Add data for ' + node + ', metric "' + metric_name + '" ...', this.logAuthor);
+
+		if (values.length <= 0) {
+			log.debug('   + No data', this.logAuthor);
+			if (this.reportMode) {
+				if (serie.visible) {
 					serie.setData([], false);
-					serie.hide()
+					serie.hide();
 				}
-				return true
-			}else{
-				return false
+				return true;
+			}else {
+				return false;
 			}
 		}
 
-		if (this.reportMode){
-			if (! serie.visible){
-				serie.show()
+		if (this.reportMode) {
+			if (! serie.visible) {
+				serie.show();
 			}
 		}
-	
-		if (! this.series[serie_id].pushPoints || this.reportMode){
-			log.debug('   + Set data', this.logAuthor)
+
+		if (! this.series[serie_id].pushPoints || this.reportMode) {
+			log.debug('   + Set data', this.logAuthor);
 			this.first = values[0][0];
 
 			serie.setData(values, false);
 			this.series[serie_id].pushPoints = true;
-			
-		}else{
-			log.debug('   + Push data', this.logAuthor)
+
+		}else {
+			log.debug('   + Push data', this.logAuthor);
 
 			var i;
 			for (i in values) {
-				value = values[i]
-				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) : 
+				value = values[i];
+				//addPoint (Object options, [Boolean redraw], [Boolean shift], [Mixed animation]) :
             	serie.addPoint(value, false, this.shift, false);
 			}
 		}
 
-		return true		
+		return true;
 	},
-	
-	addTrendLines: function(data){
-		log.debug(' + Trend line',this.logAuthor)
-		var referent_serie = this.series_hc[data.node + '.' + data.metric]
-		var trend_id = data.node + '.' + data.metric + "-TREND"
-		
+
+	addTrendLines: function(data) {
+		log.debug(' + Trend line', this.logAuthor);
+		var referent_serie = this.series_hc[data.node + '.' + data.metric];
+		var trend_id = data.node + '.' + data.metric + '-TREND';
+
 		//get the trend line
-		var trend_line = this.chart.get(trend_id)
-		
+		var trend_line = this.chart.get(trend_id);
+
 		//update/create the trend line
-		if(trend_line){
-			log.debug('  +  Trend line found : ' + trend_id,this.logAuthor)
+		if (trend_line) {
+			log.debug('  +  Trend line found : ' + trend_id, this.logAuthor);
 
 			//add data
-			for(var i in data.values)
-				this.data_trends[trend_id].push(data.values[i])
-				
+			for (var i in data.values)
+				this.data_trends[trend_id].push(data.values[i]);
+
 			//slice data (follow referent serie length)
-			if(this.shift)
-				this.data_trends[trend_id].splice(0, data.values.length)
-			
-			if(this.data_trends[trend_id].length > 2){
+			if (this.shift)
+				this.data_trends[trend_id].splice(0, data.values.length);
+
+			if (this.data_trends[trend_id].length > 2) {
 				//compute data
-				var line = fitData(this.data_trends[trend_id]).data
-				
+				var line = fitData(this.data_trends[trend_id]).data;
+
 				//trunc value
-				line = this.truncValueArray(line)
+				line = this.truncValueArray(line);
 
 				//set data
-				trend_line.setData(line,false)
+				trend_line.setData(line, false);
 			} else {
-				log.debug('  +  not enough data to draw trend line')
+				log.debug('  +  not enough data to draw trend line');
 			}
-		}else{
-			log.debug('  +  Trend line not found : ' + trend_id,this.logAuthor)
-			log.debug('  +  Create it',this.logAuthor)
-			
+		}else {
+			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);
+			log.debug('  +  Create it', this.logAuthor);
+
 			//name
-			var curve = global.curvesCtrl.getRenderInfo(data.metric)
+			var curve = global.curvesCtrl.getRenderInfo(data.metric);
 
 			// Set Label
 			var label = undefined;
 			if (curve)
-				label = curve.get('label') + "-TREND"
+				label = curve.get('label') + '-TREND';
 			else
-				label = data.metric + "-TREND"
-			
+				label = data.metric + '-TREND';
+
 			//color
-			var color = undefined
+			var color = undefined;
 			if (referent_serie.options.color)
-				color = referent_serie.options.color
+				color = referent_serie.options.color;
 
 			//serie
 			var serie = {
 				id: trend_id,
-				type:'line', 
+				type: 'line',
 				name: label,
 				data: [],
-				marker: {enabled:false},
-				dashStyle: this.trend_lines_type,
+				marker: {enabled: false},
+				dashStyle: this.trend_lines_type
 				//lineWidth: 1
-			}
-			if(color)
-				serie['color'] = color
-			
-			//push the trendline in hichart, load trend data
-			this.chart.addSeries(Ext.clone(serie), false, false)
-			var hcserie = this.chart.get(trend_id)
-			
-			this.data_trends[trend_id] = Ext.clone(data.values)
-			
-			if(this.data_trends[trend_id].length >2){
-				var line = fitData(this.data_trends[trend_id]).data
-				
-				//trunc value
-				line = this.truncValueArray(line)
+			};
+			if (color)
+				serie['color'] = color;
 
-				log.debug('  +  set data',this.logAuthor)
-				hcserie.setData(line,false)
-			}else{
-				log.debug('  +  not enough data to draw trend line')
+			//push the trendline in hichart, load trend data
+			this.chart.addSeries(Ext.clone(serie), false, false);
+			var hcserie = this.chart.get(trend_id);
+
+			this.data_trends[trend_id] = Ext.clone(data.values);
+
+			if (this.data_trends[trend_id].length > 2) {
+				var line = fitData(this.data_trends[trend_id]).data;
+
+				//trunc value
+				line = this.truncValueArray(line);
+
+				log.debug('  +  set data', this.logAuthor);
+				hcserie.setData(line, false);
+			}else {
+				log.debug('  +  not enough data to draw trend line');
 			}
 		}
 	},
-	
-	truncValueArray : function(value_array){
-		for(var i in value_array){
-			value_array[i][1] = Math.floor(value_array[i][1] * 1000) /1000
+
+	truncValueArray: function(value_array) {
+		for (var i in value_array) {
+			value_array[i][1] = Math.floor(value_array[i][1] * 1000) / 1000;
 		}
-		return value_array
+		return value_array;
 	},
-	
-	processNodes : function(){
-		var post_params = []
-		for (var i in this.nodes){
+
+	processNodes: function() {
+		var post_params = [];
+		for (var i in this.nodes) {
 			post_params.push({
 				id: this.nodes[i].id,
-				metrics: this.nodes[i].metrics,
-			})
+				metrics: this.nodes[i].metrics
+			});
 		}
-		this.post_params = { 
+		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method
-			}
-		
-		if(this.chart_type == 'column')
-			this.post_params.interval = this.refreshInterval
-			
-		if(this.use_window_ts)
-			this.post_params.use_window_ts = this.use_window_ts
+			};
+
+		if (this.chart_type == 'column')
+			this.post_params.interval = this.refreshInterval;
+
+		if (this.use_window_ts)
+			this.post_params.use_window_ts = this.use_window_ts;
 	},
-	
- 	beforeDestroy : function() {
+
+ 	beforeDestroy: function() {
 		this.callParent(arguments);
-		
- 		if (this.chart){
-			this.chart.destroy()
-			log.debug(" + Chart Destroyed", this.logAuthor)
+
+ 		if (this.chart) {
+			this.chart.destroy();
+			log.debug(' + Chart Destroyed', this.logAuthor);
 		}
- 	},
+ 	}
 
 });

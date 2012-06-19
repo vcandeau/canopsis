@@ -19,44 +19,44 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.view.Tabs.ViewWizard' ,{
+Ext.define('canopsis.view.Tabs.ViewWizard' , {
 	extend: 'canopsis.lib.view.cwizard',
 
-	title : _('View options wizard'),
-	
-	data : undefined,
-	
-	logAuthor : '[widget option wizard]',
+	title: _('View options wizard'),
+
+	data: undefined,
+
+	logAuthor: '[widget option wizard]',
 
 	initComponent: function() {
-		
+
 		//----------------------Build wizard options
 		var step1 = {
 				title: _('Choose widget'),
 				//description : _('choose the type of widget you want, its title, and refresh interval'),
-				items : [{
-							"xtype" : "colorfield",
-							"name" : "background",
-							"fieldLabel": "Background color",
-							"value": "FFFFFF"
-                           },]
-				}
-		
-		this.step_list = [step1]
+				items: [{
+							'xtype' : 'colorfield',
+							'name' : 'background',
+							'fieldLabel': 'Background color',
+							'value': 'FFFFFF'
+                           }]
+				};
+
+		this.step_list = [step1];
 
 		this.callParent(arguments);
 	},
-	
-	cancel_button: function(){
-		log.debug('cancel button',this.logAuthor)
-		this.fireEvent('cancel',this.widgetId)
-		this.close()
+
+	cancel_button: function() {
+		log.debug('cancel button', this.logAuthor);
+		this.fireEvent('cancel', this.widgetId);
+		this.close();
 	},
-	
-	finish_button: function(){
-		log.debug('save button',this.logAuthor)
-		var variables = this.get_variables()
-		this.fireEvent('save', variables)
-		this.close()
-	},
-})
+
+	finish_button: function() {
+		log.debug('save button', this.logAuthor);
+		var variables = this.get_variables();
+		this.fireEvent('save', variables);
+		this.close();
+	}
+});

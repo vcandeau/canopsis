@@ -22,16 +22,16 @@ Ext.define('canopsis.model.File', {
 	extend: 'Ext.data.Model',
 	fields: [
 		{name: '_id'},
-		{name: 'id', mapping:'_id'},
-		{name : 'file_name'},
+		{name: 'id', mapping: '_id'},
+		{name: 'file_name'},
 		{name: 'crecord_write_time'},
 		{name: 'content_type'},
 		{name: 'creationTs'},
-		
+
 		{name: 'aaa_access_group'},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_access_owner'},
 		{name: 'aaa_group'},
-		{name: 'aaa_owner'},
-	],
+		{name: 'aaa_owner'}
+	]
 });

@@ -18,82 +18,82 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.perfdata_kpi.perfdata_kpi' ,{
+Ext.define('widgets.perfdata_kpi.perfdata_kpi' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias : 'widget.perfdata_kpi',
-	
+	alias: 'widget.perfdata_kpi',
+
 	logAuthor: '[perfdata_kpi]',
-	
+
 	iconset: '1',
-	
+
 	initComponent: function() {
-		log.debug('Init Weather kpi '+this.id, this.logAuthor)
-		log.debug(' + NodeId: '+ this.nodeId, this.logAuthor)
+		log.debug('Init Weather kpi ' + this.id, this.logAuthor);
+		log.debug(' + NodeId: ' + this.nodeId, this.logAuthor);
 
 		this.callParent(arguments);
-		
-		
+
+
 	},
-	
-	onRefresh: function(data){
-		
+
+	onRefresh: function(data) {
+
 		//formating iconset name
-		if(this.iconset < 10){
-			var icon = '0' + this.iconset
-		}else{
-			var icon = this.iconset
+		if (this.iconset < 10) {
+			var icon = '0' + this.iconset;
+		}else {
+			var icon = this.iconset;
 		}
-		
+
 		var health = this.getHealth(data);
 		//little tweak, because 0 = undefined ...
-		if(health == 0){
+		if (health == 0) {
 			health = 1;
 		}
-		
-		if (health){
+
+		if (health) {
 			//round the result
-			var roundHealth = 100 - (Math.round(health / 10) *10);
+			var roundHealth = 100 - (Math.round(health / 10) * 10);
 			log.debug(roundHealth);
-			switch (roundHealth){
+			switch (roundHealth) {
 				case 0:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_0-10'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_0-10'/></center>");
 					break;
 				case 10:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_10-20'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_10-20'/></center>");
 					break;
 				case 20:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_20-30'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_20-30'/></center>");
 					break;
 				case 30:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_30-40'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_30-40'/></center>");
 					break;
 				case 40:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_40-50'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_40-50'/></center>");
 					break;
 				case 50:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_50-60'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_50-60'/></center>");
 					break;
 				case 60:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_60-70'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_60-70'/></center>");
 					break;
 				case 70:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_70-80'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_70-80'/></center>");
 					break;
 				case 80:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_80-90'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_80-90'/></center>");
 					break;
 				case 90:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_90-100'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_90-100'/></center>");
 					break;
 				case 100:
-					this.setHtml("<center><span class='kpi kpi_iconSet"+icon+"_90-100'/></center>");
+					this.setHtml("<center><span class='kpi kpi_iconSet" + icon + "_90-100'/></center>");
 					break;
 			}
 		} else {
-			this.setHtml("<center><div>Metric invalid or data missing, you can set this in the view editor</br>check the console for more details</div></center>");
+			this.setHtml('<center><div>Metric invalid or data missing, you can set this in the view editor</br>check the console for more details</div></center>');
 		}
-	},
-	
-	
+	}
+
+
 });

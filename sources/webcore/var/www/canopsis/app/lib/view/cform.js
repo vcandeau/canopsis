@@ -26,51 +26,51 @@ Ext.define('canopsis.lib.view.cform', {
 	requires: ['Ext.form.field.Text'],
 
 	title: '',
-	bodyStyle:'padding:5px 5px 0',
+	bodyStyle: 'padding:5px 5px 0',
 	border: 0,
-	
+
 	EditMethod: 'tab',
 
 	defaultType: 'textfield',
 
 	logAuthor: '[view][cform]',
 
-	initComponent: function(){
+	initComponent: function() {
 		var tbar = [{
 				iconCls: 'icon-save',
 				text: _('Save'),
-				action: 'save',
+				action: 'save'
 			},{
 				iconCls: 'icon-cancel',
 				text: _('Cancel'),
-				action: 'cancel',
+				action: 'cancel'
 			}
 		];
-		
+
 		var bbar = [{
 				iconCls: 'icon-cancel',
 				text: _('Cancel'),
-				action: 'cancel',
+				action: 'cancel'
 			},
 			{xtype: 'tbfill'},
 			{
 				iconCls: 'icon-save',
 				text: _('Save'),
 				action: 'save',
-				pack: 'end',
+				pack: 'end'
 			}
 		];
-		
-		if (this.EditMethod == 'tab'){
-			this.on('beforeclose', this.beforeclose)
-			this.tbar =  tbar;
-		}else{
-			this.bbar =  bbar;
+
+		if (this.EditMethod == 'tab') {
+			this.on('beforeclose', this.beforeclose);
+			this.tbar = tbar;
+		}else {
+			this.bbar = bbar;
 		}
 		this.callParent();
 	},
-    
-	beforeclose: function(tab, object){
+
+	beforeclose: function(tab, object) {
 		log.debug('Active previous tab', this.logAuthor);
 		old_tab = Ext.getCmp('main-tabs').old_tab;
 		if (old_tab) {
@@ -78,10 +78,10 @@ Ext.define('canopsis.lib.view.cform', {
 		}
 	},
 
-	beforeDestroy : function() {
-		log.debug("Destroy items ...", this.logAuthor)
+	beforeDestroy: function() {
+		log.debug('Destroy items ...', this.logAuthor);
 		Ext.form.Panel.superclass.beforeDestroy.call(this);
-		log.debug(this.id + " Destroyed.", this.logAuthor);
+		log.debug(this.id + ' Destroyed.', this.logAuthor);
 	}
-    
+
 });

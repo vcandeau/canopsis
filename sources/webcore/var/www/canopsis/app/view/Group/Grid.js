@@ -18,14 +18,14 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.view.Group.Grid' ,{
+Ext.define('canopsis.view.Group.Grid' , {
 	extend: 'canopsis.lib.view.cgrid',
 
 	alias: 'widget.GroupGrid',
 
 	model: 'Group',
-	store : 'Groups',	
-	
+	store: 'Groups',
+
 	opt_menu_delete: true,
 	opt_menu_rights: false,
 
@@ -35,14 +35,14 @@ Ext.define('canopsis.view.Group.Grid' ,{
 				width: 25,
 				sortable: false,
 				renderer: rdr_crecord_type,
-	               dataIndex: 'crecord_type',
+	               dataIndex: 'crecord_type'
         	},{
 				header: _('Name'),
 				flex: 2,
 				sortable: true,
-				dataIndex: 'crecord_name',
+				dataIndex: 'crecord_name'
 		}
-            
+
 	],
 
 	initComponent: function() {
