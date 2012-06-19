@@ -301,7 +301,7 @@ class node(object):
 
 	def pretty_print(self):
 		print " + Id: %s" % self._id
-		print " + Node: %s" % self.dn
+		print " + Node DN: %s" % self.dn
 		print " + Retention: %s" % self.retention
 		print " + Metrics:"
 
