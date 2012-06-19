@@ -29,6 +29,7 @@ function install(){
 	easy_install_pylib pyparsing
 	easy_install_pylib gunicorn
 	easy_install_pylib apscheduler
+	easy_install_pylib msgpack-python
 
 	# Clean
 	#rm -Rf $PREFIX/.python-eggs/*
