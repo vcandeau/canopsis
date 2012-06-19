@@ -122,10 +122,18 @@ class mongostore(storage):
 							
 		return size
 
-	def get_all_nodes(self,limit=None,offset=None):
+	def get_all_nodes(self,limit=None,offset=None,search=None):
 		nodes = []
 		
-		raw_output = self.collection.find({ 'd.metrics' : {'$exists' : True}})
+		filter = { 'd.metrics' : {'$exists' : True}}
+		
+		if search:
+			filter = {'$and':[
+								filter,
+								{ 'd.dn': { '$regex' : '.*'+search+'.*', '$options': 'i' }}
+							]}
+		
+		raw_output = self.collection.find(filter)
 		total = raw_output.count()
 		if raw_output and limit:
 			raw_output = raw_output.limit(int(limit))
@@ -137,13 +145,18 @@ class mongostore(storage):
 
 		return {'total':total,'data':nodes}
 		
-	def get_all_metrics(self,limit=None,offset=None):
+	def get_all_metrics(self,limit=None,offset=None,search=None):
 		nodes = []
 		
-		raw_output = self.collection.find({'$and' : [
-												{'d.dn':{'$exists' : True}},
-												{ 'd.metrics' : {'$exists' : False}}
-											]}, sort =[('_id',ASCENDING)])
+		filter = {'$and' : [
+								{'d.dn':{'$exists' : True}},
+								{ 'd.metrics' : {'$exists' : False}}
+							]}
+							
+		if search:
+			filter['$and'].append({ 'd.dn': { '$regex' : '.*'+search+'.*', '$options': 'i' }})
+		
+		raw_output = self.collection.find(filter, sort =[('_id',ASCENDING)])
 		total = raw_output.count()
 		if raw_output and limit:
 			raw_output = raw_output.limit(int(limit))
