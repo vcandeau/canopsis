@@ -19,6 +19,10 @@
 # ---------------------------------
 
 import sys, zlib, json, logging
+import msgpack
+
+packer = msgpack.Packer()
+unpacker = msgpack.Unpacker()
 
 class dca(object):
 	def __init__(self, storage, _id=None, metric_id=None, raw=None, max_size=300):
@@ -163,6 +167,8 @@ class dca(object):
 			offset = timestamp
 			i += 1
 
+		values = packer.pack(values)
+
 		asize = sys.getsizeof(values)
 
 		ratio = int(((bsize-asize)*100)/bsize)
@@ -186,6 +192,9 @@ class dca(object):
 
 		if not values:
 			values = self.get_values()
+		
+		unpacker.feed(values)
+		values = list(unpacker.unpack())
 
 		if type(values).__name__ == 'str' or type(values).__name__ == 'unicode':
 			values = json.loads(values)
@@ -231,8 +240,10 @@ class dca(object):
 			values = self.storage.get_raw(self.values_id)
 
 		self.logger.debug(" + Json encode and compress it")
-		values = json.dumps(values)
-		values = values.replace(' ', '')
+		
+		#values = json.dumps(values)
+		#values = values.replace(' ', '')
+		#values = msgpack.packb(values)
 
 		bsize = self.get_values_size()
 
@@ -262,7 +273,8 @@ class dca(object):
 			values = self.storage.get_raw(self.values_id)
 		
 		values = zlib.decompress(values)
-		values = json.loads(values)
+		#values = json.loads(values)
+		#values = list(msgpack.unpackb(values))
 
 		#self.format = "TSC"
 

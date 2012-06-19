@@ -37,8 +37,8 @@ logging.basicConfig(level=logging.INFO,
 )
 
 rotate_plan = {
-	'PLAIN': 1,
-	'TSC': 0,
+	'PLAIN': 0,
+	'TSC': 3,
 }
 
 def bench_store(store, interval=60, duration=60*60*24, point_per_dca=None):
@@ -114,8 +114,9 @@ print "Mongo Store"
 storage = mongostore(mongo_safe=False, mongo_collection='pyperfstorebench')
 storage.drop()
 
-day = 10
+day = 30
 point_per_dca=None #auto
+point_per_dca=1400
 
 bench_store(	storage,
 				interval=300,
