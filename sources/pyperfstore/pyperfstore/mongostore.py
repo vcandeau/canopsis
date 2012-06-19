@@ -112,10 +112,19 @@ class mongostore(storage):
 			pass
 			
 		else:
-			size = self.db.command("collstats", self.mongo_collection)['size']
+			size = 0
 			try:
-				size += self.db.command("collstats", self.mongo_collection+".fs.chunks")['size']
-				size += self.db.command("collstats", self.mongo_collection+".fs.files")['size']
+				size = self.db.command("collstats", self.mongo_collection)['size']
+				#print 'Col Size: %s' % size
+			except:
+				self.logger.warning("Impossible to read Collecion Size")
+				
+			try:
+				chunks_size = self.db.command("collstats", self.mongo_collection+".fs.chunks")['size']
+				#print 'Chunks Size: %s' % chunks_size
+				bin_size = self.db.command("collstats", self.mongo_collection+".fs.files")['size']
+				#print 'Bin Size: %s' % bin_size
+				size += chunks_size + bin_size
 			except:
 				self.logger.warning("Impossible to read GridFS Size")
 				pass

@@ -41,8 +41,16 @@ rotate_plan = {
 	'TSC': 3,
 }
 
+interval = 300
+day = 30
+point_per_dca=None #auto
+#point_per_dca=300
+
 def bench_store(store, interval=60, duration=60*60*24, point_per_dca=None):
 	print "Start Bench ..."
+	
+	msize = store.size()
+	
 	mynode = node('nagios.Central.check.service.localhost', storage=store, rotate_plan=rotate_plan, point_per_dca=point_per_dca)
 
 	# 1 value / 5 min = 8928 values/month = 107136 values/year
@@ -82,28 +90,24 @@ def bench_store(store, interval=60, duration=60*60*24, point_per_dca=None):
 	print ""
 
 	start = time.time()
-
+	mynode = node('nagios.Central.check.service.localhost', storage=store)
 	print "Get values between %s and %s" % (bench_start, bench_stop)
 	values = mynode.metric_get_values(dn='load1', tstart=bench_start, tstop=bench_stop)
-
 	nb = len(values)
-
 	elapsed = time.time() - start
 	print " + READ:"
 	print "    + %s values in %s seconds" % ( nb, elapsed)
 	print "    + %s values per second" % (int(nb/elapsed))
 	print ""
-
-	start = time.time()
-
+	
 	mynode.pretty_print()
-
-	#mynode.remove()
-
+	size = store.size()
+	
+	start = time.time()
+	mynode.remove()
 	elapsed = time.time() - start
 	
 	size = store.size()
-	
 	print " + REMOVE:"
 	print "    + %.2f MB" % (size / 1024.0 / 1024.0)
 	print "    + %s seconds" % elapsed
@@ -114,12 +118,8 @@ print "Mongo Store"
 storage = mongostore(mongo_safe=False, mongo_collection='pyperfstorebench')
 storage.drop()
 
-day = 30
-point_per_dca=None #auto
-point_per_dca=1400
-
 bench_store(	storage,
-				interval=300,
+				interval=interval,
 				duration=60*60*24*day,
 				point_per_dca=point_per_dca)
 
