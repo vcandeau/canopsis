@@ -140,7 +140,7 @@ def perfstore_getMetric(_id):
 	output = []
 	if metrics:
 		for metric in metrics:
-			output.append({'metric': metric })
+			output.append({'metric': metric,'node':_id })
 	
 	output = {'total': len(output), 'success': True, 'data': output}
 	
@@ -148,13 +148,21 @@ def perfstore_getMetric(_id):
 
 @get('/perfstore/get_all_nodes',apply=[check_auth])
 def perstore_all_nodes():
-	index = perfstore.get_all_nodes()
-	return {'success': True,'data' : index,'total' : len(index)}
+	limit		= request.params.get('limit', default=None)
+	start		= request.params.get('start', default=None)
+	
+	search = perfstore.get_all_nodes(limit=limit,offset=start)
+	
+	return {'success': True,'data' : search['data'],'total' : search['total']}
 
 @get('/perfstore/get_all_metrics',apply=[check_auth])
 def perstore_get_all_metrics():
-	index = perfstore.get_all_metrics()
-	return {'success': True,'data' : index,'total' : len(index)}
+	limit		= request.params.get('limit', default=None)
+	start		= request.params.get('start', default=None)
+	
+	search = perfstore.get_all_metrics(limit=limit,offset=start)
+	
+	return {'success': True,'data' : search['data'],'total' : search['total']}
 
 def perfstore_get_last_value(_id, metrics):
 	output=[]
