@@ -78,16 +78,17 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		this.node_store = Ext.create('canopsis.lib.store.cstore', {
 				model: 'Node',
-				pageSize: this.pageSize,
+				//pageSize: this.pageSize,
 				proxy: {
 					 type: 'ajax',
 					 url: '/perfstore/get_all_nodes',
+					 extraParams:{limit:this.pageSize},
 					 reader: {
 						 type: 'json',
 						 root: 'data'
 					}	
 				 },
-				 autoLoad: true
+				 autoLoad: {start: 0, limit: this.pageSize},
 		});
 		
 		this.metric_store = Ext.create('canopsis.lib.store.cstore', {
@@ -141,10 +142,9 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			opt_bar_reload: true,
 			opt_bar_delete: false,
 			opt_paging: true,
-			
 			opt_simple_search : true,
 
-			opt_bar_search_field: ['dn'],
+			border : true,
 			
 			columns: [
 				{
