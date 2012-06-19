@@ -99,7 +99,7 @@ function createApplication(){
 			'Briefcase',
 			'Curves',
 			'MetricNavigation',
-			'Events',
+			'Events'
 		],
 	
 		//autoCreateViewport: true,

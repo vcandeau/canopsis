@@ -20,71 +20,64 @@
 */
 Ext.define('canopsis.controller.LiveSearch', {
 	extend: 'Ext.app.Controller',
-    
-	views: ['LiveSearch.View','LiveSearch.Grid'],
+
+	views: ['LiveSearch.View', 'LiveSearch.Grid'],
 	stores: ['Inventory'],
 
 	logAuthor: '[controller][LiveSearch]',
 	//models: [''],
 
 	//iconCls: 'icon-crecord_type-account',
-	
-	refs : [{
-		
-		ref : 'grid',
-		selector : 'LiveGrid'
-		
+
+	refs: [{
+
+		ref: 'grid',
+		selector: 'LiveGrid'
+
 	},{
-		ref : 'liveSearch',
-		selector : 'LiveSearch'
+		ref: 'liveSearch',
+		selector: 'LiveSearch'
 	}],
-	
-	init : function() {
+
+	init: function() {
 		this.callParent(arguments);
-		
+
 		this.control({
-			
 			'LiveSearch #LiveSearchButton' : {
-				click : this.addFilter,
+				click: this.addFilter
 			}
-			
-			
-			
-		})
-		
+		});
+
 	},
-	
-	addFilter : function() {
+
+	addFilter: function() {
 		log.debug('Search button pushed', this.logAuthor);
 		var store = this.getGrid().getStore();
 		store.clearFilter();
 
 		search = {};
-		
+
 		var searchValue = this.getLiveSearch().down('#source_name').value;
-		if (searchValue){
-			store.load().filter('source_name',searchValue);
+		if (searchValue) {
+			store.load().filter('source_name', searchValue);
 		}
-		
+
 		searchValue = this.getLiveSearch().down('#type').value;
-		if (searchValue){
-			store.load().filter('type',searchValue);
+		if (searchValue) {
+			store.load().filter('type', searchValue);
 		}
-		
+
 		searchValue = this.getLiveSearch().down('#source_type').value;
-		if (searchValue){
-			store.load().filter('source_type',searchValue);
+		if (searchValue) {
+			store.load().filter('source_type', searchValue);
 		}
-		
+
 		searchValue = this.getLiveSearch().down('#component').value;
-		if (searchValue){
-			store.load().filter('component',searchValue);
+		if (searchValue) {
+			store.load().filter('component', searchValue);
 		}
-		
+
 		store.load();
-		
-		
-	},
-	
-	
+	}
+
 });

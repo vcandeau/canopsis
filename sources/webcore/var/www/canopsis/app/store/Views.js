@@ -21,12 +21,12 @@
 Ext.define('canopsis.store.Views', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.View',
-	
+
 	storeId: 'store.View',
-	
+
 	autoLoad: true,
 	autoSync: true,
-	
+
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/view',
@@ -34,20 +34,20 @@ Ext.define('canopsis.store.Views', {
 		reader: {
 			type: 'json',
 			root: 'data',
-			totalProperty  : 'total',
-			successProperty: 'success',
+			totalProperty: 'total',
+			successProperty: 'success'
 		},
 		writer: {
 			type: 'json'
-		},
+		}
 	},
-	
+
 	constructor: function(config) {
 		 this.callParent(arguments);
 		 //quiet the store, handle by the controller
-		 this.removeListener('write',this.listeners.write,this)
+		 this.removeListener('write', this.listeners.write, this);
 	}
-	
+
 	/*load: function (){
 		log.debug('View store loaded.')
 		log.dump(this.getById('view.root.dashboard'))

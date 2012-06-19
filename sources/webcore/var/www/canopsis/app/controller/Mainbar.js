@@ -21,250 +21,248 @@
 Ext.define('canopsis.controller.Mainbar', {
 	extend: 'Ext.app.Controller',
 
-	views: [ 'Mainbar.Bar'],
+	views: ['Mainbar.Bar'],
 
 	logAuthor: '[controller][Mainbar]',
 
 	init: function() {
 		this.control({
 			'#region-north' : {
-				collapse : this.onCollapseMainbar,
-				expand: this.onExpandMainbar,
+				collapse: this.onCollapseMainbar,
+				expand: this.onExpandMainbar
 			},
 			'Mainbar menuitem[action="logout"]' : {
-				click : this.logout,
+				click: this.logout
 			},
 			'Mainbar menuitem[action="cleartabscache"]' : {
-				click : this.cleartabscache,
+				click: this.cleartabscache
 			},
 			'Mainbar menuitem[action="authkey"]' : {
-				click : this.authkey,
+				click: this.authkey
 			},
 			'Mainbar combobox[action="viewSelector"]' : {
-				select : this.openViewSelector,
+				select: this.openViewSelector
 			},
 			'Mainbar combobox[action="dashboardSelector"]' : {
-				select : this.setDashboard,
+				select: this.setDashboard
 			},
 			'Mainbar combobox[action="localeSelector"]' : {
-				select : this.setLocale,
+				select: this.setLocale
 			},
 			'Mainbar menuitem[action="openDashboard"]' : {
-				click : this.openDashboard,
+				click: this.openDashboard
 			},
 			'Mainbar menuitem[action="editView"]' : {
-				click : this.editView,
+				click: this.editView
 			},
 			'Mainbar menuitem[action="editAccount"]' : {
-				click : this.openAccount,
+				click: this.openAccount
 			},
 			'Mainbar menuitem[action="showconsole"]' : {
-				click : this.showconsole,
+				click: this.showconsole
 			},
 			'Mainbar menuitem[action="openViewsManager"]' : {
-				click : this.openViewsManager,
+				click: this.openViewsManager
 			},
 			'Mainbar menuitem[action="editGroup"]' : {
-				click : this.openGroup,
+				click: this.openGroup
 			},
 			'Mainbar menuitem[action="editSchedule"]' : {
-				click : this.editSchedule,
+				click: this.editSchedule
 			},
 			'Mainbar menuitem[action="openBriefcase"]' : {
-				click : this.openBriefcase,
+				click: this.openBriefcase
 			},
 			'Mainbar menuitem[action="newView"]' : {
-				click : this.newView,
+				click: this.newView
 			},
 			'Mainbar menuitem[action="exportView"]' : {
-				click : this.exportView,
+				click: this.exportView
 			},
 			'Mainbar menuitem[action="reportingMode"]' : {
-				click : this.reportingMode,
+				click: this.reportingMode
 			},
 			'Mainbar menuitem[action="ScheduleExportView"]' : {
-				click : this.ScheduleExportView,
+				click: this.ScheduleExportView
 			},
 			'Mainbar [name="clock"]' : {
-				afterrender : this.setClock,
+				afterrender: this.setClock
 			},
 			'Mainbar menuitem[action="openViewMenu"]' : {
-				click : this.openViewMenu,
-			},
-			
-		})
+				click: this.openViewMenu
+			}
+		});
 
 		this.callParent(arguments);
-	
+
 		// Bind Websocket Events
-		global.websocketCtrl.on("transport_up", function(){
-			var button = Ext.getCmp('Mainbar-menu-Websocket')
+		global.websocketCtrl.on('transport_up', function() {
+			var button = Ext.getCmp('Mainbar-menu-Websocket');
 			if (button)
-				button.setIconCls("icon-bullet-green")
+				button.setIconCls('icon-bullet-green');
 		},this);
-		global.websocketCtrl.on("transport_down", function(){
-			var button = Ext.getCmp('Mainbar-menu-Websocket')
+		global.websocketCtrl.on('transport_down', function() {
+			var button = Ext.getCmp('Mainbar-menu-Websocket');
 			if (button)
-				button.setIconCls("icon-bullet-red")
+				button.setIconCls('icon-bullet-red');
 		},this);
-	
+
 	},
 
-	onCollapseMainbar: function(){
-	},
-	
-	onExpandMainbar: function(){
+	onCollapseMainbar: function() {
 	},
 
-	logout: function(){
-		log.debug('Logout', this.logAuthor)
+	onExpandMainbar: function() {
+	},
+
+	logout: function() {
+		log.debug('Logout', this.logAuthor);
 		Ext.Ajax.request({
 			url: '/logout',
 			scope: this,
-			success: function(response){
+			success: function(response) {
 				log.debug(' + Success.', this.logAuthor);
-				window.location.href='/';
+				window.location.href = '/';
 			},
-			failure: function ( result, request) {
-				log.error("Logout impossible, maybe you're already logout")
+			failure: function(result, request) {
+				log.error("Logout impossible, maybe you're already logout");
 			}
 		});
 	},
 
-	cleartabscache: function(){
+	cleartabscache: function() {
 		log.debug('Clear tabs localstore', this.logAuthor);
-		var store = Ext.data.StoreManager.lookup('Tabs');
-		store.proxy.clear();
-	},
-	
-	authkey: function(){
-		log.debug('Show authkey',this.logAuthor)
-		var authkey = Ext.create('canopsis.lib.view.cauthkey')
-		authkey.show()
+		this.getController('Tabs').clearTabsCache();
 	},
 
-	showconsole: function(){
+	authkey: function() {
+		log.debug('Show authkey', this.logAuthor);
+		var authkey = Ext.create('canopsis.lib.view.cauthkey');
+		authkey.show();
+	},
+
+	showconsole: function() {
 		log.debug('Show log console', this.logAuthor);
 		log.show_console();
 	},
-	
-	openViewMenu: function(item){
-		var view_id = item.viewId
-		this.getController('Tabs').open_view({ view_id: view_id, title: _(item.text) })
+
+	openViewMenu: function(item) {
+		var view_id = item.viewId;
+		this.getController('Tabs').open_view({ view_id: view_id, title: _(item.text) });
 	},
-	
-	setClock : function(item){
+
+	setClock: function(item) {
 		log.debug('Set Clock', this.logAuthor);
-		var refreshClock = function(){
-			var thisTime = new Date()
+		var refreshClock = function() {
+			var thisTime = new Date();
 			hours = thisTime.getHours();
 			minutesRaw = thisTime.getMinutes();
 			//add 0 if needed
-			if(minutesRaw < 10){
-				var minutes = "0" + minutesRaw;
-			}else{
-				var minutes = minutesRaw
+			if (minutesRaw < 10) {
+				var minutes = '0' + minutesRaw;
+			}else {
+				var minutes = minutesRaw;
 			}
-			
-			item.update("<div class='cps-account' >" + hours + ":" + minutes + "  -  " + (thisTime.toLocaleDateString()) + "</div>");
+
+			item.update("<div class='cps-account' >" + hours + ':' + minutes + '  -  ' + (thisTime.toLocaleDateString()) + '</div>');
 		};
 		Ext.TaskManager.start({
 			run: refreshClock,
 			interval: 60000
 		});
 	},
-	
-	setLocale: function(combo, records){
+
+	setLocale: function(combo, records) {
 		var language = records[0].get('value');
-		log.debug('Set language to '+language, this.logAuthor);
-		this.getController('Account').setLocale(language)
+		log.debug('Set language to ' + language, this.logAuthor);
+		this.getController('Account').setLocale(language);
 	},
 
-	setDashboard: function(combo, records){
+	setDashboard: function(combo, records) {
 		var view_id = records[0].get('id');
-		log.debug('Set dashboard to '+view_id, this.logAuthor);
-		
+		log.debug('Set dashboard to ' + view_id, this.logAuthor);
+
 		//set new dashboard
-		this.getController('Account').setConfig("dashboard", view_id);
-		
+		this.getController('Account').setConfig('dashboard', view_id);
+
 		var maintabs = Ext.getCmp('main-tabs');
-		
+
 		//close view selected if open
-		var tab = Ext.getCmp(view_id+".tab");
-		if (tab){
-			tab.close()
+		var tab = Ext.getCmp(view_id + '.tab');
+		if (tab) {
+			tab.close();
 		}
-		
+
 		//close current dashboard
-		
-		maintabs.setActiveTab(0)
-		maintabs.getActiveTab().close()
-		var tab = this.getController('Tabs').open_dashboard()
-	
+
+		maintabs.setActiveTab(0);
+		maintabs.getActiveTab().close();
+		var tab = this.getController('Tabs').open_dashboard();
+
 	},
-	
-	openDashboard: function(){
+
+	openDashboard: function() {
 		log.debug('Open dashboard', this.logAuthor);
 		var maintabs = Ext.getCmp('main-tabs');
 		maintabs.setActiveTab(0);
 	},
 
-	openViewSelector: function(combo, records){
+	openViewSelector: function(combo, records) {
 		var view_id = records[0].get('id');
 		var view_name = records[0].get('crecord_name');
-		log.debug('Open view "'+view_name+'" ('+view_id+')', this.logAuthor);
+		log.debug('Open view "' + view_name + '" (' + view_id + ')', this.logAuthor);
 		combo.clearValue();
-		this.getController('Tabs').open_view({ view_id: view_id, title: view_name })
+		this.getController('Tabs').open_view({ view_id: view_id, title: view_name });
 	},
-	
-	openViewsManager: function(){
-		this.getController('Tabs').open_view({ view_id: 'view.view_manager', title: _('Views') })
+
+	openViewsManager: function() {
+		this.getController('Tabs').open_view({ view_id: 'view.view_manager', title: _('Views') });
 	},
-	
-	openAccount: function(){
-		this.getController('Tabs').open_view({ view_id: 'view.account_manager', title: _('Accounts') })
+
+	openAccount: function() {
+		this.getController('Tabs').open_view({ view_id: 'view.account_manager', title: _('Accounts') });
 	},
-	
-	openGroup: function(){
-		this.getController('Tabs').open_view({ view_id: 'view.group_manager', title: _('Groups') })
+
+	openGroup: function() {
+		this.getController('Tabs').open_view({ view_id: 'view.group_manager', title: _('Groups') });
 	},
-	
-	editView: function(){
+
+	editView: function() {
 		log.debug('Edit view', this.logAuthor);
-		var ctrl = this.getController('Tabs')
-		ctrl.edit_active_view()
+		var ctrl = this.getController('Tabs');
+		ctrl.edit_active_view();
 	},
-	
-	editSchedule : function(){
-		this.getController('Tabs').open_view({ view_id: 'view.schedule_manager', title: _('Schedules') })
+
+	editSchedule: function() {
+		this.getController('Tabs').open_view({ view_id: 'view.schedule_manager', title: _('Schedules') });
 	},
-	
-	openBriefcase : function(){
-		this.getController('Tabs').open_view({ view_id: 'view.briefcase', title: _('Briefcase') })
+
+	openBriefcase: function() {
+		this.getController('Tabs').open_view({ view_id: 'view.briefcase', title: _('Briefcase') });
 	},
-	
-	reportingMode: function(){
+
+	reportingMode: function() {
 		log.debug('Live reporting mode activated', this.logAuthor);
-		var ctrl = this.getController('ReportingBar')
-		ctrl.enable_reporting_mode()
+		var ctrl = this.getController('ReportingBar');
+		ctrl.enable_reporting_mode();
 	},
-	
-	newView: function(){
+
+	newView: function() {
 		log.debug('New view', this.logAuthor);
-		var ctrl = this.getController('Tabs')
-		ctrl.create_new_view()
+		var ctrl = this.getController('Tabs');
+		ctrl.create_new_view();
 	},
-	
-	exportView: function(id){
-		var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id		
-		this.getController('Reporting').launchReport(view_id)
+
+	exportView: function(id) {
+		var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id;
+		this.getController('Reporting').launchReport(view_id);
 	},
-	
-	ScheduleExportView : function(){
-		log.debug('Schedule active view export',this.logAuthor)
+
+	ScheduleExportView: function() {
+		log.debug('Schedule active view export', this.logAuthor);
 		var activetabs = Ext.getCmp('main-tabs').getActiveTab();
 		var record = Ext.create('canopsis.model.Schedule', activetabs.view);
-		this.getController('Schedule').scheduleWizard(record,activetabs.id)
+		this.getController('Schedule').scheduleWizard(record, activetabs.id);
 	}
-	
+
 });

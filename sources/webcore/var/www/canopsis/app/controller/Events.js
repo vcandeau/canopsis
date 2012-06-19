@@ -24,37 +24,37 @@ Ext.define('canopsis.controller.Events', {
 	logAuthor: '[controller][Events]',
 
 	init: function() {
-		log.debug('Initialize ...',this.logAuthor);
+		log.debug('Initialize ...', this.logAuthor);
 
 		this.callParent(arguments);
-		
-		global.eventsCtrl = this
+
+		global.eventsCtrl = this;
 	},
 
-	sendEvent: function(event){
-		log.debug('Prepare to send events',this.logAuthor)
-		
+	sendEvent: function(event) {
+		log.debug('Prepare to send events', this.logAuthor);
+
 		Ext.Ajax.request({
 			url: '/event/',
 			method: 'POST',
 			params: event,
 			scope: this,
-			success: function(response){
+			success: function(response) {
 				var text = response.responseText;
-				global.notify.notify(_('Success'),_('Event successfuly sent'))
+				global.notify.notify(_('Success'), _('Event successfuly sent'));
 				//close the window
 			},
-			failure : function(response){
-				
-				if(response.status == 403){
-					global.notify.notify(_('Access denied'),_('You don\'t have the rights to modify this object'),'error')
-					log.error(_('Access denied'))
+			failure: function(response) {
+
+				if (response.status == 403) {
+					global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
+					log.error(_('Access denied'));
 				} else {
-					log.error(_('Updating rights have failed'),this.logAuthor)
+					log.error(_('Updating rights have failed'), this.logAuthor);
 				}
 			}
 		});
-		
+
 	}
 
-})
+});

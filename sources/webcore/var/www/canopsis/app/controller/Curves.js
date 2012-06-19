@@ -25,64 +25,64 @@ Ext.define('canopsis.controller.Curves', {
     stores: ['Curves'],
     models: ['Curve'],
 
-    logAuthor: "[controller][Curves]",
+    logAuthor: '[controller][Curves]',
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
-		this.formXtype = 'CurvesForm'
-		this.listXtype = 'CurvesGrid'
+		this.formXtype = 'CurvesForm';
+		this.listXtype = 'CurvesGrid';
 
-		this.modelId = 'Curve'
+		this.modelId = 'Curve';
 
 		this.callParent(arguments);
-		
-		global.curvesCtrl = this
+
+		global.curvesCtrl = this;
     },
-    
-	preSave: function(record,data,form){
+
+	preSave: function(record,data,form) {
 		record.data['_id'] = $.encoding.digests.hexSha1Str(record.data['metric']);
 		record.data['crecord_name'] = record.data['metric'];
-		return record
+		return record;
 	},
 
 	getRenderInfo: function(metric) {
-		if (metric){
+		if (metric) {
 			var _id = $.encoding.digests.hexSha1Str(metric);
-			var store = Ext.data.StoreManager.lookup('Curves')
-			var info = store.getById(_id)
-			if (info){
-				return info
+			var store = Ext.data.StoreManager.lookup('Curves');
+			var info = store.getById(_id);
+			if (info) {
+				return info;
 			}
 		}
 	},
-	
+
 	getRenderColors: function(metric, index) {
 		if (! index)
-			index = 0
-			
-		var line_color = global.default_colors[index]
-		var area_color = line_color
-		var area_opacity = 75
-		
-		var info = this.getRenderInfo(metric)
-		if (info){
-			line_color = info.get('line_color')
-			area_color = info.get('area_color')
-			area_opacity = info.get('area_opacity')
+			index = 0;
+
+		var line_color = global.default_colors[index];
+		var area_color = line_color;
+		var area_opacity = 75;
+
+		var info = this.getRenderInfo(metric);
+		if (info) {
+			line_color = info.get('line_color');
+			area_color = info.get('area_color');
+			area_opacity = info.get('area_opacity');
 		}
-		
+
 		if (line_color)
-			line_color = '#' + line_color
+			line_color = '#' + line_color;
 		else
-			line_color = undefined
-			
+			line_color = undefined;
+
 		if (area_color)
-			area_color = '#' + area_color
+			area_color = '#' + area_color;
 		else
-			area_color = undefined
-		
-		return [ line_color, area_color, area_opacity]
+			area_color = undefined;
+
+		return [line_color, area_color, area_opacity];
 	}
-  
+
 });

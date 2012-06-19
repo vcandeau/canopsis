@@ -21,7 +21,7 @@
 Ext.define('canopsis.store.Schedules', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Schedule',
-	
+
 	storeId: 'store.Schedules',
 
 	autoLoad: true,
@@ -33,13 +33,13 @@ Ext.define('canopsis.store.Schedules', {
 		reader: {
 			type: 'json',
 			root: 'data',
-			totalProperty  : 'total',
+			totalProperty: 'total',
 			successProperty: 'success'
 		},
 		writer: {
 			type: 'json',
-			writeAllFields: false,
-		},
-	},
-	
+			writeAllFields: false
+		}
+	}
+
 });

@@ -18,84 +18,84 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('widgets.pie.pie' ,{
+Ext.define('widgets.pie.pie' , {
 	extend: 'canopsis.lib.view.cwidget',
 
-	alias : 'widget.pie',
-	
+	alias: 'widget.pie',
+
 	logAuthor: '[pie]',
-	
+
 	options: {},
 	chartTitle: null,
 	chart: undefined,
 	serie: undefined,
-	
+
 	//Default Options
 	max: undefined,
-	other_label: "Free",
-	
+	other_label: 'Free',
+
 	autoTitle: true,
-	backgroundColor: "#FFFFFF",
-	borderColor: "#FFFFFF",
+	backgroundColor: '#FFFFFF',
+	borderColor: '#FFFFFF',
 	borderWidth: 0,
-	
+
 	title_fontSize: 15,
-	
+
 	pie_size: 60,
-	legend_verticalAlign: "bottom",
-	legend_align: "center",
-	legend_layout: "horizontal",
+	legend_verticalAlign: 'bottom',
+	legend_align: 'center',
+	legend_layout: 'horizontal',
 	legend_backgroundColor: null,
-	legend_borderColor: "#909090",
+	legend_borderColor: '#909090',
 	legend_borderWidth: 1,
 	legend_fontSize: 12,
-	legend_fontColor: "#3E576F",
+	legend_fontColor: '#3E576F',
 	//
 
 	initComponent: function() {
 		//Set title
 		if (this.autoTitle) {
 			this.setchartTitle();
-			this.title = ''
-		}else{
-			if (! this.border){
-				this.chartTitle = this.title
-				this.title = ''
+			this.title = '';
+		}else {
+			if (! this.border) {
+				this.chartTitle = this.title;
+				this.title = '';
 			}
 		}
 		this.callParent(arguments);
 	},
 
-	setchartTitle: function(){
-		var title = ""
+	setchartTitle: function() {
+		var title = '';
 		if (this.nodes) {
-			if (this.nodes.length == 1){
-				var info = split_amqp_rk(this.nodes[0].id)
-				
+			if (this.nodes.length == 1) {
+				var info = split_amqp_rk(this.nodes[0].id);
+
 				if (info.source_type == 'resource')
-					title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component
+					title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component;
 				else
-					title = info.component
+					title = info.component;
 			}
 		}
-		this.chartTitle = title	
+		this.chartTitle = title;
 	},
-	
-	afterContainerRender: function(){
-		log.debug("Initialize Pie", this.logAuthor)
-		
+
+	afterContainerRender: function() {
+		log.debug('Initialize Pie', this.logAuthor);
+
 		this.setOptions();
 		this.createChart();
-		
-		if (this.nodes){
+
+		if (this.nodes) {
 			// Clean this.nodes
-			this.processNodes()
+			this.processNodes();
 		}
-		
+
 		this.ready();
 	},
 
-	setOptions: function(){
+	setOptions: function() {
 		this.options = {
 			chart: {
 				renderTo: this.wcontainerId,
@@ -105,7 +105,7 @@ Ext.define('widgets.pie.pie' ,{
 				animation: false,
 				borderColor: this.borderColor,
 				borderWidth: this.borderWidth,
-				backgroundColor: this.backgroundColor,
+				backgroundColor: this.backgroundColor
 			},
 			exporting: {
 				enabled: false
@@ -120,12 +120,12 @@ Ext.define('widgets.pie.pie' ,{
 					},
 					showInLegend: true,
 					animation: false,
-					size: this.pie_size + '%',
+					size: this.pie_size + '%'
 				}
 			},
 			tooltip: {
 				formatter: function() {
-					return this.point.name + ': '+ Math.round(this.percentage) +' %';
+					return this.point.name + ': ' + Math.round(this.percentage) + ' %';
 					}
 			},
 			title: {
@@ -136,7 +136,7 @@ Ext.define('widgets.pie.pie' ,{
 				}
 			},
 			symbols: [],
-			credits: {	
+			credits: {
 				enabled: false
 			},
 			legend: {
@@ -153,151 +153,151 @@ Ext.define('widgets.pie.pie' ,{
 				}
 			},
 			series: []
-		}
+		};
 
 		//specifique options to add
-		if(this.exportMode){
+		if (this.exportMode) {
 			this.options.plotOptions.pie.enableMouseTracking = false;
-			this.options.plotOptions.tooltip = {}
+			this.options.plotOptions.tooltip = {};
 			this.options.plotOptions.pie.shadow = false;
-		}	
+		}
 	},
-	
-	createChart: function(){
+
+	createChart: function() {
 		this.chart = new Highcharts.Chart(this.options);
 	},
-	
-	processNodes : function(){
-		var post_params = []
-		for (var i in this.nodes){
+
+	processNodes: function() {
+		var post_params = [];
+		for (var i in this.nodes) {
 			post_params.push({
 				id: this.nodes[i].id,
-				metrics: this.nodes[i].metrics,
-			})
+				metrics: this.nodes[i].metrics
+			});
 		}
-		this.post_params = { 'nodes': Ext.JSON.encode(post_params) }
+		this.post_params = { 'nodes': Ext.JSON.encode(post_params) };
 	},
-	
-	doRefresh: function(from, to){
-		if (this.nodes){
-			if(this.nodes.length != 0){
-				
-				if (this.reportMode || this.exportMode){
-					url = '/perfstore/values/'+from+'/'+to
-				}else{
-					url = '/perfstore/values'
+
+	doRefresh: function(from, to) {
+		if (this.nodes) {
+			if (this.nodes.length != 0) {
+
+				if (this.reportMode || this.exportMode) {
+					url = '/perfstore/values/' + from + '/' + to;
+				}else {
+					url = '/perfstore/values';
 				}
-				
+
 				Ext.Ajax.request({
 					url: url,
 					scope: this,
 					params: this.post_params,
 					method: 'POST',
-					success: function(response){
-						var data = Ext.JSON.decode(response.responseText)
-						data = data.data
-						this.onRefresh(data)	
+					success: function(response) {
+						var data = Ext.JSON.decode(response.responseText);
+						data = data.data;
+						this.onRefresh(data);
 					},
-					failure: function ( result, request) {
-						log.error("Ajax request failed ... ("+request.url+")", this.logAuthor)
-					} 
-				})
+					failure: function(result, request) {
+						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+					}
+				});
 			} else {
-				log.debug('No nodes specified', this.logAuthor)
+				log.debug('No nodes specified', this.logAuthor);
 			}
 		}
 	},
-	
-	onRefresh: function(data){
-		if (this.chart && data){
+
+	onRefresh: function(data) {
+		if (this.chart && data) {
 
 			// Remove old series
-			this.removeSerie()
-			
+			this.removeSerie();
+
 			var serie = {
 				id: 'pie',
 				type: 'pie',
 				data: []
 			};
 
-			var other_unit = ""
-			
+			var other_unit = '';
+
 			for (var index in data) {
-				info = data[index]
-				
-				var node = info['node']
-				var metric = info['metric']
-				var value = info['values'][0][1]
-				var unit = info['bunit']
-				var max = info['max']
-				
+				info = data[index];
+
+				var node = info['node'];
+				var metric = info['metric'];
+				var value = info['values'][0][1];
+				var unit = info['bunit'];
+				var max = info['max'];
+
 				if (max == null)
-					max = this.max
-				
+					max = this.max;
+
 				if (unit == '%' && ! max)
-					max = 100
-				
-				var metric_name = metric
-				
-				var colors = global.curvesCtrl.getRenderColors(metric_name, index)
-				var curve = global.curvesCtrl.getRenderInfo(metric_name)
-				
+					max = 100;
+
+				var metric_name = metric;
+
+				var colors = global.curvesCtrl.getRenderColors(metric_name, index);
+				var curve = global.curvesCtrl.getRenderInfo(metric_name);
+
 				// Set Label
 				var label = undefined;
 				if (curve)
-					label = curve.get('label')		
+					label = curve.get('label');
 				if (! label)
-					label = metric_name
-					
-				var metric_long_name = "<b>" + label + "</b>"
-				
-				if (unit){
-					metric_long_name += " ("+unit+")"
-					other_unit += " ("+unit+")"
+					label = metric_name;
+
+				var metric_long_name = '<b>' + label + '</b>';
+
+				if (unit) {
+					metric_long_name += ' ('+ unit + ')';
+					other_unit += ' ('+ unit + ')';
 				}
-				
-				serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] })
-				
+
+				serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] });
+
 			}
-			
-			if (data.length == 1){
-				var other_label = "<b>" + this.other_label + "</b>" + other_unit
-				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1)
-				serie.data.push({ id: 'pie_other', name: other_label, y: max-value, color: colors[0] })
+
+			if (data.length == 1) {
+				var other_label = '<b>' + this.other_label + '</b>' + other_unit;
+				var colors = global.curvesCtrl.getRenderColors(this.other_label, 1);
+				serie.data.push({ id: 'pie_other', name: other_label, y: max - value, color: colors[0] });
 			}
-			
-			if (serie.data){
-				this.serie = serie
-				this.displaySerie()
-			}else{
-				log.debug("No data to display", this.logAuthor)
+
+			if (serie.data) {
+				this.serie = serie;
+				this.displaySerie();
+			}else {
+				log.debug('No data to display', this.logAuthor);
 			}
 		}
-	
-	},
-	
-	removeSerie: function(){
-		var serie = this.chart.get('pie')
-		if (serie)
-			serie.destroy()
-	},
-	
-	displaySerie: function(){
-		if (this.serie)
-			this.chart.addSeries(Ext.clone(this.serie))
-	},
-	
-	reloadSerie: function(){
-		this.removeSerie()
-		this.displaySerie()
+
 	},
 
-	onResize: function(){
-		log.debug("onRezize", this.logAuthor)
-		if (this.chart){
-			this.chart.setSize(this.getWidth(), this.getHeight() , false);
-			this.reloadSerie()
-		}
+	removeSerie: function() {
+		var serie = this.chart.get('pie');
+		if (serie)
+			serie.destroy();
 	},
+
+	displaySerie: function() {
+		if (this.serie)
+			this.chart.addSeries(Ext.clone(this.serie));
+	},
+
+	reloadSerie: function() {
+		this.removeSerie();
+		this.displaySerie();
+	},
+
+	onResize: function() {
+		log.debug('onRezize', this.logAuthor);
+		if (this.chart) {
+			this.chart.setSize(this.getWidth(), this.getHeight() , false);
+			this.reloadSerie();
+		}
+	}
 
 });

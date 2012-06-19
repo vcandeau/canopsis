@@ -24,68 +24,68 @@ Ext.define('canopsis.controller.Widgets', {
     //views: ['Widgets.kpi', 'Widgets.host_header'],
     stores: ['Widgets'],
     models: ['Event'],
-    
-    item_to_translate : ['title','fieldLabel','boxLabel', 'text'],
 
-    logAuthor: "[controller][Widgets]",
+    item_to_translate: ['title', 'fieldLabel', 'boxLabel', 'text'],
+
+    logAuthor: '[controller][Widgets]',
 
     init: function() {
 		Ext.Loader.setPath('widgets', './widgets');
 		this.store = this.getStore('Widgets');
 		log.debug('parsing Widget store', this.logAuthor);
-		this.store.on('load',function(){
-			this.store.each(function(record){
+		this.store.on('load', function() {
+			this.store.each(function(record) {
 				log.debug('loading ' + record.data.xtype, this.logAuthor);
-				var name ='widgets.' + record.data.xtype + '.' + record.data.xtype ;
+				var name = 'widgets.' + record.data.xtype + '.' + record.data.xtype;
 				Ext.require(name);
-				if (record.data.locales){
-					if (record.data.locales.indexOf(global.locale) >= 0){
-						log.debug(' + loading locale '+global.locale+' ...', this.logAuthor);
-						var name ='widgets.' + record.data.xtype + '.locales.lang-' +  global.locale;
+				if (record.data.locales) {
+					if (record.data.locales.indexOf(global.locale) >= 0) {
+						log.debug(' + loading locale ' + global.locale + ' ...', this.logAuthor);
+						var name = 'widgets.' + record.data.xtype + '.locales.lang-' + global.locale;
 						//Ext.require(name);
-						Ext.Loader.syncRequire(name)
+						Ext.Loader.syncRequire(name);
 					}
 				}
 			}, this);
-			
+
 			//translate the store
 			this.check_translate();
-			
+
 			// small hack
-			Ext.Function.defer(function(){ 
+			Ext.Function.defer(function() {
 				this.fireEvent('loaded');
 			 },1000, this);
 
 		}, this);
     },
-    
-	check_translate : function(){
-		if(global.locale != 'en'){
-			log.debug('Attempting to translate widget in store', this.logAuthor)
-			this.store.each(function(record){
-				var options = record.get('options')
-				if(options != undefined){
-					for(i in options){
-						this.translate(record.get('xtype'),options[i])
+
+	check_translate: function() {
+		if (global.locale != 'en') {
+			log.debug('Attempting to translate widget in store', this.logAuthor);
+			this.store.each(function(record) {
+				var options = record.get('options');
+				if (options != undefined) {
+					for (i in options) {
+						this.translate(record.get('xtype'), options[i]);
 					}
 				}
-			},this)
+			},this);
 		}
 	},
-	
+
 	//recursive translate function for widget records
-	translate : function(xtype, data){
-		
+	translate: function(xtype, data) {
+
 		// for every item
-		for( var key in data){
-			if (key == 'items' || key == 'store' || key == 'data' || key >= 0){
-				this.translate(xtype, data[key])
+		for (var key in data) {
+			if (key == 'items' || key == 'store' || key == 'data' || key >= 0) {
+				this.translate(xtype, data[key]);
 			}
-				
-			if(this.item_to_translate.indexOf(key) > -1){
-				data[key] = _(data[key], xtype)
+
+			if (this.item_to_translate.indexOf(key) > -1) {
+				data[key] = _(data[key], xtype);
 			}
 		}
 	}
-	
+
 });

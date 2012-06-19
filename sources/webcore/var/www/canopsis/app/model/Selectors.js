@@ -27,7 +27,7 @@ Ext.define('canopsis.model.Selectors', {
 		{name: 'description'},
 		{name: 'filter'},
 		{name: 'category'},
-		{name: 'collection'},
-    ],
+		{name: 'collection'}
+    ]
 
 });
