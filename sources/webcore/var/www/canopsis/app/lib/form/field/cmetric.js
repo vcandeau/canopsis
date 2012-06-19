@@ -24,6 +24,8 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	
 	alias: 'widget.cmetric',
 	
+	pageSize : 14,
+	
 	border: false,
 	layout: {
         type: 'hbox',
@@ -74,8 +76,9 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			});
 		}
 		
-		this.node_store = Ext.create('Ext.data.Store', {
+		this.node_store = Ext.create('canopsis.lib.store.cstore', {
 				model: 'Node',
+				pageSize: this.pageSize,
 				proxy: {
 					 type: 'ajax',
 					 url: '/perfstore/get_all_nodes',
@@ -87,11 +90,11 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				 autoLoad: true
 		});
 		
-		this.metric_store = Ext.create('Ext.data.Store', {
+		this.metric_store = Ext.create('canopsis.lib.store.cstore', {
 				model: 'Metric'
 		});
 		
-		this.selected_store = Ext.create('Ext.data.Store', {
+		this.selected_store = Ext.create('canopsis.lib.store.cstore', {
 				model: 'Metric'
 		});
 		
@@ -127,19 +130,20 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		//-------------------------first grid--------------------
 		this.node_grid = Ext.create('canopsis.lib.view.cgrid',{
 			store:this.node_store,
-			//scroll: false,
 			flex:2,
-
 			margin:3,
-			border:true,
-			//opt_bar: true,
+			
+			opt_bar: true,
 			opt_bar_search: true,
 			opt_bar_add: false,
-			opt_bar_reload: false,
+			opt_allow_edit: false,
+			opt_bar_duplicate: false,
+			opt_bar_reload: true,
 			opt_bar_delete: false,
+			opt_paging: true,
+
 			opt_bar_search_field: ['dn'],
 			
-			opt_bar_search_field: ['node','dn'],
 			columns: [
 				{
 					header: 'Component/Ressource',
@@ -148,8 +152,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 					flex: 1
 	       		}
 			]
-
+			
 		})
+		
+		var search_ctrl = Ext.create('canopsis.lib.controller.cgrid');
+		this.node_grid.on('afterrender',function(){
+			search_ctrl._bindGridEvents(this.node_grid);
+		},this)
 		
 		//------------------------second grid---------------------
 		this.metric_grid = Ext.widget('grid',{
