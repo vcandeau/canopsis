@@ -2,7 +2,7 @@
 
 NAME="pkgmgr"
 VERSION=0.2
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
 REQUIRES="canohome"
 
