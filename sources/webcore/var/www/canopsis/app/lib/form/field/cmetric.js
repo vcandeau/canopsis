@@ -305,6 +305,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		var output = []
 		var nodes = {}
 		this.selected_store.each(function(record) {
+			
 			var node = record.get('node')
 			var metric = record.get('metric')
 			var node_exploded = node.split('.')
@@ -315,6 +316,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			else
 				var source_type = 'component'
 			
+			/*
 			//regroup metric by nodes
 			if (nodes[node]){
 				nodes[node].metrics.push(metric)
@@ -324,12 +326,20 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				else
 					nodes[node] = {'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type}
 			}
+			*/
+			if(source_type == 'resource')
+				output.push({'id':node,'metrics':[metric],'resource':node_exploded[5],'component':node_exploded[4],'source_type':source_type})
+			else
+				output.push({'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type})
 		})
-		
+		/*
 		//object to array
 		for(var i in nodes)
 			output.push(nodes[i])
-		
+			*/
+		log.dump('-----------------------------------')
+		log.dump(output)
+		log.dump('-----------------------------------')
 		return output
 	},
 	
