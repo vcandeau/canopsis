@@ -243,6 +243,30 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				}
 			}
 		})
-	}
+	},
+	
+	getValue : function(){
+		var output = []
+		var nodes = {}
+		this.selected_store.each(function(record) {
+			var node = record.get('node')
+			var metric = record.get('metric')
+			
+			if (nodes[node])
+				nodes[node].metrics.push(metric)
+			else
+				nodes[node] = {'id':node,'metrics':[metric]}
+		})
+		
+		for(var i in nodes)
+			output.push(nodes[i])
+		
+		return output
+	},
+	
+	setValue : function(data){
+		
+		
+	},
 	
 })
