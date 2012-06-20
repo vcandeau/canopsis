@@ -124,6 +124,14 @@ def on_message(body, msg):
 	logger.debug(' + perf_data_array: %s', perf_data_array)
 	event['perf_data_array'] = perf_data_array
 	
+	### Add status informations
+	if   event['event_type'] == 'check':
+		state = int(event['state'])
+		state_type = int(event['state_type'])
+		state_extra = 0
+		cps_state = state * 100 + state_type * 10 + state_extra
+		perf_data_array.append({"metric": "cps_state", "value": cps_state})
+	
 	### Store perfdata
 	if perf_data_array:
 		try:
