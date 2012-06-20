@@ -45,6 +45,10 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	opt_bar_search: false,
 	opt_bar_search_field: [],
 	opt_bar_time: false,
+	
+	//Hack , will be unified soon with the common research, just need time to
+	//rewrite the old search used by cinventory or cgrid_state
+	opt_simple_search : false,
 
 	opt_db_namespace: 'object',
 
