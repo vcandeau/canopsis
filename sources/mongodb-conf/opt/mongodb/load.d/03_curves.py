@@ -45,7 +45,10 @@ def init():
 		{'line_color': 'e97b15', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 1, 'area_color': None, 'label': 'Load midterm', 'metric': 'load5'},
 		{'line_color': 'f3d30b', 'dashStyle': 'Solid', 'invert': False, 'area_opacity': 30, 'zIndex': 2, 'area_color': None, 'label': 'Load shortterm', 'metric': 'load1'},
 		{'line_color': 'FF9300', 'dashStyle': 'Dash', 'invert': False, 'area_opacity': 75, 'zIndex': 10, 'area_color': None, 'label': 'Warning', 'metric': 'pl_warning'},
-		{'line_color': 'FF0000', 'dashStyle': 'Dash', 'invert': False, 'area_opacity': 75, 'zIndex': 10, 'area_color': None, 'label': 'Critical', 'metric': 'pl_critical'}
+		{'line_color': 'FF0000', 'dashStyle': 'Dash', 'invert': False, 'area_opacity': 75, 'zIndex': 10, 'area_color': None, 'label': 'Critical', 'metric': 'pl_critical'},
+		{'line_color': 'FF0000', 'dashStyle': 'Solid', 'metric': 'cps_state_crit', 'label': 'Critical', 'zIndex': -30, 'area_opacity': 20, 'area_color': None, 'invert': False},
+		{'line_color': 'FF9300', 'dashStyle': 'Solid', 'metric': 'cps_state_warn', 'label': 'Warning', 'zIndex': -30, 'area_opacity': 20, 'area_color': None, 'invert': False},
+		{'line_color': 'B7CA79', 'dashStyle': 'Solid', 'metric': 'cps_state_ok', 'label': 'Ok', 'zIndex': -30, 'area_opacity': 20, 'area_color': None, 'invert': False}
 	]
 	
 	for curve in curves:
