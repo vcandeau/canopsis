@@ -1,7 +1,7 @@
 // Author: slammer  
 // http://www.sencha.com/forum/showthread.php?140793-Simple-Ext.ux.ColorField-plugin
 
-//Modified by Capensis: Add colors
+//Modified by Capensis: Add colors and fix '#'
 
 Ext.define('Ext.ux.ColorField', {
     extend: 'Ext.form.field.Trigger',
@@ -45,14 +45,28 @@ Ext.define('Ext.ux.ColorField', {
         });
     },
     
+    getValue : function(){
+		hex = Ext.ux.ColorField.superclass.getValue.call(this);
+		if (hex[0] != '#')
+			hex = '#' + hex
+        return hex
+    },
+    
     setValue : function(hex){
-        Ext.ux.ColorField.superclass.setValue.call(this, hex);
+		var shex = hex
+		if (shex[0] == '#')
+			shex = shex.slice(1)
+			
+        Ext.ux.ColorField.superclass.setValue.call(this, shex);
         this.setColor(hex);
     },
     
     setColor : function(hex) {
+		if (hex[0] != '#')
+			hex = '#' + hex
+		
         Ext.ux.ColorField.superclass.setFieldStyle.call(this, {
-            'background-color': '#' + hex,
+            'background-color': hex,
             'background-image': 'none'
         });
     },

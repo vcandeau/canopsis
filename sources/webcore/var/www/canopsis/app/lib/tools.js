@@ -145,3 +145,12 @@ function getMidnight(timestamp) {
 	return new_time;
 }
 
+function check_color(color){
+	if (! color)
+		return color
+	if (color[0] != '#')
+		return '#' + color
+	else
+		return color
+}
+
