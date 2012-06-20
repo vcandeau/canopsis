@@ -84,7 +84,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 					}	
 				 },
 				 //autoLoad: {start: 0, limit: this.pageSize},
-				 autoload:true
+				 autoLoad:true
 		});
 		
 		this.metric_store = Ext.create('canopsis.lib.store.cstore', {
@@ -99,10 +99,31 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	
 	bind_event : function(){
 		log.debug('Binding events', this.logAuthor)
+		
+		//---------------------event inventory----------------------
 		if(this.node_grid){
 				this.node_grid.on('itemclick',function(view,record){
 						this.fetch_metrics(record.get('node'))
 					},this)
+					
+				this.node_grid.on('itemdblclick',function(view,record){
+						this.select_metrics(record.get('node'))
+					},this)
+		}
+		
+		//--------------------event metric of node------------------
+		if(this.metric_grid){
+			this.metric_grid.on('itemdblclick',function(view,record){
+							this.selected_store.add(record)
+						},this)
+		}
+		
+		//----------------------event selected metric----------------
+		if(this.selected_grid){
+			this.selected_grid.on('itemdblclick',function(view,record){
+							view.store.remove(record)
+						})
+			
 		}
 		
 		//----------------------drop function--------------------
@@ -142,12 +163,27 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			scope: this,
 			success: function(response){
 				var text = Ext.decode(response.responseText);
-				log.dump(text.data)
 				var record_array = []
 				for(var i in text.data){
 					record_array.push(Ext.create('Metric',text.data[i]))
 				}
 				this.metric_store.loadData(record_array)
+			}
+		});
+	},
+	
+	select_metrics: function(_id){
+		log.debug('Select metrics', this.logAuthor)
+		Ext.Ajax.request({
+			url: '/perfstore/metrics/' + _id,
+			scope: this,
+			success: function(response){
+				var text = Ext.decode(response.responseText);
+				var record_array = []
+				for(var i in text.data){
+					record_array.push(Ext.create('Metric',text.data[i]))
+				}
+				this.selected_store.add(record_array)
 			}
 		});
 	},
@@ -253,11 +289,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			var metric = record.get('metric')
 			var node_exploded = node.split('.')
 			
+			//check if resource
 			if(node_exploded[5])
 				var source_type = 'resource'
 			else
 				var source_type = 'component'
 			
+			//regroup metric by nodes
 			if (nodes[node]){
 				nodes[node].metrics.push(metric)
 			}else{
@@ -268,6 +306,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			}
 		})
 		
+		//object to array
 		for(var i in nodes)
 			output.push(nodes[i])
 		
