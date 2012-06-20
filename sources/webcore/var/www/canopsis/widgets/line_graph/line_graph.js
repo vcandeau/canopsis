@@ -46,7 +46,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	metrics: [],
 
 	chartTitle: null,
-	chartTitle: null,
 
 	//Default Options
 	time_window: global.commonTs.day, //24 hours
