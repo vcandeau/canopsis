@@ -317,7 +317,7 @@
 		}, {
 			"title": "Choose Metrics",
 			"items": [{
-						"xtype": "cinventory",
+						"xtype": "cmetric",
 						"name": "nodes",
 						"multiSelect": true,
 						"metrics": true
