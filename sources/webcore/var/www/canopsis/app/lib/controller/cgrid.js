@@ -106,7 +106,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
 		for (i in btns) {
-			btns[i].on('click', this._searchRecord, this);
+			if(this.grid.opt_simple_search == true){
+				btns[i].on('click', this._searchRecordSimple, this);
+			}else{
+				btns[i].on('click', this._searchRecord, this);
+			}
 		}
 
 		//bind keynav
@@ -115,7 +119,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				var textfield = textfields[i];
 				Ext.create('Ext.util.KeyNav', textfield.id, {
 					scope: this,
-					enter: this._searchRecord
+					enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
 				});
 		}
 
@@ -627,8 +631,24 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}else {
 			store.load();
 		}
+	},
+
+	//temporary function, will be merge with the previous as soon as possible
+	_searchRecordSimple : function(){
+		log.debug('Clicked on searchButton (new func)', this.logAuthor);
+		var grid = this.grid;
+		var store = grid.getStore();
+		var search = grid.down('textfield[name=searchField]').getValue();
+		
+		grid.pagingbar.moveFirst();
+		
+		store.load({
+			params:{
+				start:0,
+				limit: grid.pageSize,
+				search: search
+			}
+		})
 	}
-
-
 
 });
