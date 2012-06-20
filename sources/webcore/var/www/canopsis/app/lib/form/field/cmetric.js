@@ -47,11 +47,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.callParent(arguments);
 	},
 	
-	afterRender : function(){
-		log.debug('after render', this.logAuthor)
-
-	},
-	
 	build_stores : function(){
 		
 		var model = Ext.ModelManager.getModel('canopsis.model.Node');
@@ -82,13 +77,14 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				proxy: {
 					 type: 'ajax',
 					 url: '/perfstore/get_all_nodes',
-					 extraParams:{limit:this.pageSize},
+					// extraParams:{limit:this.pageSize},
 					 reader: {
 						 type: 'json',
 						 root: 'data'
 					}	
 				 },
-				 autoLoad: {start: 0, limit: this.pageSize},
+				 //autoLoad: {start: 0, limit: this.pageSize},
+				 autoload:true
 		});
 		
 		this.metric_store = Ext.create('canopsis.lib.store.cstore', {
@@ -104,10 +100,39 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	bind_event : function(){
 		log.debug('Binding events', this.logAuthor)
 		if(this.node_grid){
-				this.node_grid.on('itemdblclick',function(view,record){
+				this.node_grid.on('itemclick',function(view,record){
 						this.fetch_metrics(record.get('node'))
 					},this)
 		}
+		
+		//----------------------drop function--------------------
+		this.selected_grid.getView().on('beforedrop',function(html_node,data,model,dropPosition,dropFunction,eOpts){
+			var records = data.records;
+			for (var i in records) {
+				var record = records[i];
+				
+				if(record.get('metric')){
+					this.selected_store.add(record);
+				}else{
+					var node = record.get('node');
+					Ext.Ajax.request({
+						url: '/perfstore/metrics/' + node,
+						scope: this,
+						success: function(response){
+							var data = Ext.decode(response.responseText).data;
+							if(data)
+								this.selected_store.add(data)
+						}
+					});
+				}
+			}
+
+			event.cancel = true;
+			event.dropStatus = true;
+			
+			return false;
+		},this)
+		
 	},
 	
 	fetch_metrics: function(_id){
@@ -153,8 +178,15 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 					dataIndex: 'dn',
 					flex: 1
 	       		}
-			]
-			
+			],
+			viewConfig: {
+				copy: true,
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					enableDrop: false,
+					dragGroup: 'search_grid_DNDGroup'
+				}
+			}
 		})
 		
 		var search_ctrl = Ext.create('canopsis.lib.controller.cgrid');
@@ -176,7 +208,15 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 					dataIndex: 'metric',
 					flex:1
 	       		}
-			]
+			],
+			viewConfig: {
+				copy: true,
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					enableDrop: false,
+					dragGroup: 'search_grid_DNDGroup'
+				}
+			}
 		})
 		
 		//------------------------third grid---------------------
@@ -194,7 +234,14 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 					dataIndex: 'metric',
 					flex:1
 	       		}
-			]
+			],
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					enableDrag: false,
+					dropGroup: 'search_grid_DNDGroup'
+				}
+			}
 		})
 	}
 	
