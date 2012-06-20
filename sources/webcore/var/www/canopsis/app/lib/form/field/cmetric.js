@@ -139,30 +139,33 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		//----------------------drop function--------------------
 		this.selected_grid.getView().on('beforedrop',function(html_node,data,model,dropPosition,dropFunction,eOpts){
-			var records = data.records;
-			for (var i in records) {
-				var record = records[i];
-				
-				if(record.get('metric')){
-					this.selected_store.add(record);
-				}else{
-					var node = record.get('node');
-					Ext.Ajax.request({
-						url: '/perfstore/metrics/' + node,
-						scope: this,
-						success: function(response){
-							var data = Ext.decode(response.responseText).data;
-							if(data)
-								this.selected_store.add(data)
-						}
-					});
+			//only do action is not reorder
+			if(data.view.id != this.selected_grid.getView().id){
+				var records = data.records;
+				for (var i in records) {
+					var record = records[i];
+					
+					if(record.get('metric')){
+						this.selected_store.add(record);
+					}else{
+						var node = record.get('node');
+						Ext.Ajax.request({
+							url: '/perfstore/metrics/' + node,
+							scope: this,
+							success: function(response){
+								var data = Ext.decode(response.responseText).data;
+								if(data)
+									this.selected_store.add(data)
+							}
+						});
+					}
 				}
-			}
 
-			event.cancel = true;
-			event.dropStatus = true;
-			
-			return false;
+				event.cancel = true;
+				event.dropStatus = true;
+				
+				return false;
+			}
 		},this)
 		
 	},
@@ -293,7 +296,9 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
-					enableDrag: false,
+					//enableDrag: false,
+					copy:false,
+					dragGroup: 'search_grid_DNDGroup',
 					dropGroup: 'search_grid_DNDGroup'
 				}
 			}
