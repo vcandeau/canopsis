@@ -314,8 +314,16 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 	
 	setValue : function(data){
+		log.debug('erfezregergsrgesrgregesrger')
+		log.dump(data)
 		
-		
+		for(var i in data){
+			var node = data[i]
+			for(var j in node.metrics){
+				var metric = node.metrics[j]
+				this.selected_store.add({'node':node.id,'metric':metric})
+			}
+		}
 	},
 	
 })
