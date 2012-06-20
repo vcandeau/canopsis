@@ -122,11 +122,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if(node_list.indexOf(id) == -1)
 					node_list.push(id)
 			}
-			log.dump('------------------------------------')
-			log.dump(node_list)
-			log.dump('------------------------------------')
 
-			
 			if (node_list.length == 1) {
 				var resource = this.nodes[0].resource;
 				var component = this.nodes[0].component;
