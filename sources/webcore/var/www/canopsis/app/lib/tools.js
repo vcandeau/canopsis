@@ -107,3 +107,12 @@ function split_amqp_rk(rk){
     return {}
 }
 
+function check_color(color){
+	if (! color)
+		return color
+	if (color[0] != '#')
+		return '#' + color
+	else
+		return color
+}
+

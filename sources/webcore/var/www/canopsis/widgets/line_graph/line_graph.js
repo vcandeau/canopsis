@@ -79,6 +79,13 @@ Ext.define('widgets.line_graph.line_graph' ,{
 	//..
 	
 	initComponent: function() {
+		
+		this.backgroundColor		= check_color(this.backgroundColor)
+		this.borderColor			= check_color(this.borderColor)
+		this.legend_fontColor		= check_color(this.legend_fontColor)
+		this.legend_borderColor 	= check_color(this.legend_borderColor)
+		this.legend_backgroundColor	= check_color(this.legend_backgroundColor)
+		
 		//Set title
 		if (this.autoTitle) {
 			this.setchartTitle();
