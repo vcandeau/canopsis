@@ -19,85 +19,114 @@
 # ---------------------------------
 
 import unittest
+import time
 
 from cselector import cselector
 #from cselector import cselector_get, cselector_getall
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
+                    )
 
 from crecord import crecord
 from caccount import caccount
-from cstorage import cstorage
+from cstorage import get_storage
 
-import hashlib
+root_account = caccount(user="root", group="root")
+storage = get_storage(account=root_account , namespace='unittest', logging_level=logging.INFO)
+selector = None
 
-STORAGE = None
-SELECTOR = None
-ID = None
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
 		pass
 
 	def test_01_InitPutGet(self):
-		global SELECTOR 
-		SELECTOR = cselector(name="myselector", namespace='unittest', storage=STORAGE)
-		SELECTOR.nocache = True
+		global selector 
+		selector = cselector(name="myselector", namespace='unittest', storage=storage)
+		selector.nocache = True
 
-		_id = SELECTOR._id
+		_id = selector._id
+		print "Selector Id: %s" % _id
+
+		dump = selector.dump()
 
 		## Put in db
-		STORAGE.put(SELECTOR)
-		record = STORAGE.get(_id)
+		storage.put(selector)
 
 		## Load
-		SELECTOR = cselector(name="myselector", storage=STORAGE)
-		SELECTOR = cselector(_id=_id, storage=STORAGE)
-		SELECTOR = cselector(record=record, storage=STORAGE)
+		selector = cselector(name="myselector", storage=storage)
+		ndump = selector.dump()
 		
-		
+		if dump['_id'] != ndump['_id'] or dump['namespace'] != ndump['namespace'] or dump['mfilter'] != ndump['mfilter'] or dump['aaa_owner'] != ndump['aaa_owner']:
+			print dump
+			print nump
+			raise Exception('Invalid dump ...')		
 
 	def test_02_PutData(self):
-		global ID
 		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0})
 		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 0})
 		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 0})
 
-		STORAGE.put([record1, record2, record3])
-		ID = record2._id
-
+		storage.put([record1, record2, record3])
+		
+	
 	def test_03_Resolv(self):
-		SELECTOR.mfilter = {'$or': [ {'check': 'test1'},  {'check': 'test2'}] }
-		records = SELECTOR.resolv()
-		if len(records) != 2:
-			raise Exception('Error in selector resolving ...')
-
-
-		SELECTOR.mids = ['check3']
-		records = SELECTOR.resolv()
-		if len(records) != 3:
-			raise Exception('Error in selector resolving ...')
-
-	def test_04_Cat(self):
-		SELECTOR.cat()
+		
+		selector.setMfilter({'_id': 'check1'})
+		ids = selector.resolv()
+		
+		if len(ids) != 1:
+			raise Exception('Invalid count (%s)' % ids)
+			
+		selector.setMfilter({'state': 0})
+		ids = selector.resolv()
+		
+		if len(ids) != 3:
+			raise Exception('Invalid count (%s)' % ids)
+			
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
+		ids = selector.resolv()
+		
+		if len(ids) != 2:
+			raise Exception('Invalid count (%s)' % ids)
+		
+		
+		## Check cache
+		selector.cache_time = 2
+		
+		ids = selector.resolv()
+		if len(ids) != 2:
+			raise Exception('Invalid count (%s)' % ids)
+			
+		selector.mfilter = {'_id': 'check1'}
+		ids = selector.resolv()
+		if len(ids) != 2:
+			raise Exception('Invalid count with cache (%s)' % ids)
+			
+		time.sleep(3)
+		ids = selector.resolv()
+		if len(ids) != 1:
+			raise Exception('Invalid count with cache (%s)' % ids)
 
 	def test_05_Match(self):
-		if not SELECTOR.match('check1'):
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
+		
+		if not selector.match('check1'):
 			raise Exception('Error in match, plain id ...')
 
-		if SELECTOR.match('toto'):
+		if selector.match('toto'):
 			raise Exception('Error in match, wrong id ...')
-
-		if not SELECTOR.match(ID):
-			raise Exception('Error in match, objectid ...')
-
+	
 	def test_08_Remove(self):
-		STORAGE.remove(SELECTOR)
+		storage.remove(selector)
 
 	def test_99_DropNamespace(self):
-		STORAGE.drop_namespace('unittest')
+		storage.drop_namespace('unittest')
 
 
 if __name__ == "__main__":
-	STORAGE = cstorage(caccount(user="root", group="root"), namespace='unittest')
-	unittest.main(verbosity=1)
+	unittest.main(verbosity=2)
 	
 
 

@@ -94,7 +94,7 @@ class crecord(object):
 			
 		
 		try:
-			self._id = dump['_id']
+			self._id = str(dump['_id'])
 			del dump['_id']
 		except:
 			self._id = None

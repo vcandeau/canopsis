@@ -72,16 +72,17 @@ class ccache(object):
 				
 				data = func(*k,**a)
 				self.put(cid, data, account)
+				if logger:
+					logger.debug('   + Update cache (%s)...' % cid)
 				return data
 			return gave
 		return dec
 
 	def remove(self, _id, account=None):
-		#Dont remove record in capped collection
-		#self.storage.remove('cache.'+_id, namespace=self.namespace, account=account)
-		pass
+		self.storage.remove('cache.'+_id, namespace=self.namespace, account=account)
 
 	def put(self, _id, data, account=None):
+		self.remove(_id)
 		record = self.make_record('cache.'+_id)
 		record.data = {'cached': data}
 		self.storage.put(record, namespace=self.namespace, account=account)
