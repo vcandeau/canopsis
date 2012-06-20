@@ -46,6 +46,28 @@ clean_tree () {
 	pkg_list_deps=$(sed 's# #\n#g' $TMP_FILE | awk ' !x[$0]++')
 }
 
+check_package () {
+	local OK=1
+	local PKG=$1
+	local LOCAL_DBINFO=$(cat $LOCAL_DB_PATH | grep "^$PKG|" | tail -n1)
+	local STATUS=$(db_parse "status" "$LOCAL_DBINFO")
+	if [ "x$STATUS" != "xinstalled" ]; then OK=0; fi;
+
+	if [ $OK -eq 1 ]; then
+		local REMOTE_DBINFO=$(cat $REMOTE_DB_PATH | grep "^$PKG|" | tail -n1)
+		local R_VERS=$(db_parse "version" "$REMOTE_DBINFO")
+		local R_RELE=$(db_parse "release" "$REMOTE_DBINFO")
+		if [ "x$R_VERS" != "x" ]; then
+			local L_VERS=$(db_parse "version" "$LOCAL_DBINFO")
+			local L_RELE=$(db_parse "release" "$LOCAL_DBINFO")
+			if [ "x$R_VERS" != "x$L_VERS" ]; then OK=0; fi;
+			if [ "x$R_RELE" != "x$L_RELE" ]; then OK=0; fi;
+		fi
+	fi
+
+	echo $OK
+}
+
 parse_install_deps () {
 	if [ $_sec -gt 200 ];then
 		echo "[`date +'%T %x'`][ERR] Error in packages dependences build" >> $LOG_FILE
@@ -66,6 +88,14 @@ parse_install_deps () {
 		else
 			local DBINFO=$(cat $REMOTE_DB_PATH | grep "^$dep|" | tail -n1)
 			local L_DEPS=$(db_parse "deps" "$DBINFO")
+			
+			# Clean deps allready installed and up to date
+			local N_DEPS=''
+			for ddep in $L_DEPS; do
+				if [ $(check_package "$ddep") -eq 0 ]; then N_DEPS="$N_DEPS $ddep"; fi
+			done
+			L_DEPS=$N_DEPS	
+			
 			if [ -z "$L_DEPS" ]; then 
                	NB_DEPS=0
            	else 
