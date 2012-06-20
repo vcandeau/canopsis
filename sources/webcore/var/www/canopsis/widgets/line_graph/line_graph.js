@@ -202,14 +202,20 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			},
 			xAxis: {
+				id: 'timestamp',
 				type: 'datetime',
 				tickmarkPlacement: 'on'
 			},
-			yAxis: {
-				title: {
-					text: null
+			yAxis: [
+				{
+					title: { text: null }
+				},{
+					id: "state",
+					title: { text: null },
+					labels: { enabled: false },
+					max: 100
 				}
-        	},
+			],
 			plotOptions: {
 				series: {
 					animation: false,
@@ -384,11 +390,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 			}*/
 
 			if (data.length > 0) {
-				var i;
-				for (i in data) {
+				for (var i in data) {
 					this.addDataOnChart(data[i]);
 					//add/refresh trend lines
-					if (this.trend_lines)
+					// Exclude state lines
+					if (this.trend_lines && (data[i]['metric'] != 'cps_state' && data[i]['metric'] != 'cps_state_ok' && data[i]['metric'] != 'cps_state_warn' && data[i]['metric'] != 'cps_state_crit' ))
 						this.addTrendLines(data[i]);
 				}
 
@@ -454,8 +460,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	getSerie: function(node, metric_name, bunit, min, max) {
+	getSerie: function(node, metric_name, bunit, min, max, yAxis) {		
 		var serie_id = node + '.' + metric_name;
+		
+		if (! yAxis)
+			yAxis = 0
 
 		//var serie = this.chart.get(serie_id)
 		var serie = this.series_hc[serie_id];
@@ -494,14 +503,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (! label)
 			label = metric_name;
 
-		metric_long_name += '<b>' + label + '</b>';
+		metric_long_name += '<b>' + _(label) + '</b>';
 
 		if (bunit)
 			metric_long_name += ' ('+ bunit + ')';
 
 		log.debug('    + legend: ' + metric_long_name, this.logAuthor);
 
-		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0], min: min, max: max};
+		var serie = {id: serie_id, name: metric_long_name, data: [], color: colors[0], min: min, max: max, yAxis: yAxis};
 
 		if (curve) {
 			serie['dashStyle'] = curve.get('dashStyle');
@@ -575,8 +584,99 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var min = data['min'];
 		var max = data['max'];
 		//log.dump(data)
+		
+		var serie = undefined;
+		
+		if (metric_name == 'cps_state_ok' || metric_name == 'cps_state_warn' || metric_name == 'cps_state_crit'){
+			serie = this.getSerie(node, metric_name, undefined, undefined, undefined, 1);
+		}
 
-		var serie = this.getSerie(node, metric_name, bunit, min, max);
+		if (metric_name == 'cps_state'){
+						
+			ok_values = []
+			warn_values = []
+			crit_values = []
+			for (var index in data['values']){
+				state = parseInt(data['values'][index][1]/100)
+				if       (state == 0){
+					ok_values.push([data['values'][index][0], 100])
+					warn_values.push([data['values'][index][0], 0])
+					crit_values.push([data['values'][index][0], 0])
+				}else if (state == 1){
+					ok_values.push([data['values'][index][0], 0])
+					warn_values.push([data['values'][index][0], 100])
+					crit_values.push([data['values'][index][0], 0])
+				}else if (state == 2){
+					ok_values.push([data['values'][index][0], 0])
+					warn_values.push([data['values'][index][0], 0])
+					crit_values.push([data['values'][index][0], 100])
+				}
+			}
+			
+			data['metric'] = 'cps_state_ok'
+			data['values'] = ok_values
+			this.addDataOnChart(data)
+			data['metric'] = 'cps_state_warn'
+			data['values'] = warn_values
+			this.addDataOnChart(data)
+			data['metric'] = 'cps_state_crit'
+			data['values'] = crit_values
+			this.addDataOnChart(data)
+			
+			return
+			
+			/*this.lastplotband = xaxis.addPlotBand({ // mark the weekend
+					color: '#FCFFC5',
+					from: data['values'][0][0],
+					to: data['values'][data['values'].length-1][0]
+				});
+			console.log(this.lastplotband)*/
+			
+			
+			/*var xaxis = this.chart.get('timestamp')
+			var doPB = []
+			if (this.lastplotband){
+
+			}else{
+				console.log("addplotband ")
+				var from = data['values'][0][0]
+				var last_state = parseInt(data['values'][0][1]/100)
+				
+				for (var index in data['values']){
+					state = parseInt(data['values'][index][1]/100)
+					if (state != last_state){
+						doPB.push({from: from, to: data['values'][index][0], state: last_state})
+						from = data['values'][index][0]
+						last_state = state
+					}
+				}
+				
+				doPB.push({from: from, to: data['values'][data['values'].length-1][0], state: state})
+			}
+			
+			console.log(doPB)
+			for (var index in doPB){
+				var pb = doPB[index]
+				var color
+					
+				if      (pb.state == 0)
+					color = global.state_colors['ok']
+				else if (pb.state == 1)
+					color = global.state_colors['warning']
+				else if (pb.state == 2)
+					color = global.state_colors['critical']
+				
+				this.lastplotband = xaxis.addPlotBand({ // mark the weekend
+					color: color,
+					from: pb.from,
+					to: pb.to,
+					state: pb.state
+				});
+			}*/
+			
+		}else{
+			serie = this.getSerie(node, metric_name, bunit, min, max);
+		}
 
 		if (! serie) {
 			log.error('Impossible to get serie, node: '+ node + ' metric: '+ metric_name, this.logAuthor);
