@@ -19,130 +19,124 @@
 # ---------------------------------
 
 #import logging
-from crecord_ng import crecord_ng
+from crecord import crecord
 
-from ccache import ccache
+from ccache import get_cache
 from ctimer import ctimer
 from ctools import calcul_pct
 from pymongo import objectid
 
 from caccount import caccount
-from cstorage import get_storage
+#from cstorage import get_storage
 
 import time
 import json
 import logging
 
-
-class cselector(crecord_ng):
-	def __init__(self, namespace='inventory', type='selector',  mids=[], mfilter=None, logging_level=logging.INFO, *args, **kargs):
-
+class cselector(crecord):
+	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, logging_level=None):
+		self.type = 'selector'
+		self.storage = storage
+		
+		if name and not _id:
+			self._id = self.type + "." + storage.account._id + "." + name
+			
 		## Default vars
 		self.namespace = namespace
-		self.mfilter = mfilter
-		self.mids = mids
+		self.mfilter = {}
+		self.changed = False
+		self.mids = []
 		self.timer = ctimer(logging_level=logging.INFO)
-		self.nocache = False
+		self.use_cache = use_cache
 		self.cache_time = 60
+		self.cache = None
 		self.last_resolv_time = 0
 		self.last_nb_records = 0
 
 		self._ids = []
 		
+		self.logger = logging.getLogger('cselector')
+		if logging_level:
+			self.logger.setLevel(logging_level)
+		
 		## Init
-		crecord_ng.__init__(self, type=type, *args, **kargs)
-
+		try:
+			record = storage.get(self._id)
+		except:
+			record = None
+		
+		if record:
+			self.logger.debug("Init from record.")
+			crecord.__init__(self, record=record, storage=storage)
+		else:
+			self.logger.debug("Init new record.")
+			crecord.__init__(self, _id=self._id, owner=storage.account.user, group=storage.account.group, type=self.type, storage=storage)
+		
 	def dump(self):
 		self.data['mids'] = self.mids
 		self.data['namespace'] = self.namespace
 		self.data['mfilter'] = json.dumps(self.mfilter)
-		return crecord_ng.dump(self)
+		return crecord.dump(self)
 
 	def load(self, dump):
-		crecord_ng.load(self, dump)
-		self.mfilter = json.loads(self.data['mfilter'])
-		self.namespace = self.data['namespace']
-		self.mids = self.data['mids']
-
-	def resolv(self, nocache=False):
-
-		if not (nocache or self.nocache):
-			# check cache freshness
-			if (self.last_resolv_time + self.cache_time) > time.time():
-				return self.records
-
-		_ids = []
-
-		records = []
-		
-		if self.mfilter or self.mfilter == {}:	
-			records = self.storage.find(self.mfilter, namespace=self.namespace)
-
-		if self.mids:
-			for mid in self.mids:
-				try:
-					records.append(self.storage.get(mid, namespace=self.namespace))
-				except:
-					self.logger.error("'%s' not found in '%s' ..." % (mid, self.namespace))
-
-		state = 0
-		for record in records:
-			try:
-				#print "%s: %s" % (record._id, record.data['state'])
-				if record.data['state'] > state:
-					state = record.data['state']
-			except:
-				pass
-			_ids.append(record._id)
-
-		self.state = state
-
-		# Put in cache
-		#self.cache.put(self._id, _ids)
-
-		#self.last_resolv_time = self.timer.elapsed
-		self.last_nb_records = len(records)
-
-		self._ids = _ids
-		self.records = records
-
-		self.save()
-
-		return records
-
-	def match(self, _id):
-		self.resolv()
-
+		crecord.load(self, dump)
 		try:
-			oid = objectid.ObjectId(_id)
+			self.mfilter = json.loads(self.data['mfilter'])
 		except:
-			oid = _id
+			self.mfilter = {}
+		self.namespace = str(self.data['namespace'])
+		self.mids = self.data['mids']
+		
+	def setMfilter(self, filter):
+		try:
+			json.dumps(self.mfilter)
+			self.mfilter = filter
+			self.changed = True
+		except:
+			raise Exception('Invalid mfilter')
 
-		if oid in self._ids:
-			return True
-
-		return False
-
-
-#	def cat(self):
-#		print "Id:\t\t\t", self._id
-#		print "Mfilter:\t\t", self.data['mfilter']
-#		print "Last Resolv Time:\t%.2f ms" % (self.data['last_resolv_time']*1000)
-#		print "Last Nb records:\t", self.data['last_nb_records'], "\n"
-
-
-#################
-
-#def cselector_getall(storage):
-#	selectors = []
-#	records = storage.find({'crecord_type': 'selector'})
-#	for record in records:
-#		selectors.append(cselector(record))
-#	
-#	return selectors
-
-#def cselector_get(storage, user):
-#	record = storage.get('account-'+user)
-#	selector = cselector(record)
-#	return selector
 	
+	def resolv(self):
+		def do_resolv(self):
+			ids = []
+			if self.mids:
+				ids = self.mids
+				
+			if self.mfilter:
+				records = self.storage.find(mfilter=self.mfilter, namespace=self.namespace)
+				for record in records:
+					ids.append(record._id)
+		
+			self.last_resolv_time = time.time()
+			self.last_nb_records = len(self._ids)
+			self.changed = False
+			
+			return ids
+			
+		if self.use_cache and not self.cache:
+			self.logger.debug("Create cache object")
+			self.cache = get_cache(storage=self.storage)
+			self.cache.remove(self._id)
+		
+		if self.changed:
+			self.logger.debug("Selector has change, get new ids")
+			self._ids = do_resolv(self)
+			if self.cache:
+				self.cache.put(self._id, self._ids)
+		
+		elif self.cache:
+			@self.cache.deco(self._id, self.cache_time)
+			def do_resolv_cache(self):
+				return do_resolv(self)
+				
+			self.logger.debug("Get ids from cache")
+			self._ids = do_resolv_cache(self)
+			
+		else:
+			self._ids = do_resolv(self)
+		
+		return self._ids
+	
+	def match(self, _id):
+		ids = self.resolv()
+		return _id in ids
