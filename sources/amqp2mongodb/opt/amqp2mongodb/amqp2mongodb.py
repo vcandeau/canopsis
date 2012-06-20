@@ -129,7 +129,7 @@ def on_message(body, msg):
 		try:
 			dn = None
 			if event['source_type'] == 'resource':
-				dn = "%s.%s" % (event['component'], event['resource'])
+				dn = "%s - %s" % (event['component'], event['resource'])
 				
 			elif event['source_type'] == 'component':
 				dn = event['component']
