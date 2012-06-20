@@ -28,7 +28,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	
 	border: false,
 	layout: {
-        type: 'hbox',
+        type: 'vbox',
         align: 'stretch'
     },
 	//autoscroll : true,
@@ -40,15 +40,26 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.build_stores()
 		this.build_grids()
 		this.bind_event()
-		//this.add([this.node_grid,this.metric_grid,this.selected_grid])
 		
-		this.items = [this.node_grid,this.metric_grid,this.selected_grid]
+		var config = {
+			layout: {
+				type: 'hbox',
+				align: 'stretch'
+			},
+			flex:2
+		}
+
+		var container = Ext.create('Ext.container.Container',config)
+		
+		container.add([this.node_grid,this.metric_grid])
+		
+		this.items = [container,this.selected_grid]
 		
 		this.callParent(arguments);
 	},
 	
 	build_stores : function(){
-		
+		log.debug('Build stores', this.logAuthor)
 		var model = Ext.ModelManager.getModel('canopsis.model.Node');
 		if(! model){
 			Ext.define('Node', {
@@ -189,6 +200,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 
 	build_grids : function(){
+		log.debug('Build grids', this.logAuthor)
 		//-------------------------first grid--------------------
 		this.node_grid = Ext.create('canopsis.lib.view.cgrid',{
 			store:this.node_store,
@@ -265,6 +277,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			scroll: true,
 			columns: [
 				{
+					header: 'Node',
+					sortable: false,
+					dataIndex: 'node',
+					renderer: this.node_to_dn,
+					flex:1
+	       		},
+	       		{
 					header: 'Selected metrics',
 					sortable: false,
 					dataIndex: 'metric',
@@ -282,6 +301,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 	
 	getValue : function(){
+		log.debug('Write values',this.logAuthor)
 		var output = []
 		var nodes = {}
 		this.selected_store.each(function(record) {
@@ -313,10 +333,18 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		return output
 	},
 	
-	setValue : function(data){
-		log.debug('erfezregergsrgesrgregesrger')
-		log.dump(data)
+	node_to_dn : function(val){
+		var val = val.split('.')
+		var len = val.length
 		
+		if(len == 6)
+			return val[4] + '.' + val[5]
+		else
+			return val[4]
+	},
+	
+	setValue : function(data){
+		log.debug('Load values',this.logAuthor)
 		for(var i in data){
 			var node = data[i]
 			for(var j in node.metrics){
