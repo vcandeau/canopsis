@@ -152,9 +152,9 @@ def perstore_all_nodes():
 	start		= request.params.get('start', default=None)
 	search		= request.params.get('search', default=None)
 	
-	search = perfstore.get_all_nodes(limit=limit,offset=start,search=search)
+	result = perfstore.get_all_nodes(limit=limit,offset=start,search=search)
 	
-	return {'success': True,'data' : search['data'],'total' : search['total']}
+	return {'success': True,'data' : result['data'],'total' : result['total']}
 
 @get('/perfstore/get_all_metrics',apply=[check_auth])
 def perstore_get_all_metrics():
@@ -162,9 +162,9 @@ def perstore_get_all_metrics():
 	start		= request.params.get('start', default=None)
 	search		= request.params.get('search', default=None)
 	
-	search = perfstore.get_all_metrics(limit=limit,offset=start,search=search)
+	result = perfstore.get_all_metrics(limit=limit,offset=start,search=search)
 	
-	return {'success': True,'data' : search['data'],'total' : search['total']}
+	return {'success': True,'data' : result['data'],'total' : result['total']}
 
 def perfstore_get_last_value(_id, metrics):
 	output=[]
