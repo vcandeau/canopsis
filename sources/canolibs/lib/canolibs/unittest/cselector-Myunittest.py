@@ -65,8 +65,8 @@ class KnownValues(unittest.TestCase):
 
 	def test_02_PutData(self):
 		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0})
-		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 0})
-		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 0})
+		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 1})
+		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 2})
 
 		storage.put([record1, record2, record3])
 		
@@ -82,7 +82,7 @@ class KnownValues(unittest.TestCase):
 		selector.setMfilter({'state': 0})
 		ids = selector.resolv()
 		
-		if len(ids) != 3:
+		if len(ids) != 1:
 			raise Exception('Invalid count (%s)' % ids)
 			
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
@@ -109,6 +109,32 @@ class KnownValues(unittest.TestCase):
 		if len(ids) != 1:
 			raise Exception('Invalid count with cache (%s)' % ids)
 
+	def test_04_ResolvIncludeExclude(self):
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}, {'check': 'test3'}] })
+		
+		selector.setExclude_ids(['check1'])
+		ids = selector.resolv()
+		if len(ids) != 2:
+			raise Exception('Invalid count with Exclude (%s)' % ids)
+		
+		selector.setExclude_ids([])
+		selector.setInclude_ids([])
+		
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'} ] })
+		
+		selector.setInclude_ids(['check3'])
+		ids = selector.resolv()
+		if len(ids) != 3:
+			raise Exception('Invalid count with Include (%s)' % ids)
+			
+		selector.setExclude_ids(['check3'])
+		ids = selector.resolv()
+		if len(ids) != 2:
+			raise Exception('Invalid count with Include + Exclude (%s)' % ids)
+		
+		selector.setExclude_ids([])
+		selector.setInclude_ids([])
+
 	def test_05_Match(self):
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
 		
@@ -117,6 +143,29 @@ class KnownValues(unittest.TestCase):
 
 		if selector.match('toto'):
 			raise Exception('Error in match, wrong id ...')
+			
+	def test_06_GetRecords(self):
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
+		records = selector.getRecords()
+		
+		if len(records) != 2 and isinstance(records[0], crecord):
+			raise Exception('Error in get records ("%s")' % records)
+			
+	def test_06_GetState(self):
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}, {'check': 'test3'}] })
+		state = selector.getState()
+		if state != 2:
+			raise Exception('Invalid state ("%s")' % state)
+		
+		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
+		state = selector.getState()
+		if state != 1:
+			raise Exception('Invalid state ("%s")' % state)
+		
+		selector.setMfilter({'$or': [ {'check': 'test1'}] })
+		state = selector.getState()
+		if state != 0:
+			raise Exception('Invalid state ("%s")' % state)
 	
 	def test_08_Remove(self):
 		storage.remove(selector)

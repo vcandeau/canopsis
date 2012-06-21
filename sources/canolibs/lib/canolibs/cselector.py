@@ -43,8 +43,9 @@ class cselector(crecord):
 		## Default vars
 		self.namespace = namespace
 		self.mfilter = {}
+		self.include_ids = []
+		self.exclude_ids = []
 		self.changed = False
-		self.mids = []
 		#self.timer = ctimer(logging_level=logging.INFO)
 		self.use_cache = use_cache
 		self.cache_time = cache_time
@@ -79,9 +80,11 @@ class cselector(crecord):
 			crecord.__init__(self, _id=self._id, owner=storage.account.user, group=storage.account.group, type=self.type, storage=storage)
 		
 	def dump(self):
-		self.data['mids'] = self.mids
-		self.data['namespace'] = self.namespace
+		self.data['include_ids'] = self.include_ids
+		self.data['exclude_ids'] = self.exclude_ids
 		self.data['mfilter'] = json.dumps(self.mfilter)
+		self.data['namespace'] = self.namespace
+
 		return crecord.dump(self)
 
 	def load(self, dump):
@@ -91,7 +94,8 @@ class cselector(crecord):
 		except:
 			self.mfilter = {}
 		self.namespace = str(self.data['namespace'])
-		self.mids = self.data['mids']
+		self.include_ids = self.data['include_ids']
+		self.exclude_ids = self.data['exclude_ids']
 		
 	def setMfilter(self, filter):
 		try:
@@ -100,18 +104,29 @@ class cselector(crecord):
 			self.changed = True
 		except:
 			raise Exception('Invalid mfilter')
+			
+	def setExclude_ids(self, ids):
+		self.exclude_ids = ids
+		self.changed = True
 
+	def setInclude_ids(self, ids):
+		self.include_ids = ids
+		self.changed = True
 	
 	def resolv(self):
 		def do_resolv(self):
 			ids = []
-			if self.mids:
-				ids = self.mids
+			if self.include_ids:
+				ids = self.include_ids
 				
 			if self.mfilter:
 				records = self.storage.find(mfilter=self.mfilter, namespace=self.namespace)
 				for record in records:
-					ids.append(record._id)
+					if not record._id in ids:
+						ids.append(record._id)
+		
+			if self.exclude_ids:
+				ids = [_id for _id in ids if not _id in self.exclude_ids]
 		
 			#self.last_resolv_time = time.time()
 			self.last_nb_records = len(self._ids)
@@ -147,3 +162,33 @@ class cselector(crecord):
 	def match(self, _id):
 		ids = self.resolv()
 		return _id in ids
+		
+	def getRecords(self):
+		ids = self.resolv()
+		return self.storage.get(ids)
+	
+	def getState(self):
+		# 1. Ponderation
+		# 2. Nb par state
+		# 3. Decision
+		records = self.getRecords()
+		
+		## Count states
+		states = {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}
+		for record in records:
+			states[record.data['state']] += 1
+		
+		state = self.stateRule_morebadstate(states)
+		
+		return state
+		
+	def stateRule_morebadstate(self, states):
+		state = 0
+		## Set state
+		if states[0]:
+			state = 0
+		if states[1]:
+			state = 1
+		if states[2]:
+			state = 2
+		return state
