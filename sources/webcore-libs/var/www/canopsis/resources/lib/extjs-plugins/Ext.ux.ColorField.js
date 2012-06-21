@@ -46,19 +46,22 @@ Ext.define('Ext.ux.ColorField', {
     },
     
     getValue : function(){
-		hex = Ext.ux.ColorField.superclass.getValue.call(this);
+	hex = Ext.ux.ColorField.superclass.getValue.call(this);
+	if (hex && hex.length > 1)
 		if (hex[0] != '#')
 			hex = '#' + hex
-        return hex
+	return hex
     },
     
     setValue : function(hex){
+	if (hex && hex.length > 1){
 		var shex = hex
 		if (shex[0] == '#')
 			shex = shex.slice(1)
 			
-        Ext.ux.ColorField.superclass.setValue.call(this, shex);
-        this.setColor(hex);
+		Ext.ux.ColorField.superclass.setValue.call(this, shex);
+		this.setColor(hex);
+	}
     },
     
     setColor : function(hex) {
