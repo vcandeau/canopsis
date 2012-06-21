@@ -28,7 +28,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	
 	border: false,
 	layout: {
-        type: 'hbox',
+        type: 'vbox',
         align: 'stretch'
     },
 	//autoscroll : true,
@@ -40,15 +40,26 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.build_stores()
 		this.build_grids()
 		this.bind_event()
-		//this.add([this.node_grid,this.metric_grid,this.selected_grid])
 		
-		this.items = [this.node_grid,this.metric_grid,this.selected_grid]
+		var config = {
+			layout: {
+				type: 'hbox',
+				align: 'stretch'
+			},
+			flex:2
+		}
+
+		var container = Ext.create('Ext.container.Container',config)
+		
+		container.add([this.node_grid,this.metric_grid])
+		
+		this.items = [container,this.selected_grid]
 		
 		this.callParent(arguments);
 	},
 	
 	build_stores : function(){
-		
+		log.debug('Build stores', this.logAuthor)
 		var model = Ext.ModelManager.getModel('canopsis.model.Node');
 		if(! model){
 			Ext.define('Node', {
@@ -128,32 +139,39 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		//----------------------drop function--------------------
 		this.selected_grid.getView().on('beforedrop',function(html_node,data,model,dropPosition,dropFunction,eOpts){
-			var records = data.records;
-			for (var i in records) {
-				var record = records[i];
-				
-				if(record.get('metric')){
-					this.selected_store.add(record);
-				}else{
-					var node = record.get('node');
-					Ext.Ajax.request({
-						url: '/perfstore/metrics/' + node,
-						scope: this,
-						success: function(response){
-							var data = Ext.decode(response.responseText).data;
-							if(data)
-								this.selected_store.add(data)
-						}
-					});
+			//only do action is not reorder
+			if(data.view.id != this.selected_grid.getView().id){
+				var records = data.records;
+				for (var i in records) {
+					var record = records[i];
+					
+					if(record.get('metric')){
+						this.selected_store.add(record);
+					}else{
+						var node = record.get('node');
+						Ext.Ajax.request({
+							url: '/perfstore/metrics/' + node,
+							scope: this,
+							success: function(response){
+								var data = Ext.decode(response.responseText).data;
+								if(data)
+									this.selected_store.add(data)
+							}
+						});
+					}
 				}
-			}
 
-			event.cancel = true;
-			event.dropStatus = true;
-			
-			return false;
+				event.cancel = true;
+				event.dropStatus = true;
+				
+				return false;
+			}
 		},this)
 		
+		//-------------------------Menu option---------------------
+		this.selected_grid.on('itemcontextmenu', this.open_menu, this);
+		this.clearAllButton.setHandler(function(){this.selected_store.removeAll()},this)
+		this.deleteButton.setHandler(this.deleteSelected,this)
 	},
 	
 	fetch_metrics: function(_id){
@@ -189,12 +207,14 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	},
 
 	build_grids : function(){
+		log.debug('Build grids', this.logAuthor)
 		//-------------------------first grid--------------------
 		this.node_grid = Ext.create('canopsis.lib.view.cgrid',{
 			store:this.node_store,
 			flex:2,
 			margin:3,
 			
+			opt_menu_rights: false,
 			opt_bar: true,
 			opt_bar_search: true,
 			opt_bar_add: false,
@@ -262,9 +282,17 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			flex:1,
 			margin:3,
 			border:true,
+			multiSelect:true,
 			scroll: true,
 			columns: [
 				{
+					header: 'Node',
+					sortable: false,
+					dataIndex: 'node',
+					renderer: this.node_to_dn,
+					flex:1
+	       		},
+	       		{
 					header: 'Selected metrics',
 					sortable: false,
 					dataIndex: 'metric',
@@ -274,17 +302,59 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
-					enableDrag: false,
+					//enableDrag: false,
+					copy:false,
+					dragGroup: 'search_grid_DNDGroup',
 					dropGroup: 'search_grid_DNDGroup'
 				}
 			}
 		})
+		
+		//---------------------build menu------------------------
+		this.clearAllButton = Ext.create('Ext.Action', {
+							iconCls: 'icon-delete',
+							text: _('Clear all'),
+							action: 'clear'
+						})
+
+		this.deleteButton = Ext.create('Ext.Action', {
+							iconCls: 'icon-delete',
+							text: _('Delete selected'),
+							action: 'delete'
+						})
+
+		this.contextMenu = Ext.create('Ext.menu.Menu', {
+						items: [this.deleteButton,this.clearAllButton]
+					});
+		
+
+		
+	},
+	
+	open_menu : function(view, rec, node, index, e) {
+		e.preventDefault()
+		//don't auto select if multi selecting
+		var selection = this.selected_grid.getSelectionModel().getSelection();
+		if (selection.length < 2)
+			view.select(rec);
+
+		this.contextMenu.showAt(e.getXY());
+		return false;
+    },
+    
+    deleteSelected : function(){
+		log.debug('delete selected metrics',this.logAuthor)
+		var selection = this.selected_grid.getSelectionModel().getSelection();
+		for(var i in selection)
+			this.selected_store.remove(selection[i])
 	},
 	
 	getValue : function(){
+		log.debug('Write values',this.logAuthor)
 		var output = []
 		var nodes = {}
 		this.selected_store.each(function(record) {
+			
 			var node = record.get('node')
 			var metric = record.get('metric')
 			var node_exploded = node.split('.')
@@ -295,6 +365,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			else
 				var source_type = 'component'
 			
+			/*
 			//regroup metric by nodes
 			if (nodes[node]){
 				nodes[node].metrics.push(metric)
@@ -304,19 +375,35 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				else
 					nodes[node] = {'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type}
 			}
+			*/
+			if(source_type == 'resource')
+				output.push({'id':node,'metrics':[metric],'resource':node_exploded[5],'component':node_exploded[4],'source_type':source_type})
+			else
+				output.push({'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type})
 		})
-		
+		/*
 		//object to array
 		for(var i in nodes)
 			output.push(nodes[i])
-		
+			*/
+		log.dump('-----------------------------------')
+		log.dump(output)
+		log.dump('-----------------------------------')
 		return output
 	},
 	
-	setValue : function(data){
-		log.debug('erfezregergsrgesrgregesrger')
-		log.dump(data)
+	node_to_dn : function(val){
+		var val = val.split('.')
+		var len = val.length
 		
+		if(len == 6)
+			return val[4] + '.' + val[5]
+		else
+			return val[4]
+	},
+	
+	setValue : function(data){
+		log.debug('Load values',this.logAuthor)
 		for(var i in data){
 			var node = data[i]
 			for(var j in node.metrics){
