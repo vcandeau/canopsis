@@ -24,6 +24,7 @@ Ext.define('canopsis.model.Group', {
 		{name: '_id'},
 		{name: 'id', mapping: '_id'},
 		{name: 'crecord_type', defaultValue: 'group'},
-		{name: 'crecord_name'}
+		{name: 'crecord_name'},
+		{name: 'description'}
 	]
 });
