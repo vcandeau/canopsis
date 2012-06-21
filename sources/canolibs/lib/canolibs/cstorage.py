@@ -203,7 +203,7 @@ class cstorage(object):
 					raise ValueError("Access denied")
 			else:
 			## Insert
-				self.logger.debug("Try inserting of %s" % _id)
+				self.logger.debug("Try inserting")
 				try:
 					record.write_time = int(time.time())
 					data = record.dump()
@@ -310,39 +310,44 @@ class cstorage(object):
 		else:
 			_ids = [ _id_or_ids ]
 
-		## TODO
-		_id = _ids[0]
-
 		backend = self.get_backend(namespace)
 		
-		self.logger.debug(" + Get record '%s'" % _id)
+		self.logger.debug(" + Get record '%s'" % _ids)
+		
+		self.logger.debug("    + Clean ids")
+		_ids = [self.clean_id(_id) for _id in _ids]
 
+		#Build basic filter
+		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
+		
+		if len(_ids) == 1:
+			mfilter = {'_id': _ids[0]}
+		else:
+			mfilter = {'_id': {'$in': _ids }}
+		
+		mfilter = { '$and': [ mfilter, Read_mfilter ] }
+
+		records = []
 		try:
-			self.logger.debug("   + _id type: '%s'" % type(_id))
-			oid = self.clean_id(_id)
-			self.logger.debug("   + oid type: '%s'" % type(oid))
-
-			(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
-			oid_mfilter = {'_id': oid}
-			id_mfilter = {'_id': _id}
-
-			#mfilter = dict(oid_mfilter.items() + Read_mfilter.items())
-			mfilter = { '$and': [ oid_mfilter, Read_mfilter ] }
-			raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
-
-			if not raw_record:
-				# small hack for wrong oid
-				#mfilter = dict(id_mfilter.items() + Read_mfilter.items())
-				mfilter = { '$and': [ id_mfilter, Read_mfilter ] }
+			if len(_ids) == 1:
 				raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
-			
+				if raw_record:
+					records.append(crecord(raw_record=raw_record))
+			else:
+				raw_records = backend.find(mfilter, safe=self.mongo_safe)
+				records = [crecord(raw_record=raw_record) for raw_record in raw_records]
+				
 		except Exception, err:
-			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
+			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_ids, err))
 
-		if not raw_record:
-			raise KeyError("'%s' not found ..." % _id)
-			
-		return crecord(raw_record=raw_record)
+		self.logger.debug(" + Found %s records" % len(records))
+		if not len(records):
+			raise KeyError("'%s' not found ..." % _ids)
+		
+		if len(_ids) == 1:
+			return records[0]
+		else:
+			return records
 
 	def remove(self, _id_or_ids, account=None, namespace=None):
 		if not account:
@@ -384,6 +389,8 @@ class cstorage(object):
 					backend.remove({'_id': oid}, safe=self.mongo_safe)
 				except Exception, err:
 					self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
+					
+				self.logger.debug(" + Success removed")
 			else:				
 				self.logger.error("Remove: Access denied ...")
 				raise ValueError("Access denied ...")
