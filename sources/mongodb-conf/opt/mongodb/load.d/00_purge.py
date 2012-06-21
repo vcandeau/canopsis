@@ -36,10 +36,10 @@ def init():
 		logger.info(" + Drop '%s' collection" % namespace)
 		storage.drop_namespace(namespace)
 	
-	logger.info(" + Create 'cache' collection")
+	#logger.info(" + Create 'cache' collection")
 	## Create 100MB cache
-	storage.db.create_collection('cache', options={'capped': True, 'size': 104857600})
+	#storage.db.create_collection('cache', options={'capped': True, 'size': 104857600})
 
 def update():
-	pass
+	storage.drop_namespace('cache')
 
