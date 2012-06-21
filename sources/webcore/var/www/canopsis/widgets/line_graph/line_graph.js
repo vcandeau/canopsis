@@ -496,13 +496,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var metric_long_name = '';
 
 		if (this._multiNode) {
+			//TODO: Ban this function !!!!!
 			var info = split_amqp_rk(node);
+			if (info){
+				metric_long_name = info.component;
+				if (info.source_type == 'resource')
+					metric_long_name += ' - ' + info.resource;
 
-			metric_long_name = info.component;
-			if (info.source_type == 'resource')
-				metric_long_name += ' - ' + info.resource;
-
-			metric_long_name = '(' + metric_long_name + ') ';
+				metric_long_name = '(' + metric_long_name + ') ';
+			}
 		}
 
 		var colors = global.curvesCtrl.getRenderColors(metric_name, serie_index);
