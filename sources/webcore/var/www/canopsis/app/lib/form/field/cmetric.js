@@ -324,7 +324,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 						})
 
 		this.contextMenu = Ext.create('Ext.menu.Menu', {
-						items: [this.clearAllButton,this.deleteButton]
+						items: [this.deleteButton,this.clearAllButton]
 					});
 		
 
