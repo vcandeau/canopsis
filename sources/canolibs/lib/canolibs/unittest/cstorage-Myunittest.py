@@ -71,6 +71,20 @@ class KnownValues(unittest.TestCase):
 		if MYRECORD.data != self.data:
 			raise Exception('Invalid data ...')
 
+	def test_05_MultiGet(self):
+		record1 = crecord({'check': 'remove1'})
+		record2 = crecord({'check': 'remove2'})
+		record3 = crecord({'check': 'remove3'})
+		
+		ids = STORAGE.put([record1, record2, record3])
+		records = STORAGE.get(ids)
+		
+		if len(records) != 3:
+			print records
+			raise Exception("Impossible to get with id's list")
+		
+		STORAGE.remove(ids)
+		
 	def test_06_UpdateAndPut(self):
 		MYRECORD.data['mydata4'] = 'data4'
 		STORAGE.put(MYRECORD)
