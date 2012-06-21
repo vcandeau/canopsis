@@ -137,10 +137,11 @@ def on_message(body, msg):
 		try:
 			dn = None
 			if event['source_type'] == 'resource':
-				dn = "%s - %s" % (event['component'], event['resource'])
+				#dn = "%s - %s" % (event['component'], event['resource'])
+				dn = [ event['component'], event['resource'] ]
 				
 			elif event['source_type'] == 'component':
-				dn = event['component']
+				dn = [ event['component'] ]
 				
 			to_perfstore(	_id=event_id,
 							perf_data=perf_data_array,

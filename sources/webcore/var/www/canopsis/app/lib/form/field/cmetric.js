@@ -66,7 +66,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				extend: 'Ext.data.Model',
 				fields: [
 					{name: 'node', type: 'string'},
-					{name: 'dn',  type: 'string'},
+					{name: 'dn',  type: 'array'},
 					{name: 'metrics'}
 				]
 			});
@@ -78,6 +78,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				extend: 'Ext.data.Model',
 				fields: [
 					{name: 'node', type: 'string'},
+					{name: 'dn', type: 'array'},
 					{name: 'metric',  type: 'string'}
 				]
 			});
@@ -126,7 +127,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		//--------------------event metric of node------------------
 		if(this.metric_grid){
 			this.metric_grid.on('itemdblclick',function(view,record){
-							this.select_metrics([{node:record.get('node'),metric:record.get('metric')}])
+							this.select_metrics([{node: record.get('node'), metric: record.get('metric'), dn: record.get('dn')}])
 						},this)
 		}
 		
@@ -174,9 +175,11 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		var metric_array = []
 		var metrics = record.get('metrics')
 		var node = record.get('node')
+		var dn = record.get('dn')
+		console.log(dn)
 		
 		for( var i in metrics)
-			metric_array.push({'node':node,'metric':metrics[i].dn})
+			metric_array.push({'node':node,'metric':metrics[i].dn, 'dn': dn})
 			
 		return metric_array
 	},
@@ -202,6 +205,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			if(exist == -1)
 				store.add(metric_array[i])
 		}
+	},
+	
+	renderer_dn: function(val){
+		if (val.length > 1)
+			return val[0] + " - " + val[1]
+		else
+			return val[0]
 	},
 
 	build_grids : function(){
@@ -230,6 +240,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 					header: 'Node',
 					sortable: false,
 					dataIndex: 'dn',
+					renderer: this.renderer_dn,
 					flex: 1
 	       		}
 			],
@@ -286,8 +297,8 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				{
 					header: 'Node',
 					sortable: false,
-					dataIndex: 'node',
-					renderer: this.node_to_dn,
+					dataIndex: 'dn',
+					renderer: this.renderer_dn,
 					flex:1
 	       		},
 	       		{
@@ -351,8 +362,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.selected_store.each(function(record) {
 			
 			var node = record.get('node')
-			var metric = record.get('metric')
 			var node_exploded = node.split('.')
+			
+			var dn = record.get('dn')
+			console.log("dn:")
+			console.log(dn)
+			
+			var metric = record.get('metric')
 			
 			//check if resource
 			if(node_exploded[5])
@@ -361,9 +377,9 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				var source_type = 'component'
 			
 			if(source_type == 'resource')
-				output.push({'id':node,'metrics':[metric],'resource':node_exploded[5],'component':node_exploded[4],'source_type':source_type})
+				output.push({'id':node,'metrics':[metric],'resource': dn[1],'component': dn[0],'source_type':source_type, 'dn': dn})
 			else
-				output.push({'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type})
+				output.push({'id':node,'metrics':[metric],'component': dn[0],'source_type':source_type, 'dn': dn})
 		})
 
 		return output
@@ -385,7 +401,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			var node = data[i]
 			for(var j in node.metrics){
 				var metric = node.metrics[j]
-				this.selected_store.add({'node':node.id,'metric':metric})
+				this.selected_store.add({'node':node.id,'metric':metric, 'dn': node.dn})
 			}
 		}
 	},
