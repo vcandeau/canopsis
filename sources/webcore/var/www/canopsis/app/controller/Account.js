@@ -328,6 +328,20 @@ Ext.define('canopsis.controller.Account', {
 				log.error('Error while fetching new Authkey', this.logAuthor);
 			}
 		});
+	},
+	
+	checkGroup : function(group){
+		if (global.account.aaa_group == group || (global.account.groups.indexOf(group) != -1))
+			return true
+		else
+			return false
+	},
+	
+	checkRoot : function(){
+		if (global.account.user == 'root' || global.account.aaa_group == 'group.root' || (global.account.groups.indexOf('group.root') != -1))
+			return true
+		else
+			return false
 	}
 
 });
