@@ -35,7 +35,7 @@ from libexec.auth import check_auth, get_account, check_group_rights
 logger = logging.getLogger("ui_view")
 
 #group who have right to access 
-group_managing_access = 'group.CPS_view_admin'
+group_managing_access = ['group.CPS_view_admin','group.CPS_view']
 
 #########################################################################
 '''
@@ -132,6 +132,11 @@ def tree_delete(name=None):
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
+	
+		
+	if not check_group_rights(account,group_managing_access[0]) and not check_group_rights(account,group_managing_access[1]):
+		return HTTPError(403, "Access Denied : Your groups have not right to create/update view")
+		
 		
 	storage = get_storage(namespace=namespace, account=account)
 	
@@ -196,7 +201,7 @@ def tree_update(name='None'):
 				parentNode.add_children(record)
 				
 				record.chown(account._id)
-				record.chgrp(group_managing_access)
+				record.chgrp(group_managing_access[0])
 				record.chmod('g+w')
 				record.chmod('g+r')
 				
