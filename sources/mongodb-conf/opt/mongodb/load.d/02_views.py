@@ -42,11 +42,11 @@ def init():
 	create_view('group_manager', 'Groups', data)
 
 	### Components
-	data = {'xtype': 'list', 'filter': '{"source_type":"component"}', 'show_resource': False}
+	data = {'xtype': 'list', 'filter': '{"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}', 'show_resource': False}
 	create_view('components', 'Components', data)
 
 	### Resources
-	data = { 'xtype': 'list', 'filter': '{"source_type":"resource"}'}
+	data = { 'xtype': 'list', 'filter': '{"$and": [{"source_type":"resource"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}'}
 	create_view('resources', 'Resources', data)
 
 	### View manager
