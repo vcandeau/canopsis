@@ -41,6 +41,11 @@ Ext.define('canopsis.view.Group.Grid' , {
 				flex: 2,
 				sortable: true,
 				dataIndex: 'crecord_name'
+		},{
+				header: _('Description'),
+				flex: 2,
+				sortable: true,
+				dataIndex: 'description'
 		}
 
 	],
