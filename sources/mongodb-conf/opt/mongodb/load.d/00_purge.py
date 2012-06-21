@@ -24,12 +24,11 @@ from crecord import crecord
 
 ##set root account
 root = caccount(user="root", group="root")
+storage = cstorage(account=root)
 
 logger = None
 
 def init():
-	storage = cstorage(account=root)
-
 	namespaces = ['cache', 'events', 'events_log', 'object' ]
 	
 	for namespace in namespaces:
