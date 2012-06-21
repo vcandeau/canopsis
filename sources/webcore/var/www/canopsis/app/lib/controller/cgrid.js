@@ -494,9 +494,6 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_editRecord: function(view, item, index) {
-		if (! this.allowEdit)
-			return;
-
 		log.debug('Clicked editRecord', this.logAuthor);
 
 		//check rights
