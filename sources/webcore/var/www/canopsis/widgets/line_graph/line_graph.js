@@ -90,6 +90,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	use_window_ts: false,
 	//..
 
+	//fix in setchartTitle
+	_multiNode : true,
 
 	initComponent: function() {
 		
@@ -132,6 +134,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 					title = resource + ' ' + _('line_graph.on') + ' ' + component;
 				else
 					title = component;
+				
+				this._multiNode = false
 			}
 		}
 		this.chartTitle = title;
@@ -491,7 +495,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var metric_long_name = '';
 
-		if (this.nodes.length != 1) {
+		if (this._multiNode) {
 			var info = split_amqp_rk(node);
 
 			metric_long_name = info.component;
