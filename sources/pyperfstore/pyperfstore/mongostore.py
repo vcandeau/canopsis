@@ -141,7 +141,7 @@ class mongostore(storage):
 			raw_output = raw_output.skip(int(offset))
 		
 		for record in raw_output:
-			nodes.append({'node':record['_id'],'dn':record['d']['dn']})
+			nodes.append({'node':record['_id'],'dn':record['d']['dn'],'metrics':record['d']['metrics']})
 
 		return {'total':total,'data':nodes}
 		
