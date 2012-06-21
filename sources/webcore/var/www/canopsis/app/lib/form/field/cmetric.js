@@ -170,8 +170,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		//-------------------------Menu option---------------------
 		this.selected_grid.on('itemcontextmenu', this.open_menu, this);
-		//this.clearAllButton	.on('click',function(){this.selected_store.removeAll()},this)
-		//this.deleteButton.on('click',this.deleteSelected,this)
 		this.clearAllButton.setHandler(function(){this.selected_store.removeAll()},this)
 		this.deleteButton.setHandler(this.deleteSelected,this)
 	},
@@ -318,15 +316,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 							text: _('Clear all'),
 							action: 'clear'
 						})
-		//this.clearAllButton.setHandler(this.clearAllButton,this)
-						
+
 		this.deleteButton = Ext.create('Ext.Action', {
 							//iconCls: 'icon-run',
 							text: _('Delete selected'),
 							action: 'delete'
 						})
-		//this.deleteButton.setHandler(this.deleteButton,this)
-		
+
 		this.contextMenu = Ext.create('Ext.menu.Menu', {
 						items: [this.clearAllButton,this.deleteButton]
 					});
