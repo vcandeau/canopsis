@@ -28,10 +28,20 @@ logger = None
 ##set root account
 root = caccount(user="root", group="root")
 
+#need this in two functions, krey:group_name , value : group_description
+groups =  {
+	'root':'Have all rights.',
+	'canopsis':'Base canopsis group.',
+	'CPS_curve_admin':'Create and modify curves parameters for UI.',
+	'CPS_view_admin':'Manage all view in canopsis, add, remove or edit.',
+	'CPS_schedule_admin':'View and create his own reporting schedules.',
+	'CPS_reporting_admin':'Launch and export report, use live reporting',
+	'CPS_account_admin':'Manage all account and groups in canopsis',
+	'CPS_event_admin':'Send event by the webservice or websocket'
+}
+
 def init():
 	storage = get_storage(account=root, namespace='object')
-	
-	groups =  ['root', 'canopsis', 'CPS_curve_admin','CPS_view_admin','CPS_schedule_admin','CPS_reporting_admin','CPS_account_admin','CPS_event_admin']
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
@@ -47,6 +57,7 @@ def init():
 			logger.info(" + Create group '%s'" % name)
 			record = crecord({'_id': 'group.%s' % name }, type='group', name=name, group='group.CPS_account_admin')
 			record.admin_group = 'group.CPS_account_admin'
+			record.description = groups[name]
 			record.chmod('o+r')
 			storage.put(record)
 		
@@ -107,6 +118,20 @@ def update():
 	init()
 	check_and_create_authkey()
 	update_for_new_rights()
+	add_description_to_group()
+	
+def add_description_to_group():
+	storage = get_storage(account=root, namespace='object')
+	for name in groups:
+		try:
+			record = storage.get('group.%s' % name)
+			group_record = cgroup(record)
+			if not group_record.description:
+				group_record.description = groups[name]
+				storage.put(group_record)
+		except:
+			pass
+
 	
 def check_and_create_authkey():
 	storage = get_storage(account=root, namespace='object')
@@ -152,7 +177,7 @@ def update_for_new_rights():
 		record.chmod('g+r')
 	storage.put(dump, account=root)
 	
-	#update groups
+	#update schedule
 	dump = storage.find({'crecord_type':'schedule'})
 	for record in dump:
 		record.chgrp('group.CPS_schedule_admin')
