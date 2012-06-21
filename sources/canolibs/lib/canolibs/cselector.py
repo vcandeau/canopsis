@@ -24,7 +24,6 @@ from crecord import crecord
 from ccache import get_cache
 from ctimer import ctimer
 from ctools import calcul_pct
-from pymongo import objectid
 
 from caccount import caccount
 #from cstorage import get_storage
@@ -34,7 +33,7 @@ import json
 import logging
 
 class cselector(crecord):
-	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, logging_level=None):
+	def __init__(self, storage, _id=None, name=None, namespace='events', use_cache=True, record=None, cache_time=60, logging_level=None):
 		self.type = 'selector'
 		self.storage = storage
 		
@@ -46,11 +45,11 @@ class cselector(crecord):
 		self.mfilter = {}
 		self.changed = False
 		self.mids = []
-		self.timer = ctimer(logging_level=logging.INFO)
+		#self.timer = ctimer(logging_level=logging.INFO)
 		self.use_cache = use_cache
-		self.cache_time = 60
+		self.cache_time = cache_time
 		self.cache = None
-		self.last_resolv_time = 0
+		#self.last_resolv_time = 0
 		self.last_nb_records = 0
 
 		self._ids = []
@@ -64,6 +63,13 @@ class cselector(crecord):
 			record = storage.get(self._id)
 		except:
 			record = None
+
+		if not record:
+			try:
+				record = storage.get(self._id)
+			except:
+				record = None
+
 		
 		if record:
 			self.logger.debug("Init from record.")
@@ -107,7 +113,7 @@ class cselector(crecord):
 				for record in records:
 					ids.append(record._id)
 		
-			self.last_resolv_time = time.time()
+			#self.last_resolv_time = time.time()
 			self.last_nb_records = len(self._ids)
 			self.changed = False
 			
@@ -122,6 +128,7 @@ class cselector(crecord):
 			self.logger.debug("Selector has change, get new ids")
 			self._ids = do_resolv(self)
 			if self.cache:
+				self.logger.debug(" + Put to cache")
 				self.cache.put(self._id, self._ids)
 		
 		elif self.cache:
