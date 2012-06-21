@@ -168,6 +168,12 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			}
 		},this)
 		
+		//-------------------------Menu option---------------------
+		this.selected_grid.on('itemcontextmenu', this.open_menu, this);
+		//this.clearAllButton	.on('click',function(){this.selected_store.removeAll()},this)
+		//this.deleteButton.on('click',this.deleteSelected,this)
+		this.clearAllButton.setHandler(function(){this.selected_store.removeAll()},this)
+		this.deleteButton.setHandler(this.deleteSelected,this)
 	},
 	
 	fetch_metrics: function(_id){
@@ -210,6 +216,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			flex:2,
 			margin:3,
 			
+			opt_menu_rights: false,
 			opt_bar: true,
 			opt_bar_search: true,
 			opt_bar_add: false,
@@ -277,6 +284,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			flex:1,
 			margin:3,
 			border:true,
+			multiSelect:true,
 			scroll: true,
 			columns: [
 				{
@@ -303,6 +311,46 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				}
 			}
 		})
+		
+		//---------------------build menu------------------------
+		this.clearAllButton = Ext.create('Ext.Action', {
+							//iconCls: 'icon-run',
+							text: _('Clear all'),
+							action: 'clear'
+						})
+		//this.clearAllButton.setHandler(this.clearAllButton,this)
+						
+		this.deleteButton = Ext.create('Ext.Action', {
+							//iconCls: 'icon-run',
+							text: _('Delete selected'),
+							action: 'delete'
+						})
+		//this.deleteButton.setHandler(this.deleteButton,this)
+		
+		this.contextMenu = Ext.create('Ext.menu.Menu', {
+						items: [this.clearAllButton,this.deleteButton]
+					});
+		
+
+		
+	},
+	
+	open_menu : function(view, rec, node, index, e) {
+		e.preventDefault()
+		//don't auto select if multi selecting
+		var selection = this.selected_grid.getSelectionModel().getSelection();
+		if (selection.length < 2)
+			view.select(rec);
+
+		this.contextMenu.showAt(e.getXY());
+		return false;
+    },
+    
+    deleteSelected : function(){
+		log.debug('delete selected metrics',this.logAuthor)
+		var selection = this.selected_grid.getSelectionModel().getSelection();
+		for(var i in selection)
+			this.selected_store.remove(selection[i])
 	},
 	
 	getValue : function(){
