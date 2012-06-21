@@ -312,13 +312,13 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		//---------------------build menu------------------------
 		this.clearAllButton = Ext.create('Ext.Action', {
-							//iconCls: 'icon-run',
+							iconCls: 'icon-delete',
 							text: _('Clear all'),
 							action: 'clear'
 						})
 
 		this.deleteButton = Ext.create('Ext.Action', {
-							//iconCls: 'icon-run',
+							iconCls: 'icon-delete',
 							text: _('Delete selected'),
 							action: 'delete'
 						})
