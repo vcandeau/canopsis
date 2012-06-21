@@ -99,6 +99,10 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid data ...')
 
 		del event_alert['_id']
+		
+		# remove cps_state
+		if len(event_alert['perf_data_array']) >= 2:
+			del event_alert['perf_data_array'][1]
 
 		event['perf_data_array'] = parse_perfdata(event['perf_data'])
 		if event_alert != event:
