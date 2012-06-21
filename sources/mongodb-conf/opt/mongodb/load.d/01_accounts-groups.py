@@ -34,10 +34,11 @@ groups =  {
 	'canopsis':'Base canopsis group.',
 	'CPS_curve_admin':'Create and modify curves parameters for UI.',
 	'CPS_view_admin':'Manage all view in canopsis, add, remove or edit.',
+	'CPS_view':'Create and manage his own view.',
 	'CPS_schedule_admin':'View and create his own reporting schedules.',
-	'CPS_reporting_admin':'Launch and export report, use live reporting',
-	'CPS_account_admin':'Manage all account and groups in canopsis',
-	'CPS_event_admin':'Send event by the webservice or websocket'
+	'CPS_reporting_admin':'Launch and export report, use live reporting.',
+	'CPS_account_admin':'Manage all account and groups in canopsis.',
+	'CPS_event_admin':'Send event by the webservice or websocket.'
 }
 
 def init():
