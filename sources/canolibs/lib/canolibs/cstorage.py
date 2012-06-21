@@ -305,8 +305,10 @@ class cstorage(object):
 		if not account:
 			account = self.account
 
+		dolist = False
 		if isinstance(_id_or_ids, list):
 			_ids = _id_or_ids
+			dolist = True
 		else:
 			_ids = [ _id_or_ids ]
 
@@ -344,7 +346,7 @@ class cstorage(object):
 		if not len(records):
 			raise KeyError("'%s' not found ..." % _ids)
 		
-		if len(_ids) == 1:
+		if len(_ids) == 1 and not dolist:
 			return records[0]
 		else:
 			return records
