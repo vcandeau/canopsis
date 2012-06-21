@@ -185,7 +185,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		log.debug('Select metrics', this.logAuthor)
 		var store = this.selected_store
 
-		/
 		for(var i in metric_array){
 			var metric = metric_array[i]
 			
