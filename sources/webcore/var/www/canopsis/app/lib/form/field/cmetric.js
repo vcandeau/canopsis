@@ -66,7 +66,8 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 				extend: 'Ext.data.Model',
 				fields: [
 					{name: 'node', type: 'string'},
-					{name: 'dn',  type: 'string'}
+					{name: 'dn',  type: 'string'},
+					{name: 'metrics'}
 				]
 			});
 		}
@@ -84,17 +85,15 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		this.node_store = Ext.create('canopsis.lib.store.cstore', {
 				model: 'Node',
-				//pageSize: this.pageSize,
 				proxy: {
 					 type: 'ajax',
 					 url: '/perfstore/get_all_nodes',
-					// extraParams:{limit:this.pageSize},
+
 					 reader: {
 						 type: 'json',
 						 root: 'data'
 					}	
 				 },
-				 //autoLoad: {start: 0, limit: this.pageSize},
 				 autoLoad:true
 		});
 		
@@ -114,18 +113,20 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		//---------------------event inventory----------------------
 		if(this.node_grid){
 				this.node_grid.on('itemclick',function(view,record){
-						this.fetch_metrics(record.get('node'))
+						var metrics = this.fetch_metrics(record)
+						this.metric_store.loadData(metrics)
 					},this)
 					
 				this.node_grid.on('itemdblclick',function(view,record){
-						this.select_metrics(record.get('node'))
+						var metrics = this.fetch_metrics(record)
+						this.select_metrics(metrics)
 					},this)
 		}
 		
 		//--------------------event metric of node------------------
 		if(this.metric_grid){
 			this.metric_grid.on('itemdblclick',function(view,record){
-							this.selected_store.add(record)
+							this.select_metrics([{node:record.get('node'),metric:record.get('metric')}])
 						},this)
 		}
 		
@@ -139,25 +140,18 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		
 		//----------------------drop function--------------------
 		this.selected_grid.getView().on('beforedrop',function(html_node,data,model,dropPosition,dropFunction,eOpts){
-			//only do action is not reorder
+			//only do action if is not reorder
 			if(data.view.id != this.selected_grid.getView().id){
 				var records = data.records;
 				for (var i in records) {
 					var record = records[i];
 					
 					if(record.get('metric')){
+						//if the dd is a metric
 						this.selected_store.add(record);
 					}else{
-						var node = record.get('node');
-						Ext.Ajax.request({
-							url: '/perfstore/metrics/' + node,
-							scope: this,
-							success: function(response){
-								var data = Ext.decode(response.responseText).data;
-								if(data)
-									this.selected_store.add(data)
-							}
-						});
+						//if the dd is a node
+						this.select_metrics(this.fetch_metrics(record))
 					}
 				}
 
@@ -174,36 +168,40 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.deleteButton.setHandler(this.deleteSelected,this)
 	},
 	
-	fetch_metrics: function(_id){
+	fetch_metrics: function(record){
 		log.debug('Fetch metrics', this.logAuthor)
-		Ext.Ajax.request({
-			url: '/perfstore/metrics/' + _id,
-			scope: this,
-			success: function(response){
-				var text = Ext.decode(response.responseText);
-				var record_array = []
-				for(var i in text.data){
-					record_array.push(Ext.create('Metric',text.data[i]))
-				}
-				this.metric_store.loadData(record_array)
-			}
-		});
+
+		var metric_array = []
+		var metrics = record.get('metrics')
+		var node = record.get('node')
+		
+		for( var i in metrics)
+			metric_array.push({'node':node,'metric':metrics[i].dn})
+			
+		return metric_array
 	},
 	
-	select_metrics: function(_id){
+	select_metrics: function(metric_array){
 		log.debug('Select metrics', this.logAuthor)
-		Ext.Ajax.request({
-			url: '/perfstore/metrics/' + _id,
-			scope: this,
-			success: function(response){
-				var text = Ext.decode(response.responseText);
-				var record_array = []
-				for(var i in text.data){
-					record_array.push(Ext.create('Metric',text.data[i]))
+		var store = this.selected_store
+
+		for(var i in metric_array){
+			var metric = metric_array[i]
+			
+			//check if already in store
+			var exist = store.findBy(
+				function(record,id){
+					if(metric.node == record.get('node'))
+						if(metric.metric == record.get('metric'))
+							return true
+					return false				
 				}
-				this.selected_store.add(record_array)
-			}
-		});
+			,this)
+			
+			//if not, add it
+			if(exist == -1)
+				store.add(metric_array[i])
+		}
 	},
 
 	build_grids : function(){
@@ -229,7 +227,7 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			
 			columns: [
 				{
-					header: 'Component/Ressource',
+					header: 'Node',
 					sortable: false,
 					dataIndex: 'dn',
 					flex: 1
@@ -326,9 +324,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.contextMenu = Ext.create('Ext.menu.Menu', {
 						items: [this.deleteButton,this.clearAllButton]
 					});
-		
-
-		
 	},
 	
 	open_menu : function(view, rec, node, index, e) {
@@ -365,30 +360,12 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			else
 				var source_type = 'component'
 			
-			/*
-			//regroup metric by nodes
-			if (nodes[node]){
-				nodes[node].metrics.push(metric)
-			}else{
-				if(source_type == 'resource')
-					nodes[node] = {'id':node,'metrics':[metric],'resource':node_exploded[5],'component':node_exploded[4],'source_type':source_type}
-				else
-					nodes[node] = {'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type}
-			}
-			*/
 			if(source_type == 'resource')
 				output.push({'id':node,'metrics':[metric],'resource':node_exploded[5],'component':node_exploded[4],'source_type':source_type})
 			else
 				output.push({'id':node,'metrics':[metric],'component':node_exploded[4],'source_type':source_type})
 		})
-		/*
-		//object to array
-		for(var i in nodes)
-			output.push(nodes[i])
-			*/
-		log.dump('-----------------------------------')
-		log.dump(output)
-		log.dump('-----------------------------------')
+
 		return output
 	},
 	
