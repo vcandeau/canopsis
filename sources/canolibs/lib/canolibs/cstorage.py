@@ -162,6 +162,7 @@ class cstorage(object):
 
 			if _id:
 			## Update
+				self.logger.debug("Try updating of %s" % _id)
 				## Check rights
 				if account.user == 'root':
 					access = True
@@ -181,6 +182,7 @@ class cstorage(object):
 						data = record.dump()
 						
 						del data['_id']
+						_id = self.clean_id(_id)
 						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
 
 						if self.mongo_safe:
@@ -201,6 +203,7 @@ class cstorage(object):
 					raise ValueError("Access denied")
 			else:
 			## Insert
+				self.logger.debug("Try inserting of %s" % _id)
 				try:
 					record.write_time = int(time.time())
 					data = record.dump()
@@ -315,7 +318,9 @@ class cstorage(object):
 		self.logger.debug(" + Get record '%s'" % _id)
 
 		try:
+			self.logger.debug("   + _id type: '%s'" % type(_id))
 			oid = self.clean_id(_id)
+			self.logger.debug("   + oid type: '%s'" % type(oid))
 
 			(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 			oid_mfilter = {'_id': oid}
