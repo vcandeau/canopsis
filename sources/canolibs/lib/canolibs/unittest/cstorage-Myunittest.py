@@ -75,8 +75,9 @@ class KnownValues(unittest.TestCase):
 		MYRECORD.data['mydata4'] = 'data4'
 		STORAGE.put(MYRECORD)
 		record = STORAGE.get(ID)
-		record.cat()
 		if record.data == self.data:
+			print "record.data: %s" % record.data 
+			print "self.data:   %s"  % self.data
 			raise Exception('Data not updated ...')
 
 	def test_07_Remove(self):
