@@ -66,7 +66,7 @@ class crecord_ng(crecord):
 				pass
 
 		## Init logger
-		self.logger = logging.getLogger(_id)
+		self.logger = logging.getLogger(str(_id))
 		self.logger.setLevel(logging_level)
 		self.logger.debug("Init %s '%s' ..." % (type, _id))
 
