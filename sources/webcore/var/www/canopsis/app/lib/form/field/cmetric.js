@@ -176,7 +176,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		var metrics = record.get('metrics')
 		var node = record.get('node')
 		var dn = record.get('dn')
-		console.log(dn)
 		
 		for( var i in metrics)
 			metric_array.push({'node':node,'metric':metrics[i].dn, 'dn': dn})
@@ -365,8 +364,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			var node_exploded = node.split('.')
 			
 			var dn = record.get('dn')
-			console.log("dn:")
-			console.log(dn)
 			
 			var metric = record.get('metric')
 			
