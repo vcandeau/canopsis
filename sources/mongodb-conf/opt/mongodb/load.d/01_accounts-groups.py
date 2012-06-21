@@ -190,7 +190,7 @@ def update_for_new_rights():
 	#update accounts
 	dump = storage.find({'$or': [{'crecord_type':'account'},{'crecord_type':'group'}]})
 	for record in dump:
-		record.chgrp('group.CPS_account_admin')
+		#record.chgrp('group.CPS_account_admin')
 		record.admin_group = 'group.CPS_account_admin'
 		record.chmod('g+w')
 		record.chmod('g+r')
