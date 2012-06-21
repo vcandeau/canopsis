@@ -187,7 +187,7 @@ Ext.define('widgets.stream.event' , {
 					log.debug(records.length + " comments for '" + me.event_id + "'", me.logAuthor);
 					if (records.length > 0) {
 						me.init_comment_counter();
-
+						records.reverse()
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 
