@@ -210,6 +210,15 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		else
 			return val[0]
 	},
+	
+	renderer_dn_component : function(val){
+		return val[0]
+	},
+	
+	renderer_dn_resource : function(val){
+		if (val.length > 1)
+			return val[1]
+	},
 
 	build_grids : function(){
 		log.debug('Build grids', this.logAuthor)
@@ -234,10 +243,17 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			
 			columns: [
 				{
-					header: 'Node',
+					header: _('Component'),
 					sortable: false,
 					dataIndex: 'dn',
-					renderer: this.renderer_dn,
+					renderer: this.renderer_dn_component,
+					flex: 1
+	       		},
+	       		{
+					header: _('Resource'),
+					sortable: false,
+					dataIndex: 'dn',
+					renderer: this.renderer_dn_resource,
 					flex: 1
 	       		}
 			],
@@ -292,11 +308,18 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 			scroll: true,
 			columns: [
 				{
-					header: 'Node',
+					header: _('Component'),
 					sortable: false,
 					dataIndex: 'dn',
-					renderer: this.renderer_dn,
-					flex:1
+					renderer: this.renderer_dn_component,
+					flex: 1
+	       		},
+	       		{
+					header: _('Resource'),
+					sortable: false,
+					dataIndex: 'dn',
+					renderer: this.renderer_dn_resource,
+					flex: 1
 	       		},
 	       		{
 					header: 'Selected metrics',
