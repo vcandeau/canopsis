@@ -22,7 +22,6 @@
 from crecord import crecord
 
 from ccache import get_cache
-from ctimer import ctimer
 from ctools import calcul_pct
 
 from caccount import caccount
@@ -42,15 +41,17 @@ class cselector(crecord):
 			
 		## Default vars
 		self.namespace = namespace
+		
 		self.mfilter = {}
 		self.include_ids = []
 		self.exclude_ids = []
 		self.changed = False
-		#self.timer = ctimer(logging_level=logging.INFO)
+		
 		self.use_cache = use_cache
 		self.cache_time = cache_time
 		self.cache = None
-		#self.last_resolv_time = 0
+		
+		self.last_resolv = None
 		self.last_nb_records = 0
 
 		self._ids = []
@@ -128,7 +129,7 @@ class cselector(crecord):
 			if self.exclude_ids:
 				ids = [_id for _id in ids if not _id in self.exclude_ids]
 		
-			#self.last_resolv_time = time.time()
+			self.last_resolv = time.time()
 			self.last_nb_records = len(self._ids)
 			self.changed = False
 			
