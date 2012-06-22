@@ -63,14 +63,15 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				{'operator': '$all','text': _('Match all'), 'type':'array' },
 				{'operator': '$exists','text': _('Exists'), 'type':'boolean' },
 				//{'operator': '$mod','text': , 'type': },
-				{'operator': '$ne','text':'Not equal' , 'type':'value' },
-				{'operator': '$in','text': 'In', 'type': 'array'},
-				{'operator': '$nin','text': 'Not in', 'type': 'array'},
-				{'operator': '$nor','text': 'Nor', 'type': 'object'},
-				{'operator': '$or','text': 'Or', 'type': 'object'},
-				{'operator': '$and','text': 'And', 'type': 'object'},
+				{'operator': '$ne','text':_('Not equal'), 'type':'value' },
+				{'operator': '$in','text': _('In'), 'type': 'array'},
+				{'operator': '$nin','text': _('Not in'), 'type': 'array'},
+				{'operator': '$nor','text': _('Nor'), 'type': 'object'},
+				{'operator': '$or','text': _('Or'), 'type': 'object'},
+				{'operator': '$and','text': _('And'), 'type': 'object'}
 				//{'operator': '$size','text': , 'type': },
 				//{'operator': '$type','text': , 'type': }
+			]
 		})
 	}
 });
