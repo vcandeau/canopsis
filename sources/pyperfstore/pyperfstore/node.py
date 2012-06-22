@@ -54,7 +54,10 @@ class node(object):
 		data = self.storage.get(self._id)
 		if data:
 			self.load(data)
-
+			if self.dn != dn:
+				self.dn = dn
+				self.save()
+				
 	def dump(self):
 		dump = {
 			#'id':		self._id,
