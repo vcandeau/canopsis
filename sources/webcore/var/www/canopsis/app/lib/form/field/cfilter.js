@@ -24,36 +24,100 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	alias: 'widget.cfilter',
 	
-	height : 400,
+	height : 1000,
 	
 	layout: {
         type: 'vbox',
         align: 'stretch'
     },
+    
 	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']'
 		log.debug('Initialize ...', this.logAuthor)
 		
-		this.build_stores()
+		//define internal object
+		this.define_object()
+		
+		//build operator store
+		this.build_store()
+
+		this.items = [this.build_field_panel()]
 
 		this.callParent(arguments);
 	},
 	
-	build_stores : function(){
+	define_object : function(){
+		Ext.define('cfilter.object' ,{
+			extend: 'Ext.panel.Panel',
+			title : 'Field',
+			margin : 5,
+			height : 200,
+		
+			initComponent: function() {
+				log.debug('init sub object',this.logAuthor)
+				
+				//----------------------create combo----------------
+				this._combo = Ext.widget('combobox',{
+								'name': 'field',
+								'queryMode': 'local',
+								'displayField': 'text',
+								'valueField': 'operator',
+								'store': this._store
+								})
+				
+				//----------------------bind events-------------------
+				this._combo.on('change',function(combo,value,oldvalue){this._do_action(combo,value,oldvalue)},this)
+				
+				this.items = [this._combo]
+				
+				this.callParent(arguments);
+			},
+			
+			_drop_all : function(){
+				for(var i = 1; i < this.items; i++)
+					this.remove(this.items[i])
+			},
+			
+			_string_value : function(){
+				
+			},
+			
+			_do_action : function(combo,value,oldvalue){
+				log.debug('combobox changes', this.logAuthor)
+				var store = this._store
+				var panel = combo.up()
+				log.dump(panel)
+				//----------------testing type-----------------------
+				var search = store.find('operator',value)
+				
+				if(search == -1){
+					//field is a simple value
+					log.debug('string value',this.logAuthor)		
+				} else {
+					
+				}
+			}
+		
+		})
+
+	},
+
+	build_field_panel : function(){
+		//-----------------Build panel--------------------
+		var config = {
+			_store: this.field_store
+		}
+		
+		var panel = Ext.create('cfilter.object',config)
+		return panel
+	},
+	
+	build_store : function(){
 		log.debug('Build stores', this.logAuthor)
 		
-		//---------------------field store-------------------
-		this.field_store = Ext.create('Ext.data.Store', {
-			fields : ['value','text'],
-			data: [
-				{'value':'crecord_type','text':'Record type'}
-
-			]
-		})
-		
 		//---------------------operator store----------------
-		this.operator_store = Ext.create('Ext.data.Store', {
+		this.field_store = Ext.create('Ext.data.Store', {
 			fields : ['operator','text','type'],
 			data : [
 				{'operator': '<','text': _('Less'), 'type':'value' },
@@ -73,5 +137,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				//{'operator': '$type','text': , 'type': }
 			]
 		})
-	}
+	},
+	
+
 });
