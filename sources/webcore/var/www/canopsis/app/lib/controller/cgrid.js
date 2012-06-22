@@ -199,6 +199,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		for (i in btns) {
 			btns[i].setDisabled(records.length === 0);
 		}
+		
+		//Enable duplicate Button
+		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=duplicate]');
+		for (i in btns) {
+			btns[i].setDisabled(records.length === 0);
+		}
 
 		if (this.selectionchange) {
 			this.selectionchange(view, records);
