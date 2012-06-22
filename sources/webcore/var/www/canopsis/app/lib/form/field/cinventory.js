@@ -30,7 +30,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	multiSelect: true,
 	vertical_multiselect: false,
 	default_padding: 5,
-	isFormField: true,
+	//isFormField: true,
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
