@@ -24,8 +24,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 	
 	alias: 'widget.cmetric',
 	
-	pageSize : 14,
-	
 	border: false,
 	layout: {
         type: 'vbox',
