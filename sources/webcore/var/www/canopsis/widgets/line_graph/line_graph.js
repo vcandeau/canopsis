@@ -639,55 +639,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 			
 			return
 			
-			/*this.lastplotband = xaxis.addPlotBand({ // mark the weekend
-					color: '#FCFFC5',
-					from: data['values'][0][0],
-					to: data['values'][data['values'].length-1][0]
-				});
-			console.log(this.lastplotband)*/
-			
-			
-			/*var xaxis = this.chart.get('timestamp')
-			var doPB = []
-			if (this.lastplotband){
-
-			}else{
-				console.log("addplotband ")
-				var from = data['values'][0][0]
-				var last_state = parseInt(data['values'][0][1]/100)
-				
-				for (var index in data['values']){
-					state = parseInt(data['values'][index][1]/100)
-					if (state != last_state){
-						doPB.push({from: from, to: data['values'][index][0], state: last_state})
-						from = data['values'][index][0]
-						last_state = state
-					}
-				}
-				
-				doPB.push({from: from, to: data['values'][data['values'].length-1][0], state: state})
-			}
-			
-			console.log(doPB)
-			for (var index in doPB){
-				var pb = doPB[index]
-				var color
-					
-				if      (pb.state == 0)
-					color = global.state_colors['ok']
-				else if (pb.state == 1)
-					color = global.state_colors['warning']
-				else if (pb.state == 2)
-					color = global.state_colors['critical']
-				
-				this.lastplotband = xaxis.addPlotBand({ // mark the weekend
-					color: color,
-					from: pb.from,
-					to: pb.to,
-					state: pb.state
-				});
-			}*/
-			
 		}else{
 			serie = this.getSerie(node, metric_name, bunit, min, max);
 		}
