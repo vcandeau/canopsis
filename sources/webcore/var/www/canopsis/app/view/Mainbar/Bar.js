@@ -129,7 +129,18 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				}
 			]);
 		}
-
+		
+		//Root selector menu
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_selector_admin')){
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-selector',
+					text: _('Edit selector'),
+					action: 'editSelector'
+				}
+			]);
+		}
+		
 		//Build menu
 		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin')||global.accountCtrl.checkGroup('group.CPS_view')){
 			menu_build = menu_build.concat([

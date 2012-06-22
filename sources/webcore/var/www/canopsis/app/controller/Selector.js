@@ -18,16 +18,30 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Selectors', {
-    extend: 'Ext.data.Model',
+Ext.define('canopsis.controller.Selector', {
+	extend: 'canopsis.lib.controller.cgrid',
 
-	fields: [
-		{name: '_id'},
-		{name: 'name'},
-		{name: 'description'},
-		{name: 'filter'},
-		{name: 'category'},
-		{name: 'collection'}
-    ]
+	views: ['Selector.Grid', 'Selector.Form'],
+	stores: ['Selectors'],
+	models: ['Selector'],
+	
+	logAuthor: '[controller][selector]',
 
+	init: function() {
+		log.debug('Initialize ...', this.logAuthor);
+
+		this.formXtype = 'SelectorForm';
+		this.listXtype = 'SelectorGrid';
+
+		this.modelId = 'Selector';
+
+		this.callParent(arguments);
+	},
+	
+	preSave: function(record, data, form) {
+		console.log(form)
+		record.set('_id', "selector." + global.account._id + "."+ record.get('crecord_name'));
+		record.set('id', record.get('_id'));
+		return record;
+	},
 });

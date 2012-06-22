@@ -215,6 +215,10 @@
     background-image: url(../images/icons/color_swatch.png) !important; 
 }
 
+.icon-mainbar-selector { 
+    background-image: url(../images/icons/arrow_join.png) !important; 
+}
+
 .icon-true { 
     background-image: url(../images/icons/bullet_green.png) !important; 
 }
@@ -298,6 +302,10 @@
 
 .icon-crecord_type-group { 
     background-image: url(../images/icons/group.png) !important; 
+}
+
+.icon-crecord_type-selector { 
+    background-image: url(../images/icons/arrow_join.png) !important; 
 }
 
 /* TAB */
