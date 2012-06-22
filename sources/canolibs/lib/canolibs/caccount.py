@@ -31,8 +31,6 @@ class caccount(crecord):
 	def __init__(self, record=None, user=None, group=None, lastname=None, firstname=None, mail=None, groups=[], authkey=None, *args, **kargs):
 
 		self.user = user
-		self.owner = user
-		self.group = group
 		self.groups = groups
 		self.shadowpasswd = None
 		
@@ -45,10 +43,10 @@ class caccount(crecord):
 		self.type = "account"
 
 		if not self.user:
-			self.user="anonymous"
+			self.user = "anonymous"
 
-		if not self.group:
-			self.group ="anonymous"
+		if not group:
+			group ="group.anonymous"
 			
 		if not self.authkey:
 			self.generate_new_authkey()
@@ -56,9 +54,6 @@ class caccount(crecord):
 		if self.user:
 			self._id = self.type+"."+self.user
 		
-		if self.group.find('group.') == -1:
-			self.group = 'group.%s' % self.group
-
 		self.access_owner=['r','w']
 		self.access_group=[]
 		self.access_other=[]
@@ -67,7 +62,7 @@ class caccount(crecord):
 		if isinstance(record, crecord):
 			crecord.__init__(self, _id=self._id, record=record, type=self.type, *args, **kargs)
 		else:
-			crecord.__init__(self, _id=self._id, owner=self.user, group=self.group, type=self.type, *args, **kargs)
+			crecord.__init__(self, _id=self._id, owner="account.%s" % self.user, group=group, type=self.type, *args, **kargs)
 
 
 
@@ -156,6 +151,7 @@ class caccount(crecord):
 		print " + Fullname:\t", self.firstname, self.lastname
 		print " + User:\t", self.user
 		print " + Mail:\t", self.mail
+		print " + Owner:\t", self.owner
 		print " + Group:\t", self.group
 		print " + Groups:\t", self.groups, "\n"
 		

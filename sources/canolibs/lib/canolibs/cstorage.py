@@ -155,10 +155,10 @@ class cstorage(object):
 				record.data['data_id'] = data_id
 
 			if not record.owner:
-				record.owner = account._id
-				#record.owner = account.user
+				record.chown(account.user)
+	
 			if not record.group:
-				record.group = account.group
+				record.chgrp(account.group)
 
 			if _id:
 			## Update
