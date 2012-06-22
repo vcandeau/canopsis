@@ -382,14 +382,11 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		this.selected_store.each(function(record) {
 			
 			var node = record.get('node')
-			var node_exploded = node.split('.')
-			
 			var dn = record.get('dn')
-			
 			var metric = record.get('metric')
 			
 			//check if resource
-			if(node_exploded[5])
+			if(dn.length > 1)
 				var source_type = 'resource'
 			else
 				var source_type = 'component'
@@ -401,16 +398,6 @@ Ext.define('canopsis.lib.form.field.cmetric' ,{
 		})
 
 		return output
-	},
-	
-	node_to_dn : function(val){
-		var val = val.split('.')
-		var len = val.length
-		
-		if(len == 6)
-			return val[4] + '.' + val[5]
-		else
-			return val[4]
 	},
 	
 	setValue : function(data){
