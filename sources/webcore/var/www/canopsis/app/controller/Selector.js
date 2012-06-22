@@ -39,7 +39,6 @@ Ext.define('canopsis.controller.Selector', {
 	},
 	
 	preSave: function(record, data, form) {
-		console.log(form)
 		record.set('_id', "selector." + global.account._id + "."+ record.get('crecord_name'));
 		record.set('id', record.get('_id'));
 		return record;

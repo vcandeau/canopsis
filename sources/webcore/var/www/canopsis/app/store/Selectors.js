@@ -18,20 +18,12 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.model.Selectors', {
-    extend: 'Ext.data.Model',
 
-	fields: [
-		{name: 'id'},
-		{name: 'state'}
-    ]
-});
-
-Ext.define('canopsis.store.Selector', {
+Ext.define('canopsis.store.Selectors', {
     extend: 'canopsis.lib.store.cstore',
 	model: 'canopsis.model.Selector',
 
-	storeId: 'store.Selector',
+	storeId: 'store.Selectors',
 
 	//autoLoad: true,
 
@@ -45,9 +37,6 @@ Ext.define('canopsis.store.Selector', {
 			successProperty: 'success'
 		}
 	}
-	/*load: function (){
-		log.debug('View store loaded.')
-		log.dump(this.getById('view.root.dashboard'))
-	},*/
+
 });
 
