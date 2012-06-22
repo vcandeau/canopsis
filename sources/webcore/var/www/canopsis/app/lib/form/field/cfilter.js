@@ -35,6 +35,42 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		this.logAuthor = '[' + this.id + ']'
 		log.debug('Initialize ...', this.logAuthor)
 		
+		this.build_stores()
+
 		this.callParent(arguments);
 	},
-})
+	
+	build_stores : function(){
+		log.debug('Build stores', this.logAuthor)
+		
+		//---------------------field store-------------------
+		this.field_store = Ext.create('Ext.data.Store', {
+			fields : ['value','text'],
+			data: [
+				{'value':'crecord_type','text':'Record type'}
+
+			]
+		})
+		
+		//---------------------operator store----------------
+		this.operator_store = Ext.create('Ext.data.Store', {
+			fields : ['operator','text','type'],
+			data : [
+				{'operator': '<','text': _('Less'), 'type':'value' },
+				{'operator': '<=','text': _('Less or equal'), 'type':'value' },
+				{'operator': '>','text': _('Greater'), 'type':'value' },
+				{'operator': '>=','text': _('Greater or equal'), 'type':'value' },
+				{'operator': '$all','text': _('Match all'), 'type':'array' },
+				{'operator': '$exists','text': _('Exists'), 'type':'boolean' },
+				//{'operator': '$mod','text': , 'type': },
+				{'operator': '$ne','text':'Not equal' , 'type':'value' },
+				{'operator': '$in','text': 'In', 'type': 'array'},
+				{'operator': '$nin','text': 'Not in', 'type': 'array'},
+				{'operator': '$nor','text': 'Nor', 'type': 'object'},
+				{'operator': '$or','text': 'Or', 'type': 'object'},
+				{'operator': '$and','text': 'And', 'type': 'object'},
+				//{'operator': '$size','text': , 'type': },
+				//{'operator': '$type','text': , 'type': }
+		})
+	}
+});
