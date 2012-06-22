@@ -637,15 +637,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var store = grid.getStore();
 		var search = grid.down('textfield[name=searchField]').getValue();
 		
-		grid.pagingbar.moveFirst();
-		
-		store.load({
-			params:{
-				start:0,
-				limit: grid.pageSize,
-				search: search
-			}
-		})
+		store.proxy.extraParams.search = search
+
+		if (grid.pagingbar) {
+			grid.pagingbar.moveFirst();
+		}else {
+			store.load();
+		}
 	}
 
 });
