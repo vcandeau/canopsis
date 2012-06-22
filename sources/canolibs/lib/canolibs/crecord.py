@@ -27,8 +27,12 @@ class crecord(object):
 	def __init__(self, data = {}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None,admin_group=None, type='raw'):
 		self.write_time = None
 
-		self.owner=self.chown(owner)
-		self.group=self.chgrp(group)
+		self.owner = None
+		self.group = None
+		
+		self.chown(owner)
+		self.chgrp(group)
+		
 		self.admin_group=admin_group
 		self.type= type
 		self.access_owner=['r','w']
@@ -243,16 +247,18 @@ class crecord(object):
 		#	self.group = owner.group
 		#else:
 		#	self.owner=owner
-		if re_owner.match(str(owner)):
-			self.owner=owner
-		else:
-			self.owner= "account.%s" % owner
+		if owner:
+			if re_owner.match(str(owner)):
+				self.owner=owner
+			else:
+				self.owner= "account.%s" % owner
 
 	def chgrp(self, group):
-		if re_group.match(str(group)):
-			self.group=group
-		else:
-			self.group= "group.%s" % group
+		if group:
+			if re_group.match(str(group)):
+				self.group=group
+			else:
+				self.group= "group.%s" % group
 
 	def chmod(self, action):
 		## g+w, g+r, u+r, u+w ...
