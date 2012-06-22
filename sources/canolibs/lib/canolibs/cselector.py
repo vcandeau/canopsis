@@ -78,7 +78,7 @@ class cselector(crecord):
 			crecord.__init__(self, record=record, storage=storage)
 		else:
 			self.logger.debug("Init new record.")
-			crecord.__init__(self, _id=self._id, owner=storage.account.user, group=storage.account.group, type=self.type, storage=storage)
+			crecord.__init__(self, _id=self._id, account=storage.account, type=self.type, storage=storage)
 		
 	def dump(self):
 		self.data['include_ids'] = self.include_ids
