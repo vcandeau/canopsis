@@ -79,6 +79,8 @@ Ext.define('canopsis.view.Account.Form', {
 		var checkboxModel = Ext.create('Ext.selection.CheckboxModel');
 		this.checkGrid = Ext.create('Ext.grid.Panel', {
 			store: 'Groups',
+			autoScroll: true,
+			height: 200,
 			selModel: checkboxModel,
 			columns: [
 				{text: _('Name'), dataIndex: 'crecord_name', flex: 1}
