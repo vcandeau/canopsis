@@ -90,8 +90,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	use_window_ts: false,
 	//..
 
-	//fix in setchartTitle
-	_multiNode : true,
+	nb_node: 0,
+	
 
 	initComponent: function() {
 		
@@ -100,6 +100,31 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_fontColor		= check_color(this.legend_fontColor)
 		this.legend_borderColor 	= check_color(this.legend_borderColor)
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor)
+
+		this.callParent(arguments);
+	},
+
+	afterContainerRender: function() {
+		log.debug('Initialize line_graph', this.logAuthor);
+		log.debug(' + Time window: ' + this.time_window, this.logAuthor);
+
+		this.series = {};
+		this.series_hc = {};
+				
+		// Clean this.nodes
+		if (this.nodes)
+			this.processNodes();
+
+		this.nodesByID = {}
+		//Store nodes in object
+		for(var i in this.nodes){
+			if (this.nodesByID[this.nodes[i].id]){
+				this.nodesByID[this.nodes[i].id].metrics.push(this.nodes[i].metrics[0])
+			}else{
+				this.nodesByID[this.nodes[i].id] = this.nodes[i]
+				this.nb_node += 1;
+			}
+		}
 
 		//Set title
 		if (this.autoTitle) {
@@ -111,52 +136,29 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.title = '';
 			}
 		}
-		this.callParent(arguments);
+		
+		this.setOptions();
+		this.createChart();
+
+		this.ready();
 	},
 
 	setchartTitle: function() {
 		var title = '';
-		if (this.nodes) {
-			var node_list = []
-			
-			for(var i in this.nodes){
-				var id = this.nodes[i].id
-				if(node_list.indexOf(id) == -1)
-					node_list.push(id)
-			}
-
-			if (node_list.length == 1) {
-				var resource = this.nodes[0].resource;
-				var component = this.nodes[0].component;
+		if (this.nb_node) {
+			if (this.nb_node == 1) {
+				var component = this.nodes[0].dn[0];
 				var source_type = this.nodes[0].source_type;
-
-				if (source_type == 'resource')
-					title = resource + ' ' + _('line_graph.on') + ' ' + component;
-				else
-					title = component;
 				
-				this._multiNode = false
+				if (source_type == 'resource'){
+					var resource = this.nodes[0].dn[1];
+					title = resource + ' ' + _('line_graph.on') + ' ' + component;
+				}else{
+					title = component;
+				}
 			}
 		}
 		this.chartTitle = title;
-	},
-
-	afterContainerRender: function() {
-		log.debug('Initialize line_graph', this.logAuthor);
-		log.debug(' + Time window: ' + this.time_window, this.logAuthor);
-
-		this.series = {};
-		this.series_hc = {};
-
-		this.setOptions();
-		this.createChart();
-
-		if (this.nodes) {
-			// Clean this.nodes
-			this.processNodes();
-		}
-
-		this.ready();
 	},
 
 	setOptions: function() {
@@ -472,8 +474,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 	},
 
-	getSerie: function(node, metric_name, bunit, min, max, yAxis) {		
-		var serie_id = node + '.' + metric_name;
+	getSerie: function(node_id, metric_name, bunit, min, max, yAxis) {		
+		var serie_id = node_id + '.' + metric_name;
 		
 		if (! yAxis)
 			yAxis = 0
@@ -495,13 +497,12 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		var metric_long_name = '';
 
-		if (this._multiNode) {
-			//TODO: Ban this function !!!!!
-			var info = split_amqp_rk(node);
-			if (info){
-				metric_long_name = info.component;
+		if (this.nb_node != 1) {
+			var node = this.nodesByID[node_id]
+			if (node){
+				metric_long_name = node.dn[0];
 				if (info.source_type == 'resource')
-					metric_long_name += ' - ' + info.resource;
+					metric_long_name += ' - ' + node.dn[1];
 
 				metric_long_name = '(' + metric_long_name + ') ';
 			}
@@ -594,7 +595,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var metric_name = data['metric'];
 		var values = data['values'];
 		var bunit = data['bunit'];
-		var node = data['node'];
+		var node_id = data['node'];
 		var min = data['min'];
 		var max = data['max'];
 		//log.dump(data)
@@ -602,7 +603,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		var serie = undefined;
 		
 		if (metric_name == 'cps_state_ok' || metric_name == 'cps_state_warn' || metric_name == 'cps_state_crit'){
-			serie = this.getSerie(node, metric_name, undefined, undefined, undefined, 1);
+			serie = this.getSerie(node_id, metric_name, undefined, undefined, undefined, 1);
 		}
 
 		if (metric_name == 'cps_state'){
@@ -640,11 +641,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 			return
 			
 		}else{
-			serie = this.getSerie(node, metric_name, bunit, min, max);
+			serie = this.getSerie(node_id, metric_name, bunit, min, max);
 		}
 
 		if (! serie) {
-			log.error('Impossible to get serie, node: '+ node + ' metric: '+ metric_name, this.logAuthor);
+			log.error('Impossible to get serie, node: '+ node_id + ' metric: '+ metric_name, this.logAuthor);
 			return;
 		}
 
@@ -676,7 +677,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		values = this.parseValues(serie, values);
 
-		log.debug('  + Add data for ' + node + ', metric "' + metric_name + '" ...', this.logAuthor);
+		log.debug('  + Add data for ' + node_id + ', metric "' + metric_name + '" ...', this.logAuthor);
 
 		if (values.length <= 0) {
 			log.debug('   + No data', this.logAuthor);
