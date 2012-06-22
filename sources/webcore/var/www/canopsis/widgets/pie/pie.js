@@ -51,6 +51,8 @@ Ext.define('widgets.pie.pie' , {
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
 	//
+	
+	nb_node: 0,
 
 	initComponent: function() {
 		this.backgroundColor		= check_color(this.backgroundColor)
@@ -58,7 +60,21 @@ Ext.define('widgets.pie.pie' , {
 		this.legend_fontColor		= check_color(this.legend_fontColor)
 		this.legend_borderColor 	= check_color(this.legend_borderColor)
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor)
-		
+
+		this.nodesByID = {}
+		//Store nodes in object
+		for(var i in this.nodes){
+			var node = this.nodes[i]
+			if (this.nodesByID[node.id]){
+				this.nodesByID[node.id].metrics.push(node.metrics[0])
+			}else{
+				this.nodesByID[node.id] = Ext.clone(node)
+				this.nb_node += 1;
+			}
+		}
+		log.debug('nodesByID:', this.logAuthor);
+		log.dump(this.nodesByID)
+
 		//Set title
 		if (this.autoTitle) {
 			this.setchartTitle();
@@ -69,36 +85,39 @@ Ext.define('widgets.pie.pie' , {
 				this.title = '';
 			}
 		}
+
 		this.callParent(arguments);
+	},
+	
+	afterContainerRender: function() {
+		log.debug('Initialize Pie', this.logAuthor);
+
+		// Clean this.nodes
+		if (this.nodes) 
+			this.processNodes();
+
+		this.setOptions();
+		this.createChart();
+		
+		this.ready();
 	},
 
 	setchartTitle: function() {
 		var title = '';
-		if (this.nodes) {
-			if (this.nodes.length == 1) {
-				var info = split_amqp_rk(this.nodes[0].id);
-
-				if (info.source_type == 'resource')
-					title = info.resource + ' ' + _('line_graph.on') + ' ' + info.component;
-				else
-					title = info.component;
+		if (this.nb_node) {
+			if (this.nb_node == 1) {
+				var component = this.nodes[0].dn[0];
+				var source_type = this.nodes[0].source_type;
+				
+				if (source_type == 'resource'){
+					var resource = this.nodes[0].dn[1];
+					title = resource + ' ' + _('line_graph.on') + ' ' + component;
+				}else{
+					title = component;
+				}
 			}
 		}
 		this.chartTitle = title;
-	},
-
-	afterContainerRender: function() {
-		log.debug('Initialize Pie', this.logAuthor);
-
-		this.setOptions();
-		this.createChart();
-
-		if (this.nodes) {
-			// Clean this.nodes
-			this.processNodes();
-		}
-
-		this.ready();
 	},
 
 	setOptions: function() {

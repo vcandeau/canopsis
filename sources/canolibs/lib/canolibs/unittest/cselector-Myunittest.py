@@ -60,7 +60,7 @@ class KnownValues(unittest.TestCase):
 		
 		if dump['_id'] != ndump['_id'] or dump['namespace'] != ndump['namespace'] or dump['mfilter'] != ndump['mfilter'] or dump['aaa_owner'] != ndump['aaa_owner']:
 			print dump
-			print nump
+			print ndump
 			raise Exception('Invalid dump ...')		
 
 	def test_02_PutData(self):

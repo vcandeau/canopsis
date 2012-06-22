@@ -114,20 +114,21 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'add'
 					});
 				}
-				if (this.opt_bar_duplicate) {
-					bar_child.push({
-						xtype: 'button',
-						iconCls: 'icon-copy',
-						text: _('Duplicate'),
-						action: 'duplicate'
-					});
-				}
 				if (this.opt_bar_reload) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-reload',
 						text: _('Reload'),
 						action: 'reload'
+					});
+				}
+				if (this.opt_bar_duplicate) {
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-copy',
+						text: _('Duplicate'),
+						disabled: true,
+						action: 'duplicate'
 					});
 				}
 				if (this.opt_bar_delete) {
