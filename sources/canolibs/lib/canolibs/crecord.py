@@ -41,13 +41,10 @@ class crecord(object):
 		self.children_record = []
 		self._id = _id
 		self.enable = True
-		
-
 
 		if account:
-			#self.account = account
-			self.owner=account.user
-			self.group=account.group
+			self.owner=self.chown(account.user)
+			self.group=self.chown(account.group)
 		
 		#set admin account
 		if not self.admin_group:
