@@ -145,8 +145,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	},
 
 	add_new_step: function(step) {
-		log.debug('Dumping step before adding');
-		log.dump(step);
+		//log.debug('Dumping step before adding');
+		//log.dump(step);
 		step.bodyPadding = 10;
 		step.autoScroll = true;
 
