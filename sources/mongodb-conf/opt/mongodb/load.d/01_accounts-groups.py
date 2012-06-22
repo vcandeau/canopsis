@@ -38,7 +38,8 @@ groups =  {
 	'CPS_schedule_admin':'View and create his own reporting schedules.',
 	'CPS_reporting_admin':'Launch and export report, use live reporting.',
 	'CPS_account_admin':'Manage all account and groups in canopsis.',
-	'CPS_event_admin':'Send event by the webservice or websocket.'
+	'CPS_event_admin':'Send event by the webservice or websocket.',
+	'CPS_selector_admin':'Manage all selectors in canopsis, add, remove or edit.'
 }
 
 def init():
