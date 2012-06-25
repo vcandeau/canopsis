@@ -258,7 +258,7 @@ def reload_account(_id=None):
 		return False
 
 def check_group_rights(account,group_id):
-	if account._id != 'account.root':
+	if not (account._id == 'account.root' or  account.group == 'group.root'):
 		if not group_id in account.groups and group_id != account.group:
 			logger.debug('%s is not in %s' % (account.user,group_id))
 			return False
