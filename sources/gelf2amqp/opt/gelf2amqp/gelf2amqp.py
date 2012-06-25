@@ -34,7 +34,7 @@ logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 gelf_port = 5555
-gelf_interface = "127.0.0.1"
+gelf_interface = "0.0.0.0"
 
 myamqp = None
 
@@ -107,9 +107,12 @@ def wait_gelf_udp(on_log):
 	logger.info("Wait GELF data from UDP (%s:%s)" % (gelf_interface, gelf_port))
 	try:
 		while handler.status():
-			data, peer = s.recvfrom(1024)
-			gelf = gelf_uncompress(data)
-			on_log(gelf)
+			try:
+				data, peer = s.recvfrom(1024)
+				gelf = gelf_uncompress(data)
+				on_log(gelf)
+			except socket.timeout:
+				pass
 	except Exception, err:
 		logger.error("Exception: '%s'" % err)
 
