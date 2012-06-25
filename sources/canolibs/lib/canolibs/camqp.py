@@ -144,11 +144,17 @@ class camqp(threading.Thread):
 			self.logger.debug("Allready connected")
 	
 	def get_exchange(self, name):
-		try:
-			return self.exchanges[name]
-		except:
-			self.exchanges[name] =  Exchange(name , "topic", durable=True, auto_delete=False)
-			return self.exchanges[name]
+		if name:
+			try:
+				return self.exchanges[name]
+			except:
+				if name == "amq.direct":
+					self.exchanges[name] = Exchange(name, "direct", durable=True)
+				else:
+					self.exchanges[name] =  Exchange(name , "topic", durable=True, auto_delete=False)
+				return self.exchanges[name]
+		else:
+			return None
 		
 	def init_queue(self, reconnect=False):
 		if self.queues:
@@ -159,9 +165,14 @@ class camqp(threading.Thread):
 				
 				if not qsettings['queue']:
 					self.logger.debug("   + Create queue")
+					
+					routing_key = None
+					if qsettings['routing_keys']:
+						routing_key = qsettings['routing_keys'][0]
+						
 					qsettings['queue'] = Queue(queue_name,
 											exchange = self.get_exchange(qsettings['exchange_name']),
-											routing_key = qsettings['routing_keys'][0],
+											routing_key = routing_key,
 											exclusive = qsettings['exclusive'],
 											auto_delete = qsettings['auto_delete'],
 											no_ack = qsettings['no_ack'])
@@ -175,8 +186,14 @@ class camqp(threading.Thread):
 
 	
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
-		if not isinstance(routing_keys, list):
-			routing_keys = [ routing_keys ]
+		if exchange_name == "amq.direct":
+			routing_keys = queue_name
+		
+		if routing_keys:
+			if not isinstance(routing_keys, list):
+				routing_keys = [ routing_keys ]
+		else:
+			routing_keys = None
 		
 		if not exchange_name:
 			exchange_name = self.exchange_name		
