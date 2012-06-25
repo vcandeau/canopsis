@@ -75,7 +75,20 @@ class KnownValues(unittest.TestCase):
 		
 		perf_data = "'C:\ Used'=55.4%;90;95; 'S:\ Used'=27.2%;90;95; 'E:\ Used'=24.6%;90;95; 'Q:\ Used'=1.1%;90;95; 'F:\ Used'=83.3%;90;95; 'F:\Journaux\ Used'=0.5%;90;95; 'F:\Data\ Used'=2.0%;90;95; 'F:\App\ Used'=1.4%;90;95; 'G:\ Used'=62.6%;90;95; 'G:\Journaux\ Used'=21.6%;90;95; 'G:\App\ Used'=7.8%;90;95; '\\?\Volume{c75733e9-4327-11e0-8596-0010184d9c22}\ Used'=35.9%;90;95; 'H:\ Used'=76.6%;90;95; 'H:\Journaux\ Used'=7.2%;90;95; '\\?\Volume{b7cdcbde-4fe5-11e0-a4e6-0010184d9c22}\ Used'=49.6%;90;95; 'H:\App\ Used'=9.9%;90;95; 'I:\ Used'=46.7%;90;95; 'I:\Journaux\ Used'=8.7%;90;95; '\\?\Volume{b7cdcbe1-4fe5-11e0-a4e6-0010184d9c22}\ Used'=99.0%;90;95; 'I:\App\ Used'=10.8%;90;95; 'J:\ Used'=75.2%;90;95; 'J:\Journaux\ Used'=7.0%;90;95; 'J:\App\ Used'=10.0%;90;95; 'J:\Data\ Used'=74.2%;90;95; 'K:\ Used'=77.3%;90;95; 'K:\Journaux\ Used'=8.2%;90;95; 'K:\Data\ Used'=84.6%;90;95; 'K:\App\ Used'=10.2%;90;95; 'G:\Data\ Used'=25.7%;90;95; 'H:\Data\ Used'=41.4%;90;95; 'I:\Data\ Used'=46.1%;90;95;"
 		perf_data = parse_perfdata(perf_data)
-
+		
+		perf_data = "'C_Used'=55.4%;90;95;"
+		perf_data = parse_perfdata(perf_data)
+		if perf_data[0]['metric'] != 'C_Used':
+			raise Exception('[5] Error in perfdata parsing ...')
+			
+		perf_data = "redo_log_file_switch_interval=6s;360:;60: /data/XXXX/oracle/XXXXX/dbs/archivelog=2059MB;30686;32391;0;34096"
+		perf_data = parse_perfdata(perf_data)
+		if perf_data[0]['warn'] != 360 or perf_data[0]['crit'] != 60 or perf_data[1]['metric'] != '/data/XXXX/oracle/XXXXX/dbs/archivelog' or perf_data[1]['warn'] != 30686 or perf_data[1]['crit'] != 32391 :
+			raise Exception('[6] Error in perfdata parsing ...')
+			
+		perf_data = "test=6s;360:120;@60:23;90;1000"
+		perf_data = parse_perfdata(perf_data)
+ 
 	def test_02_calcul_pct(self):
 		result = {'unknown': 23.01, 'warning': 41.0, 'ok': 26.55, 'critical': 9.44}
 		data = {'ok': 90, 'warning': 139, 'critical': 32, 'unknown': 78}
