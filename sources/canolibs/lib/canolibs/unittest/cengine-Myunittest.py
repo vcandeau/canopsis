@@ -25,10 +25,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
                     
-#import cengine
-#class testengine(cengine):
-#	def __init__():
-#		pass
+from cengine import cengine
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):

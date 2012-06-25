@@ -21,6 +21,7 @@
 
 import unittest
 import time, json, logging
+import multiprocessing
 from multiprocessing import Process
 
 logging.basicConfig(level=logging.DEBUG,
@@ -30,63 +31,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 from camqp import camqp
 from cinit import cinit
-
-############""
-
-from camqp import camqp
-import multiprocessing
-import time
-import Queue
-from cinit import cinit
-
-class Engine(multiprocessing.Process):
-
-	def __init__(self, signal_queue, name="worker1"):
-		multiprocessing.Process.__init__(self)
-	
-		self.signal_queue = signal_queue
-		self.RUN = True
-		
-		self.name = name
-		self.amqp_queue = "Engine_%s" % name
-		
-		init 	= cinit()
-		self.logger = init.getLogger(name, level="DEBUG")
-		
-		self.amqp = camqp()
-		self.amqp.add_queue(self.amqp_queue, None, self.work, "amq.direct", auto_delete=True)
-		
-		self.logger.debug("Engine initialised")
-
-	def run(self):
-		self.logger.debug("Run Engine")
-		self.amqp.start()
-		
-		while self.RUN:
-			try:
-				signal = self.signal_queue.get_nowait()
-				self.logger.debug("Signal: %s" % signal)
-				if signal == "STOP":
-					self.RUN = False
-			except Queue.Empty:
-				pass
-			
-			time.sleep(0.5)
-			
-		self.logger.debug("Stop Engine")
-		self.stop()
-		
-	def work(self, body, msg):
-		self.logger.debug("Event: %s" % body)
-			
-	def stop(self):
-		self.RUN = False
-		self.amqp.stop()
-		self.amqp.join()
-		self.logger.debug(" + Stopped")
-	
-##################
-
+from cengine import cengine
 
 DAEMON_NAME="amqp2engines"
 
@@ -100,7 +45,7 @@ engine = None
 amqp = None
 
 def on_message(body, msg):
-	amqp.publish(body, engine.amqp_queue, "amqp.direct")
+	amqp.publish(body, "Engine_worker1", "amq.direct")
 	
 def main():
 	global engine, amqp
@@ -110,7 +55,7 @@ def main():
 	
 	# Init Engines
 	signal_queue = multiprocessing.Queue()
-	engine = Engine(signal_queue)
+	engine = cengine(signal_queue)
 	
 	# Init AMQP
 	amqp = camqp()
@@ -134,6 +79,7 @@ def main():
 	amqp.join()
 	
 	signal_queue.empty()
+	del signal_queue
 	logger.info("Process finished")
 	
 if __name__ == "__main__":

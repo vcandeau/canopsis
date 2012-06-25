@@ -27,7 +27,7 @@ import time, logging, threading, os
 
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.ERROR, read_config_file=True, auto_connect=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.INFO, read_config_file=True, auto_connect=True):
 		threading.Thread.__init__(self)
 		
 		self.logger = logging.getLogger("camqp")
