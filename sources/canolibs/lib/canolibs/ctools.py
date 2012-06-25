@@ -49,7 +49,7 @@ def calcul_pct(data, total=None):
 	return data_pct
 
 #############################################
-RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\.%%\-{}\? ]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;? ?))")
+RE_PERF_DATA = re.compile("('?([0-9A-Za-z/\\\:\.%%\-{}\?_ ]*)'?=([0-9.,]*)(([A-Za-z%%/]*))(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;([0-9.,]*))?(;? ?))")
 
 def parse_perfdata(perf_data_raw):
 		# 'label'=value[UOM];[warn];[crit];[min];[max]
