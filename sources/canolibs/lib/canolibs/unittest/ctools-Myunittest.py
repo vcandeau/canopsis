@@ -88,6 +88,9 @@ class KnownValues(unittest.TestCase):
 			
 		perf_data = "test=6s;360:120;@60:23;90;1000"
 		perf_data = parse_perfdata(perf_data)
+		
+		perf_data = "test=6s;360;~:60;90;1000"
+		perf_data = parse_perfdata(perf_data)
  
 	def test_02_calcul_pct(self):
 		result = {'unknown': 23.01, 'warning': 41.0, 'ok': 26.55, 'critical': 9.44}
