@@ -79,38 +79,46 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					this.remove(this.items[i])
 			},
 			
-			_string_value : function(){
-				
-			},
-			
 			_do_action : function(combo,value,oldvalue){
 				log.debug('combobox changes', this.logAuthor)
 				var store = this._store
 				var panel = combo.up()
-				log.dump(panel)
-				//----------------testing type-----------------------
+
 				var search = store.find('operator',value)
 				
 				if(search == -1){
-					//field is a simple value
-					log.debug('string value',this.logAuthor)		
+					log.debug(' + Field is string value',this.logAuthor)
+					
 				} else {
+					log.debug(' + Field is an operator',this.logAuthor)
 					
 				}
+			},
+			
+			string_value : function(){
+				
+			},
+			
+			array_value : function(){
+				
+			},
+			
+			operator_value : function(){
+				
 			}
-		
+			
 		})
 
 	},
 
 	build_field_panel : function(){
-		//-----------------Build panel--------------------
-		var config = {
-			_store: this.field_store
+
+		var config = {	
+			_store: this.field_store 
 		}
 		
-		var panel = Ext.create('cfilter.object',config)
-		return panel
+
+		return Ext.create('cfilter.object',config)
 	},
 	
 	build_store : function(){
@@ -139,5 +147,12 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		})
 	},
 	
+	get_value : function(){
+		
+	},
+	
+	set_value : function(){
+		
+	}
 
 });
