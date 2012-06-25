@@ -24,41 +24,56 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	alias: 'widget.cfilter',
 	
-	height : 1000,
+	height : 600,
+	
 	
 	layout: {
         type: 'vbox',
         align: 'stretch'
     },
     
-	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']'
 		log.debug('Initialize ...', this.logAuthor)
 		
-		//define internal object
 		this.define_object()
-		
-		//build operator store
 		this.build_store()
 
-		this.items = [this.build_field_panel()]
-
+		this.cfilter = Ext.create('cfilter.object',{operator_store: this.operator_store})
+		this.items = [this.cfilter]
+		
+		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
+		
+		this.tbar = [finish_button]
+		
 		this.callParent(arguments);
 	},
 	
 	define_object : function(){
+		//this object is made of two component, upper panel with combobox 
+		//and the bottom panel with object (itself) and add button
 		Ext.define('cfilter.object' ,{
 			extend: 'Ext.panel.Panel',
-			title : 'Field',
+			alias: 'widget.cfilter',
+			border: false,
+			operator_store : undefined,
+			
 			margin : 5,
-			height : 200,
 		
 			initComponent: function() {
 				log.debug('init sub object',this.logAuthor)
-				
+				this.logAuthor = '[' + this.id + ']'
 				//----------------------create combo----------------
-				this._combo = Ext.widget('combobox',{
+				this.operator_combo = Ext.widget('combobox',{
+								'name': 'field',
+								'queryMode': 'local',
+								'displayField': 'text',
+								'valueField': 'operator',
+								'store': this.operator_store
+								})
+				
+				//-------------sub operator combo ($in etc...)-----
+				this.sub_operator_combo = Ext.widget('combobox',{
 								'name': 'field',
 								'queryMode': 'local',
 								'displayField': 'text',
@@ -66,66 +81,138 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 								'store': this._store
 								})
 				
+				//--------------------panel-------------------------
+				//add button
+				var config = {
+					text:'add',
+					margin: '0 0 0 5',
+					hidden:true
+				}
+				this.add_button = Ext.widget('button',config)
+				
+				//string value
+				var config = {
+					label: _('value'),
+					margin : '0 0 0 5'
+				}
+				this.string_value = Ext.widget('field',config)
+				
+				//upper panel
+				var config = {
+					items:[this.operator_combo,this.add_button,this.string_value],
+					layout:'hbox',
+					border:false
+				}
+				this.upperPanel = Ext.widget('panel',config)
+				
+				//bottom panel
+				var config = {
+					margin: '0 0 0 20',
+					bodyStyle:'border-top:none;border-bottom:none;border-right:none;'
+				}
+				this.bottomPanel = Ext.widget('panel',config)
+				
 				//----------------------bind events-------------------
-				this._combo.on('change',function(combo,value,oldvalue){this._do_action(combo,value,oldvalue)},this)
-				
-				this.items = [this._combo]
-				
+				//combo binding
+				this.operator_combo.on('change',function(combo,value,oldvalue){this.operator_combo_change(combo,value,oldvalue)},this)
+				this.add_button.on('click',function(){
+					this.bottomPanel.add(this.build_field_panel())
+					if(this.string_value)
+						this.string_value.hide()
+				},this)
+				/*
+				this.string_value.on('change',function(item,value){
+					log.dump(value)
+					if(value != '')
+						this.add_button.hide()
+					else
+						this.add_button.show()
+				},this)
+				*/
+				//-------------------building cfilter-----------------
+				this.items = [this.upperPanel,this.bottomPanel]
 				this.callParent(arguments);
 			},
-			
-			_drop_all : function(){
-				for(var i = 1; i < this.items; i++)
-					this.remove(this.items[i])
-			},
-			
-			_do_action : function(combo,value,oldvalue){
-				log.debug('combobox changes', this.logAuthor)
-				var store = this._store
-				var panel = combo.up()
 
-				var search = store.find('operator',value)
+			//launched when value selected in combobox
+			operator_combo_change : function(combo,value,oldvalue){
+				log.debug(' + Catch changes on combobox', this.logAuthor)
+
+				//check if operator is known
+				var index_search = this.operator_store.find('operator',value)
 				
-				if(search == -1){
-					log.debug(' + Field is string value',this.logAuthor)
-					
+				if(index_search != -1){
+					log.debug(' + Field is a known operator',this.logAuthor)
+					var operator_record = this.operator_store.getAt(index_search)
+					switch(operator_record.get('type')){
+						case 'object':
+							this.string_value.hide()
+							this.add_button.show()
+							break;
+						case 'value':
+							this.string_value.show()
+							this.add_button.hide()
+							break;
+						/*
+						case 'string':
+							this.add_string_value()
+							this.remove_cfile()
+							break;
+							*/
+						case 'array':
+							break;
+						default:
+							log.debug(' + Unrecognized field type',this.logAuthor)
+							break;
+					}
 				} else {
-					log.debug(' + Field is an operator',this.logAuthor)
-					
+					log.debug(' + Unknown operator, showing two options',this.logAuthor)
+					this.add_button.hide()
+					this.string_value.show()
+					this.sub_operator_combo.show()
 				}
 			},
-			
-			string_value : function(){
-				
+
+			//return an ready to add cfile
+			build_field_panel : function(){
+				var config = {	operator_store: this.operator_store	}
+				return Ext.create('cfilter.object',config)
 			},
 			
-			array_value : function(){
-				
+			//------------get / set value--------------------
+			getValue : function(){
+				var field = this._combo.getValue()
+				var output = {}
+				var values = []
+				for(var i in this.bottomPanel.items.items){
+					var cfilter = this.bottomPanel.items.items[i]
+					log.dump(cfilter.getValue())
+					values.push(cfilter.getValue())
+				}
+				output[field] = values
+				return output
 			},
 			
-			operator_value : function(){
+			setValue : function(){
 				
 			}
-			
 		})
-
-	},
-
-	build_field_panel : function(){
-
-		var config = {	
-			_store: this.field_store 
-		}
-		
-
-		return Ext.create('cfilter.object',config)
 	},
 	
 	build_store : function(){
 		log.debug('Build stores', this.logAuthor)
 		
 		//---------------------operator store----------------
-		this.field_store = Ext.create('Ext.data.Store', {
+		this.operator_store = Ext.create('Ext.data.Store', {
+			fields : ['operator','text','type'],
+			data : [
+				{'operator': '$nor','text': _('Nor'), 'type': 'object'},
+				{'operator': '$or','text': _('Or'), 'type': 'object'},
+				{'operator': '$and','text': _('And'), 'type': 'object'}
+			]
+		})
+		
+		this.sub_operator_store = Ext.create('Ext.data.Store', {
 			fields : ['operator','text','type'],
 			data : [
 				{'operator': '<','text': _('Less'), 'type':'value' },
@@ -133,26 +220,22 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				{'operator': '>','text': _('Greater'), 'type':'value' },
 				{'operator': '>=','text': _('Greater or equal'), 'type':'value' },
 				{'operator': '$all','text': _('Match all'), 'type':'array' },
-				{'operator': '$exists','text': _('Exists'), 'type':'boolean' },
-				//{'operator': '$mod','text': , 'type': },
+				{'operator': '$exists','text': _('Exists'), 'type':'value' },
 				{'operator': '$ne','text':_('Not equal'), 'type':'value' },
 				{'operator': '$in','text': _('In'), 'type': 'array'},
-				{'operator': '$nin','text': _('Not in'), 'type': 'array'},
-				{'operator': '$nor','text': _('Nor'), 'type': 'object'},
-				{'operator': '$or','text': _('Or'), 'type': 'object'},
-				{'operator': '$and','text': _('And'), 'type': 'object'}
-				//{'operator': '$size','text': , 'type': },
-				//{'operator': '$type','text': , 'type': }
+				{'operator': '$nin','text': _('Not in'), 'type': 'array'}
 			]
 		})
-	},
-	
-	get_value : function(){
 		
 	},
 	
-	set_value : function(){
-		
+	getValue : function(){
+		log.dump(Ext.encode(this.cfilter.getValue()))
+		return this.cfilter.getValue()
+	},
+	
+	setValue : function(value){
+		this.cfilter.setValue()
 	}
 
 });
