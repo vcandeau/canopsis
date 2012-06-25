@@ -165,13 +165,11 @@ def on_message(body, msg):
 
 		archiver.store_event(event_id, event)
 
-		## Alert only non-ok state
-		if event['state'] != 0:
-			_id = archiver.log_event(event_id, event)
-			event['_id'] = _id
+		_id = archiver.log_event(event_id, event)
+		event['_id'] = _id
 			
-			## Event to Alert
-			amqp.publish(event, event_id, amqp.exchange_name_alerts)
+		## Event to Alert
+		amqp.publish(event, event_id, amqp.exchange_name_alerts)
 
 	elif event['event_type'] == 'trap' or event['event_type'] == 'comment':
 		## passthrough
