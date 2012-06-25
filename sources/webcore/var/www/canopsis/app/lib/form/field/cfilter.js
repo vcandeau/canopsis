@@ -36,27 +36,30 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		this.logAuthor = '[' + this.id + ']'
 		log.debug('Initialize ...', this.logAuthor)
 		
-		//define internal object
 		this.define_object()
-		
-		//build operator store
+
 		this.build_store()
 
-		this.items = [this.build_field_panel()]
+		this.items = [Ext.create('cfilter.object',{_store: this.field_store})]
 
 		this.callParent(arguments);
 	},
 	
 	define_object : function(){
+		//this object is made of two component, upper panel with combobox and
+		//string value, and the bottom panel with object (itself) and add button
+		
 		Ext.define('cfilter.object' ,{
 			extend: 'Ext.panel.Panel',
-			title : 'Field',
+			alias: 'widget.cfilter',
+			border: 'false',
+			//title : 'Field',
+			_store : undefined,
 			margin : 5,
-			height : 200,
 		
 			initComponent: function() {
 				log.debug('init sub object',this.logAuthor)
-				
+				this.logAuthor = '[' + this.id + ']'
 				//----------------------create combo----------------
 				this._combo = Ext.widget('combobox',{
 								'name': 'field',
@@ -65,60 +68,122 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 								'valueField': 'operator',
 								'store': this._store
 								})
+								
+				//--------------------panel-------------------------
+				//panel for field and string
+				var config = {
+					items:[this._combo],
+					layout:'hbox',
+					border:false
+				}
+				
+				this.upperPanel = Ext.widget('panel',config)
 				
 				//----------------------bind events-------------------
-				this._combo.on('change',function(combo,value,oldvalue){this._do_action(combo,value,oldvalue)},this)
+				this._combo.on('change',function(combo,value,oldvalue){this.on_combo_change(combo,value,oldvalue)},this)
 				
-				this.items = [this._combo]
+				this.items = [this.upperPanel]
 				
 				this.callParent(arguments);
 			},
-			
-			_drop_all : function(){
-				for(var i = 1; i < this.items; i++)
-					this.remove(this.items[i])
-			},
-			
-			_do_action : function(combo,value,oldvalue){
-				log.debug('combobox changes', this.logAuthor)
-				var store = this._store
-				var panel = combo.up()
 
-				var search = store.find('operator',value)
+			//launched when value selected in combobox
+			on_combo_change : function(combo,value,oldvalue){
+				log.debug(' + Catch changes on combobox', this.logAuthor)
+
+				var index_search = this._store.find('operator',value)
 				
-				if(search == -1){
+				if(index_search == -1){
 					log.debug(' + Field is string value',this.logAuthor)
-					
+					if(!this.string_value){
+						this.remove_cfile_panel()
+						this.add_string_value()
+					}
 				} else {
 					log.debug(' + Field is an operator',this.logAuthor)
-					
+					var operator_record = this._store.getAt(index_search)
+					switch(operator_record.get('type')){
+						case 'object':
+							this.remove_string_value()
+							this.add_cfile_panel()
+							break;
+						case 'string':
+							this.remove_cfile_panel()
+							this.add_string_value()
+							break;
+							
+						case 'array':
+							break;
+							
+						default:
+							log.debug(' + Unrecognized field type',this.logAuthor)
+							break;
+					}
 				}
 			},
 			
-			string_value : function(){
+			//--Operation on string value (the little box next to operator field)--
+			remove_string_value : function(){
+				if(this.string_value){
+					this.upperPanel.remove(this.string_value,true)
+					this.string_value = undefined
+				}
+			},
+			
+			add_string_value : function(){
+				log.debug('  +  Add simple string value',this.logAuthor)
+				var config = {
+					label: _('value'),
+					margin : '0 0 0 10'
+				}
+				this.string_value = Ext.widget('field',config)
+				this.upperPanel.add(this.string_value)
+			},
+			
+			//------Operation on cfile panel (the panel with all the cfiles)------
+			remove_cfile_panel : function(){
+				if(this.bottomPanel){
+					this.bottomPanel.removeAll(true)
+					this.bottomPanel.destroy()
+					this.bottomPanel = undefined
+				}
+			},
+			
+			add_cfile_panel : function(){
+				log.debug('  +  Add cfile',this.logAuthor)
+				var new_field = this.build_field_panel()
+				var add_button = Ext.widget('button',{text:'add'})
+				
+				var config = {
+					border : false,
+					margin: '0 0 0 20',
+					items:[new_field,add_button]
+				}
+				
+				this.bottomPanel = Ext.widget('panel',config)
+				this.add(this.bottomPanel)
+				
+				//------bind event on add button------
+				add_button.on('click',function(){
+					var length = this.bottomPanel.items.length
+					this.bottomPanel.insert(length -1,this.build_field_panel())
+				},this)
 				
 			},
 			
-			array_value : function(){
-				
+			//return an ready to add cfile
+			build_field_panel : function(){
+				var config = {	
+					_store: this._store,
+					border : '0 1 0 0'
+				}
+				return Ext.create('cfilter.object',config)
 			},
 			
-			operator_value : function(){
-				
-			}
+			
 			
 		})
 
-	},
-
-	build_field_panel : function(){
-
-		var config = {	
-			_store: this.field_store 
-		}
-		
-
-		return Ext.create('cfilter.object',config)
 	},
 	
 	build_store : function(){
