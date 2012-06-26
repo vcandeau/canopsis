@@ -23,22 +23,23 @@ import multiprocessing
 import time
 import Queue
 import logging
+import os
 from cinit import cinit
 
 class cengine(multiprocessing.Process):
 
-	def __init__(self, signal_queue, next_amqp_queue=None, name="worker1", beat_interval=60, logging_level = logging.DEBUG):
+	def __init__(self, next_amqp_queue=None, name="worker1", beat_interval=60, logging_level=logging.INFO):
 		multiprocessing.Process.__init__(self)
 		
 		self.logging_level = logging_level
 	
-		self.signal_queue = signal_queue
+		self.signal_queue = multiprocessing.Queue()
 		self.RUN = True
 		
 		self.name = name
 		
 		self.amqp_queue = "Engine_%s" % name
-		self.next_amqp_queue = "Engine_%s" % next_amqp_queue
+		self.next_amqp_queue = next_amqp_queue
 		
 		init 	= cinit()
 		self.logger = init.getLogger(name, logging_level=self.logging_level)
@@ -52,15 +53,11 @@ class cengine(multiprocessing.Process):
 		
 		self.beat_interval = beat_interval
 		self.beat_last = time.time()
-		
-		## default
-		self.beat = None
-		self.work = None
 				
-		self.logger.debug("Engine initialised")
+		self.logger.info("Engine initialised with pid %s" % (os.getpid()))
 
 	def run(self):
-		self.logger.debug("Run Engine")
+		self.logger.info("Start Engine")
 			
 		self.amqp.start()
 		
@@ -83,17 +80,22 @@ class cengine(multiprocessing.Process):
 			
 			time.sleep(0.5)
 			
-		self.logger.debug("Stop Engine")
+		self.logger.info("Stop Engine")
 		self.stop()
+		self.logger.info("End of Engine")
 	
-	def _work(self, *args, **kargs):
+	def _work(self, event, *args, **kargs):
 		start = time.time()
 		error = False
 		try:
-			if self.work:
-				event = self.work(*args, **kargs)
-				# Forward event to next queue
-				if event a self.next_amqp_queue:
+			wevent = self.work(event, *args, **kargs)
+			# Forward event to next queue
+			if self.next_amqp_queue:
+				self.logger.debug("Send event to next engine '%s'" % self.next_amqp_queue)
+				if wevent:
+					self.amqp.publish(wevent, self.next_amqp_queue, "amq.direct")
+				else:
+					self.logger.warning("forward with original event")
 					self.amqp.publish(event, self.next_amqp_queue, "amq.direct")
 					
 		except Exception, err:
@@ -105,6 +107,9 @@ class cengine(multiprocessing.Process):
 			
 		self.counter_event += 1
 		self.counter_worktime += time.time() - start
+		
+	def work(self, event, amqp_msg):
+		return event
 		
 	def _beat(self):
 		self.logger.debug("Beat: %s event(s), %s error" % (self.counter_event, self.counter_error))
@@ -118,14 +123,18 @@ class cengine(multiprocessing.Process):
 		self.counter_event = 0
 		self.counter_worktime = 0
 		
-		if self.beat:
-			try:
-				self.beat()
-			except Exception, err:
-				self.logger.error("Beat raise exception: %s" % err)
+		try:
+			self.beat()
+		except Exception, err:
+			self.logger.error("Beat raise exception: %s" % err)
+				
+	def beat(self):
+		pass
 			
 	def stop(self):
 		self.RUN = False
 		self.amqp.stop()
 		self.amqp.join()
+		self.signal_queue.empty()
+		del self.signal_queue
 		self.logger.debug(" + Stopped")

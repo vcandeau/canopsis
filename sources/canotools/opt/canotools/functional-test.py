@@ -105,6 +105,12 @@ class KnownValues(unittest.TestCase):
 			del event_alert['perf_data_array'][1]
 
 		event['perf_data_array'] = parse_perfdata(event['perf_data'])
+		
+		try:
+			event['rk'] = event_alert['rk']
+		except:
+			pass
+			
 		if event_alert != event:
 			print "event_alert: %s" % event_alert
 			print "event: %s" % event

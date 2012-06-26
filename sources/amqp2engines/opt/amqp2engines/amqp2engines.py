@@ -24,14 +24,17 @@ import time, json, logging
 import multiprocessing
 from multiprocessing import Process
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)s %(levelname)s %(message)s',
-                    )
-
-
 from camqp import camqp
 from cinit import cinit
-from cengine import cengine
+
+## Engines path
+import sys, os
+sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
+
+import perfstore
+import eventstore
+
+## Configurations
 
 DAEMON_NAME="amqp2engines"
 
@@ -43,9 +46,43 @@ handler = init.getHandler(logger)
 engines=[]
 engine = None
 amqp = None
+next_queue = []
 
 def on_message(body, msg):
-	amqp.publish(body, "Engine_worker1", "amq.direct")
+	## Sanity Checks
+	rk = msg.delivery_info['routing_key']
+	if not rk:
+		raise Exception("Invalid routing-key '%s' (%s)" % (rk, body))
+		
+	#logger.debug("Event: %s" % rk)
+	
+	## Try to decode event
+	if isinstance(body, dict):
+		event = body
+	else:
+		logger.info(" + Try to decode event '%s'" % rk)
+		try:
+			if isinstance(body, str) or isinstance(body, unicode):
+				try:
+					event = json.loads(body)
+				except:
+					try:
+						logger.info(" + Try hack for windows string")
+						# Hack for windows FS -_-
+						event = json.loads(body.replace('\\', '\\\\'))
+					except Exception, err:
+						raise Exception(err)
+		except Exception, err:
+			logger.info("   + Failed")
+			logger.debug("Impossible to parse event '%s'" % rk)
+			logger.debug(body)
+			raise Exception("Impossible to parse event '%s'" % rk)
+	
+	## Forward to engines
+	event['rk'] = rk
+	
+	for queue in next_queue:
+		amqp.publish(event, queue, "amq.direct")
 	
 def main():
 	global engine, amqp
@@ -54,15 +91,21 @@ def main():
 	handler.run()
 	
 	# Init Engines
-	signal_queue = multiprocessing.Queue()
-	engine = cengine(signal_queue)
+	engine_eventstore = eventstore.engine()
+	engine_perfstore = perfstore.engine(next_amqp_queue=engine_eventstore.amqp_queue)
+	
+	# Set Next queue
+	next_queue.append(engine_perfstore.amqp_queue)
+	
+	### perfstore -> eventstore
 	
 	# Init AMQP
 	amqp = camqp()
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)	
 	
 	# Start Engines
-	engine.start()
+	engine_perfstore.start()
+	engine_eventstore.start()
 	
 	# Start AMQP
 	amqp.start()
@@ -71,15 +114,16 @@ def main():
 	handler.wait()
 	
 	# Stop Engines
-	signal_queue.put("STOP")
-	engine.join()
+	engine_perfstore.signal_queue.put("STOP")
+	engine_eventstore.signal_queue.put("STOP")
+	
+	engine_perfstore.join()
+	engine_eventstore.join()
 	
 	# Stop AMQP
 	amqp.stop()
 	amqp.join()
-	
-	signal_queue.empty()
-	del signal_queue
+
 	logger.info("Process finished")
 	
 if __name__ == "__main__":
