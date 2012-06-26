@@ -122,6 +122,12 @@ Ext.define('widgets.stream.event' , {
 
 		if (! raw['author'])
 			raw['author'] = undefined;
+			
+		if (! raw['output'])
+			raw['output'] = '';
+			
+		if (! raw['long_output'])
+			raw['long_output'] = '';
 
 		raw['event_date'] = this.time();
 		raw['event_Component_id'] = this.id;
