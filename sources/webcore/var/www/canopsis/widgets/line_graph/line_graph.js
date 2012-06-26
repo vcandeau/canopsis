@@ -103,6 +103,11 @@ Ext.define('widgets.line_graph.line_graph' , {
 		//Store nodes in object
 		for(var i in this.nodes){
 			var node = this.nodes[i]
+			
+			//hack for retro compatibility
+			if(!node.dn)
+				node.dn = [node.component,node.resource]
+			
 			if (this.nodesByID[node.id]){
 				this.nodesByID[node.id].metrics.push(node.metrics[0])
 			}else{
