@@ -59,8 +59,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			extend: 'Ext.panel.Panel',
 			alias: 'widget.cfilter',
 			border: false,
+			
 			operator_store : undefined,
 			sub_operator_store : undefined,
+			
+			contain_other_cfile : false,
 			
 			margin : 5,
 		
@@ -151,11 +154,13 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					var operator_record = this.operator_store.getAt(index_search)
 					switch(operator_record.get('type')){
 						case 'object':
+							this.contain_other_cfile = true
 							this.string_value.hide()
 							this.add_button.show()
 							this.sub_operator_combo.hide()
 							break;
 						case 'value':
+							this.contain_other_cfile = false
 							this.string_value.show()
 							this.sub_operator_combo.show()
 							this.add_button.hide()
@@ -187,14 +192,22 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			getValue : function(){
 				var items = this.bottomPanel.items.items
 				var field = this.operator_combo.getValue()
+				
+				var value = this.string_value.getValue()
 				var output = {}
-				var values = []
-				for(var i in items){
-					var cfilter = items[i]
-					values.push(cfilter.getValue())
+				
+				if(this.contain_other_cfile){
+					//get into cfiles
+					var values = []
+					for(var i in items){
+						var cfilter = items[i]
+						values.push(cfilter.getValue())
+					}
+				}else{
+					//just simple value (no inner cfile)
+					values = this.string_value.getValue()
 				}
 				output[field] = values
-				log.dump(Ext.encode(output))
 				return output
 			},
 			
