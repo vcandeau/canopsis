@@ -115,15 +115,24 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
+		
 		for (i in textfields) {
 				var textfield = textfields[i];
+				
 				//HACK : because sometimes this field is really long to render
-				textfield.on('afterrender',function(){
-					new Ext.util.KeyNav(textfield.el, {
-						scope: this,
-						enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
-					});
-				},this)
+				if(!textfield.el){
+					textfield.on('afterrender',function(){
+						new Ext.util.KeyNav(textfield.id, {
+							scope: this,
+							enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
+						});
+					},this)
+				}else{
+					new Ext.util.KeyNav(textfield.id, {
+							scope: this,
+							enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
+						});
+				}
 		}
 
 		if (grid.opt_keynav_del) {
