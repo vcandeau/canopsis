@@ -38,8 +38,7 @@ Ext.define('widgets.stream.stream' , {
 	burst_interval: 500, //ms
 	burst_threshold: 2, //nb events
 
-	autoScroll: true,
-
+	wcontainer_autoScroll: true,
 	wcontainer_layout: 'anchor',
 
 	showToolbar: true,
