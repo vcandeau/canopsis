@@ -21,8 +21,9 @@
 import os, sys, json, logging
 
 class storage(object):
-	def __init__(self):
+	def __init__(self, logging_level=logging.INFO):
 		self.logger = logging.getLogger('storage')
+		self.logger.setLevel(logging_level)
 
 	def encode(self, value):
 		try:
