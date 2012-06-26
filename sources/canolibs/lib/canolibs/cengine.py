@@ -55,13 +55,13 @@ class cengine(multiprocessing.Process):
 		self.beat_interval = beat_interval
 		self.beat_last = time.time()
 				
-		self.logger.info("Engine initialised with pid %s" % (os.getpid()))
+		self.logger.info("Engine initialised")
 		
 	def create_amqp_queue(self):
 		self.amqp.add_queue(self.amqp_queue, None, self._work, "amq.direct", auto_delete=True)
 		
 	def run(self):
-		self.logger.info("Start Engine")
+		self.logger.info("Start Engine with pid %s" % (os.getpid()))
 			
 		self.amqp.start()
 		
