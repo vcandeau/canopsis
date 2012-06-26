@@ -36,19 +36,23 @@ class cinit(object):
 					break
 			self.stop()
 
-	def getLogger(self, name, level="INFO"):
-		if level == "INFO":
-			self.level = logging.INFO
-		elif level == "WARNING":
-			self.level = logging.WARNING
-		elif level == "ERROR":
-			self.level = logging.ERROR
-		elif level == "CRITICAL":
-			self.level = logging.CRITICAL
-		elif level == "EXCEPTION":
-			self.level = logging.EXCEPTION
-		elif level == "DEBUG":
-			self.level = logging.DEBUG
+	def getLogger(self, name, level="INFO", logging_level=None):
+		if not logging_level:
+			if level == "INFO":
+				self.level = logging.INFO
+			elif level == "WARNING":
+				self.level = logging.WARNING
+			elif level == "ERROR":
+				self.level = logging.ERROR
+			elif level == "CRITICAL":
+				self.level = logging.CRITICAL
+			elif level == "EXCEPTION":
+				self.level = logging.EXCEPTION
+			elif level == "DEBUG":
+				self.level = logging.DEBUG
+		else:
+			self.level = logging_level
+			
 		logging.basicConfig(level=self.level,
    			                format='%(asctime)s %(name)s %(levelname)s %(message)s',
  	 	 		            )

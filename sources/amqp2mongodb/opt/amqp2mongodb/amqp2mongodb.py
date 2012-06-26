@@ -28,7 +28,6 @@ import logging
 
 from carchiver import carchiver
 
-from ctools import parse_perfdata
 from pyperfstore import node
 from pyperfstore import mongostore
 
