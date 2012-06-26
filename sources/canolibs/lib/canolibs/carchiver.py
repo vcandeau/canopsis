@@ -97,22 +97,28 @@ class carchiver(object):
 		return mid
 		
 	def merge_perf_data(self, old_event, new_event):
-				
-		perf_data_array = old_event['perf_data_array']
+		if not old_event['perf_data_array']:
+			old_event['perf_data_array'] = []
+			
+		if new_event['perf_data_array']:
+			perf_data_array = old_event['perf_data_array']
+			
+			new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
+			old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
+			
+			if new_metrics == old_metrics:
+				return new_event
+			
+			for new_metric in new_metrics:
+				if new_metric in old_metrics:
+					perf_data_array[old_metrics.index(new_metric)] = new_event['perf_data_array'][new_metrics.index(new_metric)]
+				else:
+					perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
+						
+			new_event['perf_data_array'] = perf_data_array
+		else:
+			self.logger.warning("merge_perf_data: No 'perf_data_array' field in event, check perfstore engine.")
 		
-		new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
-		old_metrics = [ perf['metric'] for perf in old_event['perf_data_array'] ]
-		
-		if new_metrics == old_metrics:
-			return new_event
-		
-		for new_metric in new_metrics:
-			if new_metric in old_metrics:
-				perf_data_array[old_metrics.index(new_metric)] = new_event['perf_data_array'][new_metrics.index(new_metric)]
-			else:
-				perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
-					
-		new_event['perf_data_array'] = perf_data_array
 		return new_event
 
 	def store_event(self, _id, event):
