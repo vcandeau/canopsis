@@ -295,14 +295,14 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				flex: 2.3
 			},{
 				iconCls: 'icon-user',
-				flex: 0.2,
+				flex: 0.25,
 				menu: {
 					items: menu_preferences
 				}
 
 			},'-', {
 				iconCls: 'icon-preferences',
-				flex: 0.2,
+				flex: 0.25,
 				menu: {
 					name: 'Preferences',
 					showSeparator: true,
