@@ -45,7 +45,7 @@ Ext.define('canopsis.store.Views', {
 	constructor: function(config) {
 		 this.callParent(arguments);
 		 //quiet the store, handle by the controller
-		 this.removeListener('write', this.listeners.write, this);
+		 //this.removeListener('write', this.listeners.write, this);
 	}
 
 	/*load: function (){

@@ -117,7 +117,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
 		for (i in textfields) {
 				var textfield = textfields[i];
-				Ext.create('Ext.util.KeyNav', textfield.id, {
+				log.dump(textfield.id)
+				Ext.create('Ext.util.KeyNav', textfield, {
 					scope: this,
 					enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
 				});
