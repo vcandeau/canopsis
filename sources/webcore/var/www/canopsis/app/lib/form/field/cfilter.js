@@ -85,6 +85,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 								'queryMode': 'local',
 								'displayField': 'text',
 								'valueField': 'operator',
+								'editable':false,
 								'margin' : '0 0 0 5',
 								'store': this.sub_operator_store
 								})
@@ -197,16 +198,23 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				var output = {}
 				
 				if(this.contain_other_cfile){
-					//get into cfiles
+					//get into cfilter
 					var values = []
 					for(var i in items){
 						var cfilter = items[i]
 						values.push(cfilter.getValue())
 					}
 				}else{
-					//just simple value (no inner cfile)
-					values = this.string_value.getValue()
+					//just simple value (no inner cfilter)
+					var values = {}
+					var sub_operator = this.sub_operator_combo.getValue()
+					
+					if(sub_operator != '' && sub_operator != undefined)
+						values[sub_operator] = this.string_value.getValue()
+					else
+						var values = this.string_value.getValue()
 				}
+				
 				output[field] = values
 				return output
 			},
