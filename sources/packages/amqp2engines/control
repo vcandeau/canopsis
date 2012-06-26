@@ -18,9 +18,16 @@ function pre_install(){
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	if [ -e $PREFIX/opt/amqp2mongodb ]; then
+		echo " + Disable amqp2mongodb"
 		rm -f $PREFIX/etc/init.d/amqp2mongodb
 		sed -i "s#service amqp2mongodb#service amqp2engines#g" $PREFIX/bin/hypcontrol	
 	fi
+	if [ -e $PREFIX/opt/collectd2event ]; then
+		echo " + Disable collectd2event"
+		rm -f $PREFIX/etc/init.d/collectd2event
+		sed -i "s#service collectd2event .*##g" $PREFIX/bin/hypcontrol
+	fi
+
 	check_code $? 
 }
 
