@@ -128,7 +128,7 @@ def tree_delete(name=None):
 	
 	
 	
-@put('/ui/view/:name',apply=[check_auth])
+@post('/ui/view/:name',apply=[check_auth])
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
