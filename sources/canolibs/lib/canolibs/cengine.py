@@ -23,12 +23,13 @@ import multiprocessing
 import time
 import Queue
 import logging
-import os
+import os, sys
 from cinit import cinit
 
 class cengine(multiprocessing.Process):
 
 	def __init__(self, next_amqp_queue=None, name="worker1", beat_interval=60, logging_level=logging.INFO):
+		
 		multiprocessing.Process.__init__(self)
 		
 		self.logging_level = logging_level
@@ -45,7 +46,7 @@ class cengine(multiprocessing.Process):
 		self.logger = init.getLogger(name, logging_level=self.logging_level)
 		
 		self.amqp = camqp(logging_level=logging.INFO)
-		self.amqp.add_queue(self.amqp_queue, None, self._work, "amq.direct", auto_delete=True)
+		self.create_amqp_queue()
 		
 		self.counter_error = 0
 		self.counter_event = 0
@@ -55,7 +56,10 @@ class cengine(multiprocessing.Process):
 		self.beat_last = time.time()
 				
 		self.logger.info("Engine initialised with pid %s" % (os.getpid()))
-
+		
+	def create_amqp_queue(self):
+		self.amqp.add_queue(self.amqp_queue, None, self._work, "amq.direct", auto_delete=True)
+		
 	def run(self):
 		self.logger.info("Start Engine")
 			

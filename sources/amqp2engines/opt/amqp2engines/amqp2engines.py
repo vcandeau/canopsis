@@ -33,6 +33,7 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
 import perfstore
 import eventstore
+import collectdgw
 
 ## Configurations
 
@@ -91,14 +92,18 @@ def main():
 	handler.run()
 	
 	# Init Engines
-	engine_eventstore = eventstore.engine()
-	engine_perfstore = perfstore.engine(next_amqp_queue=engine_eventstore.amqp_queue)
+	### Route:
+	### Nagios/Icinga/Shinken... ----------------------------> canopsis.exchange -> perfstore -> eventstore
+	### collectd ------------------> amq.topic -> collectdgw |
+	
+	engine_eventstore	= eventstore.engine()
+	engine_perfstore	= perfstore.engine(next_amqp_queue=engine_eventstore.amqp_queue)
+	engine_collectdgw	= collectdgw.engine(next_amqp_queue=engine_perfstore.amqp_queue)
 	
 	# Set Next queue
 	next_queue.append(engine_perfstore.amqp_queue)
 	
-	### perfstore -> eventstore
-	
+
 	# Init AMQP
 	amqp = camqp()
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)	
@@ -106,6 +111,7 @@ def main():
 	# Start Engines
 	engine_perfstore.start()
 	engine_eventstore.start()
+	engine_collectdgw.start()
 	
 	# Start AMQP
 	amqp.start()
@@ -114,9 +120,11 @@ def main():
 	handler.wait()
 	
 	# Stop Engines
+	engine_collectdgw.signal_queue.put("STOP")
 	engine_perfstore.signal_queue.put("STOP")
 	engine_eventstore.signal_queue.put("STOP")
 	
+	engine_collectdgw.join()
 	engine_perfstore.join()
 	engine_eventstore.join()
 	
