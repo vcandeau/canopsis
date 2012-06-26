@@ -66,16 +66,6 @@ Ext.define('canopsis.controller.View', {
 		this.tree.on('exportPdf', function(view) {
 				this.getController('Reporting').launchReport(view);
 			},this);
-
-		//reload treeStore if view store is update (means that someone have save a
-		//view, you need to sync those two stores
-		var viewStore = Ext.data.StoreManager.lookup('Views');
-		viewStore.on('write', function() {
-			if (!this.treeStore.isLoading()) {
-				this.treeStore.load();
-			}
-
-		},this);
 	},
 
 	check_right_on_drop: function(node,data,overModel) {
@@ -217,10 +207,6 @@ Ext.define('canopsis.controller.View', {
 			rootNode.dirty = false;
 
 			this.treeStore.sync();
-
-			if (!this.treeStore.isLoading()) {
-				this.treeStore.load();
-			}
 
 			//open view for edition
 			if (open_after_put == true) {
