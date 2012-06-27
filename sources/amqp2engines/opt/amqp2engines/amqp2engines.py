@@ -21,8 +21,6 @@
 
 import unittest
 import time, json, logging
-import multiprocessing
-from multiprocessing import Process
 
 from camqp import camqp
 from cinit import cinit
@@ -97,11 +95,11 @@ def main():
 	### Nagios/Icinga/Shinken... ----------------------------> canopsis.exchange -> tag -> perfstore -> eventstore
 	### collectd ------------------> amq.topic -> collectdgw |
 	
-	engine_collectdgw	= collectdgw.engine(logging_level=logging.DEBUG)
+	engine_collectdgw	= collectdgw.engine()
 	
-	engine_eventstore	= eventstore.engine()
-	engine_perfstore	= perfstore.engine(next_amqp_queue=engine_eventstore.amqp_queue)
-	engine_tag			= tag.engine(next_amqp_queue=engine_perfstore.amqp_queue)
+	engine_eventstore	= eventstore.engine(logging_level=logging.DEBUG)
+	engine_perfstore	= perfstore.engine(	next_amqp_queue=engine_eventstore.amqp_queue)
+	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	
 	# Set Next queue
 	next_queue.append(engine_tag.amqp_queue)
@@ -118,7 +116,7 @@ def main():
 	engine_collectdgw.start()
 	
 	# Safety wait
-	time.sleep(3)
+	time.sleep(5)
 	
 	# Start AMQP
 	amqp.start()
