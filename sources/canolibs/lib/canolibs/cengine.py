@@ -18,7 +18,6 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-from camqp import camqp
 import multiprocessing
 import time
 import Queue
@@ -45,9 +44,6 @@ class cengine(multiprocessing.Process):
 		init 	= cinit()
 		self.logger = init.getLogger(name, logging_level=self.logging_level)
 		
-		self.amqp = camqp(logging_level=logging.INFO)
-		self.create_amqp_queue()
-		
 		self.counter_error = 0
 		self.counter_event = 0
 		self.counter_worktime = 0
@@ -62,7 +58,12 @@ class cengine(multiprocessing.Process):
 		
 	def run(self):
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
-			
+		
+		from camqp import camqp
+		
+		self.amqp = camqp(logging_level=logging.DEBUG, logging_name="%s-amqp" % self.name)
+		self.create_amqp_queue()
+		
 		self.amqp.start()
 		
 		while self.RUN:
