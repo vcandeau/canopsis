@@ -171,7 +171,7 @@ class camqp(threading.Thread):
 					if qsettings['routing_keys']:
 						routing_key = qsettings['routing_keys'][0]
 					
-					self.logger.debug("   + exchange: '%s', routing_key:' %s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
+					self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
 					qsettings['queue'] = Queue(queue_name,
 											exchange = self.get_exchange(qsettings['exchange_name']),
 											routing_key = routing_key,
