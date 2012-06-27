@@ -61,7 +61,7 @@ class cengine(multiprocessing.Process):
 		
 		from camqp import camqp
 		
-		self.amqp = camqp(logging_level=logging.INFO)
+		self.amqp = camqp(logging_level=logging.DEBUG)
 		self.create_amqp_queue()
 		
 		self.amqp.start()
