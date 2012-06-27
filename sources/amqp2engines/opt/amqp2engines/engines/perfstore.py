@@ -102,6 +102,21 @@ class engine(cengine):
 			raise Exception("Imposible to parse: %s (is not a list)" % perf_data)
 		 
 	def work(self, event, msg):
+		try:
+			event['perf_data']
+		except:
+			event['perf_data'] = None
+		
+		try:
+			event['perf_data_array']
+		except:
+			event['perf_data_array'] = []
+		
+		
+		### Bypass if no perfdata
+		if not event['perf_data'] and not event['perf_data_array']:
+			return event
+		
 		## Metrology
 		timestamp = int(event['timestamp'])
 		perf_data_array = []
