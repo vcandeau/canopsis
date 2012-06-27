@@ -113,6 +113,9 @@ def main():
 	engine_eventstore.start()
 	engine_collectdgw.start()
 	
+	# Safety wait
+	time.sleep(3)
+	
 	# Start AMQP
 	amqp.start()
 	
