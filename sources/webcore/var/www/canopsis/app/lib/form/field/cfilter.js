@@ -26,7 +26,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	height : 600,
 	
-	filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
+	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
+	filter : undefined,
 	
 	layout: {
         type: 'vbox',
@@ -56,11 +57,65 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 
 	define_object : function(){
+		
+		//for array input
+		Ext.define('cfilter.array_field',{
+			extend: 'Ext.panel.Panel',
+			
+			border:false,
+			value: undefined,
+			width:200,
+
+			margin: '0 0 0 5',
+			layout: 'hbox',
+			
+			initComponent: function() {
+				this.textfield_panel = Ext.widget('panel',{border: false})
+				
+				if(!this.value)
+					this.textfield_panel.add(Ext.widget('textfield'))
+				
+				//--------buttons--------
+				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',})
+				
+				//--------build object----
+				this.items = [this.textfield_panel,this.add_button]
+				this.callParent(arguments);
+				
+				//--------bindings-------
+				this.add_button.on('click',function(){this.add_textfield()},this)
+			},
+			
+			add_textfield : function(value){
+				var config = {}
+				if(value)
+					config.value = value
+				this.textfield_panel.add(Ext.widget('textfield',config))
+			},
+			
+			getValue: function(){
+				var output = []
+				for(var i in this.textfield_panel.items.items){
+					var textfield = this.textfield_panel.items.items[i]
+					log.dump(textfield.getValue())
+					output.push(textfield.getValue())
+				}
+				return output
+			},
+			
+			setValue:function(array){
+				for(var i in array){
+					this.add_textfield(array[i])
+				}
+			}
+		})
+		
+		
 		//this object is made of two component, upper panel with combobox 
 		//and the bottom panel with object (itself) and add button
 		Ext.define('cfilter.object' ,{
 			extend: 'Ext.panel.Panel',
-			alias: 'widget.cfilter',
+			//alias: 'widget.cfilter',
 			border: false,
 			
 			operator_store : undefined,
@@ -98,38 +153,24 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 								})
 				
 				//--------------------panel-------------------------
-				//add button
-				var config = {
-					text:'add',
-					margin: '0 0 0 5',
-					hidden:true
-				}
-				this.add_button = Ext.widget('button',config)
-				
-				if(this.opt_remove_button){
-					//remove button
-					var config = {
-						text:'remove',
-						margin: '0 0 0 5',
-					}
-					this.remove_button = Ext.widget('button',config)
-				}
-				
-				//string value
-				var config = {
-					label: _('value'),
-					margin : '0 0 0 5'
-				}
-				this.string_value = Ext.widget('field',config)
+				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',hidden:true})
+				if(this.opt_remove_button)
+					this.remove_button = Ext.widget('button',{text:'remove',margin: '0 5 0 0'})
+				this.string_value = Ext.widget('textfield',{margin : '0 0 0 5'})
+				this.array_field = Ext.create('cfilter.array_field',{hidden:true})
+			
+				var items_array = []
+				if(this.opt_remove_button)
+					items_array.push(this.remove_button)
+				items_array.push(this.operator_combo,this.sub_operator_combo,this.string_value,this.array_field,this.add_button)
 				
 				//upper panel
 				var config = {
-					items:[this.operator_combo,this.sub_operator_combo,this.add_button,this.string_value],
+					items:items_array,
 					layout:'hbox',
 					border:false
 				}
-				if(this.opt_remove_button)
-					config.items.push(this.remove_button)
+			
 				this.upperPanel = Ext.widget('panel',config)
 				
 				//bottom panel
@@ -144,6 +185,12 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				this.operator_combo.on('change',function(combo,value,oldvalue){
 					this.operator_combo_change(combo,value,oldvalue)
 				},this)
+				
+				this.sub_operator_combo.on('change',function(combo,value,oldvalue){
+					this.sub_operator_combo_change(combo,value,oldvalue)
+				},this)
+				
+				//button binding
 				this.add_button.on('click',function(){this.add_cfilter()},this)
 				
 				if(this.opt_remove_button)
@@ -160,55 +207,69 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 
 			//launched when value selected in combobox
 			operator_combo_change : function(combo,value,oldvalue){
-				log.debug(' + Catch changes on combobox', this.logAuthor)
-
-				//check if operator is known
-				var index_search = this.operator_store.find('operator',value)
-				
-				if(index_search != -1){
+				log.debug(' + Catch changes on operator combobox', this.logAuthor)
+				var operator_type = this.get_type_from_operator(value,this.operator_store)
+					
+				if(operator_type == 'object'){
 					log.debug(' + Field is a known operator',this.logAuthor)
-					var operator_record = this.operator_store.getAt(index_search)
-					switch(operator_record.get('type')){
-						case 'object':
-							this.contain_other_cfile = true
-							this.string_value.hide()
-							this.add_button.show()
-							this.sub_operator_combo.hide()
-							break;
-						case 'value':
-							this.contain_other_cfile = false
-							this.string_value.show()
-							this.sub_operator_combo.show()
-							this.add_button.hide()
-							break;
-						case 'array':
-							break;
-						default:
-							log.debug(' + Unrecognized field type',this.logAuthor)
-							break;
-					}
+					this.contain_other_cfile = true
+					this.add_button.show()
+					this.string_value.hide()
+					this.array_field.hide()
+					this.sub_operator_combo.hide()
 				} else {
-					//log.debug(' + Unknown operator, showing two options',this.logAuthor)
+					log.debug(' + Unknown operator',this.logAuthor)
+					this.contain_other_cfile = false
 					this.add_button.hide()
-					this.string_value.show()
 					this.sub_operator_combo.show()
+					//check sub_operator value
+					this.sub_operator_combo_change()
+				}
+			},
+			
+			sub_operator_combo_change : function(combo,value,oldvalue){
+				log.debug(' + Catch changes on sub operator combobox', this.logAuthor)
+				if(!value)
+					var value = this.sub_operator_combo.getValue()
+				
+				switch(this.get_type_from_operator(value,this.sub_operator_store)){
+					case 'value':
+						this.string_value.show()
+						this.array_field.hide()
+						break;
+					case 'array':
+						this.string_value.hide()
+						this.array_field.show()
+						break;
+					default:
+						log.debug(' + Unrecognized field type',this.logAuthor)
+						break;
 				}
 			},
 			
 			add_cfilter : function(filter){
-				var panel = this.bottomPanel.add(this.build_field_panel(filter))
-				this.string_value.hide()
-				return panel
+				return this.bottomPanel.add(this.build_field_panel(filter))
+			},
+			
+			//give operator and store, return associated type
+			get_type_from_operator : function(operator,store){
+				var index_search = store.find('operator',operator)
+				if(index_search != -1){
+					var operator_record = store.getAt(index_search)
+					var operator_type = operator_record.get('type')
+					return operator_type
+				}else{
+					return null
+				}
 			},
 
 			//return an ready to add cfilter
 			build_field_panel : function(filter){
-				var config = {	
-					operator_store: this.operator_store,
-					sub_operator_store:this.sub_operator_store,
-					filter:filter
-					}
-				return Ext.create('cfilter.object',config)
+				return Ext.create('cfilter.object',{	
+							operator_store: this.operator_store,
+							sub_operator_store:this.sub_operator_store,
+							filter:filter
+						})
 			},
 			
 			remove_button_func: function(){
@@ -235,11 +296,17 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					//just simple value (no inner cfilter)
 					var values = {}
 					var sub_operator = this.sub_operator_combo.getValue()
+					var sub_operator_type = this.get_type_from_operator(sub_operator,this.sub_operator_store)
 					
-					if(sub_operator != '' && sub_operator != '$eq')
-						values[sub_operator] = this.string_value.getValue()
-					else
-						var values = this.string_value.getValue()
+					//choose between array or value
+					if(sub_operator_type == 'value'){
+						if(sub_operator != '$eq')
+							values[sub_operator] = this.string_value.getValue()
+						else
+							var values = this.string_value.getValue()
+					}else if(sub_operator_type == 'array'){
+						values[sub_operator] = this.array_field.getValue()
+					}
 				}
 				
 				output[field] = values
@@ -303,7 +370,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				{'operator': '$exists','text': _('Exists'), 'type':'value' },
 				{'operator': '$ne','text':_('Not equal'), 'type':'value' },
 				{'operator': '$in','text': _('In'), 'type': 'array'},
-				{'operator': '$nin','text': _('Not in'), 'type': 'array'}
+				{'operator': '$nin','text': _('Not in'), 'type': 'array'},
+				{'operator': '$regex','text': _('Regex'), 'type': 'value'},
 			]
 		})
 		
