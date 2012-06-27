@@ -46,7 +46,8 @@ def forger(		connector,
 			perf_data_array=None,
 			address=None,
 			domain=None,
-			reverse_lookup=True
+			reverse_lookup=True,
+			tags=[]
 		):
 
 	if not timestamp:
@@ -117,7 +118,8 @@ def forger(		connector,
 		'perf_data':		perf_data,
 		'perf_data_array':	perf_data_array,
 		'address':			address,
-		'domain':			domain
+		'domain':			domain,
+		'tags':				tags
 	}
 
 	return dump
