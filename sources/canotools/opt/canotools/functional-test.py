@@ -38,7 +38,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
-event = cevent.forger(connector='canopsis', connector_name='unittest', event_type='check', source_type = "component", component="test1", state=0, output="Output_1", perf_data="mymetric=1s;10;20;0;30")
+event = cevent.forger(connector='canopsis', connector_name='unittest', event_type='check', source_type = "component", component="test1", state=0, output="Output_1", perf_data="mymetric=1s;10;20;0;30", tags = ['check', 'component', 'test1'])
 rk = cevent.get_routingkey(event)
 
 myamqp = None
@@ -55,9 +55,9 @@ def on_alert(body, message):
 	
 def clean():
 		storage.remove(rk)
-		records = storage.find({'event_id': rk}, namespace='events_log')
+		records = storage.find({'rk': rk}, namespace='events_log')
 		storage.remove(records, namespace='events_log')
-		node(rk, storage=perfstore).remove()	
+		node(rk, storage=perfstore).remove()
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):

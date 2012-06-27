@@ -144,6 +144,7 @@ class engine(cengine):
 					
 					## send event on amqp
 					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+					return None
 					
 			else:
 				self.logger.error("Invalid collectd Action (%s)" % body)

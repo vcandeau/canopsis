@@ -27,10 +27,10 @@ import time, logging, threading, os
 
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.INFO, read_config_file=True, auto_connect=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True):
 		threading.Thread.__init__(self)
 		
-		self.logger = logging.getLogger("camqp")
+		self.logger = logging.getLogger(logging_name)
 		
 		
 		self.host=host
@@ -91,6 +91,7 @@ class camqp(threading.Thread):
 			if self.connected:
 				self.init_queue(reconnect=reconnect)
 				
+				self.logger.debug("Drain events ...")
 				while self.RUN:
 					try:
 						self.conn.drain_events(timeout=0.5)
@@ -169,7 +170,8 @@ class camqp(threading.Thread):
 					routing_key = None
 					if qsettings['routing_keys']:
 						routing_key = qsettings['routing_keys'][0]
-						
+					
+					self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
 					qsettings['queue'] = Queue(queue_name,
 											exchange = self.get_exchange(qsettings['exchange_name']),
 											routing_key = routing_key,

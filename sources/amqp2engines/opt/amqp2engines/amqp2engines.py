@@ -21,8 +21,6 @@
 
 import unittest
 import time, json, logging
-import multiprocessing
-from multiprocessing import Process
 
 from camqp import camqp
 from cinit import cinit
@@ -34,6 +32,7 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 import perfstore
 import eventstore
 import collectdgw
+import tag
 
 ## Configurations
 
@@ -93,15 +92,17 @@ def main():
 	
 	# Init Engines
 	### Route:
-	### Nagios/Icinga/Shinken... ----------------------------> canopsis.exchange -> perfstore -> eventstore
+	### Nagios/Icinga/Shinken... ----------------------------> canopsis.exchange -> tag -> perfstore -> eventstore
 	### collectd ------------------> amq.topic -> collectdgw |
 	
-	engine_eventstore	= eventstore.engine()
-	engine_perfstore	= perfstore.engine(next_amqp_queue=engine_eventstore.amqp_queue)
-	engine_collectdgw	= collectdgw.engine(next_amqp_queue=engine_perfstore.amqp_queue)
+	engine_collectdgw	= collectdgw.engine()
+	
+	engine_eventstore	= eventstore.engine(logging_level=logging.DEBUG)
+	engine_perfstore	= perfstore.engine(	next_amqp_queue=engine_eventstore.amqp_queue)
+	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	
 	# Set Next queue
-	next_queue.append(engine_perfstore.amqp_queue)
+	next_queue.append(engine_tag.amqp_queue)
 	
 
 	# Init AMQP
@@ -109,9 +110,13 @@ def main():
 	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)	
 	
 	# Start Engines
+	engine_tag.start()
 	engine_perfstore.start()
 	engine_eventstore.start()
 	engine_collectdgw.start()
+	
+	# Safety wait
+	time.sleep(5)
 	
 	# Start AMQP
 	amqp.start()
@@ -119,18 +124,20 @@ def main():
 	logger.info("Wait")
 	handler.wait()
 	
+	# Stop AMQP
+	amqp.stop()
+	amqp.join()
+	
 	# Stop Engines
 	engine_collectdgw.signal_queue.put("STOP")
+	engine_tag.signal_queue.put("STOP")
 	engine_perfstore.signal_queue.put("STOP")
 	engine_eventstore.signal_queue.put("STOP")
 	
 	engine_collectdgw.join()
+	engine_tag.join()
 	engine_perfstore.join()
 	engine_eventstore.join()
-	
-	# Stop AMQP
-	amqp.stop()
-	amqp.join()
 
 	logger.info("Process finished")
 	
