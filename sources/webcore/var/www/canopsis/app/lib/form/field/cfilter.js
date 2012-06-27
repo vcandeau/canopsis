@@ -27,7 +27,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	height : 600,
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
-	filter : undefined,
+	filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
+	//filter : undefined,
 	
 	layout: {
         type: 'vbox',
@@ -70,18 +71,16 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			layout: 'hbox',
 			
 			initComponent: function() {
-				this.textfield_panel = Ext.widget('panel',{border: false})
-				
-				if(!this.value)
-					this.textfield_panel.add(Ext.widget('textfield'))
-				
+				this.textfield_panel = Ext.widget('panel',{
+					border: false,
+					items:[Ext.widget('textfield')]
+				})
+
 				//--------buttons--------
 				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',})
-				
 				//--------build object----
 				this.items = [this.textfield_panel,this.add_button]
 				this.callParent(arguments);
-				
 				//--------bindings-------
 				this.add_button.on('click',function(){this.add_textfield()},this)
 			},
@@ -104,6 +103,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			},
 			
 			setValue:function(array){
+				this.textfield_panel.removeAll()
 				for(var i in array){
 					this.add_textfield(array[i])
 				}
@@ -330,7 +330,13 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						var object_key = Ext.Object.getKeys(value)[0]
 						var object_value = value[object_key]
 						this.sub_operator_combo.setValue(object_key)
-						this.string_value.setValue(object_value)
+						
+						//check sub operator type
+						var sub_operator_type = this.get_type_from_operator(object_key,this.sub_operator_store)
+						if(sub_operator_type == 'array')
+							this.array_field.setValue(object_value)
+						else
+							this.string_value.setValue(object_value)
 					}else{
 						this.string_value.setValue(value)
 					}
