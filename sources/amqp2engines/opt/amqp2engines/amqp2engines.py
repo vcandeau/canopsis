@@ -98,7 +98,7 @@ def main():
 	
 	engine_eventstore	= eventstore.engine()
 	engine_perfstore	= perfstore.engine(next_amqp_queue=engine_eventstore.amqp_queue)
-	engine_collectdgw	= collectdgw.engine(next_amqp_queue=engine_perfstore.amqp_queue)
+	engine_collectdgw	= collectdgw.engine(next_amqp_queue=engine_perfstore.amqp_queue, logging_level=logging.DEBUG)
 	
 	# Set Next queue
 	next_queue.append(engine_perfstore.amqp_queue)
