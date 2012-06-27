@@ -55,9 +55,9 @@ def on_alert(body, message):
 	
 def clean():
 		storage.remove(rk)
-		records = storage.find({'event_id': rk}, namespace='events_log')
+		records = storage.find({'rk': rk}, namespace='events_log')
 		storage.remove(records, namespace='events_log')
-		node(rk, storage=perfstore).remove()	
+		node(rk, storage=perfstore).remove()
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
