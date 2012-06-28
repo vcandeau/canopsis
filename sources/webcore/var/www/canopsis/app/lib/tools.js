@@ -154,3 +154,6 @@ function check_color(color){
 		return color
 }
 
+function strip_blanks(val){
+	return val.replace(/\n/g, '').replace(/ /g,'')
+}
