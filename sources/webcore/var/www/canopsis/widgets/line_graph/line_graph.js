@@ -99,6 +99,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_borderColor 	= check_color(this.legend_borderColor)
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor)
 
+		this.aggregate_interval = this.refreshInterval
+
 		this.nodesByID = {}
 		//Store nodes in object
 		for(var i in this.nodes){
@@ -830,7 +832,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			};
 
 		if (this.chart_type == 'column')
-			this.post_params.interval = this.refreshInterval;
+			this.post_params.interval = this.aggregate_interval;
 
 		if (this.use_window_ts)
 			this.post_params.use_window_ts = this.use_window_ts;
