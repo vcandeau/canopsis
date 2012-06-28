@@ -25,10 +25,12 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	alias: 'widget.cfilter',
 	
 	height : 600,
+	namespace: 'event',
+	ctype: 'event',
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
-	filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
-	//filter : undefined,
+	//filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
+	filter : undefined,
 	
 	layout: {
         type: 'vbox',
@@ -41,6 +43,34 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		
 		this.define_object()
 		this.build_store()
+		
+		//-----------------preview windows----------------
+		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
+			proxy: {
+				 type: 'ajax',
+				 url: '/rest/' + this.namespace + '/' + this.ctype,
+				 reader: {
+					 type: 'json',
+					 root: 'data'
+				 }
+			 },
+			autoLoad:false,
+			model: 'event'
+		})
+		this.preview_grid = Ext.widget('grid',{
+			store: this.preview_store,
+			columns: [
+				{ header: 'Name',  dataIndex: 'crecord_name',flex:1 }
+			],
+		})
+		this.preview_window = Ext.widget('window',{
+			title:_('Filter preview'),
+			constrain: true,
+			height : 300,
+			width:300,
+			items:[this.preview_grid]
+		})
+		
 
 		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object',{
@@ -62,8 +92,9 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
 		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this,disabled:true})
 		this.edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
+		this.preview_button = Ext.widget('button',{handler:this.show_preview,text:'preview',scope:this})
 
-		this.tbar = [finish_button,this.wizard_button,this.edit_button]
+		this.tbar = [finish_button,this.wizard_button,this.edit_button,this.preview_button]
 		
 
 		this.items = [this.cfilter,this.edit_area]
@@ -102,6 +133,16 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		this.edit_area.show()
 		this.wizard_button.setDisabled(false)
 		this.edit_button.setDisabled(true)
+	},
+	
+	show_preview : function(){
+		var filter = this.getValue()
+		if(filter){
+			this.preview_store.clearFilter()
+			this.preview_store.setFilter(filter)
+			this.preview_store.load()
+			this.preview_window.show()
+		}
 	},
 
 	define_object : function(){
@@ -262,6 +303,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					this.string_value.hide()
 					this.array_field.hide()
 					this.sub_operator_combo.hide()
+					this.bottomPanel.show()
 				} else {
 					log.debug(' + Unknown operator',this.logAuthor)
 					this.contain_other_cfile = false
@@ -269,6 +311,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					this.sub_operator_combo.show()
 					//check sub_operator value
 					this.sub_operator_combo_change()
+					this.bottomPanel.hide()
 				}
 			},
 			
@@ -433,16 +476,24 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	getValue : function(){
-		if(!this.cfilter.isHidden())
+		var value = undefined
+		if(!this.cfilter.isHidden()){
 			var value = this.cfilter.getValue()
-		else
-			var value = strip_blanks(this.edit_area.getValue())
-			
-		if(typeof(value) == 'string')
-			value = Ext.decode(value)
+		}else{
+			if(this.edit_area.validate())
+				var value = strip_blanks(this.edit_area.getValue())
+		}
+		
+		if(value){
+			if(typeof(value) == 'string')
+				value = Ext.decode(value)
 
-		log.debug('The filter is : ' + Ext.encode(value),this.logAuthor)
-		return this.cfilter.getValue()
+			log.debug('The filter is : ' + Ext.encode(value),this.logAuthor)
+			return this.cfilter.getValue()
+		}else{
+			log.debug('Invalid JSON value',this.logAuthor)
+			return undefined
+		}
 	},
 	
 	setValue : function(value){
