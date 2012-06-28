@@ -141,12 +141,8 @@
 		},{
 			"title": "Filter",
 			"items": [{
-					"xtype": "textareafield",
-					"fieldLabel": "Filter",
-					"name": "filter",
-					"height": 100,
-					"width": 550,
-					"value": "{\"source_type\":\"component\"}"
+					"xtype": "cfilter",
+					"name": "filter"
 				}]
 		}]
 
