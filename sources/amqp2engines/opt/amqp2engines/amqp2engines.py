@@ -51,7 +51,6 @@ ready = False
 def on_message(body, msg):
 	
 	if not ready:
-		logger.info("Wait engines ...")
 		while ready:
 			time.sleep(0.5)
 	
@@ -89,39 +88,58 @@ def on_message(body, msg):
 	
 	for queue in next_queue:
 		amqp.publish(event, queue, "amq.direct")
-	
-def main():
-	global engine, amqp, ready
-		
-	logger.info("Initialyze process")
-	handler.run()
-	
-	# Init AMQP
-	amqp = camqp()
-	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)
-	
-	# Start AMQP
-	amqp.start()
-	
+
+
+def start_engines():
+	global engines
 	# Init Engines
 	### Route:
 	### Nagios/Icinga/Shinken... ----------------------------> canopsis.exchange -> tag -> perfstore -> eventstore
 	### collectd ------------------> amq.topic -> collectdgw |
 	
 	engine_collectdgw	= collectdgw.engine()
+	engines.append(engine_collectdgw)
 	
 	engine_eventstore	= eventstore.engine()
+	engines.append(engine_eventstore)
+	
 	engine_perfstore	= perfstore.engine(	next_amqp_queue=engine_eventstore.amqp_queue)
+	engines.append(engine_perfstore)
+	
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
+	engines.append(engine_tag)
 	
 	# Set Next queue
 	next_queue.append(engine_tag.amqp_queue)
 	
-	# Start Engines
-	engine_tag.start()
-	engine_perfstore.start()
-	engine_eventstore.start()
-	engine_collectdgw.start()
+	logger.info("Start engines")
+	for engine in engines:
+		engine.start()
+	
+def stop_engines():
+	logger.info("Stop engines")
+	for engine in engines:
+		engine.signal_queue.put("STOP")
+	
+	logger.info("Join engines")
+	for engine in engines:
+		engine.join()
+
+def amqp2engines_ready():
+	start_engines()
+
+def main():
+	global amqp, ready
+		
+	logger.info("Initialyze process")
+	handler.run()
+	
+	# Init AMQP
+	amqp = camqp(on_ready=amqp2engines_ready)
+	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)
+	
+	# Start AMQP
+	amqp.start()
 	
 	# Safety wait
 	time.sleep(3)
@@ -134,16 +152,7 @@ def main():
 	amqp.stop()
 	amqp.join()
 	
-	# Stop Engines
-	engine_collectdgw.signal_queue.put("STOP")
-	engine_tag.signal_queue.put("STOP")
-	engine_perfstore.signal_queue.put("STOP")
-	engine_eventstore.signal_queue.put("STOP")
-	
-	engine_collectdgw.join()
-	engine_tag.join()
-	engine_perfstore.join()
-	engine_eventstore.join()
+	stop_engines()
 
 	logger.info("Process finished")
 	

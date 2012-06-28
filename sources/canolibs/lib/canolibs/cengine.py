@@ -57,11 +57,14 @@ class cengine(multiprocessing.Process):
 		self.amqp.add_queue(self.amqp_queue, None, self._work, "amq.direct", auto_delete=True)
 		
 	def run(self):
+		def ready():
+			self.logger.info(" + Ready!")
+			
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
 		
 		from camqp import camqp
 		
-		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name)
+		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
 		self.create_amqp_queue()
 		
 		self.amqp.start()
@@ -96,11 +99,11 @@ class cengine(multiprocessing.Process):
 			wevent = self.work(event, *args, **kargs)
 			# Forward event to next queue
 			if self.next_amqp_queue:
-				self.logger.debug("Send event to next engine '%s'" % self.next_amqp_queue)
 				if wevent:
+					self.logger.debug("Forward event '%s' to next engine '%s'" % (wevent['rk'], self.next_amqp_queue))
 					self.amqp.publish(wevent, self.next_amqp_queue, "amq.direct")
 				else:
-					self.logger.warning("forward with original event")
+					self.logger.debug("Forward original event '%s' to next engine '%s'" % (event['rk'], self.next_amqp_queue))
 					self.amqp.publish(event, self.next_amqp_queue, "amq.direct")
 					
 		except Exception, err:

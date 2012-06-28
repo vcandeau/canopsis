@@ -27,7 +27,7 @@ import time, logging, threading, os
 
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True, on_ready=None):
 		threading.Thread.__init__(self)
 		
 		self.logger = logging.getLogger(logging_name)
@@ -54,6 +54,7 @@ class camqp(threading.Thread):
 		self.chan = None
 		self.conn = None
 		self.connected = False
+		self.on_ready = on_ready
 		
 		self.RUN = True
 	
@@ -185,6 +186,9 @@ class camqp(threading.Thread):
 				
 				self.logger.debug("   + Consume queue")
 				qsettings['consumer'].consume()
+			
+			if self.on_ready:
+				self.on_ready()
 
 	
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
