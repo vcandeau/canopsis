@@ -249,6 +249,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				this.operator_combo = Ext.widget('combobox',{
 								queryMode: 'local',
 								displayField: 'text',
+								triggerAction:'all',
+								disableKeyFilter:true,
 								valueField: 'operator',
 								emptyText: _('Type value or choose operator'),
 								store: this.operator_store
@@ -259,6 +261,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				this.sub_operator_combo = Ext.widget('combobox',{
 								queryMode: 'local',
 								displayField: 'text',
+								triggerAction:'all',
 								valueField: 'operator',
 								value:'$eq',
 								editable:false,
@@ -394,6 +397,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 
 			//return an ready to add cfilter
 			build_field_panel : function(filter){
+				//Hack: clean store filters (otherwise combo are empty)
+				this.operator_store.clearFilter()
 				return Ext.create('cfilter.object',{	
 							operator_store: this.operator_store,
 							sub_operator_store:this.sub_operator_store,
