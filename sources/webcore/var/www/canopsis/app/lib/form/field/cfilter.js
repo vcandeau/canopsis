@@ -155,7 +155,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			
 			border:false,
 			value: undefined,
-			width:400,
 
 			margin: '0 0 0 5',
 			layout: 'hbox',
@@ -168,7 +167,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					this.add_textfield()
 
 				//--------buttons--------
-				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',})
+				this.add_button = Ext.widget('button',{
+					text:'add',
+					margin: '0 0 0 5',
+					tooltip: _('Add new value to this list')
+				})
 				//--------build object----
 				this.items = [this.textfield_panel,this.add_button]
 				this.callParent(arguments);
@@ -177,17 +180,26 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			},
 			
 			add_textfield : function(value){
-				var config = {flex:3}
+				var config = {
+					//flex:4,
+					emptyText:_('Type value here')
+				}
+				
 				if(value)
 					config.value = value
 					
 				var textfield = Ext.widget('textfield',config)
-				var remove_button = Ext.widget('button',{text:'X',margin: '0 0 0 5',flex:1})
+				var remove_button = Ext.widget('button',{
+					iconCls: 'icon-cancel',
+					margin: '0 0 0 5',
+					width:24,
+					tooltip:_('Remove this from list of value')
+				})
 
 				var panel = Ext.widget('panel',{
 					border:false,
+					margin: '0 0 5 0',
 					layout: 'hbox',
-					width:205,
 					items:[textfield,remove_button]
 				})
 				remove_button.on('click',function(button){button.up().destroy()})
@@ -235,29 +247,44 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				log.debug('init sub object',this.logAuthor)
 				//------------------create operator combo----------------
 				this.operator_combo = Ext.widget('combobox',{
-								'queryMode': 'local',
-								'displayField': 'text',
-								'valueField': 'operator',
-								'store': this.operator_store
-								})
+								queryMode: 'local',
+								displayField: 'text',
+								valueField: 'operator',
+								emptyText: _('Type value or choose operator'),
+								store: this.operator_store
+							})
 				
 				
 				//-------------sub operator combo ($in etc...)-----
 				this.sub_operator_combo = Ext.widget('combobox',{
-								'queryMode': 'local',
-								'displayField': 'text',
-								'valueField': 'operator',
-								'value':'$eq',
-								'editable':false,
-								'margin' : '0 0 0 5',
-								'store': this.sub_operator_store
-								})
+								queryMode: 'local',
+								displayField: 'text',
+								valueField: 'operator',
+								value:'$eq',
+								editable:false,
+								margin : '0 0 0 5',
+								store: this.sub_operator_store
+							})
 				
 				//--------------------panel-------------------------
-				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',hidden:true})
+				this.add_button = Ext.widget('button',{
+					text:'add',
+					margin: '0 0 0 5',
+					hidden:true,
+					tooltip:_('Add new field/condition')
+				})
+				
 				if(this.opt_remove_button)
-					this.remove_button = Ext.widget('button',{iconCls: 'icon-cancel',margin: '0 5 0 0'})
-				this.string_value = Ext.widget('textfield',{margin : '0 0 0 5'})
+					this.remove_button = Ext.widget('button',{
+						iconCls: 'icon-cancel',
+						margin: '0 5 0 0',
+						tooltip: _('Remove this condition')
+					})
+					
+				this.string_value = Ext.widget('textfield',{
+					margin : '0 0 0 5',
+					emptyText: 'Type value here'
+					})
 				this.array_field = Ext.create('cfilter.array_field',{hidden:true})
 			
 				var items_array = []
