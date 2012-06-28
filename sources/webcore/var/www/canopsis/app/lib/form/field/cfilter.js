@@ -24,13 +24,14 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	alias: 'widget.cfilter',
 	
-	height : 600,
+	//height : 600,
 	namespace: 'event',
 	ctype: 'event',
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
 	//filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
-	//filter : undefined,
+	filter : undefined,
+	//filter : {"source":"fes"},
 	
 	layout: {
         type: 'vbox',
@@ -77,7 +78,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		this.cfilter = Ext.create('cfilter.object',{
 			operator_store: this.operator_store,
 			sub_operator_store:this.sub_operator_store,
-			filter:this.filter,
+			//filter:this.filter,
 			opt_remove_button : false
 		})
 		
@@ -90,12 +91,12 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		})
 
 		//---------------------TBAR--------------------------
-		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
+		//var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
 		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this,disabled:true})
 		this.edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
 		this.preview_button = Ext.widget('button',{handler:this.show_preview,text:'preview',scope:this})
 
-		this.tbar = [finish_button,this.wizard_button,this.edit_button,this.preview_button]
+		this.tbar = [this.wizard_button,this.edit_button,this.preview_button]
 		
 
 		this.items = [this.cfilter,this.edit_area]
@@ -234,16 +235,15 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				log.debug('init sub object',this.logAuthor)
 				//------------------create operator combo----------------
 				this.operator_combo = Ext.widget('combobox',{
-								'name': 'field',
 								'queryMode': 'local',
 								'displayField': 'text',
 								'valueField': 'operator',
 								'store': this.operator_store
 								})
 				
+				
 				//-------------sub operator combo ($in etc...)-----
 				this.sub_operator_combo = Ext.widget('combobox',{
-								'name': 'field',
 								'queryMode': 'local',
 								'displayField': 'text',
 								'valueField': 'operator',
@@ -308,11 +308,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 
 			//launched when value selected in combobox
 			operator_combo_change : function(combo,value,oldvalue){
-				log.debug(' + Catch changes on operator combobox', this.logAuthor)
+				log.debug(' + Catch changes on operator combobox, value : ' + value, this.logAuthor)
 				var operator_type = this.get_type_from_operator(value,this.operator_store)
-					
+				//log.debug(' + The type of the operator is: ' + operator_type,this.logAuthor)
 				if(operator_type == 'object'){
-					log.debug(' + Field is a known operator',this.logAuthor)
+					//log.debug('   + Field is a known operator',this.logAuthor)
 					this.contain_other_cfilter = true
 					this.add_button.show()
 					this.string_value.hide()
@@ -320,7 +320,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					this.sub_operator_combo.hide()
 					this.bottomPanel.show()
 				} else {
-					log.debug(' + Unknown operator',this.logAuthor)
+					//log.debug('   + Unknown operator',this.logAuthor)
 					this.contain_other_cfilter = false
 					this.add_button.hide()
 					this.sub_operator_combo.show()
@@ -330,7 +330,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			},
 			
 			sub_operator_combo_change : function(combo,value,oldvalue){
-				log.debug(' + Catch changes on sub operator combobox', this.logAuthor)
+				//log.debug(' + Catch changes on sub operator combobox, value : ' + value, this.logAuthor)
 				if(!value)
 					var value = this.sub_operator_combo.getValue()
 				
@@ -344,7 +344,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						this.array_field.show()
 						break;
 					default:
-						log.debug(' + Unrecognized field type',this.logAuthor)
+						//log.debug('   + Unrecognized field type',this.logAuthor)
 						break;
 				}
 			},
@@ -429,29 +429,38 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				
 				//Hack: clear filter before research, otherwise -> search always = -1
 				this.operator_store.clearFilter()
+				log.debug('Search for the operator "' + key + '" in store',this.logAuthor)
 				var search = this.operator_store.find('operator',key)
+				
+				log.debug('Set Operator field with: '+ key ,this.logAuthor)
 				this.operator_combo.setValue(key)
 
 				if(search == -1){
-					log.debug(' + Field is not an operator',this.logAuthor)
+					log.debug(' + "'+ key +'" not an operator',this.logAuthor)
 					if(typeof(value) == 'object'){
+						log.debug('  + Field is another cfilter condition',this.logAuthor)
 						var object_key = Ext.Object.getKeys(value)[0]
+						//log.debug('  + Object key is: ' + object_key,this.logAuthor)
 						var object_value = value[object_key]
+						//log.debug('  + Object value is: ' + object_value,this.logAuthor)
 						this.sub_operator_combo.setValue(object_key)
 						
 						//check sub operator type
 						var sub_operator_type = this.get_type_from_operator(object_key,this.sub_operator_store)
 						if(sub_operator_type == 'array'){
-							log.debug('  +  The sub operator is an array',this.logAuthor)
+							log.debug('   + The sub operator is an array',this.logAuthor)
 							this.array_field.setValue(object_value)
 						}else{
-							log.debug('  +  The sub operator is a value',this.logAuthor)
+							log.debug('   + The sub operator is a value',this.logAuthor)
 							this.string_value.setValue(object_value)
 						}
 					}else{
+						log.debug('  + "'+ key +'" is a simple value',this.logAuthor)
 						this.string_value.setValue(value)
 					}
 				}else{
+					log.debug('  + "'+ key +'" is a registred operator: ' + key,this.logAuthor)
+					this.operator_combo.setValue(key)
 					for(i in value){
 						log.debug(' + New cfilter object',this.logAuthor)
 						this.add_cfilter(value[i])
@@ -516,7 +525,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	setValue : function(value){
-		log.debug('The filter to set is : ' + value,this.logAuthor)
+		if(typeof(value) == 'string'){
+			value = Ext.decode(value)
+		}
+		
+		log.debug('The filter to set is : ' + Ext.encode(value),this.logAuthor)
 		this.cfilter.setValue(value)
 	}
 
