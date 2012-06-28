@@ -100,7 +100,7 @@ class carchiver(object):
 		if not old_event['perf_data_array']:
 			old_event['perf_data_array'] = []
 			
-		if new_event['perf_data_array']:
+		if new_event['perf_data_array'] != []:
 			perf_data_array = old_event['perf_data_array']
 			
 			new_metrics = [ perf['metric'] for perf in new_event['perf_data_array'] ]
@@ -116,8 +116,6 @@ class carchiver(object):
 					perf_data_array.append(new_event['perf_data_array'][new_metrics.index(new_metric)])
 						
 			new_event['perf_data_array'] = perf_data_array
-		else:
-			self.logger.warning("merge_perf_data: No 'perf_data_array' field in event, check perfstore engine.")
 		
 		return new_event
 
