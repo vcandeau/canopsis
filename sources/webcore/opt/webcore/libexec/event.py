@@ -35,6 +35,9 @@ import cevent
 #import protection function
 from libexec.auth import check_auth, get_account, check_group_rights
 
+amqp = camqp(logging_name="Event-amqp")
+amqp.start()
+
 logger = logging.getLogger('Event')
 
 group_managing_access = 'group.CPS_event_admin'
@@ -165,15 +168,9 @@ def send_event(	routing_key=None):
 	#------------------------------AMQP Part--------------------------------------
 	
 	key = cevent.get_routingkey(event)
-	
-	amqp = camqp()
-	amqp.start()
-	
+
 	amqp.publish(event, key, amqp.exchange_name_events)
-	
-	amqp.stop()
-	amqp.join()
-	
+		
 	logger.debug('Amqp event published')
 	
 	return {'total':1,'success':True,'data':{'event':event}}

@@ -34,8 +34,8 @@ Ext.define('canopsis.view.Group.Form', {
 		},{
 			fieldLabel: _('Description'),
 			name: 'description',
-			allowBlank: false,
-			}],
+			allowBlank: false
+		}],
 
 
     initComponent: function() {

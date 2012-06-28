@@ -54,5 +54,5 @@ Ext.define('canopsis.store.TreeStoreViews', {
 		move: function(node, oldParent, newParent, index, options ) {
 				this.sync();
 		}
-	},
+	}
 });
