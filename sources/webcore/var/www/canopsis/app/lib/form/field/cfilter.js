@@ -48,13 +48,38 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			filter:this.filter,
 			opt_remove_button : false
 		})
-		this.items = [this.cfilter]
+		
+		this.edit_area = Ext.widget('textarea',{
+				hidden:true,
+				flex : 1
+		})
+		
+		this.items = [this.cfilter,this.edit_area]
 		
 		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
-		
-		this.tbar = [finish_button]
+		var wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this})
+		var edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
+
+		this.tbar = [finish_button,wizard_button,edit_button]
 		
 		this.callParent(arguments);
+	},
+	
+	show_wizard : function(){
+		var filter = this.edit_area.getValue()
+		filter = filter.replace(/\n/g, '').replace(/ /g,'')
+		this.cfilter.remove_all_cfilter()
+		this.setValue(filter)
+		this.cfilter.show()
+		this.edit_area.hide()
+	},
+	
+	show_edit_area : function(){
+		var filter = this.getValue()
+		filter = JSON.stringify(filter, undefined, 8)
+		this.edit_area.setValue(filter)
+		this.cfilter.hide()
+		this.edit_area.show()
 	},
 
 	define_object : function(){
@@ -155,7 +180,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				//--------------------panel-------------------------
 				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',hidden:true})
 				if(this.opt_remove_button)
-					this.remove_button = Ext.widget('button',{text:'remove',margin: '0 5 0 0'})
+					this.remove_button = Ext.widget('button',{iconCls: 'icon-cancel',margin: '0 5 0 0'})
 				this.string_value = Ext.widget('textfield',{margin : '0 0 0 5'})
 				this.array_field = Ext.create('cfilter.array_field',{hidden:true})
 			
@@ -274,6 +299,10 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			
 			remove_button_func: function(){
 				this.destroy()
+			},
+			
+			remove_all_cfilter : function(){
+				this.bottomPanel.removeAll()
 			},
 			
 			//------------get / set value--------------------
