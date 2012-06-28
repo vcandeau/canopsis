@@ -36,7 +36,7 @@ su - canopsis -c "rm -Rf tmp/canopsis_installer*"
 
 ## Start install
 echo "---> Start install"
-su - canopsis -c "pkgmgr install cmaster"
+su - canopsis -c "pkgmgr install --force-yes cmaster"
 if [ $? -ne 0 ]; then exit 1; fi
 
 ## Check install
