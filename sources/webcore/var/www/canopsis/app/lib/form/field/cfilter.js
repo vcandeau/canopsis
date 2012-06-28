@@ -24,13 +24,14 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	alias: 'widget.cfilter',
 	
-	height : 600,
+	//height : 600,
 	namespace: 'event',
 	ctype: 'event',
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
 	//filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
 	filter : undefined,
+	//filter : {"source":"fes"},
 	
 	layout: {
         type: 'vbox',
@@ -73,12 +74,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			items:[this.preview_grid]
 		})
 		
-
 		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object',{
 			operator_store: this.operator_store,
 			sub_operator_store:this.sub_operator_store,
-			filter:this.filter,
+			//filter:this.filter,
 			opt_remove_button : false
 		})
 		
@@ -91,12 +91,12 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		})
 
 		//---------------------TBAR--------------------------
-		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
+		//var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
 		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this,disabled:true})
 		this.edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
 		this.preview_button = Ext.widget('button',{handler:this.show_preview,text:'preview',scope:this})
 
-		this.tbar = [finish_button,this.wizard_button,this.edit_button,this.preview_button]
+		this.tbar = [this.wizard_button,this.edit_button,this.preview_button]
 		
 
 		this.items = [this.cfilter,this.edit_area]
@@ -155,7 +155,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			
 			border:false,
 			value: undefined,
-			width:200,
 
 			margin: '0 0 0 5',
 			layout: 'hbox',
@@ -163,11 +162,16 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			initComponent: function() {
 				this.textfield_panel = Ext.widget('panel',{
 					border: false,
-					items:[Ext.widget('textfield')]
 				})
+				if(!this.value)
+					this.add_textfield()
 
 				//--------buttons--------
-				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',})
+				this.add_button = Ext.widget('button',{
+					text:'add',
+					margin: '0 0 0 5',
+					tooltip: _('Add new value to this list')
+				})
 				//--------build object----
 				this.items = [this.textfield_panel,this.add_button]
 				this.callParent(arguments);
@@ -176,16 +180,38 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			},
 			
 			add_textfield : function(value){
-				var config = {}
+				var config = {
+					//flex:4,
+					emptyText:_('Type value here')
+				}
+				
 				if(value)
 					config.value = value
-				this.textfield_panel.add(Ext.widget('textfield',config))
+					
+				var textfield = Ext.widget('textfield',config)
+				var remove_button = Ext.widget('button',{
+					iconCls: 'icon-cancel',
+					margin: '0 0 0 5',
+					width:24,
+					tooltip:_('Remove this from list of value')
+				})
+
+				var panel = Ext.widget('panel',{
+					border:false,
+					margin: '0 0 5 0',
+					layout: 'hbox',
+					items:[textfield,remove_button]
+				})
+				remove_button.on('click',function(button){button.up().destroy()})
+				
+				this.textfield_panel.add(panel)
 			},
 			
 			getValue: function(){
 				var output = []
 				for(var i in this.textfield_panel.items.items){
-					var textfield = this.textfield_panel.items.items[i]
+					var panel = this.textfield_panel.items.items[i]
+					var textfield = panel.down('.textfield')
 					output.push(textfield.getValue())
 				}
 				return output
@@ -212,7 +238,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			
 			opt_remove_button : true,
 			
-			contain_other_cfile : false,
+			contain_other_cfilter : false,
 			
 			margin : 5,
 		
@@ -221,30 +247,44 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				log.debug('init sub object',this.logAuthor)
 				//------------------create operator combo----------------
 				this.operator_combo = Ext.widget('combobox',{
-								'name': 'field',
-								'queryMode': 'local',
-								'displayField': 'text',
-								'valueField': 'operator',
-								'store': this.operator_store
-								})
+								queryMode: 'local',
+								displayField: 'text',
+								valueField: 'operator',
+								emptyText: _('Type value or choose operator'),
+								store: this.operator_store
+							})
+				
 				
 				//-------------sub operator combo ($in etc...)-----
 				this.sub_operator_combo = Ext.widget('combobox',{
-								'name': 'field',
-								'queryMode': 'local',
-								'displayField': 'text',
-								'valueField': 'operator',
-								'value':'$eq',
-								'editable':false,
-								'margin' : '0 0 0 5',
-								'store': this.sub_operator_store
-								})
+								queryMode: 'local',
+								displayField: 'text',
+								valueField: 'operator',
+								value:'$eq',
+								editable:false,
+								margin : '0 0 0 5',
+								store: this.sub_operator_store
+							})
 				
 				//--------------------panel-------------------------
-				this.add_button = Ext.widget('button',{text:'add',margin: '0 0 0 5',hidden:true})
+				this.add_button = Ext.widget('button',{
+					text:'add',
+					margin: '0 0 0 5',
+					hidden:true,
+					tooltip:_('Add new field/condition')
+				})
+				
 				if(this.opt_remove_button)
-					this.remove_button = Ext.widget('button',{iconCls: 'icon-cancel',margin: '0 5 0 0'})
-				this.string_value = Ext.widget('textfield',{margin : '0 0 0 5'})
+					this.remove_button = Ext.widget('button',{
+						iconCls: 'icon-cancel',
+						margin: '0 5 0 0',
+						tooltip: _('Remove this condition')
+					})
+					
+				this.string_value = Ext.widget('textfield',{
+					margin : '0 0 0 5',
+					emptyText: 'Type value here'
+					})
 				this.array_field = Ext.create('cfilter.array_field',{hidden:true})
 			
 				var items_array = []
@@ -295,30 +335,29 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 
 			//launched when value selected in combobox
 			operator_combo_change : function(combo,value,oldvalue){
-				log.debug(' + Catch changes on operator combobox', this.logAuthor)
+				log.debug(' + Catch changes on operator combobox, value : ' + value, this.logAuthor)
 				var operator_type = this.get_type_from_operator(value,this.operator_store)
-					
+				//log.debug(' + The type of the operator is: ' + operator_type,this.logAuthor)
 				if(operator_type == 'object'){
-					log.debug(' + Field is a known operator',this.logAuthor)
-					this.contain_other_cfile = true
+					//log.debug('   + Field is a known operator',this.logAuthor)
+					this.contain_other_cfilter = true
 					this.add_button.show()
 					this.string_value.hide()
 					this.array_field.hide()
 					this.sub_operator_combo.hide()
 					this.bottomPanel.show()
 				} else {
-					log.debug(' + Unknown operator',this.logAuthor)
-					this.contain_other_cfile = false
+					//log.debug('   + Unknown operator',this.logAuthor)
+					this.contain_other_cfilter = false
 					this.add_button.hide()
 					this.sub_operator_combo.show()
-					//check sub_operator value
 					this.sub_operator_combo_change()
 					this.bottomPanel.hide()
 				}
 			},
 			
 			sub_operator_combo_change : function(combo,value,oldvalue){
-				log.debug(' + Catch changes on sub operator combobox', this.logAuthor)
+				//log.debug(' + Catch changes on sub operator combobox, value : ' + value, this.logAuthor)
 				if(!value)
 					var value = this.sub_operator_combo.getValue()
 				
@@ -332,7 +371,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						this.array_field.show()
 						break;
 					default:
-						log.debug(' + Unrecognized field type',this.logAuthor)
+						//log.debug('   + Unrecognized field type',this.logAuthor)
 						break;
 				}
 			},
@@ -378,7 +417,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				var value = this.string_value.getValue()
 				var output = {}
 				
-				if(this.contain_other_cfile){
+				if(this.contain_other_cfilter){
 					//get into cfilter
 					var values = []
 					//get all cfilter values
@@ -415,26 +454,40 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				var key = Ext.Object.getKeys(filter)[0]
 				var value = filter[key]
 				
-				this.operator_combo.setValue(key)
-				
+				//Hack: clear filter before research, otherwise -> search always = -1
+				this.operator_store.clearFilter()
+				log.debug('Search for the operator "' + key + '" in store',this.logAuthor)
 				var search = this.operator_store.find('operator',key)
+				
+				log.debug('Set Operator field with: '+ key ,this.logAuthor)
+				this.operator_combo.setValue(key)
+
 				if(search == -1){
-					log.debug(' + Field is not an operator',this.logAuthor)
+					log.debug(' + "'+ key +'" not an operator',this.logAuthor)
 					if(typeof(value) == 'object'){
+						log.debug('  + Field is another cfilter condition',this.logAuthor)
 						var object_key = Ext.Object.getKeys(value)[0]
+						//log.debug('  + Object key is: ' + object_key,this.logAuthor)
 						var object_value = value[object_key]
+						//log.debug('  + Object value is: ' + object_value,this.logAuthor)
 						this.sub_operator_combo.setValue(object_key)
 						
 						//check sub operator type
 						var sub_operator_type = this.get_type_from_operator(object_key,this.sub_operator_store)
-						if(sub_operator_type == 'array')
+						if(sub_operator_type == 'array'){
+							log.debug('   + The sub operator is an array',this.logAuthor)
 							this.array_field.setValue(object_value)
-						else
+						}else{
+							log.debug('   + The sub operator is a value',this.logAuthor)
 							this.string_value.setValue(object_value)
+						}
 					}else{
+						log.debug('  + "'+ key +'" is a simple value',this.logAuthor)
 						this.string_value.setValue(value)
 					}
 				}else{
+					log.debug('  + "'+ key +'" is a registred operator: ' + key,this.logAuthor)
+					this.operator_combo.setValue(key)
 					for(i in value){
 						log.debug(' + New cfilter object',this.logAuthor)
 						this.add_cfilter(value[i])
@@ -499,6 +552,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	setValue : function(value){
+		if(typeof(value) == 'string'){
+			value = Ext.decode(value)
+		}
+		
+		log.debug('The filter to set is : ' + Ext.encode(value),this.logAuthor)
 		this.cfilter.setValue(value)
 	}
 
