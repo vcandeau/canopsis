@@ -50,7 +50,8 @@ Ext.define('widgets.stream.stream' , {
 		this.nodeId = false;
 		this.refreshInterval = 5;
 
-		if (this.showToolbar) {
+		if (this.showToolbar && ! this.exportMode) {
+			
 			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
 					//baseCls: 'x-panel-header',
 					//height: 27,
