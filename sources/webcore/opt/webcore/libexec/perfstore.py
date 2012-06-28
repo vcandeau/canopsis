@@ -86,6 +86,16 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	
 	logger.debug("POST:")
 	logger.debug(" + nodes: %s" % nodes)
+	logger.debug(" + aggregate_method: %s" % aggregate_method)
+	logger.debug(" + use_window_ts:    %s" % use_window_ts)
+	logger.debug(" + time_interval:    %s" % time_interval)
+
+	if time_interval:
+		try:
+			time_interval = int(time_interval)
+		except Exception, err:
+			logger.error(err)
+			return {'total': 0, 'success': False, 'data': []}
 
 	output = []
 	
