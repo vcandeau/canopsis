@@ -44,11 +44,17 @@ logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 engines=[]
-engine = None
 amqp = None
 next_queue = []
+ready = False
 
 def on_message(body, msg):
+	
+	if not ready:
+		logger.info("Wait engines ...")
+		while ready:
+			time.sleep(0.5)
+	
 	## Sanity Checks
 	rk = msg.delivery_info['routing_key']
 	if not rk:
@@ -85,10 +91,17 @@ def on_message(body, msg):
 		amqp.publish(event, queue, "amq.direct")
 	
 def main():
-	global engine, amqp
+	global engine, amqp, ready
 		
 	logger.info("Initialyze process")
 	handler.run()
+	
+	# Init AMQP
+	amqp = camqp()
+	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)
+	
+	# Start AMQP
+	amqp.start()
 	
 	# Init Engines
 	### Route:
@@ -97,17 +110,12 @@ def main():
 	
 	engine_collectdgw	= collectdgw.engine()
 	
-	engine_eventstore	= eventstore.engine(logging_level=logging.DEBUG)
+	engine_eventstore	= eventstore.engine()
 	engine_perfstore	= perfstore.engine(	next_amqp_queue=engine_eventstore.amqp_queue)
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	
 	# Set Next queue
 	next_queue.append(engine_tag.amqp_queue)
-	
-
-	# Init AMQP
-	amqp = camqp()
-	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)	
 	
 	# Start Engines
 	engine_tag.start()
@@ -116,10 +124,8 @@ def main():
 	engine_collectdgw.start()
 	
 	# Safety wait
-	time.sleep(5)
-	
-	# Start AMQP
-	amqp.start()
+	time.sleep(3)
+	ready = True
 	
 	logger.info("Wait")
 	handler.wait()
