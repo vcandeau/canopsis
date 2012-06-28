@@ -162,6 +162,10 @@ class KnownValues(unittest.TestCase):
 
 	def test_7_Check_collectd2event(self):
 
+		import commands
+		print "Restart collectd ..."
+		commands.getstatusoutput("service collectd restart")
+
 		print "Wait collectd events ..."
 		i=0
 		while i < 5:
