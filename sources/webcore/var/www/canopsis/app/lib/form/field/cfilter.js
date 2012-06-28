@@ -42,6 +42,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		this.define_object()
 		this.build_store()
 
+		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object',{
 			operator_store: this.operator_store,
 			sub_operator_store:this.sub_operator_store,
@@ -49,29 +50,48 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			opt_remove_button : false
 		})
 		
+		//--------------edit area (hand writing part)--------
+
 		this.edit_area = Ext.widget('textarea',{
 				hidden:true,
+				validator: this.check_json_validity,
 				flex : 1
 		})
-		
-		this.items = [this.cfilter,this.edit_area]
-		
-		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
-		var wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this})
-		var edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
 
-		this.tbar = [finish_button,wizard_button,edit_button]
+		//---------------------TBAR--------------------------
+		var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
+		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this,disabled:true})
+		this.edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
+
+		this.tbar = [finish_button,this.wizard_button,this.edit_button]
 		
+
+		this.items = [this.cfilter,this.edit_area]
 		this.callParent(arguments);
 	},
 	
+	check_json_validity : function(value){
+		try{
+			Ext.decode(value)
+			return true
+		}catch(err){
+			return 'Error: invalid JSON'
+		}
+	},
+
 	show_wizard : function(){
-		var filter = this.edit_area.getValue()
-		filter = filter.replace(/\n/g, '').replace(/ /g,'')
-		this.cfilter.remove_all_cfilter()
-		this.setValue(filter)
-		this.cfilter.show()
-		this.edit_area.hide()
+		if(this.edit_area.validate()){
+			var filter = this.edit_area.getValue()
+			filter = strip_blanks(filter)
+			this.cfilter.remove_all_cfilter()
+			this.edit_area.hide()
+			this.cfilter.show()
+			this.setValue(filter)
+			this.wizard_button.setDisabled(true)
+			this.edit_button.setDisabled(false)
+		}else{
+			log.debug('Incorrect JSON given',this.logAuthor)
+		}
 	},
 	
 	show_edit_area : function(){
@@ -80,6 +100,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		this.edit_area.setValue(filter)
 		this.cfilter.hide()
 		this.edit_area.show()
+		this.wizard_button.setDisabled(false)
+		this.edit_button.setDisabled(true)
 	},
 
 	define_object : function(){
@@ -121,7 +143,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				var output = []
 				for(var i in this.textfield_panel.items.items){
 					var textfield = this.textfield_panel.items.items[i]
-					log.dump(textfield.getValue())
 					output.push(textfield.getValue())
 				}
 				return output
@@ -140,7 +161,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		//and the bottom panel with object (itself) and add button
 		Ext.define('cfilter.object' ,{
 			extend: 'Ext.panel.Panel',
-			//alias: 'widget.cfilter',
 			border: false,
 			
 			operator_store : undefined,
@@ -272,10 +292,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				}
 			},
 			
-			add_cfilter : function(filter){
-				return this.bottomPanel.add(this.build_field_panel(filter))
-			},
-			
 			//give operator and store, return associated type
 			get_type_from_operator : function(operator,store){
 				var index_search = store.find('operator',operator)
@@ -286,6 +302,10 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				}else{
 					return null
 				}
+			},
+			
+			add_cfilter : function(filter){
+				return this.bottomPanel.add(this.build_field_panel(filter))
 			},
 
 			//return an ready to add cfilter
@@ -413,9 +433,15 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	getValue : function(){
-		var value = this.cfilter.getValue()
+		if(!this.cfilter.isHidden())
+			var value = this.cfilter.getValue()
+		else
+			var value = strip_blanks(this.edit_area.getValue())
+			
+		if(typeof(value) == 'string')
+			value = Ext.decode(value)
+
 		log.debug('The filter is : ' + Ext.encode(value),this.logAuthor)
-		log.dump(value)
 		return this.cfilter.getValue()
 	},
 	
