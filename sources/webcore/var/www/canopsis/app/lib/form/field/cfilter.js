@@ -59,12 +59,14 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		})
 		this.preview_grid = Ext.widget('grid',{
 			store: this.preview_store,
+			border:false,
 			columns: [
 				{ header: 'Name',  dataIndex: 'crecord_name',flex:1 }
 			],
 		})
 		this.preview_window = Ext.widget('window',{
 			title:_('Filter preview'),
+			layout:'fit',
 			constrain: true,
 			height : 300,
 			width:300,
