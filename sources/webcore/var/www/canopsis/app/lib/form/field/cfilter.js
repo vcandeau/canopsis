@@ -251,6 +251,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 								displayField: 'text',
 								triggerAction:'all',
 								disableKeyFilter:true,
+								typeAhead:false,
 								valueField: 'operator',
 								emptyText: _('Type value or choose operator'),
 								store: this.operator_store
@@ -492,10 +493,20 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					}
 				}else{
 					log.debug('  + "'+ key +'" is a registred operator: ' + key,this.logAuthor)
-					this.operator_combo.setValue(key)
-					for(i in value){
-						log.debug(' + New cfilter object',this.logAuthor)
-						this.add_cfilter(value[i])
+					var operator_type = this.get_type_from_operator(key,this.operator_store)
+					log.dump(operator_type)
+					if(operator_type == 'array'){
+						//temporary patch , must review all set value
+						log.debug('  + "'+ key +'" contain an array',this.logAuthor)
+						var object_key = Ext.Object.getKeys(value)[0]
+						this.sub_operator_combo.setValue(object_key)
+						var object_value = value[object_key]
+						this.array_field.setValue(object_value)
+					}else{
+						for(i in value){
+							log.debug(' + New cfilter object',this.logAuthor)
+							this.add_cfilter(value[i])
+						}
 					}
 				}
 			}
@@ -512,7 +523,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				{'operator': '$nor','text': _('Nor'), 'type': 'object'},
 				{'operator': '$or','text': _('Or'), 'type': 'object'},
 				{'operator': '$and','text': _('And'), 'type': 'object'},
-				{'operator': 'tag','text': _('Tag'), 'type': 'array'}
+				{'operator': 'tags','text': _('Tags'), 'type': 'array'}
 			]
 		})
 		
