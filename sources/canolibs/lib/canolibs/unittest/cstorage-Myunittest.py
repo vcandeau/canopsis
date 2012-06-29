@@ -43,7 +43,11 @@ class KnownValues(unittest.TestCase):
 		self.anonymous_account = caccount()
 		self.root_account = caccount(user="root", group="root")
 		self.user_account = caccount(user="william", group="capensis")
-
+		
+		self.anonymous_account.cat()
+		self.user_account.cat()
+		self.root_account.cat()
+	
 		self.data = {'mydata1': 'data1', 'mydata2': 'data2', 'mydata3': 'data3'}
 		
 	def test_01_Init(self):
@@ -150,11 +154,11 @@ class KnownValues(unittest.TestCase):
 		## 3 records for user
 		## 2 records for anonymous
 		## 6 records for root
-
+		
 		records = STORAGE.find(account=self.user_account)
 		if len(records) != 3:
 			raise Exception('Invalid rigths for user account ...')
-
+	
 		records = STORAGE.find(account=self.anonymous_account)
 		if len(records) != 2:
 			raise Exception('Invalid rigths for anonymous account ...')

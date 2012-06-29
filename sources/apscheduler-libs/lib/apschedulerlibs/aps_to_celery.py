@@ -27,6 +27,9 @@ import time
 from camqp import camqp
 import cevent
 
+amqp = camqp(logging_name="aps-amqp")
+amqp.start()
+
 init 	= cinit()
 logger = init.getLogger('aps')
 
@@ -165,15 +168,9 @@ def launch_celery_task(*args,**kwargs):
 			
 			#logger.info('Send Event: %s' % event)
 			key = cevent.get_routingkey(event)
-			
-			amqp = camqp()
-			amqp.start()
-			
+
 			amqp.publish(event, key, amqp.exchange_name_events)
-			
-			amqp.stop()
-			amqp.join()
-			
+						
 			logger.info('Amqp event published')
 
 			#--------------------return result-------------------

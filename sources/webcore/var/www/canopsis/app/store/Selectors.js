@@ -25,7 +25,8 @@ Ext.define('canopsis.store.Selectors', {
 
 	storeId: 'store.Selectors',
 
-	//autoLoad: true,
+	autoLoad: true,
+	autoSync: true,
 
 	proxy: {
 		type: 'rest',
@@ -35,8 +36,11 @@ Ext.define('canopsis.store.Selectors', {
 			root: 'data',
 			totalProperty: 'total',
 			successProperty: 'success'
+		},
+		writer: {
+			type: 'json',
+			writeAllFields: false
 		}
 	}
 
 });
-
