@@ -216,7 +216,7 @@ class cstorage(object):
 				except Exception, err:
 					self.logger.error("Impossible to store !\nReason: %s" % err)
 					self.logger.debug("Record dump:\n%s" % record.dump())
-					self.logger.debug("Successfully inserted, _id: '%s'" % _id)
+					raise ValueError("Impossible to insert (%s)" % err)
 
 				record._id = _id
 				return_ids.append(_id)

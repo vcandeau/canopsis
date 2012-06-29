@@ -44,11 +44,16 @@ Ext.define('canopsis.view.Selector.Form', {
 						bodyStyle: 'padding:5px 5px 0',
 						items: [
 							{
+								name: '_id',
+								hidden: true
+							},
+							{
 								fieldLabel: _('Name'),
 								name: 'crecord_name',
 								allowBlank: false
 							},{
 								fieldLabel: _('Description'),
+								xtype: "textareafield",
 								name: 'description'
 							}
 						]
