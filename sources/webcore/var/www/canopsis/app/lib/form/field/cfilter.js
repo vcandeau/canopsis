@@ -169,9 +169,10 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					border: false,
 					margin: '0 0 0 5',
 				})
-				if(!this.value)
+				
+				if(!this.value){
 					this.add_textfield()
-
+				}
 				//--------buttons--------
 				this.add_button = Ext.widget('button',{
 					text:'add',
@@ -202,15 +203,21 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					tooltip:_('Remove this from list of value')
 				})
 
+				var item_array = [textfield]
+
+				//if it's not first elem, add remove button
+				if(this.textfield_panel.items.length >= 1)
+					item_array.push(remove_button)
+					
 				var panel = Ext.widget('panel',{
 					border:false,
 					margin: '0 0 5 0',
 					layout: 'hbox',
-					items:[textfield,remove_button]
+					items: item_array
 				})
 				remove_button.on('click',function(button){button.up().destroy()})
 				
-				this.textfield_panel.add(panel)
+				return this.textfield_panel.add(panel)
 			},
 			
 			getValue: function(){
