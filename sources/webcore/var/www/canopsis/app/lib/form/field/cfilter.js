@@ -186,7 +186,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	show_edit_area: function() {
-		var filter = this.getValue();
+		var filter = Ext.decode(this.getValue());
 		filter = JSON.stringify(filter, undefined, 8);
 		this.edit_area.setValue(filter);
 		this.cfilter.hide();
