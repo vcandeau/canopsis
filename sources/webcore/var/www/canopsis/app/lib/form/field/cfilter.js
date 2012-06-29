@@ -77,6 +77,17 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			 },
 			autoLoad: false
 		});
+		
+		this.preview_render = function(value, p, record) {
+			var node = '';
+			if (record.data.resource) {
+				node = Ext.String.format('<b>{0}</b><br>&nbsp;&nbsp;{1}', record.data.component, record.data.resource);
+			}else {
+				node = Ext.String.format('<b>{0}</b>', record.data.component);
+			}
+			return node;
+		}
+		
 		this.preview_grid = Ext.widget('grid', {
 			store: this.preview_store,
 			border: false,
@@ -88,20 +99,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					dataIndex: 'source_type',
 					renderer: rdr_source_type
 	       		},{
-					header: '',
-					width: 25,
 					sortable: false,
-					dataIndex: 'perf_data',
-					renderer: rdr_havePerfdata
-	       		},{
-					header: _('Component'),
-					flex: 1,
-					dataIndex: 'component'
-	       		},{
-					header: _('Resource'),
+					dataIndex: 'id',
 					flex: 2,
-					dataIndex: 'resource'
-			}]
+					renderer: this.preview_render
+	       		}]
 		});
 		this.preview_window = Ext.widget('window', {
 			title: _('Filter preview'),
