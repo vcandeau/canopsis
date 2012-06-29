@@ -38,6 +38,12 @@ Ext.define('canopsis.controller.Selector', {
 		this.callParent(arguments);
 	},
 	
+	beforeload_EditForm: function(form) {
+		var name = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=crecord_name]')[0];
+		if (name)
+			name.setReadOnly(true);
+	},
+	
 	preSave: function(record, data, form) {
 		var _id = record.get('_id');			
 		record.set('id', _id);
