@@ -19,49 +19,49 @@
 # ---------------------------------
 */
 
-Ext.define('canopsis.lib.form.field.cfilter' , {
+Ext.define('canopsis.lib.form.field.cfilter' ,{
 	extend: 'Ext.panel.Panel',
-
+	
 	alias: 'widget.cfilter',
-
-	border: false,
-
+	
+	border:false,
+	
 	namespace: 'events',
 	ctype: 'event',
-	autoScroll: true,
-
+	autoScroll:true,
+	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
-	filter: undefined,
-
+	filter : undefined,
+	
 	layout: {
         type: 'vbox',
         align: 'stretch'
     },
 
 	isFormField: true,
-
-	getName: function() {
-		return this.name;
+	
+	getName: function(){
+		return this.name
 	},
-	isValid: function() {
-		return true;
+	isValid: function(){
+		return true
 	},
-	validate: function() {
-		return this.isValid();
+	validate: function(){
+		return this.isValid()
 	},
-	getSubmitData: function() {
-		var data = {};
-		data[this.name] = this.getValue();
-		return data;
+	getSubmitData: function(){
+		var data = {}
+		data[this.name] = this.getValue()
+		return data
 	},
-
+  
 	initComponent: function() {
-		this.logAuthor = '[' + this.id + ']';
-		log.debug('Initialize ...', this.logAuthor);
-
-		this.define_object();
-		this.build_store();
-
+		this.logAuthor = '[' + this.id + ']'
+		log.debug('Initialize ...', this.logAuthor)
+		
+		this.define_object()
+		this.build_store()
+		
 		//-----------------preview windows----------------
 		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
 			model: 'canopsis.model.Event',
@@ -73,548 +73,565 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					root: 'data',
 					totalProperty: 'total',
 					successProperty: 'success'
-				}
+				},
 			 },
-			autoLoad: false
-		});
-		this.preview_grid = Ext.widget('grid', {
+			autoLoad:false,
+		})
+		this.preview_grid = Ext.widget('grid',{
 			store: this.preview_store,
-			border: false,
+			border:false,
 			columns: [
-				{ header: 'Component', dataIndex: 'component', flex: 1 },
-				{ header: 'Resource', dataIndex: 'resource', flex: 1 }
-			]
-		});
-		this.preview_window = Ext.widget('window', {
-			title: _('Filter preview'),
-			layout: 'fit',
-			closeAction: 'hide',
+				{
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'source_type',
+					renderer: rdr_source_type
+	       		},{
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'perf_data',
+					renderer: rdr_havePerfdata
+	       		},{
+					header: _('Component'),
+					flex: 1,
+					dataIndex: 'component'
+	       		},{
+					header: _('Resource'),
+					flex: 2,
+					dataIndex: 'resource'
+			}],
+		})
+		this.preview_window = Ext.widget('window',{
+			title:_('Filter preview'),
+			layout:'fit',
+			closeAction:'hide',
 			constrain: true,
 			constrainTo: this.id,
-			height: 300,
-			width: 300,
-			items: [this.preview_grid]
-		});
-
+			height : 300,
+			width:300,
+			items:[this.preview_grid]
+		})
+		
 		//-------------cfilter (wizard part)---------------
-		this.cfilter = Ext.create('cfilter.object', {
+		this.cfilter = Ext.create('cfilter.object',{
 			operator_store: this.operator_store,
-			sub_operator_store: this.sub_operator_store,
+			sub_operator_store:this.sub_operator_store,
 			//filter:this.filter,
-			opt_remove_button: false
-		});
-
+			opt_remove_button : false
+		})
+		
 		//--------------edit area (hand writing part)--------
 
-		this.edit_area = Ext.widget('textarea', {
-				hidden: true,
+		this.edit_area = Ext.widget('textarea',{
+				hidden:true,
 				validator: this.check_json_validity,
-				flex: 1
-		});
+				flex : 1
+		})
 
 		//---------------------TBAR--------------------------
-		this.wizard_button = Ext.widget('button', {handler: this.show_wizard,
-			text: 'Wizard',
-			scope: this,
-			disabled: true,
+		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,
+			text:'Wizard',
+			scope:this,
+			disabled:true,
 			margin: 5
-		});
-		this.edit_button = Ext.widget('button', {
-			handler: this.show_edit_area,
-			text: 'edit',
+		})
+		this.edit_button = Ext.widget('button',{
+			handler:this.show_edit_area,
+			text:'edit',
 			margin: 5,
-			scope: this
-		});
-		this.preview_button = Ext.widget('button', {
-			handler: this.show_preview,
-			text: 'preview',
+			scope:this
+		})
+		this.preview_button = Ext.widget('button',{
+			handler:this.show_preview,
+			text:'preview',
 			margin: 5,
-			scope: this
-		});
+			scope:this
+		})
 
-		var button_panel = Ext.widget('panel', {
-			border: false,
-			items: [this.wizard_button, this.edit_button, this.preview_button]
-		});
-
-		this.items = [button_panel, this.cfilter, this.edit_area];
+		var button_panel = Ext.widget('panel',{
+			border:false,
+			items:[this.wizard_button,this.edit_button,this.preview_button]
+		})
+		
+		this.items = [button_panel,this.cfilter,this.edit_area]
 		this.callParent(arguments);
 	},
-
-	check_json_validity: function(value) {
-		if (value == '')
-			return true;
-		try {
-			Ext.decode(value);
-			return true;
-		}catch (err) {
-			return 'Error: invalid JSON';
+	
+	check_json_validity : function(value){
+		if(value == '')
+			return true
+		try{
+			Ext.decode(value)
+			return true
+		}catch(err){
+			return 'Error: invalid JSON'
 		}
 	},
 
-	show_wizard: function() {
-		if (this.edit_area.validate()) {
-			var filter = this.edit_area.getValue();
-			filter = strip_blanks(filter);
-			this.cfilter.remove_all_cfilter();
-			this.edit_area.hide();
-			this.cfilter.show();
-			this.setValue(filter);
-			this.wizard_button.setDisabled(true);
-			this.edit_button.setDisabled(false);
-		}else {
-			log.debug('Incorrect JSON given', this.logAuthor);
+	show_wizard : function(){
+		if(this.edit_area.validate()){
+			var filter = this.edit_area.getValue()
+			filter = strip_blanks(filter)
+			this.cfilter.remove_all_cfilter()
+			this.edit_area.hide()
+			this.cfilter.show()
+			this.setValue(filter)
+			this.wizard_button.setDisabled(true)
+			this.edit_button.setDisabled(false)
+		}else{
+			log.debug('Incorrect JSON given',this.logAuthor)
+		}
+	},
+	
+	show_edit_area : function(){
+		var filter = this.getValue()
+		filter = JSON.stringify(filter, undefined, 8)
+		this.edit_area.setValue(filter)
+		this.cfilter.hide()
+		this.edit_area.show()
+		this.wizard_button.setDisabled(false)
+		this.edit_button.setDisabled(true)
+	},
+	
+	show_preview : function(){
+		var filter = this.getValue()
+		if(filter){
+			this.preview_store.clearFilter()
+			log.debug('Showing preview with filter: ' + filter,this.logAuthor)
+			this.preview_store.setFilter(filter)
+			this.preview_store.load()
+			this.preview_window.show()
 		}
 	},
 
-	show_edit_area: function() {
-		var filter = this.getValue();
-		filter = JSON.stringify(filter, undefined, 8);
-		this.edit_area.setValue(filter);
-		this.cfilter.hide();
-		this.edit_area.show();
-		this.wizard_button.setDisabled(false);
-		this.edit_button.setDisabled(true);
-	},
-
-	show_preview: function() {
-		var filter = this.getValue();
-		if (filter) {
-			this.preview_store.clearFilter();
-			log.debug('Showing preview with filter: ' + filter, this.logAuthor);
-			this.preview_store.setFilter(filter);
-			this.preview_store.load();
-			this.preview_window.show();
-		}
-	},
-
-	define_object: function() {
-
+	define_object : function(){
+		
 		//for array input
-		Ext.define('cfilter.array_field', {
+		Ext.define('cfilter.array_field',{
 			extend: 'Ext.panel.Panel',
-
-			border: false,
+			
+			border:false,
 			value: undefined,
 
 			margin: '0 0 0 5',
 			layout: 'hbox',
-
+			
 			initComponent: function() {
-				this.textfield_panel = Ext.widget('panel', {
+				this.textfield_panel = Ext.widget('panel',{
 					border: false,
-					margin: '0 0 0 5'
-				});
-
-				if (!this.value) {
-					this.add_textfield();
+					margin: '0 0 0 5',
+				})
+				
+				if(!this.value){
+					this.add_textfield()
 				}
 				//--------buttons--------
-				this.add_button = Ext.widget('button', {
-					text: 'add',
+				this.add_button = Ext.widget('button',{
+					text:'add',
 					//margin: '0 0 0 5',
 					tooltip: _('Add new value to this list')
-				});
+				})
 				//--------build object----
-				this.items = [this.add_button, this.textfield_panel];
+				this.items = [this.add_button,this.textfield_panel]
 				this.callParent(arguments);
 				//--------bindings-------
-				this.add_button.on('click', function() {this.add_textfield()},this);
+				this.add_button.on('click',function(){this.add_textfield()},this)
 			},
-
-			add_textfield: function(value) {
+			
+			add_textfield : function(value){
 				var config = {
 					//flex:4,
-					emptyText: _('Type value here')
-				};
-
-				if (value)
-					config.value = value;
-
-				var textfield = Ext.widget('textfield', config);
-				var remove_button = Ext.widget('button', {
+					emptyText:_('Type value here')
+				}
+				
+				if(value)
+					config.value = value
+					
+				var textfield = Ext.widget('textfield',config)
+				var remove_button = Ext.widget('button',{
 					iconCls: 'icon-cancel',
 					margin: '0 0 0 5',
-					width: 24,
-					tooltip: _('Remove this from list of value')
-				});
+					width:24,
+					tooltip:_('Remove this from list of value')
+				})
 
-				var item_array = [textfield];
+				var item_array = [textfield]
 
 				//if it's not first elem, add remove button
-				if (this.textfield_panel.items.length >= 1)
-					item_array.push(remove_button);
-
-				var panel = Ext.widget('panel', {
-					border: false,
+				if(this.textfield_panel.items.length >= 1)
+					item_array.push(remove_button)
+					
+				var panel = Ext.widget('panel',{
+					border:false,
 					margin: '0 0 5 0',
 					layout: 'hbox',
 					items: item_array
-				});
-				remove_button.on('click', function(button) {button.up().destroy()});
-
-				return this.textfield_panel.add(panel);
+				})
+				remove_button.on('click',function(button){button.up().destroy()})
+				
+				return this.textfield_panel.add(panel)
 			},
-
-			getValue: function() {
-				var output = [];
-				for (var i in this.textfield_panel.items.items) {
-					var panel = this.textfield_panel.items.items[i];
-					var textfield = panel.down('.textfield');
-					output.push(textfield.getValue());
+			
+			getValue: function(){
+				var output = []
+				for(var i in this.textfield_panel.items.items){
+					var panel = this.textfield_panel.items.items[i]
+					var textfield = panel.down('.textfield')
+					output.push(textfield.getValue())
 				}
-				return output;
+				return output
 			},
-
-			setValue: function(array) {
-				this.textfield_panel.removeAll();
-				for (var i in array) {
-					this.add_textfield(array[i]);
+			
+			setValue:function(array){
+				this.textfield_panel.removeAll()
+				for(var i in array){
+					this.add_textfield(array[i])
 				}
 			}
-		});
-
-
-		//this object is made of two component, upper panel with combobox
+		})
+		
+		
+		//this object is made of two component, upper panel with combobox 
 		//and the bottom panel with object (itself) and add button
-		Ext.define('cfilter.object' , {
+		Ext.define('cfilter.object' ,{
 			extend: 'Ext.panel.Panel',
 			border: false,
-
-			operator_store: undefined,
-			sub_operator_store: undefined,
-			filter: undefined,
-
-			opt_remove_button: true,
-
-			contain_other_cfilter: false,
-
-			margin: 5,
-
+			
+			operator_store : undefined,
+			sub_operator_store : undefined,
+			filter:undefined,
+			
+			opt_remove_button : true,
+			
+			contain_other_cfilter : false,
+			
+			margin : 5,
+		
 			initComponent: function() {
-				this.logAuthor = '[' + this.id + ']';
-				log.debug('init sub object', this.logAuthor);
+				this.logAuthor = '[' + this.id + ']'
+				log.debug('init sub object',this.logAuthor)
 				//------------------create operator combo----------------
-				this.operator_combo = Ext.widget('combobox', {
+				this.operator_combo = Ext.widget('combobox',{
 								queryMode: 'local',
 								displayField: 'text',
-								triggerAction: 'all',
 								//Hack: don't search in store
-								minChars: 50,
+								minChars:50,
 								valueField: 'operator',
 								emptyText: _('Type value or choose operator'),
 								store: this.operator_store
-							});
-
-
+							})
+				
+				
 				//-------------sub operator combo ($in etc...)-----
-				this.sub_operator_combo = Ext.widget('combobox', {
+				this.sub_operator_combo = Ext.widget('combobox',{
 								queryMode: 'local',
 								displayField: 'text',
 								valueField: 'operator',
-								value: '$eq',
-								editable: false,
-								margin: '0 0 0 5',
+								value:'$eq',
+								editable:false,
+								margin : '0 0 0 5',
 								store: this.sub_operator_store
-							});
-
+							})
+				
 				//--------------------panel-------------------------
-				this.add_button = Ext.widget('button', {
-					text: 'add',
+				this.add_button = Ext.widget('button',{
+					text:'add',
 					margin: '0 0 0 5',
-					hidden: true,
-					tooltip: _('Add new field/condition')
-				});
-
-				if (this.opt_remove_button)
-					this.remove_button = Ext.widget('button', {
+					hidden:true,
+					tooltip:_('Add new field/condition')
+				})
+				
+				if(this.opt_remove_button)
+					this.remove_button = Ext.widget('button',{
 						iconCls: 'icon-cancel',
 						margin: '0 5 0 0',
 						tooltip: _('Remove this condition')
-					});
-
-				this.string_value = Ext.widget('textfield', {
-					margin: '0 0 0 5',
+					})
+					
+				this.string_value = Ext.widget('textfield',{
+					margin : '0 0 0 5',
 					emptyText: 'Type value here'
-					});
-				this.array_field = Ext.create('cfilter.array_field', {hidden: true});
-
-				var items_array = [];
-				if (this.opt_remove_button)
-					items_array.push(this.remove_button);
-				items_array.push(this.operator_combo, this.sub_operator_combo, this.string_value, this.array_field, this.add_button);
-
+					})
+				this.array_field = Ext.create('cfilter.array_field',{hidden:true})
+			
+				var items_array = []
+				if(this.opt_remove_button)
+					items_array.push(this.remove_button)
+				items_array.push(this.operator_combo,this.sub_operator_combo,this.string_value,this.array_field,this.add_button)
+				
 				//upper panel
 				var config = {
-					items: items_array,
-					layout: 'hbox',
-					border: false
-				};
-
-				this.upperPanel = Ext.widget('panel', config);
-
+					items:items_array,
+					layout:'hbox',
+					border:false
+				}
+			
+				this.upperPanel = Ext.widget('panel',config)
+				
 				//bottom panel
 				var config = {
 					margin: '0 0 0 20',
-					bodyStyle: 'border-top:none;border-bottom:none;border-right:none;'
-				};
-				this.bottomPanel = Ext.widget('panel', config);
-
+					bodyStyle:'border-top:none;border-bottom:none;border-right:none;'
+				}
+				this.bottomPanel = Ext.widget('panel',config)
+				
 				//----------------------bind events-------------------
 				//combo binding
-				this.operator_combo.on('change', function(combo,value,oldvalue) {
-					this.operator_combo_change(combo, value, oldvalue);
-				},this);
-
-				this.sub_operator_combo.on('change', function(combo,value,oldvalue) {
-					this.sub_operator_combo_change(combo, value, oldvalue);
-				},this);
-
+				this.operator_combo.on('change',function(combo,value,oldvalue){
+					this.operator_combo_change(combo,value,oldvalue)
+				},this)
+				
+				this.sub_operator_combo.on('change',function(combo,value,oldvalue){
+					this.sub_operator_combo_change(combo,value,oldvalue)
+				},this)
+				
 				//button binding
-				this.add_button.on('click', function() {this.add_cfilter()},this);
-
-				if (this.opt_remove_button)
-					this.remove_button.on('click', this.remove_button_func, this);
+				this.add_button.on('click',function(){this.add_cfilter()},this)
+				
+				if(this.opt_remove_button)
+					this.remove_button.on('click',this.remove_button_func,this)
 				//-------------------building cfilter-----------------
-				this.items = [this.upperPanel, this.bottomPanel];
+				this.items = [this.upperPanel,this.bottomPanel]
 				this.callParent(arguments);
-
+				
 				//--------------load filter if there is filter--------
-				if (this.filter)
-					this.setValue(this.filter);
+				if(this.filter)
+					this.setValue(this.filter)
 			},
-
+			
 
 			//launched when value selected in combobox
-			operator_combo_change: function(combo,value,oldvalue) {
-				log.debug(' + Catch changes on operator combobox, value : ' + value, this.logAuthor);
-				var operator_type = this.get_type_from_operator(value, this.operator_store);
+			operator_combo_change : function(combo,value,oldvalue){
+				log.debug(' + Catch changes on operator combobox, value : ' + value, this.logAuthor)
+				var operator_type = this.get_type_from_operator(value,this.operator_store)
 				//log.debug(' + The type of the operator is: ' + operator_type,this.logAuthor)
-				if (operator_type == 'object') {
+				if(operator_type == 'object'){
 					//log.debug('   + Field is a known operator',this.logAuthor)
-					this.contain_other_cfilter = true;
-					this.add_button.show();
-					this.string_value.hide();
-					this.array_field.hide();
-					this.sub_operator_combo.hide();
-					this.bottomPanel.show();
+					this.contain_other_cfilter = true
+					this.add_button.show()
+					this.string_value.hide()
+					this.array_field.hide()
+					this.sub_operator_combo.hide()
+					this.bottomPanel.show()
 				} else {
 					//log.debug('   + Unknown operator',this.logAuthor)
-					this.contain_other_cfilter = false;
-					this.add_button.hide();
-					this.sub_operator_combo.show();
-					this.sub_operator_combo_change();
-					this.bottomPanel.hide();
+					this.contain_other_cfilter = false
+					this.add_button.hide()
+					this.sub_operator_combo.show()
+					this.sub_operator_combo_change()
+					this.bottomPanel.hide()
 				}
 			},
-
-			sub_operator_combo_change: function(combo,value,oldvalue) {
+			
+			sub_operator_combo_change : function(combo,value,oldvalue){
 				//log.debug(' + Catch changes on sub operator combobox, value : ' + value, this.logAuthor)
-				if (!value)
-					var value = this.sub_operator_combo.getValue();
-
-				switch (this.get_type_from_operator(value, this.sub_operator_store)) {
+				if(!value)
+					var value = this.sub_operator_combo.getValue()
+				
+				switch(this.get_type_from_operator(value,this.sub_operator_store)){
 					case 'value':
-						this.string_value.show();
-						this.array_field.hide();
+						this.string_value.show()
+						this.array_field.hide()
 						break;
 					case 'array':
-						this.string_value.hide();
-						this.array_field.show();
+						this.string_value.hide()
+						this.array_field.show()
 						break;
 					default:
 						//log.debug('   + Unrecognized field type',this.logAuthor)
 						break;
 				}
 			},
-
+			
 			//give operator and store, return associated type
-			get_type_from_operator: function(operator,store) {
-				var index_search = store.find('operator', operator);
-				if (index_search != -1) {
-					var operator_record = store.getAt(index_search);
-					var operator_type = operator_record.get('type');
-					return operator_type;
-				}else {
-					return null;
+			get_type_from_operator : function(operator,store){
+				var index_search = store.find('operator',operator)
+				if(index_search != -1){
+					var operator_record = store.getAt(index_search)
+					var operator_type = operator_record.get('type')
+					return operator_type
+				}else{
+					return null
 				}
 			},
-
-			add_cfilter: function(filter) {
-				return this.bottomPanel.add(this.build_field_panel(filter));
+			
+			add_cfilter : function(filter){
+				return this.bottomPanel.add(this.build_field_panel(filter))
 			},
 
 			//return an ready to add cfilter
-			build_field_panel: function(filter) {
+			build_field_panel : function(filter){
 				//Hack: clean store filters (otherwise combo are empty)
-				this.operator_store.clearFilter();
-				return Ext.create('cfilter.object', {
+				this.operator_store.clearFilter()
+				return Ext.create('cfilter.object',{	
 							operator_store: this.operator_store,
-							sub_operator_store: this.sub_operator_store,
-							filter: filter
-						});
+							sub_operator_store:this.sub_operator_store,
+							filter:filter
+						})
 			},
-
-			remove_button_func: function() {
-				this.destroy();
+			
+			remove_button_func: function(){
+				this.destroy()
 			},
-
-			remove_all_cfilter: function() {
-				this.bottomPanel.removeAll();
+			
+			remove_all_cfilter : function(){
+				this.bottomPanel.removeAll()
 			},
-
+			
 			//------------get / set value--------------------
-			getValue: function() {
-				var items = this.bottomPanel.items.items;
-				var field = this.operator_combo.getValue();
-
-				var value = this.string_value.getValue();
-				var output = {};
-
-				if (this.contain_other_cfilter) {
+			getValue : function(){
+				var items = this.bottomPanel.items.items
+				var field = this.operator_combo.getValue()
+				
+				var value = this.string_value.getValue()
+				var output = {}
+				
+				if(this.contain_other_cfilter){
 					//get into cfilter
-					var values = [];
+					var values = []
 					//get all cfilter values
-					for (var i in items) {
-						var cfilter = items[i];
-						values.push(cfilter.getValue());
+					for(var i in items){
+						var cfilter = items[i]
+						values.push(cfilter.getValue())
 					}
-				}else {
+				}else{
 					//just simple value (no inner cfilter)
-					var values = {};
-					var sub_operator = this.sub_operator_combo.getValue();
-					var sub_operator_type = this.get_type_from_operator(sub_operator, this.sub_operator_store);
-
+					var values = {}
+					var sub_operator = this.sub_operator_combo.getValue()
+					var sub_operator_type = this.get_type_from_operator(sub_operator,this.sub_operator_store)
+					
 					//choose between array or value
-					if (sub_operator_type == 'value') {
-						if (sub_operator != '$eq')
-							values[sub_operator] = this.string_value.getValue();
+					if(sub_operator_type == 'value'){
+						if(sub_operator != '$eq')
+							values[sub_operator] = this.string_value.getValue()
 						else
-							var values = this.string_value.getValue();
-					}else if (sub_operator_type == 'array') {
-						values[sub_operator] = this.array_field.getValue();
+							var values = this.string_value.getValue()
+					}else if(sub_operator_type == 'array'){
+						values[sub_operator] = this.array_field.getValue()
 					}
 				}
-
-				output[field] = values;
-				return output;
+				
+				output[field] = values
+				return output
 			},
-
-			setValue: function(filter) {
-				log.debug('Set value', this.logAuthor);
-				if (typeof(filter) == 'string')
-					filter = Ext.decode(filter);
-
-				var key = Ext.Object.getKeys(filter)[0];
-				var value = filter[key];
-
+			
+			setValue : function(filter){
+				log.debug('Set value',this.logAuthor)
+				if(typeof(filter) == 'string')
+					filter = Ext.decode(filter)
+				
+				var key = Ext.Object.getKeys(filter)[0]
+				var value = filter[key]
+				
 				//Hack: clear filter before research, otherwise -> search always = -1
-				this.operator_store.clearFilter();
-				log.debug('Search for the operator "' + key + '" in store', this.logAuthor);
-				var search = this.operator_store.find('operator', key);
+				this.operator_store.clearFilter()
+				log.debug('Search for the operator "' + key + '" in store',this.logAuthor)
+				var search = this.operator_store.find('operator',key)
+				
+				this.operator_combo.setValue(key)
 
-				this.operator_combo.setValue(key);
-
-				if (search == -1) {
-					if (typeof(value) == 'object') {
-						log.debug('  + "' + key + '" have a sub operator', this.logAuthor);
-						var object_key = Ext.Object.getKeys(value)[0];
-						var object_value = value[object_key];
-						this.sub_operator_combo.setValue(object_key);
-
+				if(search == -1){
+					if(typeof(value) == 'object'){
+						log.debug('  + "'+ key +'" have a sub operator',this.logAuthor)
+						var object_key = Ext.Object.getKeys(value)[0]
+						var object_value = value[object_key]
+						this.sub_operator_combo.setValue(object_key)
+						
 						//check sub operator type
-						var sub_operator_type = this.get_type_from_operator(object_key, this.sub_operator_store);
-						if (sub_operator_type == 'array') {
-							log.debug('   + The sub operator is an array', this.logAuthor);
-							this.array_field.setValue(object_value);
-						}else {
-							log.debug('   + The sub operator is a value', this.logAuthor);
-							this.string_value.setValue(object_value);
+						var sub_operator_type = this.get_type_from_operator(object_key,this.sub_operator_store)
+						if(sub_operator_type == 'array'){
+							log.debug('   + The sub operator is an array',this.logAuthor)
+							this.array_field.setValue(object_value)
+						}else{
+							log.debug('   + The sub operator is a value',this.logAuthor)
+							this.string_value.setValue(object_value)
 						}
-					}else {
-						log.debug('  + "' + key + '" is a simple value', this.logAuthor);
-						this.string_value.setValue(value);
+					}else{
+						log.debug('  + "'+ key +'" is a simple value',this.logAuthor)
+						this.string_value.setValue(value)
 					}
-				}else {
-					log.debug('  + "' + key + '" is a registred operator', this.logAuthor);
-					var operator_type = this.get_type_from_operator(key, this.operator_store);
-					if (operator_type == 'array') {
-						log.debug('  + "' + key + '" contain an array', this.logAuthor);
-						var object_key = Ext.Object.getKeys(value)[0];
-						this.sub_operator_combo.setValue(object_key);
-						var object_value = value[object_key];
-						this.array_field.setValue(object_value);
-					}else {
-						for (i in value) {
-							log.debug('  + "' + key + '" contain another cfilter object', this.logAuthor);
-							this.add_cfilter(value[i]);
+				}else{
+					log.debug('  + "'+ key +'" is a registred operator',this.logAuthor)
+					var operator_type = this.get_type_from_operator(key,this.operator_store)
+					if(operator_type == 'array'){
+						log.debug('  + "'+ key +'" contain an array',this.logAuthor)
+						var object_key = Ext.Object.getKeys(value)[0]
+						this.sub_operator_combo.setValue(object_key)
+						var object_value = value[object_key]
+						this.array_field.setValue(object_value)
+					}else{
+						for(i in value){
+							log.debug('  + "'+ key +'" contain another cfilter object',this.logAuthor)
+							this.add_cfilter(value[i])
 						}
 					}
 				}
 			}
-		});
+		})
 	},
-
-	build_store: function() {
-		log.debug('Build stores', this.logAuthor);
-
+	
+	build_store : function(){
+		log.debug('Build stores', this.logAuthor)
+		
 		//---------------------operator store----------------
 		this.operator_store = Ext.create('Ext.data.Store', {
-			fields: ['operator', 'text', 'type'],
-			data: [
-				{'operator': '$nor', 'text': _('Nor'), 'type': 'object'},
-				{'operator': '$or', 'text': _('Or'), 'type': 'object'},
-				{'operator': '$and', 'text': _('And'), 'type': 'object'},
-				{'operator': 'tags', 'text': _('Tags'), 'type': 'array'}
+			fields : ['operator','text','type'],
+			data : [
+				{'operator': '$nor','text': _('Nor'), 'type': 'object'},
+				{'operator': '$or','text': _('Or'), 'type': 'object'},
+				{'operator': '$and','text': _('And'), 'type': 'object'},
+				{'operator': 'tags','text': _('Tags'), 'type': 'array'}
 			]
-		});
-
+		})
+		
 		this.sub_operator_store = Ext.create('Ext.data.Store', {
-			fields: ['operator', 'text', 'type'],
-			data: [
-				{'operator': '$eq', 'text': _('Equal'), 'type': 'value'},
-				{'operator': '$lt', 'text': _('Less'), 'type': 'value' },
-				{'operator': '$lte', 'text': _('Less or equal'), 'type': 'value' },
-				{'operator': '$gt', 'text': _('Greater'), 'type': 'value' },
-				{'operator': '$gte', 'text': _('Greater or equal'), 'type': 'value' },
-				{'operator': '$all', 'text': _('Match all'), 'type': 'array' },
-				{'operator': '$exists', 'text': _('Exists'), 'type': 'value' },
-				{'operator': '$ne', 'text': _('Not equal'), 'type': 'value' },
-				{'operator': '$in', 'text': _('In'), 'type': 'array'},
-				{'operator': '$nin', 'text': _('Not in'), 'type': 'array'},
-				{'operator': '$regex', 'text': _('Regex'), 'type': 'value'}
+			fields : ['operator','text','type'],
+			data : [
+				{'operator': '$eq', 'text':_('Equal'), 'type':'value'},
+				{'operator': '$lt','text': _('Less'), 'type':'value' },
+				{'operator': '$lte','text': _('Less or equal'), 'type':'value' },
+				{'operator': '$gt','text': _('Greater'), 'type':'value' },
+				{'operator': '$gte','text': _('Greater or equal'), 'type':'value' },
+				{'operator': '$all','text': _('Match all'), 'type':'array' },
+				{'operator': '$exists','text': _('Exists'), 'type':'value' },
+				{'operator': '$ne','text':_('Not equal'), 'type':'value' },
+				{'operator': '$in','text': _('In'), 'type': 'array'},
+				{'operator': '$nin','text': _('Not in'), 'type': 'array'},
+				{'operator': '$regex','text': _('Regex'), 'type': 'value'},
 			]
-		});
-
+		})
+		
 	},
-
-	getValue: function() {
-		var value = undefined;
-		if (!this.cfilter.isHidden()) {
-			value = this.cfilter.getValue();
-		}else {
-			if (this.edit_area.validate())
-				value = strip_blanks(this.edit_area.getValue());
+	
+	getValue : function(){
+		var value = undefined
+		if(!this.cfilter.isHidden()){
+			value = this.cfilter.getValue()
+		}else{
+			if(this.edit_area.validate())
+				value = strip_blanks(this.edit_area.getValue())
 		}
+		
+		if(value){
+			if(typeof(value) != 'string')
+				value = Ext.encode(value)
 
-		if (value) {
-			if (typeof(value) != 'string')
-				value = Ext.encode(value);
-
-			log.debug('The filter is : ' + value, this.logAuthor);
-			return value;
-		}else {
-			log.debug('Invalid JSON value', this.logAuthor);
-			return undefined;
+			log.debug('The filter is : ' + value, this.logAuthor)
+			return value
+		}else{
+			log.debug('Invalid JSON value',this.logAuthor)
+			return undefined
 		}
 	},
-
-	setValue: function(value) {
-		if (typeof(value) == 'string')
-			value = Ext.decode(value);
-
-		log.debug('The filter to set is : ' + Ext.encode(value), this.logAuthor);
-		this.cfilter.setValue(value);
+	
+	setValue : function(value){
+		if(typeof(value) == 'string')
+			value = Ext.decode(value)
+		
+		log.debug('The filter to set is : ' + Ext.encode(value),this.logAuthor)
+		this.cfilter.setValue(value)
 	}
 
 });
