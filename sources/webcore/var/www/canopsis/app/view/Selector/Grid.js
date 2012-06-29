@@ -29,7 +29,6 @@ Ext.define('canopsis.view.Selector.Grid' , {
 	opt_db_namespace: 'object',
 
 	opt_menu_delete: true,
-	opt_menu_run_item: true,
 	opt_bar_duplicate: true,
 
 	columns: [
