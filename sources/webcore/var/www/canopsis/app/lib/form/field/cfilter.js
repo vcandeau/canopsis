@@ -81,9 +81,27 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			store: this.preview_store,
 			border:false,
 			columns: [
-				{ header: 'Component',  dataIndex: 'component',flex:1 },
-				{ header: 'Resource',  dataIndex: 'resource',flex:1 }
-			],
+				{
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'source_type',
+					renderer: rdr_source_type
+	       		},{
+					header: '',
+					width: 25,
+					sortable: false,
+					dataIndex: 'perf_data',
+					renderer: rdr_havePerfdata
+	       		},{
+					header: _('Component'),
+					flex: 1,
+					dataIndex: 'component'
+	       		},{
+					header: _('Resource'),
+					flex: 2,
+					dataIndex: 'resource'
+			}],
 		})
 		this.preview_window = Ext.widget('window',{
 			title:_('Filter preview'),
@@ -298,7 +316,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				this.operator_combo = Ext.widget('combobox',{
 								queryMode: 'local',
 								displayField: 'text',
-								triggerAction:'all',
 								//Hack: don't search in store
 								minChars:50,
 								valueField: 'operator',
