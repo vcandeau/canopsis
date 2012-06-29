@@ -34,7 +34,6 @@ from libexec.auth import check_auth, get_account ,check_group_rights
 
 logger = logging.getLogger("rest")
 
-
 ctype_to_group_access = {
 							'schedule' : 'group.CPS_schedule_admin',
 							'curve' : 'CPS_curve_admin',
@@ -62,12 +61,19 @@ def rest_get(namespace, ctype=None, _id=None):
 	sort		= request.params.get('sort', default=None)
 	query		= request.params.get('query', default=None)
 	onlyWritable	= request.params.get('onlyWritable', default=False)
+	ids			= request.params.get('ids', default=[])
+	
+	if not isinstance(ids, list):
+		try:
+			ids = json.loads(ids)
+		except Exception, err:
+			logger.error("Impossible to decode ids: %s: %s" % (ids, err))
 
 	if filter:
 		try:
 			filter = json.loads(filter)
 		except Exception, err:
-			logger.error("Filter decode: %s" % err)
+			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
 			filter = None
 			
 
@@ -89,6 +95,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + namespace: "+str(namespace))
 	logger.debug(" + Ctype: "+str(ctype))
 	logger.debug(" + _id: "+str(_id))
+	logger.debug(" + ids: "+str(ids))
 	logger.debug(" + Limit: "+str(limit))
 	logger.debug(" + Page: "+str(page))
 	logger.debug(" + Start: "+str(start))
@@ -111,8 +118,6 @@ def rest_get(namespace, ctype=None, _id=None):
 			
 	elif isinstance(filter, dict):
 		mfilter = filter
-
-	total = 0
 	
 	records = []
 	if ctype:
@@ -124,23 +129,16 @@ def rest_get(namespace, ctype=None, _id=None):
 	if query:
 		mfilter = {'crecord_name': { '$regex' : '.*'+str(query)+'.*', '$options': 'i' }}
 
+
 	if _id:
-		list_id = _id.split(',')
-		if len(list_id) == 1:
-			_id = list_id[0]
-			try:
-				records = [ storage.get(_id, account=account) ]
-				total = 1
-			except:
-				return HTTPError(404, _id+" Not Found")
-		else:
-			for _id in list_id:
-				if _id:
-					try:
-						records.append(storage.get(_id, account=account))
-					except:
-						pass
+		ids = _id.split(',')
 		
+	if ids:	
+		records = storage.get(ids, account=account)
+	
+		if len(records) == 0:
+			return HTTPError(404, ids+" Not Found")
+				
 	else:
 		if search:
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
@@ -167,7 +165,7 @@ def rest_get(namespace, ctype=None, _id=None):
 					data['next_run_time'] = str(data['next_run_time'])
 				output.append(data)
 
-	output={'total': total, 'success': True, 'data': output}
+	output={'total': len(output), 'success': True, 'data': output}
 
 	#logger.debug(" + Output: "+str(output))
 
