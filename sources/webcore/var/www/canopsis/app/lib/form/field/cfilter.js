@@ -24,15 +24,14 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	alias: 'widget.cfilter',
 	
-	//height : 600,
-	namespace: 'event',
+	border:false,
+	
+	namespace: 'events',
 	ctype: 'event',
 	autoScroll:true,
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
-	//filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
 	filter : undefined,
-	//filter : {"source":"fes"},
 	
 	layout: {
         type: 'vbox',
@@ -48,6 +47,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		
 		//-----------------preview windows----------------
 		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
+			model: 'canopsis.model.Event',
 			proxy: {
 				type: 'rest',
 				url: '/rest/' + this.namespace + '/' + this.ctype,
@@ -59,18 +59,19 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				},
 			 },
 			autoLoad:false,
-			model: 'event'
 		})
 		this.preview_grid = Ext.widget('grid',{
 			store: this.preview_store,
 			border:false,
 			columns: [
-				{ header: 'Name',  dataIndex: 'crecord_name',flex:1 }
+				{ header: 'Component',  dataIndex: 'component',flex:1 },
+				{ header: 'Resource',  dataIndex: 'resource',flex:1 }
 			],
 		})
 		this.preview_window = Ext.widget('window',{
 			title:_('Filter preview'),
 			layout:'fit',
+			closeAction:'hide',
 			constrain: true,
 			constrainTo: this.id,
 			height : 300,
