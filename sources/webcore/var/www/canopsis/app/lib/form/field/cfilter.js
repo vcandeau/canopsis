@@ -27,6 +27,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	//height : 600,
 	namespace: 'event',
 	ctype: 'event',
+	autoScroll:true,
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
 	//filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
@@ -48,12 +49,14 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		//-----------------preview windows----------------
 		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
 			proxy: {
-				 type: 'ajax',
-				 url: '/rest/' + this.namespace + '/' + this.ctype,
-				 reader: {
-					 type: 'json',
-					 root: 'data'
-				 }
+				type: 'rest',
+				url: '/rest/' + this.namespace + '/' + this.ctype,
+				reader: {
+					type: 'json',
+					root: 'data',
+					totalProperty: 'total',
+					successProperty: 'success'
+				},
 			 },
 			autoLoad:false,
 			model: 'event'
@@ -69,6 +72,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			title:_('Filter preview'),
 			layout:'fit',
 			constrain: true,
+			constrainTo: this.id,
 			height : 300,
 			width:300,
 			items:[this.preview_grid]
@@ -141,6 +145,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		var filter = this.getValue()
 		if(filter){
 			this.preview_store.clearFilter()
+			log.debug('Showing preview with filter: ' + filter,this.logAuthor)
 			this.preview_store.setFilter(filter)
 			this.preview_store.load()
 			this.preview_window.show()
@@ -493,7 +498,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				}else{
 					log.debug('  + "'+ key +'" is a registred operator: ' + key,this.logAuthor)
 					var operator_type = this.get_type_from_operator(key,this.operator_store)
-					log.dump(operator_type)
 					if(operator_type == 'array'){
 						//temporary patch , must review all set value
 						log.debug('  + "'+ key +'" contain an array',this.logAuthor)
