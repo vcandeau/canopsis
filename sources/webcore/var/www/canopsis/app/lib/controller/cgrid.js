@@ -517,6 +517,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_editRecord: function(view, item, index) {
 		log.debug('Clicked editRecord', this.logAuthor);
+		
+		//hack create a copy to not mess with old record
+		item = item.copy(); 
+		Ext.data.Model.id(item)
 
 		//check rights
 		var ctrl = this.getController('Account');
