@@ -134,20 +134,23 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 		//---------------------TBAR--------------------------
 		this.wizard_button = Ext.widget('button', {handler: this.show_wizard,
-			text: 'Wizard',
+			iconCls: 'icon-wizard',
+			tooltip: _('Wizard'),
 			scope: this,
 			disabled: true,
 			margin: 5
 		});
 		this.edit_button = Ext.widget('button', {
 			handler: this.show_edit_area,
-			text: 'edit',
+			tooltip: _('Edit'),
+			iconCls: 'icon-edit',
 			margin: 5,
 			scope: this
 		});
 		this.preview_button = Ext.widget('button', {
 			handler: this.show_preview,
-			text: 'preview',
+			tooltip: _('Preview'),
+			iconCls: 'icon-preview',
 			margin: 5,
 			scope: this
 		});
@@ -188,7 +191,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	show_edit_area: function() {
-		var filter = this.getValue();
+		var filter = Ext.decode(this.getValue());
 		filter = JSON.stringify(filter, undefined, 8);
 		this.edit_area.setValue(filter);
 		this.cfilter.hide();
@@ -231,7 +234,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				}
 				//--------buttons--------
 				this.add_button = Ext.widget('button', {
-					text: 'add',
+					iconCls: 'icon-add',
 					//margin: '0 0 0 5',
 					tooltip: _('Add new value to this list')
 				});
@@ -339,7 +342,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				//--------------------panel-------------------------
 				this.add_button = Ext.widget('button', {
-					text: 'add',
+					iconCls: 'icon-add',
 					margin: '0 0 0 5',
 					hidden: true,
 					tooltip: _('Add new field/condition')
