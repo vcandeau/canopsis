@@ -167,6 +167,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			initComponent: function() {
 				this.textfield_panel = Ext.widget('panel',{
 					border: false,
+					margin: '0 0 0 5',
 				})
 				if(!this.value)
 					this.add_textfield()
@@ -174,11 +175,11 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				//--------buttons--------
 				this.add_button = Ext.widget('button',{
 					text:'add',
-					margin: '0 0 0 5',
+					//margin: '0 0 0 5',
 					tooltip: _('Add new value to this list')
 				})
 				//--------build object----
-				this.items = [this.textfield_panel,this.add_button]
+				this.items = [this.add_button,this.textfield_panel]
 				this.callParent(arguments);
 				//--------bindings-------
 				this.add_button.on('click',function(){this.add_textfield()},this)
