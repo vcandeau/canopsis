@@ -494,17 +494,13 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				log.debug('Search for the operator "' + key + '" in store',this.logAuthor)
 				var search = this.operator_store.find('operator',key)
 				
-				log.debug('Set Operator field with: '+ key ,this.logAuthor)
 				this.operator_combo.setValue(key)
 
 				if(search == -1){
-					log.debug(' + "'+ key +'" not an operator',this.logAuthor)
 					if(typeof(value) == 'object'){
-						log.debug('  + Field is another cfilter condition',this.logAuthor)
+						log.debug('  + "'+ key +'" have a sub operator',this.logAuthor)
 						var object_key = Ext.Object.getKeys(value)[0]
-						//log.debug('  + Object key is: ' + object_key,this.logAuthor)
 						var object_value = value[object_key]
-						//log.debug('  + Object value is: ' + object_value,this.logAuthor)
 						this.sub_operator_combo.setValue(object_key)
 						
 						//check sub operator type
@@ -521,10 +517,9 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						this.string_value.setValue(value)
 					}
 				}else{
-					log.debug('  + "'+ key +'" is a registred operator: ' + key,this.logAuthor)
+					log.debug('  + "'+ key +'" is a registred operator',this.logAuthor)
 					var operator_type = this.get_type_from_operator(key,this.operator_store)
 					if(operator_type == 'array'){
-						//temporary patch , must review all set value
 						log.debug('  + "'+ key +'" contain an array',this.logAuthor)
 						var object_key = Ext.Object.getKeys(value)[0]
 						this.sub_operator_combo.setValue(object_key)
@@ -532,7 +527,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						this.array_field.setValue(object_value)
 					}else{
 						for(i in value){
-							log.debug(' + New cfilter object',this.logAuthor)
+							log.debug('  + "'+ key +'" contain another cfilter object',this.logAuthor)
 							this.add_cfilter(value[i])
 						}
 					}
@@ -596,9 +591,9 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	setValue : function(value){
-		if(typeof(value) == 'string'){
+		if(typeof(value) == 'string')
 			value = Ext.decode(value)
-		}
+		
 		
 		log.debug('The filter to set is : ' + Ext.encode(value),this.logAuthor)
 		this.cfilter.setValue(value)
