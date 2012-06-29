@@ -95,15 +95,31 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		})
 
 		//---------------------TBAR--------------------------
-		//var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
-		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this,disabled:true})
-		this.edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
-		this.preview_button = Ext.widget('button',{handler:this.show_preview,text:'preview',scope:this})
+		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,
+			text:'Wizard',
+			scope:this,
+			disabled:true,
+			margin: 5
+		})
+		this.edit_button = Ext.widget('button',{
+			handler:this.show_edit_area,
+			text:'edit',
+			margin: 5,
+			scope:this
+		})
+		this.preview_button = Ext.widget('button',{
+			handler:this.show_preview,
+			text:'preview',
+			margin: 5,
+			scope:this
+		})
 
-		this.tbar = [this.wizard_button,this.edit_button,this.preview_button]
+		var button_panel = Ext.widget('panel',{
+			border:false,
+			items:[this.wizard_button,this.edit_button,this.preview_button]
+		})
 		
-
-		this.items = [this.cfilter,this.edit_area]
+		this.items = [button_panel,this.cfilter,this.edit_area]
 		this.callParent(arguments);
 	},
 	
