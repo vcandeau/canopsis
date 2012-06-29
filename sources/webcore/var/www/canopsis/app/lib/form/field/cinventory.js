@@ -89,12 +89,6 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					dataIndex: 'source_type',
 					renderer: rdr_source_type
 	       		},{
-					header: '',
-					width: 25,
-					sortable: false,
-					dataIndex: 'perf_data',
-					renderer: rdr_havePerfdata
-	       		},{
 					header: _('Component'),
 					flex: 1,
 					dataIndex: 'component'
