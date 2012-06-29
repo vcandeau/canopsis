@@ -591,18 +591,18 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	getValue : function(){
 		var value = undefined
 		if(!this.cfilter.isHidden()){
-			var value = this.cfilter.getValue()
+			value = this.cfilter.getValue()
 		}else{
 			if(this.edit_area.validate())
-				var value = strip_blanks(this.edit_area.getValue())
+				value = strip_blanks(this.edit_area.getValue())
 		}
 		
 		if(value){
-			if(typeof(value) == 'string')
-				value = Ext.decode(value)
+			if(typeof(value) != 'string')
+				value = Ext.encode(value)
 
-			log.debug('The filter is : ' + Ext.encode(value),this.logAuthor)
-			return this.cfilter.getValue()
+			log.debug('The filter is : ' + value, this.logAuthor)
+			return value
 		}else{
 			log.debug('Invalid JSON value',this.logAuthor)
 			return undefined
@@ -612,7 +612,6 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	setValue : function(value){
 		if(typeof(value) == 'string')
 			value = Ext.decode(value)
-		
 		
 		log.debug('The filter to set is : ' + Ext.encode(value),this.logAuthor)
 		this.cfilter.setValue(value)
