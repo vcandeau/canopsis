@@ -38,8 +38,7 @@ Ext.define('widgets.stream.stream' , {
 	burst_interval: 500, //ms
 	burst_threshold: 2, //nb events
 
-	autoScroll: true,
-
+	wcontainer_autoScroll: true,
 	wcontainer_layout: 'anchor',
 
 	showToolbar: true,
@@ -51,7 +50,8 @@ Ext.define('widgets.stream.stream' , {
 		this.nodeId = false;
 		this.refreshInterval = 5;
 
-		if (this.showToolbar) {
+		if (this.showToolbar && ! this.exportMode) {
+			
 			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
 					//baseCls: 'x-panel-header',
 					//height: 27,

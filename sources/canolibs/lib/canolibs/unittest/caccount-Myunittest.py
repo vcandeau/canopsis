@@ -38,8 +38,11 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global ACCOUNT
-		ACCOUNT = caccount(user="wpain", lastname="Pain", firstname="William", mail="wpain@capensis.fr", group="capensis", groups=['titi', 'tata'])
+		ACCOUNT = caccount(user="wpain", lastname="Pain", firstname="William", mail="wpain@capensis.fr", group="capensis", groups=['group.titi', 'group.tata'])
 		global GROUP
+		
+		user_account = caccount(user="william", group="capensis")
+		user_account.cat()
 
 	def test_02_Cat(self):
 		ACCOUNT.cat()
@@ -93,17 +96,17 @@ class KnownValues(unittest.TestCase):
 		if account.user != 'wpain':
 			raise Exception('account.user: Corruption in load ...')
 
-		if account.group != 'toto':
+		if account.group != 'group.toto':
 			raise Exception('account.group: Corruption in load ...')
 
-		if account.groups != ['titi', 'tata']:
+		if account.groups != ['group.titi', 'group.tata']:
 			raise Exception('account.groups: Corruption in load ...')
 		
 
 	def test_08_CheckEdit(self):
 		account = caccount_get(STORAGE, "wpain")
 
-		if account.group != 'toto':
+		if account.group != 'group.toto':
 			raise Exception('Impossible to edit account in DB ...')
 
 	def test_09_Remove(self):

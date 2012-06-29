@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, time
+import sys, time, logging
 
 from cinit import cinit
 from ctools import dynmodloads
@@ -78,8 +78,10 @@ except Exception, err:
 
 ## Logger
 if debug:
+	logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s', level=logging.DEBUG)
 	logger 	= init.getLogger("%s-webserver" % os.getpid(), "DEBUG")
 else:
+	logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s', level=logging.INFO)
 	logger 	= init.getLogger("%s-webserver" % os.getpid(), "INFO")
 
 ## Load webservices
