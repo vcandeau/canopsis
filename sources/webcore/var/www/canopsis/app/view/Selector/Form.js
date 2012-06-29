@@ -24,22 +24,22 @@ Ext.define('canopsis.view.Selector.Form', {
 	alias: 'widget.SelectorForm',
 
 	defaultType: undefined,
-	
+
     initComponent: function() {
-		
+
 		this.items = [
 			{
-				xtype: "tabpanel",
+				xtype: 'tabpanel',
 				height: 400,
 				width: 700,
 				plain: true,
 				border: false,
 				defaults: {
-					border: false,
+					border: false
 				},
 				items: [
 					{
-						title: _("General"),
+						title: _('General'),
 						defaultType: 'textfield',
 						bodyStyle: 'padding:5px 5px 0',
 						items: [
@@ -53,27 +53,27 @@ Ext.define('canopsis.view.Selector.Form', {
 								allowBlank: false
 							},{
 								fieldLabel: _('Description'),
-								xtype: "textareafield",
+								xtype: 'textareafield',
 								name: 'description'
 							}
 						]
 					},{
-						title: _("Include"),
-						name :'include_ids',
+						title: _('Include'),
+						name: 'include_ids',
 						xtype: 'cinventory'
 					},{
-						title: _("Exclude"),
+						title: _('Exclude'),
 						name: 'exclude_ids',
 						xtype: 'cinventory'
 					},{
-						title: _("Filter"),
-						xtype: "cfilter",
-						name: "mfilter",
+						title: _('Filter'),
+						xtype: 'cfilter',
+						name: 'mfilter'
 					}
 				]
 			}
 		];
-			
+
         this.callParent();
     }
 
