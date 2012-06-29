@@ -142,6 +142,8 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	check_json_validity : function(value){
+		if(value == '')
+			return true
 		try{
 			Ext.decode(value)
 			return true
