@@ -30,7 +30,23 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	multiSelect: true,
 	vertical_multiselect: false,
 	default_padding: 5,
-	//isFormField: true,
+	
+	isFormField: true,
+	
+	getName: function(){
+		return this.name
+	},
+	isValid: function(){
+		return true
+	},
+	validate: function(){
+		return this.isValid()
+	},
+	getSubmitData: function(){
+		var data = {}
+		data[this.name] = this.getValue()
+		return data
+	},
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
@@ -287,28 +303,43 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	// GetValue for wizard ...
 	getValue: function() {
 		var dump = [];
-		var me = this;
 
 		this.selection_store.each(function(record) {
 			var id = record.data.id;
 			dump.push(id);
 		});
 
-		console.log("dddddddddddddddddddddddddddddddddddddddd")
 		log.debug('getValue Dump:', this.logAuthor);
 		log.dump(dump);
 
 		return dump;
 	},
 
-	setValue: function(data) {
+	setValue_record: function(records){
+		for (var i in records){
+			this.addRecord({data: records[i]});
+		}
+	},
+	
+	setValue: function(ids) {
 		log.debug('setValue Data:', this.logAuthor);
-		log.dump(data);
-
-		//for (var i in data) {
-		//}
-
-		//this.addRecord({data: rdata});
+		log.dump(ids);
+		
+		if (ids.length > 0)
+			Ext.Ajax.request({
+				url: "/rest/events/event",
+				scope: this,
+				params: {'ids': Ext.JSON.encode(ids)},
+				method: 'GET',
+				success: function(response) {
+						var data = Ext.JSON.decode(response.responseText);
+						data = data.data;
+						this.setValue_record(data);
+					},
+					failure: function(result, request) {
+						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+					}
+			});
 	},
 
 	beforeDestroy: function() {
