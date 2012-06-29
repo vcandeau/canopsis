@@ -314,8 +314,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				store.add(record);
 				this._postSave(record, data);
 				log.debug('Reload store', this.logAuthor);
-				store.resumeEvents();
-				store.load();
+				
+				//-------------load and resume events-------------
+				store.load({
+					scope: this,
+					callback: function(records, operation, success) {
+						this.grid.store.resumeEvents();
+					}
+				});
 
 				this._cancelForm(form);
 
