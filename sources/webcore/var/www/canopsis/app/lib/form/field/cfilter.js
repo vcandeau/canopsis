@@ -24,14 +24,14 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	
 	alias: 'widget.cfilter',
 	
-	//height : 600,
-	namespace: 'event',
+	border:false,
+	
+	namespace: 'events',
 	ctype: 'event',
+	autoScroll:true,
 	
 	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
-	//filter : '{"$and":[{"fruits":{"$nin":["banana","apple","lemon"]}},{"_id":"5"},{"load":{"$ne":"9"}}]}',
 	filter : undefined,
-	//filter : {"source":"fes"},
 	
 	layout: {
         type: 'vbox',
@@ -47,28 +47,33 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		
 		//-----------------preview windows----------------
 		this.preview_store = Ext.create('canopsis.lib.store.cstore', {
+			model: 'canopsis.model.Event',
 			proxy: {
-				 type: 'ajax',
-				 url: '/rest/' + this.namespace + '/' + this.ctype,
-				 reader: {
-					 type: 'json',
-					 root: 'data'
-				 }
+				type: 'rest',
+				url: '/rest/' + this.namespace + '/' + this.ctype,
+				reader: {
+					type: 'json',
+					root: 'data',
+					totalProperty: 'total',
+					successProperty: 'success'
+				},
 			 },
 			autoLoad:false,
-			model: 'event'
 		})
 		this.preview_grid = Ext.widget('grid',{
 			store: this.preview_store,
 			border:false,
 			columns: [
-				{ header: 'Name',  dataIndex: 'crecord_name',flex:1 }
+				{ header: 'Component',  dataIndex: 'component',flex:1 },
+				{ header: 'Resource',  dataIndex: 'resource',flex:1 }
 			],
 		})
 		this.preview_window = Ext.widget('window',{
 			title:_('Filter preview'),
 			layout:'fit',
+			closeAction:'hide',
 			constrain: true,
+			constrainTo: this.id,
 			height : 300,
 			width:300,
 			items:[this.preview_grid]
@@ -91,15 +96,31 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		})
 
 		//---------------------TBAR--------------------------
-		//var finish_button = Ext.widget('button',{handler:this.getValue,text:'finish',scope:this})
-		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,text:'Wizard',scope:this,disabled:true})
-		this.edit_button = Ext.widget('button',{handler:this.show_edit_area,text:'edit',scope:this})
-		this.preview_button = Ext.widget('button',{handler:this.show_preview,text:'preview',scope:this})
+		this.wizard_button = Ext.widget('button',{handler:this.show_wizard,
+			text:'Wizard',
+			scope:this,
+			disabled:true,
+			margin: 5
+		})
+		this.edit_button = Ext.widget('button',{
+			handler:this.show_edit_area,
+			text:'edit',
+			margin: 5,
+			scope:this
+		})
+		this.preview_button = Ext.widget('button',{
+			handler:this.show_preview,
+			text:'preview',
+			margin: 5,
+			scope:this
+		})
 
-		this.tbar = [this.wizard_button,this.edit_button,this.preview_button]
+		var button_panel = Ext.widget('panel',{
+			border:false,
+			items:[this.wizard_button,this.edit_button,this.preview_button]
+		})
 		
-
-		this.items = [this.cfilter,this.edit_area]
+		this.items = [button_panel,this.cfilter,this.edit_area]
 		this.callParent(arguments);
 	},
 	
@@ -141,6 +162,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 		var filter = this.getValue()
 		if(filter){
 			this.preview_store.clearFilter()
+			log.debug('Showing preview with filter: ' + filter,this.logAuthor)
 			this.preview_store.setFilter(filter)
 			this.preview_store.load()
 			this.preview_window.show()
@@ -162,18 +184,20 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 			initComponent: function() {
 				this.textfield_panel = Ext.widget('panel',{
 					border: false,
+					margin: '0 0 0 5',
 				})
-				if(!this.value)
+				
+				if(!this.value){
 					this.add_textfield()
-
+				}
 				//--------buttons--------
 				this.add_button = Ext.widget('button',{
 					text:'add',
-					margin: '0 0 0 5',
+					//margin: '0 0 0 5',
 					tooltip: _('Add new value to this list')
 				})
 				//--------build object----
-				this.items = [this.textfield_panel,this.add_button]
+				this.items = [this.add_button,this.textfield_panel]
 				this.callParent(arguments);
 				//--------bindings-------
 				this.add_button.on('click',function(){this.add_textfield()},this)
@@ -196,15 +220,21 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 					tooltip:_('Remove this from list of value')
 				})
 
+				var item_array = [textfield]
+
+				//if it's not first elem, add remove button
+				if(this.textfield_panel.items.length >= 1)
+					item_array.push(remove_button)
+					
 				var panel = Ext.widget('panel',{
 					border:false,
 					margin: '0 0 5 0',
 					layout: 'hbox',
-					items:[textfield,remove_button]
+					items: item_array
 				})
 				remove_button.on('click',function(button){button.up().destroy()})
 				
-				this.textfield_panel.add(panel)
+				return this.textfield_panel.add(panel)
 			},
 			
 			getValue: function(){
@@ -464,17 +494,13 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 				log.debug('Search for the operator "' + key + '" in store',this.logAuthor)
 				var search = this.operator_store.find('operator',key)
 				
-				log.debug('Set Operator field with: '+ key ,this.logAuthor)
 				this.operator_combo.setValue(key)
 
 				if(search == -1){
-					log.debug(' + "'+ key +'" not an operator',this.logAuthor)
 					if(typeof(value) == 'object'){
-						log.debug('  + Field is another cfilter condition',this.logAuthor)
+						log.debug('  + "'+ key +'" have a sub operator',this.logAuthor)
 						var object_key = Ext.Object.getKeys(value)[0]
-						//log.debug('  + Object key is: ' + object_key,this.logAuthor)
 						var object_value = value[object_key]
-						//log.debug('  + Object value is: ' + object_value,this.logAuthor)
 						this.sub_operator_combo.setValue(object_key)
 						
 						//check sub operator type
@@ -491,11 +517,9 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						this.string_value.setValue(value)
 					}
 				}else{
-					log.debug('  + "'+ key +'" is a registred operator: ' + key,this.logAuthor)
+					log.debug('  + "'+ key +'" is a registred operator',this.logAuthor)
 					var operator_type = this.get_type_from_operator(key,this.operator_store)
-					log.dump(operator_type)
 					if(operator_type == 'array'){
-						//temporary patch , must review all set value
 						log.debug('  + "'+ key +'" contain an array',this.logAuthor)
 						var object_key = Ext.Object.getKeys(value)[0]
 						this.sub_operator_combo.setValue(object_key)
@@ -503,7 +527,7 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 						this.array_field.setValue(object_value)
 					}else{
 						for(i in value){
-							log.debug(' + New cfilter object',this.logAuthor)
+							log.debug('  + "'+ key +'" contain another cfilter object',this.logAuthor)
 							this.add_cfilter(value[i])
 						}
 					}
@@ -567,9 +591,9 @@ Ext.define('canopsis.lib.form.field.cfilter' ,{
 	},
 	
 	setValue : function(value){
-		if(typeof(value) == 'string'){
+		if(typeof(value) == 'string')
 			value = Ext.decode(value)
-		}
+		
 		
 		log.debug('The filter to set is : ' + Ext.encode(value),this.logAuthor)
 		this.cfilter.setValue(value)
