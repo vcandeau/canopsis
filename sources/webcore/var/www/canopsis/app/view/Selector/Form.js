@@ -62,9 +62,8 @@ Ext.define('canopsis.view.Selector.Form', {
 						xtype: 'cinventory'
 					},{
 						title: _("Filter"),
-						xtype: "textareafield",
+						xtype: "cfilter",
 						name: "mfilter",
-						value: ""
 					}
 				]
 			}
