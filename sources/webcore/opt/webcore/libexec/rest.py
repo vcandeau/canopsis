@@ -197,7 +197,7 @@ def rest_put(namespace, ctype, _id=None):
 		try:
 			data = json.loads(data)
 		except Exception, err:
-			logger.error("DELETE: Impossible to parse data (%s)" % err)
+			logger.error("PUT: Impossible to parse data (%s)" % err)
 			return HTTPError(404, "Impossible to parse data")
 
 	data['crecord_type'] = ctype
@@ -234,18 +234,24 @@ def rest_put(namespace, ctype, _id=None):
 	else:
 		group = account.group
 
-	update = False
+	record = None
 	if _id:
 		try:
 			record = storage.get(_id ,account=account)
 			logger.debug('Update record %s' % _id)
-			update = True
 		except:
 			logger.debug('Create record %s' % _id)
 
-	if update:
+	if record:
 		for key in dict(data).keys():
 			record.data[key] = data[key]
+			
+		# Update Name	
+		try:
+			record.name = data['crecord_name']
+		except:
+			pass
+		
 	else:
 		raw_record = crecord(_id=_id, type=str(ctype)).dump()
 		for key in dict(data).keys():
@@ -254,6 +260,8 @@ def rest_put(namespace, ctype, _id=None):
 		record = crecord(raw_record=raw_record)
 		record.chown(account.user)
 		record.chgrp(group)
+	
+	logger.debug(' + Record: %s' % record.dump())
 	try:
 		storage.put(record, namespace=namespace, account=account)
 		
