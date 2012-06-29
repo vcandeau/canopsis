@@ -153,6 +153,14 @@
 	background-image: url(../images/icons/cog_go.png) !important;
 }
 
+.icon-wizard {
+	background-image: url(../images/icons/application_form.png) !important;
+}
+
+.icon-preview {
+	background-image: url(../images/icons/eye.png) !important;
+}
+
 /* Mainbar */
 
 .icon-mainbar-run { 
