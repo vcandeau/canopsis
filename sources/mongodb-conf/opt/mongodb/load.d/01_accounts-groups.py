@@ -28,10 +28,10 @@ logger = None
 ##set root account
 root = caccount(user="root", group="root")
 
-#need this in two functions, krey:group_name , value : group_description
+#need this in two functions, key:group_name , value : group_description
 groups =  {
-	'root':'Have all rights.',
-	'canopsis':'Base canopsis group.',
+	'CPS_root':'Have all rights.',
+	'CPS_canopsis':'Base canopsis group.',
 	'CPS_curve_admin':'Create and modify curves parameters for UI.',
 	'CPS_view_admin':'Manage all view in canopsis, add, remove or edit.',
 	'CPS_view':'Create and manage his own view.',
@@ -168,9 +168,25 @@ def update_for_new_rights():
 			for account in record.data['account_ids']:
 				if account.find('account.') == -1:
 					account = 'account.%s' % account
-	
 	storage.put(dump)
+
 	
+	#---------------rename canopsis group and root group-------------
+	try:
+		storage.remove('group.root')
+		account_root = storage.get('account.root')
+		account_root.chgrp('CPS_root')
+		storage.put(account_root)
+	except:
+		pass
+		
+	try:
+		storage.remove('group.canopsis')
+		account_canopsis = storage.get('account.canopsis')
+		account_canopsis.chgrp('CPS_canopsis')
+		storage.put(account_canopsis)
+	except:
+		pass
 	#---------------------update each record type--------------------
 	#update view
 	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
