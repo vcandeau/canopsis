@@ -55,12 +55,20 @@ class cengine(multiprocessing.Process):
 		
 	def create_amqp_queue(self):
 		self.amqp.add_queue(self.amqp_queue, None, self._work, "amq.direct", auto_delete=True)
+	
+	def pre_run(self):
+		pass
 		
+	def post_run(self):
+		pass
+	
 	def run(self):
 		def ready():
 			self.logger.info(" + Ready!")
 			
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
+		
+		self.pre_run()
 		
 		from camqp import camqp
 		
@@ -87,7 +95,9 @@ class cengine(multiprocessing.Process):
 				pass
 			
 			time.sleep(0.5)
-			
+		
+		self.post_run()
+		
 		self.logger.info("Stop Engine")
 		self.stop()
 		self.logger.info("End of Engine")
