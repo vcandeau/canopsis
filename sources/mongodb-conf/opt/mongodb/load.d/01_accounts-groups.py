@@ -138,12 +138,14 @@ def add_description_to_group():
 def check_and_create_authkey():
 	storage = get_storage(account=root, namespace='object')
 	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
+	accounts = []
 	for record in records:
+		account = caccount(record)
 		if 'authkey' in record.data:
 			if record.data['authkey'] == None:
 				record.generate_new_authkey()
-		else:
-			record.generate_new_authkey()
+				account.append(account)
+	storage.put(accounts)
 
 def update_for_new_rights():
 	#Enable rights , update old record
