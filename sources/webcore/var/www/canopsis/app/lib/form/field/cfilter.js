@@ -347,7 +347,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 								displayField: 'text',
 								//Hack: don't search in store
 								minChars: 50,
-								allowBlank : false,
+								//allowBlank : false,
 								valueField: 'operator',
 								emptyText: _('Type value or choose operator'),
 								store: this.operator_store
@@ -382,7 +382,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				this.string_value = Ext.widget('textfield', {
 					margin: '0 0 0 5',
-					allowBlank : false,
+					//allowBlank : false,
 					emptyText: 'Type value here'
 					});
 				this.array_field = Ext.create('cfilter.array_field', {hidden: true});
