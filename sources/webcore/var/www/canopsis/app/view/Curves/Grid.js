@@ -31,6 +31,7 @@ Ext.define('canopsis.view.Curves.Grid' , {
 	opt_paging: false,
 	opt_menu_delete: true,
 	opt_bar_duplicate: true,
+	opt_menu_rights: true,
 	opt_bar_search: true,
 	opt_bar_search_field: ['metric'],
 
