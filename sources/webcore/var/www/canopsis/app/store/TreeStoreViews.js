@@ -37,6 +37,13 @@ Ext.define('canopsis.store.TreeStoreViews', {
 	//defaultRootId : 'directory.root',
 
 	proxy: {
+		//TODO : use that to make difference between update/create
+		actionMethods: {
+			read:'GET',
+			create: 'POST',
+			destroy: 'DELETE',
+			update: 'POST'
+		},
 		type: 'rest',
 		url: '/ui/view',
 		reader: {
@@ -46,7 +53,8 @@ Ext.define('canopsis.store.TreeStoreViews', {
 			//successProperty: 'success',
 		},
 		writer: {
-			type: 'json'
+			type: 'json',
+			method: 'POST'
 		}
 	},
 
