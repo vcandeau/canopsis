@@ -39,6 +39,11 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
         },{
+			header: _('Loaded'),
+			width: 55,
+			dataIndex: 'loaded',
+			renderer: rdr_boolean
+		},{
 			header: _('Name'),
 			flex: 2,
 			sortable: true,
