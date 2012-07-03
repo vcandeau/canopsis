@@ -33,6 +33,7 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'aaa_access_group', defaultValue: ['r']},
 		{name: 'aaa_access_other'},
 		{name: 'aaa_group', defaultValue: "group.CPS_selector_admin"},
-		{name: 'aaa_owner'}
+		{name: 'aaa_owner'},
+		{name: 'loaded', defaultValue: false},
 	]
 });

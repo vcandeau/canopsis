@@ -26,6 +26,8 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		
+		self.selectors = []
+		
 	def add_tag(self, event, field):
 		try:
 			if event[field]:
@@ -35,7 +37,7 @@ class engine(cengine):
 			pass
 			
 		return event
-
+		
 	def work(self, event, msg):
 		try:
 			event['tags']
