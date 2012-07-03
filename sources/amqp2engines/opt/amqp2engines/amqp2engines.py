@@ -130,6 +130,9 @@ def start_engines():
 	# Alerts:
 	### canopsis.alerts -> selector -> eventstore
 	
+	engine_selector		= selector.engine(logging_level=logging.DEBUG)
+	engines.append(engine_selector)
+	
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
 	
@@ -142,8 +145,6 @@ def start_engines():
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	engines.append(engine_tag)
 	
-	engine_selector		= selector.engine()
-	engines.append(engine_selector)
 	
 	# Set Next queue
 	## Events
@@ -163,6 +164,10 @@ def stop_engines():
 	logger.info("Join engines")
 	for engine in engines:
 		engine.join()
+		while engine.is_alive():
+			time.sleep(0.1)
+			
+	time.sleep(0.5)
 
 def amqp2engines_ready():
 	start_engines()

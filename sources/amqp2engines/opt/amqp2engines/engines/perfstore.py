@@ -112,11 +112,6 @@ class engine(cengine):
 		except:
 			event['perf_data_array'] = []
 		
-		
-		### Bypass if no perfdata
-		if not event['perf_data'] and not event['perf_data_array']:
-			return event
-		
 		## Metrology
 		timestamp = int(event['timestamp'])
 		perf_data_array = []
@@ -144,7 +139,7 @@ class engine(cengine):
 		self.logger.debug(' + perf_data_array: %s', perf_data_array)
 		
 		### Add status informations
-		if   event['event_type'] == 'check':
+		if   event['event_type'] == 'check' and event['connector_name'] != 'selector':
 			state = int(event['state'])
 			state_type = int(event['state_type'])
 			state_extra = 0
@@ -152,7 +147,7 @@ class engine(cengine):
 			perf_data_array.append({"metric": "cps_state", "value": cps_state})
 			
 		event['perf_data_array'] = perf_data_array
-		
+
 		### Store perfdata
 		if perf_data_array:
 			try:
