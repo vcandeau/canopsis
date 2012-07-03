@@ -53,6 +53,7 @@ class engine(cengine):
 			_id = self.archiver.check_event(event_id, event)
 			if _id:
 				event['_id'] = _id
+				event['event_id'] = event_id
 				## Event to Alert
 				self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
@@ -62,6 +63,7 @@ class engine(cengine):
 			self.archiver.store_event(event_id, event)
 			_id = self.archiver.log_event(event_id, event)
 			event['_id'] = _id
+			event['event_id'] = event_id
 
 			## Event to Alert
 			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
@@ -71,6 +73,7 @@ class engine(cengine):
 			## passthrough
 			_id = self.archiver.log_event(event_id, event)
 			event['_id'] = _id
+			event['event_id'] = event_id
 
 			## Event to Alert
 			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
