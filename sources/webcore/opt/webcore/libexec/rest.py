@@ -108,7 +108,9 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + query: "+str(query))
 	
 	storage = get_storage(namespace=namespace)
-
+	
+	total = 0
+	
 	mfilter = {}
 	if isinstance(filter, list):
 		if len(filter) > 0:
@@ -135,10 +137,12 @@ def rest_get(namespace, ctype=None, _id=None):
 		
 	if ids:	
 		records = storage.get(ids, account=account)
-	
-		if len(records) == 0:
+		
+		total = len(records)
+		
+		if total == 0:
 			return HTTPError(404, ids+" Not Found")
-				
+						
 	else:
 		if search:
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
@@ -165,7 +169,7 @@ def rest_get(namespace, ctype=None, _id=None):
 					data['next_run_time'] = str(data['next_run_time'])
 				output.append(data)
 
-	output={'total': len(output), 'success': True, 'data': output}
+	output={'total': total, 'success': True, 'data': output}
 
 	#logger.debug(" + Output: "+str(output))
 
