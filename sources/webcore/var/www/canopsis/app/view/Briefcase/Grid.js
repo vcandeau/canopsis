@@ -30,6 +30,7 @@ Ext.define('canopsis.view.Briefcase.Grid' , {
 
 	opt_bar_add: false,
 	opt_view_element: true,
+	opt_menu_rights: true,
 	//opt_bar_download: true,
 	//opt_menu_send_mail:true,
 
