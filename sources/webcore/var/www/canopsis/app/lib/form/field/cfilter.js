@@ -196,8 +196,10 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			if (this.edit_area.validate()) {
 				var filter = this.edit_area.getValue();
 				filter = strip_blanks(filter);
-				this.cfilter.remove_all_cfilter();
-				this.setValue(filter);
+				if(filter && filter != ''){
+					this.cfilter.remove_all_cfilter();
+					this.setValue(filter);
+				}
 				
 				this.switch_elements_visibility(true,false,false)
 				this.switch_button_state(false,true,true)
@@ -215,10 +217,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		if(filter){
 			filter = JSON.stringify(filter, undefined, 8);
 			this.edit_area.setValue(filter);
-			
-			this.switch_elements_visibility(false,true,false)
-			this.switch_button_state(true,false,true)
 		}
+		this.switch_elements_visibility(false,true,false)
+		this.switch_button_state(true,false,true)
 	},
 
 	show_preview: function() {
