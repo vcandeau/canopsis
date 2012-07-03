@@ -33,17 +33,30 @@ class engine(cengine):
 	def work(self, event, msg):
 		event_id = event['rk']
 		
-		## Archive event
-		if   event['event_type'] == 'check' or event['event_type'] == 'clock':
+		exchange = None
+		try:
+			exchange = event['exchange']
+			del event['exchange']
+		except:
+			pass
 			
+		event_types = ['check', 'trap', 'comment', 'log', 'user']
+		event_type = event['event_type']
+		
+		if event_type not in event_types:
+			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event_type, event_id, event))
+			return event
+		
+		## Archive event
+		if   event_type == 'check':
+
 			_id = self.archiver.check_event(event_id, event)
 			if _id:
 				event['_id'] = _id
-				
 				## Event to Alert
 				self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
-		elif event['event_type'] == 'trap' or event['event_type'] == 'comment' or event['event_type'] == 'log':
+		elif event_type in ['trap', 'log']:
 			
 			## passthrough
 			self.archiver.store_event(event_id, event)
@@ -53,15 +66,13 @@ class engine(cengine):
 			## Event to Alert
 			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 			
-		elif event['event_type'] == 'user' :
+		elif event_type in ['user', 'comment']:
+			
 			## passthrough
 			_id = self.archiver.log_event(event_id, event)
 			event['_id'] = _id
 
 			## Event to Alert
 			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
-
-		else:
-			self.logger.warning("Unknown event type '%s', id: '%s', event:\n%s" % (event['event_type'], event_id, event))
 			
 		return event

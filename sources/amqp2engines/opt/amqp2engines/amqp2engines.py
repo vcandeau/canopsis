@@ -33,6 +33,7 @@ import perfstore
 import eventstore
 import collectdgw
 import tag
+import selector
 
 ## Configurations
 
@@ -45,15 +46,11 @@ handler = init.getHandler(logger)
 
 engines=[]
 amqp = None
-next_queue = []
+next_event_queue = []
+next_alert_queue = []
 ready = False
 
-def on_message(body, msg):
-	
-	if not ready:
-		while ready:
-			time.sleep(0.5)
-	
+def clean_message(body, msg):
 	## Sanity Checks
 	rk = msg.delivery_info['routing_key']
 	if not rk:
@@ -83,19 +80,55 @@ def on_message(body, msg):
 			logger.debug(body)
 			raise Exception("Impossible to parse event '%s'" % rk)
 	
-	## Forward to engines
 	event['rk'] = rk
+	return event
 	
-	for queue in next_queue:
+def wait_engine():
+	if not ready:
+		while ready:
+			time.sleep(0.5)
+	
+
+def on_event(body, msg):
+	# Wait engine
+	wait_engine()
+		
+	## Clean message	
+	event = clean_message(body, msg)
+	
+	event['exchange'] = amqp.exchange_name_events
+	
+	## Forward to engines
+	for queue in next_event_queue:
+		amqp.publish(event, queue, "amq.direct")
+
+	
+def on_alert(body, msg):
+	# Wait engine
+	wait_engine()
+	
+	## Clean message	
+	event = clean_message(body, msg)
+	
+	event['exchange'] = amqp.exchange_name_alerts
+	
+	## Forward to engines
+	for queue in next_alert_queue:
 		amqp.publish(event, queue, "amq.direct")
 
 
 def start_engines():
 	global engines
 	# Init Engines
+	## TODO: Use routing table for dynamic routing
 	### Route:
-	### Nagios/Icinga/Shinken... ----------------------------> canopsis.exchange -> tag -> perfstore -> eventstore
+	
+	# Events:
+	### Nagios/Icinga/Shinken... ----------------------------> canopsis.events -> tag -> perfstore -> eventstore
 	### collectd ------------------> amq.topic -> collectdgw |
+	
+	# Alerts:
+	### canopsis.alerts -> selector -> eventstore
 	
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
@@ -109,8 +142,14 @@ def start_engines():
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	engines.append(engine_tag)
 	
+	engine_selector		= selector.engine()
+	engines.append(engine_selector)
+	
 	# Set Next queue
-	next_queue.append(engine_tag.amqp_queue)
+	## Events
+	next_event_queue.append(engine_tag.amqp_queue)
+	## Alerts
+	next_alert_queue.append(engine_selector.amqp_queue)
 	
 	logger.info("Start engines")
 	for engine in engines:
@@ -135,8 +174,9 @@ def main():
 	handler.run()
 	
 	# Init AMQP
-	amqp = camqp(on_ready=amqp2engines_ready)
-	amqp.add_queue(DAEMON_NAME, ['#'], on_message, amqp.exchange_name_events, auto_delete=False)
+	amqp = camqp(on_ready=amqp2engines_ready, logging_name="%s-amqp" % DAEMON_NAME)
+	amqp.add_queue(DAEMON_NAME, ['#'], on_event, amqp.exchange_name_events, auto_delete=False)
+	amqp.add_queue("%s_alerts" % DAEMON_NAME, ['#'], on_alert, amqp.exchange_name_alerts, auto_delete=False)
 	
 	# Start AMQP
 	amqp.start()

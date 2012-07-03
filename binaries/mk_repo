@@ -93,6 +93,7 @@ add_to_packages_list() {
 		fi
 	fi	
 	echo "$packagename|$VERSION-$RELEASE||$MD5|$REQUIRES|$PKG_ARCH|$PKG_DIST|$PKG_DISTVERS" >> "${REPO_PATH}"/Packages.list
+	check_code $? "Impossible to write in 'Packages.list' ..."
 }
 
 list_packages() {
@@ -156,7 +157,7 @@ list_folder() {
 arg1="${1}"
 check_args
 check_valid_path
-rm -Rf $arg1/Packages.list
+echo -n > $arg1/Packages.list
 create_tmp
 list_folder
 rm -Rf $tmp_folder
