@@ -28,6 +28,8 @@ import cevent
 from caccount import caccount
 #from cstorage import get_storage
 
+from bson.code import Code
+
 import time
 import json
 import logging
@@ -47,7 +49,6 @@ class cselector(crecord):
 		self.include_ids = []
 		self.exclude_ids = []
 		self.changed = False
-		self.state = 0
 		
 		self.use_cache = use_cache
 		self.cache_time = cache_time
@@ -176,6 +177,39 @@ class cselector(crecord):
 		# 1. Ponderation
 		# 2. Nb par state
 		# 3. Decision
+		self.logger.debug("getStates:")
+		
+		ids = self.resolv()
+				
+		mmap = Code("function () {"
+		"	var state = this.state;"
+		"	if (this.state_type == 0) {"
+		"		state = this.previous_state"
+		"	}"
+		"	if (this.source_type == 'host'){"
+		"		if (state == 0){ emit(0, 1) }"
+		"		else if (state == 1){ emit(2, 1) }"
+		"		else if (state == 2){ emit(3, 1) }"
+		"		else if (state == 3){ emit(3, 1) }"
+		"	}"
+		"	else if (this.source_type == 'service'){"
+		"		emit(state, 1)"
+		"	}"
+		"}")
+
+		mreduce = Code("function (key, values) {"
+		"  var total = 0;"
+		"  for (var i = 0; i < values.length; i++) {"
+		"    total += values[i];"
+		"  }"
+		"  return total;"
+		"}")
+
+		states = self.storage.map_reduce(ids, mmap, mreduce, namespace=self.namespace)
+		self.logger.debug(" + states: %s" % states)
+		
+		"""print "availability: %s" % availability
+		
 		records = self.getRecords()
 		
 		state_type = 1
@@ -185,33 +219,55 @@ class cselector(crecord):
 		states_str = ("Ok", "Warning", "Critical")
 		states = {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}
 		#output = {0: [], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
-		
+		total = len(records)
 		for record in records:
 			states[record.data['state']] += 1
-			#if record.data['state'] != 0:
-			#	output[record.data['state']].append("%s - %s" % (record.data['component'], record.data['resource']))
+		"""
 		
-		state = self.stateRule_morebadstate(states)
-		self.state = state
+		(state, state_type) = self.stateRule_morebadstate(states)
 		
+		total = 0
+		for s in states:
+			states[s] = int(states[s])
+			total += states[s]
+		
+		self.logger.debug(" + state: %s" % state)
+		self.logger.debug(" + state_type: %s" % state_type)
+		
+		perf_data_array = []
 		long_output = ""
 		output = ""
+			
+		self.logger.debug(" + total: %s" % total)
+		
+		states_str = ("Ok", "Warning", "Critical")
+		states_metric = ("cps_state_ok", "cps_state_warn", "cps_state_crit")
 		for i in [0, 1, 2]:
-			output += "%s %s " % (states[i], states_str[i])
-			perf_data_array.append({"metric": states_str[i], "value": states[i]})
+			value = 0
+			try:
+				value = states[i]
+			except:
+				pass
+				
+			output += "%s %s" % (value, states_str[i])
+			perf_data_array.append({"metric": states_metric[i], "value": value, "max": total})
+		
+		self.logger.debug(" + output: %s" % output)
+		self.logger.debug(" + long_output: %s" % long_output)
+		self.logger.debug(" + perf_data_array: %s" % perf_data_array)
 		
 		return (state, state_type, output, long_output, perf_data_array)
 		
 	def stateRule_morebadstate(self, states):
 		state = 0
 		## Set state
-		if states[0]:
-			state = 0
-		if states[1]:
-			state = 1
-		if states[2]:
-			state = 2
-		return state
+		for s in [0, 1, 2]:
+			try:
+				if states[s]:
+					state = s
+			except:
+				pass
+		return (state, 1)
 		
 	def event(self):
 		(state, state_type, output, long_output, perf_data_array) = self.getState()
