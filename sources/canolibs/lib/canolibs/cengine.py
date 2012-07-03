@@ -24,6 +24,7 @@ import Queue
 import logging
 import os, sys
 from cinit import cinit
+import traceback
 
 class cengine(multiprocessing.Process):
 
@@ -68,14 +69,14 @@ class cengine(multiprocessing.Process):
 			
 		self.logger.info("Start Engine with pid %s" % (os.getpid()))
 		
-		self.pre_run()
-		
 		from camqp import camqp
 		
 		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
 		self.create_amqp_queue()
 		
 		self.amqp.start()
+		
+		self.pre_run()
 		
 		while self.RUN:
 			try:
@@ -119,6 +120,7 @@ class cengine(multiprocessing.Process):
 		except Exception, err:
 			error = True
 			self.logger.error("Worker raise exception: %s" % err)
+			traceback.print_exc(file=sys.stdout)
 	
 		if error:
 			self.counter_error +=1
@@ -145,6 +147,7 @@ class cengine(multiprocessing.Process):
 			self.beat()
 		except Exception, err:
 			self.logger.error("Beat raise exception: %s" % err)
+			traceback.print_exc(file=sys.stdout)
 				
 	def beat(self):
 		pass
