@@ -52,7 +52,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 
 	opt_db_namespace: 'object',
 
-	opt_menu_rights: true,
+	opt_menu_rights: false,
 	opt_menu_send_mail: false,
 	opt_menu_rename: false,
 	opt_menu_run_item: false,

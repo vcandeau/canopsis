@@ -30,6 +30,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 
 	opt_menu_delete: true,
 	opt_bar_duplicate: true,
+	opt_menu_rights: true,
 
 	columns: [
 		{
