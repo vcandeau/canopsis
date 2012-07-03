@@ -171,20 +171,55 @@ def update_for_new_rights():
 	storage.put(dump)
 
 	
-	#---------------rename canopsis group and root group-------------
+	#---------------rename canopsis group, root group and curve admin-------------
 	try:
 		storage.remove('group.root')
-		account_root = storage.get('account.root')
-		account_root.chgrp('CPS_root')
-		storage.put(account_root)
+		records = storage.find({'aaa_group':'group.root'})
+		for record in records:
+			record.chgrp('CPS_root')
+		storage.put(records)
 	except:
 		pass
 		
 	try:
 		storage.remove('group.canopsis')
-		account_canopsis = storage.get('account.canopsis')
-		account_canopsis.chgrp('CPS_canopsis')
-		storage.put(account_canopsis)
+		records = storage.find({'aaa_group':'group.canopsis'})
+		for record in records:
+			record.chgrp('CPS_canopsis')
+		storage.put(records)
+	except:
+		pass
+		
+	try:
+		storage.remove('group.curves_admin')
+		records = storage.find({'aaa_group':'group.curves_admin'})
+		for record in records:
+			record.chgrp('CPS_curves_admin')
+		storage.put(records)
+	except:
+		pass
+	
+		
+	#clean all groups in account.groups
+	try:
+		group_list = ['group.canopsis','group.root','canopsis','root','curves_admin','group.curves_admin']
+		records = storage.find({'crecord_type':'account','groups':{'$in':group_list}})
+		if not isinstance(records,list):
+			records = [records]
+		
+		for record in records:
+			new_groups_array = []
+			for group in record.data['groups']:
+				if group == 'group.canopsis' or group == 'canopsis':
+					group = 'CPS_canopsis'
+				if group == 'group.root' or group == 'root':
+					group = 'CPS_root'
+				if group == 'group.curves_admin' or group == 'curves_admin':
+					group = 'CPS_curves_admin'
+				new_groups_array.append(group)
+			record.data['groups'] = new_groups_array
+
+		storage.put(records)
 	except:
 		pass
 	#---------------------update each record type--------------------
