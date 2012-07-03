@@ -26,6 +26,19 @@ Ext.define('canopsis.store.Views', {
 
 	autoLoad: true,
 	autoSync: true,
+	
+	listeners: {
+		remove: function() {
+			if (this.storeId !== 'Tabs')
+				if (global.websocketCtrl)
+					global.websocketCtrl.publish_event('store', this.storeId, 'remove');
+		},
+		update: function() {
+			if (this.storeId !== 'Tabs')
+				if (global.websocketCtrl)
+					global.websocketCtrl.publish_event('store', this.storeId, 'update');
+		},
+	},
 
 	proxy: {
 		type: 'rest',
@@ -44,10 +57,6 @@ Ext.define('canopsis.store.Views', {
 
 	constructor: function(config) {
 		this.callParent(arguments);
-		//quiet the store, handle by the controller
-		//if(this.hasListener('write')){
-			//this.removeListener('write', this.listeners.write, this);
-		//}
 	}
 
 	/*load: function (){
