@@ -23,6 +23,7 @@ from crecord import crecord
 
 from ccache import get_cache
 from ctools import calcul_pct
+import cevent
 
 from caccount import caccount
 #from cstorage import get_storage
@@ -46,6 +47,7 @@ class cselector(crecord):
 		self.include_ids = []
 		self.exclude_ids = []
 		self.changed = False
+		self.state = 0
 		
 		self.use_cache = use_cache
 		self.cache_time = cache_time
@@ -53,6 +55,8 @@ class cselector(crecord):
 		
 		self.last_resolv = None
 		self.last_nb_records = 0
+		
+		self.last_event = None
 
 		self._ids = []
 		
@@ -61,11 +65,6 @@ class cselector(crecord):
 			self.logger.setLevel(logging_level)
 		
 		## Init
-		try:
-			record = storage.get(self._id)
-		except:
-			record = None
-
 		if not record:
 			try:
 				record = storage.get(self._id)
@@ -78,7 +77,7 @@ class cselector(crecord):
 			crecord.__init__(self, record=record, storage=storage)
 		else:
 			self.logger.debug("Init new record.")
-			crecord.__init__(self, _id=self._id, account=storage.account, type=self.type, storage=storage)
+			crecord.__init__(self, name=name, _id=self._id, account=storage.account, type=self.type, storage=storage)
 		
 	def dump(self):
 		self.data['include_ids'] = self.include_ids
@@ -93,8 +92,13 @@ class cselector(crecord):
 		try:
 			self.mfilter = json.loads(self.data['mfilter'])
 		except:
-			self.mfilter = {}
-		self.namespace = str(self.data['namespace'])
+			pass
+		
+		try:
+			self.namespace = str(self.data['namespace'])
+		except:
+			pass
+			
 		self.include_ids = self.data['include_ids']
 		self.exclude_ids = self.data['exclude_ids']
 		
@@ -166,7 +170,7 @@ class cselector(crecord):
 		
 	def getRecords(self):
 		ids = self.resolv()
-		return self.storage.get(ids)
+		return self.storage.get(ids, namespace=self.namespace)
 	
 	def getState(self):
 		# 1. Ponderation
@@ -174,14 +178,29 @@ class cselector(crecord):
 		# 3. Decision
 		records = self.getRecords()
 		
-		## Count states
+		state_type = 1
+		perf_data_array = []
+		
+		## Count states		
+		states_str = ("Ok", "Warning", "Critical")
 		states = {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}
+		#output = {0: [], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
+		
 		for record in records:
 			states[record.data['state']] += 1
+			#if record.data['state'] != 0:
+			#	output[record.data['state']].append("%s - %s" % (record.data['component'], record.data['resource']))
 		
 		state = self.stateRule_morebadstate(states)
+		self.state = state
 		
-		return state
+		long_output = ""
+		output = ""
+		for i in [0, 1, 2]:
+			output += "%s %s " % (states[i], states_str[i])
+			perf_data_array.append({"metric": states_str[i], "value": states[i]})
+		
+		return (state, state_type, output, long_output, perf_data_array)
 		
 	def stateRule_morebadstate(self, states):
 		state = 0
@@ -193,3 +212,32 @@ class cselector(crecord):
 		if states[2]:
 			state = 2
 		return state
+		
+	def event(self):
+		(state, state_type, output, long_output, perf_data_array) = self.getState()
+		
+		event = cevent.forger(
+			connector = "selector",
+			connector_name = "engine",
+			event_type = "check",
+			source_type="component",
+			component=self.name,
+			#resource=None,	
+			state=state,
+			state_type=state_type,
+			output=output,
+			long_output=long_output,
+			perf_data=None,
+			perf_data_array=perf_data_array
+		)
+				
+		# Extra field
+		event["selector_id"] = self._id
+		
+		## Same event
+		if event == self.last_event:
+			return (None, None)
+		
+		self.last_event = event
+			
+		return (cevent.get_routingkey(event), event)
