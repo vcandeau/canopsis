@@ -108,6 +108,7 @@ class KnownValues(unittest.TestCase):
 		
 		try:
 			event['rk'] = event_alert['rk']
+			event['event_id'] = event_alert['event_id']
 		except:
 			pass
 			
