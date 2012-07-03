@@ -177,6 +177,19 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			return 'Error: invalid JSON';
 		}
 	},
+	
+	switch_elements_visibility : function(cfilter,edit_area,preview_grid){
+		(edit_area)? this.edit_area.show() : this.edit_area.hide();
+		(preview_grid)? this.preview_grid.show() : this.preview_grid.hide();
+		(cfilter)?  this.cfilter.show() : this.cfilter.hide();
+	},
+	
+	switch_button_state : function(wizard,edit,preview){
+		(wizard)? this.wizard_button.setDisabled(false) : this.wizard_button.setDisabled(true);
+		(edit)? this.edit_button.setDisabled(false) : this.edit_button.setDisabled(true);
+		(preview)?  this.preview_button.setDisabled(false) : this.preview_button.setDisabled(true);
+	},
+	
 
 	show_wizard: function() {
 		if(!this.edit_area.isHidden()){
@@ -185,36 +198,27 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 				filter = strip_blanks(filter);
 				this.cfilter.remove_all_cfilter();
 				this.setValue(filter);
+				
+				this.switch_elements_visibility(true,false,false)
+				this.switch_button_state(false,true,true)
 			}else {
 				log.debug('Incorrect JSON given', this.logAuthor);
-				return false
 			}
+		}else{
+			this.switch_elements_visibility(true,false,false)
+			this.switch_button_state(false,true,true)
 		}
-			
-		this.edit_area.hide();
-		this.preview_grid.hide();
-		this.cfilter.show();
-		
-		this.wizard_button.setDisabled(true);
-		this.edit_button.setDisabled(false);
-		this.preview_button.setDisabled(false);
-		return true
 	},
 
 	show_edit_area: function() {
-		if(!this.cfilter.isHidden()){
-			var filter = Ext.decode(this.getValue());
+		var filter = Ext.decode(this.getValue());
+		if(filter){
 			filter = JSON.stringify(filter, undefined, 8);
 			this.edit_area.setValue(filter);
+			
+			this.switch_elements_visibility(false,true,false)
+			this.switch_button_state(true,false,true)
 		}
-		
-		this.cfilter.hide();
-		this.preview_grid.hide();
-		this.edit_area.show();
-		
-		this.wizard_button.setDisabled(false);
-		this.preview_button.setDisabled(false);
-		this.edit_button.setDisabled(true);
 	},
 
 	show_preview: function() {
@@ -224,13 +228,9 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			log.debug('Showing preview with filter: ' + filter, this.logAuthor);
 			this.preview_store.setFilter(filter);
 			this.preview_store.load();
-			this.cfilter.hide();
-			this.edit_area.hide();
-			this.preview_grid.show();
 			
-			this.wizard_button.setDisabled(false);
-			this.edit_button.setDisabled(false);
-			this.preview_button.setDisabled(true);
+			this.switch_elements_visibility(false,false,true)
+			this.switch_button_state(true,true,false)
 		}
 	},
 
@@ -346,6 +346,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 								displayField: 'text',
 								//Hack: don't search in store
 								minChars: 50,
+								allowBlank : false,
 								valueField: 'operator',
 								emptyText: _('Type value or choose operator'),
 								store: this.operator_store
@@ -380,6 +381,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				this.string_value = Ext.widget('textfield', {
 					margin: '0 0 0 5',
+					allowBlank : false,
 					emptyText: 'Type value here'
 					});
 				this.array_field = Ext.create('cfilter.array_field', {hidden: true});
@@ -511,7 +513,12 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			//------------get / set value--------------------
 			getValue: function() {
 				var items = this.bottomPanel.items.items;
-				var field = this.operator_combo.getValue();
+				
+				var field = undefined
+				if(this.operator_combo.validate())
+					field = this.operator_combo.getValue();
+				if(!field || field == '')
+					return undefined
 
 				var value = this.string_value.getValue();
 				var output = {};
@@ -635,11 +642,14 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 	getValue: function() {
 		var value = undefined;
+		
 		if (!this.cfilter.isHidden()) {
 			value = this.cfilter.getValue();
-		}else {
+		}else if (!this.edit_area.isHidden()){
 			if (this.edit_area.validate())
 				value = strip_blanks(this.edit_area.getValue());
+		}else{
+			value = this.cfilter.getValue();
 		}
 
 		if (value) {
