@@ -91,6 +91,8 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		this.preview_grid = Ext.widget('grid', {
 			store: this.preview_store,
 			border: false,
+			hidden: true,
+			hideHeaders:true,
 			columns: [
 				{
 					header: '',
@@ -105,6 +107,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					renderer: this.preview_render
 	       		}]
 		});
+		/*
 		this.preview_window = Ext.widget('window', {
 			title: _('Filter preview'),
 			layout: 'fit',
@@ -114,7 +117,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			height: 300,
 			width: 300,
 			items: [this.preview_grid]
-		});
+		});*/
 
 		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object', {
@@ -160,7 +163,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			items: [this.wizard_button, this.edit_button, this.preview_button]
 		});
 
-		this.items = [button_panel, this.cfilter, this.edit_area];
+		this.items = [button_panel, this.cfilter, this.edit_area,this.preview_grid];
 		this.callParent(arguments);
 	},
 
@@ -176,27 +179,41 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	},
 
 	show_wizard: function() {
-		if (this.edit_area.validate()) {
-			var filter = this.edit_area.getValue();
-			filter = strip_blanks(filter);
-			this.cfilter.remove_all_cfilter();
-			this.edit_area.hide();
-			this.cfilter.show();
-			this.setValue(filter);
-			this.wizard_button.setDisabled(true);
-			this.edit_button.setDisabled(false);
-		}else {
-			log.debug('Incorrect JSON given', this.logAuthor);
+		if(!this.edit_area.isHidden()){
+			if (this.edit_area.validate()) {
+				var filter = this.edit_area.getValue();
+				filter = strip_blanks(filter);
+				this.cfilter.remove_all_cfilter();
+				this.setValue(filter);
+			}else {
+				log.debug('Incorrect JSON given', this.logAuthor);
+				return false
+			}
 		}
+			
+		this.edit_area.hide();
+		this.preview_grid.hide();
+		this.cfilter.show();
+		
+		this.wizard_button.setDisabled(true);
+		this.edit_button.setDisabled(false);
+		this.preview_button.setDisabled(false);
+		return true
 	},
 
 	show_edit_area: function() {
-		var filter = Ext.decode(this.getValue());
-		filter = JSON.stringify(filter, undefined, 8);
-		this.edit_area.setValue(filter);
+		if(!this.cfilter.isHidden()){
+			var filter = Ext.decode(this.getValue());
+			filter = JSON.stringify(filter, undefined, 8);
+			this.edit_area.setValue(filter);
+		}
+		
 		this.cfilter.hide();
+		this.preview_grid.hide();
 		this.edit_area.show();
+		
 		this.wizard_button.setDisabled(false);
+		this.preview_button.setDisabled(false);
 		this.edit_button.setDisabled(true);
 	},
 
@@ -207,7 +224,13 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 			log.debug('Showing preview with filter: ' + filter, this.logAuthor);
 			this.preview_store.setFilter(filter);
 			this.preview_store.load();
-			this.preview_window.show();
+			this.cfilter.hide();
+			this.edit_area.hide();
+			this.preview_grid.show();
+			
+			this.wizard_button.setDisabled(false);
+			this.edit_button.setDisabled(false);
+			this.preview_button.setDisabled(true);
 		}
 	},
 
