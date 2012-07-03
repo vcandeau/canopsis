@@ -47,6 +47,7 @@ Ext.define('canopsis.controller.Selector', {
 	preSave: function(record, data, form) {
 		var _id = record.get('_id');
 		record.set('id', _id);
+		record.set('loaded', false);
 		return record;
 	}
 });
