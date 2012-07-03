@@ -397,9 +397,19 @@ class cstorage(object):
 				self.logger.error("Remove: Access denied ...")
 				raise ValueError("Access denied ...")
 
-	def map_reduce(self, mfilter, mmap, mreduce, account=None, namespace=None):
+	def map_reduce(self, mfilter_or_ids, mmap, mreduce, account=None, namespace=None):
 		if not account:
 			account = self.account
+
+		if   isinstance(mfilter_or_ids, dict):
+			# mfilter
+			mfilter = mfilter_or_ids
+		elif isinstance(mfilter_or_ids, list):
+			#ids
+			mfilter = {'_id': {'$in': mfilter_or_ids }}
+		else:
+				self.logger.error("Invalid filter")
+				raise ValueError("Invalid filter")
 
 		backend = self.get_backend(namespace)
 		
@@ -408,10 +418,12 @@ class cstorage(object):
 		mfilter = { '$and': [ mfilter, Read_mfilter ] }
 
 		output = {}
-		if backend.find(mfilter).count() > 0:	
+		if backend.find(mfilter).count() > 0:
 			result = backend.map_reduce(mmap, mreduce, "mapreduce", query=mfilter)
 			for doc in result.find():
 				output[doc['_id']] = doc['value']
+		else:
+			self.logger.debug("Nor record matching filter")
 
 		return output
 						

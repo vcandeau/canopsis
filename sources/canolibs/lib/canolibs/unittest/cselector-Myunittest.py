@@ -34,7 +34,7 @@ from caccount import caccount
 from cstorage import get_storage
 
 root_account = caccount(user="root", group="root")
-storage = get_storage(account=root_account , namespace='unittest', logging_level=logging.INFO)
+storage = get_storage(account=root_account , namespace='unittest', logging_level=logging.DEBUG)
 selector = None
 
 class KnownValues(unittest.TestCase): 
@@ -64,9 +64,9 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid dump ...')		
 
 	def test_02_PutData(self):
-		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0})
-		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 1})
-		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 2})
+		record1 = crecord({'_id': 'check1', 'check': 'test1', 'state': 0, 'source_type': 'service'})
+		record2 = crecord({'_id': 'check2', 'check': 'test2', 'state': 1, 'source_type': 'service'})
+		record3 = crecord({'_id': 'check3', 'check': 'test3', 'state': 2, 'source_type': 'service'})
 
 		storage.put([record1, record2, record3])
 		
@@ -153,17 +153,17 @@ class KnownValues(unittest.TestCase):
 			
 	def test_06_GetState(self):
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}, {'check': 'test3'}] })
-		state = selector.getState()
+		(state, state_type, output, long_output, perf_data_array) = selector.getState()
 		if state != 2:
 			raise Exception('Invalid state ("%s")' % state)
 		
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
-		state = selector.getState()
+		(state, state_type, output, long_output, perf_data_array) = selector.getState()
 		if state != 1:
 			raise Exception('Invalid state ("%s")' % state)
 		
 		selector.setMfilter({'$or': [ {'check': 'test1'}] })
-		state = selector.getState()
+		(state, state_type, output, long_output, perf_data_array) = selector.getState()
 		if state != 0:
 			raise Exception('Invalid state ("%s")' % state)
 	
