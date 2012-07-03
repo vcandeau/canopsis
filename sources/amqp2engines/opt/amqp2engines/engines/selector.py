@@ -46,8 +46,21 @@ class engine(cengine):
 			
 		# Save
 		self.storage.put(records, namespace="object")
+
+	def clean__selectors(self):
+		## check if selector is already in store
+		id_to_clean = []
+		for _id in self.selectors:
+			if not self.storage.count({'_id': _id}, namespace="object"):
+				id_to_clean.append(_id)
+				
+		for _id in id_to_clean:
+			self.logger.debug("Clean selector %s: %s" % (_id, self.selectors[_id].name))
+			del self.selectors[_id]
 	
 	def unload_selectors(self):
+		self.clean__selectors()
+		
 		## Unload selectors
 		if self.selectors:
 			for _id in self.selectors:
@@ -62,9 +75,10 @@ class engine(cengine):
 	
 	def load_selectors(self):
 		## Load selectors
+		self.clean__selectors()
 		
 		## New selector or modified selector
-		records = self.storage.find({'$and': [{'crecord_type': 'selector'}, {'loaded': False}]})
+		records = self.storage.find({'$and': [{'crecord_type': 'selector'}, {'loaded': False}]}, namespace="object")
 		
 		for record in records:
 			self.logger.debug("Load selector %s: %s" % (record._id, record.name))
