@@ -174,17 +174,19 @@ def update_for_new_rights():
 	#---------------rename canopsis group and root group-------------
 	try:
 		storage.remove('group.root')
-		account_root = storage.get('account.root')
-		account_root.chgrp('CPS_root')
-		storage.put(account_root)
+		records = storage.find({'aaa_group':'group.root'})
+		for record in records:
+			record.chgrp('CPS_root')
+		storage.put(records)
 	except:
 		pass
 		
 	try:
 		storage.remove('group.canopsis')
-		account_canopsis = storage.get('account.canopsis')
-		account_canopsis.chgrp('CPS_canopsis')
-		storage.put(account_canopsis)
+		records = storage.find({'aaa_group':'group.canopsis'})
+		for record in records:
+			record.chgrp('CPS_canopsis')
+		storage.put(records)
 	except:
 		pass
 	#---------------------update each record type--------------------
