@@ -189,6 +189,26 @@ def update_for_new_rights():
 		storage.put(records)
 	except:
 		pass
+		
+	#clean all groups in account.groups
+	try:
+		records = storage.find({'crecord_type':'account','groups':{'$in':['group.canopsis','group.root','canopsis','root']}})
+		if not isinstance(records,list):
+			records = [records]
+		
+		for record in records:
+			new_groups_array = []
+			for group in record.data['groups']:
+				if group == 'group.canopsis' or group == 'canopsis':
+					group = 'CPS_canopsis'
+				if group == 'group.root' or group == 'root':
+					group = 'CPS_root'
+				new_groups_array.append(group)
+			record.data['groups'] = new_groups_array
+
+		storage.put(records)
+	except:
+		pass
 	#---------------------update each record type--------------------
 	#update view
 	dump = storage.find({'$or': [{'crecord_type':'view'},{'crecord_type':'view_directory'}]})
