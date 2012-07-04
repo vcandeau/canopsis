@@ -110,7 +110,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object', {
 			operator_store: this.operator_store,
-			sub_operator_store: this.sub_operator_store,,
+			sub_operator_store: this.sub_operator_store,
 			opt_remove_button: false
 		});
 
