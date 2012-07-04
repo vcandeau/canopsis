@@ -119,16 +119,18 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 	
 	setValue: function(value){
 		value = Ext.decode(value)
-		value = value['tags']
-		var operator = Ext.Object.getKeys(value)[0]
-		var value_array = value[operator]
-		var tags_string = ''
-		
-		for(var i in value_array)
-			tags_string = tags_string + ' ' + value_array[i]
-		
-		this.operator_combo.setValue(operator)
-		this.textArea.setValue(tags_string)
+		if(value['tags']){
+			value = value['tags']
+			var operator = Ext.Object.getKeys(value)[0]
+			var value_array = value[operator]
+			var tags_string = ''
+			
+			for(var i in value_array)
+				tags_string = tags_string + ' ' + value_array[i]
+			
+			this.operator_combo.setValue(operator)
+			this.textArea.setValue(tags_string)
+		}
 	},
 	
 });
