@@ -195,9 +195,11 @@ class dca(object):
 		
 		if not values:
 			values = self.storage.get_raw(self.values_id)
-		
-		unpacker.feed(values)
-		values = list(unpacker.unpack())
+		try:
+			unpacker.feed(values)
+			values = list(unpacker.unpack())
+		except:
+			self.logger.warning("Value is not msgpack")
 
 		if type(values).__name__ == 'str' or type(values).__name__ == 'unicode':
 			values = json.loads(values)
