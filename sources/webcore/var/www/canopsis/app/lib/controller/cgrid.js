@@ -611,6 +611,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 				//duplicate
 				var copy = item.copy();
+				copy.set('_id', undefined);
 
 				// load records
 				if (this.beforeload_DuplicateForm) {
