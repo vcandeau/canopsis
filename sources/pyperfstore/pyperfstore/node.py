@@ -29,16 +29,12 @@ from pyperfstore.pmath import aggregate as pmath_aggregate
 class node(object):
 	def __init__(self, _id, storage, dn=None, point_per_dca=None, retention=None, rotate_plan=None):
 		self.logger = logging.getLogger('node')
-
-		if not dn:
-			dn = _id
 			
 		self.logger.debug("Init node '%s'" % dn)
-		
-		self.dn = dn
+	
 		self._id = _id
 		#self._id = hashlib.md5(dn).hexdigest()
-
+		self.dn = None
 		self.retention = retention
 
 		self.point_per_dca = point_per_dca
@@ -54,9 +50,12 @@ class node(object):
 		data = self.storage.get(self._id)
 		if data:
 			self.load(data)
-			if self.dn != dn:
+			if dn and self.dn != dn:
 				self.dn = dn
-				self.save()
+				#self.save()
+				
+		if not self.dn:
+			self.dn = _id
 				
 	def dump(self):
 		dump = {
@@ -81,8 +80,8 @@ class node(object):
 	def load(self, data):
 		self.logger.debug("Load node '%s'" % self._id)
 
-		#self._id		= data['id']
-		self._dn		= data['dn']
+		#self._id			= data['id']
+		self.dn				= data['dn']
 		self.retention		= data['retention']
 		self.point_per_dca	= data['point_per_dca']
 		self.rotate_plan	= data['rotate_plan']
