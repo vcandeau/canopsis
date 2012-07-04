@@ -280,7 +280,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 		// Ymax
 		if (this.SeriePercent) {
-			this.options.yAxis.max = 100;
+			this.options.yAxis[0].max = 100;
 			//this.options.yAxis.title.text = 'pct'
 		}
 
