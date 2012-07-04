@@ -2,7 +2,7 @@
 
 NAME="pyperfstore"
 VERSION=0.3
-RELEASE=1
+RELEASE=2
 DESCRIPTION=""
 REQUIRES="canohome pkgmgr python"
 
