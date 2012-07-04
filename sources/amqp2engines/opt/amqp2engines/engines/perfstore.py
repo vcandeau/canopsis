@@ -32,8 +32,8 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		
 		self.rotate_plan = {
-			'PLAIN': 1,
-			'TSC': 0,
+			'PLAIN': 0,
+			'TSC': 3,
 		}
 		self.point_per_dca = None
 		
