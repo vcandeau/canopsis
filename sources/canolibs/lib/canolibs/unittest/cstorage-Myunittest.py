@@ -43,7 +43,11 @@ class KnownValues(unittest.TestCase):
 		self.anonymous_account = caccount()
 		self.root_account = caccount(user="root", group="root")
 		self.user_account = caccount(user="william", group="capensis")
-
+		
+		self.anonymous_account.cat()
+		self.user_account.cat()
+		self.root_account.cat()
+	
 		self.data = {'mydata1': 'data1', 'mydata2': 'data2', 'mydata3': 'data3'}
 		
 	def test_01_Init(self):
@@ -71,12 +75,27 @@ class KnownValues(unittest.TestCase):
 		if MYRECORD.data != self.data:
 			raise Exception('Invalid data ...')
 
+	def test_05_MultiGet(self):
+		record1 = crecord({'check': 'remove1'})
+		record2 = crecord({'check': 'remove2'})
+		record3 = crecord({'check': 'remove3'})
+		
+		ids = STORAGE.put([record1, record2, record3])
+		records = STORAGE.get(ids)
+		
+		if len(records) != 3:
+			print records
+			raise Exception("Impossible to get with id's list")
+		
+		STORAGE.remove(ids)
+		
 	def test_06_UpdateAndPut(self):
 		MYRECORD.data['mydata4'] = 'data4'
 		STORAGE.put(MYRECORD)
 		record = STORAGE.get(ID)
-		record.cat()
 		if record.data == self.data:
+			print "record.data: %s" % record.data 
+			print "self.data:   %s"  % self.data
 			raise Exception('Data not updated ...')
 
 	def test_07_Remove(self):
@@ -135,11 +154,11 @@ class KnownValues(unittest.TestCase):
 		## 3 records for user
 		## 2 records for anonymous
 		## 6 records for root
-
+		
 		records = STORAGE.find(account=self.user_account)
 		if len(records) != 3:
 			raise Exception('Invalid rigths for user account ...')
-
+	
 		records = STORAGE.find(account=self.anonymous_account)
 		if len(records) != 2:
 			raise Exception('Invalid rigths for anonymous account ...')

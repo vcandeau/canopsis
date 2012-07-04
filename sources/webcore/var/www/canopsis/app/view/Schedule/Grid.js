@@ -31,6 +31,7 @@ Ext.define('canopsis.view.Schedule.Grid' , {
 	opt_menu_delete: true,
 	opt_menu_run_item: true,
 	opt_bar_duplicate: true,
+	opt_menu_rights: true,
 
 	columns: [
 		{

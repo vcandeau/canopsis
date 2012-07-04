@@ -29,7 +29,7 @@ Ext.define('canopsis.controller.Group', {
 
 	logAuthor: '[controller][Group]',
 
-	allowEdit: false,
+	//allowEdit: false,
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
@@ -45,6 +45,12 @@ Ext.define('canopsis.controller.Group', {
 	preSave: function(record) {
 		record.data.id = 'group.' + record.data.crecord_name;
 		return record;
+	},
+	
+	beforeload_EditForm: function(form) {
+		var field = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=crecord_name]')[0];
+		if (field)
+			field.allowBlank = true;
 	}
 
 });

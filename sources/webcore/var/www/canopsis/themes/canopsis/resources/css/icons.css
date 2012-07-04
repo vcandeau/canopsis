@@ -153,6 +153,14 @@
 	background-image: url(../images/icons/cog_go.png) !important;
 }
 
+.icon-wizard {
+	background-image: url(../images/icons/application_form.png) !important;
+}
+
+.icon-preview {
+	background-image: url(../images/icons/eye.png) !important;
+}
+
 /* Mainbar */
 
 .icon-mainbar-run { 
@@ -213,6 +221,10 @@
 
 .icon-mainbar-colors { 
     background-image: url(../images/icons/color_swatch.png) !important; 
+}
+
+.icon-mainbar-selector { 
+    background-image: url(../images/icons/arrow_join.png) !important; 
 }
 
 .icon-true { 
@@ -298,6 +310,10 @@
 
 .icon-crecord_type-group { 
     background-image: url(../images/icons/group.png) !important; 
+}
+
+.icon-crecord_type-selector { 
+    background-image: url(../images/icons/arrow_join.png) !important; 
 }
 
 /* TAB */

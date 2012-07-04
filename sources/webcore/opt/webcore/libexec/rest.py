@@ -34,11 +34,11 @@ from libexec.auth import check_auth, get_account ,check_group_rights
 
 logger = logging.getLogger("rest")
 
-
 ctype_to_group_access = {
 							'schedule' : 'group.CPS_schedule_admin',
 							'curve' : 'CPS_curve_admin',
-							'account' : 'CPS_account_admin'
+							'account' : 'CPS_account_admin',
+							'group' : 'CPS_account_admin'
 						}
 
 #########################################################################
@@ -61,12 +61,19 @@ def rest_get(namespace, ctype=None, _id=None):
 	sort		= request.params.get('sort', default=None)
 	query		= request.params.get('query', default=None)
 	onlyWritable	= request.params.get('onlyWritable', default=False)
+	ids			= request.params.get('ids', default=[])
+	
+	if not isinstance(ids, list):
+		try:
+			ids = json.loads(ids)
+		except Exception, err:
+			logger.error("Impossible to decode ids: %s: %s" % (ids, err))
 
 	if filter:
 		try:
 			filter = json.loads(filter)
 		except Exception, err:
-			logger.error("Filter decode: %s" % err)
+			logger.error("Impossible to decode filter: %s: %s" % (filter, err))
 			filter = None
 			
 
@@ -88,6 +95,7 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + namespace: "+str(namespace))
 	logger.debug(" + Ctype: "+str(ctype))
 	logger.debug(" + _id: "+str(_id))
+	logger.debug(" + ids: "+str(ids))
 	logger.debug(" + Limit: "+str(limit))
 	logger.debug(" + Page: "+str(page))
 	logger.debug(" + Start: "+str(start))
@@ -100,7 +108,9 @@ def rest_get(namespace, ctype=None, _id=None):
 	logger.debug(" + query: "+str(query))
 	
 	storage = get_storage(namespace=namespace)
-
+	
+	total = 0
+	
 	mfilter = {}
 	if isinstance(filter, list):
 		if len(filter) > 0:
@@ -110,8 +120,6 @@ def rest_get(namespace, ctype=None, _id=None):
 			
 	elif isinstance(filter, dict):
 		mfilter = filter
-
-	total = 0
 	
 	records = []
 	if ctype:
@@ -123,23 +131,18 @@ def rest_get(namespace, ctype=None, _id=None):
 	if query:
 		mfilter = {'crecord_name': { '$regex' : '.*'+str(query)+'.*', '$options': 'i' }}
 
+
 	if _id:
-		list_id = _id.split(',')
-		if len(list_id) == 1:
-			_id = list_id[0]
-			try:
-				records = [ storage.get(_id, account=account) ]
-				total = 1
-			except:
-				return HTTPError(404, _id+" Not Found")
-		else:
-			for _id in list_id:
-				if _id:
-					try:
-						records.append(storage.get(_id, account=account))
-					except:
-						pass
+		ids = _id.split(',')
 		
+	if ids:	
+		records = storage.get(ids, account=account)
+		
+		total = len(records)
+		
+		if total == 0:
+			return HTTPError(404, ids+" Not Found")
+						
 	else:
 		if search:
 			mfilter['_id'] = { '$regex' : '.*'+search+'.*', '$options': 'i' }
@@ -198,7 +201,7 @@ def rest_put(namespace, ctype, _id=None):
 		try:
 			data = json.loads(data)
 		except Exception, err:
-			logger.error("DELETE: Impossible to parse data (%s)" % err)
+			logger.error("PUT: Impossible to parse data (%s)" % err)
 			return HTTPError(404, "Impossible to parse data")
 
 	data['crecord_type'] = ctype
@@ -235,18 +238,24 @@ def rest_put(namespace, ctype, _id=None):
 	else:
 		group = account.group
 
-	update = False
+	record = None
 	if _id:
 		try:
 			record = storage.get(_id ,account=account)
 			logger.debug('Update record %s' % _id)
-			update = True
 		except:
 			logger.debug('Create record %s' % _id)
 
-	if update:
+	if record:
 		for key in dict(data).keys():
 			record.data[key] = data[key]
+			
+		# Update Name	
+		try:
+			record.name = data['crecord_name']
+		except:
+			pass
+		
 	else:
 		raw_record = crecord(_id=_id, type=str(ctype)).dump()
 		for key in dict(data).keys():
@@ -255,6 +264,8 @@ def rest_put(namespace, ctype, _id=None):
 		record = crecord(raw_record=raw_record)
 		record.chown(account.user)
 		record.chgrp(group)
+	
+	logger.debug(' + Record: %s' % record.dump())
 	try:
 		storage.put(record, namespace=namespace, account=account)
 		

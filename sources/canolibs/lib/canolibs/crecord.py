@@ -19,12 +19,20 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
+import re
+re_owner = re.compile("^account\..*")
+re_group = re.compile("^group\..*")
+
 class crecord(object):
 	def __init__(self, data = {}, _id=None, name="noname", owner=None, group=None, raw_record=None, record=None, storage=None, account=None,admin_group=None, type='raw'):
 		self.write_time = None
 
-		self.owner=owner
-		self.group=group
+		self.owner = None
+		self.group = None
+		
+		self.chown(owner)
+		self.chgrp(group)
+		
 		self.admin_group=admin_group
 		self.type= type
 		self.access_owner=['r','w']
@@ -39,9 +47,8 @@ class crecord(object):
 		self.enable = True
 
 		if account:
-			#self.account = account
-			self.owner=account.user
-			self.group=account.group
+			self.owner=self.chown(account.user)
+			self.group=self.chown(account.group)
 		
 		#set admin account
 		if not self.admin_group:
@@ -94,7 +101,7 @@ class crecord(object):
 			
 		
 		try:
-			self._id = dump['_id']
+			self._id = str(dump['_id'])
 			del dump['_id']
 		except:
 			self._id = None
@@ -240,11 +247,18 @@ class crecord(object):
 		#	self.group = owner.group
 		#else:
 		#	self.owner=owner
-
-		self.owner=owner
+		if owner:
+			if re_owner.match(str(owner)):
+				self.owner=owner
+			else:
+				self.owner= "account.%s" % owner
 
 	def chgrp(self, group):
-		self.group = group
+		if group:
+			if re_group.match(str(group)):
+				self.group=group
+			else:
+				self.group= "group.%s" % group
 
 	def chmod(self, action):
 		## g+w, g+r, u+r, u+w ...

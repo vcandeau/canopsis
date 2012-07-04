@@ -58,6 +58,9 @@ Ext.define('canopsis.controller.Mainbar', {
 			'Mainbar menuitem[action="editAccount"]' : {
 				click: this.openAccount
 			},
+			'Mainbar menuitem[action="editSelector"]' : {
+				click: this.openSelector
+			},
 			'Mainbar menuitem[action="showconsole"]' : {
 				click: this.showconsole
 			},
@@ -217,6 +220,10 @@ Ext.define('canopsis.controller.Mainbar', {
 
 	openViewsManager: function() {
 		this.getController('Tabs').open_view({ view_id: 'view.view_manager', title: _('Views') });
+	},
+
+	openSelector: function() {
+		this.getController('Tabs').open_view({ view_id: 'view.selector_manager', title: _('Selectors') });
 	},
 
 	openAccount: function() {

@@ -106,17 +106,31 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
 		for (i in btns) {
-			btns[i].on('click', this._searchRecord, this);
+			if(this.grid.opt_simple_search == true){
+				btns[i].on('click', this._searchRecordSimple, this);
+			}else{
+				btns[i].on('click', this._searchRecord, this);
+			}
 		}
 
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
+		var keynav_config = {
+				scope: this,
+				enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
+			}
+			
 		for (i in textfields) {
 				var textfield = textfields[i];
-				Ext.create('Ext.util.KeyNav', textfield.id, {
-					scope: this,
-					enter: this._searchRecord
-				});
+				
+				//HACK : because sometimes this field is really long to render
+				if(!textfield.el){
+					textfield.on('afterrender',function(){
+						new Ext.util.KeyNav(textfield.id,keynav_config );
+					},this)
+				}else{
+					new Ext.util.KeyNav(textfield.id, keynav_config);
+				}
 		}
 
 		if (grid.opt_keynav_del) {
@@ -192,6 +206,12 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]');
+		for (i in btns) {
+			btns[i].setDisabled(records.length === 0);
+		}
+		
+		//Enable duplicate Button
+		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=duplicate]');
 		for (i in btns) {
 			btns[i].setDisabled(records.length === 0);
 		}
@@ -294,8 +314,14 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				store.add(record);
 				this._postSave(record, data);
 				log.debug('Reload store', this.logAuthor);
-				store.resumeEvents();
-				store.load();
+				
+				//-------------load and resume events-------------
+				store.load({
+					scope: this,
+					callback: function(records, operation, success) {
+						this.grid.store.resumeEvents();
+					}
+				});
 
 				this._cancelForm(form);
 
@@ -490,10 +516,11 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	_editRecord: function(view, item, index) {
-		if (! this.allowEdit)
-			return;
-
 		log.debug('Clicked editRecord', this.logAuthor);
+		
+		//hack create a copy to not mess with old record
+		item = item.copy(); 
+		Ext.data.Model.id(item)
 
 		//check rights
 		var ctrl = this.getController('Account');
@@ -532,71 +559,74 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	_duplicateRecord: function() {
 		log.debug('clicked duplicateRecord', this.logAuthor);
 		var grid = this.grid;
-		 var item = grid.getSelectionModel().getSelection()[0];
+		var item = grid.getSelectionModel().getSelection()[0];
+		if (item) {
+			var editing = false;
+			
+			if (this.formXtype) {
+				if (this.EditMethod == 'tab') {
+					var main_tabs = Ext.getCmp('main-tabs');
+					var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g, '-') + '-tab';
+					var tab = Ext.getCmp(id);
+					if (tab) {
+						log.debug("Tab '" + id + "'allerady open, just show it", this.logAuthor);
+						main_tabs.setActiveTab(tab);
+					}else {
+						log.debug("Create tab '" + id + "'", this.logAuthor);
+						var form = main_tabs.add({
+							title: _('Edit') + ' ' + item.raw.crecord_name,
+							xtype: this.formXtype,
+							id: id,
+							closable: true }).show();
+					}
 
-		var editing = false;
-
-		if (this.formXtype) {
-			if (this.EditMethod == 'tab') {
-				var main_tabs = Ext.getCmp('main-tabs');
-				var id = this.formXtype + '-' + item.internalId.replace(/[\. ]/g, '-') + '-tab';
-				var tab = Ext.getCmp(id);
-				if (tab) {
-					log.debug("Tab '" + id + "'allerady open, just show it", this.logAuthor);
-					main_tabs.setActiveTab(tab);
 				}else {
-					log.debug("Create tab '" + id + "'", this.logAuthor);
-					var form = main_tabs.add({
-						title: _('Edit') + ' ' + item.raw.crecord_name,
-						xtype: this.formXtype,
-						id: id,
-						closable: true }).show();
+					var form = Ext.getCmp(id);
+
+					if (form) {
+						log.debug("Window '" + id + "' allready open, just show it", this.logAuthor);
+						form.win.show();
+					}else {
+						// Create new Window
+						log.debug("Create window '" + this.formXtype + "'", this.logAuthor);
+						var form = Ext.create('widget.' + this.formXtype, {
+							id: id,
+							EditMethod: this.EditMethod,
+							editing: editing,
+							record: data
+						});
+
+						var win = Ext.create('widget.window', {
+							title: this.modelId,
+							items: form,
+							closable: true,
+							constrain: true,
+							renderTo: this.grid.id,
+							closeAction: 'destroy'
+						}).show();
+						form.win = win;
+						this._keynav.disable();
+					}
 				}
 
-			}else {
-				var form = Ext.getCmp(id);
+				//duplicate
+				var copy = item.copy();
 
-				if (form) {
-					log.debug("Window '" + id + "' allready open, just show it", this.logAuthor);
-					form.win.show();
-				}else {
-					// Create new Window
-					log.debug("Create window '" + this.formXtype + "'", this.logAuthor);
-					var form = Ext.create('widget.' + this.formXtype, {
-						id: id,
-						EditMethod: this.EditMethod,
-						editing: editing,
-						record: data
-					});
-
-					var win = Ext.create('widget.window', {
-						title: this.modelId,
-						items: form,
-						closable: true,
-						constrain: true,
-						renderTo: this.grid.id,
-						closeAction: 'destroy'
-					}).show();
-					form.win = win;
-					this._keynav.disable();
+				// load records
+				if (this.beforeload_DuplicateForm) {
+					this.beforeload_DuplicateForm(form, copy);
 				}
+
+				form.loadRecord(copy);
+
+				if (this.afterload_DuplicateForm) {
+					this.afterload_DuplicateForm(form, copy);
+				}
+
+				this._bindFormEvents(form);
 			}
-
-			//duplicate
-			var copy = item.copy();
-
-			// load records
-			if (this.beforeload_DuplicateForm) {
-				this.beforeload_DuplicateForm(form, copy);
-			}
-
-			form.loadRecord(copy);
-
-			if (this.afterload_DuplicateForm) {
-				this.afterload_DuplicateForm(form, copy);
-			}
-
-			this._bindFormEvents(form);
+		}else{
+			global.notify.notify(_('Error'), _('You must select record'), 'error');
 		}
 	},
 
@@ -627,8 +657,22 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}else {
 			store.load();
 		}
+	},
+
+	//temporary function, will be merge with the previous as soon as possible
+	_searchRecordSimple : function(){
+		log.debug('Clicked on searchButton (new func)', this.logAuthor);
+		var grid = this.grid;
+		var store = grid.getStore();
+		var search = grid.down('textfield[name=searchField]').getValue();
+		
+		store.proxy.extraParams.search = search
+
+		if (grid.pagingbar) {
+			grid.pagingbar.moveFirst();
+		}else {
+			store.load();
+		}
 	}
-
-
 
 });

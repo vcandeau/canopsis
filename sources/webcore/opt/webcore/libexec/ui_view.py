@@ -35,7 +35,7 @@ from libexec.auth import check_auth, get_account, check_group_rights
 logger = logging.getLogger("ui_view")
 
 #group who have right to access 
-group_managing_access = 'group.CPS_view_admin'
+group_managing_access = ['group.CPS_view_admin','group.CPS_view']
 
 #########################################################################
 '''
@@ -128,25 +128,32 @@ def tree_delete(name=None):
 	
 	
 	
-@put('/ui/view/:name',apply=[check_auth])
+@post('/ui/view/:name',apply=[check_auth])
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
 		
+	if not check_group_rights(account,group_managing_access[0]) and not check_group_rights(account,group_managing_access[1]):
+		return HTTPError(403, "Access Denied : Your groups have not right to create/update view")
+		
+		
 	storage = get_storage(namespace=namespace, account=account)
 	
 	data = json.loads(request.body.readline())
+	
+	logger.debug('Tree update %s' % data['_id'])
 
 	try:
+		logger.debug(' + Get future parent record')
 		record_parent = storage.get(data['parentId'], account=account)
 	except:
 		return HTTPError(403, "You don't have right on the parent record")
 	
 	try:
-		logger.debug('try to get the children record')
+		logger.debug(' + Get the children record')
 		record_child = storage.get(data['_id'], account=account)
 	except:
-		logger.debug('record_child not found')
+		logger.debug('   + Children not found')
 		record_child = None
 
 	#test if the record exist
@@ -154,28 +161,27 @@ def tree_update(name='None'):
 		#check write rights
 		if record_parent.check_write(account=account) and record_child.check_write(account=account):
 			#if parents are really different
-			if(record_child.parent[0] != data['parentId']):
-				parent = storage.get(record_child.parent, account=account)
-
-				if isinstance(parent, crecord):
-					parent.remove_children(record_child)
-					if storage.is_parent(parent,record_child):
-						raise ValueError("parent/children link don't remove")
-					storage.put([parent],account=account)
+			if not (data['parentId'] in record_child.parent):
+				logger.debug(' + Update relations')	
+				record_parent_old = storage.get(record_child.parent[0], account=account)
+				logger.debug('   + Remove children %s from %s' % (record_child._id, record_parent_old._id))
+				record_parent_old.remove_children(record_child)
 				
-				logger.debug('updating records')
+				logger.debug('   + Add children %s to %s' % (record_child._id, record_parent._id))
 				record_parent.add_children(record_child)
-				storage.put([record_child,record_parent],account=account)
 				
-			elif (record_child.name != data['crecord_name']): 
-				logger.debug('different crecord_name, update name')
-				logger.debug('old name : %s' % str(record_child.name))
-				logger.debug('new name : %s' % data['crecord_name'])
+				logger.debug('   + Updating all records')
+				storage.put([record_child, record_parent, record_parent_old],account=account)
+				
+			elif (record_child.name != data['crecord_name']):
+				logger.debug(' + Rename record')	
+				logger.debug('   + old name : %s' % str(record_child.name))
+				logger.debug('   + new name : %s' % data['crecord_name'])
 				record_child.name = data['crecord_name']
 				storage.put(record_child,account=account)
 			
 			else :
-				logger.debug('records are the same, nothing to do')
+				logger.debug(' + Records are same, nothing to do')
 		else:
 			logger.debug('Access Denied')
 			return HTTPError(403, "Access Denied")
@@ -196,7 +202,7 @@ def tree_update(name='None'):
 				parentNode.add_children(record)
 				
 				record.chown(account._id)
-				record.chgrp(group_managing_access)
+				record.chgrp(group_managing_access[0])
 				record.chmod('g+w')
 				record.chmod('g+r')
 				

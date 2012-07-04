@@ -45,10 +45,14 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	opt_bar_search: false,
 	opt_bar_search_field: [],
 	opt_bar_time: false,
+	
+	//Hack , will be unified soon with the common research, just need time to
+	//rewrite the old search used by cinventory or cgrid_state
+	opt_simple_search : false,
 
 	opt_db_namespace: 'object',
 
-	opt_menu_rights: true,
+	opt_menu_rights: false,
 	opt_menu_send_mail: false,
 	opt_menu_rename: false,
 	opt_menu_run_item: false,
@@ -110,20 +114,21 @@ Ext.define('canopsis.lib.view.cgrid' , {
 						action: 'add'
 					});
 				}
-				if (this.opt_bar_duplicate) {
-					bar_child.push({
-						xtype: 'button',
-						iconCls: 'icon-copy',
-						text: _('Duplicate'),
-						action: 'duplicate'
-					});
-				}
 				if (this.opt_bar_reload) {
 					bar_child.push({
 						xtype: 'button',
 						iconCls: 'icon-reload',
 						text: _('Reload'),
 						action: 'reload'
+					});
+				}
+				if (this.opt_bar_duplicate) {
+					bar_child.push({
+						xtype: 'button',
+						iconCls: 'icon-copy',
+						text: _('Duplicate'),
+						disabled: true,
+						action: 'duplicate'
 					});
 				}
 				if (this.opt_bar_delete) {

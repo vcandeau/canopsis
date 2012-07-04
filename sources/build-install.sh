@@ -21,19 +21,6 @@ INC_DIRS="/usr/include"
 LOG_PATH="$SRC_PATH/log/"
 INST_CONF="$SRC_PATH/build.d/"
 
-if [ -d $SRC_PATH/externals/jqGridable ]; then
-	echo "Copy jqGridable from externals ..."
-	cp -R $SRC_PATH/externals/jqGridable/* $SRC_PATH/webcore-libs/var/www/canopsis/resources/lib/jqGridable/ 
-	check_code $? "Impossible to copy jqGridable"
-else
-	echo "Init submodules ..."
-	cd ..
-	git submodule init
-	check_code $? "Impossible to init submodule"
-	git submodule update
-	check_code $? "Impossible to update submodule"
-	cd sources
-fi
 
 ######################################
 #  functions
@@ -363,6 +350,21 @@ if [ $OPT_CLEAN -eq 1 ]; then
 	if [ "x$ARG1" == "x-c" ]; then
 		exit 0
 	fi
+fi
+
+### Init submodules
+if [ -d $SRC_PATH/externals/jqGridable ]; then
+	echo "Copy jqGridable from externals ..."
+	cp -R $SRC_PATH/externals/jqGridable/* $SRC_PATH/webcore-libs/var/www/canopsis/resources/lib/jqGridable/ 
+	check_code $? "Impossible to copy jqGridable"
+else
+	echo "Init submodules ..."
+	cd ..
+	git submodule init
+	check_code $? "Impossible to init submodule"
+	git submodule update
+	check_code $? "Impossible to update submodule"
+	cd sources
 fi
 
 export_env
