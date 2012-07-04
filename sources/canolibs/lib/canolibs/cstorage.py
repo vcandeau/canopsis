@@ -319,6 +319,9 @@ class cstorage(object):
 		backend = self.get_backend(namespace)
 		
 		self.logger.debug(" + Get record '%s'" % _ids)
+		if not len(_ids):
+			self.logger.debug("   + No ids")
+			return []
 		
 		self.logger.debug("    + Clean ids")
 		_ids = [self.clean_id(_id) for _id in _ids]
