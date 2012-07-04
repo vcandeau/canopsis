@@ -109,6 +109,7 @@ function createApplication(){
 			Ext.require('canopsis.lib.form.field.cinventory');
 			Ext.require('canopsis.lib.form.field.cmetric');
 			Ext.require('canopsis.lib.form.field.cfilter');
+			Ext.require('canopsis.lib.form.field.ctag');
 
 
 			this.getController('Widgets').on('loaded', this.createViewport,this,{single : true});
