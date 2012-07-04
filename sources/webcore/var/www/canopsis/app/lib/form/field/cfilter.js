@@ -30,7 +30,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 	ctype: 'event',
 	autoScroll: true,
 
-	//filter : {"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]},
 	filter: undefined,
 
 	layout: {
@@ -107,23 +106,11 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					renderer: this.preview_render
 	       		}]
 		});
-		/*
-		this.preview_window = Ext.widget('window', {
-			title: _('Filter preview'),
-			layout: 'fit',
-			closeAction: 'hide',
-			constrain: true,
-			constrainTo: this.id,
-			height: 300,
-			width: 300,
-			items: [this.preview_grid]
-		});*/
 
 		//-------------cfilter (wizard part)---------------
 		this.cfilter = Ext.create('cfilter.object', {
 			operator_store: this.operator_store,
-			sub_operator_store: this.sub_operator_store,
-			//filter:this.filter,
+			sub_operator_store: this.sub_operator_store,,
 			opt_remove_button: false
 		});
 
@@ -271,7 +258,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 			add_textfield: function(value) {
 				var config = {
-					//flex:4,
 					emptyText: _('Type value here')
 				};
 
@@ -347,7 +333,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 								displayField: 'text',
 								//Hack: don't search in store
 								minChars: 50,
-								//allowBlank : false,
 								valueField: 'operator',
 								emptyText: _('Type value or choose operator'),
 								store: this.operator_store
@@ -382,7 +367,6 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				this.string_value = Ext.widget('textfield', {
 					margin: '0 0 0 5',
-					//allowBlank : false,
 					emptyText: 'Type value here'
 					});
 				this.array_field = Ext.create('cfilter.array_field', {hidden: true});
