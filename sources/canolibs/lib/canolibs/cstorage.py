@@ -250,6 +250,10 @@ class cstorage(object):
 	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0):
 		if not account:
 			account = self.account
+			
+		# Clean Id
+		if mfilter.get('_id', None):
+			mfilter['_id'] = self.clean_id(mfilter['_id'])
 
 		if one:
 			sort = [('timestamp', -1)]
@@ -315,6 +319,9 @@ class cstorage(object):
 		backend = self.get_backend(namespace)
 		
 		self.logger.debug(" + Get record '%s'" % _ids)
+		if not len(_ids):
+			self.logger.debug("   + No ids")
+			return []
 		
 		self.logger.debug("    + Clean ids")
 		_ids = [self.clean_id(_id) for _id in _ids]
