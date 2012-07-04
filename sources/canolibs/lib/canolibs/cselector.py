@@ -118,21 +118,66 @@ class cselector(crecord):
 	def setInclude_ids(self, ids):
 		self.include_ids = ids
 		self.changed = True
+		
+	def makeMfilter(self):
+		self.logger.debug("Make filter:")
+		(ifilter, efilter, mfilter) = ({}, {}, {})
+		
+		if self.include_ids:
+			if len(self.include_ids) == 1:
+				ifilter = {'_id': self.include_ids[0]}
+			else:
+				ifilter = {'_id': {'$in': self.include_ids}}
+				
+		if self.exclude_ids:
+			if len(self.exclude_ids) == 1:
+				efilter = {'_id': {'$ne': self.exclude_ids[0]}}
+			else:
+				efilter = {'_id': {'$nin': self.include_ids}}
+				
+		if self.mfilter:
+			mfilter = self.mfilter
+		
+		self.logger.debug(" + ifilter: %s" % ifilter)
+		self.logger.debug(" + efilter: %s" % efilter)
+		self.logger.debug(" + mfilter: %s" % mfilter)
+		
+		## Tweaks
+		if mfilter and not ifilter and not efilter:
+			return mfilter
+			
+		if not mfilter and ifilter and not efilter:
+			return ifilter
+			
+		if not mfilter and not ifilter and efilter:
+			return None
+			
+		if mfilter and ifilter and not efilter:
+			return {"$or": [mfilter, ifilter]}
+			
+		if mfilter and not ifilter and efilter:
+			return {"$and": [mfilter, efilter]}
+			
+		if not mfilter and ifilter and efilter:
+			return {"$and": [ifilter, efilter]}
+		
+		## Universal case
+		return {"$and": [{"$or": [mfilter, ifilter]}, efilter]}
 	
 	def resolv(self):
 		def do_resolv(self):
+			self.logger.debug("do_resolv:")
 			ids = []
-			if self.include_ids:
-				ids = self.include_ids
-				
-			if self.mfilter:
-				records = self.storage.find(mfilter=self.mfilter, namespace=self.namespace)
-				for record in records:
-					if not record._id in ids:
-						ids.append(record._id)
-		
-			if self.exclude_ids:
-				ids = [_id for _id in ids if not _id in self.exclude_ids]
+			mfilter = self.makeMfilter()
+			self.logger.debug(" + filter: %s" % mfilter)
+			if not mfilter:
+				self.logger.debug("  + Invalid mfilter" )
+				return []
+			self.logger.debug(" + namespace: %s" % self.namespace)	
+			records = self.storage.find(mfilter=mfilter, namespace=self.namespace)
+			for record in records:
+				if not record._id in ids:
+					ids.append(record._id)
 		
 			self.last_resolv = time.time()
 			self.last_nb_records = len(self._ids)
@@ -179,7 +224,11 @@ class cselector(crecord):
 		# 3. Decision
 		self.logger.debug("getStates:")
 		
-		ids = self.resolv()
+		mfilter = self.makeMfilter()
+		self.logger.debug(" + filter: %s" % mfilter)
+		if not mfilter:
+			self.logger.debug("  + Invalid filter" )
+			return 3
 				
 		mmap = Code("function () {"
 		"	var state = this.state;"
@@ -192,7 +241,7 @@ class cselector(crecord):
 		"		else if (state == 2){ emit(3, 1) }"
 		"		else if (state == 3){ emit(3, 1) }"
 		"	}"
-		"	else if (this.source_type == 'service'){"
+		"	else {"
 		"		emit(state, 1)"
 		"	}"
 		"}")
@@ -204,25 +253,10 @@ class cselector(crecord):
 		"  }"
 		"  return total;"
 		"}")
-
-		states = self.storage.map_reduce(ids, mmap, mreduce, namespace=self.namespace)
+		
+		self.logger.debug(" + namespace: %s" % self.namespace)
+		states = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
 		self.logger.debug(" + states: %s" % states)
-		
-		"""print "availability: %s" % availability
-		
-		records = self.getRecords()
-		
-		state_type = 1
-		perf_data_array = []
-		
-		## Count states		
-		states_str = ("Ok", "Warning", "Critical")
-		states = {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}
-		#output = {0: [], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
-		total = len(records)
-		for record in records:
-			states[record.data['state']] += 1
-		"""
 		
 		(state, state_type) = self.stateRule_morebadstate(states)
 		
@@ -241,7 +275,7 @@ class cselector(crecord):
 		self.logger.debug(" + total: %s" % total)
 		
 		states_str = ("Ok", "Warning", "Critical")
-		states_metric = ("cps_state_ok", "cps_state_warn", "cps_state_crit")
+		states_metric = ("cps_sel_state_ok", "cps_sel_state_warn", "cps_sel_state_crit")
 		for i in [0, 1, 2]:
 			value = 0
 			try:
@@ -275,7 +309,7 @@ class cselector(crecord):
 		event = cevent.forger(
 			connector = "selector",
 			connector_name = "engine",
-			event_type = "check",
+			event_type = "selector",
 			source_type="component",
 			component=self.name,
 			#resource=None,	
