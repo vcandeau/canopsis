@@ -59,11 +59,11 @@ class KnownValues(unittest.TestCase):
 		record = crecord(self.data)
 
 		record.chown('toto')
-		if record.owner != 'toto':
+		if record.owner != 'account.toto':
 			raise Exception('chown dont work ...')
 
 		record.chgrp('tata')
-		if record.group != 'tata':
+		if record.group != 'group.tata':
 			raise Exception('chgrp dont work ...')
 
 		#record.chown(self.user_account)

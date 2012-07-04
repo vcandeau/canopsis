@@ -155,13 +155,14 @@ class cstorage(object):
 				record.data['data_id'] = data_id
 
 			if not record.owner:
-				record.owner = account._id
-				#record.owner = account.user
+				record.chown(account.user)
+	
 			if not record.group:
-				record.group = account.group
+				record.chgrp(account.group)
 
 			if _id:
 			## Update
+				self.logger.debug("Try updating of %s" % _id)
 				## Check rights
 				if account.user == 'root':
 					access = True
@@ -181,6 +182,7 @@ class cstorage(object):
 						data = record.dump()
 						
 						del data['_id']
+						_id = self.clean_id(_id)
 						ret = backend.update({'_id': _id}, {"$set": data}, upsert=True, safe=self.mongo_safe)
 
 						if self.mongo_safe:
@@ -201,6 +203,7 @@ class cstorage(object):
 					raise ValueError("Access denied")
 			else:
 			## Insert
+				self.logger.debug("Try inserting")
 				try:
 					record.write_time = int(time.time())
 					data = record.dump()
@@ -213,7 +216,7 @@ class cstorage(object):
 				except Exception, err:
 					self.logger.error("Impossible to store !\nReason: %s" % err)
 					self.logger.debug("Record dump:\n%s" % record.dump())
-					self.logger.debug("Successfully inserted, _id: '%s'" % _id)
+					raise ValueError("Impossible to insert (%s)" % err)
 
 				record._id = _id
 				return_ids.append(_id)
@@ -247,6 +250,10 @@ class cstorage(object):
 	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0):
 		if not account:
 			account = self.account
+			
+		# Clean Id
+		if mfilter.get('_id', None):
+			mfilter['_id'] = self.clean_id(mfilter['_id'])
 
 		if one:
 			sort = [('timestamp', -1)]
@@ -302,42 +309,54 @@ class cstorage(object):
 		if not account:
 			account = self.account
 
+		dolist = False
 		if isinstance(_id_or_ids, list):
 			_ids = _id_or_ids
+			dolist = True
 		else:
 			_ids = [ _id_or_ids ]
 
-		## TODO
-		_id = _ids[0]
-
 		backend = self.get_backend(namespace)
 		
-		self.logger.debug(" + Get record '%s'" % _id)
+		self.logger.debug(" + Get record '%s'" % _ids)
+		if not len(_ids):
+			self.logger.debug("   + No ids")
+			return []
+		
+		self.logger.debug("    + Clean ids")
+		_ids = [self.clean_id(_id) for _id in _ids]
 
+		#Build basic filter
+		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
+		
+		if len(_ids) == 1:
+			mfilter = {'_id': _ids[0]}
+		else:
+			mfilter = {'_id': {'$in': _ids }}
+		
+		mfilter = { '$and': [ mfilter, Read_mfilter ] }
+
+		records = []
 		try:
-			oid = self.clean_id(_id)
-
-			(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
-			oid_mfilter = {'_id': oid}
-			id_mfilter = {'_id': _id}
-
-			#mfilter = dict(oid_mfilter.items() + Read_mfilter.items())
-			mfilter = { '$and': [ oid_mfilter, Read_mfilter ] }
-			raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
-
-			if not raw_record:
-				# small hack for wrong oid
-				#mfilter = dict(id_mfilter.items() + Read_mfilter.items())
-				mfilter = { '$and': [ id_mfilter, Read_mfilter ] }
+			if len(_ids) == 1:
 				raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
-			
+				if raw_record:
+					records.append(crecord(raw_record=raw_record))
+			else:
+				raw_records = backend.find(mfilter, safe=self.mongo_safe)
+				records = [crecord(raw_record=raw_record) for raw_record in raw_records]
+				
 		except Exception, err:
-			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_id, err))
+			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_ids, err))
 
-		if not raw_record:
-			raise KeyError("'%s' not found ..." % _id)
-			
-		return crecord(raw_record=raw_record)
+		self.logger.debug(" + Found %s records" % len(records))
+		if not len(records):
+			raise KeyError("'%s' not found ..." % _ids)
+		
+		if len(_ids) == 1 and not dolist:
+			return records[0]
+		else:
+			return records
 
 	def remove(self, _id_or_ids, account=None, namespace=None):
 		if not account:
@@ -379,13 +398,25 @@ class cstorage(object):
 					backend.remove({'_id': oid}, safe=self.mongo_safe)
 				except Exception, err:
 					self.logger.error("Impossible remove record '%s' !\nReason: %s" % (_id, err))
+					
+				self.logger.debug(" + Success removed")
 			else:				
 				self.logger.error("Remove: Access denied ...")
 				raise ValueError("Access denied ...")
 
-	def map_reduce(self, mfilter, mmap, mreduce, account=None, namespace=None):
+	def map_reduce(self, mfilter_or_ids, mmap, mreduce, account=None, namespace=None):
 		if not account:
 			account = self.account
+
+		if   isinstance(mfilter_or_ids, dict):
+			# mfilter
+			mfilter = mfilter_or_ids
+		elif isinstance(mfilter_or_ids, list):
+			#ids
+			mfilter = {'_id': {'$in': mfilter_or_ids }}
+		else:
+				self.logger.error("Invalid filter")
+				raise ValueError("Invalid filter")
 
 		backend = self.get_backend(namespace)
 		
@@ -394,10 +425,12 @@ class cstorage(object):
 		mfilter = { '$and': [ mfilter, Read_mfilter ] }
 
 		output = {}
-		if backend.find(mfilter).count() > 0:	
+		if backend.find(mfilter).count() > 0:
 			result = backend.map_reduce(mmap, mreduce, "mapreduce", query=mfilter)
 			for doc in result.find():
 				output[doc['_id']] = doc['value']
+		else:
+			self.logger.debug("Nor record matching filter")
 
 		return output
 						

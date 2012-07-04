@@ -86,6 +86,16 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	
 	logger.debug("POST:")
 	logger.debug(" + nodes: %s" % nodes)
+	logger.debug(" + aggregate_method: %s" % aggregate_method)
+	logger.debug(" + use_window_ts:    %s" % use_window_ts)
+	logger.debug(" + time_interval:    %s" % time_interval)
+
+	if time_interval:
+		try:
+			time_interval = int(time_interval)
+		except Exception, err:
+			logger.error(err)
+			return {'total': 0, 'success': False, 'data': []}
 
 	output = []
 	
@@ -140,7 +150,7 @@ def perfstore_getMetric(_id):
 	output = []
 	if metrics:
 		for metric in metrics:
-			output.append({'metric': metric })
+			output.append({'metric': metric,'node':_id })
 	
 	output = {'total': len(output), 'success': True, 'data': output}
 	
@@ -148,13 +158,23 @@ def perfstore_getMetric(_id):
 
 @get('/perfstore/get_all_nodes',apply=[check_auth])
 def perstore_all_nodes():
-	index = perfstore.get_all_nodes()
-	return {'success': True,'data' : index,'total' : len(index)}
+	limit		= request.params.get('limit', default=None)
+	start		= request.params.get('start', default=None)
+	search		= request.params.get('search', default=None)
+	
+	result = perfstore.get_all_nodes(limit=limit,offset=start,search=search)
+	
+	return {'success': True,'data' : result['data'],'total' : result['total']}
 
 @get('/perfstore/get_all_metrics',apply=[check_auth])
 def perstore_get_all_metrics():
-	index = perfstore.get_all_metrics()
-	return {'success': True,'data' : index,'total' : len(index)}
+	limit		= request.params.get('limit', default=None)
+	start		= request.params.get('start', default=None)
+	search		= request.params.get('search', default=None)
+	
+	result = perfstore.get_all_metrics(limit=limit,offset=start,search=search)
+	
+	return {'success': True,'data' : result['data'],'total' : result['total']}
 
 def perfstore_get_last_value(_id, metrics):
 	output=[]

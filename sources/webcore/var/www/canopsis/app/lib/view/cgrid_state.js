@@ -28,6 +28,8 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 
 	opt_paging: false,
 	opt_bar: false,
+	
+	opt_allow_edit : false,
 
 	opt_column_sortable: false,
 

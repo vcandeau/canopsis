@@ -31,6 +31,10 @@ Ext.define('canopsis.view.Group.Form', {
 			allowBlank: false,
 			regex: /^[A-Za-z0-9_]+$/,
 			regexText: _('Invalid name') + ', '+ _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
+		},{
+			fieldLabel: _('Description'),
+			name: 'description',
+			allowBlank: false
 		}],
 
 

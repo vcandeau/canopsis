@@ -556,7 +556,7 @@ var heartbeat = function(){
 
 var stream_getComments = function(referer, limit, callback){
 	log.debug("getComments for '"+referer+"'", "widget-stream")
-	mongodb_find('events_log', { "$and": [{"referer": referer }, {"event_type": "comment"} ]}, { 'limit': limit, 'sort': {"timestamp": 1} }, callback)
+	mongodb_find('events_log', { "$and": [{"referer": referer }, {"event_type": "comment"} ]}, { 'limit': limit, 'sort': {"timestamp": -1} }, callback)
 }
 
 var stream_countComments = function(referer, callback){
