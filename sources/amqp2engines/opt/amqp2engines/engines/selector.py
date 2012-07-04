@@ -22,6 +22,8 @@ from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
 from cselector import cselector
+
+import logging
 		
 NAME="selector"
 
@@ -47,7 +49,7 @@ class engine(cengine):
 		# Save
 		self.storage.put(records, namespace="object")
 
-	def clean__selectors(self):
+	def clean_selectors(self):
 		## check if selector is already in store
 		id_to_clean = []
 		for _id in self.selectors:
@@ -59,7 +61,7 @@ class engine(cengine):
 			del self.selectors[_id]
 	
 	def unload_selectors(self):
-		self.clean__selectors()
+		self.clean_selectors()
 		
 		## Unload selectors
 		if self.selectors:
@@ -75,7 +77,7 @@ class engine(cengine):
 	
 	def load_selectors(self):
 		## Load selectors
-		self.clean__selectors()
+		self.clean_selectors()
 		
 		## New selector or modified selector
 		records = self.storage.find({'$and': [{'crecord_type': 'selector'}, {'loaded': False}]}, namespace="object")
@@ -91,7 +93,7 @@ class engine(cengine):
 				pass
 				
 			## store
-			self.selectors[_id] = cselector(storage=self.storage, record=record)
+			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=logging.DEBUG)
 		
 			## Publish state	
 			(rk, event) = self.selectors[_id].event()
