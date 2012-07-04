@@ -104,7 +104,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 
 
 		//Root build menu
-		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_account_admin' || (global.account.groups.indexOf('group.CPS_account_admin') != -1)) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_account_admin')){
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-edit-account',
@@ -119,7 +119,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 		//Build menu Curves Admin
-		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_curve_admin' || (global.account.groups.indexOf('group.CPS_curve_admin') != -1)) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_curve_admin')){
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-colors',
@@ -129,9 +129,20 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				}
 			]);
 		}
-
+		
+		//Root selector menu
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_selector_admin')){
+			menu_build = menu_build.concat([
+				{
+					iconCls: 'icon-mainbar-selector',
+					text: _('Edit selector'),
+					action: 'editSelector'
+				}
+			]);
+		}
+		
 		//Build menu
-		//if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin')||global.accountCtrl.checkGroup('group.CPS_view')){
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-edit-view',
@@ -143,10 +154,10 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					action: 'newView'
 				}
 			]);
-		//}
+		}
 
 		//Reporting menu
-		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_reporting_admin' || (global.account.groups.indexOf('group.CPS_reporting_admin') != -1)) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_reporting_admin')){
 			menu_reporting = menu_reporting.concat([
 				{
 					iconCls: 'icon-mimetype-pdf',
@@ -157,7 +168,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 
-		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_schedule_admin' || (global.account.groups.indexOf('group.CPS_schedule_admin') != -1)) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_schedule_admin')) {
 			menu_reporting = menu_reporting.concat([
 				{
 					iconCls: 'icon-mainbar-add-task',
@@ -171,7 +182,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			]);
 		}
 
-		if (global.account.user == 'root' || global.account.aaa_group == 'group.CPS_reporting_admin' || (global.account.groups.indexOf('group.CPS_reporting_admin') != -1)) {
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_reporting_admin')) {
 			menu_reporting = menu_reporting.concat([{
 					iconCls: 'icon-mainbar-reporting',
 					text: _('Switch to live reporting'),
@@ -205,7 +216,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			}
 		]);
 
-		//if(global.account.user == 'root' ||global.account.aaa_group == 'group.CPS_view_admin' ||(global.account.groups.indexOf('group.CPS_view_admin') != -1)){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin')||global.accountCtrl.checkGroup('group.CPS_view')){
 			menu_run = menu_run.concat(
 				[
 					{
@@ -215,7 +226,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 					}
 				]
 			);
-		//}
+		}
 
 		menu_run = menu_run.concat([
 			'-', this.viewSelector
@@ -295,14 +306,14 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				flex: 2.3
 			},{
 				iconCls: 'icon-user',
-				flex: 0.2,
+				flex: 0.25,
 				menu: {
 					items: menu_preferences
 				}
 
 			},'-', {
 				iconCls: 'icon-preferences',
-				flex: 0.2,
+				flex: 0.25,
 				menu: {
 					name: 'Preferences',
 					showSeparator: true,

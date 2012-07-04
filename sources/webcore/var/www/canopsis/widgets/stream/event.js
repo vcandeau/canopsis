@@ -45,7 +45,12 @@ widget_stream_event_template = Ext.create('Ext.XTemplate',
 							"<h1 class='title'>{author}</h1>",
 						'</tpl>',
 						'<tpl if="author == undefined">',
-							"<h1 class='title'>{component} - {resource}</h1>",
+							'<tpl if="source_type == \'resource\'">',
+								"<h1 class='title'>{component} - {resource}</h1>",
+							'</tpl>',
+							'<tpl if="source_type == \'component\'">',
+								"<h1 class='title'>{component}</h1>",
+							'</tpl>',
 						'</tpl>',
 						"<span id='{event_Component_id}-time' class='timestamp'>{event_date}</span>",
 					'</header>',
@@ -122,6 +127,12 @@ Ext.define('widgets.stream.event' , {
 
 		if (! raw['author'])
 			raw['author'] = undefined;
+			
+		if (! raw['output'])
+			raw['output'] = '';
+			
+		if (! raw['long_output'])
+			raw['long_output'] = '';
 
 		raw['event_date'] = this.time();
 		raw['event_Component_id'] = this.id;
@@ -187,7 +198,7 @@ Ext.define('widgets.stream.event' , {
 					log.debug(records.length + " comments for '" + me.event_id + "'", me.logAuthor);
 					if (records.length > 0) {
 						me.init_comment_counter();
-
+						records.reverse()
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 

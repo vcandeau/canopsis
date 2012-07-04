@@ -27,10 +27,10 @@ import time, logging, threading, os
 
 
 class camqp(threading.Thread):
-	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_level=logging.ERROR, read_config_file=True, auto_connect=True):
+	def __init__(self, host="localhost", port=5672, userid="guest", password="guest", virtual_host="canopsis", exchange_name="canopsis", logging_name="camqp", logging_level=logging.INFO, read_config_file=True, auto_connect=True, on_ready=None):
 		threading.Thread.__init__(self)
 		
-		self.logger = logging.getLogger("camqp")
+		self.logger = logging.getLogger(logging_name)
 		
 		
 		self.host=host
@@ -54,6 +54,7 @@ class camqp(threading.Thread):
 		self.chan = None
 		self.conn = None
 		self.connected = False
+		self.on_ready = on_ready
 		
 		self.RUN = True
 	
@@ -91,6 +92,7 @@ class camqp(threading.Thread):
 			if self.connected:
 				self.init_queue(reconnect=reconnect)
 				
+				self.logger.debug("Drain events ...")
 				while self.RUN:
 					try:
 						self.conn.drain_events(timeout=0.5)
@@ -144,11 +146,17 @@ class camqp(threading.Thread):
 			self.logger.debug("Allready connected")
 	
 	def get_exchange(self, name):
-		try:
-			return self.exchanges[name]
-		except:
-			self.exchanges[name] =  Exchange(name , "topic", durable=True, auto_delete=False)
-			return self.exchanges[name]
+		if name:
+			try:
+				return self.exchanges[name]
+			except:
+				if name == "amq.direct":
+					self.exchanges[name] = Exchange(name, "direct", durable=True)
+				else:
+					self.exchanges[name] =  Exchange(name , "topic", durable=True, auto_delete=False)
+				return self.exchanges[name]
+		else:
+			return None
 		
 	def init_queue(self, reconnect=False):
 		if self.queues:
@@ -159,9 +167,15 @@ class camqp(threading.Thread):
 				
 				if not qsettings['queue']:
 					self.logger.debug("   + Create queue")
+					
+					routing_key = None
+					if qsettings['routing_keys']:
+						routing_key = qsettings['routing_keys'][0]
+					
+					self.logger.debug("   + exchange: '%s', routing_key: '%s', exclusive: %s, auto_delete: %s, no_ack: %s" % (qsettings['exchange_name'], routing_key, qsettings['exclusive'], qsettings['auto_delete'], qsettings['no_ack']))
 					qsettings['queue'] = Queue(queue_name,
 											exchange = self.get_exchange(qsettings['exchange_name']),
-											routing_key = qsettings['routing_keys'][0],
+											routing_key = routing_key,
 											exclusive = qsettings['exclusive'],
 											auto_delete = qsettings['auto_delete'],
 											no_ack = qsettings['no_ack'])
@@ -172,11 +186,20 @@ class camqp(threading.Thread):
 				
 				self.logger.debug("   + Consume queue")
 				qsettings['consumer'].consume()
+			
+			if self.on_ready:
+				self.on_ready()
 
 	
 	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
-		if not isinstance(routing_keys, list):
-			routing_keys = [ routing_keys ]
+		if exchange_name == "amq.direct":
+			routing_keys = queue_name
+		
+		if routing_keys:
+			if not isinstance(routing_keys, list):
+				routing_keys = [ routing_keys ]
+		else:
+			routing_keys = None
 		
 		if not exchange_name:
 			exchange_name = self.exchange_name		

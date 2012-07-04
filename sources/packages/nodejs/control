@@ -2,9 +2,9 @@
 
 NAME="nodejs"
 VERSION=0.6.15
-RELEASE=0
+RELEASE=1
 DESCRIPTION=""
-REQUIRES=""
+REQUIRES="canohome pkgmgr"
 
 #P_ARCH="@P_ARCH@"
 #P_DIST="@P_DIST@"

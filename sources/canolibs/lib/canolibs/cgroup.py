@@ -26,11 +26,12 @@ except:
 	pass
 
 class cgroup(crecord):
-	def __init__(self, record=None, account_ids=[], *args, **kargs):
+	def __init__(self, record=None, account_ids=[], description=None, *args, **kargs):
 		crecord.__init__(self, *args, **kargs)
 		self.type = 'group'
 		self._id = '%s.%s' % (self.type,str(self.name))
 		self.account_ids = account_ids
+		self.description = description
 		
 		#HACK
 		self.admin_group = 'group.CPS_account_admin'
@@ -40,6 +41,7 @@ class cgroup(crecord):
 
 	def dump(self,json=False):
 		self.data['account_ids'] = self.account_ids
+		self.data['description'] = self.description
 		return crecord.dump(self,json=json)
 		
 	def load(self, dump):
@@ -48,6 +50,9 @@ class cgroup(crecord):
 			self.account_ids = self.data['account_ids']
 		else:
 			self.account_ids = []
+		
+		if 'description' in  self.data:
+			self.description = self.data['description']
 		
 	def add_accounts(self, accounts,storage=None):
 		if not storage:

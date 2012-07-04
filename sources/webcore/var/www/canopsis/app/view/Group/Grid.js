@@ -28,6 +28,7 @@ Ext.define('canopsis.view.Group.Grid' , {
 
 	opt_menu_delete: true,
 	opt_menu_rights: false,
+	opt_allow_edit : true,
 
 	columns: [
 		{
@@ -41,6 +42,11 @@ Ext.define('canopsis.view.Group.Grid' , {
 				flex: 2,
 				sortable: true,
 				dataIndex: 'crecord_name'
+		},{
+				header: _('Description'),
+				flex: 2,
+				sortable: true,
+				dataIndex: 'description'
 		}
 
 	],

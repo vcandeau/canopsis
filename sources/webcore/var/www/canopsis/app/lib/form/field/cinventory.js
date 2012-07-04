@@ -30,6 +30,23 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	multiSelect: true,
 	vertical_multiselect: false,
 	default_padding: 5,
+	
+	isFormField: true,
+	
+	getName: function(){
+		return this.name
+	},
+	isValid: function(){
+		return true
+	},
+	validate: function(){
+		return this.isValid()
+	},
+	getSubmitData: function(){
+		var data = {}
+		data[this.name] = this.getValue()
+		return data
+	},
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
@@ -72,12 +89,6 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					dataIndex: 'source_type',
 					renderer: rdr_source_type
 	       		},{
-					header: '',
-					width: 25,
-					sortable: false,
-					dataIndex: 'perf_data',
-					renderer: rdr_havePerfdata
-	       		},{
 					header: _('Component'),
 					flex: 1,
 					dataIndex: 'component'
@@ -100,56 +111,15 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			return node;
 		}
 
-		this.selection_render_metrics = function(perf_data, p, record) {
-			if (perf_data) {
-				var output = '';
-
-				var i = 0;
-				for (var index in perf_data) {
-					metric = perf_data[index]['metric'];
-
-					var checked = 'checked';
-					var state = this.get_metric(record.data.id, metric, i);
-					if (! state) { checked = '' }
-
-					output += Ext.String.format(
-						'<input type="checkbox" value="{0}" onclick="Ext.getCmp(\'{1}\').check_metric(\'{2}\',\'{3}\');" {4}> {5}<br>',
-						metric,
-						this.id,
-						record.data.id,
-						metric.replace(/\\/g, '\\\\'),
-						checked,
-						metric
-					);
-					i += 1;
-				}
-				return output;
-			}
-		}
-
 		this.selection_store = Ext.create('Ext.data.Store', {
 				model: model
 		});
 
-		// If metric mode
-		var columns_metrics = {};
-		if (this.metrics) {
-			columns_metrics = {
-					sortable: false,
-					dataIndex: 'perf_data_array',
-					flex: 1,
-					renderer: this.selection_render_metrics
-				};
-		}
 
 		var selection_height = undefined;
-		var selection_flex = 1;
 
-		if (! this.multiSelect) {
-			selection_flex = undefined;
+		if (! this.multiSelect)
 			selection_height = 130;
-		}
-
 
 		this.selection_grid = Ext.create('canopsis.lib.view.cgrid', {
 			title: _('Selection'),
@@ -159,7 +129,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			border: true,
 			opt_allow_edit: false,
 			opt_paging: false,
-			flex: selection_flex,
+			flex: 1,
 			height: selection_height,
 			store: this.selection_store,
 			hideHeaders: true,
@@ -176,7 +146,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					dataIndex: 'id',
 					flex: 2,
 					renderer: this.selection_render
-	       		}, columns_metrics
+	       		}
 			],
 
 			viewConfig: {
@@ -238,9 +208,6 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				autoLoad: false
 		});
 
-		if (this.metrics)
-			this.search_store.setFilter({'$and': [{'perf_data_array': {'$ne': []}}, {'perf_data_array': {'$exists': true} }]});
-
 		this.search_store.load();
 
 		this.search_grid = Ext.create('canopsis.lib.view.cgrid', {
@@ -256,7 +223,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			border: true,
 			opt_paging: true,
 			multiSelect: this.multiSelect,
-			flex: 1,
+			flex: 2,
 			store: this.search_store,
 			columns: this.columns,
 			viewConfig: {
@@ -330,39 +297,10 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	// GetValue for wizard ...
 	getValue: function() {
 		var dump = [];
-		var me = this;
 
 		this.selection_store.each(function(record) {
 			var id = record.data.id;
-
-			var metrics = [];
-
-			if (me.metrics) {
-				var metrics_checked = me.selection_grid.metrics[id];
-				var nb_metric = 0;
-
-				for (var metric in metrics_checked) {
-					if (metrics_checked[metric]) {
-						metrics.push(metric);
-					}
-					nb_metric += 1;
-				}
-
-				//check if all metrics are checked
-				if (metrics.length == nb_metric) {
-					metrics = ['<all>'];
-				}
-			}
-
-			var rdump = {
-				id: id,
-				component: record.data.component,
-				perf_data_array: record.data.perf_data_array,
-				resource: record.data.resource,
-				source_type: record.data.source_type,
-				metrics: metrics
-			};
-			dump.push(rdump);
+			dump.push(id);
 		});
 
 		log.debug('getValue Dump:', this.logAuthor);
@@ -371,38 +309,31 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		return dump;
 	},
 
-	setValue: function(data) {
-		log.debug('setValue Data:', this.logAuthor);
-		log.dump(data);
-
-		for (var i in data) {
-			var rdata = data[i];
-			// uncheck all metrics
-			log.debug(' + Uncheck all metrics', this.logAuthor);
-			for (var index in rdata.perf_data_array) {
-					var metric = rdata.perf_data_array[index]['metric'];
-					this.selection_grid.check_metric(rdata.id, metric, false);
-			}
-
-			// if '<all>' check all metrics
-			if (rdata.metrics) {
-				if (rdata.metrics[0] == '<all>') {
-					log.debug(' + Check all metrics', this.logAuthor);
-					for (var index in rdata.perf_data_array) {
-						var metric = rdata.perf_data_array[index]['metric'];
-						this.selection_grid.check_metric(rdata.id, metric, true);
-					}
-				}else {
-					for (var index in rdata.metrics) {
-						var metric = rdata.metrics[index];
-						log.debug(" + Check '" + metric + "'", this.logAuthor);
-						this.selection_grid.check_metric(rdata.id, metric, true);
-					}
-				}
-			}
-
-			this.addRecord({data: rdata});
+	setValue_record: function(records){
+		for (var i in records){
+			this.addRecord({data: records[i]});
 		}
+	},
+	
+	setValue: function(ids) {
+		log.debug('setValue Data:', this.logAuthor);
+		log.dump(ids);
+		
+		if (ids.length > 0)
+			Ext.Ajax.request({
+				url: "/rest/events/event",
+				scope: this,
+				params: {'ids': Ext.JSON.encode(ids)},
+				method: 'GET',
+				success: function(response) {
+						var data = Ext.JSON.decode(response.responseText);
+						data = data.data;
+						this.setValue_record(data);
+					},
+					failure: function(result, request) {
+						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+					}
+			});
 	},
 
 	beforeDestroy: function() {
