@@ -48,7 +48,7 @@ class engine(cengine):
 			return event
 		
 		## Archive event
-		if   event_type in ['check', 'selector']:
+		if   event_type == 'check' or event_type == 'selector':
 
 			_id = self.archiver.check_event(event_id, event)
 			if _id:
@@ -57,7 +57,7 @@ class engine(cengine):
 				## Event to Alert
 				self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 
-		elif event_type in ['trap', 'log']:
+		elif event_type == 'trap' or event_type == 'log':
 			
 			## passthrough
 			self.archiver.store_event(event_id, event)
@@ -68,7 +68,7 @@ class engine(cengine):
 			## Event to Alert
 			self.amqp.publish(event, event_id, self.amqp.exchange_name_alerts)
 			
-		elif event_type in ['user', 'comment']:
+		elif event_type == 'user' or event_type == 'comment':
 			
 			## passthrough
 			_id = self.archiver.log_event(event_id, event)
