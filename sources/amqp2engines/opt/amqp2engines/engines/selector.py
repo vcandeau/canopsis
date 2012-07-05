@@ -52,13 +52,17 @@ class engine(cengine):
 	def clean_selectors(self):
 		## check if selector is already in store
 		id_to_clean = []
-		for _id in self.selectors:
-			if not self.storage.count({'_id': _id}, namespace="object"):
-				id_to_clean.append(_id)
+		ids = [_id for _id in self.selectors]
+		
+		count = self.storage.count({'_id': {"$in": ids}}, namespace="object")
+		if count != len(ids):
+			for _id in self.selectors:
+				if not self.storage.count({'_id': _id}, namespace="object"):
+					id_to_clean.append(_id)
 				
-		for _id in id_to_clean:
-			self.logger.debug("Clean selector %s: %s" % (_id, self.selectors[_id].name))
-			del self.selectors[_id]
+			for _id in id_to_clean:
+				self.logger.debug("Clean selector %s: %s" % (_id, self.selectors[_id].name))
+				del self.selectors[_id]
 	
 	def unload_selectors(self):
 		self.clean_selectors()
@@ -93,7 +97,7 @@ class engine(cengine):
 				pass
 				
 			## store
-			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=logging.DEBUG)
+			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=logging.INFO)
 		
 			## Publish state	
 			(rk, event) = self.selectors[_id].event()
@@ -145,7 +149,6 @@ class engine(cengine):
 		for selector in selectors:
 			(rk, sevent) = selector.event()
 			if sevent:
-				self.logger.debug("%s: %s" % (rk, sevent))
 				self.amqp.publish(sevent, rk, self.amqp.exchange_name_events)
 			else:
 				pass
