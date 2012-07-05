@@ -50,7 +50,8 @@ class KnownValues(unittest.TestCase):
 		global mynode, storage, timestamp
 		#storage = filestore(base_path="/tmp/")
 		storage = memstore()
-		mynode = node('nagios.Central.check.service.localhost9', point_per_dca=100, storage=storage)
+		_id = 'nagios.Central.check.service.localhost9'
+		mynode = node(_id=_id, dn=_id, point_per_dca=100, storage=storage)
 
 		timestamp = 1
 
