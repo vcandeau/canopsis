@@ -49,10 +49,26 @@ class node(object):
 
 		data = self.storage.get(self._id)
 		if data:
+			# Load data
 			self.load(data)
-			if dn and self.dn != dn:
+			
+			# Save new configurations
+			changed = False
+			if dn and dn != self.dn:
 				self.dn = dn
-				#self.save()
+				changed = True
+				
+			"""if retention and retention != self.retention:
+				self.retention = retention
+				changed = True
+				
+			if rotate_plan and rotate_plan != self.rotate_plan:
+				self.rotate_plan = rotate_plan
+				changed = True
+			"""
+			
+			if changed:
+				self.save()
 				
 		if not self.dn:
 			self.dn = _id
