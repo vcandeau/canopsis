@@ -22,11 +22,12 @@ import sys, zlib, json, logging
 import msgpack
 
 packer = msgpack.Packer()
-unpacker = msgpack.Unpacker()
 
 class dca(object):
 	def __init__(self, storage, _id=None, metric_id=None, raw=None, max_size=300):
 		self.logger = logging.getLogger('dca')
+		
+		self.unpacker = msgpack.Unpacker()
 
 		self._id = _id
 		self.metric_id = metric_id
@@ -126,16 +127,17 @@ class dca(object):
 
 	def compress_TSC(self, values=None):
 		#self.format = "PLAIN"
-		self.logger.debug("TSC: Timestamp compression")
 		
 		if not values:
 			values = self.storage.get_raw(self.values_id)
-	
-		bsize = self.get_values_size()
+		
+		self.logger.debug("TSC: Timestamp compression (%s)" % self.format)
 
 		if self.format != "PLAIN":
 			self.logger.error(" + Only compress PLAIN format ...")
 			raise ValueError("Only compress PLAIN format ..")
+
+		bsize = sys.getsizeof(values)
 
 		# Remplace timestamp by interval
 		self.logger.debug(" + Remplace Timestamp by Interval and compress it")
@@ -144,9 +146,9 @@ class dca(object):
 		previous_interval = None
 
 		#self.logger.debug(values)
-
+		
 		for point in values:
-			#self.logger.debug(point)
+			self.logger.debug(point)
 
 			timestamp = point[0]
 			value = point[1]
@@ -168,10 +170,10 @@ class dca(object):
 			offset = timestamp
 			i += 1
 
+
 		values = packer.pack(values)
 
 		asize = sys.getsizeof(values)
-
 		ratio = int(((bsize-asize)*100)/bsize)
 
 		self.logger.debug(" + Before:\t%s" % bsize)
@@ -183,9 +185,10 @@ class dca(object):
 		
 		#self.save()
 		self.storage.set_raw(self.values_id, values)
+		return values
 
 	def uncompress_TSC(self, values=None):
-		self.logger.debug("TSC: Timestamp uncompression")
+		self.logger.debug("TSC: Timestamp uncompression (%s)" % self.format)
 
 		#if self.format != "TSC":
 		#	self.logger.error(" + Invalid TSC format")
@@ -195,15 +198,48 @@ class dca(object):
 		
 		if not values:
 			values = self.storage.get_raw(self.values_id)
-		try:
-			unpacker.feed(values)
-			values = list(unpacker.unpack())
-		except:
-			self.logger.warning("Value is not msgpack")
+			
+		self.logger.debug(" + Type of values: %s" % type(values))
+		if type(values).__name__ != 'list':
+			try:
+				self.unpacker.feed(values)
+				values = list(self.unpacker.unpack())
+			except Exception, err:
+				self.logger.warning("Values is not msgpack (%s)" % err)
 
-		if type(values).__name__ == 'str' or type(values).__name__ == 'unicode':
-			values = json.loads(values)
+				########################################################################
+				######################### Decode OLD serialisation #####################
+				########################################################################
+				
+				if type(values).__name__ == 'str' or type(values).__name__ == 'unicode':
+					
+					self.logger.debug("Decode old serialisation format (JSON) (%s)", self.format)
+						
+					try:
+						values = json.loads(values)
+					except Exception, err:
+						#self.logger.error(values)
+						self.logger.error("Values is not JSON (%s: %s)" % (type(values).__name__, err))
+						raise ValueError("Invalid values (%s: %s)" % (type(values).__name__, err))
+						
+					try:							
+						## Save with new format
+						if self.format == "TSC":
+							self.logger.info(" + Save TSC with new format")
+							self.compress_TSC(self.uncompress_TSC(values))
+							
+						elif self.format == "ZTSC":
+							self.format = "PLAIN"
+							self.logger.info(" + Save ZTSC with new format")
+							self.compress_ZTSC(self.compress_TSC(self.uncompress_TSC(values)))
+							
+					except Exception, err:
+						#self.logger.error(values)
+						raise ValueError("Impossible to save with new format (%s)" % err)
+						
+				########################################################################
 
+		self.logger.debug(" + Type of values: %s" % type(values))
 		if type(values).__name__ != 'list':
 			raise ValueError("Invalid type (%s)" % type(values).__name__)
 
@@ -220,29 +256,34 @@ class dca(object):
 		#others
 		for i in range(2, len(values)):
 			point = values[i]
-			#self.logger.debug(point)
-
-			if isinstance(point ,list):
-				offset = point[0]
-				timestamp += offset
+			
+			if isinstance(point ,list) or isinstance(point ,tuple):
+				poffset = point[0]
+				timestamp += poffset
 				values[i] = [ timestamp, point[1] ]
 			else:
 				timestamp += offset
 				values[i] = [ timestamp, point ]
+				
+			#self.logger.debug("%s -> %s" % (point, values[i]))
 		
 		#self.format = "PLAIN"
 		return values
 
-	def compress_ZTSC(self, values=None):
-		self.logger.debug("ZTSC: Zlib Timestamp compression")
-		
+	def compress_ZTSC(self, values=None):		
 		if not values:
 			values = self.storage.get_raw(self.values_id)
 			
 		if self.format == "PLAIN":
-			self.compress_TSC(values)
+			values = self.compress_TSC(values)
+	
+		self.logger.debug("ZTSC: Zlib Timestamp compression (%s)" % self.format)
+			
+		if self.format != "TSC":
+			self.logger.error(" + Only compress TSC format ...")
+			raise ValueError("Only compress TSC format ..")
 
-		bsize = self.get_values_size()
+		bsize = sys.getsizeof(values)
 
 		self.logger.debug(" + Zlib compression")
 		values = zlib.compress(str(values), 9)
@@ -258,9 +299,10 @@ class dca(object):
 		self.format = "ZTSC"
 
 		self.storage.set_raw(self.values_id, values)
+		return values
 
 	def uncompress_ZTSC(self, values=None):
-		self.logger.debug("ZTSC: Zlib Timestamp uncompression")
+		self.logger.debug("ZTSC: Zlib Timestamp uncompression (%s)" % self.format)
 
 		#if self.format != "ZTSC":
 		#	self.logger.error(" + Invalid ZTSC format")
@@ -269,6 +311,7 @@ class dca(object):
 		if not values:
 			values = self.storage.get_raw(self.values_id)
 		
+		self.logger.debug(" + Type of values: %s" % type(values))
 		values = str(zlib.decompress(values))
 		#self.format = "TSC"
 		values = self.uncompress_TSC(values)
