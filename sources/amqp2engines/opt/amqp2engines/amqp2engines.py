@@ -130,7 +130,7 @@ def start_engines():
 	# Alerts:
 	### canopsis.alerts -> selector -> eventstore
 	
-	engine_selector		= selector.engine(logging_level=logging.DEBUG)
+	engine_selector		= selector.engine()
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
