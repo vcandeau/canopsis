@@ -148,7 +148,7 @@ class dca(object):
 		#self.logger.debug(values)
 		
 		for point in values:
-			self.logger.debug(point)
+			#self.logger.debug(point)
 
 			timestamp = point[0]
 			value = point[1]
