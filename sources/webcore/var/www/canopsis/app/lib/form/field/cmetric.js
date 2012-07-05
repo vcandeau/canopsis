@@ -97,6 +97,10 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		});
 
 		this.metric_store = Ext.create('canopsis.lib.store.cstore', {
+				sorters: [{
+					 property: 'metric',
+					 direction: 'ASC'
+				 }],
 				model: 'Metric'
 		});
 
@@ -178,7 +182,18 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		for (var i in metrics)
 			metric_array.push({'node': node, 'metric': metrics[i].dn, 'dn': dn});
 
-		return metric_array;
+		return metric_array.sort(this.sort_by_metric);
+	},
+	
+	sort_by_metric: function(a,b){
+		a = a.metric;
+		b = b.metric;
+		if(a == b)
+			return 0
+		if(a > b)
+			return 1
+		else
+			return -1
 	},
 
 	select_metrics: function(metric_array) {
