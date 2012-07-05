@@ -509,7 +509,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 			var node = this.nodesByID[node_id]
 			if (node){
 				metric_long_name = node.dn[0];
-				if (info.source_type == 'resource')
+				if (node.source_type == 'resource')
 					metric_long_name += ' - ' + node.dn[1];
 
 				metric_long_name = '(' + metric_long_name + ') ';
