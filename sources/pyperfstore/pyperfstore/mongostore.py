@@ -142,7 +142,7 @@ class mongostore(storage):
 								{ 'd.dn': { '$regex' : '.*'+search+'.*', '$options': 'i' }}
 							]}
 		
-		raw_output = self.collection.find(filter)
+		raw_output = self.collection.find(filter,sort =[('_id',ASCENDING)])
 		total = raw_output.count()
 		if raw_output and limit:
 			raw_output = raw_output.limit(int(limit))
