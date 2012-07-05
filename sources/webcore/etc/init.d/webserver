@@ -7,7 +7,7 @@ BIN="gunicorn"
 PIDF="$HOME/var/run/webserver.pid"
 LOGF="$HOME/var/log/webserver.log"
 
-LL="error"
+LL="info"
 
 ABIND="0.0.0.0:8082"
 
