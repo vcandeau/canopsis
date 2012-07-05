@@ -24,6 +24,7 @@ NAME="collectdgw"
 
 from cengine import cengine
 import cevent
+import time
 
 import sys, os
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/%s/' % NAME))
@@ -38,7 +39,9 @@ class engine(cengine):
 		self.amqp.add_queue(self.amqp_queue, ['collectd'], self.on_collectd_event, "amq.topic", auto_delete=False)
 		
 	def on_collectd_event(self, body, msg):
-				
+		start = time.time()
+		error = False
+		
 		collectd_info = body.split(' ')
 		
 		if len(collectd_info) > 0:
@@ -144,14 +147,18 @@ class engine(cengine):
 					
 					## send event on amqp
 					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-					return None
-					
+										
 			else:
+				error = True
 				self.logger.error("Invalid collectd Action (%s)" % body)
-				
-			self.logger.debug("")
 			
 		else:
 			self.logger.error("Invalid collectd Message (%s)" % body)
+		
+		if error:
+			self.counter_error +=1
+			
+		self.counter_event += 1
+		self.counter_worktime += time.time() - start
 
 		
