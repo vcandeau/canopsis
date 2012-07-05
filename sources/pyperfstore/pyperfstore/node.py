@@ -58,14 +58,13 @@ class node(object):
 				self.dn = dn
 				changed = True
 				
-			"""if retention and retention != self.retention:
+			if retention and retention != self.retention:
 				self.retention = retention
 				changed = True
 				
 			if rotate_plan and rotate_plan != self.rotate_plan:
 				self.rotate_plan = rotate_plan
 				changed = True
-			"""
 			
 			if changed:
 				self.save()
