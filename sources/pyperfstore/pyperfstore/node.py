@@ -69,8 +69,10 @@ class node(object):
 			if changed:
 				self.save()
 				
-		if not self.dn:
-			self.dn = _id
+			if not self.dn and not dn:
+				self.dn = _id
+		else:
+			self.dn = dn
 				
 	def dump(self):
 		dump = {
@@ -320,6 +322,7 @@ class node(object):
 		print " + Id: %s" % self._id
 		print " + Node DN: %s" % self.dn
 		print " + Retention: %s" % self.retention
+		print " + Rotate_plan: %s" % self.rotate_plan
 		print " + Metrics:"
 
 		for _id in self.metrics.keys():
