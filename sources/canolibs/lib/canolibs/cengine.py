@@ -25,6 +25,7 @@ import logging
 import os, sys
 from cinit import cinit
 import traceback
+import cevent
 
 class cengine(multiprocessing.Process):
 
@@ -133,15 +134,49 @@ class cengine(multiprocessing.Process):
 		
 	def _beat(self):
 		self.logger.debug("Beat: %s event(s), %s error" % (self.counter_event, self.counter_error))
+		evt_per_sec = 0
+		sec_per_evt = 0
+		
 		if self.counter_event:
-			self.logger.debug(" + %0.2f event(s)/seconds" % (float(self.counter_event) / self.beat_interval))
+			evt_per_sec = float(self.counter_event) / self.beat_interval
+			self.logger.debug(" + %0.2f event(s)/seconds" % evt_per_sec)
 			
 		if self.counter_worktime:
-			self.logger.debug(" + %0.5f seconds/event" % (self.counter_worktime / self.counter_event))
+			sec_per_evt = self.counter_worktime / self.counter_event
+			self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
 			
 		self.counter_error = 0
 		self.counter_event = 0
 		self.counter_worktime = 0
+		
+		## Submit event
+		state = 0
+		
+		if sec_per_evt > 0.5:
+			state = 1
+			
+		if sec_per_evt > 0.8:
+			state = 2
+		
+		perf_data_array = [
+			{'metric': 'cps_evt_per_sec', 'value': round(evt_per_sec,2), 'unit': 'evt/sec' },
+			{'metric': 'cps_sec_per_evt', 'value': round(sec_per_evt,5), 'unit': 'sec/evt', 'warn': 0.5, 'crit': 0.8 },
+		]
+		
+		event = cevent.forger(
+			connector = "cengine",
+			connector_name = "engine",
+			event_type = "check",
+			source_type="resource",
+			resource=self.amqp_queue,
+			state=state,
+			state_type=1,
+			output="%0.2f evt/sec, %0.5f sec/evt" % (evt_per_sec, sec_per_evt),
+			perf_data_array=perf_data_array
+		)
+		
+		rk = cevent.get_routingkey(event)
+		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		
 		try:
 			self.beat()
