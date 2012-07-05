@@ -139,10 +139,11 @@ class engine(cengine):
 		self.logger.debug(' + perf_data_array: %s', perf_data_array)
 		
 		### Add status informations
-		if   event['event_type'] == 'check':
+		if   event['event_type'] == 'check' or event['event_type'] == 'selector':
 			state = int(event['state'])
 			state_type = int(event['state_type'])
 			state_extra = 0
+			# Multiplex state
 			cps_state = state * 100 + state_type * 10 + state_extra
 			perf_data_array.append({"metric": "cps_state", "value": cps_state})
 			
