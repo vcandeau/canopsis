@@ -450,6 +450,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 						title: _(this.modelId),
 						items: form,
 						closable: true,
+						resizable: false,
 						constrain: true,
 						renderTo: this.grid.id,
 						closeAction: 'destroy'
@@ -600,6 +601,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 							title: this.modelId,
 							items: form,
 							closable: true,
+							resizable: false,
 							constrain: true,
 							renderTo: this.grid.id,
 							closeAction: 'destroy'
