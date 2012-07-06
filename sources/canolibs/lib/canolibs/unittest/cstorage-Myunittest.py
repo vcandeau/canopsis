@@ -75,15 +75,17 @@ class KnownValues(unittest.TestCase):
 		if MYRECORD.data != self.data:
 			raise Exception('Invalid data ...')
 
-	def test_06_Put_field(self):
+	def test_06_Update_field(self):
 
-		STORAGE.put_field(ID, 'mydata1', 'toto')
+		data = {'mydata1': 'toto'}
+
+		STORAGE.update(ID, data)
 		record = STORAGE.get(ID)
 		
 		if record.data['mydata1'] != 'toto':
 			raise Exception('Put_field failed ...')
 		
-		STORAGE.put_field(ID, 'mydata1', self.data['mydata1'])
+		STORAGE.update(ID, {'mydata1': self.data['mydata1']})
 		record = STORAGE.get(ID)
 		
 		if record.data['mydata1'] != self.data['mydata1']:
