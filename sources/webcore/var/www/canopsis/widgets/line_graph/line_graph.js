@@ -764,19 +764,29 @@ Ext.define('widgets.line_graph.line_graph' , {
 			log.debug('  +  Create it', this.logAuthor);
 
 			//name
-			var curve = global.curvesCtrl.getRenderInfo(data.metric);
-
-			// Set Label
-			var label = undefined;
-			if (curve)
-				label = curve.get('label') + '-TREND';
-			else
-				label = data.metric + '-TREND';
+			var trend_name = data.metric + '-TREND'
+			var curve = global.curvesCtrl.getRenderInfo(trend_name);
+			if(curve){
+				label = curve.get('label')
+			}else{
+				//check if referent curve have its own curve
+				var curve = global.curvesCtrl.getRenderInfo(data.metric)
+				if (curve)
+					label = curve.get('label') + '-TREND';
+				else
+					label = trend_name;
+			}
 
 			//color
-			var color = undefined;
-			if (referent_serie.options.color)
+			var color = global.curvesCtrl.getRenderColors(trend_name)[0]
+			
+			if (referent_serie.options.color && !color)
 				color = referent_serie.options.color;
+			
+			if(curve)
+				var trend_dashStyle = curve.get('dashStyle')
+			else
+				var trend_dashStyle = this.trend_lines_type
 
 			//serie
 			var serie = {
@@ -785,8 +795,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				name: label,
 				data: [],
 				marker: {enabled: false},
-				dashStyle: this.trend_lines_type
-				//lineWidth: 1
+				dashStyle: trend_dashStyle
 			};
 			if (color)
 				serie['color'] = color;
