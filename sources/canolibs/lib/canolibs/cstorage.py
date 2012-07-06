@@ -129,7 +129,15 @@ class cstorage(object):
 			self.logger.debug("Connected to %s collection." % namespace)
 			return self.backend[namespace]
 			
-
+			
+	def put_field(self, _id, field, value, namespace=None, account=None):
+		oldrecord = self.get(_id, namespace=namespace, account=account)
+		if oldrecord:
+			backend = self.get_backend(namespace)
+			data = {}
+			data[field] = value
+			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
+		
 	def put(self, _record_or_records, account=None, namespace=None):
 		if not account:
 			account = self.account
@@ -335,7 +343,8 @@ class cstorage(object):
 			mfilter = {'_id': {'$in': _ids }}
 		
 		mfilter = { '$and': [ mfilter, Read_mfilter ] }
-
+		
+		#self.logger.debug("   + mfilter: %s" % mfilter)
 		records = []
 		try:
 			if len(_ids) == 1:
