@@ -130,12 +130,14 @@ class cstorage(object):
 			return self.backend[namespace]
 			
 			
-	def put_field(self, _id, field, value, namespace=None, account=None):
-		oldrecord = self.get(_id, namespace=namespace, account=account)
-		if oldrecord:
+	def update(self, _id, data, namespace=None, account=None):
+		if not isinstance(data, dict):
+			raise Exception('Invalid data, must be a dict ...')
+		
+		# Check if record exist
+		record = self.get(_id, namespace=namespace, account=account)
+		if record:
 			backend = self.get_backend(namespace)
-			data = {}
-			data[field] = value
 			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
 		
 	def put(self, _record_or_records, account=None, namespace=None):
