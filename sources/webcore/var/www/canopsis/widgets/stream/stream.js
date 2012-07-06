@@ -30,7 +30,7 @@ Ext.define('widgets.stream.stream' , {
 	max: 10,
 	max_comment: 5,
 
-	queue: [],
+	//queue: [],
 
 	last_push: 0,
 	burst_counter: 0,
@@ -47,6 +47,7 @@ Ext.define('widgets.stream.stream' , {
 	hard_state_only: true,
 
 	initComponent: function() {
+		this.queue = []
 		this.nodeId = false;
 		this.refreshInterval = 5;
 
