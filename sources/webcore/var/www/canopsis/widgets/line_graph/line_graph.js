@@ -526,7 +526,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (! label)
 			label = metric_name;
 
-		metric_long_name += '<b>' + _(label) + '</b>';
+		metric_long_name += '<b>' + label + '</b>';
 
 		if (bunit)
 			metric_long_name += ' ('+ bunit + ')';
