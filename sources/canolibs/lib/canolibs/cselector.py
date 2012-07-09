@@ -49,6 +49,7 @@ class cselector(crecord):
 		self.include_ids = []
 		self.exclude_ids = []
 		self.changed = False
+		self.rk = None
 		
 		self.use_cache = use_cache
 		self.cache_time = cache_time
@@ -85,6 +86,7 @@ class cselector(crecord):
 		self.data['exclude_ids'] = self.exclude_ids
 		self.data['mfilter'] = json.dumps(self.mfilter)
 		self.data['namespace'] = self.namespace
+		self.data['rk'] = self.rk
 
 		return crecord.dump(self)
 
@@ -97,6 +99,11 @@ class cselector(crecord):
 		
 		try:
 			self.namespace = str(self.data['namespace'])
+		except:
+			pass
+			
+		try:
+			self.rk = self.data['rk']
 		except:
 			pass
 			
@@ -181,6 +188,9 @@ class cselector(crecord):
 		
 			self.last_resolv = time.time()
 			self.last_nb_records = len(self._ids)
+			
+			#self.storage.update(self._id, {'ids': ids})
+			
 			self.changed = False
 			
 			return ids
@@ -329,5 +339,10 @@ class cselector(crecord):
 			return (None, None)
 		
 		self.last_event = event
-			
-		return (cevent.get_routingkey(event), event)
+		
+		rk = cevent.get_routingkey(event)
+		if not self.rk:
+			self.storage.update(self._id, {'rk': rk})
+			self.rk = rk
+		
+		return (rk, event)

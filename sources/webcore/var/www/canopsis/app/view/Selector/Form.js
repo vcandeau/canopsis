@@ -55,6 +55,11 @@ Ext.define('canopsis.view.Selector.Form', {
 								fieldLabel: _('Description'),
 								xtype: 'textareafield',
 								name: 'description'
+							},{
+								fieldLabel: _('SLA'),
+								xtype: 'checkboxfield',
+								inputValue: true,
+								name: 'sla'
 							}
 						]
 					},{
