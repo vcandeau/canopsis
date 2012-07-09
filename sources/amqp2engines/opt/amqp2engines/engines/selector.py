@@ -42,12 +42,13 @@ class engine(cengine):
 		
 	def unload_all_selectors(self):
 		self.logger.debug("Unload all selectors")
-		records = self.storage.find({'crecord_type': 'selector'})
+		
+		records = self.storage.find({'crecord_type': 'selector', 'loaded': True })
 		for record in records:
-			record.data["loaded"] = False
+			self.storage.update(record._id, {'loaded': False})
 			
-		# Save
-		self.storage.put(records, namespace="object")
+		#for _id in self.selectors:
+		#	self.storage.update(_id, {'loaded': False})
 
 	def clean_selectors(self):
 		## check if selector is already in store
@@ -73,8 +74,7 @@ class engine(cengine):
 				selector = self.selectors[_id]
 				record = self.storage.get(selector._id)
 				self.logger.debug("Unload selector %s: %s" % (record._id, record.name))
-				record.data["loaded"] = False
-				self.storage.put(record)
+				self.storage.update(record._id, {'loaded': False})
 				del selector
 				
 		self.selectors = []
@@ -84,11 +84,15 @@ class engine(cengine):
 		self.clean_selectors()
 		
 		## New selector or modified selector
-		records = self.storage.find({'$and': [{'crecord_type': 'selector'}, {'loaded': False}]}, namespace="object")
+		records = self.storage.find({'crecord_type': 'selector', 'loaded': False}, namespace="object")
 		
 		for record in records:
 			self.logger.debug("Load selector %s: %s" % (record._id, record.name))
 			_id = record._id
+			
+			# Set loaded
+			self.storage.update(_id, {'loaded': True})
+			
 			try:
 				selector = self.selectors[_id]
 				## Delete old
@@ -103,12 +107,7 @@ class engine(cengine):
 			(rk, event) = self.selectors[_id].event()
 			if event:
 				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-			
-			# Set loaded
-			record.data["loaded"] = True
-			
-		# Save
-		self.storage.put(records, namespace="object")
+		
 
 	def beat(self):
 		self.nb_beat +=1

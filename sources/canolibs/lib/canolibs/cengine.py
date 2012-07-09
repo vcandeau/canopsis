@@ -52,6 +52,10 @@ class cengine(multiprocessing.Process):
 		
 		self.beat_interval = beat_interval
 		self.beat_last = time.time()
+		
+		self.create_queue =  True
+		
+		self.send_stats_event = True
 				
 		self.logger.info("Engine initialised")
 		
@@ -73,7 +77,9 @@ class cengine(multiprocessing.Process):
 		from camqp import camqp
 		
 		self.amqp = camqp(logging_level=logging.INFO, logging_name="%s-amqp" % self.name, on_ready=ready)
-		self.create_amqp_queue()
+		
+		if self.create_queue:
+			self.create_amqp_queue()
 		
 		self.amqp.start()
 		
@@ -150,33 +156,34 @@ class cengine(multiprocessing.Process):
 		self.counter_worktime = 0
 		
 		## Submit event
-		state = 0
-		
-		if sec_per_evt > 0.5:
-			state = 1
+		if self.send_stats_event:
+			state = 0
 			
-		if sec_per_evt > 0.8:
-			state = 2
-		
-		perf_data_array = [
-			{'metric': 'cps_evt_per_sec', 'value': round(evt_per_sec,2), 'unit': 'evt/sec' },
-			{'metric': 'cps_sec_per_evt', 'value': round(sec_per_evt,5), 'unit': 'sec/evt', 'warn': 0.5, 'crit': 0.8 },
-		]
-		
-		event = cevent.forger(
-			connector = "cengine",
-			connector_name = "engine",
-			event_type = "check",
-			source_type="resource",
-			resource=self.amqp_queue,
-			state=state,
-			state_type=1,
-			output="%0.2f evt/sec, %0.5f sec/evt" % (evt_per_sec, sec_per_evt),
-			perf_data_array=perf_data_array
-		)
-		
-		rk = cevent.get_routingkey(event)
-		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+			if sec_per_evt > 0.5:
+				state = 1
+				
+			if sec_per_evt > 0.8:
+				state = 2
+			
+			perf_data_array = [
+				{'metric': 'cps_evt_per_sec', 'value': round(evt_per_sec,2), 'unit': 'evt/sec' },
+				{'metric': 'cps_sec_per_evt', 'value': round(sec_per_evt,5), 'unit': 'sec/evt', 'warn': 0.5, 'crit': 0.8 },
+			]
+			
+			event = cevent.forger(
+				connector = "cengine",
+				connector_name = "engine",
+				event_type = "check",
+				source_type="resource",
+				resource=self.amqp_queue,
+				state=state,
+				state_type=1,
+				output="%0.2f evt/sec, %0.5f sec/evt" % (evt_per_sec, sec_per_evt),
+				perf_data_array=perf_data_array
+			)
+			
+			rk = cevent.get_routingkey(event)
+			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		
 		try:
 			self.beat()
