@@ -29,12 +29,6 @@ from cinit import cinit
 import sys, os
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 
-import perfstore
-import eventstore
-import collectdgw
-import tag
-import selector
-
 ## Configurations
 
 DAEMON_NAME="amqp2engines"
@@ -130,7 +124,14 @@ def start_engines():
 	# Alerts:
 	### canopsis.alerts -> selector -> eventstore
 	
-	engine_selector		= selector.engine()
+	import perfstore
+	import eventstore
+	import collectdgw
+	import tag
+	import selector
+	import sla
+	
+	engine_selector		= selector.engine(logging_level=logging.DEBUG)
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
@@ -145,7 +146,9 @@ def start_engines():
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	engines.append(engine_tag)
 	
-	
+	#engine_sla			= sla.engine(logging_level=logging.DEBUG)
+	#engines.append(engine_sla)
+
 	# Set Next queue
 	## Events
 	next_event_queue.append(engine_tag.amqp_queue)
