@@ -19,6 +19,6 @@
 # ---------------------------------
 */
 
-i18n['text.Event'] = 'Événement';
+i18n['text.Inventory'] = 'Inventaire';
 i18n['text.Write Template'] = 'Créer un template' ;
 i18n['text.list of avaible fields'] = "Liste des champs disponibles"; 
