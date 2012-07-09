@@ -44,9 +44,9 @@ class KnownValues(unittest.TestCase):
 		self.root_account = caccount(user="root", group="root")
 		self.user_account = caccount(user="william", group="capensis")
 		
-		self.anonymous_account.cat()
-		self.user_account.cat()
-		self.root_account.cat()
+		#self.anonymous_account.cat()
+		#self.user_account.cat()
+		#self.root_account.cat()
 	
 		self.data = {'mydata1': 'data1', 'mydata2': 'data2', 'mydata3': 'data3'}
 		
@@ -75,7 +75,34 @@ class KnownValues(unittest.TestCase):
 		if MYRECORD.data != self.data:
 			raise Exception('Invalid data ...')
 
-	def test_05_MultiGet(self):
+	def test_06_Update_field(self):
+
+		data = {'mydata1': 'toto'}
+
+		STORAGE.update(ID, data)
+		record = STORAGE.get(ID)
+		
+		if record.data['mydata1'] != 'toto':
+			raise Exception('Put_field failed ...')
+		
+		STORAGE.update(ID, {'mydata1': self.data['mydata1']})
+		record = STORAGE.get(ID)
+		
+		if record.data['mydata1'] != self.data['mydata1']:
+			raise Exception('Put_field failed ...')
+
+	def test_06_Get_field(self):
+		
+		raw_record = STORAGE.get(ID, mfields=["mydata2"])
+		print "raw_record: %s" % raw_record
+		
+		raw_record["mydata2"]
+		
+		if len(raw_record) != 2: #field + _id
+			raise Exception('Get_field failed ...')
+
+
+	def test_07_MultiGet(self):
 		record1 = crecord({'check': 'remove1'})
 		record2 = crecord({'check': 'remove2'})
 		record3 = crecord({'check': 'remove3'})
@@ -89,7 +116,7 @@ class KnownValues(unittest.TestCase):
 		
 		STORAGE.remove(ids)
 		
-	def test_06_UpdateAndPut(self):
+	def test_08_UpdateAndPut(self):
 		MYRECORD.data['mydata4'] = 'data4'
 		STORAGE.put(MYRECORD)
 		record = STORAGE.get(ID)
@@ -98,7 +125,7 @@ class KnownValues(unittest.TestCase):
 			print "self.data:   %s"  % self.data
 			raise Exception('Data not updated ...')
 
-	def test_07_Remove(self):
+	def test_09_Remove(self):
 		record1 = crecord({'check': 'remove1'})
 		id1 = STORAGE.put(record1)
 		record2 = crecord({'check': 'remove2'})
@@ -110,17 +137,17 @@ class KnownValues(unittest.TestCase):
 
 		STORAGE.remove(ID)
 
-	def test_08_CheckRemove(self):
+	def test_10_CheckRemove(self):
 		self.assertRaises(KeyError, STORAGE.get, ID)
 
-	def test_09_ManyInsert(self):
+	def test_11_ManyInsert(self):
 		record1 = crecord({'check': 'test1', 'state': 1})
 		record2 = crecord({'check': 'test2', 'state': 0})
 		record3 = crecord({'check': 'test3', 'state': 0})
 
 		STORAGE.put([record1, record2, record3])
 
-	def test_10_Find(self):
+	def test_12_Find(self):
 		records = STORAGE.find({'check': 'test1'})
 		#for record in records:
 		#	record.cat()
@@ -128,24 +155,24 @@ class KnownValues(unittest.TestCase):
 		if len(records) != 1:
 			raise Exception('Error in filter ...')
 
-	def test_11_Find_limit(self):
+	def test_13_Find_limit(self):
 		records = STORAGE.find({}, limit=3)
 
 		if len(records) != 3:
 			raise Exception('Error in limit ...')
 
-	def test_12_FindOne(self):
+	def test_14_FindOne(self):
 		record = STORAGE.find_one({'check': 'test1'})
 
 		if not isinstance(record, crecord):
 			raise Exception('Error in find_one ...')
 
-	def test_13_count(self):
+	def test_15_count(self):
 		nb = STORAGE.count({'state': 0})
 		if nb != 2:
 			raise Exception('Error in count ...')
 
-	def test_14_CheckReadRights(self):
+	def test_16_CheckReadRights(self):
 		# Inserts
 		STORAGE.put(crecord({'check': 'test4'}), account=self.anonymous_account)
 		STORAGE.put(crecord({'check': 'test5'}), account=self.anonymous_account)
@@ -172,7 +199,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid rigths for root account ...')
 	
 
-	def test_15_CheckWriteRights(self):
+	def test_17_CheckWriteRights(self):
 		# Insert with user account
 		record = crecord({'check': 'test7'})
 		STORAGE.put(record, account=self.user_account)
@@ -189,7 +216,7 @@ class KnownValues(unittest.TestCase):
 		STORAGE.remove(record, account=self.anonymous_account)
 		
 
-	def test_16_MapReduce(self):
+	def test_18_MapReduce(self):
 		from bson.code import Code
 	
 		mmap = Code("function () {"
@@ -212,7 +239,7 @@ class KnownValues(unittest.TestCase):
 		if result['ok'] != 2 and result['warning'] != 1:
 			raise Exception('Invalid map/reduce result ...')
 
-	def test_17_tree(self):
+	def test_19_tree(self):
 		record1 = crecord({'data': 1}, name="record1")
 		record2 = crecord({'data': 2}, name="record2")
 		record3 = crecord({'data': 3}, name="record3")
@@ -233,19 +260,19 @@ class KnownValues(unittest.TestCase):
 		
 		json.dumps(record1.dump(json=True))
 		
-	def test_18_GetRecursivelyAllChilds(self):
+	def test_20_GetRecursivelyAllChilds(self):
 		parent_record = STORAGE.find_one({'data': 1})
 		STORAGE.recursive_get(parent_record)
 		if len(parent_record.children) != 2:
 			raise Exception('Wrong parent/children tree builded')
 			
 
-	def test_19_RemoveAll(self):
+	def test_21_RemoveAll(self):
 		records = STORAGE.find(account=self.root_account)
 		STORAGE.remove(records, account=self.root_account)
 		pass
 		
-	def test_20_admin_group_access(self):
+	def test_22_admin_group_access(self):
 		root_account = caccount(user="root", group="root")
 		storage = STORAGE
 		group = cgroup(name='administrator')
