@@ -89,7 +89,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			if (this.nodes.length > 0) {
 				log.debug('Nodes:', this.logAuthor);
 				log.dump(this.nodes);
-				this.nodeId = this.nodes[0];
+				this.nodeId = this.nodes;
 			}
 		}
 
@@ -226,7 +226,14 @@ Ext.define('canopsis.lib.view.cwidget' , {
 				scope: this,
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					data = data.data[0];
+					if ( this.nodeId.length > 1 )
+					{
+						data = data.data ;
+					}
+					else
+					{
+						data = data.data[0];
+					}
 					this._onRefresh(data);
 				},
 				failure: function(result, request) {

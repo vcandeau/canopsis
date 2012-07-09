@@ -32,17 +32,33 @@ Ext.define('widgets.text.text' , {
 	onRefresh: function(data) {
 		if ( data )
 		{
-			//If data exist we apply the template on the node
-			data.timestamp = rdr_tstodate(data.timestamp) ;
-			this.HTML = this.myTemplate.apply(data);
-			this.setHtml( this.HTML ) ;
+			if ( this.nodes.length > 1 )
+			{
+				var htmlArray = new Array();
+				for ( i in data ) 
+				{
+					var obj = data[i] ;
+					obj.timestamp = rdr_tstodate(obj.timestamp) ;
+					htmlArray.push( this.myTemplate.apply(obj) ) ;
+				}
+				this.HTML = htmlArray.join('');	
+			}	
+			else
+			{
+				console.log('onRefresh specifique');
+				console.log(data);
+				//If data exist we apply the template on the node
+				data.timestamp = rdr_tstodate(data.timestamp) ;
+				this.HTML = this.myTemplate.apply(data);
+
+			}
 		}
 		else
 		{
 			//otherwise we put the text contained in the field
 			this.HTML = this.text ;
-			this.setHtml( this.HTML ) ;
 		}
+		this.setHtml( this.HTML ) ;
 	},
 	getNodeInfo: function() {
 		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
