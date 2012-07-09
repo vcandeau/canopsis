@@ -4,20 +4,32 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype": "text",
-	"description": "Display own text in cell",
-	"refreshInterval": 0,
-	"rowHeight": 50,
-	"formWidth": 800,
+	"description": "write a template to display event",
+	"refreshInterval": 10,
+	"border" : true,
 	"locales": ["fr"],
-	"options": [{
-			"title": "Inner text",
-			"layout": "fit",
-			"items" : [{
-						"xtype": "htmleditor",
-						"name": "text",
-						"height": 200,
-						"width": 550,
-						"value": ""
-					}]
-		}]
+	"options": [
+			{
+				"title" : "Event",
+				"items" : [{
+					"xtype":"cinventory",
+					"name" : "nodes",
+					"multiSelect": "false"
+				}]
+			},
+			{	
+                        "title": "Write Template",
+                        "layout": "fit",
+			"width" : 800,
+                        "items" : [ {
+                                                "xtype": "htmleditor",
+                                                "name": "text",
+                                                "height": 350,
+                                                "value": ""
+                                      } 
+					
+				
+				]
+			}
+	]
 }]

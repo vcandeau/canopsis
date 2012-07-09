@@ -20,22 +20,37 @@
 */
 Ext.define('widgets.text.text' , {
 	extend: 'canopsis.lib.view.cwidget',
-
 	alias: 'widget.text',
-
 	initComponent: function() {
-		this.nodeId = false;
-		this.refreshInterval = 0;
-
-		this.callParent(arguments);
+		//Initialisation of ext JS template
+		this.myTemplate = new Ext.Template ( "<div>" + this.text +"</div>" ) ;
+		//Compilation of template ( to accelerate the render )
+		this.myTemplate.compile();
+		this.HTML = ""; // contains the html
+		this.callParent(arguments); // Initialization globale of the template
 	},
-
-	doRefresh: function() {
-		if (this.text) {
-			this.setHtml(this.text);
-		}else {
-			this.setHtml('');
+	onRefresh: function(data) {
+		if ( data )
+		{
+			//If data exist we apply the template on the node
+			data.timestamp = rdr_tstodate(data.timestamp) ;
+			this.HTML = this.myTemplate.apply(data);
+			this.setHtml( this.HTML ) ;
 		}
+		else
+		{
+			//otherwise we put the text contained in the field
+			this.HTML = this.text ;
+			this.setHtml( this.HTML ) ;
+		}
+	},
+	getNodeInfo: function() {
+		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
+		if ( ! this.nodeId )
+		{
+			this.onRefresh(false);
+		}
+		//we call the parent which is applied when there is a nodeId specified.
+		this.callParent(arguments);
 	}
-
 });
