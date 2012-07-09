@@ -275,18 +275,19 @@ class cstorage(object):
 		if Read_mfilter:
 			mfilter = { '$and': [ mfilter, Read_mfilter ] }
 
-		self.logger.debug(" + %s" % mfilter)
+		self.logger.debug(" + fields : %s" % mfields)
+		self.logger.debug(" + mfilter: %s" % mfilter)
 
 		backend = self.get_backend(namespace)
 
 		if one:
-			raw_records = backend.find_one(mfilter, safe=self.mongo_safe)
+			raw_records = backend.find_one(mfilter, fields=mfields, safe=self.mongo_safe)
 			if raw_records:
 				raw_records = [ raw_records ]
 			else:
 				raw_records = []
 		else:
-			raw_records = backend.find(mfilter, safe=self.mongo_safe)
+			raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
 			if count:
 				return raw_records.count()
 			## Limit output
@@ -298,6 +299,7 @@ class cstorage(object):
 				raw_records.sort(sort)
 
 		records=[]
+
 		for raw_record in raw_records:
 			try:
 				records.append(crecord(raw_record=raw_record))
@@ -315,7 +317,7 @@ class cstorage(object):
 		else:
 			return records
 
-	def get(self, _id_or_ids, account=None, namespace=None):
+	def get(self, _id_or_ids, mfields=None, account=None, namespace=None):
 		if not account:
 			account = self.account
 
@@ -333,7 +335,9 @@ class cstorage(object):
 			self.logger.debug("   + No ids")
 			return []
 		
-		self.logger.debug("    + Clean ids")
+		self.logger.debug("   + fields : %s" % mfields)
+		
+		self.logger.debug("   + Clean ids")
 		_ids = [self.clean_id(_id) for _id in _ids]
 
 		#Build basic filter
@@ -350,12 +354,18 @@ class cstorage(object):
 		records = []
 		try:
 			if len(_ids) == 1:
-				raw_record = backend.find_one(mfilter, safe=self.mongo_safe)
-				if raw_record:
+				raw_record = backend.find_one(mfilter, fields=mfields, safe=self.mongo_safe)
+				
+				if raw_record and mfields:
+					records.append(raw_record)
+				elif raw_record:
 					records.append(crecord(raw_record=raw_record))
 			else:
-				raw_records = backend.find(mfilter, safe=self.mongo_safe)
-				records = [crecord(raw_record=raw_record) for raw_record in raw_records]
+				raw_records = backend.find(mfilter, fields=mfields, safe=self.mongo_safe)
+				if mfields:
+					records = [raw_record for raw_record in raw_records]
+				else:
+					records = [crecord(raw_record=raw_record) for raw_record in raw_records]
 				
 		except Exception, err:
 			self.logger.error("Impossible get record '%s' !\nReason: %s" % (_ids, err))

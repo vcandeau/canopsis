@@ -44,9 +44,9 @@ class KnownValues(unittest.TestCase):
 		self.root_account = caccount(user="root", group="root")
 		self.user_account = caccount(user="william", group="capensis")
 		
-		self.anonymous_account.cat()
-		self.user_account.cat()
-		self.root_account.cat()
+		#self.anonymous_account.cat()
+		#self.user_account.cat()
+		#self.root_account.cat()
 	
 		self.data = {'mydata1': 'data1', 'mydata2': 'data2', 'mydata3': 'data3'}
 		
@@ -90,6 +90,17 @@ class KnownValues(unittest.TestCase):
 		
 		if record.data['mydata1'] != self.data['mydata1']:
 			raise Exception('Put_field failed ...')
+
+	def test_06_Get_field(self):
+		
+		raw_record = STORAGE.get(ID, mfields=["mydata2"])
+		print "raw_record: %s" % raw_record
+		
+		raw_record["mydata2"]
+		
+		if len(raw_record) != 2: #field + _id
+			raise Exception('Get_field failed ...')
+
 
 	def test_07_MultiGet(self):
 		record1 = crecord({'check': 'remove1'})
