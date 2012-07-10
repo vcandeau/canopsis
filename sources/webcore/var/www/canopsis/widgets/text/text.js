@@ -23,7 +23,8 @@ Ext.define('widgets.text.text' , {
 	alias: 'widget.text',
 	initComponent: function() {
 		//Initialisation of ext JS template
-		this.myTemplate = new Ext.Template ( "<div>" + this.text +"</div>" ) ;
+		console.log(this.text );
+		this.myTemplate = new Ext.XTemplate ( "<div>" + this.text +"</div>" ) ;
 		//Compilation of template ( to accelerate the render )
 		this.myTemplate.compile();
 		this.HTML = ""; // contains the html
@@ -32,7 +33,7 @@ Ext.define('widgets.text.text' , {
 	onRefresh: function(data) {
 		if ( data )
 		{
-			if ( this.nodes.length > 1 )
+			if ( this.nodes.length > 1 && this.systemLoop )
 			{
 				var htmlArray = new Array();
 				for ( i in data ) 
@@ -44,9 +45,10 @@ Ext.define('widgets.text.text' , {
 				this.HTML = htmlArray.join('');	
 			}	
 			else
-			{
-				console.log('onRefresh specifique');
-				console.log(data);
+			{	
+				if (this.nodes.length > 1 )
+					for ( i in data )
+						data[i].timestamp = rdr_tstodate(data[i].timestamp) ;
 				//If data exist we apply the template on the node
 				data.timestamp = rdr_tstodate(data.timestamp) ;
 				this.HTML = this.myTemplate.apply(data);
