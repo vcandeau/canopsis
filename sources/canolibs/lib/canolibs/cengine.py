@@ -50,6 +50,9 @@ class cengine(multiprocessing.Process):
 		self.counter_event = 0
 		self.counter_worktime = 0
 		
+		self.thd_warn_sec_per_evt = 0.6
+		self.thd_crit_sec_per_evt = 0.9
+		
 		self.beat_interval = beat_interval
 		self.beat_last = time.time()
 		
@@ -159,10 +162,10 @@ class cengine(multiprocessing.Process):
 		if self.send_stats_event:
 			state = 0
 			
-			if sec_per_evt > 0.5:
+			if sec_per_evt > self.thd_warn_sec_per_evt:
 				state = 1
 				
-			if sec_per_evt > 0.8:
+			if sec_per_evt > self.thd_crit_sec_per_evt:
 				state = 2
 			
 			perf_data_array = [
