@@ -23,7 +23,6 @@ Ext.define('widgets.text.text' , {
 	alias: 'widget.text',
 	initComponent: function() {
 		//Initialisation of ext JS template
-		console.log(this.text );
 		this.myTemplate = new Ext.XTemplate ( "<div>" + this.text +"</div>" ) ;
 		//Compilation of template ( to accelerate the render )
 		this.myTemplate.compile();
@@ -33,7 +32,7 @@ Ext.define('widgets.text.text' , {
 	onRefresh: function(data) {
 		if ( data )
 		{
-			if ( this.nodes.length > 1 && this.systemLoop )
+			if ( this.nodes.length > 1 )
 			{
 				var htmlArray = new Array();
 				for ( i in data ) 
