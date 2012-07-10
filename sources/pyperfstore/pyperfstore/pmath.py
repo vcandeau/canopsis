@@ -321,6 +321,8 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 			agfn = vmax
 		elif atype == 'DELTA':
 			agfn = delta
+		elif atype == 'SUM':
+			agfn = sum
 		else:
 			agfn = vmean
 
