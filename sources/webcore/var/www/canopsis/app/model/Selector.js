@@ -35,6 +35,11 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'aaa_group', defaultValue: "group.CPS_selector_admin"},
 		{name: 'aaa_owner'},
 		{name: 'loaded', defaultValue: false},
-		{name: 'sla', defaultValue: false}
+		{name: 'sla', defaultValue: false},
+		{name: 'sla_timewindow', defaultValue: 0},
+		{name: 'sla_timewindow_value', defaultValue: 1},
+		{name: 'sla_timewindow_unit', defaultValue: global.commonTs.month},
+		{name: 'thd_warn_sla_timewindow', defaultValue: 98},
+		{name: 'thd_crit_sla_timewindow', defaultValue: 95},
 	]
 });
