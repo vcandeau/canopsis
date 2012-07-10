@@ -38,7 +38,7 @@ Ext.define('canopsis.controller.Selector', {
 		this.callParent(arguments);
 	},
 
-	beforeload_EditForm: function(form) {
+	beforeload_EditForm: function(form, item) {	
 		var name = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=crecord_name]')[0];
 		if (name)
 			name.setReadOnly(true);
@@ -48,6 +48,9 @@ Ext.define('canopsis.controller.Selector', {
 		var _id = record.get('_id');
 		record.set('id', _id);
 		record.set('loaded', false);
+		
+		record.set('sla_timewindow', record.get('sla_timewindow_value') * record.get('sla_timewindow_unit'));
+		
 		return record;
 	}
 });
