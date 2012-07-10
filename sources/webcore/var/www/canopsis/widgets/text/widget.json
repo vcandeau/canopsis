@@ -14,9 +14,26 @@
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "nodes",
-					"multiSelect": "false"
+					"multiSelect": false
 				}]
 			},
+/*			{
+				"title": "Options",
+				"items": [
+					{
+						"xtype": "checkbox",
+						"name": "scroll",
+						"boxLabel": "Enable Scroll Bar",
+						"checked": false
+					},
+					{
+						"xtype": "checkbox",
+						"name": "systemLoop",
+						"boxLabel": "Use System Loop",
+						"checked": false	
+					}	
+				]
+			}, */
 			{	
                         "title": "Template",
                         "layout": "fit",
