@@ -131,7 +131,7 @@ def start_engines():
 	import selector
 	import sla
 	
-	engine_selector		= selector.engine(logging_level=logging.DEBUG)
+	engine_selector		= selector.engine()
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
@@ -146,8 +146,8 @@ def start_engines():
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	engines.append(engine_tag)
 	
-	#engine_sla			= sla.engine(logging_level=logging.DEBUG)
-	#engines.append(engine_sla)
+	engine_sla			= sla.engine(logging_level=logging.DEBUG)
+	engines.append(engine_sla)
 
 	# Set Next queue
 	## Events
