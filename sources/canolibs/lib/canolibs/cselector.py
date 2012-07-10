@@ -293,9 +293,13 @@ class cselector(crecord):
 			except:
 				pass
 				
-			output += "%s %s " % (value, states_str[i])
+			output += "%s %s, " % (value, states_str[i])
 			perf_data_array.append({"metric": states_metric[i], "value": value, "max": total})
 		
+		# remove ", " at the end
+		if output:
+			output = output[0:len(output)-2]
+				
 		self.logger.debug(" + output: %s" % output)
 		self.logger.debug(" + long_output: %s" % long_output)
 		self.logger.debug(" + perf_data_array: %s" % perf_data_array)
