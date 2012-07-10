@@ -188,3 +188,28 @@ var rdr_clean_id = function(val) {
 
 	return val;
 };
+
+var rdr_time_interval = function(val) {
+	if (val == 0)
+		return '';
+		
+	var tmp;
+	
+	tmp = val / global.commonTs.year;
+	if (tmp >= 1)
+		return tmp + " " + _('Year') + "(s)";
+
+	tmp = val / global.commonTs.month;
+	if (tmp >= 1)
+		return tmp + " " + _('Month') + "(s)";
+		
+	tmp = val / global.commonTs.week;
+	if (tmp >= 1)
+		return tmp + " " + _('Week') + "(s)";
+		
+	tmp = val / global.commonTs.day;
+	if (tmp >= 1)
+		return tmp + " " + _('Day') + "(s)";
+		
+	return val + " " + _("Second") + "(s)";
+}

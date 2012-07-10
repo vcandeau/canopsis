@@ -50,6 +50,11 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'sla',
 			renderer: rdr_boolean
 		},{
+			header: _('SLA') + " " + _('time window'),
+			dataIndex: 'sla_timewindow',
+			align: 'center',
+			renderer: rdr_time_interval
+		},{
 			header: _('Name'),
 			flex: 2,
 			sortable: true,
