@@ -204,15 +204,24 @@ class engine(cengine):
 		total = 0
 		states_sum = states.copy()
 		for state in states:
-			self.logger.debug("Get %s time's:" % states_str[state])
+			self.logger.debug("Get %s (%s) time's:" % (states_str[state], state))
 			points = self.get_states(rk, 'cps_time_by_state_%s' % state, start, stop)
+			
+			first_timestamp = points[0][0]
+			if first_timestamp > start:
+				# Set unknown time
+				states_sum[3] += first_timestamp - start
+			
 			mysum = sum([point[1] for point in points])
-			total += mysum
-			states_sum[state] = mysum
-			self.logger.debug(" + %s seconds" % mysum)
+			states_sum[state] += mysum
+
+			total += states_sum[state]
+			
+			self.logger.debug(" + %s seconds" % states_sum[state])
 			
 		self.logger.debug("Total: %s seconds" % total)
 		
+		## Calcul PCT
 		perf_data_array = []
 		output = ""
 		states_pct = states.copy()
@@ -222,6 +231,7 @@ class engine(cengine):
 				states_pct[state] = round((states_sum[state] * 100) / float(total), 3)
 				
 			output += "%s%% %s, " % (states_pct[state], states_str[state])
+		
 			perf_data_array.append({"metric": 'cps_pct_by_state_%s' % state, "value": states_pct[state], "max": 100, "unit": "%"})
 		
 		# remove ", " at the end
@@ -233,6 +243,9 @@ class engine(cengine):
 			state = 1
 		if states_pct[0] < thd_crit_sla_timewindow:
 			state = 2
+		
+		self.logger.debug(output)
+		self.logger.debug(" + State: %s (%s)" % (states_str[state], state))
 		
 		# Send event
 		event = cevent.forger(
@@ -252,8 +265,10 @@ class engine(cengine):
 		
 		rk = cevent.get_routingkey(event)
 		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-		
-		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_lastsum': mysum, 'sla_timewindow_rk': rk})
+
+		# Waring with integer key ....
+		#self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_lastsum': states_sum, 'sla_lastpct': states_pct, 'sla_timewindow_rk': rk})
+		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_rk': rk})
 	
 	def beat(self):
 		start = time.time()
