@@ -67,7 +67,7 @@ def auth(login=None, password=None):
 	storage = get_storage(namespace='object')
 
 	try:
-		account = caccount(storage.get(_id, caccount(user=login)))
+		account = caccount(storage.get(_id, account=caccount(user=login)))
 		logger.debug(" + Check password ...")
 
 		if shadow:
@@ -109,7 +109,7 @@ def autoLogin(key=None):
 				'authkey':key,
 			}
 				
-	foundByKey = storage.find(mfilter=mfilter,account=caccount(user='root'))
+	foundByKey = storage.find(mfilter=mfilter, account=caccount(user='root'))
 	#-------------------------if found, create session and redirect------------------------
 	if len(foundByKey) == 1:
 		account = caccount(foundByKey[0])
@@ -149,7 +149,7 @@ def keyAuth(login=None, key=None):
 	storage = get_storage(namespace='object')
 
 	try:
-		account = caccount(storage.get(_id, caccount(user=login)))
+		account = caccount(storage.get(_id, account=caccount(user=login)))
 	except Exception, err:
 		logger.error('Error while fetching %s : %s' % (_id,err))
 		return HTTPError(403, "There is no account for this login")
@@ -245,7 +245,7 @@ def reload_account(_id=None):
 		account = get_account()
 		storage = get_storage(namespace='object')
 		if _id:	
-			record = storage.get(_id,account=account)
+			record = storage.get(_id, account=account)
 			account_to_update = caccount(record)
 		else:
 			record = storage.get(account._id, account=account )
