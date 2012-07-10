@@ -5,12 +5,12 @@
 	"website": "http://www.canopsis.org",
 	"xtype": "text",
 	"description": "write a template to display event",
-	"refreshInterval": 10,
-	"border" : true,
+	"refreshInterval": 300,
+	"border" : false,
 	"locales": ["fr"],
 	"options": [
 			{
-				"title" : "Event",
+				"title" : "Inventory",
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "nodes",
@@ -18,13 +18,13 @@
 				}]
 			},
 			{	
-                        "title": "Write Template",
+                        "title": "Template",
                         "layout": "fit",
-			"width" : 800,
+			"width" : 500,
                         "items" : [ {
                                                 "xtype": "htmleditor",
                                                 "name": "text",
-                                                "height": 350,
+                                                "width": 150,
                                                 "value": ""
                                       } 
 					
