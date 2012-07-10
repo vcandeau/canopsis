@@ -268,7 +268,7 @@ class engine(cengine):
 
 		# Waring with integer key ....
 		#self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_lastsum': states_sum, 'sla_lastpct': states_pct, 'sla_timewindow_rk': rk})
-		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_rk': rk})
+		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_rk': rk, 'sla_timewindow_perfdata': perf_data_array})
 	
 	def beat(self):
 		start = time.time()
