@@ -317,7 +317,7 @@ class cstorage(object):
 		else:
 			return records
 
-	def get(self, _id_or_ids, mfields=None, account=None, namespace=None):
+	def get(self, _id_or_ids, account=None, namespace=None, mfields=None):
 		if not account:
 			account = self.account
 
