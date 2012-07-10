@@ -82,11 +82,11 @@ class cselector(crecord):
 			crecord.__init__(self, name=name, _id=self._id, account=storage.account, type=self.type, storage=storage)
 		
 	def dump(self):
-		self.data['include_ids'] = self.include_ids
-		self.data['exclude_ids'] = self.exclude_ids
-		self.data['mfilter'] = json.dumps(self.mfilter)
-		self.data['namespace'] = self.namespace
-		self.data['rk'] = self.rk
+		self.data['include_ids']	= self.include_ids
+		self.data['exclude_ids']	= self.exclude_ids
+		self.data['mfilter']		= json.dumps(self.mfilter)
+		self.data['namespace']		= self.namespace
+		self.data['rk']				= self.rk
 
 		return crecord.dump(self)
 
@@ -97,18 +97,10 @@ class cselector(crecord):
 		except:
 			pass
 		
-		try:
-			self.namespace = str(self.data['namespace'])
-		except:
-			pass
-			
-		try:
-			self.rk = self.data['rk']
-		except:
-			pass
-			
-		self.include_ids = self.data['include_ids']
-		self.exclude_ids = self.data['exclude_ids']
+		self.namespace		= self.data.get('namespace', self.namespace)
+		self.rk 			= self.data.get('rk', self.rk)
+		self.include_ids	= self.data.get('include_ids', self.include_ids)
+		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
 		
 	def setMfilter(self, filter):
 		try:
