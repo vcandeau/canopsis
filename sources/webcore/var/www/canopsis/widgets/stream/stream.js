@@ -205,7 +205,7 @@ Ext.define('widgets.stream.stream' , {
 	publish_comment: function(event_id, raw, message, orievent) {
 		if (! global.websocketCtrl.connected){
 			log.error('Impossible to publish, not connected.', this.logAuthor);
-			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall')+" (port: "+nowjs.port+")", 'error');
+			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall')+" (port: "+global.nowjs.port+")", 'error');
 			return
 		}
 		
