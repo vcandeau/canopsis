@@ -153,7 +153,7 @@ class engine(cengine):
 			output = ""
 			for state in states_sum:
 				output += "%s seconds in %s, " % (states_sum[state], states_str[state])
-				perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state]})
+				perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state], "unit": "s"})
 			
 			# remove ", " at the end
 			if output:
