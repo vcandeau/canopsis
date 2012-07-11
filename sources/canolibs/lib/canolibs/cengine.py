@@ -36,6 +36,7 @@ class cengine(multiprocessing.Process):
 		self.logging_level = logging_level
 	
 		self.signal_queue = multiprocessing.Queue()
+		self.input_queue = multiprocessing.Queue()
 		self.RUN = True
 		
 		self.name = name

@@ -146,7 +146,7 @@ def start_engines():
 	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
 	engines.append(engine_tag)
 	
-	engine_sla			= sla.engine(logging_level=logging.DEBUG)
+	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
 
 	# Set Next queue

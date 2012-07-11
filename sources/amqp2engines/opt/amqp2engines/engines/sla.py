@@ -84,8 +84,9 @@ class engine(cengine):
 	
 	def calcul_time_by_state(self, _id, config):
 		rk = config['rk']
-
-		self.logger.debug("Get States of %s (%s)" % (_id, rk))
+		
+		self.logger.debug("Calcul time by state")
+		self.logger.debug(" + Get States of %s (%s)" % (_id, rk))
 			
 		sla_timewindow = config.get('sla_timewindow', self.default_sla_timewindow)
 			
@@ -119,6 +120,7 @@ class engine(cengine):
 					
 			# Calcul each state's time for period start -> stop
 			self.logger.debug(" + Parse Points:")
+			states_sum = states.copy()
 			total = 0
 			last_timestamp = start
 			for point in points:
@@ -129,7 +131,7 @@ class engine(cengine):
 					(state, state_type, extra) = self.split_state(value)
 						
 					interval = timestamp - last_timestamp
-					states[last_state] += interval
+					states_sum[last_state] += interval
 					total += interval
 										
 					self.logger.debug("   + %s: interval (%s): state: %s, state_type: %s, extra: %s, last_state: %s" % (timestamp, interval, state, state_type, extra, last_state))
@@ -141,7 +143,7 @@ class engine(cengine):
 					self.logger.error("Error in parsing: %s" % err)
 				
 			self.logger.debug(" + Total: %s" % total)	
-			self.logger.debug(" + States: %s" % states)
+			self.logger.debug(" + States: %s" % states_sum)
 				
 			# Set last point timestamp
 			self.logger.debug(" + Set sla_lastcalcul to: %s" % last_point[0])
@@ -149,9 +151,9 @@ class engine(cengine):
 				
 			perf_data_array = []
 			output = ""
-			for state in states:
-				output += "%s seconds in %s, " % (states[state], states_str[state])
-				perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states[state]})
+			for state in states_sum:
+				output += "%s seconds in %s, " % (states_sum[state], states_str[state])
+				perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state]})
 			
 			# remove ", " at the end
 			if output:
@@ -184,7 +186,8 @@ class engine(cengine):
 	def calcul_state_by_timewindow(self, _id, config):
 		rk = config['sla_rk']
 
-		self.logger.debug("Get States of %s (%s)" % (_id, rk))
+		self.logger.debug("Calcul state by timewindow")
+		self.logger.debug(" + Get States of %s (%s)" % (_id, rk))
 
 		sla_timewindow = config.get('sla_timewindow', self.default_sla_timewindow) # 1 day
 		
