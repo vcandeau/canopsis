@@ -59,6 +59,7 @@ Ext.define('canopsis.view.Selector.Form', {
 								fieldLabel: _('SLA'),
 								xtype: 'checkboxfield',
 								inputValue: true,
+								uncheckedValue: false,
 								name: 'sla'
 							},{
 								xtype: 'fieldcontainer',
@@ -93,6 +94,12 @@ Ext.define('canopsis.view.Selector.Form', {
 										}
 									}
 								]
+							},{
+								fieldLabel: _('Consider unknown time'),
+								xtype: 'checkboxfield',
+								inputValue: true,
+								uncheckedValue: false,
+								name: 'sla_timewindow_doUnknown'
 							},{
 								xtype: 'numberfield',
 								fieldLabel: _('Warning threshold'),

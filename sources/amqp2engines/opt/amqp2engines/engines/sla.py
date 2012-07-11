@@ -190,12 +190,16 @@ class engine(cengine):
 		
 		thd_warn_sla_timewindow = config.get('thd_warn_sla_timewindow', self.thd_warn_sla_timewindow)
 		thd_crit_sla_timewindow = config.get('thd_crit_sla_timewindow', self.thd_crit_sla_timewindow)
-					
+		
+		#consider unknown time
+		sla_timewindow_doUnknown = config.get('sla_timewindow_doUnknown', True)
+
 		stop = int(time.time())
 		start = stop - sla_timewindow
 		
 		self.logger.debug(" + Thd Warning:    %s" % thd_warn_sla_timewindow)
 		self.logger.debug(" + Thd Critical:   %s" % thd_crit_sla_timewindow)
+		self.logger.debug(" + do Unknown:     %s" % sla_timewindow_doUnknown)
 		self.logger.debug(" + sla_timewindow: %s" % sla_timewindow)
 		self.logger.debug(" + start:          %s" % start)
 		self.logger.debug(" + stop:           %s" % stop)
@@ -208,7 +212,7 @@ class engine(cengine):
 			points = self.get_states(rk, 'cps_time_by_state_%s' % state, start, stop)
 			
 			first_timestamp = points[0][0]
-			if first_timestamp > start:
+			if first_timestamp > start and sla_timewindow_doUnknown:
 				# Set unknown time
 				states_sum[3] += first_timestamp - start
 			
