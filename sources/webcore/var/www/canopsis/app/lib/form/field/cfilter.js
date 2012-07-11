@@ -367,7 +367,14 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 
 				this.string_value = Ext.widget('textfield', {
 					margin: '0 0 0 5',
-					emptyText: 'Type value here'
+					emptyText: 'Type value here',
+					getValue: function(){
+						var string = Ext.form.field.Text.superclass.getValue.call(this);
+						var number = parseInt(string)				
+						if (! isNaN(number))
+							return number;
+						return string;
+					}
 					});
 				this.array_field = Ext.create('cfilter.array_field', {hidden: true});
 
@@ -506,6 +513,7 @@ Ext.define('canopsis.lib.form.field.cfilter' , {
 					return undefined
 
 				var value = this.string_value.getValue();
+					
 				var output = {};
 
 				if (this.contain_other_cfilter) {
