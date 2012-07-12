@@ -26,6 +26,10 @@ from pyperfstore.metric import metric
 from pyperfstore.dca import dca
 from pyperfstore.pmath import aggregate as pmath_aggregate
 
+def make_metric_id(node_id, metric_dn):
+	#return hashlib.md5(node_id+"-"+metric_dn).hexdigest()
+	return node_id.replace('.','-') + "-" + hashlib.md5(metric_dn).hexdigest()
+
 class node(object):
 	def __init__(self, _id, storage, dn=None, point_per_dca=None, retention=None, rotate_plan=None):
 		self.logger = logging.getLogger('node')
@@ -113,8 +117,7 @@ class node(object):
 		self.storage.set(self._id, dump)
 
 	def metric_make_id(self, dn):
-		return self._id.replace('.','-') + "-" + hashlib.md5(dn).hexdigest()
-		#return hashlib.md5(self._id+"-"+dn).hexdigest()
+		return make_metric_id(self._id, dn)
 
 	def metric_get(self, dn=None, _id=None):
 		_id = self.metric_get_id(dn, _id)
