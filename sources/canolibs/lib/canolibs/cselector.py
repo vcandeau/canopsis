@@ -80,6 +80,10 @@ class cselector(crecord):
 		else:
 			self.logger.debug("Init new record.")
 			crecord.__init__(self, name=name, _id=self._id, account=storage.account, type=self.type, storage=storage)
+			
+		if self.use_cache:
+			self.logger.debug("Create cache object")
+			self.cache = get_cache(storage=self.storage)
 		
 	def dump(self):
 		self.data['include_ids']	= self.include_ids
@@ -186,11 +190,6 @@ class cselector(crecord):
 			self.changed = False
 			
 			return ids
-			
-		if self.use_cache and not self.cache:
-			self.logger.debug("Create cache object")
-			self.cache = get_cache(storage=self.storage)
-			self.cache.remove(self._id)
 		
 		if self.changed:
 			self.logger.debug("Selector has change, get new ids")
@@ -225,7 +224,7 @@ class cselector(crecord):
 		# 2. Nb par state
 		# 3. Decision
 		self.logger.debug("getStates:")
-		
+				
 		mfilter = self.makeMfilter()
 		self.logger.debug(" + filter: %s" % mfilter)
 		if not mfilter:
