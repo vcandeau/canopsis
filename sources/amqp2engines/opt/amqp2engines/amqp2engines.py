@@ -138,7 +138,7 @@ def start_engines():
 	import selector
 	import sla
 	
-	engine_selector		= selector.engine(logging_level=logging.DEBUG)
+	engine_selector		= selector.engine(logging_level=logging.INFO)
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
@@ -154,7 +154,7 @@ def start_engines():
 	#engine_tag			= tag.engine(		next_engines=[engine_eventstore])
 	engines.append(engine_tag)
 	
-	engine_sla			= sla.engine(logging_level=logging.DEBUG)
+	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
 
 	# Set Next queue
