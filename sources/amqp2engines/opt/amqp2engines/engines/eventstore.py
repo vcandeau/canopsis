@@ -30,7 +30,7 @@ class engine(cengine):
 		
 		self.archiver = carchiver(namespace='events',  autolog=True, logging_level=self.logging_level)
 		 
-	def work(self, event, msg):
+	def work(self, event, *args, **kargs):
 		event_id = event['rk']
 		
 		exchange = None
@@ -40,7 +40,7 @@ class engine(cengine):
 		except:
 			pass
 			
-		event_types = ['check', 'trap', 'comment', 'log', 'user', 'selector', 'sla']
+		event_types = ['check', 'trap', 'comment', 'log', 'user', 'selector', 'sla', 'perf']
 		event_type = event['event_type']
 		
 		if event_type not in event_types:
@@ -48,7 +48,10 @@ class engine(cengine):
 			return event
 		
 		## Archive event
-		if   event_type == 'check' or event_type == 'selector' or event_type == 'sla':
+		if event_type == 'perf':
+			pass
+				
+		elif   event_type == 'check' or event_type == 'selector' or event_type == 'sla':
 
 			_id = self.archiver.check_event(event_id, event)
 			if _id:

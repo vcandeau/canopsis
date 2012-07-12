@@ -38,7 +38,7 @@ class engine(cengine):
 			
 		return event
 		
-	def work(self, event, msg):
+	def work(self, event, *args, **kargs):
 		try:
 			event['tags']
 		except:

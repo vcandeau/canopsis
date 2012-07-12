@@ -36,8 +36,7 @@ class engine(cengine):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		
 		self.create_queue = False
-		self.send_stats_event = True
-		
+				
 		self.beat_interval =  900
 		
 		self.resource = "sla"
