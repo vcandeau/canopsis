@@ -28,7 +28,7 @@ import time
 class ccache(object):
 	def __init__(self, storage, namespace=None):
 		self.storage = storage
-
+		
 		if not namespace:
 			namespace = storage.namespace
 		self.namespace = namespace
@@ -84,7 +84,7 @@ class ccache(object):
 	def put(self, _id, data, account=None):
 		self.remove(_id)
 		record = self.make_record('cache.'+_id)
-		record.data = {'cached': data}
+		record.data = {'d': data}
 		self.storage.put(record, namespace=self.namespace, account=account)
 		
 	def get(self, _id, freshness=10, account=None):
@@ -98,7 +98,7 @@ class ccache(object):
 				self.remove(_id)
 				return None
 			else:
-				return record.data['cached']
+				return record.data['d']
 		except:
 			return None
 
