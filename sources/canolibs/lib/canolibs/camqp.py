@@ -62,6 +62,8 @@ class camqp(threading.Thread):
 		
 		self.queues = {}
 		
+		self.paused = False
+		
 		self.connection_errors = (	 AMQPConnectionException,
 									 socket.error,
 									 IOError,
@@ -95,7 +97,10 @@ class camqp(threading.Thread):
 				self.logger.debug("Drain events ...")
 				while self.RUN:
 					try:
-						self.conn.drain_events(timeout=0.5)
+						if not self.paused:
+							self.conn.drain_events(timeout=0.5)
+						else:
+							time.sleep(0.5)
 					except socket.timeout:
 						pass
 					except self.connection_errors, err:
@@ -191,7 +196,7 @@ class camqp(threading.Thread):
 				self.on_ready()
 
 	
-	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack = True, exclusive=False, auto_delete=True):
+	def add_queue(self, queue_name, routing_keys, callback, exchange_name=None, no_ack=True, exclusive=False, auto_delete=True):
 		if exchange_name == "amq.direct":
 			routing_keys = queue_name
 		
@@ -229,11 +234,8 @@ class camqp(threading.Thread):
 		else:
 			self.logger.error("You are not connected ...")
 			
-		
-	def disconnect(self):
- 		if self.connected:
-			self.logger.info("Disconnect from AMQP Broker")
-	
+	def cancel_queues(self):
+		if self.connected:
 			for queue_name in self.queues.keys():
 				if self.queues[queue_name]['consumer']:
 					self.logger.debug(" + Cancel consumer on %s" % queue_name)
@@ -245,8 +247,14 @@ class camqp(threading.Thread):
 					del(self.queues[queue_name]['consumer'])
 					self.queues[queue_name]['consumer'] = False
 					del(self.queues[queue_name]['queue'])
-					self.queues[queue_name]['queue'] = False
-				
+					self.queues[queue_name]['queue'] = False		
+	
+	def disconnect(self):
+ 		if self.connected:
+			self.logger.info("Disconnect from AMQP Broker")
+	
+			self.cancel_queues()
+			
 			self.conn.release()
 			#self.conn.close()
 			self.connected = False
