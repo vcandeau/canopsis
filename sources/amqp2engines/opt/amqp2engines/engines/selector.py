@@ -31,24 +31,17 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		self.selectors = {}
+		self.selectors_events = {}
 		
-		self.nb_beat_interval = 900
+		self.nb_beat_publish = 15
 		self.nb_beat = 0
 	
 	def pre_run(self):
 		#load selectors
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+		
+		self.unload_all_selectors()
 		self.load_selectors()
-		
-	def unload_all_selectors(self):
-		self.logger.debug("Unload all selectors")
-		
-		records = self.storage.find({'crecord_type': 'selector', 'loaded': True })
-		for record in records:
-			self.storage.update(record._id, {'loaded': False})
-			
-		#for _id in self.selectors:
-		#	self.storage.update(_id, {'loaded': False})
 
 	def clean_selectors(self):
 		## check if selector is already in store
@@ -64,6 +57,7 @@ class engine(cengine):
 			for _id in id_to_clean:
 				self.logger.debug("Clean selector %s: %s" % (_id, self.selectors[_id].name))
 				del self.selectors[_id]
+				del self.selectors_events[_id]
 	
 	def unload_selectors(self):
 		self.clean_selectors()
@@ -78,6 +72,12 @@ class engine(cengine):
 				del selector
 				
 		self.selectors = []
+		
+	def unload_all_selectors(self):
+		records = self.storage.find({'crecord_type': 'selector'}, namespace="object")
+		
+		for record in records:
+			self.storage.update(record._id, {'loaded': False})
 	
 	def load_selectors(self):
 		## Load selectors
@@ -93,16 +93,15 @@ class engine(cengine):
 			# Set loaded
 			self.storage.update(_id, {'loaded': True})
 			
-			try:
-				selector = self.selectors[_id]
-				## Delete old
+			# Del old
+			if self.selectors.get(_id, None):
 				del self.selectors[_id]
-			except:
-				pass
+				del self.selectors_events[_id]
 				
 			## store
 			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=logging.INFO)
-		
+			self.selectors_events[_id] = 0
+			
 			## Publish state	
 			(rk, event) = self.selectors[_id].event()
 			if event:
@@ -110,47 +109,34 @@ class engine(cengine):
 		
 
 	def beat(self):
-		self.nb_beat +=1
+		self.load_selectors()
 		
-		## Send event all self.beat_interval seconds
-		if self.nb_beat >= (self.nb_beat_interval/self.beat_interval):
+		publish = False
+		if self.nb_beat >= self.nb_beat_publish:
 			self.nb_beat = 0
-			for _id in self.selectors:
+			publish = True
+		
+		for _id in self.selectors:	
+			if self.selectors_events[_id]:
+				publish = True
+			
+			if publish:
 				selector = self.selectors[_id]
 				(rk, event) = selector.event()
 				if event:
+					self.logger.debug("Publish event for '%s' (%s events)" % (selector.name, self.selectors_events[_id]))
 					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-				else:
-					pass
-					
-		self.load_selectors()
-		
-	def get_selectors(self, _id):
-		if not self.selectors:
-			return []
-			
-		selectors = []
-		for sid in self.selectors:
-			selector = self.selectors[sid]
-			if selector.match(_id):
-				selectors.append(selector)
-			
-		return selectors
-		
-	def work(self, event, msg):
+				self.selectors_events[_id] = 0
+						
+		self.nb_beat +=1
+				
+	def work(self, event, *args, **kargs):
 		event_id = event["event_id"]
 						
-		## Process selector
-		selectors = self.get_selectors(event_id)
-		if not selectors:
-			return event
-			
-		for selector in selectors:
-			(rk, sevent) = selector.event()
-			if sevent:
-				self.amqp.publish(sevent, rk, self.amqp.exchange_name_events)
-			else:
-				pass
+		## Process selector and prevent Burst
+		for sid in self.selectors:
+			if self.selectors[sid].match(event_id):
+				self.selectors_events[sid] += 1
 		
 		return event
 		
