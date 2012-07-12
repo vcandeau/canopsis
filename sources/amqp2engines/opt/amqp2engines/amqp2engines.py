@@ -40,8 +40,8 @@ handler = init.getHandler(logger)
 
 engines=[]
 amqp = None
-next_event_queue = []
-next_alert_queue = []
+next_event_engines = []
+next_alert_engines = []
 ready = False
 
 def clean_message(body, msg):
@@ -93,8 +93,12 @@ def on_event(body, msg):
 	event['exchange'] = amqp.exchange_name_events
 	
 	## Forward to engines
-	for queue in next_event_queue:
-		amqp.publish(event, queue, "amq.direct")
+	for engine in next_event_engines:
+		try:
+			engine.input_queue.put(event)
+		except Queue.Full:
+			logger.warngin("Internal queue of '%s' is full, forward event to AMQP queue." % engine.name)
+			amqp.publish(event, engine.amqp_queue, "amq.direct")
 
 	
 def on_alert(body, msg):
@@ -107,9 +111,12 @@ def on_alert(body, msg):
 	event['exchange'] = amqp.exchange_name_alerts
 	
 	## Forward to engines
-	for queue in next_alert_queue:
-		amqp.publish(event, queue, "amq.direct")
-
+	for engine in next_alert_engines:
+		try:
+			engine.input_queue.put(event)
+		except Queue.Full:
+			logger.warngin("Internal queue of '%s' is full, forward event to AMQP queue." % engine.name)
+			amqp.publish(event, engine.amqp_queue, "amq.direct")
 
 def start_engines():
 	global engines
@@ -131,7 +138,7 @@ def start_engines():
 	import selector
 	import sla
 	
-	engine_selector		= selector.engine()
+	engine_selector		= selector.engine(logging_level=logging.DEBUG)
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
@@ -140,20 +147,21 @@ def start_engines():
 	engine_eventstore	= eventstore.engine()
 	engines.append(engine_eventstore)
 	
-	engine_perfstore	= perfstore.engine(	next_amqp_queue=engine_eventstore.amqp_queue)
+	engine_perfstore	= perfstore.engine(	next_engines=[engine_eventstore])
 	engines.append(engine_perfstore)
 	
-	engine_tag			= tag.engine(		next_amqp_queue=engine_perfstore.amqp_queue)
+	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
+	#engine_tag			= tag.engine(		next_engines=[engine_eventstore])
 	engines.append(engine_tag)
 	
-	engine_sla			= sla.engine(logging_level=logging.INFO)
+	engine_sla			= sla.engine(logging_level=logging.DEBUG)
 	engines.append(engine_sla)
 
 	# Set Next queue
 	## Events
-	next_event_queue.append(engine_tag.amqp_queue)
+	next_event_engines.append(engine_tag)
 	## Alerts
-	next_alert_queue.append(engine_selector.amqp_queue)
+	next_alert_engines.append(engine_selector)
 	
 	logger.info("Start engines")
 	for engine in engines:
