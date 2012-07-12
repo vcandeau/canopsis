@@ -23,6 +23,8 @@ import unittest
 from ctools import calcul_pct
 from ctools import parse_perfdata
 
+import time
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -98,6 +100,22 @@ class KnownValues(unittest.TestCase):
 		pct = calcul_pct(data)
 		if pct != result:
 			raise Exception('Error in pct calculation ...')
+			
+	def test_03_perf(self):		
+		perf_datas = [
+			"/=541MB;906;956;0;1007 /home=62MB;452;477;0;503 /tmp=38MB;906;956;0;1007 /var=943MB;1813;1914;0;2015 /usr=2249MB;5441;5743;0;6046 /opt=68MB;112;118;0;125 /boot=25MB;90;95;0;100 /backup=4410MB;7256;7659;0;8063 /mnt/NAS_OPU_LIVRAISON=35603MB;36300;38317;0;40334 /products/admin=595MB;906;956;0;1007 /products/oracle/10.2.0=146MB;7256;7659;0;8063 /products/agtgrid=851MB;6349;6702;0;7055 /app/PPOPVGL=10966MB;27213;28725;0;30237",
+			"redo_log_file_switch_interval=6s;360:;60: /data/XXXX/oracle/XXXXX/dbs/archivelog=2059MB;30686;32391;0;34096",
+			"'C:\ Used'=55.4%;90;95; 'S:\ Used'=27.2%;90;95; 'E:\ Used'=24.6%;90;95; 'Q:\ Used'=1.1%;90;95; 'F:\ Used'=83.3%;90;95; 'F:\Journaux\ Used'=0.5%;90;95; 'F:\Data\ Used'=2.0%;90;95; 'F:\App\ Used'=1.4%;90;95; 'G:\ Used'=62.6%;90;95; 'G:\Journaux\ Used'=21.6%;90;95; 'G:\App\ Used'=7.8%;90;95; '\\?\Volume{c75733e9-4327-11e0-8596-0010184d9c22}\ Used'=35.9%;90;95; 'H:\ Used'=76.6%;90;95; 'H:\Journaux\ Used'=7.2%;90;95; '\\?\Volume{b7cdcbde-4fe5-11e0-a4e6-0010184d9c22}\ Used'=49.6%;90;95; 'H:\App\ Used'=9.9%;90;95; 'I:\ Used'=46.7%;90;95; 'I:\Journaux\ Used'=8.7%;90;95; '\\?\Volume{b7cdcbe1-4fe5-11e0-a4e6-0010184d9c22}\ Used'=99.0%;90;95; 'I:\App\ Used'=10.8%;90;95; 'J:\ Used'=75.2%;90;95; 'J:\Journaux\ Used'=7.0%;90;95; 'J:\App\ Used'=10.0%;90;95; 'J:\Data\ Used'=74.2%;90;95; 'K:\ Used'=77.3%;90;95; 'K:\Journaux\ Used'=8.2%;90;95; 'K:\Data\ Used'=84.6%;90;95; 'K:\App\ Used'=10.2%;90;95; 'G:\Data\ Used'=25.7%;90;95; 'H:\Data\ Used'=41.4%;90;95; 'I:\Data\ Used'=46.1%;90;95;",
+			"load1=0.040;3.000;4.000;0; load5=0.070;4.000;5.000;0; load15=0.010;4.000;5.000;0;"
+		]
+
+		print "Start test:"
+		start = time.time()
+		for perf_data in perf_datas:
+			parse_perfdata(perf_data)
+		stop = time.time()
+		
+		print " + Elapsed: %.5f" % (stop-start)
 	
 		
 if __name__ == "__main__":
