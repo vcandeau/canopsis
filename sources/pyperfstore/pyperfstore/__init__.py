@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
+from pyperfstore.node import make_metric_id
 
 from pyperfstore.node import node
 from pyperfstore.metric import metric
