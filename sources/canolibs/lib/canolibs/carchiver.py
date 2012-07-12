@@ -97,9 +97,9 @@ class carchiver(object):
 		return mid
 		
 	def merge_perf_data(self, old_event, new_event):
-		if not old_event['perf_data_array']:
-			old_event['perf_data_array'] = []
-			
+		old_event['perf_data_array'] = old_event.get('perf_data_array', [])
+		new_event['perf_data_array'] = new_event.get('perf_data_array', [])
+		
 		if new_event['perf_data_array'] != []:
 			perf_data_array = old_event['perf_data_array']
 			
