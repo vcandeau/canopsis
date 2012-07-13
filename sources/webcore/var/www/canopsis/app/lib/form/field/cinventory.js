@@ -47,7 +47,10 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		data[this.name] = this.getValue()
 		return data
 	},
-
+	isDirty: function(){
+		return false
+	},
+	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
