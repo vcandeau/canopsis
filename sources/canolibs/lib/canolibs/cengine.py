@@ -208,8 +208,8 @@ class cengine(multiprocessing.Process):
 		if self.counter_event:
 			evt_per_sec = float(self.counter_event) / self.beat_interval
 			self.logger.debug(" + %0.2f event(s)/seconds" % evt_per_sec)
-			
-		if self.counter_worktime:
+		
+		if self.counter_worktime and self.counter_event:
 			sec_per_evt = self.counter_worktime / self.counter_event
 			self.logger.debug(" + %0.5f seconds/event" % sec_per_evt)
 			
