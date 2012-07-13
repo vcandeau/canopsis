@@ -19,6 +19,9 @@
 # ---------------------------------
 
 from cengine import cengine
+from cstorage import get_storage
+from caccount import caccount
+from ccache import get_cache
 
 NAME="tag"
 
@@ -26,15 +29,23 @@ class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
 		
-		self.selectors = []
+		self.tags_ids = []
 		
-	def add_tag(self, event, field):
-		try:
-			if event[field]:
-				if event[field] not in event['tags']:
-					event['tags'].append(event[field])
-		except:
-			pass
+	def pre_run(self):
+		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+		self.cache = get_cache(storage=self.storage)
+		
+		self.beat()
+				
+	def add_tag(self, event, field=None, value=None):
+		if not value and not field:
+			return event
+			
+		if not value and field:
+			value = event.get(field, None)
+			
+		if value and value not in event['tags']:
+			event['tags'].append(value)
 			
 		return event
 		
@@ -49,4 +60,21 @@ class engine(cengine):
 		event = self.add_tag(event, 'component')
 		event = self.add_tag(event, 'resource')
 		
+		### Tag with dynamic tags
+		if self.tags_ids:
+			for data in self.tags_ids:
+				if event['rk'] in data[1]:
+					event = self.add_tag(event, value=data[0])
+			
 		return event
+
+	def beat(self):
+		self.tags_ids = []
+		
+		## Extract ids resolved by selectors
+		datas = self.storage.find({ 'crecord_type': 'selector', 'rk': { '$exists' : True } }, mfields=['_id', 'crecord_name', 'ids'], namespace="object")
+		for data in datas:
+			_id = data.get('_id')
+			ids = data.get('ids')
+			if ids:
+				self.tags_ids.append( (data.get('crecord_name'), ids) )
