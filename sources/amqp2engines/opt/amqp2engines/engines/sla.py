@@ -304,4 +304,4 @@ class engine(cengine):
 				self.calcul_state_by_timewindow(_id, configs[_id], slanode)
 				self.counter_event += 1
 				
-		self.counter_worktime += time.time() - start - 1 # break
+		self.counter_worktime += time.time() - start
