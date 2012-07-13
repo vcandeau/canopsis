@@ -299,13 +299,15 @@ class cstorage(object):
 				raw_records.sort(sort)
 
 		records=[]
-
-		for raw_record in raw_records:
-			try:
-				records.append(crecord(raw_record=raw_record))
-			except Exception, err:
-				## Not record format ..
-				self.logger.error("Impossible parse record ('%s') !" % err)
+		if not mfields:
+			for raw_record in raw_records:
+				try:
+					records.append(crecord(raw_record=raw_record))
+				except Exception, err:
+					## Not record format ..
+					self.logger.error("Impossible parse record ('%s') !" % err)
+		else:
+			records = [ record for record in raw_records ]
 
 		self.logger.debug("Found %s record(s)" % len(records))
 

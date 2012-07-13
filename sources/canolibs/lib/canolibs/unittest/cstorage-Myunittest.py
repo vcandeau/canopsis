@@ -154,6 +154,10 @@ class KnownValues(unittest.TestCase):
 
 		if len(records) != 1:
 			raise Exception('Error in filter ...')
+			
+		records = STORAGE.find({}, mfields=['state'])
+		if len(records) != 3:
+			raise Exception('Error in mfields ...')
 
 	def test_13_Find_limit(self):
 		records = STORAGE.find({}, limit=3)
