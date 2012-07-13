@@ -185,7 +185,7 @@ class cselector(crecord):
 			self.last_resolv = time.time()
 			self.last_nb_records = len(self._ids)
 			
-			#self.storage.update(self._id, {'ids': ids})
+			self.storage.update(self._id, {'ids': ids})
 			
 			self.changed = False
 			
