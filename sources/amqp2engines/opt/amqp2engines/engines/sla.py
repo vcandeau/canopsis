@@ -186,8 +186,8 @@ class engine(cengine):
 
 		sla_timewindow = config.get('sla_timewindow', self.default_sla_timewindow) # 1 day
 		
-		thd_warn_sla_timewindow = config.get('thd_warn_sla_timewindow', self.thd_warn_sla_timewindow)
-		thd_crit_sla_timewindow = config.get('thd_crit_sla_timewindow', self.thd_crit_sla_timewindow)
+		thd_warn_sla_timewindow = float(config.get('thd_warn_sla_timewindow', self.thd_warn_sla_timewindow))
+		thd_crit_sla_timewindow = float(config.get('thd_crit_sla_timewindow', self.thd_crit_sla_timewindow))
 		
 		#consider unknown time
 		sla_timewindow_doUnknown = config.get('sla_timewindow_doUnknown', True)
