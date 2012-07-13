@@ -33,7 +33,7 @@ class engine(cengine):
 		self.selectors = {}
 		self.selectors_events = {}
 		
-		self.nb_beat_publish = 15
+		self.nb_beat_publish = 10
 		self.nb_beat = 0
 	
 	def pre_run(self):
