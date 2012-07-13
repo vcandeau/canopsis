@@ -54,7 +54,7 @@ widget_stream_event_template = Ext.create('Ext.XTemplate',
 						'</tpl>',
 						"<span id='{event_Component_id}-time' class='timestamp'>{event_date}</span>",
 					'</header>',
-					"<span class='output'>{output}</span><br> <span class='long_output'>{long_output}</span>",
+					"<span class='output'>{output}</span></br> <span class='long_output'>{long_output}</span>",
 					'<tpl if="referer == undefined">',
 						"<div class='afooter'>",
 								"<span class='icon icon-comment'></span><div class='comment-counter' id='{event_Component_id}-nbcomment'></div>",
@@ -133,6 +133,12 @@ Ext.define('widgets.stream.event' , {
 			
 		if (! raw['long_output'])
 			raw['long_output'] = '';
+			
+		if (raw['output'])
+			raw['output'] = raw['output'].replace('\n', '</br>');
+		
+		if (raw['long_output'])
+			raw['output'] = raw['output'].replace('\n', '</br>');
 
 		raw['event_date'] = this.time();
 		raw['event_Component_id'] = this.id;
