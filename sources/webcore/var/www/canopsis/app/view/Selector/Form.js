@@ -56,64 +56,68 @@ Ext.define('canopsis.view.Selector.Form', {
 								xtype: 'textareafield',
 								name: 'description'
 							},{
-								fieldLabel: _('SLA'),
-								xtype: 'checkboxfield',
-								inputValue: true,
-								uncheckedValue: false,
-								name: 'sla'
-							},{
-								xtype: 'fieldcontainer',
-								fieldLabel: _('Time window'),
-								layout: 'hbox',
-								width: 500,
-								items:[
+								xtype:'fieldset',
+								checkboxToggle: true,
+								title: _('Calcul SLA'),
+								checkboxName: 'sla',
+								defaultType: 'textfield',
+								collapsed: true,
+								items: [
 									{
-										xtype: 'numberfield',
-										name: 'sla_timewindow_value',
-										minValue: 1,
-										value: 1,
-										width: 60,
-										allowBlank: false,
-										padding: "0 5 0 0"
+										xtype: 'fieldcontainer',
+										fieldLabel: _('Time window'),
+										layout: 'hbox',
+										width: 500,
+										items:[
+											{
+												xtype: 'numberfield',
+												name: 'sla_timewindow_value',
+												minValue: 1,
+												value: 1,
+												width: 60,
+												allowBlank: false,
+												padding: "0 5 0 0"
+											},{
+												xtype: 'combobox',
+												name: 'sla_timewindow_unit',
+												queryMode: 'local',
+												displayField: 'text',
+												width: 90,
+												valueField: 'value',
+												store: {
+													xtype: 'store',
+													fields: ['value', 'text'],
+													data: [
+														{value: global.commonTs.day, text: _('Day')},
+														{value: global.commonTs.week, text: _('Week')},
+														{value: global.commonTs.month, text: _('Month')},
+														{value: global.commonTs.year, text: _('Year')}
+													]
+												}
+											}
+										]
 									},{
-										xtype: 'combobox',
-										name: 'sla_timewindow_unit',
-										queryMode: 'local',
-										displayField: 'text',
-										width: 90,
-										valueField: 'value',
-										store: {
-											xtype: 'store',
-											fields: ['value', 'text'],
-											data: [
-												{value: global.commonTs.day, text: _('Day')},
-												{value: global.commonTs.week, text: _('Week')},
-												{value: global.commonTs.month, text: _('Month')},
-												{value: global.commonTs.year, text: _('Year')}
-											]
-										}
+										fieldLabel: _('Consider unknown time'),
+										xtype: 'checkboxfield',
+										inputValue: true,
+										uncheckedValue: false,
+										name: 'sla_timewindow_doUnknown'
+									},{
+										xtype: 'numberfield',
+										fieldLabel: _('Warning threshold'),
+										name: 'thd_warn_sla_timewindow',
+										minValue: 1,
+										maxValue: 100,
+										allowBlank: true
+									},{
+										xtype: 'numberfield',
+										fieldLabel: _('Critical threshold'),
+										name: 'thd_crit_sla_timewindow',
+										minValue: 1,
+										maxValue: 100,
+										allowBlank: true
 									}
 								]
-							},{
-								fieldLabel: _('Consider unknown time'),
-								xtype: 'checkboxfield',
-								inputValue: true,
-								uncheckedValue: false,
-								name: 'sla_timewindow_doUnknown'
-							},{
-								xtype: 'numberfield',
-								fieldLabel: _('Warning threshold'),
-								name: 'thd_warn_sla_timewindow',
-								minValue: 1,
-								maxValue: 100,
-								allowBlank: false
-							},{
-								xtype: 'numberfield',
-								fieldLabel: _('Critical threshold'),
-								name: 'thd_crit_sla_timewindow',
-								minValue: 1,
-								maxValue: 100,
-								allowBlank: false
 							}
 						]
 					},{
