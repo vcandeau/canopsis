@@ -115,7 +115,9 @@ class engine(cengine):
 				del points[0]
 			else:
 				last_state = 0
+				start = first_point[0]
 				self.logger.debug(" + Set last state to default: %s (initial)" % last_state)
+				self.logger.debug(" + New start:                 %s" % start)
 					
 			# Calcul each state's time for period start -> stop
 			self.logger.debug(" + Parse Points:")
@@ -209,22 +211,30 @@ class engine(cengine):
 		## TODO: Tweaks
 		total = 0
 		states_sum = states.copy()
+		first_timestamp = None
+		
 		for state in states:
 			self.logger.debug("Get %s (%s) time's:" % (states_str[state], state))
 			points = self.get_states(rk, 'cps_time_by_state_%s' % state, start, stop)
 			
-			first_timestamp = points[0][0]
+			if points:
+				first_timestamp = points[0][0]
+				
+				mysum = sum([point[1] for point in points])
+				states_sum[state] += mysum
+
+				total += states_sum[state]
+				
+				self.logger.debug(" + %s seconds" % states_sum[state])
+		
+		if first_timestamp:
 			if first_timestamp > start and sla_timewindow_doUnknown:
 				# Set unknown time
 				states_sum[3] += first_timestamp - start
-			
-			mysum = sum([point[1] for point in points])
-			states_sum[state] += mysum
-
-			total += states_sum[state]
-			
-			self.logger.debug(" + %s seconds" % states_sum[state])
-			
+				self.logger.debug("Set Unknown time's:")
+				self.logger.debug(" + %s seconds" % states_sum[3])
+				total += states_sum[3]
+		
 		self.logger.debug("Total: %s seconds" % total)
 		
 		## Calcul PCT
