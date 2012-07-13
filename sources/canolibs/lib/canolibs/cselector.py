@@ -329,15 +329,17 @@ class cselector(crecord):
 		# Extra field
 		event["selector_id"] = self._id
 		
+		rk = cevent.get_routingkey(event)
+		
+		if not self.rk:
+			self.logger.debug("Set RK to" % rk)
+			self.storage.update(self._id, {'rk': rk})
+			self.rk = rk
+		
 		## Same event
 		if event == self.last_event:
 			return (None, None)
 		
 		self.last_event = event
-		
-		rk = cevent.get_routingkey(event)
-		if not self.rk:
-			self.storage.update(self._id, {'rk': rk})
-			self.rk = rk
-		
+				
 		return (rk, event)
