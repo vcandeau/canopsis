@@ -80,6 +80,9 @@ class engine(cengine):
 			aggregate=False
 		)
 		return points
+		
+	def get_rk(self, name):
+		return "sla.engine.sla.resource.%s.sla" % name
 	
 	def calcul_time_by_state(self, _id, config):
 		rk = config['rk']
@@ -148,45 +151,36 @@ class engine(cengine):
 				
 			# Set last point timestamp
 			self.logger.debug(" + Set sla_lastcalcul to: %s" % last_point[0])
-				
-				
-			perf_data_array = []
-			output = ""
-			for state in states_sum:
-				output += "%s seconds in %s, " % (states_sum[state], states_str[state])
-				perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state], "unit": "s"})
+			last_timestamp = last_point[0]
 			
-			# remove ", " at the end
-			if output:
-				output = output[0:len(output)-2]
-			
-			# Send event
-			event = cevent.forger(
-				connector = "sla",
-				connector_name = "engine",
-				event_type = "sla",
-				source_type="resource",
-				component=config['name'],
-				resource="sla",
-				state=0,
-				state_type=1,
-				output=output,
-				long_output="",
-				perf_data=None,
-				perf_data_array=perf_data_array
+			# Store result in perfstore
+			# Don't submit Canopsis event because data it's just for next calcul
+			rk  = self.get_rk(config['name'])
+			slanode = node( _id=rk,
+							 dn=[ config['name'], "sla" ],
+							 storage=self.perfstorage,
+							 point_per_dca=300,
+							 rotate_plan={'PLAIN': 0, 'TSC': 3,}
 			)
+			
+			for state in states_sum:
+				#perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state], "unit": "s"})
+				slanode.metric_push_value(	dn = 'cps_time_by_state_%s' % state,
+											unit = "s",
+											value = states_sum[state],
+											timestamp = last_timestamp
+				)
 				
-			rk = cevent.get_routingkey(event)
-				
-			self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-				
-			self.storage.update(_id, {'sla_lastcalcul': last_timestamp, 'sla_rk': rk})
+			self.storage.update(_id, {'sla_lastcalcul': last_timestamp, 'sla_node_id': slanode._id})
+			return slanode
 		else:
 			self.logger.debug(" + You must have more points for calcul SLA")
+			return None
 	
-	def calcul_state_by_timewindow(self, _id, config):
-		rk = config['sla_rk']
-
+	
+	def calcul_state_by_timewindow(self, _id, config, slanode):
+		rk  = self.get_rk(config['name'])
+		
 		self.logger.debug("Calcul state by timewindow")
 		self.logger.debug(" + Get States of %s (%s)" % (_id, rk))
 
@@ -215,7 +209,13 @@ class engine(cengine):
 		
 		for state in states:
 			self.logger.debug("Get %s (%s) time's:" % (states_str[state], state))
-			points = self.get_states(rk, 'cps_time_by_state_%s' % state, start, stop)
+			
+			points = slanode.metric_get_values(
+						dn='cps_time_by_state_%s' % state,
+						tstart=start,
+						tstop=stop,
+						aggregate=False
+			)
 			
 			if points:
 				first_timestamp = points[0][0]
@@ -270,7 +270,7 @@ class engine(cengine):
 			event_type = "sla",
 			source_type="resource",
 			component=config['name'],
-			resource="sla_timewindow",
+			resource="sla",
 			state=state,
 			state_type=1,
 			output=output,
@@ -279,12 +279,10 @@ class engine(cengine):
 			perf_data_array=perf_data_array
 		)
 		
-		rk = cevent.get_routingkey(event)
+		self.logger.debug("Publish event on %s" % rk)
 		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
-		# Waring with integer key ....
-		#self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_lastsum': states_sum, 'sla_lastpct': states_pct, 'sla_timewindow_rk': rk})
-		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_rk': rk, 'sla_timewindow_perfdata': perf_data_array})
+		self.storage.update(_id, {'sla_timewindow_lastcalcul': stop, 'sla_timewindow_perfdata': perf_data_array})
 	
 	def beat(self):
 		start = time.time()
@@ -298,21 +296,12 @@ class engine(cengine):
 			configs[record._id]['name'] = record.name
 		
 		for _id in configs:
-			self.calcul_time_by_state(_id, configs[_id])
+			slanode = self.calcul_time_by_state(_id, configs[_id])
 			self.counter_event += 1
-		
-		########## Break
-		time.sleep(1)
-		
-		########## calcul_state_by_timewindow
-		configs = {}
-		records = self.storage.find({ 'crecord_type': 'selector', 'sla': True, 'rk': { '$exists' : True }, 'sla_rk': { '$exists' : True } }, namespace="object")
-		for record in records:
-			configs[record._id] = record.data
-			configs[record._id]['name'] = record.name
-		
-		for _id in configs:
-			self.calcul_state_by_timewindow(_id, configs[_id])
-			self.counter_event += 1
-		
+			
+			if slanode:
+				########## calcul_state_by_timewindow
+				self.calcul_state_by_timewindow(_id, configs[_id], slanode)
+				self.counter_event += 1
+				
 		self.counter_worktime += time.time() - start - 1 # break
