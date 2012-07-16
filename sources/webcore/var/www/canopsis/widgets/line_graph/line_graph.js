@@ -377,7 +377,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 				if (this.nodes.length != 0) {
 					url = this.makeUrl(from, to);
 					this.last_from = to;
-
 					Ext.Ajax.request({
 						url: url,
 						scope: this,

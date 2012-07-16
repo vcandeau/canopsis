@@ -1,0 +1,21 @@
+.subtitle {
+	font-variant:small-caps ;
+	font-size: 1em;
+}
+
+.scenario-title {
+	font-weight:bold ;
+}
+
+.scenario-statut {
+	display:block;
+	text-align:left;
+	float:left;
+	width:16px;
+}
+
+span.line-graph {
+	width: 100%;
+	height:100%;
+	display: block;
+}
