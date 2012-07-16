@@ -33,6 +33,9 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	
 	isFormField: true,
 	
+	onlyComponent: false,
+	filter: false,
+	
 	getName: function(){
 		return this.name
 	},
@@ -51,7 +54,6 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
-
 		var default_layout = { type: 'hbox', align: 'stretch'};
 		var default_defaults = { padding: this.default_padding };
 
@@ -92,11 +94,17 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 					header: _('Component'),
 					flex: 1,
 					dataIndex: 'component'
-	       		},{
+	       		}] ;
+		
+		if ( ! this.onlyComponent ) 
+		{	
+			this.columns.push(
+			{
 					header: _('Resource'),
 					flex: 2,
 					dataIndex: 'resource'
-		}];
+			} );
+		}
 
 		//////// Selection GRID
 		log.debug(' + Selection grid', this.logAuthor);
@@ -110,12 +118,9 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			}
 			return node;
 		}
-
 		this.selection_store = Ext.create('Ext.data.Store', {
 				model: model
 		});
-
-
 		var selection_height = undefined;
 
 		if (! this.multiSelect)
@@ -208,8 +213,10 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				autoLoad: false
 		});
 
-		this.search_store.load();
+		if ( this.filter ) 
+			this.search_store.setFilter( this.filter );
 
+		this.search_store.load();
 		this.search_grid = Ext.create('canopsis.lib.view.cgrid', {
 			multiSelect: this.multiSelect,
 			opt_bar: true,
@@ -318,7 +325,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	setValue: function(ids) {
 		log.debug('setValue Data:', this.logAuthor);
 		log.dump(ids);
-		
+		console.log( {'ids': Ext.JSON.encode(ids)} ) ;	
 		if (ids.length > 0)
 			Ext.Ajax.request({
 				url: "/rest/events/event",
