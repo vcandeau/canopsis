@@ -18,6 +18,16 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+widget_weather_template = new Ext.Template(
+		'<table>',
+			'<span class="{cls}">{name} {value}</span>',
+		'</table',
+
+		{
+			compiled: true,      // compile immediately
+		}
+	);
+
 Ext.define('widgets.weather.weather' , {
 	extend: 'canopsis.lib.view.cwidget',
 
@@ -26,22 +36,19 @@ Ext.define('widgets.weather.weather' , {
 	
 	_template : undefined,
 	
+	cls: 'widget-weather',
 	
-	/*
 	initComponent: function() {
-		
+		this.html = this.build();
+		this.callParent(arguments);
+	},
+	/*
+	afterContainerRender: function() {
+
 	},*/
 	
-	afterContainerRender: function() {
-		this._template = new Ext.Template(
-			'<div name="{id}">',
-				'<span class="{cls}">{name} {value}</span>',
-			'</div>',
-
-			{
-				compiled: true,      // compile immediately
-			}
-		);
-	},
+	build : function(){
+		
+	}
 	
 });
