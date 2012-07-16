@@ -332,7 +332,7 @@ class cselector(crecord):
 		rk = cevent.get_routingkey(event)
 		
 		if not self.rk:
-			self.logger.debug("Set RK to" % rk)
+			self.logger.debug("Set RK to '%s'" % rk)
 			self.storage.update(self._id, {'rk': rk})
 			self.rk = rk
 		
