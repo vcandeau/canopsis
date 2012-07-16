@@ -1,2 +1,42 @@
-.widget-weather .event {
+.widget-weather .table {
+	height: 100%;
+	width: 100%;
 }
+
+/*left panel*/
+
+.widget-weather .left_panel{
+	height: 100%;
+	width:75%;
+	float:left;
+}
+
+.widget-weather .left_panel .alert_panel{
+	position:relative;
+	top: 75%;
+}
+
+.widget-weather .left_panel .alert_panel div{
+	float:left;
+	height:100%;
+	width: 33%;
+}
+
+/*right panel*/
+
+.widget-weather .right_panel{
+	float:left;
+	width:25%;
+	height:100%;
+}
+
+.widget-weather .right_panel .logo{
+	width: 100%;
+	height: 80%;
+}
+
+.widget-weather .right_panel .legend{
+	width: 100%;
+	height: 20%;
+}
+
