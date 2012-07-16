@@ -19,10 +19,23 @@
 # ---------------------------------
 */
 widget_weather_template = new Ext.Template(
-		'<table>',
-			'<span class="{cls}">{name} {value}</span>',
+		'<table class="table">',
+			'<tr>',
+				'<td class="left_panel">',
+					'<p class="title">title</p>',
+					'<p class="comment">comment</p>',
+					'<div class="alert_panel">',
+						'<div>button</div>',
+						'<div><img src=""/></div>',
+						'<div><span>alert comment</span></div>',
+					'</div>',
+				'</td>',
+				'<td class="right_panel">',
+					'<div class="logo">logo</div>',
+					'<div class="legend">text</div>',
+				'</td>',
+			'</tr>',
 		'</table',
-
 		{
 			compiled: true,      // compile immediately
 		}
@@ -39,16 +52,23 @@ Ext.define('widgets.weather.weather' , {
 	cls: 'widget-weather',
 	
 	initComponent: function() {
-		this.html = this.build();
-		this.callParent(arguments);
-	},
-	/*
-	afterContainerRender: function() {
+		log.debug('Initialize...' , this.logAuthor)
+		/*
+		this.inner_component = Ext.create('Ext.Component',{
+			html : this.build()
+		})*/
 
-	},*/
+		this.callParent(arguments);
+
+	},
+	
+	afterContainerRender: function() {
+		//this.wcontainer.removeAll()
+		this.wcontainer.update(this.build())
+	},
 	
 	build : function(){
-		
+		return widget_weather_template.applyTemplate();
 	}
 	
 });
