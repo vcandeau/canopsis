@@ -10,20 +10,23 @@
 .widget-weather .left_panel{
 	height: 100%;
 	width:75%;
-	float:left;
+	vertical-align:top;
+	/*float:left;*/
 }
 
 .widget-weather .left_panel .title{
-	float:left;
-	height:20%;
+	/*float:left;*/
+	/*height:20%;*/
 	width: 100%;
-	font-size: 24px;
+	font-size: 15px;
+	font-weight: bold;
 }
 
 .widget-weather .left_panel .comment{
-	float:left;
-	font-style: oblique;
-	height:20%;
+	/*float:left;*/
+	font-size: 13px;
+	/*font-style: oblique;*/
+	/*height:10%;*/
 	width: 100%;
 }
 
@@ -73,7 +76,7 @@
 /*right panel*/
 
 .widget-weather .right_panel{
-	float:left;
+	/*float:left;*/
 	width:25%;
 	height:100%;
 }
@@ -84,6 +87,7 @@
 	height: 80%;
 	background-position:center center;
 	background-repeat:no-repeat;
+	background-size:contain;
 }
 
 .widget-weather .right_panel .logo p{
@@ -91,56 +95,58 @@
 	vertical-align:middle;
 	text-align:center;
 	width:100%;
-	font-size:200%;
+	font-size:13px;
+	font-weight: bold;
 }
 
 .widget-weather .right_panel .legend{
 	width: 100%;
 	height: 20%;
 	text-align:center;
+	font-size:11px;
 }
 
 /* icons */
 
 /*-----------------------------iconset N°1---------------------------*/
 .iconSet01_0-10 {
-	background-image: url(./icons/set1/14.png) !important;
+	background-image: url(./icons/set1/09.png) !important;
 }
 
 .iconSet01_10-20 {
-	background-image: url(./icons/set1/14.png) !important;
+	background-image: url(./icons/set1/09.png) !important;
 }
 
 .iconSet01_20-30 {
-	background-image: url(./icons/set1/11.png) !important;
+	background-image: url(./icons/set1/08.png) !important;
 }
 
 .iconSet01_30-40 {
-	background-image: url(./icons/set1/12.png) !important;
+	background-image: url(./icons/set1/07.png) !important;
 }
 
 .iconSet01_40-50 {
-	background-image: url(./icons/set1/10.png) !important;
+	background-image: url(./icons/set1/06.png) !important;
 }
 
 .iconSet01_50-60 {
-	background-image: url(./icons/set1/09d.png) !important;
+	background-image: url(./icons/set1/05.png) !important;
 }
 
 .iconSet01_60-70 {
-	background-image: url(./icons/set1/07d.png) !important;
+	background-image: url(./icons/set1/04.png) !important;
 }
 
 .iconSet01_70-80 {
-	background-image: url(./icons/set1/05d.png) !important;
+	background-image: url(./icons/set1/03.png) !important;
 }
 
 .iconSet01_80-90 {
-	background-image: url(./icons/set1/02d.png) !important;
+	background-image: url(./icons/set1/02.png) !important;
 }
 
 .iconSet01_90-100 {
-	background-image: url(./icons/set1/01d.png) !important;
+	background-image: url(./icons/set1/01.png) !important;
 }
 
 /*-----------------------------iconset N°2---------------------------*/
