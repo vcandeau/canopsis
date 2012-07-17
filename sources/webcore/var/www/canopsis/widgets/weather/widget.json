@@ -8,5 +8,15 @@
 	"refreshInterval": 60,
 	"border" : true,
 	"locales": ["fr"],
-	"options": []
+	"options": [
+			{
+				"title" : "Selectors",
+				"items" : [{
+					"xtype":"cinventory",
+					"name" : "nodes",
+					"multiSelect": false,
+					"event_type": "selector"
+				}]
+			}
+	]
 }]
