@@ -82,7 +82,6 @@ Ext.define('widgets.weather.weather' , {
 			widget_data.alert_comment = 'This component will be shut down from 0:00am to 9:00am'
 			
 			this.build(widget_data)
-			log.dump(this.border)
 		} else {
 			this.wcontainer.update('invalid selector')
 		}
