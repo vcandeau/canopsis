@@ -11,33 +11,32 @@
 	height: 100%;
 	width:75%;
 	vertical-align:top;
-	/*float:left;*/
+	padding: 2px;
 }
 
-.widget-weather .left_panel .title{
-	/*float:left;*/
-	/*height:20%;*/
+.widget-weather .first_sub_section{
+	width:100%;
+	height:100%;
+}
+
+.widget-weather .second_sub_section{
+	width:100%;
+	height:30%;
+}
+
+.widget-weather .left_panel .first_sub_section .title{
 	width: 100%;
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: bold;
 }
 
-.widget-weather .left_panel .comment{
-	/*float:left;*/
-	font-size: 13px;
-	/*font-style: oblique;*/
-	/*height:10%;*/
+.widget-weather .left_panel .first_sub_section .comment{
+	font-size: 12px;
 	width: 100%;
 }
 
-.widget-weather .left_panel .alert_panel{
-	float:left;
-	width:90%;
-	margin-top:5%;
-	height:40%;
-}
-
-.widget-weather .left_panel .alert_panel .alert_information{
+/*.widget-weather .left_panel .alert_panel .alert_information{*/
+.widget-weather .left_panel .alert_information{
 	display: table;
 	float: left;
 	height:100%;
@@ -45,33 +44,41 @@
 	text-align:center;
 }
 
-.widget-weather .left_panel .alert_panel .alert_information span{
+/*.widget-weather .left_panel .alert_panel .alert_information span{*/
+.widget-weather .left_panel .alert_information span{
 	display: table-cell;
 	vertical-align: middle;
 }
 
-.widget-weather .left_panel .alert_panel .alert_img{
+/*.widget-weather .left_panel .alert_panel .alert_img{*/
+.widget-weather .left_panel .alert_img{
 	background-image: url(./icons/warning-icon.png) !important;
 	background-position:center center;
 	background-repeat:no-repeat;
+	background-size:contain;
+	float:left;
+	width: 33%;
+	height: 100%;
+}
+
+/*.widget-weather .left_panel .alert_panel .alert_button{*/
+.widget-weather .left_panel .alert_button{
+	/*display: table;*/
 	float:left;
 	height:100%;
 	width: 33%;
+	font-size:11px;
+	max-height:20px;
+	margin: 0px auto 0px auto;
 }
 
-.widget-weather .left_panel .alert_panel .alert_button{
-	display: table;
-	float:left;
-	height:100%;
-	width: 33%;
-}
-
-.widget-weather .left_panel .alert_panel .alert_button button{
-	/*margin-top: 36%;*/
-	display: table-cell;
-	vertical-align: middle;
-	width: 100%;
-}
+/*.widget-weather .left_panel .alert_panel .alert_button button{
+.widget-weather .left_panel .alert_button{
+	/*display:table-cell;
+	vertical-align: bottom;
+	font-size:11px;
+	max-height:20px;
+}*/
 
 /*right panel*/
 
