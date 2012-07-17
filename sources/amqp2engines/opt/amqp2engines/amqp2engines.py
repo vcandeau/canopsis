@@ -131,14 +131,14 @@ def start_engines():
 	# Alerts:
 	### canopsis.alerts -> selector -> eventstore
 	
-	import perfstore
+	import perfstore2
 	import eventstore
 	import collectdgw
 	import tag
 	import selector
 	import sla
 	
-	engine_selector		= selector.engine(logging_level=logging.INFO)
+	engine_selector		= selector.engine(logging_level=logging.DEBUG)
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
@@ -147,14 +147,14 @@ def start_engines():
 	engine_eventstore	= eventstore.engine()
 	engines.append(engine_eventstore)
 	
-	engine_perfstore	= perfstore.engine(	next_engines=[engine_eventstore])
+	engine_perfstore	= perfstore2.engine(next_engines=[engine_eventstore])
 	engines.append(engine_perfstore)
 	
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
 	#engine_tag			= tag.engine(		next_engines=[engine_eventstore])
 	engines.append(engine_tag)
 	
-	engine_sla			= sla.engine(logging_level=logging.INFO)
+	engine_sla			= sla.engine(logging_level=logging.DEBUG)
 	engines.append(engine_sla)
 
 	# Set Next queue

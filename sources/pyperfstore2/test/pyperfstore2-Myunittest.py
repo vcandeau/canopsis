@@ -29,9 +29,16 @@ logging.basicConfig(level=logging.INFO,
 
 import pyperfstore2
 manager = None
-name = 'nagios.Central.check.service.localhost9'
+name = 'nagios.Central.check.service.localhost9.ping'
+component = 'localhost9'
+resource = 'ping'
+
+meta_extra = {'dn': (component, resource) }
 
 start = int(time.time())
+stop = None
+ut_start = int(time.time())
+nb = 0
 
 class KnownValues(unittest.TestCase):
 	def setUp(self):
@@ -39,17 +46,18 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global manager
-		manager = pyperfstore2.manager(logging_level=logging.DEBUG)
+		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', logging_level=logging.DEBUG)
 		
-		manager.remove(name=name)
+		manager.store.drop()
 
 	def test_02_Push(self):
-		global start
+		global start, nb
 		
 		manager.midnight = start
 		
 		for i in range(start, start+(60*60*1), 60):
-			manager.push(name=name, value=33.6, timestamp=i)
+			manager.push(name=name, value=33.6, timestamp=i, meta_data=meta_extra)
+			nb+=1
 			
 		i+=60
 		
@@ -57,27 +65,63 @@ class KnownValues(unittest.TestCase):
 		start = i
 			
 	def test_03_Rotate(self):
-		manager.rotate(name=name, force=True)
+		manager.rotate(name=name)
 
 	def test_04_Push(self):
-		global start
+		global start, nb
 		
 		manager.midnight = start
 		
 		for i in range(start, start+(60*60*1), 60):
 			manager.push(name=name, value=33.6, timestamp=i)
+			nb+=1
 		
 		i+=60
 		
 		manager.midnight = i
 		start = i
 		
-	def test_05_Get_Meta(self):
+		global stop
+		stop = start
+		
+	def test_05_Functions(self):
+		data = manager.find_meta()
+		if data.count() != 1:
+			raise Exception('Invalid meta count')
+			
+		data = manager.find_dca(name=name)
+		if data.count() != 1:
+			raise Exception('Invalid dca count')
+			
+	def test_06_Get_Meta(self):
 		meta = manager.get_meta(name=name)
-		print meta
+		print "Meta: %s" % meta
+		if not meta:
+			raise Exception('Invalid Meta !')
+			
+	def test_07_Get_point(self):
+		points = manager.get_points(name=name, tstart=ut_start, tstop=stop)
+		print "Total: %s" % nb
+		print "Nb points: %s" % len(points)
+		
+		if len(points) != nb:
+			raise Exception('Invalid points count')
+			
+		points = manager.aggregate(points, max_points=50, atype='MEAN', mode='by_point')
+		
+		print "Nb points: %s" % len(points)
+		
 		
 	def test_99_Remove(self):
-		#manager.remove(name=name)
+		"""
+		manager.remove(name=name)
+		meta = manager.get_meta(name=name)
+		
+		if meta:
+			raise Exception('Impossible to delete')
+		
+		#manager.store.drop()
+		"""
 		pass
 		
 	

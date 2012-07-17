@@ -29,7 +29,6 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
         type: 'vbox',
         align: 'stretch'
     },
-	//autoscroll : true,
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
@@ -37,8 +36,11 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		this.build_stores();
 		this.build_grids();
-		this.bind_event();
-
+		
+		this.on('afterrender', function() {
+			this.bind_event();
+		}, this);
+		
 		var config = {
 			layout: {
 				type: 'hbox',
@@ -49,7 +51,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		var container = Ext.create('Ext.container.Container', config);
 
-		container.add([this.node_grid, this.metric_grid]);
+		container.add(this.meta_grid);
 
 		this.items = [container, this.selected_grid];
 
@@ -58,35 +60,26 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 	build_stores: function() {
 		log.debug('Build stores', this.logAuthor);
-		var model = Ext.ModelManager.getModel('canopsis.model.Node');
+
+		var model = Ext.ModelManager.getModel('canopsis.model.Meta');
 		if (! model) {
-			Ext.define('Node', {
+			Ext.define('Meta', {
 				extend: 'Ext.data.Model',
 				fields: [
-					{name: 'node', type: 'string'},
-					{name: 'dn', type: 'array'},
-					{name: 'metrics'}
+					{name: '_id'},
+					{name: 'id', mapping: '_id'},
+					{name: 'co'},
+					{name: 're', defaultValue: undefined},
+					{name: 'me'},
 				]
 			});
 		}
 
-		var model = Ext.ModelManager.getModel('canopsis.model.Metric');
-		if (! model) {
-			Ext.define('Metric', {
-				extend: 'Ext.data.Model',
-				fields: [
-					{name: 'node', type: 'string'},
-					{name: 'dn', type: 'array'},
-					{name: 'metric', type: 'string'}
-				]
-			});
-		}
-
-		this.node_store = Ext.create('canopsis.lib.store.cstore', {
-				model: 'Node',
+		this.meta_store = Ext.create('canopsis.lib.store.cstore', {
+				model: 'Meta',
 				proxy: {
 					 type: 'ajax',
-					 url: '/perfstore/get_all_nodes',
+					 url: '/perfstore/get_all_metrics',
 
 					 reader: {
 						 type: 'json',
@@ -96,67 +89,145 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				 autoLoad: true
 		});
 
-		this.metric_store = Ext.create('canopsis.lib.store.cstore', {
-				sorters: [{
-					 property: 'metric',
-					 direction: 'ASC'
-				 }],
-				model: 'Metric'
-		});
-
 		this.selected_store = Ext.create('canopsis.lib.store.cstore', {
-				model: 'Metric'
+				model: 'Meta'
 		});
 
+	},
+
+	build_grids: function() {
+		log.debug('Build grids', this.logAuthor);
+	
+		//-------------------------first grid--------------------
+		this.meta_grid = Ext.create('canopsis.lib.view.cgrid', {
+			store: this.meta_store,
+			flex: 2,
+			margin: 3,
+
+			opt_menu_rights: false,
+			opt_bar: true,
+			opt_bar_search: true,
+			opt_bar_add: false,
+			opt_allow_edit: false,
+			opt_bar_duplicate: false,
+			opt_bar_reload: true,
+			opt_bar_delete: false,
+			opt_paging: true,
+			opt_simple_search: true,
+
+			border: true,
+
+			columns: [
+					{
+					header: _('Component'),
+					sortable: false,
+					dataIndex: 'co',
+					flex: 1
+	       		},{
+					header: _('Resource'),
+					sortable: false,
+					dataIndex: 're',
+					flex: 1
+	       		},{
+					header: _('Metric'),
+					sortable: false,
+					dataIndex: 'me',
+					flex: 1
+	       		}
+			],
+			viewConfig: {
+				copy: true,
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					enableDrop: false,
+					dragGroup: 'search_grid_DNDGroup'
+				}
+			}
+		});
+
+		// Create controller and bind with meta_grid
+		this.meta_grid_ctrl = Ext.create('canopsis.lib.controller.cgrid');
+		this.meta_grid.on('afterrender', function() {
+			this.meta_grid_ctrl._bindGridEvents(this.meta_grid);
+		}, this);
+
+		
+		//------------------------ Selection grid---------------------
+
+		this.selected_grid = Ext.widget('grid', {
+			store: this.selected_store,
+			flex: 1,
+			margin: 3,
+			border: true,
+			multiSelect: true,
+			scroll: true,
+			columns: [
+				{
+					header: _('Component'),
+					sortable: false,
+					dataIndex: 'co',
+					flex: 1
+	       		},{
+					header: _('Resource'),
+					sortable: false,
+					dataIndex: 're',
+					flex: 1
+	       		},{
+					header: _('Metric'),
+					sortable: false,
+					dataIndex: 'me',
+					flex: 1
+	       		}
+			],
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					//enableDrag: false,
+					copy: false,
+					dragGroup: 'search_grid_DNDGroup',
+					dropGroup: 'search_grid_DNDGroup'
+				}
+			}
+		});
+
+		//---------------------build menu------------------------
+		this.clearAllButton = Ext.create('Ext.Action', {
+							iconCls: 'icon-delete',
+							text: _('Clear all'),
+							action: 'clear'
+						});
+
+		this.deleteButton = Ext.create('Ext.Action', {
+							iconCls: 'icon-delete',
+							text: _('Delete selected'),
+							action: 'delete'
+						});
+
+		this.contextMenu = Ext.create('Ext.menu.Menu', {
+						items: [this.deleteButton, this.clearAllButton]
+					});
 	},
 
 	bind_event: function() {
 		log.debug('Binding events', this.logAuthor);
 
-		//---------------------event inventory----------------------
-		if (this.node_grid) {
-				this.node_grid.on('itemclick', function(view,record) {
-						var metrics = this.fetch_metrics(record);
-						this.metric_store.loadData(metrics);
-					},this);
-
-				this.node_grid.on('itemdblclick', function(view,record) {
-						var metrics = this.fetch_metrics(record);
-						this.select_metrics(metrics);
-					},this);
-		}
-
-		//--------------------event metric of node------------------
-		if (this.metric_grid) {
-			this.metric_grid.on('itemdblclick', function(view,record) {
-							this.select_metrics([{node: record.get('node'), metric: record.get('metric'), dn: record.get('dn')}]);
-						},this);
-		}
+		//---------------------Meta inventory----------------------
+		this.meta_grid.on('itemdblclick', function(view, record) {
+			this.select_meta(record);
+		},this);
 
 		//----------------------event selected metric----------------
-		if (this.selected_grid) {
-			this.selected_grid.on('itemdblclick', function(view,record) {
-							view.store.remove(record);
-						});
-
-		}
+		this.selected_grid.on('itemdblclick', function(view,record) {
+			this.selected_store.remove(record);
+		}, this);
 
 		//----------------------drop function--------------------
 		this.selected_grid.getView().on('beforedrop', function(html_node,data,model,dropPosition,dropFunction,eOpts) {
 			//only do action if is not reorder
 			if (data.view.id != this.selected_grid.getView().id) {
 				var records = data.records;
-				for (var i in records) {
-					var record = records[i];
-
-					if (record.get('metric')) {
-						//if the dd is a metric
-						this.selected_store.add(record);
-					}else {
-						//if the dd is a node
-						this.select_metrics(this.fetch_metrics(record));
-					}
-				}
+				for (var i in records)
+					this.select_meta(records[i]);
 
 				event.cancel = true;
 				event.dropStatus = true;
@@ -196,180 +267,13 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			return -1
 	},
 
-	select_metrics: function(metric_array) {
-		log.debug('Select metrics', this.logAuthor);
-		var store = this.selected_store;
-
-		for (var i in metric_array) {
-			var metric = metric_array[i];
-
-			//check if already in store
-			var exist = store.findBy(
-				function(record,id) {
-					if (metric.node == record.get('node'))
-						if (metric.metric == record.get('metric'))
-							return true;
-					return false;
-				}
-			,this);
-
-			//if not, add it
-			if (exist == -1)
-				store.add(metric_array[i]);
-		}
-	},
-
-	renderer_dn: function(val) {
-		if (val.length > 1)
-			return val[0] + ' - ' + val[1];
+	select_meta: function(record) {
+		var _id = record.get('_id')
+		log.debug('Select Meta '+_id , this.logAuthor);
+		if (! this.selected_store.getById(_id))
+			this.selected_store.add(record.copy());
 		else
-			return val[0];
-	},
-
-	renderer_dn_component: function(val) {
-		return val[0];
-	},
-
-	renderer_dn_resource: function(val) {
-		if (val.length > 1)
-			return val[1];
-	},
-
-	build_grids: function() {
-		log.debug('Build grids', this.logAuthor);
-		//-------------------------first grid--------------------
-		this.node_grid = Ext.create('canopsis.lib.view.cgrid', {
-			store: this.node_store,
-			flex: 2,
-			margin: 3,
-
-			opt_menu_rights: false,
-			opt_bar: true,
-			opt_bar_search: true,
-			opt_bar_add: false,
-			opt_allow_edit: false,
-			opt_bar_duplicate: false,
-			opt_bar_reload: true,
-			opt_bar_delete: false,
-			opt_paging: true,
-			opt_simple_search: true,
-
-			border: true,
-
-			columns: [
-				{
-					header: _('Component'),
-					sortable: false,
-					dataIndex: 'dn',
-					renderer: this.renderer_dn_component,
-					flex: 1
-	       		},
-	       		{
-					header: _('Resource'),
-					sortable: false,
-					dataIndex: 'dn',
-					renderer: this.renderer_dn_resource,
-					flex: 1
-	       		}
-			],
-			viewConfig: {
-				copy: true,
-				plugins: {
-					ptype: 'gridviewdragdrop',
-					enableDrop: false,
-					dragGroup: 'search_grid_DNDGroup'
-				}
-			}
-		});
-
-		var search_ctrl = Ext.create('canopsis.lib.controller.cgrid');
-		this.node_grid.on('afterrender', function() {
-			search_ctrl._bindGridEvents(this.node_grid);
-		},this);
-
-		//------------------------second grid---------------------
-		this.metric_grid = Ext.widget('grid', {
-			store: this.metric_store,
-			flex: 1,
-			margin: 3,
-			border: true,
-			scroll: true,
-			columns: [
-				{
-					header: 'Metrics',
-					sortable: false,
-					dataIndex: 'metric',
-					flex: 1
-	       		}
-			],
-			viewConfig: {
-				copy: true,
-				plugins: {
-					ptype: 'gridviewdragdrop',
-					enableDrop: false,
-					dragGroup: 'search_grid_DNDGroup'
-				}
-			}
-		});
-
-		//------------------------third grid---------------------
-
-		this.selected_grid = Ext.widget('grid', {
-			store: this.selected_store,
-			flex: 1,
-			margin: 3,
-			border: true,
-			multiSelect: true,
-			scroll: true,
-			columns: [
-				{
-					header: _('Component'),
-					sortable: false,
-					dataIndex: 'dn',
-					renderer: this.renderer_dn_component,
-					flex: 1
-	       		},
-	       		{
-					header: _('Resource'),
-					sortable: false,
-					dataIndex: 'dn',
-					renderer: this.renderer_dn_resource,
-					flex: 1
-	       		},
-	       		{
-					header: 'Selected metrics',
-					sortable: false,
-					dataIndex: 'metric',
-					flex: 1
-	       		}
-			],
-			viewConfig: {
-				plugins: {
-					ptype: 'gridviewdragdrop',
-					//enableDrag: false,
-					copy: false,
-					dragGroup: 'search_grid_DNDGroup',
-					dropGroup: 'search_grid_DNDGroup'
-				}
-			}
-		});
-
-		//---------------------build menu------------------------
-		this.clearAllButton = Ext.create('Ext.Action', {
-							iconCls: 'icon-delete',
-							text: _('Clear all'),
-							action: 'clear'
-						});
-
-		this.deleteButton = Ext.create('Ext.Action', {
-							iconCls: 'icon-delete',
-							text: _('Delete selected'),
-							action: 'delete'
-						});
-
-		this.contextMenu = Ext.create('Ext.menu.Menu', {
-						items: [this.deleteButton, this.clearAllButton]
-					});
+			log.debug(' + Already selected' , this.logAuthor);	
 	},
 
 	open_menu: function(view, rec, node, index, e) {
@@ -395,21 +299,19 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 		var output = [];
 		var nodes = {};
 		this.selected_store.each(function(record) {
-
-			var node = record.get('node');
-			var dn = record.get('dn');
-			var metric = record.get('metric');
-
-			//check if resource
-			if (dn.length > 1)
-				var source_type = 'resource';
-			else
-				var source_type = 'component';
+			var _id = record.get('id')
+			var component = record.get('co')
+			var resource = record.get('re')
+			var metric = record.get('me');
+			
+			var source_type = 'component';
+			if (resource)
+				source_type = 'resource';
 
 			if (source_type == 'resource')
-				output.push({'id': node, 'metrics': [metric], 'resource': dn[1], 'component': dn[0], 'source_type': source_type, 'dn': dn});
+				output.push({'id': _id, 'metrics': [metric], 'resource': resource, 'component': component, 'source_type': source_type});
 			else
-				output.push({'id': node, 'metrics': [metric], 'component': dn[0], 'source_type': source_type, 'dn': dn});
+				output.push({'id': _id, 'metrics': [metric], 'component': component, 'source_type': source_type});
 		});
 
 		return output;
@@ -417,12 +319,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
-		for (var i in data) {
-			var node = data[i];
-			for (var j in node.metrics) {
-				var metric = node.metrics[j];
-				this.selected_store.add({'node': node.id, 'metric': metric, 'dn': node.dn});
-			}
+		log.dump(data)
+		for (var i in data){
+			this.selected_store.add(data[i]);
 		}
 	}
 

@@ -134,17 +134,14 @@ class store(object):
 		return size
 	
 	def get(self, _id):
-		try:
-			return self.collection.find_one({'_id': _id})
-		except:
-			return self.grid.get(_id)
-			
-	def get_dca(self, _id, mfilter=None):
-		if mfilter:
-			return self.collection.find({"$and":[{'nid': _id}, mfilter]})
-		else:
-			return self.collection.find({'nid': _id})
-									
+		return self.collection.find_one({'_id': _id})
+	
+	def get_bin(self, _id):
+		return self.grid.get(_id).read()
+
+	def find(self, limit=0, skip=0, mfilter={}):			
+		return self.collection.find(mfilter, limit=limit, skip=skip)
+							
 	def drop(self):
 		self.db.drop_collection(self.mongo_collection)
 		self.db.drop_collection(self.mongo_collection+"_bin.chunks")
