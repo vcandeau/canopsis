@@ -26,12 +26,12 @@ from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, mongo_collection='perfdata2', logging_level=logging.INFO):
+	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, logging_level=logging.INFO):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		
-		self.store = store(mongo_collection='perfdata2', logging_level=logging.INFO)
-		
+		self.store = store(mongo_collection=mongo_collection, logging_level=logging.INFO)
+		self.auto_rotate = auto_rotate
 		self.midnight = None
 		self.get_midnight_timestamp()
 		
@@ -51,16 +51,18 @@ class manager(object):
 
 	def get_midnight_timestamp(self):
 		if not self.midnight or time.time() > self.midnight + 86400:
+			if self.auto_rotate and self.midnight:
+				self.rotateAll()
 			self.midnight = int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
 			
 		return self.midnight
 		
-	def get_node_id(self, name):
+	def get_meta_id(self, name):
 		return hashlib.md5(name).hexdigest()
 		
-	def get_dca_id(self, node_id):
+	def get_dca_id(self, _id):
 		# get midnight timestamp
-		dca_hash = "%s%s"  % (node_id, self.get_midnight_timestamp())
+		dca_hash = "%s%s"  % (_id, self.get_midnight_timestamp())
 		return hashlib.md5(dca_hash).hexdigest()
 		
 	def id_exist(self, _id):
@@ -78,30 +80,56 @@ class manager(object):
 				
 		return exist
 
-	def get_meta(self, _id=None, name=None):
+	def get_id(self, _id=None, name=None):
 		if not _id and not name:
 			raise Exception('Invalid args')
 			
 		if not _id:
-			_id = self.get_node_id(name)
+			_id = self.get_meta_id(name)
+			
+		return _id					
+
+	def get_meta(self, _id=None, name=None, raw=False):
+		_id = self.get_id(_id, name)
 		
 		meta_data = self.store.get(_id)
 		
+		if not meta_data:
+			return None
+		
 		# Uncompress fields name
-		for field in self.fields_map:
-			value = meta_data.get(self.fields_map[field][0], self.fields_map[field][1])
-			meta_data[field] = value
-			try:
-				del meta_data[self.fields_map[field][0]]
-			except:
-				pass
+		if not raw:
+			for field in self.fields_map:
+				value = meta_data.get(self.fields_map[field][0], self.fields_map[field][1])
+				meta_data[field] = value
+				try:
+					del meta_data[self.fields_map[field][0]]
+				except:
+					pass
 		
 		return meta_data
 
-	def push(self, name, value, timestamp=None, meta_data={}):
+	def find_dca(self, _id=None, name=None, mfilter=None):
+		_id = self.get_id(_id, name)
 		
-		node_id = self.get_node_id(name)
-		dca_id  = self.get_dca_id(node_id)
+		if mfilter:
+			return self.store.find(mfilter={"$and":[{'mid': _id}, mfilter]})
+		else:
+			return self.store.find(mfilter={'mid': _id})
+	
+	def find_meta(self, limit=20, skip=0, mfilter={}):
+		ofilter = {'r': { '$exists' : True }}
+		if mfilter:
+			mfilter = {'$and': [ofilter, mfilter]}
+		else:
+			mfilter = ofilter
+			
+		return self.store.find(mfilter=mfilter, limit=limit, skip=skip)
+
+	def push(self, value, _id=None, name=None, timestamp=None, meta_data={}):
+		_id = self.get_id(_id, name)
+					
+		dca_id  = self.get_dca_id(_id)
 		
 		if not timestamp:
 			timestamp = int(time.time())
@@ -110,45 +138,107 @@ class manager(object):
 		
 		if self.id_exist(dca_id):
 			# Append value
-			self.logger.debug("Append point to dca record '%s'" % dca_id)
+			#self.logger.debug("Append point to dca record '%s'" % dca_id)
 			self.store.push(_id=dca_id, point=point)
 		else:
-			# Check Meta
-			if not self.id_exist(node_id):
-				def set_meta(meta, field, new_field, default):
-					data = meta.get(field, default)
-					if data != None:
-						meta[new_field] = data
-					try:
-						del meta[field]
-					except:
-						pass
-					return meta
-				
-				# Compress fields name
-				for field in self.fields_map:
-					meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
-				
-				self.logger.debug("Create meta record '%s'" % node_id)
-				self.store.create(_id=node_id, data=meta_data)
+			# Create Meta
+			self.create_meta(_id=_id, meta_data=meta_data)
 				
 			# Create DCA
 			self.logger.debug("Create dca record '%s'" % dca_id)
-			self.store.create(_id=dca_id, data = {'c': False, 'nid': node_id, 'fts': timestamp, 'lts': timestamp, 'd': [ point ]})
+			self.store.create(_id=dca_id, data = {'c': False, 'mid': _id, 'fts': timestamp, 'lts': timestamp, 'd': [ point ]})
+
+	def create_meta(self,_id=None, name=None, meta_data={}):
+		_id = self.get_id(_id, name)
+		
+		# Check Meta
+		if not self.id_exist(_id):
+			def set_meta(meta, field, new_field, default):
+				data = meta.get(field, default)
+				if data != None:
+					meta[new_field] = data
+				try:
+					del meta[field]
+				except:
+					pass
+				return meta
 			
-	def rotate(self, _id=None, name=None, force=False):
-		if not _id and not name:
-			raise Exception('Invalid args')
+			# Compress fields name
+			for field in self.fields_map:
+				meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
 			
-		if not _id:
-			_id = self.get_node_id(name)
+			self.logger.debug("Create meta record '%s'" % _id)
+			self.store.create(_id=_id, data=meta_data)		
+		
+	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False):
+		_id = self.get_id(_id, name)
+		
+		points = []
+		
+		meta_data = self.get_meta(_id=_id)
+		
+		if not meta_data:
+			raise Exception('Invalid _id, not found')
+		
+		## Compressed DCA
+		if tstart < self.get_midnight_timestamp():	
+			dca_ids = []
+			
+			for dca in meta_data.get('c', []):
+				fts = dca[0]
+				lts = dca[1]
+				dca_id = dca[2]
+				
+				if tstart <= fts and tstop >= lts:
+					dca_ids.append(dca_id)
+				elif tstart >= fts and tstart <= lts:
+					dca_ids.append(dca_id)
+				elif tstop >= fts and tstop <= lts:
+					dca_ids.append(dca_id)
+			
+			for dca_id in dca_ids:
+				data = self.store.get_bin(_id=dca_id)
+				points += utils.uncompress(data)
+		
+		## Plain DCA
+		if tstop >= self.get_midnight_timestamp():
+			for dca in self.find_dca(_id=_id, mfilter={'c': False}):
+				points += dca['d']
+		
+		## Sort and Split Points
+		points = sorted(points, key=lambda point: point[0])
+		points = [ point for point in points if point[0] >= tstart and point[0] <= tstop ]		
+		
+		if raw:
+			if not return_meta:
+				return points
+			else:
+				return (meta_data, points)
+			
+		#parse_dst
+		
+		if not return_meta:
+			return points
+		else:
+			return (meta_data, points)
+
+	def aggregate(self, points, mode=None, atype='MEAN', time_interval=None, max_points=None):
+		return utils.aggregate(points, max_points=max_points, time_interval=time_interval, atype=atype, mode=mode)
+
+	def rotateAll(self):
+		metas = self.find_meta(limit=0)
+		for meta in metas:
+			self.rotate(_id=metas['_id'])
+		
+	def rotate(self, _id=None, name=None):
+		_id = self.get_id(_id, name)
 		
 		self.logger.debug("Rotate '%s'" % _id)
-		dcas = self.store.get_dca(_id=_id, mfilter={'c': False})
+		self.logger.debug(" + Compress")
 		dca_ids = []
-		for dca in dcas:
+		for dca in self.find_dca(_id=_id, mfilter={'c': False}):
 			dca_id = dca['_id']
-			self.logger.debug(" + %s" % dca_id)
+			self.logger.debug("   + DCA: %s" % dca_id)
 			# Compress data
 			data = utils.compress(dca['d'])
 			
@@ -163,11 +253,17 @@ class manager(object):
 		# Update meta record
 		self.store.update(_id=_id, mpush_all={'c': dca_ids})
 
+		# Todo: clean old dca (retention)
+		#self.logger.debug(" + Clean")
+
 	def remove(self, _id=None, name=None):
-		if not _id and not name:
-			raise Exception('Invalid args')
-			
-		if not _id:
-			_id = self.get_node_id(name)
+		_id = self.get_id(_id, name)
 		
-		self.store.remove(mfilter={'$or': [{'_id': _id}, {'nid': _id}]})
+		meta_data = self.get_meta(_id=_id, raw=True)
+		if meta_data:
+			# Remove compressed DCA
+			for dca_meta in meta_data['c']:
+				self.store.grid.delete(dca_meta[2])
+		
+		# Remove plain DCA and Meta
+		self.store.remove(mfilter={'$or': [{'_id': _id}, {'mid': _id}]})

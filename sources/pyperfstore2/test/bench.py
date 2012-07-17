@@ -34,7 +34,7 @@ interval = 300
 day = 30
 
 name = 'nagios.Central.check.service.localhost'
-manager = pyperfstore2.manager()
+manager = pyperfstore2.manager(mongo_collection='bench_perfdata2')
 manager.store.drop()
 
 def bench_store(interval=60, duration=60*60*24):
@@ -47,6 +47,7 @@ def bench_store(interval=60, duration=60*60*24):
 	bench_start = timestamp
 	
 	nb = duration / interval
+	print " + write %s loop" % nb
 	
 	start = time.time()
 	for i in range(1,nb+1):
@@ -85,11 +86,9 @@ def bench_store(interval=60, duration=60*60*24):
 	print "    + %s values per second" % (int(nb/elapsed))
 	print ""
 
-	"""
 	start = time.time()
-	mynode = node('nagios.Central.check.service.localhost', storage=store)
 	print "Get values between %s and %s" % (bench_start, bench_stop)
-	values = mynode.metric_get_values(dn='load1', tstart=bench_start, tstop=bench_stop)
+	values = manager.get_points(name="%s%s" % (name, 'load1'), tstart=bench_start, tstop=bench_stop)
 	nb = len(values)
 	elapsed = time.time() - start
 	print " + READ:"
@@ -97,10 +96,9 @@ def bench_store(interval=60, duration=60*60*24):
 	print "    + %s values per second" % (int(nb/elapsed))
 	print ""
 	
+	"""
 	mynode.pretty_print()
-	"""
-	
-	"""
+
 	size = store.size()
 	
 	start = time.time()

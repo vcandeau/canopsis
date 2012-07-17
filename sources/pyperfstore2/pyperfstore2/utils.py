@@ -24,8 +24,242 @@ import zlib
 
 import msgpack
 packer = None
+unpacker = None
+
+
+#### Utils fn
+
+def get_first_point(points):
+	if len(points):
+		return points[0]
+	else:
+		return None
+
+def get_last_point(points):
+	if len(points):
+		return points[len(points)-1]
+	else:
+		return None
+
+def get_first_value(points):
+	point = get_first_point(points)
+	if point:
+		return point[1]
+	else:
+		return None
+
+def get_last_value(points):
+	point = get_last_point(points)
+	if point:
+		return point[1]
+	else:
+		return None
+		
+def delta(points):
+	vfirst = get_first_value(points)
+	vlast = get_last_value(points)
+	return vlast - vfirst
+
+def median(vlist):
+    values = sorted(vlist)
+    count = len(values)
+
+    if count % 2 == 1:
+        return values[(count+1)/2-1]
+    else:
+        lower = values[count/2-1]
+        upper = values[count/2]
+
+    return (float(lower + upper)) / 2
+
+def get_timestamp_interval(points):
+	timestamp = 0
+	timestamps=[]
+	for point in points:
+		timestamps.append(point[0] - timestamp)
+		timestamp = point[0]
+
+	if len(timestamps) > 1:
+		del timestamps[0]
+
+	return int(median(timestamps))
+
+def get_timestamps(points):
+	return [x[0] for x in points]
+
+def get_values(points):
+	return [x[1] for x in points]
+
+def mean(vlist):
+	if len(vlist):
+		return float( sum(vlist) / float(len(vlist)))
+	else:
+		return 0.0
+
+def vmean(vlist):
+	vlist = get_values(vlist)
+	return mean(vlist)
+
+def vmin(vlist):
+	vlist = get_values(vlist)
+	return min(vlist)
+
+def vmax(vlist):
+	vlist = get_values(vlist)
+	return max(vlist)
+
+
+def derivs(vlist):
+	return [vlist[i] - vlist[i - 1] for i in range(1, len(vlist) - 2)]
+
+def parse_dst(points, dtype, first_point=[]):
+	logger.debug("Parse Data Source Type %s on %s points" % (dtype, len(points)))
+		
+	if dtype == "DERIVE" or dtype == "COUNTER" or dtype == "ABSOLUTE":
+		if points:
+			rpoints = []
+			values = get_values(points)
+			i=0
+			last_value=0
+			
+			for point in points:
+				
+				value = point[1]
+				timestamp = point[0]
+				
+				previous_timestamp = None
+				previous_value = None
+				
+				## Get previous value and timestamp
+				if i != 0:
+					previous_value 		= points[i-1][1]
+					previous_timestamp	= points[i-1][0]
+				elif i == 0 and first_point:
+					previous_value		= first_point[1]
+					previous_timestamp	= first_point[0]
+					
+				## Calcul Value
+				if previous_value:
+					if value > previous_value:
+						value -= previous_value
+					else:
+						value = 0
+				
+				## Derive
+				if previous_timestamp and dtype == "DERIVE":	
+					interval = abs(timestamp - previous_timestamp)
+					if interval:
+						value = round(float(value) / interval, 3)
+				
+				## Abs
+				if dtype == "ABSOLUTE":
+					value = abs(value)
+				
+				## if new dca start, value = 0 and no first_point: wait second point ...
+				if dtype == "DERIVE" and i == 0 and not first_point:
+					## Drop this point
+					pass
+				else:
+					rpoints.append([timestamp, value])
+					
+				i += 1
+				
+			return rpoints
+	
+	return points
+
+
+def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None, mode=None):
+	
+	if not mode:
+		mode = 'by_point'
+	elif mode != 'by_point':
+		mode = 'by_interval'
+	
+	if not max_points:
+		max_points=1450
+		
+	if time_interval:
+		time_interval = int(time_interval)
+				
+	if not atype:
+		atype = 'MEAN'
+	
+	logger.debug("Aggregate %s points (max: %s, time interval: %s, method: %s, mode: %s)" % (len(values), max_points, time_interval, atype, mode))
+
+	if not agfn:
+		if   atype == 'MEAN':
+			agfn = vmean
+		elif atype == 'FIRST':
+			agfn = get_first_value
+		elif atype == 'LAST':
+			agfn = get_last_value
+		elif atype == 'MIN':
+			agfn = vmin
+		elif atype == 'MAX':
+			agfn = vmax
+		elif atype == 'DELTA':
+			agfn = delta
+		elif atype == 'SUM':
+			agfn = sum
+		else:
+			agfn = vmean
+
+	logger.debug(" + Interval: %s" % time_interval)
+
+	rvalues=[]
+	
+	if mode == 'by_point':
+		if len(values) < max_points:
+			logger.debug(" + Useless")
+			return values
+		
+		interval = int(round(len(values) / max_points))
+		logger.debug(" + point interval: %s" % interval)
+		
+		for x in range(0, len(values), interval):
+			sample = values[x:x+interval]
+			value = agfn(sample)
+			timestamp = sample[len(sample)-1][0]
+			rvalues.append([timestamp, value])
+		
+	elif mode == 'by_interval':
+		
+		values_to_aggregate = []
+		
+		start = values[0][0]
+		# modulo interval
+		start -= start % time_interval
+		
+		stop = start + time_interval
+		for value in values:
+			#compute interval
+			if value[0] < stop:
+				values_to_aggregate.append(value)
+			else:
+				#aggregate
+				#timestamp = values_to_aggregate[0][0]
+				logger.debug("   + %s -> %s (%s points)" % (start, stop, len(values_to_aggregate)))
+				timestamp = stop
+				agvalue = round(agfn(values_to_aggregate),2)
+				point = [timestamp, agvalue]
+				logger.debug("     + Point: %s" % point)
+				rvalues.append(point)
+			
+				#Set next interval
+				start = stop
+				stop = start + time_interval
+				
+				# Push value
+				values_to_aggregate = [value]
+		
+	logger.debug(" + Nb points: %s" % len(rvalues))
+	return rvalues
+
 
 def compress(points):
+	logger.debug("Compress timeserie")
+	
 	# Create packer
 	if not packer:
 		global packer
@@ -34,6 +268,7 @@ def compress(points):
 	# Remplace timestamp by interval
 	logger.debug(" + Remplace Timestamp by Interval and compress it")
 	i = 0
+	fts = points[0][0]
 	offset = points[0][0]
 	previous_interval = None
 
@@ -61,93 +296,60 @@ def compress(points):
 		offset = timestamp
 		i += 1
 	
+	data = (fts, points)
 	# Pack and compress points
 	#points = packer.pack(points)
-	points = zlib.compress(packer.pack(points), 9)
+	#points = zlib.compress(str(points), 9)
+	points = zlib.compress(packer.pack(data), 9)
+	
 
 	return points
 
-"""
-def uncompress(self, values=None):
-	self.logger.debug("TSC: Timestamp uncompression (%s)" % self.format)
-
-	#if self.format != "TSC":
-	#	self.logger.error(" + Invalid TSC format")
-	#	raise ValueError("Invalid TSC format")
-
-	#self.format = "TSC"
+def uncompress(data):
+	logger.debug("Uncompress timeserie")
 	
-	if not values:
-		values = self.storage.get_raw(self.values_id)
-		
-	self.logger.debug(" + Type of values: %s" % type(values))
-	if type(values).__name__ != 'list':
-		try:
-			self.unpacker.feed(values)
-			values = list(self.unpacker.unpack())
-		except Exception, err:
-			self.logger.warning("Values is not msgpack (%s)" % err)
+	if not data:
+		raise ValueError("Invalid data type (%s)" % type(data))
 
-			########################################################################
-			######################### Decode OLD serialisation #####################
-			########################################################################
-			
-			if type(values).__name__ == 'str' or type(values).__name__ == 'unicode':
-				
-				self.logger.debug("Decode old serialisation format (JSON) (%s)", self.format)
-					
-				try:
-					values = json.loads(values)
-				except Exception, err:
-					#self.logger.error(values)
-					self.logger.error("Values is not JSON (%s: %s)" % (type(values).__name__, err))
-					raise ValueError("Invalid values (%s: %s)" % (type(values).__name__, err))
-					
-				try:							
-					## Save with new format
-					if self.format == "TSC":
-						self.logger.info(" + Save TSC with new format")
-						self.compress_TSC(self.uncompress_TSC(values))
-						
-					elif self.format == "ZTSC":
-						self.format = "PLAIN"
-						self.logger.info(" + Save ZTSC with new format")
-						self.compress_ZTSC(self.compress_TSC(self.uncompress_TSC(values)))
-						
-				except Exception, err:
-					#self.logger.error(values)
-					raise ValueError("Impossible to save with new format (%s)" % err)
-					
-			########################################################################
-
-	self.logger.debug(" + Type of values: %s" % type(values))
-	if type(values).__name__ != 'list':
-		raise ValueError("Invalid type (%s)" % type(values).__name__)
+	# Create unpacker
+	if not unpacker:
+		global unpacker
+		unpacker = msgpack.Unpacker(use_list=True)
+	
+	unpacker.feed(str(zlib.decompress(data)))
+	data = unpacker.unpack()
+	
+	fts = data[0]
+	points = data[1]
+	
+	logger.debug(" + Type of point: %s" % type(points))
+	
+	if type(points).__name__ != 'list':
+		raise ValueError("Invalid type (%s)" % type(points))
 
 	#first point
-	values[0] = [self.tstart, values[0]]
+	points[0] = [fts, points[0]]
 
 	#second point
-	offset = values[1][0]
-	timestamp = self.tstart + offset
-	values[1] = [timestamp, values[1][1]]
+	offset = points[1][0]
+	timestamp = fts + offset
+	points[1] = [timestamp, points[1][1]]
 	
-	self.logger.debug(" + Offset: %s", offset)
+	logger.debug(" + Offset: %s", offset)
 
 	#others
-	for i in range(2, len(values)):
-		point = values[i]
+	for i in range(2, len(points)):
+		point = points[i]
 		
 		if isinstance(point ,list) or isinstance(point ,tuple):
 			poffset = point[0]
 			timestamp += poffset
-			values[i] = [ timestamp, point[1] ]
+			points[i] = [ timestamp, point[1] ]
 		else:
 			timestamp += offset
-			values[i] = [ timestamp, point ]
+			points[i] = [ timestamp, point ]
 			
-		#self.logger.debug("%s -> %s" % (point, values[i]))
+		#logger.debug("%s -> %s" % (point, values[i]))
 	
-	#self.format = "PLAIN"
-	return values
-"""
+	return points
+
