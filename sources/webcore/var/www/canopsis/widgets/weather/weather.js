@@ -22,15 +22,18 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 		'<table class="table">',
 			'<tr>',
 				'<td class="left_panel">',
-					'<p class="title">{title}</p>',
-					'<p class="comment">{output}</p>',
-					'<div class="alert_panel">',
+					'<div class="first_sub_section">',
+						'<p class="title">{title}</p>',
+						'<p class="comment">{output}</p>',
+					'</div>',
+					/*'<div class="second_sub_section">',
 						'<tpl if="button_text != undefined">',
-							'<div class="alert_button"><button type="button">{button_text}</button></div>',
+							//'<div class="alert_button"><button type="button">{button_text}</button></div>',
+							'<button class="alert_button" type="button">{button_text}</button>',
 						'</tpl>',
 						'<div class="alert_img"></div>',
 						'<div class="alert_information"><span>{alert_comment}</span></div>',
-					'</div>',
+					'</div>',*/
 				'</td>',
 				'<td class="right_panel">',
 					'<div class="logo {class_icon}"><p>{percent}%</p></div>',
@@ -66,25 +69,29 @@ Ext.define('widgets.weather.weather' , {
 	},
 	
 	onRefresh : function(data){
-		if(data.event_type == 'sla'){	
+		//if(data.event_type == 'sla'){	
 			//build data
 			var widget_data = {}
 			
 			widget_data.title = data.component
-			widget_data.output = data.output
-			widget_data.legend = rdr_tstodate(data.timestamp)
-			widget_data.percent = data.perf_data_array[0].value
-			widget_data.class_icon = this.getIcon(widget_data.percent)
+			widget_data.legend = 'Since 20d'
+			widget_data.alert_comment = '0:00am to 9:00am'
+
+			if(data.output && data.output != "")
+				widget_data.output = data.output
+
+			if(data.perf_data_array[0]){
+				widget_data.percent = data.perf_data_array[0].value
+				widget_data.class_icon = this.getIcon(widget_data.percent)
+			}
 			
 			if(this.option_button == true)
-				widget_data.button_text = _('Report an issue')
+				widget_data.button_text = _('Report issue')
 				
-			widget_data.alert_comment = 'This component will be shut down from 0:00am to 9:00am'
-			
 			this.build(widget_data)
-		} else {
-			this.wcontainer.update('invalid selector')
-		}
+		//} else {
+		//	this.wcontainer.update('invalid selector')
+		//}
 	},
 	
 	getIcon: function(value){
@@ -122,6 +129,9 @@ Ext.define('widgets.weather.weather' , {
 				break;
 			case 100:
 				return 'iconSet' + this.iconSet + '_' + '90-100'
+				break;
+			default:
+				return undefined
 				break;
 		}
 	}
