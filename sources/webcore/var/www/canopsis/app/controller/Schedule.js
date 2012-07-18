@@ -79,33 +79,12 @@ Ext.define('canopsis.controller.Schedule', {
 
 		}
 		//----------------------formating crontab-----------------------
-		var time = data.hours.split(' ');
-
-		if (time.length > 1) {
-			//---------Format 12h
-			var hour_type = time[1];
-			var clock = time[0];
-
-			clock = clock.split(':');
-			var minute = parseInt(clock[1], 10);
-			var hour = parseInt(clock[0], 10);
-
-			if (hour_type == 'pm') {
-				hour = hour + 12;
-			}
-
-		} else {
-			//--------Format 24h
-			var time = data.hours.split(':');
-
-			var minute = parseInt(time[1], 10);
-			var hour = parseInt(time[0], 10);
-		}
-
+		var time = stringTo24h(data.hours)
+		
 		//apply offset to get utc
 		var d = new Date();
-		d.setHours(parseInt(hour, 10));
-		d.setMinutes(parseInt(minute, 10));
+		d.setHours(time.hour);
+		d.setMinutes(time.minute, 10);
 
 		//set crontab
 		var crontab = {
