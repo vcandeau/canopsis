@@ -31,6 +31,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	vertical_multiselect: false,
 	default_padding: 5,
 	
+	base_filter: undefined,
+	
 	isFormField: true,
 	
 	getName: function(){
@@ -210,6 +212,10 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 				autoLoad: false
 		});
+		
+		//set base filter if given
+		if(this.base_filter != undefined)
+			this.search_store.setFilter(this.base_filter)
 
 		this.search_store.load();
 
