@@ -34,7 +34,6 @@ Ext.define('widgets.pie.pie' , {
 	max: undefined,
 	other_label: 'Free',
 
-	autoTitle: true,
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
@@ -155,7 +154,7 @@ Ext.define('widgets.pie.pie' , {
 			},
 			tooltip: {
 				formatter: function() {
-					return this.point.name + ': ' + Math.round(this.percentage) + ' %';
+					return this.point.name + ': ' + Math.round(this.percentage, 3) + ' %';
 					}
 			},
 			title: {
