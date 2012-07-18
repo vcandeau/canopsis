@@ -157,3 +157,29 @@ function check_color(color){
 function strip_blanks(val){
 	return val.replace(/\n/g, '').replace(/ /g,'')
 }
+
+function stringTo24h(src_time){
+	var time = src_time.split(' ');
+
+	if (time.length > 1) {
+		//---------Format 12h
+		var hour_type = time[1];
+		var clock = time[0];
+
+		clock = clock.split(':');
+		var minute = parseInt(clock[1], 10);
+		var hour = parseInt(clock[0], 10);
+
+		if (hour_type == 'pm') 
+			hour = hour + 12;
+
+	} else {
+		//--------Format 24h
+		var time = src_time.split(':');
+
+		var minute = time[1];
+		var hour = time[0];
+	}
+	
+	return {minute: parseInt(minute, 10), hour: parseInt(hour, 10)}
+}
