@@ -32,7 +32,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.callParent(arguments);
 
 		//---------------------- Create items --------------------------------
-
+/*
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
 			data: [
@@ -66,28 +66,65 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
 		});
-
+*/
 		var today = new Date();
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
+		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
-		this.currentDate = this.add({
+		this.fromDate = this.add({
 			xtype: 'datefield',
-			name: 'from',
+			//name: 'from',
+			fieldLabel: _('From'),
+			labelWidth:40,
 			editable: false,
-			width: 110,
+			width: 130,
 			value: today,
 			maxValue: tommorow
 		});
-
+		
+		this.fromHour = this.add({
+			xtype:'textfield',
+			//fieldLabel: _('Hours'),
+			value: '00:00 am',
+			width:70,
+			allowBlank: false,
+			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
+		});
+		
+		this.add('-')
+		
+		this.toDate = this.add({
+			xtype: 'datefield',
+			//name: 'to',
+			labelWidth:30,
+			fieldLabel: _('To'),
+			editable: false,
+			width: 130,
+			value: yesterday,
+			maxValue: tommorow
+		});
+		
+		this.toHour = this.add({
+			xtype:'textfield',
+			//fieldLabel: _('Hours (local time)'),
+			value: '00:00 am',
+			width:70,
+			allowBlank: false,
+			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
+		});
+			
+		this.add('-')
+/*
 		this.nextButton = this.add({
 			xtype: 'button',
 			cls: 'x-btn-icon x-tbar-page-next',
 			action: 'next'
-		});
+		});*/
 
-		this.add({ xtype: 'tbspacer', width: 15 });
+		//this.add({ xtype: 'tbspacer', width: 5 });
+		this.add('->')
 
-		if (this.reloadAfterAction == false) {
+/*		if (this.reloadAfterAction == false) {
 			this.requestButton = this.add({
 				xtype: 'button',
 				iconCls: 'icon-reload',
@@ -95,7 +132,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 				action: 'request'
 			});
 		}
-
+*/
 		this.saveButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-save',
