@@ -33,69 +33,58 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 
 		//---------------------- Create items --------------------------------
 
-		var comboStore = Ext.create('Ext.data.Store', {
-			fields: ['name', 'value'],
-			data: [
-				{'name': _('Day'), 'value': global.commonTs.day},
-				{'name': _('Week'), 'value': global.commonTs.week},
-				{'name': _('Month'), 'value': global.commonTs.month},
-				{'name': _('Year'), 'value': global.commonTs.year}
-			]
-		});
-
-		comboStore.load();
-
-		this.combo = this.add({
-			xtype: 'combobox',
-			store: comboStore,
-			queryMode: 'local',
-			editable: false,
-			displayField: 'name',
-			width: 70,
-			valueField: 'value',
-			forceSelection: true,
-			value: _('Day')
-		});
-
-		this.combo.setValue(86400);
-
-		this.add({ xtype: 'tbspacer', width: 20 });
-
-		this.previousButton = this.add({
-			xtype: 'button',
-			cls: 'x-btn-icon x-tbar-page-prev',
-			action: 'previous'
-		});
-
 		var today = new Date();
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
+		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
-		this.currentDate = this.add({
+		this.fromDate = this.add({
 			xtype: 'datefield',
-			name: 'from',
+			fieldLabel: _('From'),
+			labelWidth:40,
 			editable: false,
-			width: 110,
+			width: 130,
+			value: yesterday,
+			maxValue: tommorow
+		});
+		
+		this.fromHour = this.add({
+			xtype:'textfield',
+			value: '00:00 am',
+			width:70,
+			allowBlank: false,
+			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
+		});
+		
+		this.add('-')
+		
+		this.toDate = this.add({
+			xtype: 'datefield',
+			labelWidth:30,
+			fieldLabel: _('To'),
+			editable: false,
+			width: 130,
 			value: today,
 			maxValue: tommorow
 		});
-
-		this.nextButton = this.add({
-			xtype: 'button',
-			cls: 'x-btn-icon x-tbar-page-next',
-			action: 'next'
+		
+		this.toHour = this.add({
+			xtype:'textfield',
+			//fieldLabel: _('Hours (local time)'),
+			value: '00:00 am',
+			width:70,
+			allowBlank: false,
+			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 		});
+			
+		this.add('-')
 
-		this.add({ xtype: 'tbspacer', width: 15 });
-
-		if (this.reloadAfterAction == false) {
-			this.requestButton = this.add({
-				xtype: 'button',
-				iconCls: 'icon-reload',
-				tooltip: _('Refresh'),
-				action: 'request'
-			});
-		}
-
+		this.searchButton = this.add({
+			xtype: 'button',
+			iconCls: 'icon-run',
+			action: 'search',
+			tooltip: _('Export this view to pdf')
+		});
+		
 		this.saveButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-save',
@@ -103,7 +92,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			tooltip: _('Export this view to pdf')
 		});
 
-		this.linkButton = this.add({
+		this.htmlButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-page-html',
 			action: 'link',
