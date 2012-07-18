@@ -22,92 +22,40 @@ Ext.define('canopsis.controller.ReportingBar', {
 	extend: 'Ext.app.Controller',
 
 	views: ['ReportingBar.ReportingBar'],
-
 	logAuthor: '[controller][ReportingBar]',
 
 	init: function() {
 		log.debug('Initialize ...', this.logAuthor);
 
 		this.control({
-			'ReportingBar' : {
-				afterrender: this._bindBarEvents
-			}
+			'ReportingBar' : {afterrender: this._bindBarEvents}
 		});
 
 		this.callParent(arguments);
 	},
 
 	_bindBarEvents: function(bar) {
-		var id = bar.id;
+		log.debug('Bind events...', this.logAuthor);
 		this.bar = bar;
-		log.debug('Bind events "' + id, this.logAuthor);
 
-		//previous button
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="previous"]');
-		for (i in btns) {
-			btns[i].on('click', this.previousButton, this);
-		}
-
-		//next button
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="next"]');
-		for (i in btns) {
-			btns[i].on('click', this.nextButton, this);
-		}
-
-		//savebutton
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="save"]');
-		for (i in btns) {
-			btns[i].on('click', this.saveButton, this);
-		}
-		//html report button
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="link"]');
-		for (i in btns) {
-			btns[i].on('click', this.htmlReport, this);
-		}
-
-		//exit button
-		var btns = Ext.ComponentQuery.query('#' + id + ' button[action="exit"]');
-		for (i in btns) {
-			btns[i].on('click', this.exitButton, this);
-		}
-
-		//if ask to reload data after duration/data selection
-		if (this.bar.reloadAfterAction == true) {
-			log.debug('binding event to reload after any action', this.logAuthor);
-			var btns = Ext.ComponentQuery.query('#' + id + ' combobox');
-			for (i in btns) {
-				btns[i].on('change', this.launchReport, this);
-			}
-			var btns = Ext.ComponentQuery.query('#' + id + ' datefield');
-			for (i in btns) {
-				btns[i].on('change', this.launchReport, this);
-			}
-
-		} else {
-			var btns = Ext.ComponentQuery.query('#' + id + ' button[action="request"]');
-			for (i in btns) {
-				btns[i].on('click', this.launchReport, this);
-			}
-		}
-
-
+		bar.saveButton.on('click', this.saveButton, this);
+		bar.htmlButton.on('click', this.htmlReport, this);
+		bar.exitButton.on('click', this.exitButton, this);
+		bar.searchButton.on('click',this.launchReport,this)
 	},
 
-
-
 	launchReport: function() {
-		var toolbar = this.bar;
-		var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-		var startReport =	endReport - toolbar.combo.getValue();
-		//launch tab function
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		if (toolbar.currentDate.isValid()) {
-			tab.setReportDate(startReport * 1000, endReport * 1000);
+		var startTimestamp = this.getStartTimestamp()
+		var stopTimestamp =  this.getStopTimestamp()
+
+		if (startTimestamp && stopTimestamp) {
 			log.debug('------------------------Asked Report date-----------------------');
-			log.debug('from : ' + startReport + ' To : ' + endReport, this.logAuthor);
-			log.debug('startReport date is : ' + Ext.Date.format(new Date(startReport * 1000), 'Y-m-d H:i:s'), this.logAuthor);
-			log.debug('endReport date is : ' + Ext.Date.format(new Date(endReport * 1000), 'Y-m-d H:i:s'), this.logAuthor);
+			log.debug('from : ' + startTimestamp + ' To : ' + stopTimestamp, this.logAuthor);
+			log.debug('startReport date is : ' + Ext.Date.format(new Date(startTimestamp * 1000), 'Y-m-d H:i:s'), this.logAuthor);
+			log.debug('endReport date is : ' + Ext.Date.format(new Date(stopTimestamp * 1000), 'Y-m-d H:i:s'), this.logAuthor);
 			log.debug('----------------------------------------------------------------');
+			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
 			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
 		}
@@ -115,67 +63,68 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	saveButton: function() {
 		log.debug('launching pdf reporting', this.logAuthor);
-		//get end/start
-		var toolbar = this.bar;
-		if (toolbar.currentDate.isValid()) {
-			var endReport = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var startReport = endReport - toolbar.combo.getValue();
 
-			//Get view id
-			var tab = Ext.getCmp('main-tabs').getActiveTab();
-			var view_id = tab.view_id;
+		var startTimestamp = this.getStartTimestamp()
+		var stopTimestamp =  this.getStopTimestamp()
 
-			//launch reporting fonction
+		if (startTimestamp && stopTimestamp) {
+			var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id;
 			var ctrl = this.getController('Reporting');
 
-			log.debug('view_id : ' + view_id);
-			log.debug('startReport : ' + startReport * 1000);
-			log.debug('stopReport : ' + endReport * 1000);
+			log.debug('view_id : ' + view_id,this.logAuthor);
+			log.debug('startReport : ' + startTimestamp * 1000,this.logAuthor);
+			log.debug('stopReport : ' + stopTimestamp * 1000,this.logAuthor);
 
-			ctrl.launchReport(view_id, startReport * 1000, endReport * 1000);
+			ctrl.launchReport(view_id, startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
 			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
 		}
 	},
-
-	nextButton: function() {
-		//get toolbar elements
-		var inputField = this.bar.currentDate;
-		var selectedTime = parseInt(Ext.Date.format(inputField.getValue(), 'U'));
-		var timeUnit = this.bar.combo.getValue();
-		//add the time and build a date
-		var timestamp = selectedTime + timeUnit;
-		var newDate = new Date(timestamp * 1000);
-		//set the time
-		inputField.setValue(newDate);
-	},
-
-	previousButton: function() {
-		//get toolbar elements
-		var inputField = this.bar.currentDate;
-		var selectedTime = parseInt(Ext.Date.format(inputField.getValue(), 'U'));
-		var timeUnit = this.bar.combo.getValue();
-		//substract the time and build a date
-		var timestamp = selectedTime - timeUnit;
-		var newDate = new Date(timestamp * 1000);
-		//set the time
-		inputField.setValue(newDate);
-	},
-
+	
 	htmlReport: function() {
-		var toolbar = this.bar;
-		if (toolbar.currentDate.isValid()) {
+		log.debug('launching html window reporting', this.logAuthor);
+		
+		var startTimestamp = this.getStartTimestamp()
+		var stopTimestamp =  this.getStopTimestamp()
+
+		if (startTimestamp && stopTimestamp) {
 			var ctrl = this.getController('Reporting');
-
-			//Get view id
-			var tab = Ext.getCmp('main-tabs').getActiveTab();
-			var view = tab.view_id;
-
-			var to = parseInt(Ext.Date.format(toolbar.currentDate.getValue(), 'U'));
-			var from = to - toolbar.combo.getValue();
-
-			ctrl.openHtmlReport(view, from * 1000, to * 1000);
+			var view = Ext.getCmp('main-tabs').getActiveTab().view_id;
+			ctrl.openHtmlReport(view, startTimestamp * 1000, stopTimestamp * 1000);
 		}
+	},
+	
+	getStartTimestamp : function(){
+		var fromDate = this.bar.fromDate
+		var fromHour = this.bar.fromHour
+		
+		if(fromDate.isValid() && fromHour.isValid()){
+			var date = parseInt(Ext.Date.format(fromDate.getValue(), 'U'));
+			var hour = stringTo24h(fromHour.getValue())
+			
+			//date + hour in seconds + minute in second
+			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60)
+		}else{
+			var timestamp = undefined
+		}
+		
+		return parseInt(timestamp, 10)
+	},
+
+	getStopTimestamp : function(){
+		var toDate = this.bar.toDate
+		var toHour = this.bar.toHour
+		
+		if(toDate.isValid() && toHour.isValid()){
+			var date = parseInt(Ext.Date.format(toDate.getValue(), 'U'));
+			var hour = stringTo24h(toHour.getValue())
+			
+			//date + hour in seconds + minute in second
+			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60)
+		}else{
+			var timestamp = undefined
+		}
+		return parseInt(timestamp, 10)
 	},
 
 	exitButton: function() {
@@ -187,12 +136,10 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	enable_reporting_mode: function() {
 		log.debug('Enable reporting mode', this.logAuthor);
-		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.addReportingBar();
+		Ext.getCmp('main-tabs').getActiveTab().addReportingBar();
 	},
 
 	disable_reporting_mode: function() {
-		log.debug('Disable reporting mode', this.logAuthor);
-		tab.removeReportingBar();
+		log.debug('Disable reporting mode', this.logAuthor).removeReportingBar();
 	}
 });
