@@ -140,3 +140,24 @@ def send_report():
 	except Exception, err:
 		logger.error('Error when run subtask mail : %s' % err)
 		return {'success':False,'total':'1','data':{'output':'Mail sending failed'}}
+
+
+# For highcharts
+@post('/export_svg', apply=[check_auth])
+def export_svg():
+	filename = request.params.get('filename', default=None)
+	svg = request.params.get('svg', default=None)
+	
+	if not filename:
+		filename = "chart.svg"
+	else:
+		filename += ".svg"
+		
+	
+	logger.debug("Export SVG image: %s" % filename)
+	
+	if svg and filename:
+		response.set_header('Content-Disposition', 'attachment; filename="%s"' % filename)
+		response.content_type = 'image/svg+xml'
+		return svg
+	

@@ -29,6 +29,11 @@
 						"collapsible": false,
 						"items": [
 							{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable SVG Exporting",
+								"checked": false,
+								"name": "exporting_enabled"
+							},{
 								"xtype" : "numberfield",
 								"name" : "pie_size",
 								"fieldLabel": "Pie Size %",
