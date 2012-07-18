@@ -79,7 +79,7 @@ Ext.define('widgets.weather.weather' , {
 				widget_data.output = data.output
 
 			if(this.state_as_icon_value){
-				var icon_value = 100 - ( this.selector_record.state / 4 * 100)
+				var icon_value = 100 - ( data.state / 4 * 100)
 				widget_data.class_icon = this.getIcon(icon_value)
 			}else{
 				if(data.perf_data_array[0])
