@@ -68,6 +68,8 @@ class carchiver(object):
 			self.logger.debug(" + Check with old record:")
 			old_state = record.data['state']
 			old_state_type = record.data['state_type']
+			
+			event['last_state_change'] = record.data.get('last_state_change', event['timestamp'])
 
 			self.logger.debug("   - State:\t\t'%s'" % legend[old_state])
 			self.logger.debug("   - State type:\t'%s'" % legend_type[old_state_type])
@@ -90,6 +92,9 @@ class carchiver(object):
 			# No old record
 			self.logger.debug(" + New event")
 			changed = True
+		
+		if changed:
+			event['last_state_change'] = event['timestamp']
 		
 		self.store_event(_id, event)
 
