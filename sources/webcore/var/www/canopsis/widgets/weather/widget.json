@@ -15,7 +15,8 @@
 					"xtype":"cinventory",
 					"name" : "nodes",
 					"multiSelect": false,
-					"event_type": "selector"
+					"event_type": "selector",
+					"base_filter" : {"event_type":"selector"}
 				}]
 			}
 	]

@@ -53,12 +53,13 @@
 /*.widget-weather .left_panel .alert_panel .alert_img{*/
 .widget-weather .left_panel .alert_img{
 	background-image: url(./icons/warning-icon.png) !important;
-	background-position:center center;
+	background-position:right center;
 	background-repeat:no-repeat;
 	background-size:contain;
 	float:left;
 	width: 33%;
 	height: 100%;
+	max-height: 30px;
 }
 
 /*.widget-weather .left_panel .alert_panel .alert_button{*/
