@@ -239,7 +239,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	//Reporting
 	addReportingBar: function() {
 		var config = {
-					width: 350,
+					width: 510,
 					border: false,
 					title: _('Live reporting toolbar'),
 					constrain: true,
