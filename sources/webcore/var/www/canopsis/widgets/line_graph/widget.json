@@ -16,11 +16,6 @@
 						"collapsible": false,
 						"items": [
 							{
-								"xtype": "checkbox",
-								"fieldLabel": "Auto title (if one node)",
-								"checked": true,
-								"name": "autoTitle"
-							},{
 								"xtype" : "numberfield",
 								"name" : "title_fontSize",
 								"fieldLabel": "Font Size",
