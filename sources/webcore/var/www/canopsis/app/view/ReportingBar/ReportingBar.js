@@ -78,7 +78,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			labelWidth:40,
 			editable: false,
 			width: 130,
-			value: today,
+			value: yesterday,
 			maxValue: tommorow
 		});
 		
@@ -100,7 +100,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			fieldLabel: _('To'),
 			editable: false,
 			width: 130,
-			value: yesterday,
+			value: today,
 			maxValue: tommorow
 		});
 		
@@ -133,6 +133,14 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			});
 		}
 */
+
+		this.searchButton = this.add({
+			xtype: 'button',
+			//iconCls: 'icon-save',
+			action: 'search',
+			tooltip: _('Export this view to pdf')
+		});
+		
 		this.saveButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-save',
@@ -140,7 +148,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			tooltip: _('Export this view to pdf')
 		});
 
-		this.linkButton = this.add({
+		this.htmlButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-page-html',
 			action: 'link',
