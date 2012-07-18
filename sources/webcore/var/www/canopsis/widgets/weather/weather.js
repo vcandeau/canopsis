@@ -54,8 +54,11 @@ Ext.define('widgets.weather.weather' , {
 	cls: 'widget-weather',
 	
 	iconSet : '01',
+	state_as_icon_value : false,
 	
 	option_button : true,
+	
+	selector_record : undefined,
 	
 	initComponent: function() {
 		log.debug('Initialize...' , this.logAuthor)
@@ -70,15 +73,19 @@ Ext.define('widgets.weather.weather' , {
 			widget_data.title = data.component
 			widget_data.legend = rdr_elapsed_time(data.last_state_change)
 			widget_data.alert_comment = '0:00am to 9:00am'
+			widget_data.percent = data.perf_data_array[0].value
 
 			if(data.output && data.output != "")
 				widget_data.output = data.output
 
-			if(data.perf_data_array[0]){
-				widget_data.percent = data.perf_data_array[0].value
-				widget_data.class_icon = this.getIcon(widget_data.percent)
+			if(this.state_as_icon_value){
+				var icon_value = 100 - ( data.state / 4 * 100)
+				widget_data.class_icon = this.getIcon(icon_value)
+			}else{
+				if(data.perf_data_array[0])
+					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
 			}
-			
+		
 			if(this.option_button == true)
 				widget_data.button_text = _('Report issue')
 			
@@ -92,6 +99,8 @@ Ext.define('widgets.weather.weather' , {
 	
 	onRefresh : function(data){
 		log.debug('OnRefresh', this.logAuthor)
+		
+		this.selector_record = data
 		
 		sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
 		log.debug('Searching sla resource: ' + sla_id, this.logAuthor)
