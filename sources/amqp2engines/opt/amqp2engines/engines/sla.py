@@ -299,7 +299,7 @@ class engine(cengine):
 
 		########## calcul_time_by_state
 		configs = {}
-		records = self.storage.find({ 'crecord_type': 'selector',  'sla': {'$in': [ True, 'on'] }, 'rk': { '$exists' : True } }, namespace="object")
+		records = self.storage.find({ 'crecord_type': 'selector',  'enable': True, 'sla': {'$in': [ True, 'on'] }, 'rk': { '$exists' : True } }, namespace="object")
 		for record in records:
 			configs[record._id] = record.data
 			configs[record._id]['name'] = record.name

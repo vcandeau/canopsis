@@ -51,11 +51,16 @@ class engine(cengine):
 		count = self.storage.count({'_id': {"$in": ids}}, namespace="object")
 		if count != len(ids):
 			for _id in self.selectors:
-				if not self.storage.count({'_id': _id}, namespace="object"):
+				if not self.storage.count({'_id': _id, 'enable': True}, namespace="object"):
 					id_to_clean.append(_id)
 				
 			for _id in id_to_clean:
 				self.logger.debug("Clean selector %s: %s" % (_id, self.selectors[_id].name))
+				try:
+					self.storage.update(_id, {'loaded': False})
+				except:
+					self.logger.debug(" + Record are deleted.")
+					
 				del self.selectors[_id]
 				del self.selectors_events[_id]
 	
@@ -84,7 +89,7 @@ class engine(cengine):
 		self.clean_selectors()
 		
 		## New selector or modified selector
-		records = self.storage.find({'crecord_type': 'selector', 'loaded': False}, namespace="object")
+		records = self.storage.find({'crecord_type': 'selector', 'loaded': False, 'enable': True}, namespace="object")
 		
 		for record in records:
 			self.logger.debug("Load selector %s: %s" % (record._id, record.name))
