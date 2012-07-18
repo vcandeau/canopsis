@@ -563,9 +563,12 @@ var stream_countComments = function(referer, callback){
 	log.debug("countComments for '"+referer+"'", "widget-stream")
 	mongodb_count('events_log', { "$and": [{"referer": referer }, {"event_type": "comment"} ]}, callback)
 }
-var stream_getHistory= function(limit, callback){
+var stream_getHistory= function(limit, tags, callback){
 	log.debug("getHistory", "widget-stream")
-	mongodb_find('events_log', { "$and": [{"state_type": 1 }, {"event_type": {"$ne": "comment"}}]} , { 'limit': limit, 'sort': {"timestamp": -1} }, callback)	
+	if (! tags)
+		mongodb_find('events_log', { "$and": [{"state_type": 1 }, {"event_type": {"$ne": "comment"}}]} , { 'limit': limit, 'sort': {"timestamp": -1} }, callback)
+	else
+		mongodb_find('events_log', { "$and": [{"state_type": 1 }, {"tags": {"$in": tags}}, {"event_type": {"$ne": "comment"}}]} , { 'limit': limit, 'sort': {"timestamp": -1} }, callback)
 }
 
 //####################################################
