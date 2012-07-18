@@ -97,9 +97,16 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this._authkey, this);
 			}
 
+			//run
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=run]');
 			for (i in btns) {
 				btns[i].on('click', this._runItem, this);
+			}
+			
+			//enable / disable button
+			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=enable-disable]');
+			for (i in btns) {
+				btns[i].on('click', this._enabledisable, this);
 			}
 
 		}
@@ -221,6 +228,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 	},
 
+
 	_viewElement: function(view, item, index) {
 		log.debug('Clicked on element, function viewElement', this.logAuthor);
 		//add_view_tab(this.grid.opt_view_element, item.data.component, true, {'nodeId' : item.data._id}, true, true,item.data.component)
@@ -264,6 +272,20 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}
 
 
+	},
+
+	_enabledisable: function(){
+		log.debug('Clicked enabledisable Button', this.logAuthor);
+		var grid = this.grid;
+
+		var selection = grid.getSelectionModel().getSelection();
+		if (selection) {
+			var record = selection[0]
+			if (record.get('enable'))
+				record.set('enable', false)
+			else
+				record.set('enable', true)
+		}
 	},
 
 	_editRights: function() {

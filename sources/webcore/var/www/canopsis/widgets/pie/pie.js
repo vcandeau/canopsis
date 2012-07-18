@@ -154,7 +154,7 @@ Ext.define('widgets.pie.pie' , {
 			},
 			tooltip: {
 				formatter: function() {
-					return this.point.name + ': ' + Math.round(this.percentage, 3) + ' %';
+					return this.point.name + ': ' + Math.round(this.percentage*1000)/1000 + ' %';
 					}
 			},
 			title: {
