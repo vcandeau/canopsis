@@ -165,10 +165,6 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			}
 		},this);
 
-		//-------------------------Menu option---------------------
-		this.selected_grid.on('itemcontextmenu', this.open_menu, this);
-		this.clearAllButton.setHandler(function() {this.selected_store.removeAll()},this);
-		this.deleteButton.setHandler(this.deleteSelected, this);
 	},
 
 	fetch_metrics: function(record) {
@@ -353,41 +349,9 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				}
 			}
 		});
+		
+		this.contextMenu = Ext.create('canopsis.lib.menu.cclear', { grid: this.selected_grid});
 
-		//---------------------build menu------------------------
-		this.clearAllButton = Ext.create('Ext.Action', {
-							iconCls: 'icon-delete',
-							text: _('Clear all'),
-							action: 'clear'
-						});
-
-		this.deleteButton = Ext.create('Ext.Action', {
-							iconCls: 'icon-delete',
-							text: _('Delete selected'),
-							action: 'delete'
-						});
-
-		this.contextMenu = Ext.create('Ext.menu.Menu', {
-						items: [this.deleteButton, this.clearAllButton]
-					});
-	},
-
-	open_menu: function(view, rec, node, index, e) {
-		e.preventDefault();
-		//don't auto select if multi selecting
-		var selection = this.selected_grid.getSelectionModel().getSelection();
-		if (selection.length < 2)
-			view.select(rec);
-
-		this.contextMenu.showAt(e.getXY());
-		return false;
-    },
-
-    deleteSelected: function() {
-		log.debug('delete selected metrics', this.logAuthor);
-		var selection = this.selected_grid.getSelectionModel().getSelection();
-		for (var i in selection)
-			this.selected_store.remove(selection[i]);
 	},
 
 	getValue: function() {

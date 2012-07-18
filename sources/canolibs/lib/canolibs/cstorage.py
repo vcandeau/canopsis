@@ -135,8 +135,8 @@ class cstorage(object):
 			raise Exception('Invalid data, must be a dict ...')
 		
 		# Check if record exist
-		record = self.get(_id, namespace=namespace, account=account)
-		if record:
+		count = self.count({'_id': _id}, namespace=namespace, account=account)
+		if count:
 			backend = self.get_backend(namespace)
 			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
 		

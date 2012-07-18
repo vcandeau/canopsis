@@ -239,6 +239,10 @@
     background-image: url(../images/icons/comment.png) !important;
 }
 
+.icon-enable-disable { 
+    background-image: url(../images/icons/true.png) !important;
+}
+
 /* state */
 
 /*.icon-state-0 { 
