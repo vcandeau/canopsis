@@ -151,7 +151,6 @@ def start_engines():
 	engines.append(engine_perfstore)
 	
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
-	#engine_tag			= tag.engine(		next_engines=[engine_eventstore])
 	engines.append(engine_tag)
 	
 	engine_sla			= sla.engine(logging_level=logging.INFO)
