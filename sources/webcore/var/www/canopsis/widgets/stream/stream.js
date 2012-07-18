@@ -30,7 +30,7 @@ Ext.define('widgets.stream.stream' , {
 	max: 10,
 	max_comment: 5,
 
-	//queue: [],
+	tags: "",
 
 	last_push: 0,
 	burst_counter: 0,
@@ -50,6 +50,10 @@ Ext.define('widgets.stream.stream' , {
 		this.queue = []
 		this.nodeId = false;
 		this.refreshInterval = 5;
+		
+		if (this.tags != ""){
+			this.tags = this.tags.split(' ');
+		}
 
 		if (this.showToolbar && ! this.exportMode) {
 			
@@ -140,7 +144,7 @@ Ext.define('widgets.stream.stream' , {
 		var me = this;
 		if (now) {
 			if (global.websocketCtrl.connected){
-				now.stream_getHistory(this.max, function(records) {
+				now.stream_getHistory(this.max, this.tags, function(records) {
 					log.debug('Load '+ records.length + ' events', me.logAuthor);
 					if (records.length > 0) {
 						for (var i in records)
@@ -294,6 +298,12 @@ Ext.define('widgets.stream.stream' , {
 		//Only hard state
 		if (raw.state_type == 0 && this.hard_state_only)
 			return;
+			
+		// Check tags
+		if (this.tags && raw.tags)
+			for (var i in this.tags)
+				if (! Ext.Array.contains(raw.tags, this.tags[i]))
+					return;
 
 		var id = this.get_event_id(raw);
 

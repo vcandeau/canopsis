@@ -244,6 +244,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				}
 			}
 		});
+		
+		this.contextMenu = Ext.create('canopsis.lib.menu.cclear', { grid: this.selection_grid});
 
 		//////// Bind cgrid controller on search grid
 		this.search_ctrl = Ext.create('canopsis.lib.controller.cgrid');
