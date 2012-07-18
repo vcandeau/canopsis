@@ -37,6 +37,8 @@ Ext.define('widgets.pie.pie' , {
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
+	
+	exporting_enabled: false,
 
 	title_fontSize: 15,
 
@@ -162,6 +164,24 @@ Ext.define('widgets.pie.pie' , {
 				floating: true,
 				style: {
 					fontSize: this.title_fontSize
+				}
+			},
+			exporting: {
+				enabled: this.exporting_enabled,
+				filename: this.chartTitle,
+				type: "image/svg+xml",
+				url: "/export_svg",
+				buttons: {
+					exportButton: {
+						enabled: true,
+						menuItems: null,
+						onclick: function(){
+							this.exportChart();
+						}
+					},
+					printButton: {
+						enabled: false
+					}
 				}
 			},
 			symbols: [],
