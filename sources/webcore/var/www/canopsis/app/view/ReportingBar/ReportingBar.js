@@ -32,48 +32,13 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.callParent(arguments);
 
 		//---------------------- Create items --------------------------------
-/*
-		var comboStore = Ext.create('Ext.data.Store', {
-			fields: ['name', 'value'],
-			data: [
-				{'name': _('Day'), 'value': global.commonTs.day},
-				{'name': _('Week'), 'value': global.commonTs.week},
-				{'name': _('Month'), 'value': global.commonTs.month},
-				{'name': _('Year'), 'value': global.commonTs.year}
-			]
-		});
 
-		comboStore.load();
-
-		this.combo = this.add({
-			xtype: 'combobox',
-			store: comboStore,
-			queryMode: 'local',
-			editable: false,
-			displayField: 'name',
-			width: 70,
-			valueField: 'value',
-			forceSelection: true,
-			value: _('Day')
-		});
-
-		this.combo.setValue(86400);
-
-		this.add({ xtype: 'tbspacer', width: 20 });
-
-		this.previousButton = this.add({
-			xtype: 'button',
-			cls: 'x-btn-icon x-tbar-page-prev',
-			action: 'previous'
-		});
-*/
 		var today = new Date();
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
 		this.fromDate = this.add({
 			xtype: 'datefield',
-			//name: 'from',
 			fieldLabel: _('From'),
 			labelWidth:40,
 			editable: false,
@@ -84,7 +49,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		
 		this.fromHour = this.add({
 			xtype:'textfield',
-			//fieldLabel: _('Hours'),
 			value: '00:00 am',
 			width:70,
 			allowBlank: false,
@@ -95,7 +59,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		
 		this.toDate = this.add({
 			xtype: 'datefield',
-			//name: 'to',
 			labelWidth:30,
 			fieldLabel: _('To'),
 			editable: false,
@@ -114,29 +77,10 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		});
 			
 		this.add('-')
-/*
-		this.nextButton = this.add({
-			xtype: 'button',
-			cls: 'x-btn-icon x-tbar-page-next',
-			action: 'next'
-		});*/
-
-		//this.add({ xtype: 'tbspacer', width: 5 });
-		this.add('->')
-
-/*		if (this.reloadAfterAction == false) {
-			this.requestButton = this.add({
-				xtype: 'button',
-				iconCls: 'icon-reload',
-				tooltip: _('Refresh'),
-				action: 'request'
-			});
-		}
-*/
 
 		this.searchButton = this.add({
 			xtype: 'button',
-			//iconCls: 'icon-save',
+			iconCls: 'icon-run',
 			action: 'search',
 			tooltip: _('Export this view to pdf')
 		});
