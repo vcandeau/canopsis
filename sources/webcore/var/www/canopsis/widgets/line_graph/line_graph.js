@@ -52,7 +52,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 	zoom: true,
 	legend: true,
 	tooltip: true,
-	autoTitle: true,
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
