@@ -140,7 +140,7 @@ Ext.define('widgets.stream.event' , {
 		if (raw['long_output'])
 			raw['output'] = raw['output'].replace('\n', '</br>');
 
-		raw['event_date'] = this.time();
+		raw['event_date'] = rdr_elapsed_time(raw['timestamp']);
 		raw['event_Component_id'] = this.id;
 
 		return widget_stream_event_template.applyTemplate(raw);
@@ -250,34 +250,9 @@ Ext.define('widgets.stream.event' , {
 		}
 	},
 
-
-	time: function(timestamp) {
-
-		if (! timestamp)
-			timestamp = this.timestamp;
-		else
-			timestamp = parseInt(timestamp);
-
-		var elapsed = parseInt(new Date().getTime() / 1000) - timestamp;
-
-		var elapsed_text = elapsed + ' seconds ago';
-
-		if (elapsed < 3)
-			elapsed_text = 'just now';
-		if (elapsed > 60)
-			elapsed_text = parseInt(elapsed / 60) + ' mins ago';
-		if (elapsed > 3600)
-			elapsed_text = rdr_tstodate(timestamp);
-		/*	elapsed_text = parseInt(elapsed/3600) +" hours ago"
-		if (elapsed > 86400)
-			elapsed_text = parseInt(elapsed/86400) +" days ago"*/
-
-		return elapsed_text;
-	},
-
 	update_time: function() {
 		if (this.el_time)
-			this.el_time.update(this.time());
+			this.el_time.update(rdr_elapsed_time(this.timestamp));
 
 		if (this.comments_container)
 			for (var i = 0; i < this.comments_container.items.length; i++) {
