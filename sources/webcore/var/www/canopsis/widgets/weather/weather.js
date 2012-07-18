@@ -26,7 +26,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 						'<p class="title">{title}</p>',
 						'<p class="comment">{output}</p>',
 					'</div>',
-					/*'<div class="second_sub_section">',
+				/*	'<div class="second_sub_section">',
 						'<tpl if="button_text != undefined">',
 							//'<div class="alert_button"><button type="button">{button_text}</button></div>',
 							'<button class="alert_button" type="button">{button_text}</button>',
@@ -61,20 +61,14 @@ Ext.define('widgets.weather.weather' , {
 		log.debug('Initialize...' , this.logAuthor)
 		this.callParent(arguments);
 	},
-	
+
 	build : function(data){
-		var _html = widget_weather_template.applyTemplate(data);
-		this.wcontainer.update(_html)
-		return _html
-	},
-	
-	onRefresh : function(data){
-		//if(data.event_type == 'sla'){	
+		if(data.event_type == 'sla'){	
 			//build data
 			var widget_data = {}
 			
 			widget_data.title = data.component
-			widget_data.legend = 'Since 20d'
+			widget_data.legend = rdr_elapsed_time(data.last_state_change)
 			widget_data.alert_comment = '0:00am to 9:00am'
 
 			if(data.output && data.output != "")
@@ -87,11 +81,38 @@ Ext.define('widgets.weather.weather' , {
 			
 			if(this.option_button == true)
 				widget_data.button_text = _('Report issue')
-				
-			this.build(widget_data)
-		//} else {
-		//	this.wcontainer.update('invalid selector')
-		//}
+			
+			var _html = widget_weather_template.applyTemplate(widget_data);
+			this.wcontainer.update(_html)
+
+		} else {
+			this.wcontainer.update('invalid selector')
+		}
+	},
+	
+	onRefresh : function(data){
+		log.debug('OnRefresh', this.logAuthor)
+		
+		sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
+		log.debug('Searching sla resource: ' + sla_id, this.logAuthor)
+		
+		Ext.Ajax.request({
+			url: '/rest/events/event/' + sla_id,
+			scope: this,
+			success: function(response) {
+				var data = Ext.JSON.decode(response.responseText);
+				if ( this.nodeId.length > 1 )
+					data = data.data ;
+				else
+					data = data.data[0];
+		
+				this.build(data);
+			},
+			failure: function(result, request) {
+				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+			}
+		});
+		
 	},
 	
 	getIcon: function(value){
