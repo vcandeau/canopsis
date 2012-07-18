@@ -188,7 +188,7 @@ def rest_put(namespace, ctype, _id=None):
 		if not check_group_rights(account,ctype_to_group_access[ctype]):
 			return HTTPError(403, 'Insufficient rights')
 
-	logger.debug("PUT:")
+	logger.debug("POST:")
 
 	data = request.body.readline()
 	if not data:
@@ -273,6 +273,68 @@ def rest_put(namespace, ctype, _id=None):
 		logger.error('Impossible to put (%s)' % err)
 		return HTTPError(403, "Access denied")
 		
+#### PUT
+@put('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
+@put('/rest/:namespace/:ctype',	apply=[check_auth])
+def rest_put(namespace, ctype, _id=None):
+	#get the session (security)
+	account = get_account()
+	storage = get_storage(namespace=namespace)
+	
+	#check rights on specific ctype (check ctype_to_group_access variable below)
+	if ctype in ctype_to_group_access:
+		if not check_group_rights(account,ctype_to_group_access[ctype]):
+			return HTTPError(403, 'Insufficient rights')
+
+	logger.debug("PUT:")
+
+	data = request.body.readline()
+	if not data:
+		return HTTPError(400, "No data received")
+
+	logger.debug(" + data: %s" % data)
+	logger.debug(" + data-type: %s" % type(data))
+		
+	if isinstance(data, str):
+		try:
+			data = json.loads(data)
+		except Exception, err:
+			logger.error("PUT: Impossible to parse data (%s)" % err)
+			return HTTPError(404, "Impossible to parse data")
+			
+	if not _id:
+		try:
+			_id = str(data['_id'])
+		except:
+			pass
+
+		try:
+			_id = str(data['id'])
+		except:
+			pass
+	
+	## Clean data
+	try:
+		del data['_id']
+	except:
+		pass
+
+	try:
+		del data['id']
+	except:
+		pass
+	
+	logger.debug(" + _id: "+str(_id))
+	logger.debug(" + ctype: "+str(ctype))
+	logger.debug(" + Data: "+str(data))
+	
+	try:
+		storage.update(_id, data, namespace=namespace, account=account)
+		
+	except Exception, err:
+		logger.error('Impossible to put (%s)' % err)
+		return HTTPError(403, "Access denied")
+
 
 #### DELETE
 @delete('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
