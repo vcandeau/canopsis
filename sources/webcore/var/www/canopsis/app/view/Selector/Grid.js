@@ -31,6 +31,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 	opt_menu_delete: true,
 	opt_bar_duplicate: true,
 	opt_menu_rights: true,
+	opt_bar_enable: true,
 
 	columns: [
 		{
@@ -40,6 +41,11 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
         },{
+			header: _('Enable'),
+			width: 55,
+			dataIndex: 'enable',
+			renderer: rdr_boolean
+		},{
 			header: _('Loaded'),
 			width: 55,
 			dataIndex: 'loaded',

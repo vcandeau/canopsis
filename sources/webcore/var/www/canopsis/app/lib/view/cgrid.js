@@ -45,6 +45,7 @@ Ext.define('canopsis.lib.view.cgrid' , {
 	opt_bar_search: false,
 	opt_bar_search_field: [],
 	opt_bar_time: false,
+	opt_bar_enable: false,
 	
 	//Hack , will be unified soon with the common research, just need time to
 	//rewrite the old search used by cinventory or cgrid_state
@@ -196,7 +197,17 @@ Ext.define('canopsis.lib.view.cgrid' , {
 			//--------------------Context menu---------------------
 			if (this.opt_bar) {
 				var myArray = [];
-
+				
+				if (this.opt_bar_enable) {
+					myArray.push(
+						Ext.create('Ext.Action', {
+							iconCls: 'icon-enable-disable',
+							text: _('Enable/Disable'),
+							action: 'enable-disable'
+						})
+					);
+				}
+				
 				if (this.opt_bar_delete) {
 					myArray.push(
 						Ext.create('Ext.Action', {
