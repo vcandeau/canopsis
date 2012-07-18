@@ -55,6 +55,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
+	
+	exporting_enabled: false,
 
 	showWarnCritLine: true,
 
@@ -203,7 +205,22 @@ Ext.define('widgets.line_graph.line_graph' , {
 				useUTC: false
 			},
 			exporting: {
-				enabled: false
+				enabled: this.exporting_enabled,
+				filename: this.chartTitle,
+				type: "image/svg+xml",
+				url: "/export_svg",
+				buttons: {
+					exportButton: {
+						enabled: true,
+						menuItems: null,
+						onclick: function(){
+							this.exportChart();
+						}
+					},
+					printButton: {
+						enabled: false
+					}
+				}
 			},
 			colors: [],
 			title: {
