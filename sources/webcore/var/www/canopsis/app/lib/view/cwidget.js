@@ -45,6 +45,8 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	reportMode: false,
 	exportMode: false,
+	
+	autoTitle: false,
 
 	barHeight: 27,
 
