@@ -35,6 +35,8 @@ Ext.define('widgets.weather.weather' , {
 	wcontainer_layout: 'anchor',
 	
 	option_button : true,
+	defaultHeight : undefined,
+	defaultPadding : undefined,
 	
 	selector_record : undefined,
 	sla_id: undefined,
@@ -105,9 +107,17 @@ Ext.define('widgets.weather.weather' , {
 				state_as_icon_value: this.state_as_icon_value,
 			}
 			
-			if(datas.length == 1)
+			if(datas.length == 1){
 				config.anchor = '100% 100%'
-
+			} else {
+				if(this.defaultHeight)
+					config.height = parseInt(this.defaultHeight,10)
+				config.anchor = '100%'
+			}
+			
+			if(this.defaultPadding)
+				config.padding = this.defaultPadding
+			
 			var meteo = Ext.create('widgets.weather.brick', config)
 			this.wcontainer.insert(0, meteo);
 		}
