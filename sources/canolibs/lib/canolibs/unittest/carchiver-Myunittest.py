@@ -41,10 +41,12 @@ class KnownValues(unittest.TestCase):
 		event = { 'state': 0, 'state_type': 1 }
 		event_id = 'unit.test'
 
+		print "1. Insert new event ..."
 		if not ARCHIVER.check_event(event_id, event):
 			raise Exception('[1] Invalid check ...')
 
 		time.sleep(0.2)
+		print "2. re-Insert event ..."
 		if ARCHIVER.check_event(event_id, event):
 			raise Exception('[2] Invalid check ...')
 		
@@ -52,6 +54,7 @@ class KnownValues(unittest.TestCase):
 		event = { 'state': 2, 'state_type': 0 }
 
 		time.sleep(0.2)
+		print "3. Change state ..."
 		if not ARCHIVER.check_event(event_id, event):
 			raise Exception('[3] Invalid check ...')
 
@@ -59,6 +62,7 @@ class KnownValues(unittest.TestCase):
 		event = { 'state': 0, 'state_type': 1 }
 
 		time.sleep(0.2)
+		print "4. Change state ..."
 		if not ARCHIVER.check_event(event_id, event):
 			raise Exception('[4] Invalid check ...')
 
