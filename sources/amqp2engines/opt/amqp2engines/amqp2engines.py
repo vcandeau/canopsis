@@ -144,7 +144,7 @@ def start_engines():
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
 	
-	engine_eventstore	= eventstore.engine(logging_level=logging.DEBUG)
+	engine_eventstore	= eventstore.engine(logging_level=logging.INFO)
 	engines.append(engine_eventstore)
 	
 	engine_perfstore	= perfstore.engine(	next_engines=[engine_eventstore])
