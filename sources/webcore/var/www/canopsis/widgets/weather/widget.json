@@ -24,7 +24,7 @@
 					},{
 						"xtype": "numberfield",
 						"fieldLabel": "Default margin",
-						"value": 0,
+						"value": 3,
 						"name": "defaultMargin",
 						"allowBlank": true
 					},{
@@ -38,7 +38,7 @@
 						"fieldLabel": "impair brick background color",
 						"name": "bg_impair_color",
 						"allowBlank": false,
-						"value": "#FFFFFF"
+						"value": "#FAFAFA"
 					},{
 						"xtype": "colorfield",
 						"fieldLabel": "pair brick background color",
