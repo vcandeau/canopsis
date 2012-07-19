@@ -104,7 +104,7 @@ class engine(cengine):
 				del self.selectors_events[_id]
 				
 			## store
-			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=logging.INFO)
+			self.selectors[_id] = cselector(storage=self.storage, record=record, logging_level=self.logging_level)
 			self.selectors_events[_id] = 0
 			
 			## Publish state	

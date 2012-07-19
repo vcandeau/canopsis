@@ -37,11 +37,13 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'loaded', defaultValue: false},
 		{name: 'sla', defaultValue: false},
 		{name: 'sla_timewindow', defaultValue: 0},
-		{name: 'sla_timewindow_value', defaultValue: 1},
+		{name: 'sla_timewindow_value'},
 		{name: 'sla_timewindow_unit', defaultValue: global.commonTs.month},
-		{name: 'thd_warn_sla_timewindow', defaultValue: 98},
-		{name: 'thd_crit_sla_timewindow', defaultValue: 95},
+		{name: 'thd_warn_sla_timewindow'},
+		{name: 'thd_crit_sla_timewindow'},
 		{name: 'sla_timewindow_doUnknown',  defaultValue: true},
-		{name: 'enable',  defaultValue: true}
+		{name: 'enable',  defaultValue: true},
+		{name: 'sla_output_tpl',  defaultValue: ""},
+		{name: 'output_tpl',  defaultValue: ""}
 	]
 });
