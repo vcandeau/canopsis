@@ -56,6 +56,9 @@ Ext.define('widgets.weather.weather' , {
 	iconSet : '01',
 	state_as_icon_value : false,
 	
+	wcontainer_autoScroll: true,
+	wcontainer_layout: 'anchor',
+	
 	option_button : true,
 	
 	selector_record : undefined,
@@ -66,7 +69,8 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	build : function(data){
-		if(data.event_type == 'sla'){	
+	
+		if(data['event_type'] == 'sla'){
 			//build data
 			var widget_data = {}
 			
@@ -90,15 +94,24 @@ Ext.define('widgets.weather.weather' , {
 				widget_data.button_text = _('Report issue')
 			
 			var _html = widget_weather_template.applyTemplate(widget_data);
-			this.wcontainer.update(_html)
+			
+			var meteo = Ext.create('Ext.Component', {html: _html})
+			this.wcontainer.insert(0, meteo);
+			//this.wcontainer.update(_html)
 
 		} else {
-			this.wcontainer.update('invalid selector')
+			this.wcontainer.insert(0, Ext.create('Ext.Component', {html: 'invalid selector'}));
 		}
 	},
 	
-	onRefresh : function(data){
+	onRefresh : function(datas){
 		log.debug('OnRefresh', this.logAuthor)
+		this.wcontainer.removeAll()
+		
+		for (var i in datas){
+		data = datas[i]
+		
+		console.log(data)
 		
 		this.selector_record = data
 		
@@ -110,10 +123,8 @@ Ext.define('widgets.weather.weather' , {
 			scope: this,
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
-				if ( this.nodeId.length > 1 )
-					data = data.data ;
-				else
-					data = data.data[0];
+	
+				data = data.data[0];
 		
 				this.build(data);
 			},
@@ -121,6 +132,7 @@ Ext.define('widgets.weather.weather' , {
 				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
 			}
 		});
+	}
 		
 	},
 	
