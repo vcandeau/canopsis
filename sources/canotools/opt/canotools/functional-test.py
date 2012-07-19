@@ -83,9 +83,9 @@ class KnownValues(unittest.TestCase):
 		
 	def test_2_PubState(self):
 		myamqp.publish(event, rk, exchange_name=myamqp.exchange_name_events)
-		time.sleep(1)
+		time.sleep(3)
 		
-	def test_3_Check_amqp2mongodb(self):
+	def test_3_Check_amqp2engines(self):
 		record = storage.get(rk)
 		revent = record.data
 		

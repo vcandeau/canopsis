@@ -43,6 +43,7 @@ class KnownValues(unittest.TestCase):
 		self.anonymous_account = caccount()
 		self.root_account = caccount(user="root", group="root")
 		self.user_account = caccount(user="william", group="capensis")
+		self.user2_account = caccount(user="william2", group="capensis")
 		
 		#self.anonymous_account.cat()
 		#self.user_account.cat()
@@ -90,6 +91,14 @@ class KnownValues(unittest.TestCase):
 		
 		if record.data['mydata1'] != self.data['mydata1']:
 			raise Exception('Put_field failed ...')
+			
+		# Check right
+		try:
+			STORAGE.update(ID, {'mydata1': 'toto'}, account=self.user2_account)
+			raise Exception("Update don't check write rights ...")
+		except:
+			pass
+		
 
 	def test_06_Get_field(self):
 		
