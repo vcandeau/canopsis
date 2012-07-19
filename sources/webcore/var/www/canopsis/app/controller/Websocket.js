@@ -79,13 +79,15 @@ Ext.define('canopsis.controller.Websocket', {
 
     transport_down: function() {
 		log.info('Transport Down', this.logAuthor);
-		global.notify.notify(_('Error'), _('Disconnected from websocket.'), 'error');
+		if (this.connected && global.notify)
+			global.notify.notify(_('Error'), _('Disconnected from websocket.'), 'error');
 		this.fireEvent('transport_down', this);
 	},
 
     transport_up: function() {
 		log.info('Transport Up', this.logAuthor);
-		global.notify.notify(_('Success'), _('Connected to websocket'));
+		if (! this.connected && global.notify)
+			global.notify.notify(_('Success'), _('Connected to websocket'));
 		this.fireEvent('transport_up', this);
 
 		//Re-open channel
