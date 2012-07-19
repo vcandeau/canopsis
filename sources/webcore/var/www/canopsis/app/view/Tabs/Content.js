@@ -255,9 +255,9 @@ Ext.define('canopsis.view.Tabs.Content' , {
 					};
 		this.reportingBar = Ext.widget('ReportingBar', {reloadAfterAction: true});
 
-		this.export_window = Ext.widget('window', config);
-		this.export_window.addDocked(this.reportingBar);
-		this.export_window.show();
+		this.report_window = Ext.widget('window', config);
+		this.report_window.addDocked(this.reportingBar);
+		this.report_window.show();
 
 		//switch widget to reporting mode
 		var cmps = this.getCmps();
