@@ -39,7 +39,7 @@ CONFIG = ConfigParser.RawConfigParser()
 CONFIG.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 class cstorage(object):
-	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[]):
+	def __init__(self, account, namespace='object', logging_level=logging.ERROR, mongo_host="127.0.0.1", mongo_port=27017, mongo_db='canopsis', mongo_autoconnect=True, groups=[], mongo_safe=True):
 
 		try:
 			self.mongo_host=CONFIG.get("master", "host")
@@ -56,7 +56,7 @@ class cstorage(object):
 		except:	
 			self.mongo_db=mongo_db
 		
-		self.mongo_safe=True
+		self.mongo_safe=mongo_safe
 
 		self.account = account
 
@@ -135,10 +135,12 @@ class cstorage(object):
 			raise Exception('Invalid data, must be a dict ...')
 		
 		# Check if record exist
-		count = self.count({'_id': _id}, namespace=namespace, account=account)
+		count = self.count({'_id': _id}, namespace=namespace, account=account, for_write=True)
 		if count:
 			backend = self.get_backend(namespace)
 			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
+		else:
+			raise Exception('%s not found ...' % _id)
 		
 	def put(self, _record_or_records, account=None, namespace=None):
 		if not account:
@@ -257,7 +259,7 @@ class cstorage(object):
 	def count(self, *args, **kargs):
 		return self.find(count=True, *args, **kargs)
 
-	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0):
+	def find(self, mfilter={}, mfields=None, account=None, namespace=None, one=False, count=False, sort=None, limit=0, offset=0, for_write=False):
 		if not account:
 			account = self.account
 			
@@ -272,8 +274,12 @@ class cstorage(object):
 		
 		(Read_mfilter, Write_mfilter) = self.make_mongofilter(account)
 
-		if Read_mfilter:
-			mfilter = { '$and': [ mfilter, Read_mfilter ] }
+		if for_write:
+			if Write_mfilter:
+				mfilter = { '$and': [ mfilter, Write_mfilter ] }
+		else:
+			if Read_mfilter:
+				mfilter = { '$and': [ mfilter, Read_mfilter ] }
 
 		self.logger.debug(" + fields : %s" % mfields)
 		self.logger.debug(" + mfilter: %s" % mfilter)
