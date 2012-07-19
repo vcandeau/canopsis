@@ -110,7 +110,7 @@ class cselector(crecord):
 		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
 		output_tpl		= self.data.get('output_tpl', None)
 		
-		if output_tpl != "":
+		if output_tpl and output_tpl != "":
 			self.output_tpl = output_tpl
 		
 	def setMfilter(self, filter):
