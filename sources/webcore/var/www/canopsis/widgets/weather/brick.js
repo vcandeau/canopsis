@@ -25,7 +25,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 				'<td class="left_panel">',
 					'<div class="first_sub_section">',
 						'<p class="title">{title}</p>',
-						'<p class="comment">{output}</p>',
+						'<p id="{brick_Component_id}-output" class="comment">{output}</p>',
 					'</div>',
 				/*	'<div class="second_sub_section">',
 						'<tpl if="button_text != undefined">',
@@ -37,8 +37,8 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 					'</div>',*/
 				'</td>',
 				'<td class="right_panel">',
-					'<div class="logo {class_icon}"><p>{percent}%</p></div>',
-					'<div class="legend">{legend}</div>',
+					'<div id="{brick_Component_id}-icon" class="logo {class_icon}"><p>{percent}%</p></div>',
+					'<div id="{brick_Component_id}-legend" class="legend">{legend}</div>',
 				'</td>',
 			'</tr>',
 		'</table',
@@ -56,26 +56,30 @@ Ext.define('widgets.weather.brick' , {
 	initComponent: function() {
 		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)		
 		this.callParent(arguments);
-		
+		this.getSla(this.build)
+	},
+	
+	//get sla data and give it to callback function
+	getSla : function(callback){
 		Ext.Ajax.request({
 			url: '/rest/events/event/' + this.sla_id,
 			scope: this,
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
-
 				data = data.data[0];
-
-				if(data['event_type'] == 'sla')
-					this.build(data);
-				else
-					log.debug('Incorrect selector type: not SLA')
+				callback.call(this,data);
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
 			}
 		});
 	},
-
+	
+	//here for the future, for another update function
+	update_brick : function(){
+		this.getSla(this.build)
+	},
+	
 	build: function(data){
 		log.debug('Build html for ' + this.sla_id,this.logAuthor)
 		var widget_data = {}
@@ -98,17 +102,24 @@ Ext.define('widgets.weather.brick' , {
 	
 		if(this.option_button == true)
 			widget_data.button_text = _('Report issue')
+			
+		widget_data.brick_Component_id = this.id
 		
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
+		
+		//this.getElements()
 	},
-
-
 /*
-	afterRender: function() {
-		this.callParent(arguments);
-	}
-*/
+	getElements: function() {
+		var el = this.getEl();
+		this.el_logo = el.getById(this.id + '-icon')
+		this.el_logo_percent = 
+		this.el_legend = el.getById(this.id + '-legend')
+		this.el_ouput = el.getById(this.id + '-output')
+	},
+	**/
+
 	getIcon: function(value){
 		value = Math.floor(value/10) *10
 		switch(value){
