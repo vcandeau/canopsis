@@ -88,6 +88,9 @@ Ext.define('widgets.weather.weather' , {
 		log.debug('OnRefresh', this.logAuthor)
 		this.wcontainer.removeAll()
 
+		if(!Ext.isArray(datas))
+			datas = [datas]
+
 		for (var i in datas){
 			data = datas[i]
 
