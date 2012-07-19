@@ -72,7 +72,7 @@ class engine(cengine):
 		self.tags_ids = []
 		
 		## Extract ids resolved by selectors
-		datas = self.storage.find({ 'crecord_type': 'selector', 'rk': { '$exists' : True } }, mfields=['_id', 'crecord_name', 'ids'], namespace="object")
+		datas = self.storage.find({ 'crecord_type': 'selector', 'enable': True, 'rk': { '$exists' : True } }, mfields=['_id', 'crecord_name', 'ids'], namespace="object")
 		for data in datas:
 			_id = data.get('_id')
 			ids = data.get('ids')

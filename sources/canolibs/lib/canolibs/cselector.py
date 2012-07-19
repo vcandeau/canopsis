@@ -59,6 +59,8 @@ class cselector(crecord):
 		self.last_nb_records = 0
 		
 		self.last_event = None
+		
+		self.output_tpl="{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
 
 		self._ids = []
 		
@@ -91,6 +93,7 @@ class cselector(crecord):
 		self.data['mfilter']		= json.dumps(self.mfilter)
 		self.data['namespace']		= self.namespace
 		self.data['rk']				= self.rk
+		self.data['output_tpl']		= self.output_tpl
 
 		return crecord.dump(self)
 
@@ -105,6 +108,10 @@ class cselector(crecord):
 		self.rk 			= self.data.get('rk', self.rk)
 		self.include_ids	= self.data.get('include_ids', self.include_ids)
 		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
+		output_tpl		= self.data.get('output_tpl', None)
+		
+		if output_tpl != "":
+			self.output_tpl = output_tpl
 		
 	def setMfilter(self, filter):
 		try:
@@ -275,21 +282,27 @@ class cselector(crecord):
 			
 		self.logger.debug(" + total: %s" % total)
 		
-		states_str = ("Ok", "Warning", "Critical")
-		states_metric = ("cps_sel_state_ok", "cps_sel_state_warn", "cps_sel_state_crit")
+		# Create perfdata array
+		output_data = {}
 		for i in [0, 1, 2]:
 			value = 0
 			try:
 				value = states[i]
 			except:
 				pass
-				
-			output += "%s %s, " % (value, states_str[i])
-			perf_data_array.append({"metric": states_metric[i], "value": value, "max": total})
-		
-		# remove ", " at the end
-		if output:
-			output = output[0:len(output)-2]
+			
+			metric = "cps_sel_state_%s" % i
+			output_data[metric] = value
+			perf_data_array.append({"metric": metric, "value": value, "max": total})
+			
+		output_data['total'] = total
+	
+		# Fill template
+		self.logger.debug(" + output TPL: %s" % self.output_tpl)
+		output = self.output_tpl
+		if output_data:
+			for key in output_data:
+				output = output.replace("{%s}" % key, str(output_data[key]))
 				
 		self.logger.debug(" + output: %s" % output)
 		self.logger.debug(" + long_output: %s" % long_output)
