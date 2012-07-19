@@ -112,6 +112,8 @@ class KnownValues(unittest.TestCase):
 		except:
 			pass
 			
+		del event_alert['last_state_change']
+			
 		if event_alert != event:
 			print "event_alert: %s" % event_alert
 			print "event: %s" % event
