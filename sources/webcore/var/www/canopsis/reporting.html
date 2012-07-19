@@ -48,7 +48,7 @@
 </head>
 <body>
 	
-	<div id='container' style='height:900'></div>
+	<div id='container' style='height:900;'></div>
 
 	<!--<script type="text/javascript" src="resources/lib/extjs/ext.js"></script>-->
 	<script type="text/javascript" src="resources/lib/extjs/ext-all.js"></script>
@@ -112,12 +112,12 @@
 		var to_date =  new Date(parseInt(export_to,10))
 		
 		var t = new Ext.Template(
-			'<div name="{id}" style="{style}">',
+			'<div id="{id}" name="{id}" style="{style}">',
 				'<span>{from}      {to}</span>',
 			'</div>',
 			{compiled: true}
 		);
-				
+		
 		var document_body = Ext.getBody()
 		
 		t.insertFirst(document_body, {
@@ -169,20 +169,20 @@
 				content.on('loaded',function(){
 					var options = $('#' + content.container.id).jqGridable('get_options')
 					//log.dump(options)
-					var rows = options.rows
-					var height = options.widget_height
-					var new_height = rows * height
 					
-					log.debug('[Reporting] height is : ' + rows + ' * ' + height)
+					var jqg_height = options.rows * options.widget_height
+					var header_height = $('#interval_header').height()
 					
-					$('#' + content.container.id).height(new_height)
-					$('#' + content.id).height(new_height)
-					$('body').height(new_height)
+					log.debug('[Reporting] jqg_height: ' + jqg_height)
+					log.debug('[Reporting] header_height: ' + header_height)
 					
-					log.debug('[Reporting] computed height : ' + rows * height)
-					log.debug('[Reporting] new height : ' + document.body.style.height)
-					log.debug('[Reporting] new body height : ' + $('body').height())
-					log.debug('[Reporting] container height : ' + $('#' + content.container.id).height())
+					var total_height = jqg_height + header_height
+					
+					$('#' + content.container.id).height(total_height)
+					$('#' + content.id).height(total_height)
+					$('body').height(total_height)
+				
+					log.debug('[Reporting] Body height : ' + $('body').height())
 				});
 				
 				//--------------------aware wkhtml that loading is finished----
