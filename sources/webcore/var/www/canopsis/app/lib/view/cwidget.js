@@ -198,7 +198,6 @@ Ext.define('canopsis.lib.view.cwidget' , {
 			}
 		}
 
-
 		var done = this.doRefresh(from, to);
 		if (done != false)
 			this.lastRefresh = Ext.Date.now();
