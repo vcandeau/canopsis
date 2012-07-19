@@ -52,9 +52,21 @@ Ext.define('widgets.weather.brick' , {
 	logAuthor: '[widget][weather][brick]',
 	
 	sla_id: undefined,
+	brick_number: undefined,
+	iconSet: 1,
+	state_as_icon_value: false,
+	bg_impair_color: '#FFFFF',
+	bg_pair_color:  '#FFFFF',
 	
 	initComponent: function() {
 		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
+		
+		if((this.brick_number % 2) == 0){
+			this.style = {'background-color': this.bg_pair_color}
+		}else{
+			this.style = {'background-color': this.bg_impair_color}
+		}
+		
 		this.callParent(arguments);
 		this.getSla(this.build);
 	},

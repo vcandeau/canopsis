@@ -27,19 +27,20 @@ Ext.define('widgets.weather.weather' , {
 	border: false,
 	
 	cls: 'widget-weather',
-	
-	iconSet : '01',
-	state_as_icon_value : false,
-	
+
 	wcontainer_autoScroll: true,
 	wcontainer_layout: 'anchor',
-	
-	option_button : true,
-	defaultHeight : undefined,
-	defaultPadding : undefined,
-	
+
 	selector_record : undefined,
 	sla_id: undefined,
+	
+	//brick options
+	iconSet : '01',
+	defaultHeight : undefined,
+	defaultPadding : undefined,
+	state_as_icon_value : false,
+	bg_impair_color: undefined,
+	bg_pair_color: undefined,
 	
 	afterContainerRender: function() {
 		if (this.nodeId) {
@@ -102,9 +103,12 @@ Ext.define('widgets.weather.weather' , {
 			var sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
 
 			var config = {
+				brick_number: i,
 				sla_id: sla_id,
 				iconSet: this.iconSet,
 				state_as_icon_value: this.state_as_icon_value,
+				bg_impair_color: this.bg_impair_color,
+				bg_pair_color: this.bg_pair_color
 			}
 			
 			if(datas.length == 1){

@@ -19,12 +19,26 @@
 						"xtype": "textfield",
 						"fieldLabel": "Default padding",
 						"value": "3",
-						"name": "defaultPadding"
+						"name": "defaultPadding",
+						"allowBlank": true
 					},{
 						"xtype": "textfield",
 						"fieldLabel": "Default height",
 						"value" : 100,
-						"name": "defaultHeight"
+						"name": "defaultHeight",
+						"allowBlank": true
+					},{
+						"xtype": "colorfield",
+						"fieldLabel": "impair brick background color",
+						"name": "bg_impair_color",
+						"allowBlank": false,
+						"value": "#FFFFFF"
+					},{
+						"xtype": "colorfield",
+						"fieldLabel": "pair brick background color",
+						"name": "bg_pair_color",
+						"allowBlank": false,
+						"value": "#FFFFFF"
 					}]
 				},{
 					"xtype": "fieldset",
@@ -35,6 +49,16 @@
 						"fieldLabel": "Use selector state as icon value",
 						"checked": false,
 						"name": "state_as_icon_value"
+					}]
+				},{
+					"xtype": "fieldset",
+					"title": "Icon",
+					"collapsible": false,
+					"items": [{
+						"xtype": "numberfield",
+						"fieldLabel": "Icon type",
+						"value": 1,
+						"name": "iconSet"
 					}]
 				}]
 			},
