@@ -45,6 +45,8 @@ class engine(cengine):
 		self.thd_crit_sla_timewindow = 95
 		self.default_sla_timewindow = 60*60*24 # 1 day
 		
+		self.default_sla_output_tpl="{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown"
+		
 		self.perfstorage = mongostore(mongo_collection='perfdata')
 
 	def pre_run(self):
@@ -189,6 +191,11 @@ class engine(cengine):
 		thd_warn_sla_timewindow = config.get('thd_warn_sla_timewindow', self.thd_warn_sla_timewindow)
 		thd_crit_sla_timewindow = config.get('thd_crit_sla_timewindow', self.thd_crit_sla_timewindow)
 		
+		sla_output_tpl = config.get('sla_output_tpl', self.default_sla_output_tpl)
+		
+		if sla_output_tpl == "":
+			sla_output_tpl = self.default_sla_output_tpl
+		
 		# Prevent empty string
 		if not thd_warn_sla_timewindow:
 			thd_warn_sla_timewindow = self.thd_warn_sla_timewindow
@@ -204,6 +211,7 @@ class engine(cengine):
 		stop = int(time.time())
 		start = stop - sla_timewindow
 		
+		self.logger.debug(" + output TPL:     %s" % sla_output_tpl)
 		self.logger.debug(" + Thd Warning:    %s" % thd_warn_sla_timewindow)
 		self.logger.debug(" + Thd Critical:   %s" % thd_crit_sla_timewindow)
 		self.logger.debug(" + do Unknown:     %s" % sla_timewindow_doUnknown)
@@ -248,28 +256,31 @@ class engine(cengine):
 		
 		## Calcul PCT
 		perf_data_array = []
-		output = ""
+		output_data = {}
 		states_pct = states.copy()
 		for state in states:
 			states_pct[state] = 0
 			if states_sum[state] > 0:
 				states_pct[state] = round((states_sum[state] * 100) / float(total), 3)
-				
-			output += "%s%% %s, " % (states_pct[state], states_str[state])
-		
-			perf_data_array.append({"metric": 'cps_pct_by_state_%s' % state, "value": states_pct[state], "max": 100, "unit": "%"})
-		
-		# remove ", " at the end
-		if output:
-			output = output[0:len(output)-2]
 			
+			metric = 'cps_pct_by_state_%s' % state
+			output_data[metric] = states_pct[state]
+			perf_data_array.append({"metric": metric, "value": states_pct[state], "max": 100, "unit": "%"})
+		
+		# Fill template
+		output = sla_output_tpl
+		if output_data:
+			for key in output_data:
+				output = output.replace("{%s}" % key, str(output_data[key]))
+				
+		self.logger.debug(" + output: %s" % output)
+		
 		state = 0
 		if states_pct[0] < thd_warn_sla_timewindow:
 			state = 1
 		if states_pct[0] < thd_crit_sla_timewindow:
 			state = 2
 		
-		self.logger.debug(output)
 		self.logger.debug(" + State: %s (%s)" % (states_str[state], state))
 		
 		# Send event

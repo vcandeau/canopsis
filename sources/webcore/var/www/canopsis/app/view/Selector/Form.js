@@ -24,6 +24,10 @@ Ext.define('canopsis.view.Selector.Form', {
 	alias: 'widget.SelectorForm',
 
 	defaultType: undefined,
+	
+	fieldDefaults: {
+		labelWidth: 150
+	},	
 
     initComponent: function() {
 
@@ -35,26 +39,44 @@ Ext.define('canopsis.view.Selector.Form', {
 				plain: true,
 				border: false,
 				defaults: {
-					border: false
+					border: false,
+					autoScroll: true
 				},
 				items: [
 					{
-						title: _('General'),
+						title: _('Options'),
 						defaultType: 'textfield',
 						bodyStyle: 'padding:5px 5px 0',
+						layout: 'anchor',
+						/*defaults: {
+							anchor: '100%'
+						},*/
 						items: [
 							{
 								name: '_id',
 								hidden: true
 							},
 							{
-								fieldLabel: _('Name'),
-								name: 'crecord_name',
-								allowBlank: false
-							},{
-								fieldLabel: _('Description'),
-								xtype: 'textareafield',
-								name: 'description'
+								xtype:'fieldset',
+								title: _('General'),
+								defaultType: 'textfield',
+								items: [
+									{
+										fieldLabel: _('Name'),
+										name: 'crecord_name',
+										allowBlank: false
+									},{
+										fieldLabel: _('Description'),
+										xtype: 'textareafield',
+										name: 'description'
+									},{
+										fieldLabel: _('Output Template'),
+										xtype: 'textareafield',
+										name: 'output_tpl',
+										anchor: '100%',
+										value: '{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical'
+									}
+								]
 							},{
 								xtype:'fieldset',
 								checkboxToggle: true,
@@ -84,6 +106,7 @@ Ext.define('canopsis.view.Selector.Form', {
 												displayField: 'text',
 												width: 90,
 												valueField: 'value',
+												value: global.commonTs.day,
 												store: {
 													xtype: 'store',
 													fields: ['value', 'text'],
@@ -108,6 +131,7 @@ Ext.define('canopsis.view.Selector.Form', {
 										name: 'thd_warn_sla_timewindow',
 										minValue: 1,
 										maxValue: 100,
+										value: 98,
 										allowBlank: true
 									},{
 										xtype: 'numberfield',
@@ -115,7 +139,14 @@ Ext.define('canopsis.view.Selector.Form', {
 										name: 'thd_crit_sla_timewindow',
 										minValue: 1,
 										maxValue: 100,
+										value: 95,
 										allowBlank: true
+									},{
+										fieldLabel: _('Output Template'),
+										xtype: 'textareafield',
+										name: 'sla_output_tpl',
+										anchor: '100%',
+										value: '{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown'
 									}
 								]
 							}
