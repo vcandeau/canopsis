@@ -62,12 +62,60 @@ Ext.define('widgets.weather.weather' , {
 	option_button : true,
 	
 	selector_record : undefined,
+	sla_id: undefined,
 	
 	initComponent: function() {
 		log.debug('Initialize...' , this.logAuthor)
 		this.callParent(arguments);
 	},
+	/*
+	doRefresh: function(from, to) {
+		log.debug('Do refresh',this.logAuthor)
+		//get selector info
+		if(!this.selector_record)
+			this.getNodeInfo()
+			
+		if(this.reportMode == true){
+			log.debug('reportMode enabled',this.logAuthor)
+			log.dump(this.getStateFromTs(from,to))
+		}else{
+			this._onRefresh(this.selector_record)
+		}
+	},
+	*/
+	
+	onRefresh : function(datas){
+		log.debug('OnRefresh', this.logAuthor)
+		this.wcontainer.removeAll()
 
+		for (var i in datas){
+			data = datas[i]
+
+			console.log(data)
+
+			this.selector_record = data
+
+			sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
+			log.debug('Searching sla resource: ' + sla_id, this.logAuthor)
+
+			Ext.Ajax.request({
+				url: '/rest/events/event/' + sla_id,
+				scope: this,
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+
+					data = data.data[0];
+
+					this.build(data);
+				},
+				failure: function(result, request) {
+					log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+				}
+			});
+		}
+	},
+	
+	
 	build : function(data){
 	
 		if(data['event_type'] == 'sla'){
@@ -104,37 +152,67 @@ Ext.define('widgets.weather.weather' , {
 		}
 	},
 	
-	onRefresh : function(datas){
-		log.debug('OnRefresh', this.logAuthor)
-		this.wcontainer.removeAll()
-		
-		for (var i in datas){
-		data = datas[i]
-		
-		console.log(data)
-		
-		this.selector_record = data
-		
-		sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
-		log.debug('Searching sla resource: ' + sla_id, this.logAuthor)
-		
+
+	getStateFromTs : function(from,to){
+		var post_params = [{id:this.sla_id,metrics:['cps_pct_by_state_0']}]
+
 		Ext.Ajax.request({
-			url: '/rest/events/event/' + sla_id,
+			url: '/perfstore/values/' + from +'/'+ to ,
+			params: {'nodes':Ext.JSON.encode(post_params)},
 			scope: this,
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
-	
+
 				data = data.data[0];
 		
 				this.build(data);
+
+				this.displayReport(data.data[0]);
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
 			}
 		});
-	}
-		
 	},
+		
+	
+	displayReport : function(data){
+		var widget_data = {
+				title: this.selector_record.component,
+				percent: data.values[0][1],
+				class_icon: data.values[0][1]
+			}
+		/*
+		if(data && data.values)
+			widget_data.percent = data.values[0][1]*/
+		
+		var _html = widget_weather_template.applyTemplate(widget_data);
+		this.wcontainer.update(_html)
+	},
+	/*
+	getNodeInfo: function() {
+		if (this.nodeId) {
+			Ext.Ajax.request({
+				url: this.uri + '/' + this.nodeId,
+				scope: this,
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+					if ( this.nodeId.length > 1 )
+						data = data.data ;
+					else
+						data = data.data[0];
+					
+					log.dump(data)
+					this.selector_record = data;
+					this.sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
+				},
+				failure: function(result, request) {
+					log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+				}
+			});
+		}
+	},
+	*/
 	
 	getIcon: function(value){
 		value = Math.floor(value/10) *10
