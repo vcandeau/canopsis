@@ -13,6 +13,21 @@
 				"title" : "Options",
 				"items" : [{
 					"xtype": "fieldset",
+					"title": "Display options",
+					"collapsible": false,
+					"items": [{
+						"xtype": "textfield",
+						"fieldLabel": "Default padding",
+						"value": "3",
+						"name": "defaultPadding"
+					},{
+						"xtype": "textfield",
+						"fieldLabel": "Default height",
+						"value" : 100,
+						"name": "defaultHeight"
+					}]
+				},{
+					"xtype": "fieldset",
 					"title": "Values",
 					"collapsible": false,
 					"items": [{
