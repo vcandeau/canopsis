@@ -38,6 +38,7 @@ Ext.define('widgets.weather.weather' , {
 	iconSet : '01',
 	defaultHeight : undefined,
 	defaultPadding : undefined,
+	defaultMargin : undefined,
 	state_as_icon_value : false,
 	bg_impair_color: undefined,
 	bg_pair_color: undefined,
@@ -121,6 +122,9 @@ Ext.define('widgets.weather.weather' , {
 			
 			if(this.defaultPadding)
 				config.padding = this.defaultPadding
+			
+			if(this.defaultMargin)
+				config.margin = this.defaultMargin
 			
 			var meteo = Ext.create('widgets.weather.brick', config)
 			this.wcontainer.insert(0, meteo);

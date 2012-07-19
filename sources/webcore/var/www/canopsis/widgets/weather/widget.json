@@ -16,13 +16,19 @@
 					"title": "Display options",
 					"collapsible": false,
 					"items": [{
-						"xtype": "textfield",
+						"xtype": "numberfield",
 						"fieldLabel": "Default padding",
-						"value": "3",
+						"value": 3,
 						"name": "defaultPadding",
 						"allowBlank": true
 					},{
-						"xtype": "textfield",
+						"xtype": "numberfield",
+						"fieldLabel": "Default margin",
+						"value": 0,
+						"name": "defaultMargin",
+						"allowBlank": true
+					},{
+						"xtype": "numberfield",
 						"fieldLabel": "Default height",
 						"value" : 100,
 						"name": "defaultHeight",
