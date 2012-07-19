@@ -43,6 +43,13 @@ Ext.define('widgets.weather.weather' , {
 	bg_impair_color: undefined,
 	bg_pair_color: undefined,
 	
+	initComponent: function() {
+		if(this.exportMode)
+			this.wcontainer_autoScroll = false
+		
+		this.callParent(arguments);
+	},
+	
 	afterContainerRender: function() {
 		if (this.nodeId) {
 			Ext.Ajax.request({
