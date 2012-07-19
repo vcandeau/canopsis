@@ -158,26 +158,32 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			var view_options = this.getViewOptions();
 
 		var store = Ext.data.StoreManager.lookup('Views');
-		var record = Ext.create('canopsis.model.View', data);
 
 		if (this.view_id) {
-			log.debug('editing view', this.logAuthor);
-			record.set('id', this.view_id);
-			record.set('crecord_name', this.view.crecord_name);
+			log.debug(' + Update view', this.logAuthor);
+			var record = store.getById(this.view_id);
+			//Update record
+			record.set({
+				'crecord_name': this.view.crecord_name,
+				'items': dump,
+				'view_options': view_options
+			});
+			
 		} else {
-			log.debug('new view');
+			log.debug(' + New view', this.logAuthor);
 			if (this.options.viewName) {
-				viewName = this.options.viewName;
-				record.set('crecord_name', this.options.viewName);
-				record.set('id', 'view.' + global.account.user + '.' + viewName.replace(/ /g, '_'));
+				var viewName = this.options.viewName;
+				data['crecord_name'] = viewName
+				data['id'] = 'view.' + global.account.user + '.' + viewName.replace(/ /g, '_')
+				data['view_options'] = view_options
+				data['leaf'] = true
+				
+				// Add record
+				var record = Ext.create('canopsis.model.View', data);
+				store.add(record);
 			}
 		}
-		record.set('items', dump);
-		record.set('view_options', view_options);
-		record.set('leaf', true);
-
-		store.add(record);
-
+		
 		this.dump = dump;
 
 		this.startAllTasks();
