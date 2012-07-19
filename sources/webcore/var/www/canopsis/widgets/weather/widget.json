@@ -13,6 +13,41 @@
 				"title" : "Options",
 				"items" : [{
 					"xtype": "fieldset",
+					"title": "Display options",
+					"collapsible": false,
+					"items": [{
+						"xtype": "numberfield",
+						"fieldLabel": "Default padding",
+						"value": 3,
+						"name": "defaultPadding",
+						"allowBlank": true
+					},{
+						"xtype": "numberfield",
+						"fieldLabel": "Default margin",
+						"value": 0,
+						"name": "defaultMargin",
+						"allowBlank": true
+					},{
+						"xtype": "numberfield",
+						"fieldLabel": "Default height",
+						"value" : 100,
+						"name": "defaultHeight",
+						"allowBlank": true
+					},{
+						"xtype": "colorfield",
+						"fieldLabel": "impair brick background color",
+						"name": "bg_impair_color",
+						"allowBlank": false,
+						"value": "#FFFFFF"
+					},{
+						"xtype": "colorfield",
+						"fieldLabel": "pair brick background color",
+						"name": "bg_pair_color",
+						"allowBlank": false,
+						"value": "#FFFFFF"
+					}]
+				},{
+					"xtype": "fieldset",
 					"title": "Values",
 					"collapsible": false,
 					"items": [{
@@ -20,6 +55,16 @@
 						"fieldLabel": "Use selector state as icon value",
 						"checked": false,
 						"name": "state_as_icon_value"
+					}]
+				},{
+					"xtype": "fieldset",
+					"title": "Icon",
+					"collapsible": false,
+					"items": [{
+						"xtype": "numberfield",
+						"fieldLabel": "Icon type",
+						"value": 1,
+						"name": "iconSet"
 					}]
 				}]
 			},
