@@ -69,6 +69,8 @@ Ext.define('widgets.weather.brick' , {
 		
 		this.callParent(arguments);
 		this.getSla(this.build);
+		
+		this.on('resize',function(){log.debug('frswgrqgrqzgeqzefzqgqz')})
 	},
 	
 	//get sla data and give it to callback function
@@ -98,6 +100,7 @@ Ext.define('widgets.weather.brick' , {
 		
 		widget_data.title = data.component
 		widget_data.legend = rdr_elapsed_time(data.last_state_change)
+		//widget_data.legend = 'since 18/05/08'
 		//widget_data.alert_comment = '0:00am to 9:00am'
 		widget_data.percent = data.perf_data_array[0].value
 
