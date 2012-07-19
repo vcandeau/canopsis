@@ -28,7 +28,7 @@
 				"items" : [{
 					"xtype":"cinventory",
 					"name" : "nodes",
-					"multiSelect": false,
+					"multiSelect": true,
 					"event_type": "selector",
 					"base_filter" : {"event_type":"selector"}
 				}]
