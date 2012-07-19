@@ -43,6 +43,13 @@ Ext.define('widgets.weather.weather' , {
 	bg_impair_color: undefined,
 	bg_pair_color: undefined,
 	
+	initComponent: function() {
+		if(this.exportMode)
+			this.wcontainer_autoScroll = false
+		
+		this.callParent(arguments);
+	},
+	
 	afterContainerRender: function() {
 		if (this.nodeId) {
 			Ext.Ajax.request({
@@ -84,11 +91,9 @@ Ext.define('widgets.weather.weather' , {
 	
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
-		for (var i = 0; i < this.wcontainer.items.length; i++) {
-			var brick = this.wcontainer.getComponent(i);
-			if(brick)
-				brick.update_brick()
-		}
+		
+		for (var i = 0; i < this.wcontainer.items.length; i++)
+			this.wcontainer.getComponent(i).update_brick();
 	},
 	
 	
