@@ -79,7 +79,9 @@ Ext.define('widgets.weather.weather' , {
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
 		for (var i = 0; i < this.wcontainer.items.length; i++) {
-			log.debug('refresh component', this.logAuthor)
+			var brick = this.wcontainer.getComponent(i);
+			if(brick)
+				brick.update_brick()
 		}
 	},
 	
