@@ -57,7 +57,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			log.debug('----------------------------------------------------------------');
 			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
-			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
+			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
 		}
 	},
 
