@@ -34,8 +34,8 @@ sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
 DAEMON_NAME="amqp2engines"
 
 init 	= cinit()
-#logger 	= init.getLogger(DAEMON_NAME, level="DEBUG")
-logger 	= init.getLogger(DAEMON_NAME)
+logger 	= init.getLogger(DAEMON_NAME, level="DEBUG")
+#logger 	= init.getLogger(DAEMON_NAME)
 handler = init.getHandler(logger)
 
 engines=[]
@@ -144,7 +144,7 @@ def start_engines():
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
 	
-	engine_eventstore	= eventstore.engine()
+	engine_eventstore	= eventstore.engine(logging_level=logging.DEBUG)
 	engines.append(engine_eventstore)
 	
 	engine_perfstore	= perfstore.engine(	next_engines=[engine_eventstore])
