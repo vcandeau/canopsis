@@ -102,8 +102,11 @@ Ext.define('widgets.weather.weather' , {
 			var config = {
 				sla_id: sla_id,
 				iconSet: this.iconSet,
-				state_as_icon_value: this.state_as_icon_value
+				state_as_icon_value: this.state_as_icon_value,
 			}
+			
+			if(datas.length == 1)
+				config.anchor = '100% 100%'
 
 			var meteo = Ext.create('widgets.weather.brick', config)
 			this.wcontainer.insert(0, meteo);
