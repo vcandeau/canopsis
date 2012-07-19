@@ -130,7 +130,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 	exitButton: function() {
 		log.debug('Exit reporting mode', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		tab.export_window.destroy();
+		tab.report_window.destroy();
 		this.getController('Tabs').reload_active_view();
 	},
 
