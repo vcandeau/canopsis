@@ -39,6 +39,29 @@ Ext.define('widgets.weather.weather' , {
 	selector_record : undefined,
 	sla_id: undefined,
 	
+	afterContainerRender: function() {
+		if (this.nodeId) {
+			Ext.Ajax.request({
+				url: this.uri + '/' + this.nodeId,
+				scope: this,
+				success: function(response) {
+					var data = Ext.JSON.decode(response.responseText);
+					if ( this.nodeId.length > 1 )
+						data = data.data ;
+					else
+						data = data.data[0];
+						
+					this.selector_record = data
+					this.populate(data);
+				},
+				failure: function(result, request) {
+					log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+				}
+			});
+		}
+	},
+	
+		
 	/*
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
@@ -54,27 +77,6 @@ Ext.define('widgets.weather.weather' , {
 		}
 	},
 	*/
-	
-	afterContainerRender: function() {
-		if (this.nodeId) {
-			Ext.Ajax.request({
-				url: this.uri + '/' + this.nodeId,
-				scope: this,
-				success: function(response) {
-					var data = Ext.JSON.decode(response.responseText);
-					if ( this.nodeId.length > 1 )
-						data = data.data ;
-					else
-						data = data.data[0];
-						
-					this.populate(data);
-				},
-				failure: function(result, request) {
-					log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
-				}
-			});
-		}
-	},
 	
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
@@ -94,9 +96,7 @@ Ext.define('widgets.weather.weather' , {
 			datas = [datas]
 
 		for (var i in datas){
-			data = datas[i]
-			this.selector_record = data
-
+			var data = datas[i]
 			var sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
 
 			var config = {
@@ -110,7 +110,7 @@ Ext.define('widgets.weather.weather' , {
 		}
 	},
 	
-
+/*
 	getStateFromTs : function(from,to){
 		var post_params = [{id:this.sla_id,metrics:['cps_pct_by_state_0']}]
 
@@ -132,7 +132,7 @@ Ext.define('widgets.weather.weather' , {
 			}
 		});
 	},
-		
+
 	
 	displayReport : function(data){
 		var widget_data = {
@@ -140,12 +140,10 @@ Ext.define('widgets.weather.weather' , {
 				percent: data.values[0][1],
 				class_icon: data.values[0][1]
 			}
-		/*
-		if(data && data.values)
-			widget_data.percent = data.values[0][1]*/
 		
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.wcontainer.update(_html)
 	},
+	* */
 	
 });
