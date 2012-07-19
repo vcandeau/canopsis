@@ -54,9 +54,9 @@ Ext.define('widgets.weather.brick' , {
 	sla_id: undefined,
 	
 	initComponent: function() {
-		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)		
+		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
 		this.callParent(arguments);
-		this.getSla(this.build)
+		this.getSla(this.build);
 	},
 	
 	//get sla data and give it to callback function
