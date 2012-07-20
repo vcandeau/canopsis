@@ -104,6 +104,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			
 			//date + hour in seconds + minute in second
 			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60)
+			timestamp = timestamp + (new Date().getTimezoneOffset() * 60)
 		}else{
 			var timestamp = undefined
 		}
@@ -121,6 +122,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			
 			//date + hour in seconds + minute in second
 			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60)
+			timestamp = timestamp + (new Date().getTimezoneOffset() * 60)
 		}else{
 			var timestamp = undefined
 		}
