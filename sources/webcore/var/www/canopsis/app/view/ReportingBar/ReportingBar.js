@@ -82,7 +82,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			xtype: 'button',
 			iconCls: 'icon-run',
 			action: 'search',
-			tooltip: _('Export this view to pdf')
+			tooltip: _('Display data of the selected time')
 		});
 		
 		this.saveButton = this.add({

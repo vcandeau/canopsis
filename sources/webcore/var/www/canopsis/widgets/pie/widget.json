@@ -4,7 +4,7 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype":"pie",
-	"description": "Display perfdata pie",
+	"description": "Display perfdata as a pie chart.",
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
