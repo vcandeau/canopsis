@@ -48,6 +48,8 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	exportMode: false,
 	export_from: undefined,
 	export_to: undefined,
+	
+	record: undefined,
 
 	//Locales
 	locales: {
@@ -147,7 +149,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	saveView: function(dump) {
 		//ajax request with dump sending
-		log.debug('Saving view requested', this.logAuthor);
+		log.debug('Saving view '+this.view_id, this.logAuthor);
 
 		if (dump == undefined) {
 			dump = this.dumpJqGridable();
@@ -157,31 +159,14 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		if (this.getViewOptions)
 			var view_options = this.getViewOptions();
 
-		var store = Ext.data.StoreManager.lookup('Views');
-
-		if (this.view_id) {
-			log.debug(' + Update view', this.logAuthor);
-			var record = store.getById(this.view_id);
-			//Update record
-			record.set({
+		// Update view
+		if (this.view_id){
+			var data = {
 				'crecord_name': this.view.crecord_name,
 				'items': dump,
 				'view_options': view_options
-			});
-			
-		} else {
-			log.debug(' + New view', this.logAuthor);
-			if (this.options.viewName) {
-				var viewName = this.options.viewName;
-				data['crecord_name'] = viewName
-				data['id'] = 'view.' + global.account.user + '.' + viewName.replace(/ /g, '_')
-				data['view_options'] = view_options
-				data['leaf'] = true
-				
-				// Add record
-				var record = Ext.create('canopsis.model.View', data);
-				store.add(record);
 			}
+			updateRecord('object', 'view', 'canopsis.model.View', this.view_id, data)
 		}
 		
 		this.dump = dump;
@@ -190,8 +175,6 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 		//apply new view style
 		this.applyViewOptions(view_options);
-
-		global.notify.notify(_('View') + ' ' + record.get('crecord_name'), _('Saved'));
 	},
 
 	//Binding

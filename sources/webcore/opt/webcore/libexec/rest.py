@@ -63,6 +63,11 @@ def rest_get(namespace, ctype=None, _id=None):
 	onlyWritable	= request.params.get('onlyWritable', default=False)
 	ids			= request.params.get('ids', default=[])
 	
+	get_id			= request.params.get('_id', default=None)
+	
+	if not _id and get_id:
+		_id  = get_id
+	
 	if not isinstance(ids, list):
 		try:
 			ids = json.loads(ids)
@@ -178,7 +183,7 @@ def rest_get(namespace, ctype=None, _id=None):
 #### POST
 @post('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
 @post('/rest/:namespace/:ctype',	apply=[check_auth])
-def rest_put(namespace, ctype, _id=None):
+def rest_post(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
 	storage = get_storage(namespace=namespace)
