@@ -50,6 +50,11 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					name:'description',
 					fieldLabel: _('Description'),
 				},{
+					xtype: 'checkbox',
+					fieldLabel: _('Show border'),
+					checked: false,
+					name: 'border'
+				},{
 					xtype: "checkbox",
 					fieldLabel: _("Auto title") + " " + _("if available"),
 					checked: true,
@@ -60,11 +65,6 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					xtype: 'textfield',
 					fieldLabel: _('Title') + ' ('+ _('optional') + ')',
 					name: 'title'
-				},{
-					xtype: 'checkbox',
-					fieldLabel: _('Show border'),
-					checked: false,
-					name: 'border'
 				},{
 					xtype: 'numberfield',
 					fieldLabel: _('Refresh interval'),
