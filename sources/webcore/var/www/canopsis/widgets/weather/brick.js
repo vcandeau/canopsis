@@ -163,10 +163,12 @@ Ext.define('widgets.weather.brick' , {
 		
 		if(data){
 			var cps_pct_by_state_0 = data.values[0][1]
+			var timestamp = data.values[0][0]
 			widget_data.percent = cps_pct_by_state_0
 			widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
+			widget_data.output = _('SLA on ' + rdr_tstodate(timestamp/1000) )
 		} else {
-			widget_data.output = 'No data available'
+			widget_data.output = _('No data available')
 		}
 		
 		var _html = widget_weather_template.applyTemplate(widget_data);
