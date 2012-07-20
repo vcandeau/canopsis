@@ -58,8 +58,11 @@ Ext.define('canopsis.controller.Websocket', {
 			var me = global.websocketCtrl;
 
 			now.core.socketio.on('disconnect', function() {
-				me.connected = false;
-				me.transport_down();
+				if (me.connected){
+					me.connected = false;
+					me.transport_down();
+					me.fireEvent('transport_down', this);
+				}
 			});
 
 
@@ -67,9 +70,11 @@ Ext.define('canopsis.controller.Websocket', {
 
 			now.auth(function() {
 				log.debug(' + Authed', me.logAuthor);
-
-				me.connected = true;
-				me.transport_up();
+				if (! me.connected){
+					me.connected = true;
+					me.transport_up();
+					me.fireEvent('transport_up', this);
+				}
 
 				//me.subscribe('ui', 'events', me.on_event);
 			});
@@ -79,16 +84,14 @@ Ext.define('canopsis.controller.Websocket', {
 
     transport_down: function() {
 		log.info('Transport Down', this.logAuthor);
-		if (this.connected && global.notify)
+		if (global.notify)
 			global.notify.notify(_('Error'), _('Disconnected from websocket.'), 'error');
-		this.fireEvent('transport_down', this);
 	},
 
     transport_up: function() {
 		log.info('Transport Up', this.logAuthor);
-		if (! this.connected && global.notify)
+		if (global.notify)
 			global.notify.notify(_('Success'), _('Connected to websocket'));
-		this.fireEvent('transport_up', this);
 
 		//Re-open channel
 		if (this.subscribe_cache && this.auto_resubscribe) {
