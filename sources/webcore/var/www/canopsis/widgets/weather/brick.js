@@ -37,10 +37,12 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 					'</div>',*/
 				'</td>',
 				'<td class="right_panel">',
-					'<tpl if="percent" != undefined">',
-						'<div id="{brick_Component_id}-icon" class="logo {class_icon}"><p>{percent}%</p></div>',
-					'</tpl>',
-					'<div id="{brick_Component_id}-legend" class="legend">{legend}</div>',
+					'<div class="logo {class_icon}">',
+						'<tpl if="percent != undefined ">',
+							'<p>{percent}%</p>',
+						'</tpl>',
+					'</div>',
+					'<div class="legend">{legend}</div>',
 				'</td>',
 			'</tr>',
 		'</table',
@@ -72,7 +74,7 @@ Ext.define('widgets.weather.brick' , {
 		}
 		
 		this.callParent(arguments);
-		this.getSla(this.build);
+		this.getSla();
 	},
 	
 	//here for the future, for another update function
@@ -80,11 +82,11 @@ Ext.define('widgets.weather.brick' , {
 		if(from && to)
 			this.getPastSla(from,to)
 		else
-			this.getSla(this.build)
+			this.getSla()
 	},
 	
 	//get sla data and give it to callback function
-	getSla : function(callback){
+	getSla : function(){
 		Ext.Ajax.request({
 			url: '/rest/events/event/' + this.sla_id,
 			scope: this,
@@ -95,11 +97,15 @@ Ext.define('widgets.weather.brick' , {
 				if(data.component)
 					this.component_name = data.component
 				
-				callback.call(this,data);
+				this.build(data);
 			},
 			failure: function(result, request) {
-				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+				log.error('Impossible to get SLA informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
 				global.notify.notify(_('No SLA available'), _('Currently there is no SLA for this selector, please try later'),'info');
+				
+				if(result.status == 404)
+					this.buildEmpty()
+				
 			}
 		});
 	},
@@ -168,9 +174,21 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
 			widget_data.output = _('SLA on ' + rdr_tstodate(timestamp/1000) )
 		} else {
+			widget_data.class_icon = 'widget-weather-icon-info'
 			widget_data.output = _('No data available')
 		}
 		
+		var _html = widget_weather_template.applyTemplate(widget_data);
+		this.getEl().update(_html)
+	},
+	
+	buildEmpty: function(){
+		var widget_data = {
+			title : this.component_name,
+			output : _("This selector doesn't have an SLA"),
+			class_icon : 'widget-weather-icon-info'
+		}
+
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
 	},
