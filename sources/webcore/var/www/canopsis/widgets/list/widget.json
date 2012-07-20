@@ -4,7 +4,7 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype": "list",
-	"description": "Display list of inventory items",
+	"description": "Display list of inventory items find by the provided filter.",
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
