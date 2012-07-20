@@ -19,18 +19,21 @@
 						"xtype": "numberfield",
 						"fieldLabel": "Default padding",
 						"value": 3,
+						"minValue": 0,
 						"name": "defaultPadding",
 						"allowBlank": true
 					},{
 						"xtype": "numberfield",
 						"fieldLabel": "Default margin",
 						"value": 3,
+						"minValue": 0,
 						"name": "defaultMargin",
 						"allowBlank": true
 					},{
 						"xtype": "numberfield",
 						"fieldLabel": "Default height",
 						"value" : 100,
+						"minValue": 0,
 						"name": "defaultHeight",
 						"allowBlank": true
 					},{
@@ -63,6 +66,8 @@
 					"items": [{
 						"xtype": "numberfield",
 						"fieldLabel": "Icon type",
+						"maxValue": 2,
+						"minValue": 1,
 						"value": 1,
 						"name": "iconSet"
 					}]
