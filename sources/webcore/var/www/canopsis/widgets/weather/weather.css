@@ -117,6 +117,10 @@
 
 /* icons */
 
+.widget-weather-icon-info{
+	background-image: url(./icons/info-icon.png) !important;
+}
+
 /*-----------------------------iconset N°1---------------------------*/
 .iconSet1_0-10 {
 	background-image: url(./icons/set1/09.png) !important;
