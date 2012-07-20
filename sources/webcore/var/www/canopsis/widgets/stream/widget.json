@@ -33,21 +33,21 @@
 							"fieldLabel": "Show toolbar",
 							"inputValue": true,
 							"uncheckedValue": false,
-							"value": true,
+							"checked": true,
 							"name": "showToolbar"
 					   },{
 							"xtype": "checkboxfield",
 							"fieldLabel": "Enable user inputs",
 							"inputValue": true,
 							"uncheckedValue": false,
-							"value": true,
+							"checked": true,
 							"name": "enable_userinputs"
 					   },{
 							"xtype": "checkboxfield",
 							"fieldLabel": "Enable user comments",
 							"inputValue": true,
 							"uncheckedValue": false,
-							"value": true,
+							"checked": true,
 							"name": "enable_comments"
 					   }	
 					]
