@@ -29,6 +29,7 @@ Ext.define('canopsis.controller.Notify', {
 		global.notify = this;
 		log.debug('[controller][cnotify] - Initialize ...');
 		this.callParent(arguments);
+		$.pnotify.defaults.styling = "jqueryui";
     },
 
     notify: function(title, text, type, icon,hide,closer,sticker) {
@@ -38,16 +39,16 @@ Ext.define('canopsis.controller.Notify', {
 		if (closer == undefined) {var closer = true}
 		if (sticker == undefined) {var sticker = false}
 		$.pnotify({
-			pnotify_title: title,
-			pnotify_text: text,
-			pnotify_delay: 3500,
-			pnotify_type: type,
-			pnotify_history: this.history,
-			pnotify_notice_icon: icon,
-			pnotify_opacity: this.opacity,
-			pnotify_hide: hide,
-			pnotify_closer: closer,
-			pnotify_sticker: sticker
+			title: title,
+			text: text,
+			delay: 3500,
+			type: type,
+			history: this.history,
+			notice_icon: icon,
+			opacity: this.opacity,
+			hide: hide,
+			closer: closer,
+			sticker: sticker
 		});
 		log.debug('Display notification', this.logAuthor);
 	}
