@@ -37,7 +37,9 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 					'</div>',*/
 				'</td>',
 				'<td class="right_panel">',
-					'<div id="{brick_Component_id}-icon" class="logo {class_icon}"><p>{percent}%</p></div>',
+					'<tpl if="percent" != undefined">',
+						'<div id="{brick_Component_id}-icon" class="logo {class_icon}"><p>{percent}%</p></div>',
+					'</tpl>',
 					'<div id="{brick_Component_id}-legend" class="legend">{legend}</div>',
 				'</td>',
 			'</tr>',
@@ -156,14 +158,16 @@ Ext.define('widgets.weather.brick' , {
 	buildReport : function(data){
 		log.debug('Build html for ' + this.sla_id,this.logAuthor)
 		
-		var cps_pct_by_state_0 = data.values[0][1]
-		
 		var widget_data = {}
-		
 		widget_data.title = this.component_name
-		widget_data.percent = cps_pct_by_state_0
-
-		widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
+		
+		if(data){
+			var cps_pct_by_state_0 = data.values[0][1]
+			widget_data.percent = cps_pct_by_state_0
+			widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
+		} else {
+			widget_data.output = 'No data available'
+		}
 		
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
