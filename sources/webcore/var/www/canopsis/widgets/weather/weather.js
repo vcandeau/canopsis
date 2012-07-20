@@ -66,35 +66,21 @@ Ext.define('widgets.weather.weather' , {
 					this.populate(data);
 				},
 				failure: function(result, request) {
-					log.error('Impossible to get', this.logAuthor);
-					global.notify.notify(_('No SLA available'), _('Currently there is no SLA for this selector, please try later'),'info');
+					log.error('Impossible to get Node', this.logAuthor);
+					global.notify.notify(_('Issue'), _("The selected selector can't be found"),'info');
 				}
 			});
 		}
 	},
 	
-		
-	/*
-	doRefresh: function(from, to) {
-		log.debug('Do refresh',this.logAuthor)
-		//get selector info
-		if(!this.selector_record)
-			this.getNodeInfo()
-			
-		if(this.reportMode == true){
-			log.debug('reportMode enabled',this.logAuthor)
-			log.dump(this.getStateFromTs(from,to))
-		}else{
-			this._onRefresh(this.selector_record)
-		}
-	},
-	*/
-	
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
 		
 		for (var i = 0; i < this.wcontainer.items.length; i++)
-			this.wcontainer.getComponent(i).update_brick();
+			if(this.reportMode)
+				this.wcontainer.getComponent(i).update_brick(from,to);
+			else
+				this.wcontainer.getComponent(i).update_brick();
 	},
 	
 	
