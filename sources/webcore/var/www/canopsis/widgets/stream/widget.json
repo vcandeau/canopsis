@@ -13,7 +13,7 @@
 			"items": [
 				{
 					"xtype": "fieldset",
-					"title": "Title",
+					"title": "Options",
 					"collapsible": false,
 					"items": [
 						{
@@ -28,6 +28,27 @@
 							"fieldLabel": "Maximum comments",
 							"minValue": 1,
 							"value": 5
+					   },{
+							"xtype": "checkboxfield",
+							"fieldLabel": "Show toolbar",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "showToolbar"
+					   },{
+							"xtype": "checkboxfield",
+							"fieldLabel": "Enable user inputs",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "enable_userinputs"
+					   },{
+							"xtype": "checkboxfield",
+							"fieldLabel": "Enable user comments",
+							"inputValue": true,
+							"uncheckedValue": false,
+							"checked": true,
+							"name": "enable_comments"
 					   }	
 					]
 				},{
