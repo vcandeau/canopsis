@@ -52,7 +52,7 @@
 					"collapsible": false,
 					"items": [{
 						"xtype": "checkbox",
-						"fieldLabel": "Use selector state as icon value",
+						"fieldLabel": "Use sla state as icon value",
 						"checked": false,
 						"name": "state_as_icon_value"
 					}]
