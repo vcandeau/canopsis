@@ -85,7 +85,6 @@ Ext.define('widgets.weather.brick' , {
 			this.getSla()
 	},
 	
-	//get sla data and give it to callback function
 	getSla : function(){
 		Ext.Ajax.request({
 			url: '/rest/events/event/' + this.sla_id,
