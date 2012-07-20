@@ -46,6 +46,10 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					//value: 'empty',
 					allowBlank: false
 				},{
+					xtype: 'displayfield',
+					name:'description',
+					fieldLabel: _('Description'),
+				},{
 					xtype: "checkbox",
 					fieldLabel: _("Auto title") + " " + _("if available"),
 					checked: true,
