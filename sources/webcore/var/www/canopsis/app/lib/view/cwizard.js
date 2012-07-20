@@ -226,6 +226,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		output = [];
 		this.reset_steps();
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
+		var description_field = Ext.ComponentQuery.query('#' + this.id + ' [name=description]')[0];
+		
 		if (combo[0].isValid()) {
 			var store = combo[0].getStore();
 			var record = store.findRecord('xtype', combo[0].getValue());
@@ -244,6 +246,10 @@ Ext.define('canopsis.lib.view.cwizard' , {
 					output.push(this.add_new_step(options[i]));
 				}
 			}
+			var description = record.get('description')
+			if(description_field && description)
+				description_field.setValue(description)
+
 			this.update_button();
 		}
 		return output;
