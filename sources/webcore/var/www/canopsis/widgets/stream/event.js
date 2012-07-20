@@ -155,6 +155,7 @@ Ext.define('widgets.stream.event' , {
 		this.el_comments = el.getById(this.id + '-comments-td');
 		this.el_btn_exp_comments = el.getById(this.id + '-expend-comments');
 		this.el_nbcomment = el.getById(this.id + '-nbcomment');
+		
 		this.el_time = el.getById(this.id + '-time');
 
 		this.init_comment_counter();
@@ -171,31 +172,37 @@ Ext.define('widgets.stream.event' , {
 
 	create_comments_container: function() {
 		if (! this.comments_container) {
-			log.debug("Create comment's container", this.logAuthor);
-			this.comment_form = Ext.create('Ext.form.Panel', {
-					layout: 'fit',
-					border: false,
-					margin: 3,
-					items: [{
-						xtype: 'textfield',
-						emptyText: _('Leave a') + ' ' + _('comment') + ' ?',
-						name: 'message',
-						listeners: {
-							specialkey: {
-								fn: function(field, e) {
-									if (e.getKey() == e.ENTER)
-										this.submit_comment();
-								},
-								scope: this
-							}
+			var items = []
 
-						}
-					}]
-			});
+			if (this.stream.enable_comments){
+				log.debug("Create comment's container", this.logAuthor);
+				this.comment_form = Ext.create('Ext.form.Panel', {
+						layout: 'fit',
+						border: false,
+						margin: 3,
+						items: [{
+							xtype: 'textfield',
+							emptyText: _('Leave a') + ' ' + _('comment') + ' ?',
+							name: 'message',
+							listeners: {
+								specialkey: {
+									fn: function(field, e) {
+										if (e.getKey() == e.ENTER)
+											this.submit_comment();
+									},
+									scope: this
+								}
+
+							}
+						}]
+				});
+				
+				items.push(this.comment_form)
+			}
 
 			this.comments_container = Ext.create('Ext.container.Container', {
 				layout: 'anchor',
-				items: [this.comment_form]
+				items: items
 			});
 
 			this.comments_container.on('afterRender', function() {
@@ -292,7 +299,8 @@ Ext.define('widgets.stream.event' , {
 
 		this.create_comments_container();
 
-		this.comment_form.getForm().findField('message').focus();
+		if (this.comment_form)
+			this.comment_form.getForm().findField('message').focus();
 	},
 
 	hide_comments: function() {
