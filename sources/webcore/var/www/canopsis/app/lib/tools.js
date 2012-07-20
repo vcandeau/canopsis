@@ -183,3 +183,34 @@ function stringTo24h(src_time){
 	
 	return {minute: parseInt(minute, 10), hour: parseInt(hour, 10)}
 }
+
+var updateRecord = function(namespace, crecord_type, model, _id, data, on_success, on_error){
+	var logAuthor = '[tools][updateRecord]';
+		
+	if (! data){
+		log.error('You must specify data to write', logAuthor);
+		return
+	}
+
+	var base_url = '/rest/'+namespace+'/'+crecord_type+'/'+_id;
+	
+	log.debug("Update "+_id, logAuthor);
+	Ext.Ajax.request({
+		url: base_url,
+		jsonData: data,
+		method: 'PUT',
+		success: function(){
+			log.debug(" + Success", logAuthor);
+			global.notify.notify(_('Saved'), _("Successfully"));
+			if (on_success)
+				on_success(operation)
+		},
+		failure: function(response){
+			log.error(' + Impossible to deal with webservice', logAuthor);
+			global.notify.notify(_('Error'), _('Imposible to deal with webservice, record not saved.'), 'error');
+			if (on_error)
+				on_error()	
+		}	
+		
+	});
+}
