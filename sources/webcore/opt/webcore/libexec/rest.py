@@ -141,12 +141,15 @@ def rest_get(namespace, ctype=None, _id=None):
 		ids = _id.split(',')
 		
 	if ids:	
-		records = storage.get(ids, account=account)
-		
-		total = len(records)
+		try:
+			records = storage.get(ids, account=account)
+			total = len(records)
+		except Exception, err:
+			logger.info('Error: %s' % err)
+			total = 0
 		
 		if total == 0:
-			return HTTPError(404, ids+" Not Found")
+			return HTTPError(404, str(ids) +" Not Found")
 						
 	else:
 		if search:
