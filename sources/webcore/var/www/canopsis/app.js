@@ -67,13 +67,13 @@ function createApplication(){
 	//Answer to every error
 	Ext.Ajax.on('requestexception', function (conn, response, options) {
 		if (response.status === 403) {
-			global.notify.notify(_('Server error'),_('You have no sufficient rights'),'error')
+			global.notify.notify(_('Server notification'),_('You have no sufficient rights'),'info')
 		}
 		if (response.status === 500) {
 			global.notify.notify(_('Server error'),_('Unexpected server error'),'error')
 		}
 		if (response.status === 404) {
-			global.notify.notify(_('Server error'),_('The ressource you was looking for cannot be found'),'error')
+			global.notify.notify(_('Server notification'),_('The ressource you was looking for cannot be found'),'info')
 		}
 	});
 

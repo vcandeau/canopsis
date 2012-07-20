@@ -101,7 +101,8 @@ Ext.define('widgets.weather.weather' , {
 				iconSet: this.iconSet,
 				state_as_icon_value: this.state_as_icon_value,
 				bg_impair_color: this.bg_impair_color,
-				bg_pair_color: this.bg_pair_color
+				bg_pair_color: this.bg_pair_color,
+				component_name: data.component
 			}
 			
 			if(datas.length == 1){
