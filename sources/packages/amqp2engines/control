@@ -43,6 +43,10 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	echo " + Delete amqp2mongodb queue"
+	rabbitmqadmin  -V canopsis  delete queue name=amqp2mongodb &> /dev/null
+	echo " + Delete collectd2event queue"
+	rabbitmqadmin  -V canopsis  delete queue name=collectd2event &> /dev/null
 	check_code $?
 }
 
