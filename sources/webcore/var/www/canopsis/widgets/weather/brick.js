@@ -58,6 +58,8 @@ Ext.define('widgets.weather.brick' , {
 	bg_impair_color: '#FFFFF',
 	bg_pair_color:  '#FFFFF',
 	
+	component_name: undefined,
+	
 	initComponent: function() {
 		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
 		
@@ -69,8 +71,14 @@ Ext.define('widgets.weather.brick' , {
 		
 		this.callParent(arguments);
 		this.getSla(this.build);
-		
-		this.on('resize',function(){log.debug('frswgrqgrqzgeqzefzqgqz')})
+	},
+	
+	//here for the future, for another update function
+	update_brick : function(from,to){
+		if(from && to)
+			this.getPastSla(from,to)
+		else
+			this.getSla(this.build)
 	},
 	
 	//get sla data and give it to callback function
@@ -81,17 +89,36 @@ Ext.define('widgets.weather.brick' , {
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 				data = data.data[0];
+				
+				if(data.component)
+					this.component_name = data.component
+				
 				callback.call(this,data);
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+				global.notify.notify(_('No SLA available'), _('Currently there is no SLA for this selector, please try later'),'info');
 			}
 		});
 	},
 	
-	//here for the future, for another update function
-	update_brick : function(){
-		this.getSla(this.build)
+	getPastSla : function(from,to){
+		log.debug('get past sla for: ' + this.sla_id,this.logAuthor)
+		var post_params = [{id:this.sla_id,metrics:['cps_pct_by_state_0']}]
+		Ext.Ajax.request({
+			url: '/perfstore/values/' + from +'/'+ to ,
+			params: {'nodes':Ext.JSON.encode(post_params)},
+			scope: this,
+			success: function(response) {
+				var data = Ext.JSON.decode(response.responseText);
+				data = data.data[0];
+				
+				this.buildReport(data);
+			},
+			failure: function(result, request) {
+				log.error('Impossible to get sla informations on the given time period', this.logAuthor);
+			}
+		});
 	},
 	
 	build: function(data){
@@ -118,13 +145,30 @@ Ext.define('widgets.weather.brick' , {
 		if(this.option_button == true)
 			widget_data.button_text = _('Report issue')
 			
-		widget_data.brick_Component_id = this.id
+		//widget_data.brick_Component_id = this.id
 		
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
 		
 		//this.getElements()
 	},
+	
+	buildReport : function(data){
+		log.debug('Build html for ' + this.sla_id,this.logAuthor)
+		
+		var cps_pct_by_state_0 = data.values[0][1]
+		
+		var widget_data = {}
+		
+		widget_data.title = this.component_name
+		widget_data.percent = cps_pct_by_state_0
+
+		widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
+		
+		var _html = widget_weather_template.applyTemplate(widget_data);
+		this.getEl().update(_html)
+	},
+	
 /*
 	getElements: function() {
 		var el = this.getEl();
