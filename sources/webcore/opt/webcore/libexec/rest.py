@@ -143,7 +143,13 @@ def rest_get(namespace, ctype=None, _id=None):
 	if ids:	
 		try:
 			records = storage.get(ids, account=account)
-			total = len(records)
+			if isinstance(records,crecord):
+				records = [records]
+				total = 1
+			elif isinstance(records,list):
+				total = len(records)
+			else:
+				total = 0
 		except Exception, err:
 			logger.info('Error: %s' % err)
 			total = 0
