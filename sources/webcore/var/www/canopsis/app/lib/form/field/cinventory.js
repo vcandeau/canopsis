@@ -29,7 +29,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	metrics: true,
 	multiSelect: true,
 	vertical_multiselect: false,
-	default_padding: 5,
+	padding: 5,
 	
 	base_filter: undefined,
 	
@@ -58,7 +58,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		log.debug('Initialize ...', this.logAuthor);
 
 		var default_layout = { type: 'hbox', align: 'stretch'};
-		var default_defaults = { padding: this.default_padding };
+		var default_defaults = { padding: this.padding };
+		this.padding = 0;
 
 		this.items = this.buildView();
 
