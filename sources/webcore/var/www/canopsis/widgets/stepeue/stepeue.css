@@ -5,17 +5,36 @@
 
 .scenario-title {
 	font-weight:bold ;
+	display:block;
 }
 
-.scenario-statut {
-	display:block;
+.scenario-status {
+	width:10% ;
+	height:100%;
 	text-align:left;
 	float:left;
-	width:16px;
+}
+
+div.title-bar-scenario {
+	height:100%;
+	width:45%;
+	margin:0;
+	float:left;
+}
+
+div.graph-data {
+	width: 45%;
+	height: 100%;
+	float:left;
+	margin:0;
+	
 }
 
 span.line-graph {
-	width: 100%;
+	margin-top:1em;
+	margin-bottom:1em;
 	height:100%;
-	display: block;
+	width:90%;
+	display:block;
+
 }
