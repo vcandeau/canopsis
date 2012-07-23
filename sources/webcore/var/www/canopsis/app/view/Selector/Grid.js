@@ -51,9 +51,14 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'loaded',
 			renderer: rdr_boolean
 		},{
+			header: _('State'),
+			width: 35,
+			dataIndex: 'dostate',
+			renderer: rdr_boolean
+		},{
 			header: _('SLA'),
 			width: 35,
-			dataIndex: 'sla',
+			dataIndex: 'dosla',
 			renderer: rdr_boolean
 		},{
 			header: _('SLA') + " " + _('time window'),
