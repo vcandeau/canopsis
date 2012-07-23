@@ -298,7 +298,8 @@ class engine(cengine):
 			perf_data=None,
 			perf_data_array=perf_data_array
 		)
-		
+		event['selector_id'] = config['_id']
+		event['selector_rk'] = config['rk']
 		self.logger.debug("Publish event on %s" % rk)
 		self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 
@@ -314,6 +315,7 @@ class engine(cengine):
 		for record in records:
 			configs[record._id] = record.data
 			configs[record._id]['name'] = record.name
+			configs[record._id]['_id'] =record._id
 		
 		for _id in configs:
 			slanode = self.calcul_time_by_state(_id, configs[_id])
