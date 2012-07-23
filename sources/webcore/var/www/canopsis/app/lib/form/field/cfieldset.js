@@ -27,6 +27,7 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	checkboxToggle:true,
 	inputValue: true,
 	collapsible: true,
+	collapsed : true,
 	
 	isFormField: true,
 	
@@ -50,9 +51,13 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	},
 	
 	initComponent: function() {
-        this.callParent(arguments);
-        if(!this.name)
+		if(this.value == true)
+			this.collapsed = false
+			
+		if(!this.name)
 			this.name = this.checkboxName
+		
+        this.callParent(arguments);
     },
 	
 	getValue : function(){
@@ -66,12 +71,17 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	},
 	
 	setValue : function(value){
+		if(value == undefined)
+			value = false
+			
 		if(this.checkboxCmp){
 			this.checkboxCmp.setValue(value);
 		}else{
 			this.collapsed = !value
 			if(!value)
 				this.collapse()
+			else
+				this.expand()
 		}
 	},
 	
