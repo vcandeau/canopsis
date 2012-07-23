@@ -20,17 +20,37 @@
 */
 
 function _(text, context) {
-	if (typeof(i18n) != 'undefined') {
-		if (context)
-			if (i18n[context + '.' + text])
-				return i18n[context + '.' + text];
-
-		if (i18n[text])
-			return i18n[text];
-
-		if (global.locale != 'en' && (global.log.level > 4))
-			global.untranslated.push(text);
+	var ttext = undefined
+	
+	// Check if locales is loaded
+	if (typeof(i18n) == 'undefined')
+		return text
+	
+	if (context){
+		ttext = i18n[context + '.' + text]
+		if (ttext) return ttext;
+		
+		ttext = i18n[context + '.' + Ext.String.capitalize(text)]
+		if (ttext) return Ext.String.uncapitalize(ttext)
+		
+		ttext = i18n[context + '.' + Ext.String.uncapitalize(text)]
+		if (ttext) return Ext.String.capitalize(ttext)
+		
 	}
+	
+	ttext = i18n[text]
+	if (ttext) return ttext;
+		
+	ttext = i18n[Ext.String.capitalize(text)]
+	if (ttext) return Ext.String.uncapitalize(ttext)
+		
+	ttext = i18n[Ext.String.uncapitalize(text)]
+	if (ttext) return Ext.String.capitalize(ttext)
+
+	// Translate failed
+	if (global.locale != 'en' && (global.log.level > 4))
+		if (global.untranslated.indexOf(text) == -1)
+			global.untranslated.push(text);
 
 	return text;
 }
