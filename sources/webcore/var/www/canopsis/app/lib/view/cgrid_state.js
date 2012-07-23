@@ -41,6 +41,7 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 	opt_show_source_type: true,
 	opt_show_last_check: true,
 	opt_show_output: true,
+	opt_show_tags: true,
 
 	opt_show_row_background: true,
 
@@ -132,6 +133,17 @@ Ext.define('canopsis.lib.view.cgrid_state' , {
 				dataIndex: 'output'
 			});
 		}
+
+		if (this.opt_show_tags) {
+			this.columns.push({
+				header: _('Tags'),
+				flex: 4,
+				sortable: this.opt_column_sortable,
+				dataIndex: 'tags',
+				renderer: rdr_tags
+			});
+		}		
+		
 
 		//store
 		if (! this.store) {

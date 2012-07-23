@@ -238,3 +238,16 @@ rdr_elapsed_time = function(timestamp, full_length) {
 	return elapsed_text;
 }
 
+rdr_tags = function(tags) {
+	var html = ""
+	if (tags){
+		if (tags.length > 0){
+			html += "<ul class='tags'>"
+			for (var i in tags)
+				html += "<li><a href='#'>"+tags[i]+"</a></li>"
+			html += "</ul>"
+		}
+	}
+	return html
+}
+
