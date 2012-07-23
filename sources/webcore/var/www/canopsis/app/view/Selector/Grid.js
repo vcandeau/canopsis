@@ -41,29 +41,34 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
         },{
-			header: _('Enable'),
+			header: _('Enabled'),
+			align: 'center',
 			width: 55,
 			dataIndex: 'enable',
 			renderer: rdr_boolean
 		},{
 			header: _('Loaded'),
+			align: 'center',
 			width: 55,
 			dataIndex: 'loaded',
 			renderer: rdr_boolean
 		},{
 			header: _('State'),
+			align: 'center',
 			width: 35,
 			dataIndex: 'dostate',
 			renderer: rdr_boolean
 		},{
 			header: _('SLA'),
+			align: 'center',
 			width: 35,
 			dataIndex: 'dosla',
 			renderer: rdr_boolean
 		},{
-			header: _('SLA') + " " + _('time window'),
-			dataIndex: 'sla_timewindow',
+			header: _('SLA') + ": " + _('time window'),
 			align: 'center',
+			dataIndex: 'sla_timewindow',
+			width: 150,
 			renderer: rdr_time_interval
 		},{
 			header: _('Name'),
