@@ -72,9 +72,9 @@ function createApplication(){
 		if (response.status === 500) {
 			global.notify.notify(_('Server error'),_('Unexpected server error'),'error')
 		}
-		if (response.status === 404) {
+	/*	if (response.status === 404) {
 			global.notify.notify(_('Server notification'),_('The ressource you was looking for cannot be found'),'info')
-		}
+		}*/
 	});
 
 	log.debug("Start ExtJS application ...", "[app]");
