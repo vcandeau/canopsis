@@ -36,6 +36,7 @@ Ext.define('canopsis.model.Event', {
 		{name: 'long_output'},
 		{name: 'perf_data'},
 		{name: 'perf_data_array'},
+		{name: 'tags'},
 		{name: 'id'}
 	]
 

@@ -87,6 +87,11 @@
 								"boxLabel": "Plugin's output",
 								"checked": true,
 								"name": "show_output"
+							},{
+								"xtype": "checkbox",
+								"boxLabel": "Tags",
+								"checked": false,
+								"name": "show_tags"
 							}]
 				},{
 						"xtype": "fieldset",
