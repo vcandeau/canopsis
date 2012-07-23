@@ -391,5 +391,6 @@ var i18n={
 	'Type value here': "Entrer la valeur ici",
 	'Remove this from list of value': "Supprimer l'élément de la liste",
 	'Add new value to this list': "Ajouter une nouvelle élément dans la liste",
-	'Selector': "Selecteur"
+	'Selector': "Selecteur",
+	'Successfully': "Avec succès"
 }
