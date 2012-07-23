@@ -153,7 +153,7 @@ Ext.define('widgets.weather.brick' , {
 		var widget_data = {}
 		
 		widget_data.title = data.component
-		widget_data.legend = rdr_elapsed_time(data.last_state_change)
+		widget_data.legend = rdr_elapsed_time(data.last_state_change,true)
 		//widget_data.legend = 'since 18/05/08'
 		//widget_data.alert_comment = '0:00am to 9:00am'
 
