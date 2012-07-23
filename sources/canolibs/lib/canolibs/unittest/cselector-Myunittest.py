@@ -153,17 +153,17 @@ class KnownValues(unittest.TestCase):
 			
 	def test_06_GetState(self):
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}, {'check': 'test3'}] })
-		(state, state_type, output, long_output, perf_data_array) = selector.getState()
+		(states, state, state_type) = selector.getState()
 		if state != 2:
 			raise Exception('Invalid state ("%s")' % state)
 		
 		selector.setMfilter({'$or': [ {'check': 'test1'},  {'check': 'test2'}] })
-		(state, state_type, output, long_output, perf_data_array) = selector.getState()
+		(states, state, state_type) = selector.getState()
 		if state != 1:
 			raise Exception('Invalid state ("%s")' % state)
 		
 		selector.setMfilter({'$or': [ {'check': 'test1'}] })
-		(state, state_type, output, long_output, perf_data_array) = selector.getState()
+		(states, state, state_type) = selector.getState()
 		if state != 0:
 			raise Exception('Invalid state ("%s")' % state)
 	
