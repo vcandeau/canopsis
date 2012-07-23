@@ -97,11 +97,8 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 			if(variables.xtype == undefined)
 				variables.xtype = combo[0].getValue()
 				
-			if(variables.use_sla == undefined)
-				variables.use_sla = false
-				
-			log.dump('---------------------')
-			log.dump(variables)
+			//log.dump('---------------------')
+			//log.dump(variables)
 			
 			this.fireEvent('save', this.widgetId, variables);
 			this.close();
