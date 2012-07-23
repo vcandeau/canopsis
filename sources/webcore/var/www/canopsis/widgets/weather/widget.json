@@ -57,6 +57,7 @@
 					"items": [{
 						"xtype": "checkbox",
 						"fieldLabel": "Use SLA state as icon value",
+						"labelWidth":200,
 						"inputValue": true,
 						"uncheckedValue": false,
 						"checked": false,
