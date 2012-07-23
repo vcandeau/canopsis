@@ -53,6 +53,7 @@
 					"xtype": "cfieldset",
 					"title": "Use SLA event",
 					"checkboxName": "use_sla",
+					"value": false,
 					"items": [{
 						"xtype": "checkbox",
 						"fieldLabel": "Use SLA state as icon value",
