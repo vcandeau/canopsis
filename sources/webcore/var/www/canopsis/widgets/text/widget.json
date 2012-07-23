@@ -19,13 +19,13 @@
 			},
 			{	
 				"title": "Template",
-				"layout": "fit",
-				"width" : 500,
+				"layout": "anchor",
 				"items" : [
 					{
 						"xtype": "htmleditor",
+						"anchor": "100%",
 						"name": "text",
-						"width": 150,
+						"height" : 350,
 						"value": ""
 					}
 				]
