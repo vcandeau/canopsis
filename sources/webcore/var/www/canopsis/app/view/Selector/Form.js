@@ -69,7 +69,19 @@ Ext.define('canopsis.view.Selector.Form', {
 										fieldLabel: _('Description'),
 										xtype: 'textareafield',
 										name: 'description'
-									},{
+									}
+								]
+							},{
+								xtype:'fieldset',
+								checkboxToggle: true,
+								title: _('Calcul State'),
+								checkboxName: 'dostate',
+								defaultType: 'textfield',
+								inputValue: true,
+								uncheckedValue: false,
+								checked: true,
+								collapsed: false,
+								items: [{
 										fieldLabel: _('Output Template'),
 										xtype: 'textareafield',
 										name: 'output_tpl',
@@ -80,9 +92,12 @@ Ext.define('canopsis.view.Selector.Form', {
 							},{
 								xtype:'fieldset',
 								checkboxToggle: true,
-								title: _('Calcul SLA'),
-								checkboxName: 'sla',
+								title: _('Calcul SLA (if state is calculated)'),
+								checkboxName: 'dosla',
 								defaultType: 'textfield',
+								inputValue: true,
+								uncheckedValue: false,
+								checked: false,
 								collapsed: true,
 								items: [
 									{
