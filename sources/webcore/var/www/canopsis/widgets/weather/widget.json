@@ -58,6 +58,11 @@
 						"fieldLabel": "Use sla state as icon value",
 						"checked": false,
 						"name": "state_as_icon_value"
+					},{
+						"xtype": "checkbox",
+						"fieldLabel": "Use selector state instead of SLA",
+						"checked": false,
+						"name": "use_selector_state"
 					}]
 				},{
 					"xtype": "fieldset",
