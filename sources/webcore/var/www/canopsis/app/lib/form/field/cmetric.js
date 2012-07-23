@@ -30,6 +30,26 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
         align: 'stretch'
     },
 	//autoscroll : true,
+	
+	isFormField: true,
+	
+	getName: function(){
+		return this.name
+	},
+	isValid: function(){
+		return true
+	},
+	validate: function(){
+		return this.isValid()
+	},
+	getSubmitData: function(){
+		var data = {}
+		data[this.name] = this.getValue()
+		return data
+	},
+	isDirty: function(){
+		return false
+	},
 
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
