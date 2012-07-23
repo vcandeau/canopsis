@@ -30,7 +30,8 @@ Ext.define('canopsis.view.Selector.Form', {
 	},	
 
     initComponent: function() {
-
+		var labelWidth = 200;
+		
 		this.items = [
 			{
 				xtype: 'tabpanel',
@@ -60,6 +61,7 @@ Ext.define('canopsis.view.Selector.Form', {
 								xtype:'fieldset',
 								title: _('General'),
 								defaultType: 'textfield',
+								defaults: { labelWidth: labelWidth },
 								items: [
 									{
 										fieldLabel: _('Name'),
@@ -72,15 +74,13 @@ Ext.define('canopsis.view.Selector.Form', {
 									}
 								]
 							},{
-								xtype:'fieldset',
+								xtype: 'cfieldset',
 								checkboxToggle: true,
 								title: _('Calcul State'),
 								checkboxName: 'dostate',
 								defaultType: 'textfield',
-								inputValue: true,
-								uncheckedValue: false,
-								checked: true,
-								collapsed: false,
+								value: true,
+								defaults: { labelWidth: labelWidth },
 								items: [{
 										fieldLabel: _('Output Template'),
 										xtype: 'textareafield',
@@ -90,15 +90,13 @@ Ext.define('canopsis.view.Selector.Form', {
 									}
 								]
 							},{
-								xtype:'fieldset',
+								xtype:'cfieldset',
 								checkboxToggle: true,
 								title: _('Calcul SLA (if state is calculated)'),
 								checkboxName: 'dosla',
 								defaultType: 'textfield',
-								inputValue: true,
-								uncheckedValue: false,
-								checked: false,
-								collapsed: true,
+								value: false,
+								defaults: { labelWidth: labelWidth },
 								items: [
 									{
 										xtype: 'fieldcontainer',
