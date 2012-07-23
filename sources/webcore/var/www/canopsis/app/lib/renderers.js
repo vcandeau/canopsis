@@ -214,7 +214,7 @@ var rdr_time_interval = function(val) {
 	return val + " " + _("Second") + "(s)";
 }
 
-rdr_elapsed_time = function(timestamp) {
+rdr_elapsed_time = function(timestamp, full_length) {
 	timestamp = parseInt(timestamp);
 	
 	var elapsed = parseInt(new Date().getTime() / 1000) - timestamp;
@@ -225,11 +225,16 @@ rdr_elapsed_time = function(timestamp) {
 		elapsed_text = 'just now';
 	if (elapsed > 60)
 		elapsed_text = parseInt(elapsed / 60) + ' mins ago';
-	if (elapsed > 3600)
-		elapsed_text = rdr_tstodate(timestamp);
-	/*	elapsed_text = parseInt(elapsed/3600) +" hours ago"
-	if (elapsed > 86400)
-		elapsed_text = parseInt(elapsed/86400) +" days ago"*/
+	if(!full_length){
+		if (elapsed > 3600)
+			elapsed_text = rdr_tstodate(timestamp);
+	}else{
+		if (elapsed > 3600)
+			elapsed_text = parseInt(elapsed/3600) +" hours ago"
+		if (elapsed > 86400)
+			elapsed_text = parseInt(elapsed/86400) +" days ago"
+	}
 
 	return elapsed_text;
 }
+
