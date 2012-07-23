@@ -127,17 +127,17 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		this.tabPanel.on('tabchange', this.update_button, this);
 	},
 
-	add_new_step: function(step) {
-		step.bodyPadding = 10;
+	add_new_step: function(step) {			
 		step.autoScroll = true;
 		step.xtype = 'form';
 
 		step.defaults = { labelWidth: this.labelWidth };
 
-		if (step.items.length == 1) {
-			step.layout = 'fit';
-			step.bodyPadding = 5;
-		}
+		if (step.items.length == 1)
+			if (! step.layout)
+				step.layout = 'fit';
+		
+		step.padding = 5
 
 		return this.tabPanel.add(step);
 	},
