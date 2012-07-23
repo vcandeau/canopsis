@@ -53,7 +53,8 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					xtype: 'checkbox',
 					fieldLabel: _('Show border'),
 					checked: false,
-					name: 'border'
+					name: 'border',
+					uncheckedValue: false
 				},{
 					xtype: "checkbox",
 					fieldLabel: _("Auto title") + " " + _("if available"),
@@ -91,6 +92,17 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
 		if (combo[0].isValid()) {
 			var variables = this.get_variables();
+
+			//hack: if no xtype set it (the field is disable in editmode)
+			if(variables.xtype == undefined)
+				variables.xtype = combo[0].getValue()
+				
+			if(variables.use_sla == undefined)
+				variables.use_sla = false
+				
+			log.dump('---------------------')
+			log.dump(variables)
+			
 			this.fireEvent('save', this.widgetId, variables);
 			this.close();
 		}

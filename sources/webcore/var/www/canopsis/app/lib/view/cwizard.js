@@ -77,28 +77,11 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		}
 
 		this.items = [this.tabPanel];
-		//--
 
 		this.callParent(arguments);
 
 		this.previousButton.setDisabled(true);
-		/* ----------------------------------------
 
-		//---------tab panel----------
-		this.tabPanel = this.add({
-			layout: 'fit',
-			xtype: 'tabpanel',
-			plain: true,
-			deferredRender: false,
-		})
-
-		if(this.step_list){
-			//var tmp = this.build_step_list(this.step_list)
-			log.debug("Wizard steps fully generated",this.logAuthor)
-			for(var i in this.step_list){
-				this.add_new_step(this.step_list[i])
-			}
-		}*/
 	},
 
 	afterRender: function() {
@@ -145,10 +128,9 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	},
 
 	add_new_step: function(step) {
-		//log.debug('Dumping step before adding');
-		//log.dump(step);
 		step.bodyPadding = 10;
 		step.autoScroll = true;
+		step.xtype = 'form';
 
 		step.defaults = { labelWidth: this.labelWidth };
 
@@ -157,15 +139,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			step.bodyPadding = 5;
 		}
 
-		//adding some style
-	/*	var items = step.items
-		for(var i in items){
-			var item = items[i]
-			item.padding = 5
-			item.marging = 5
-			item.border = false
-		}*/
-		//adding to center panel
 		return this.tabPanel.add(step);
 	},
 
@@ -178,17 +151,13 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			var list_tab = this.add_option_panel();
 			combo[0].setDisabled(true);
 		}
-
-		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]');
-
-		for (var i in ext_element) {
-			var elem = ext_element[i];
-			//log.debug('the element is : ' + elem.name)
-			//log.debug('the new value is : ' + this.data[elem.name])
-			if (this.data[elem.name] != undefined) {
-				elem.setValue(this.data[elem.name]);
-			}
+		
+		var child_items = this.tabPanel.items.items
+		for(var i in child_items){
+			var form = child_items[i].getForm()
+			form.setValues(this.data)
 		}
+
 	},
 
 	reset_steps: function() {
@@ -209,16 +178,16 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		}
 	},
 
-
-
 	get_variables: function() {
 		var output = {};
-		var ext_element = Ext.ComponentQuery.query('#' + this.id + ' [name]');
-		for (var i in ext_element) {
-			var name = ext_element[i].name;
-			var value = ext_element[i].getValue();
-			output[name] = value;
+		
+		var child_items = this.tabPanel.items.items
+		for(var i in child_items){
+			var values = child_items[i].getForm().getValues()
+			for(var j in values)
+				output[j] = values[j]
 		}
+		
 		return output;
 	},
 
@@ -323,7 +292,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	finish_button: function() {
 		log.debug('save button', this.logAuthor);
 		var variables = this.get_variables();
-		log.debug(variables);
+		log.debug('Saved values are:',this.logAuthor)
+		log.debug(variables,this.logAuthor);
 		this.fireEvent('save', variables);
 		this.close();
 	}
