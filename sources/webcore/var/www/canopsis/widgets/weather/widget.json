@@ -50,19 +50,17 @@
 						"value": "#FFFFFF"
 					}]
 				},{
-					"xtype": "fieldset",
-					"title": "Values",
-					"collapsible": false,
+					"xtype": "cfieldset",
+					"title": "Use SLA event",
+					"checkboxName": "use_sla",
+					"value": false,
 					"items": [{
 						"xtype": "checkbox",
-						"fieldLabel": "Use sla state as icon value",
+						"fieldLabel": "Use SLA state as icon value",
+						"inputValue": true,
+						"uncheckedValue": false,
 						"checked": false,
 						"name": "state_as_icon_value"
-					},{
-						"xtype": "checkbox",
-						"fieldLabel": "Use selector state instead of SLA",
-						"checked": false,
-						"name": "use_selector_state"
 					}]
 				},{
 					"xtype": "fieldset",

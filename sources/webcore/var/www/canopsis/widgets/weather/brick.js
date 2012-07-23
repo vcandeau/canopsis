@@ -59,7 +59,7 @@ Ext.define('widgets.weather.brick' , {
 	brick_number: undefined,
 	iconSet: 1,
 	state_as_icon_value: false,
-	use_selector_state: false,
+	use_sla: false,
 	selector: undefined,
 	bg_impair_color: '#FFFFF',
 	bg_pair_color:  '#FFFFF',
@@ -83,13 +83,17 @@ Ext.define('widgets.weather.brick' , {
 	afterRender : function(){
 		this.component_name = this.selector.component
 		
-		if(this.use_selector_state){
-			this.source_id = this.selector._id;
-			this.build(this.selector);
-		}else{
+		log.debug(' + use_sla is: ' + this.use_sla, this.logAuthor)
+	
+		if(this.use_sla){
 			this.source_id = this.sla_id;
 			this.getData();
+		}else{
+			this.source_id = this.selector._id;
+			this.build(this.selector);
 		}
+		
+		log.debug(' + source id is ' + this.source_id, this.logAuthor)
 	},
 	
 	//here for the future, for another update function
@@ -102,10 +106,10 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	prepareReport :function(from,to){
-		if(this.use_selector_state)
-			var post_params = [{id:this.source_id,metrics:['cps_state']}]
-		else
+		if(this.use_sla)
 			var post_params = [{id:this.source_id,metrics:['cps_pct_by_state_0']}]
+		else
+			var post_params = [{id:this.source_id,metrics:['cps_state']}]
 			
 		this.getPastData(from,to,post_params);
 	},
@@ -160,7 +164,7 @@ Ext.define('widgets.weather.brick' , {
 		if(data.output && data.output != "")
 			widget_data.output = data.output
 
-		if(this.state_as_icon_value || this.use_selector_state){
+		if(this.state_as_icon_value || !this.use_sla){
 			var icon_value = 100 - ( data.state / 4 * 100)
 			widget_data.class_icon = this.getIcon(icon_value)
 		}else{
@@ -189,7 +193,7 @@ Ext.define('widgets.weather.brick' , {
 		
 		if(data){
 			var timestamp = data.values[0][0]
-			if(this.use_selector_state){
+			if(!this.use_sla){
 				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
 				log.debug('State of ' + this.source_id + ' is: ' + state,this.logAuthor)
 				var icon_value = 100 - ( state / 4 * 100)

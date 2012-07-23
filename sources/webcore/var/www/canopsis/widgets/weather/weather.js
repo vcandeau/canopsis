@@ -100,7 +100,7 @@ Ext.define('widgets.weather.weather' , {
 				brick_number: i,
 				sla_id: sla_id,
 				iconSet: this.iconSet,
-				use_selector_state: this.use_selector_state,
+				use_sla: this.use_sla,
 				selector: data,
 				state_as_icon_value: this.state_as_icon_value,
 				bg_impair_color: this.bg_impair_color,
