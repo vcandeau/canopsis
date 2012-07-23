@@ -121,17 +121,22 @@ class engine(cengine):
 			self.nb_beat = 0
 			publish = True
 		
-		for _id in self.selectors:	
-			if self.selectors_events[_id]:
-				publish = True
+		for _id in self.selectors:
+			selector = self.selectors[_id]
 			
-			if publish:
-				selector = self.selectors[_id]
-				(rk, event) = selector.event()
-				if event:
-					self.logger.debug("Publish event for '%s' (%s events)" % (selector.name, self.selectors_events[_id]))
-					self.amqp.publish(event, rk, self.amqp.exchange_name_events)
-				self.selectors_events[_id] = 0
+			if not selector.dostate:
+				# Dont send state but resolve ids for cache result (tags)
+				selector.resolv()
+			else:
+				if self.selectors_events[_id]:
+					publish = True
+				
+				if publish:
+					(rk, event) = selector.event()
+					if event:
+						self.logger.debug("Publish event for '%s' (%s events)" % (selector.name, self.selectors_events[_id]))
+						self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+					self.selectors_events[_id] = 0
 						
 		self.nb_beat +=1
 				
@@ -140,8 +145,10 @@ class engine(cengine):
 						
 		## Process selector and prevent Burst
 		for sid in self.selectors:
-			if self.selectors[sid].match(event_id):
-				self.selectors_events[sid] += 1
+			selector = self.selectors[sid]
+			if selector.dostate:
+				if selector.match(event_id):
+					self.selectors_events[sid] += 1
 		
 		return event
 		
