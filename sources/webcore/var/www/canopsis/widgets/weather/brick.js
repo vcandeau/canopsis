@@ -59,8 +59,12 @@ Ext.define('widgets.weather.brick' , {
 	brick_number: undefined,
 	iconSet: 1,
 	state_as_icon_value: false,
+	use_selector_state: false,
+	selector: undefined,
 	bg_impair_color: '#FFFFF',
 	bg_pair_color:  '#FFFFF',
+	
+	source_id: undefined,
 	
 	component_name: undefined,
 	
@@ -74,27 +78,45 @@ Ext.define('widgets.weather.brick' , {
 		}
 		
 		this.callParent(arguments);
-		this.getSla();
+	},
+	
+	afterRender : function(){
+		this.component_name = this.selector.component
+		
+		if(this.use_selector_state){
+			this.source_id = this.selector._id;
+			this.build(this.selector);
+		}else{
+			this.source_id = this.sla_id;
+			this.getData();
+		}
 	},
 	
 	//here for the future, for another update function
 	update_brick : function(from,to){
-		if(from && to)
-			this.getPastSla(from,to)
-		else
-			this.getSla()
+		if(from && to){
+			this.prepareReport(from,to)
+		}else{
+			this.getData()
+		}
 	},
 	
-	getSla : function(){
+	prepareReport :function(from,to){
+		if(this.use_selector_state)
+			var post_params = [{id:this.source_id,metrics:['cps_state']}]
+		else
+			var post_params = [{id:this.source_id,metrics:['cps_pct_by_state_0']}]
+			
+		this.getPastData(from,to,post_params);
+	},
+	
+	getData : function(){
 		Ext.Ajax.request({
-			url: '/rest/events/event/' + this.sla_id,
+			url: '/rest/events/event/' + this.source_id,
 			scope: this,
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 				data = data.data[0];
-				
-				if(data.component)
-					this.component_name = data.component
 				
 				this.build(data);
 			},
@@ -104,14 +126,12 @@ Ext.define('widgets.weather.brick' , {
 				
 				if(result.status == 404)
 					this.buildEmpty()
-				
 			}
 		});
 	},
 	
-	getPastSla : function(from,to){
-		log.debug('get past sla for: ' + this.sla_id,this.logAuthor)
-		var post_params = [{id:this.sla_id,metrics:['cps_pct_by_state_0']}]
+	getPastData : function(from,to,post_params){
+		log.debug('get past data for: ' + this.source_id,this.logAuthor)
 		Ext.Ajax.request({
 			url: '/perfstore/values/' + from +'/'+ to ,
 			params: {'nodes':Ext.JSON.encode(post_params)},
@@ -129,24 +149,25 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	build: function(data){
-		log.debug('Build html for ' + this.sla_id,this.logAuthor)
+		log.debug('Build html for ' + this.source_id,this.logAuthor)
 		var widget_data = {}
 		
 		widget_data.title = data.component
 		widget_data.legend = rdr_elapsed_time(data.last_state_change)
 		//widget_data.legend = 'since 18/05/08'
 		//widget_data.alert_comment = '0:00am to 9:00am'
-		widget_data.percent = data.perf_data_array[0].value
 
 		if(data.output && data.output != "")
 			widget_data.output = data.output
 
-		if(this.state_as_icon_value){
+		if(this.state_as_icon_value || this.use_selector_state){
 			var icon_value = 100 - ( data.state / 4 * 100)
 			widget_data.class_icon = this.getIcon(icon_value)
 		}else{
-			if(data.perf_data_array[0])
+			if(data.perf_data_array[0]){
+				widget_data.percent = data.perf_data_array[0].value
 				widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
+			}
 		}
 	
 		if(this.option_button == true)
@@ -161,17 +182,25 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	buildReport : function(data){
-		log.debug('Build html for ' + this.sla_id,this.logAuthor)
+		log.debug('Build html for ' + this.source_id,this.logAuthor)
 		
 		var widget_data = {}
 		widget_data.title = this.component_name
 		
 		if(data){
-			var cps_pct_by_state_0 = data.values[0][1]
 			var timestamp = data.values[0][0]
-			widget_data.percent = cps_pct_by_state_0
-			widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
-			widget_data.output = _('SLA on ' + rdr_tstodate(timestamp/1000) )
+			if(this.use_selector_state){
+				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
+				log.debug('State of ' + this.source_id + ' is: ' + state,this.logAuthor)
+				var icon_value = 100 - ( state / 4 * 100)
+				widget_data.class_icon = this.getIcon(icon_value)
+				widget_data.output = _('State on ' + rdr_tstodate(timestamp/1000))
+			}else{
+				var cps_pct_by_state_0 = data.values[0][1]
+				widget_data.percent = cps_pct_by_state_0
+				widget_data.class_icon = this.getIcon(cps_pct_by_state_0)
+				widget_data.output = _('SLA on ' + rdr_tstodate(timestamp/1000))
+			}
 		} else {
 			widget_data.class_icon = 'widget-weather-icon-info'
 			widget_data.output = _('No data available')
