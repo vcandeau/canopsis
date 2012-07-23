@@ -40,6 +40,7 @@ Ext.define('widgets.weather.weather' , {
 	defaultPadding : undefined,
 	defaultMargin : undefined,
 	state_as_icon_value : false,
+	use_selector_state: false,
 	bg_impair_color: undefined,
 	bg_pair_color: undefined,
 	
@@ -99,6 +100,8 @@ Ext.define('widgets.weather.weather' , {
 				brick_number: i,
 				sla_id: sla_id,
 				iconSet: this.iconSet,
+				use_selector_state: this.use_selector_state,
+				selector: data,
 				state_as_icon_value: this.state_as_icon_value,
 				bg_impair_color: this.bg_impair_color,
 				bg_pair_color: this.bg_pair_color,
@@ -124,40 +127,5 @@ Ext.define('widgets.weather.weather' , {
 		}
 	},
 	
-/*
-	getStateFromTs : function(from,to){
-		var post_params = [{id:this.sla_id,metrics:['cps_pct_by_state_0']}]
-
-		Ext.Ajax.request({
-			url: '/perfstore/values/' + from +'/'+ to ,
-			params: {'nodes':Ext.JSON.encode(post_params)},
-			scope: this,
-			success: function(response) {
-				var data = Ext.JSON.decode(response.responseText);
-
-				data = data.data[0];
-		
-				this.build(data);
-
-				this.displayReport(data.data[0]);
-			},
-			failure: function(result, request) {
-				log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
-			}
-		});
-	},
-
-	
-	displayReport : function(data){
-		var widget_data = {
-				title: this.selector_record.component,
-				percent: data.values[0][1],
-				class_icon: data.values[0][1]
-			}
-		
-		var _html = widget_weather_template.applyTemplate(widget_data);
-		this.wcontainer.update(_html)
-	},
-	* */
 	
 });
