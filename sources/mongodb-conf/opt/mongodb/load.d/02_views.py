@@ -46,11 +46,11 @@ def init():
 	create_view('selector_manager', 'Selectors', data)
 
 	### Components
-	data = {'xtype': 'list', 'filter': '{"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}', 'show_resource': False}
+	data = { 'xtype': 'list', 'show_tags': True, 'filter': '{"$and": [{"source_type":"component"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}', 'show_resource': False}
 	create_view('components', 'Components', data)
 
 	### Resources
-	data = { 'xtype': 'list', 'filter': '{"$and": [{"source_type":"resource"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}'}
+	data = { 'xtype': 'list', 'show_tags': True, 'filter': '{"$and": [{"source_type":"resource"}, {"event_type": {"$ne": "comment"}}, {"event_type": {"$ne": "user"}}]}'}
 	create_view('resources', 'Resources', data)
 
 	### View manager
