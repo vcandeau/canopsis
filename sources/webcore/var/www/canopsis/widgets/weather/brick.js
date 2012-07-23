@@ -100,7 +100,7 @@ Ext.define('widgets.weather.brick' , {
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get SLA informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
-				global.notify.notify(_('No SLA available'), _('Currently there is no SLA for this selector, please try later'),'info');
+				//global.notify.notify(_('No SLA available'), _('Currently there is no SLA for this selector, please try later'),'info');
 				
 				if(result.status == 404)
 					this.buildEmpty()
