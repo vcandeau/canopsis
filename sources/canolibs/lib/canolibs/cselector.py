@@ -45,6 +45,8 @@ class cselector(crecord):
 		## Default vars
 		self.namespace = namespace
 		
+		self.dostate = True
+		
 		self.mfilter = {}
 		self.include_ids = []
 		self.exclude_ids = []
@@ -61,6 +63,8 @@ class cselector(crecord):
 		self.last_event = None
 		
 		self.output_tpl="{cps_sel_state_0} Ok, {cps_sel_state_1} Warning, {cps_sel_state_2} Critical"
+
+		self.sel_metric_name = "cps_sel_state_%s"
 
 		self._ids = []
 		
@@ -94,6 +98,7 @@ class cselector(crecord):
 		self.data['namespace']		= self.namespace
 		self.data['rk']				= self.rk
 		self.data['output_tpl']		= self.output_tpl
+		self.data['dostate']		= self.dostate
 
 		return crecord.dump(self)
 
@@ -108,7 +113,8 @@ class cselector(crecord):
 		self.rk 			= self.data.get('rk', self.rk)
 		self.include_ids	= self.data.get('include_ids', self.include_ids)
 		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
-		output_tpl		= self.data.get('output_tpl', None)
+		self.dostate		= self.data.get('dostate', self.dostate)
+		output_tpl			= self.data.get('output_tpl', None)
 		
 		if output_tpl and output_tpl != "":
 			self.output_tpl = output_tpl
@@ -128,7 +134,8 @@ class cselector(crecord):
 	def setInclude_ids(self, ids):
 		self.include_ids = ids
 		self.changed = True
-		
+	
+	## Build MongoDB for find ids
 	def makeMfilter(self):
 		self.logger.debug("Make filter:")
 		(ifilter, efilter, mfilter) = ({}, {}, {})
@@ -153,6 +160,10 @@ class cselector(crecord):
 		self.logger.debug(" + mfilter: %s" % mfilter)
 		
 		## Tweaks
+		if not mfilter and not ifilter and not efilter:
+			self.logger.warning("%s: Invalid filter" % self.name)
+			return None
+		
 		if mfilter and not ifilter and not efilter:
 			return mfilter
 			
@@ -174,6 +185,7 @@ class cselector(crecord):
 		## Universal case
 		return {"$and": [{"$or": [mfilter, ifilter]}, efilter]}
 	
+	## Get all ids
 	def resolv(self):
 		def do_resolv(self):
 			self.logger.debug("do_resolv:")
@@ -227,17 +239,18 @@ class cselector(crecord):
 		return self.storage.get(ids, namespace=self.namespace)
 	
 	def getState(self):
-		# 1. Ponderation
-		# 2. Nb par state
-		# 3. Decision
 		self.logger.debug("getStates:")
-				
+		
+		# Build MongoDB filter		
 		mfilter = self.makeMfilter()
+		
+		# Check filter
 		self.logger.debug(" + filter: %s" % mfilter)
 		if not mfilter:
 			self.logger.debug("  + Invalid filter" )
-			return 3
-				
+			return ({}, 3, 1)
+		
+		# Build Map / Reduce	
 		mmap = Code("function () {"
 		"	var state = this.state;"
 		"	if (this.state_type == 0) {"
@@ -262,13 +275,25 @@ class cselector(crecord):
 		"  return total;"
 		"}")
 		
+		# Map / Reduce
 		self.logger.debug(" + namespace: %s" % self.namespace)
 		states = self.storage.map_reduce(mfilter, mmap, mreduce, namespace=self.namespace)
 		self.logger.debug(" + states: %s" % states)
 		
+		# Define state
 		(state, state_type) = self.stateRule_morebadstate(states)
 		
-		total = 0
+		return (states, state, state_type)
+		
+	def event(self):
+		### Transform Selector to Canopsis Event
+		self.logger.debug("To Event:")
+		
+		# Get state
+		(states, state, state_type) = self.getState()
+		
+		# Build output
+		total = 0		
 		for s in states:
 			states[s] = int(states[s])
 			total += states[s]
@@ -284,46 +309,32 @@ class cselector(crecord):
 		
 		# Create perfdata array
 		output_data = {}
-		for i in [0, 1, 2]:
+		for i in [0, 1, 2, 3]:
 			value = 0
 			try:
 				value = states[i]
 			except:
 				pass
 			
-			metric = "cps_sel_state_%s" % i
+			metric =  self.sel_metric_name % i
 			output_data[metric] = value
 			perf_data_array.append({"metric": metric, "value": value, "max": total})
 			
 		output_data['total'] = total
 	
-		# Fill template
+		# Fill Output template
 		self.logger.debug(" + output TPL: %s" % self.output_tpl)
 		output = self.output_tpl
 		if output_data:
 			for key in output_data:
 				output = output.replace("{%s}" % key, str(output_data[key]))
-				
+		
+		# Debug
 		self.logger.debug(" + output: %s" % output)
 		self.logger.debug(" + long_output: %s" % long_output)
 		self.logger.debug(" + perf_data_array: %s" % perf_data_array)
 		
-		return (state, state_type, output, long_output, perf_data_array)
-		
-	def stateRule_morebadstate(self, states):
-		state = 0
-		## Set state
-		for s in [0, 1, 2]:
-			try:
-				if states[s]:
-					state = s
-			except:
-				pass
-		return (state, 1)
-		
-	def event(self):
-		(state, state_type, output, long_output, perf_data_array) = self.getState()
-		
+		# Build Event
 		event = cevent.forger(
 			connector = "selector",
 			connector_name = "engine",
@@ -342,17 +353,27 @@ class cselector(crecord):
 		# Extra field
 		event["selector_id"] = self._id
 		
+		# Build RK
 		rk = cevent.get_routingkey(event)
 		
+		# Save RK
 		if not self.rk:
 			self.logger.debug("Set RK to '%s'" % rk)
 			self.storage.update(self._id, {'rk': rk})
 			self.rk = rk
-		
-		## Same event
-		if event == self.last_event:
-			return (None, None)
-		
+				
+		# Cache event
 		self.last_event = event
 				
 		return (rk, event)
+
+	def stateRule_morebadstate(self, states):
+		state = 0
+		## Set state
+		for s in [0, 1, 2]:
+			try:
+				if states[s]:
+					state = s
+			except:
+				pass
+		return (state, 1)
