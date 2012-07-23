@@ -19,14 +19,16 @@
 # ---------------------------------
 */
 
+
 Ext.define('widgets.stepeue.stepeue' , {
 	extend: 'canopsis.lib.view.cwidget',
 
 	alias: 'widget.stepeue',
 	logAuthor: '[widget][stream]',
-	
+	scroll : true,	
 	initComponent: function( ) {
 		this.chart = new Array( ) ;
+		this.nbResource = 0 ;
 		this.chartsOptions = new Array( ); 
 		this.model = Ext.ModelManager.getModel('canopsis.model.Event');
 		this.callParent(arguments);
@@ -54,10 +56,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 		this.storeEvent.load( { callback: function ( records, operation, success) { me.structureRecords(records)  }  }  );
 	},
 	findPerfData: function (record) {
-
 		url = this.urlPerfStore
-	
-
 		post_params_tmp = [ { id: record._id, metrics: ["duration"] }] ;
 		post_params = { 'nodes':  Ext.JSON.encode(post_params_tmp)} ;
                 Ext.Ajax.request({
@@ -68,7 +67,6 @@ Ext.define('widgets.stepeue.stepeue' , {
 		        success: function(response) {
         		        var data = Ext.JSON.decode(response.responseText);
                         	data = data.data[0];
-				console.log(data);
 				myArrVal = new Array( );
 				for( var i in data.values ) 
 					myArrVal.push( data.values[i][1] ) ;
@@ -102,15 +100,44 @@ Ext.define('widgets.stepeue.stepeue' , {
 	},
 	structureRecords: function (records) {
 		this.structuredData = {} ;
-		this.raw
 		console.log('structure');
 		console.log(records);
 		this.structuredRaw = { } ;
 		for (i in records ) {
+			this.nbResource++ ;
 			var current = records[i] ;
 			this.structuredRaw[ current.data.resource ] = current.raw ;
 			this.findPerfData( current.data ) ;
 		}
+	},
+	buildOptionsTable: function ( resource_name )  
+	{
+		console.log ( "build browser table" );
+		console.log ( this.structuredRaw[resource_name] ) ;
+/*                Ext.Ajax.request({
+                        url: url,
+                        scope: this,
+                        params: post_params,
+                        method: 'POST',
+                        success: function(response) {
+                                var data = Ext.JSON.decode(response.responseText);
+                                data = data.data[0];
+                                console.log(data);
+                                myArrVal = new Array( );
+                        },
+                        failure: function(result, request) {
+                                log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+                        }
+                });
+*/
+		browser = {
+			"firefox" : {
+   				'state': 0,
+				'timestamp': 0,
+				'duration' : 1	
+			} 
+		}
+
 	},
 	createAccordionItems : function( )
 	{	
@@ -121,29 +148,78 @@ Ext.define('widgets.stepeue.stepeue' , {
 		        padding: 5
     		} ;
 		var items = new Array() ;
+		console.log ( this.structuredData.length );
 		for ( var i  in this.structuredData ) {
-			console.log(this.structuredData );
 			var object = { } ;
 			var rState = this.structuredData[i].state ;
 			var currDate = rdr_tstodate(this.structuredData[i].timestamp ) ;
-			object.title = "<span class=\"scenario-title\">"+i+"</span><span class=\"scenario-statut\">"+ rdr_status( rState) + "</span>"+ currDate ;
+			object.width = "100%" ; 
+			object.xtype = "panel" ;
+			//object.minHeight = 150 ; //this.el.dom.clientHeight / this.nbResource  ;
+			object.title = "<div><div class=\"scenario-status\">"+ rdr_status( rState )  +"</div><div class=\"title-bar-scenario\"> <span class=\"scenario-title\">"+i+"</span><span>"+ currDate+ " | "+ this.structuredData[i].perf_data_array[0].value + " "+this.structuredData[i].perf_data_array[0].unit + "</span></div><div class=\"graph-data\">"+ this.structuredData[i].graphData +"</div></div>";
 			object.items = [ {
-				html: "box1",
 				xtype: xt,
-				anchor: "100% 70%",
-				border: false 
-			} ,
-			{
-				xtype: xt,
-				anchor: "100% 30%",
-				html: this.structuredData[i].graphData , 
-				border: false 
-			}  ] ;
-			object.layout = "anchor" ;
+				border: false,
+				items: [
+				{
+					xtype: xt,
+					anchor: "100% 100%",
+					border: false,
+					layout: "column",
+					height: "100%",
+					items: [ 
+						{
+							columnWidth: 0.7,
+							border:false,
+							html: "Ceci est du code html"//,<br /><br/><br/>ceci encore,<br/><br/><br/> ceci encore !" 
+							//tems: this.buildOptionsTable( i )  
+						},
+						{
+							columnWidth: 0.3,
+					//		height: "100%",
+							border: false,
+							items: this.buildScreenShot( i ) 
+						}
+					]	
+				} ]  
+		 	} ] ; 
+			/*, {
+				anchor: "100% 100%",
+				border: false,
+				items: this.buildScreenShot( i )
+			}  ] ;*/
+//			object.layout = "anchor" ;
+/*			object.bbar = [
+		        {
+		            id: this.structuredData[i].resource+':!:move-prev',
+		            text: 'Back',
+		            handler: function(btn) {
+                		navigate(btn.up("panel"), "prev", btn);
+		            },
+		            disabled: true
+		        },
+		        '->', // greedy spacer so that the buttons are aligned to each side
+		        {
+		            id: this.structuredData[i].resource+':!:move-next',
+		            text: 'Next',
+ 		            handler: function(btn) {
+ 			    navigate(btn.up("panel"), "next" , btn);
+            			}
+        		}
+    			]; */
 			items.push( object ) ;
 		}
 		return items ;
 	}, 
+	buildScreenShot: function ( i ) {
+		var srcImg = this.structuredRaw[i].server_media_url + "/"+this.structuredRaw[i].scenario_screenshot ;
+		console.log( "build screen shot");
+		return Ext.create( 'Ext.Img', {
+			id: "img-"+this.structuredRaw[i].resource,
+			src: srcImg,
+			width: "100%",
+		} ) ;
+	},
 	prepareChart : function( object ) {
 		var values = new Array ( ) ;
 		for ( i in object ) {
@@ -157,15 +233,10 @@ Ext.define('widgets.stepeue.stepeue' , {
 		var itemsList = this.createAccordionItems() ;
 		this.content = Ext.create('Ext.Panel', {
 			title: "["+this.baseNode.component+"]<br/><span class=\"subtitle\">"+this.baseNode.description+"</span>" ,
-			defaults: {
-     				   // applied to each contained panel
-			        bodyStyle: 'padding:15px'
-    			},
+			autoScroll: true,
 			layout:  {
 			        type: 'accordion',
-			        titleCollapse: false,
-			        animate: true,
-			        activeOnTop: true	
+				align:'stretch'
 			},
 			items: itemsList 
 	
@@ -175,6 +246,21 @@ Ext.define('widgets.stepeue.stepeue' , {
 		var gWidth = $('.line-graph').width() ;
 		var gHeight = $('.line-graph').height() ;
 		$(".line-graph").peity("line", { height: gHeight, width:gWidth } ) ;
+		for ( var i in this.structuredRaw ) {
+			Ext.EventManager.on ( 'img-'+this.structuredRaw[i].resource, 'click', function( e, t) {
+ 				e.preventDefault() ;
+				var srcImg = t.getAttribute('src');
+				var img = Ext.create( 'Ext.Img', {
+		                        src: srcImg,
+                		        width: "100%",
+         		       } ) ;
+				Ext.create('Ext.window.Window',{ 
+					width:"53%",
+					layout: 'auto',
+					items: img
+				}).show();
+			}  ) ;
+		}
 	},
 
 	

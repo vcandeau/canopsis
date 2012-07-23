@@ -213,10 +213,36 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				autoLoad: false
 		});
 
-		if ( this.filter ) 
+		if ( this.filter ) // si un filtre est specifié on l'applique 
 			this.search_store.setFilter( this.filter );
 
-		this.search_store.load();
+		
+		if ( this.onlyComponent ) { // si on choisi seulement un composant, il faut eliminer les doublons.
+			this.search_store.load( function (records, operation, success ) {
+				console.log( "load" ) ;
+				var usedValue = { }  ;
+				for ( var i in records ) { 
+					console.log ( records[i] ) ;
+					if ( ! usedValue[records[i].data.component] ) 
+					{
+						records[i].data.resource = null ;
+						usedValue[records[i].data.component] = records[i] ;
+					}
+					else
+					{
+						this.remove( records[i] ) ;
+					}
+				}
+				console.log(usedValue ) ;
+			} ) ;
+		}
+		else
+		{
+			this.search_store.load( ) ;
+
+		}
+		
+		
 		this.search_grid = Ext.create('canopsis.lib.view.cgrid', {
 			multiSelect: this.multiSelect,
 			opt_bar: true,
@@ -335,6 +361,10 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				success: function(response) {
 						var data = Ext.JSON.decode(response.responseText);
 						data = data.data;
+						
+						if ( this.onlyComponent ) // si seulement les composants, le nom de la resource ne doit pas apparaitre
+							for ( var i in data ) 
+								data[i].resource = null ;
 						this.setValue_record(data);
 					},
 					failure: function(result, request) {
