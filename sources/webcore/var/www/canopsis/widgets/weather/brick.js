@@ -105,6 +105,7 @@ Ext.define('widgets.weather.brick' , {
 	
 	build: function(data){
 		log.debug(' + Build html for ' + data._id,this.logAuthor)
+		log.dump(data)
 		var widget_data = {
 			legend: rdr_elapsed_time(data.last_state_change,true)
 		}
@@ -116,9 +117,13 @@ Ext.define('widgets.weather.brick' , {
 			var icon_value = 100 - ( data.state / 4 * 100)
 			widget_data.class_icon = this.getIcon(icon_value)
 		}else{
-			if(data.perf_data_array[0]){
-				widget_data.percent = data.perf_data_array[0].value
-				widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
+			if(data.perf_data_array){
+				if(data.perf_data_array[0]){
+					widget_data.percent = data.perf_data_array[0].value
+					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
+				}
+			}else{
+				widget_data.class_icon ='widget-weather-icon-info'
 			}
 		}
 		/*
