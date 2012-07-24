@@ -31,16 +31,26 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 	initComponent: function() {
 		this.callParent(arguments);
 
+		this.advancedMode = false
+
 		//---------------------- Create items --------------------------------
 
 		var today = new Date();
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
+		this.textFor = this.add({xtype: 'tbtext', text: _('from: ')})
+
+		this.previousButton = this.add({
+			xtype: 'button', 
+			cls: 'x-btn-icon x-tbar-page-prev',
+			action: 'previous'
+		})
+
 		this.fromDate = this.add({
 			xtype: 'datefield',
-			fieldLabel: _('From'),
-			labelWidth:40,
+			//fieldLabel: _('From'),
+			//labelWidth:40,
 			editable: false,
 			width: 130,
 			value: yesterday,
@@ -55,16 +65,23 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 		});
 		
+		this.nextButton = this.add({
+			xtype: 'button', 
+			cls: 'x-btn-icon x-tbar-page-next',
+			action: 'next'
+		})
+		
 		this.add('-')
 		
 		this.toDate = this.add({
 			xtype: 'datefield',
-			labelWidth:30,
-			fieldLabel: _('To'),
+			labelWidth:20,
+			//fieldLabel: _('To'),
 			editable: false,
 			width: 130,
 			value: today,
-			maxValue: tommorow
+			maxValue: tommorow,
+			hidden : true
 		});
 		
 		this.toHour = this.add({
@@ -73,10 +90,58 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			value: '00:00 am',
 			width:70,
 			allowBlank: false,
-			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
+			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/,
+			hidden : true
 		});
-			
+		
+		//---------------------period bar item---------------------
+		this.textFor = this.add({xtype: 'tbtext', text: _('for:')})
+		
+		var comboStore = Ext.create('Ext.data.Store', {
+			fields: ['name', 'value'],
+			data : [
+				{"name":_("Day"), "value":global.commonTs.day},
+				{"name":_("Week"), "value":global.commonTs.week},
+				{"name":_("Month"), "value":global.commonTs.month},
+				{"name":_("Year"), "value":global.commonTs.year}
+			]
+		});
+
+		comboStore.load();
+		
+		
+		this.periodNumber = this.add({
+			xtype:'numberfield',
+			width:55,
+			value: 1,
+			//allowBlank: false,
+		});
+
+		this.combo = this.add({
+			xtype: 'combobox',
+			store: comboStore,
+			queryMode: 'local',
+			editable:false,
+			displayField: 'name',
+			width:85,
+			valueField: 'value',
+			forceSelection : true,
+			value : _('Day')
+		});
+
+		this.combo.setValue(86400)
+		
+		this.add('->')
+
+		//--------------------Buttons--------------------
+		
 		this.add('-')
+		
+		this.toggleButton = this.add({
+			xtype: 'button',
+			iconCls: 'icon-calendar',
+			tooltip: _('toggle to advanced/simple mode')
+		});
 
 		this.searchButton = this.add({
 			xtype: 'button',
@@ -105,6 +170,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'exit',
 			tooltip: _('Leave reporting mode')
 		});
+		
+		
 	}
 
 });

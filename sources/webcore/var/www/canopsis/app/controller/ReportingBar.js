@@ -42,12 +42,19 @@ Ext.define('canopsis.controller.ReportingBar', {
 		bar.htmlButton.on('click', this.htmlReport, this);
 		bar.exitButton.on('click', this.exitButton, this);
 		bar.searchButton.on('click',this.launchReport,this)
+		bar.toggleButton.on('click',this.toggle_mode,this)
+		
+		bar.nextButton.on('click',this.nextButton,this)
+		bar.previousButton.on('click',this.previousButton,this)
+		
 	},
 
 	launchReport: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		var startTimestamp = this.getStartTimestamp()
-		var stopTimestamp =  this.getStopTimestamp()
+		
+		var timestamps = this.getReportTime()
+		var startTimestamp = timestamps.start
+		var stopTimestamp =  timestamps.stop
 
 		if (startTimestamp && stopTimestamp) {
 			log.debug('------------------------Asked Report date-----------------------');
@@ -60,12 +67,39 @@ Ext.define('canopsis.controller.ReportingBar', {
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
 		}
 	},
+	
+	nextButton: function(){
+		log.debug('Next button pressed', this.logAuthor);
+		var dateField = this.bar.fromDate
+		
+		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), "U"))
+		var timeUnit = this.bar.combo.getValue()
+		
+		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue())
+		var newDate = new Date(timestamp * 1000)
+		dateField.setValue(newDate)
+		this.launchReport()
+	},
+
+	previousButton: function(){
+		log.debug('Previous button pressed', this.logAuthor);
+		var dateField = this.bar.fromDate
+		
+		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), "U"))
+		var timeUnit = this.bar.combo.getValue()
+		
+		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue())
+		var newDate = new Date(timestamp * 1000)
+		dateField.setValue(newDate)
+		this.launchReport()
+	},
 
 	saveButton: function() {
 		log.debug('launching pdf reporting', this.logAuthor);
 
-		var startTimestamp = this.getStartTimestamp()
-		var stopTimestamp =  this.getStopTimestamp()
+		var timestamps = this.getReportTime()
+		var startTimestamp = timestamps.start
+		var stopTimestamp =  timestamps.stop
 
 		if (startTimestamp && stopTimestamp) {
 			var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id;
@@ -84,14 +118,30 @@ Ext.define('canopsis.controller.ReportingBar', {
 	htmlReport: function() {
 		log.debug('launching html window reporting', this.logAuthor);
 		
-		var startTimestamp = this.getStartTimestamp()
-		var stopTimestamp =  this.getStopTimestamp()
+		var timestamps = this.getReportTime()
+		var startTimestamp = timestamps.start
+		var stopTimestamp =  timestamps.stop
 
 		if (startTimestamp && stopTimestamp) {
 			var ctrl = this.getController('Reporting');
 			var view = Ext.getCmp('main-tabs').getActiveTab().view_id;
 			ctrl.openHtmlReport(view, startTimestamp * 1000, stopTimestamp * 1000);
 		}
+	},
+	
+	getReportTime : function(){
+		if(this.bar.advancedMode){
+			var startTimestamp = this.getStartTimestamp()
+			var stopTimestamp =  this.getStopTimestamp()
+		} else {
+			var timeUnit = this.bar.combo.getValue()
+			var periodLength = this.bar.periodNumber.getValue()
+			var stopTimestamp = this.getStartTimestamp()
+			var startTimestamp = stopTimestamp - (timeUnit * periodLength)
+		}
+		
+		return {start:startTimestamp,stop:stopTimestamp}
+		
 	},
 	
 	getStartTimestamp : function(){
@@ -143,5 +193,29 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	disable_reporting_mode: function() {
 		log.debug('Disable reporting mode', this.logAuthor).removeReportingBar();
+	},
+	
+	toggle_mode : function(){
+		if(this.bar.advancedMode){
+			this.bar.toDate.hide()
+			this.bar.toHour.hide()
+			this.bar.textFor.show()
+			this.bar.previousButton.show()
+			this.bar.nextButton.show()
+			this.bar.periodNumber.show()
+			this.bar.combo.show()
+			this.bar.advancedMode = false
+		}else{
+			this.bar.toDate.show()
+			this.bar.toHour.show()
+			this.bar.textFor.hide()
+			this.bar.previousButton.hide()
+			this.bar.nextButton.hide()
+			this.bar.periodNumber.hide()
+			this.bar.combo.hide()
+			this.bar.advancedMode = true
+		}
+
 	}
+	
 });
