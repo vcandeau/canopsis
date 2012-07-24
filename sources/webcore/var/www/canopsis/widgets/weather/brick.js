@@ -20,32 +20,30 @@
 */
 
 widget_weather_template = Ext.create('Ext.XTemplate',
-		'<table class="table">',
-			'<tr>',
-				'<td class="left_panel">',
-					'<div class="first_sub_section">',
-						'<p class="title">{title}</p>',
-						'<p id="{brick_Component_id}-output" class="comment">{output}</p>',
-					'</div>',
-					'<div class="second_sub_section">',
-						'<tpl if="button_text != undefined">',
-							//'<div class="alert_button"><button type="button">{button_text}</button></div>',
-							'<button class="alert_button" type="button">{button_text}</button>',
-						'</tpl>',
-						'<div class="alert_information"><span>{alert_comment}</span></div>',
-						//'<div class="alert_img"></div>',
-					'</div>',
-				'</td>',
-				'<td class="right_panel">',
-					'<div class="logo {class_icon}">',
-						'<tpl if="percent != undefined ">',
-							'<p>{percent}%</p>',
-						'</tpl>',
-					'</div>',
-					'<div class="legend">{legend}</div>',
-				'</td>',
-			'</tr>',
-		'</table',
+		'<div class="table">',
+			'<div class="left_panel" style="float:{first_panel_float}">',
+				'<div class="first_sub_section">',
+					'<p class="title">{title}</p>',
+					'<p id="{brick_Component_id}-output" class="comment">{output}</p>',
+				'</div>',
+				'<div class="second_sub_section">',
+					'<tpl if="button_text != undefined">',
+						//'<div class="alert_button"><button type="button">{button_text}</button></div>',
+						'<button class="alert_button" type="button">{button_text}</button>',
+					'</tpl>',
+					'<div class="alert_information"><span>{alert_comment}</span></div>',
+					//'<div class="alert_img"></div>',
+				'</div>',
+			'</div>',
+			'<div class="right_panel" style="float:{second_panel_float}">',
+				'<div class="logo {class_icon}">',
+					'<tpl if="percent != undefined ">',
+						'<p>{percent}%</p>',
+					'</tpl>',
+				'</div>',
+				'<div class="legend">{legend}</div>',
+			'</div>',
+		'</div',
 		{compiled: true}
 	);
 
@@ -57,6 +55,7 @@ Ext.define('widgets.weather.brick' , {
 	
 	brick_number: undefined,
 	iconSet: 1,
+	icon_on_left:false,
 	state_as_icon_value: false,
 	bg_color: "#FFFFFF",
 		
@@ -80,8 +79,24 @@ Ext.define('widgets.weather.brick' , {
 	
 	afterRender : function(){
 		log.debug(' + Brick created',this.logAuthor)
+		
+		//------------------build widget base config--------------
+		this.widget_base_config = {
+			title : "Unknown"
+		}
+
+		if(this.icon_on_left){
+			this.widget_base_config.first_panel_float = "right"
+			this.widget_base_config.second_panel_float = "left"
+		}else{
+			this.widget_base_config.first_panel_float = "left"
+			this.widget_base_config.second_panel_float = "right"
+		}
+		
+		//----------------------build html------------------------
+		
 		if(this.data){
-			this.component_name = this.data.component
+			this.widget_base_config.title = this.data.component
 			this.build(this.data)
 		}else{
 			this.buildEmpty()
@@ -90,11 +105,11 @@ Ext.define('widgets.weather.brick' , {
 	
 	build: function(data){
 		log.debug(' + Build html for ' + data._id,this.logAuthor)
-		var widget_data = {}
-		
-		widget_data.title = this.component_name
-		widget_data.legend = rdr_elapsed_time(data.last_state_change,true)
-		
+		log.dump(data)
+		var widget_data = {
+			legend: rdr_elapsed_time(data.last_state_change,true)
+		}
+
 		if(data.output && data.output != "")
 			widget_data.output = data.output
 
@@ -102,9 +117,13 @@ Ext.define('widgets.weather.brick' , {
 			var icon_value = 100 - ( data.state / 4 * 100)
 			widget_data.class_icon = this.getIcon(icon_value)
 		}else{
-			if(data.perf_data_array[0]){
-				widget_data.percent = data.perf_data_array[0].value
-				widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
+			if(data.perf_data_array){
+				if(data.perf_data_array[0]){
+					widget_data.percent = data.perf_data_array[0].value
+					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
+				}
+			}else{
+				widget_data.class_icon ='widget-weather-icon-info'
 			}
 		}
 		/*
@@ -116,17 +135,16 @@ Ext.define('widgets.weather.brick' , {
 				
 			widget_data.alert_comment = '0:00am to 9:00am'
 		}*/
-
-		var _html = widget_weather_template.applyTemplate(widget_data);
+		
+		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
 	
 	
 	buildReport : function(data){
 		log.debug('Build html for report ' + this.source_id,this.logAuthor)
-		
 		var widget_data = {}
-		widget_data.title = this.component_name
 		
 		if(data){
 			var timestamp = data.values[0][0]
@@ -147,19 +165,20 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.output = _('No data available')
 		}
 		
-		var _html = widget_weather_template.applyTemplate(widget_data);
+		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
 	
 	buildEmpty: function(){
 		log.debug('Build empty brick ' + this.source_id,this.logAuthor)
 		var widget_data = {
-			title : this.component_name,
 			output : _("No data for the selected information"),
 			class_icon : 'widget-weather-icon-info'
 		}
-
-		var _html = widget_weather_template.applyTemplate(widget_data);
+		
+		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
 
