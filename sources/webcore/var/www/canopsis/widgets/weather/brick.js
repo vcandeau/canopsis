@@ -58,14 +58,17 @@ Ext.define('widgets.weather.brick' , {
 	brick_number: undefined,
 	iconSet: 1,
 	state_as_icon_value: false,
-	bg_impair_color: '#FFFFF',
-	bg_pair_color:  '#FFFFF',
-	
+	bg_color: "#FFFFFF",
+		
 	data : undefined,
 	nodeId : undefined,
+	component_name : undefined,
 	
 	initComponent: function() {
 		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
+		
+		if(this.bg_color.indexOf('#') == -1)
+			this.bg_color = '#' + this.bg_color
 		
 		this.style = {'background-color': this.bg_color}
 		
@@ -73,76 +76,21 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	afterRender : function(){
-		log.debug(' + Build html..',this.logAuthor)
-		if(this.data)
+		log.debug(' + Brick created',this.logAuthor)
+		if(this.data){
+			this.component_name = this.data.component
 			this.build(this.data)
-		else
-			this.buildEmpty()
-	},
-	/*
-	//here for the future, for another update function
-	update_brick : function(from,to){
-		if(from && to){
-			this.prepareReport(from,to)
 		}else{
-			this.getData()
+			this.buildEmpty()
 		}
 	},
 	
-	prepareReport :function(from,to){
-		if(this.use_sla)
-			var post_params = [{id:this.source_id,metrics:['cps_pct_by_state_0']}]
-		else
-			var post_params = [{id:this.source_id,metrics:['cps_state']}]
-			
-		this.getPastData(from,to,post_params);
-	},
-	
-	getData : function(){
-		Ext.Ajax.request({
-			url: '/rest/events/event/' + this.source_id,
-			scope: this,
-			success: function(response) {
-				var data = Ext.JSON.decode(response.responseText);
-				data = data.data[0];
-				
-				this.build(data);
-			},
-			failure: function(result, request) {
-				log.error('Impossible to get SLA informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
-				//global.notify.notify(_('No SLA available'), _('Currently there is no SLA for this selector, please try later'),'info');
-				
-				if(result.status == 404)
-					this.buildEmpty()
-			}
-		});
-	},
-	
-	getPastData : function(from,to,post_params){
-		log.debug('get past data for: ' + this.source_id,this.logAuthor)
-		Ext.Ajax.request({
-			url: '/perfstore/values/' + from +'/'+ to ,
-			params: {'nodes':Ext.JSON.encode(post_params)},
-			scope: this,
-			success: function(response) {
-				var data = Ext.JSON.decode(response.responseText);
-				data = data.data[0];
-				
-				this.buildReport(data);
-			},
-			failure: function(result, request) {
-				log.error('Impossible to get sla informations on the given time period', this.logAuthor);
-			}
-		});
-	},
-	*/
 	build: function(data){
-		log.debug('Build html for ' + this.source_id,this.logAuthor)
+		log.debug(' + Build html for ' + data._id,this.logAuthor)
 		var widget_data = {}
 		
-		widget_data.title = data.component
+		widget_data.title = this.component_name
 		widget_data.legend = rdr_elapsed_time(data.last_state_change,true)
-		//widget_data.legend = 'since 18/05/08'
 		//widget_data.alert_comment = '0:00am to 9:00am'
 
 		if(data.output && data.output != "")
@@ -167,16 +115,16 @@ Ext.define('widgets.weather.brick' , {
 		this.getEl().update(_html)
 	},
 	
-	/*
+	
 	buildReport : function(data){
-		log.debug('Build html for ' + this.source_id,this.logAuthor)
+		log.debug('Build html for report ' + this.source_id,this.logAuthor)
 		
 		var widget_data = {}
 		widget_data.title = this.component_name
 		
 		if(data){
 			var timestamp = data.values[0][0]
-			if(!this.use_sla){
+			if(this.data.event_type == "selector"){
 				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
 				log.debug('State of ' + this.source_id + ' is: ' + state,this.logAuthor)
 				var icon_value = 100 - ( state / 4 * 100)
@@ -196,11 +144,12 @@ Ext.define('widgets.weather.brick' , {
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
 	},
-	*/
+	
 	buildEmpty: function(){
+		log.debug('Build empty brick ' + this.source_id,this.logAuthor)
 		var widget_data = {
 			title : this.component_name,
-			output : _("This selector doesn't have an SLA"),
+			output : _("No data for the selected information"),
 			class_icon : 'widget-weather-icon-info'
 		}
 
