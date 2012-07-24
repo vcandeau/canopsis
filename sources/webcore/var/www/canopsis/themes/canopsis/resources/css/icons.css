@@ -67,6 +67,10 @@
     background-image: url(../images/icons/magnifier.png) !important; 
 }
 
+.icon-calendar { 
+    background-image: url(../images/icons/calendar.png) !important; 
+}
+
 /*
 .icon-cancel { 
     background-image: url(../images/icons/move.png) !important; 
