@@ -71,6 +71,10 @@
     background-image: url(../images/icons/calendar.png) !important; 
 }
 
+.icon-clean {
+	background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
+}
+
 /*
 .icon-cancel { 
     background-image: url(../images/icons/move.png) !important; 
