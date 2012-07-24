@@ -74,7 +74,10 @@ Ext.define('widgets.weather.brick' , {
 	
 	afterRender : function(){
 		log.debug(' + Build html..',this.logAuthor)
-		this.build(this.data)
+		if(this.data)
+			this.build(this.data)
+		else
+			this.buildEmpty()
 	},
 	/*
 	//here for the future, for another update function
