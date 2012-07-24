@@ -48,13 +48,7 @@
 						"name": "bg_pair_color",
 						"allowBlank": false,
 						"value": "#FFFFFF"
-					}]
-				},{
-					"xtype": "cfieldset",
-					"title": "Use SLA event",
-					"checkboxName": "use_sla",
-					"value": false,
-					"items": [{
+					},{
 						"xtype": "checkbox",
 						"fieldLabel": "Use SLA state as icon value",
 						"labelWidth":200,
@@ -62,12 +56,7 @@
 						"uncheckedValue": false,
 						"checked": false,
 						"name": "state_as_icon_value"
-					}]
-				},{
-					"xtype": "fieldset",
-					"title": "Icon",
-					"collapsible": false,
-					"items": [{
+					},{
 						"xtype": "numberfield",
 						"fieldLabel": "Icon type",
 						"maxValue": 2,
@@ -84,7 +73,7 @@
 					"name" : "nodes",
 					"multiSelect": true,
 					"event_type": "selector",
-					"base_filter" : {"event_type":"selector"}
+					"base_filter" : {"$or":[{"event_type":"selector"},{"event_type":"sla"}]}
 				}]
 			}
 	]
