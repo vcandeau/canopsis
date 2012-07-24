@@ -41,7 +41,7 @@ Ext.define('widgets.weather.weather' , {
 	defaultMargin : undefined,
 	state_as_icon_value : false,
 	bg_impair_color: undefined,
-	bg_pair_color: undefined,
+	bg_pair_color: "#FFFFFF",
 	
 	initComponent: function() {
 		if(this.exportMode)
@@ -149,9 +149,9 @@ Ext.define('widgets.weather.weather' , {
 			}
 			
 			if((i % 2) == 0)
-				config.bg_color = {'background-color': this.bg_pair_color}
+				config.bg_color = this.bg_pair_color
 			else
-				config.bg_color = {'background-color': this.bg_impair_color}
+				config.bg_color = this.bg_impair_color
 
 			var meteo = Ext.create('widgets.weather.brick',Ext.Object.merge(base_config, config) )
 			this.wcontainer.insert(0, meteo);		
