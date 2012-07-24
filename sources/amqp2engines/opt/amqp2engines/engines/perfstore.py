@@ -40,18 +40,6 @@ class engine(cengine):
 		
 		self.storage = mongostore(mongo_collection='perfdata')
 		
-	"""
-		## TODO: Improve perf ....
-		self.cache_node = {}
-		
-	def get_node(self, _id, *args, **kargs):
-		mynode = self.cache_node.get(_id, None)
-		if not mynode:
-			mynode = node(_id=_id, *args, **kargs)
-			self.cache_node[_id] = mynode
-			
-		return mynode
-	"""
 		
 	def to_perfstore(self, _id, perf_data, timestamp, dn=None):
 		
@@ -59,10 +47,11 @@ class engine(cengine):
 	
 			try:
 				mynode = node(	_id=_id,
-										dn=dn,
-										storage=self.storage,
-										point_per_dca=self.point_per_dca,
-										rotate_plan=self.rotate_plan)
+								dn=dn,
+								storage=self.storage,
+								point_per_dca=self.point_per_dca,
+								rotate_plan=self.rotate_plan,
+								logging_level=self.logging_level)
 								
 			except Exception, err:
 				raise Exception("Imposible to init node: %s (%s)" % (_id, err))
