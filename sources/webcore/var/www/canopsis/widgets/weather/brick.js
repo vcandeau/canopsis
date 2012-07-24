@@ -55,47 +55,28 @@ Ext.define('widgets.weather.brick' , {
 	
 	logAuthor: '[widget][weather][brick]',
 	
-	sla_id: undefined,
 	brick_number: undefined,
 	iconSet: 1,
 	state_as_icon_value: false,
-	use_sla: false,
-	selector: undefined,
 	bg_impair_color: '#FFFFF',
 	bg_pair_color:  '#FFFFF',
 	
-	source_id: undefined,
-	
-	component_name: undefined,
+	data : undefined,
+	nodeId : undefined,
 	
 	initComponent: function() {
 		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
 		
-		if((this.brick_number % 2) == 0){
-			this.style = {'background-color': this.bg_pair_color}
-		}else{
-			this.style = {'background-color': this.bg_impair_color}
-		}
+		this.style = {'background-color': this.bg_color}
 		
 		this.callParent(arguments);
 	},
 	
 	afterRender : function(){
-		this.component_name = this.selector.component
-		
-		log.debug(' + use_sla is: ' + this.use_sla, this.logAuthor)
-	
-		if(this.use_sla){
-			this.source_id = this.sla_id;
-			this.getData();
-		}else{
-			this.source_id = this.selector._id;
-			this.build(this.selector);
-		}
-		
-		log.debug(' + source id is ' + this.source_id, this.logAuthor)
+		log.debug(' + Build html..',this.logAuthor)
+		this.build(this.data)
 	},
-	
+	/*
 	//here for the future, for another update function
 	update_brick : function(from,to){
 		if(from && to){
@@ -151,7 +132,7 @@ Ext.define('widgets.weather.brick' , {
 			}
 		});
 	},
-	
+	*/
 	build: function(data){
 		log.debug('Build html for ' + this.source_id,this.logAuthor)
 		var widget_data = {}
@@ -164,7 +145,7 @@ Ext.define('widgets.weather.brick' , {
 		if(data.output && data.output != "")
 			widget_data.output = data.output
 
-		if(this.state_as_icon_value || !this.use_sla){
+		if(this.state_as_icon_value || data.event_type == "selector"){
 			var icon_value = 100 - ( data.state / 4 * 100)
 			widget_data.class_icon = this.getIcon(icon_value)
 		}else{
@@ -174,17 +155,16 @@ Ext.define('widgets.weather.brick' , {
 			}
 		}
 	
+		/*
 		if(this.option_button == true)
 			widget_data.button_text = _('Report issue')
-			
-		//widget_data.brick_Component_id = this.id
+			* */
 		
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
-		
-		//this.getElements()
 	},
 	
+	/*
 	buildReport : function(data){
 		log.debug('Build html for ' + this.source_id,this.logAuthor)
 		
@@ -213,7 +193,7 @@ Ext.define('widgets.weather.brick' , {
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
 	},
-	
+	*/
 	buildEmpty: function(){
 		var widget_data = {
 			title : this.component_name,
@@ -224,16 +204,6 @@ Ext.define('widgets.weather.brick' , {
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
 	},
-	
-/*
-	getElements: function() {
-		var el = this.getEl();
-		this.el_logo = el.getById(this.id + '-icon')
-		this.el_logo_percent = 
-		this.el_legend = el.getById(this.id + '-legend')
-		this.el_ouput = el.getById(this.id + '-output')
-	},
-	**/
 
 	getIcon: function(value){
 		value = Math.floor(value/10) *10
