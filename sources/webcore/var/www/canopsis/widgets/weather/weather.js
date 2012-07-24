@@ -41,12 +41,11 @@ Ext.define('widgets.weather.weather' , {
 	defaultMargin : undefined,
 	state_as_icon_value : false,
 	bg_impair_color: undefined,
-	bg_pair_color: undefined,
+	bg_pair_color: "#FFFFFF",
 	
 	initComponent: function() {
 		if(this.exportMode)
 			this.wcontainer_autoScroll = false
-		
 		this.callParent(arguments);
 	},
 	
@@ -58,8 +57,12 @@ Ext.define('widgets.weather.weather' , {
 	
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
-		if (this.nodeId) 
-			this.getNodes()
+		if (this.nodeId){
+			if(!this.reportMode)
+				this.getNodes()
+			else
+				this.getPastNodes(from,to)
+		}
 	},
 	
 	getNodes : function(){
@@ -75,6 +78,38 @@ Ext.define('widgets.weather.weather' , {
 			failure: function(result, request) {
 				log.error('Impossible to get Node', this.logAuthor);
 				global.notify.notify(_('Issue'), _("The selected selector can't be found"),'info');
+			}
+		});
+	},
+	
+	getPastNodes : function(from,to){
+		log.debug(' + Request data from: ' + from + ' to: ' + to,this.logAuthor)
+		
+		//--------------------Prepare post params-----------------
+		var post_params = []
+		for(var i in this.nodes){
+			var node = {id:this.nodes[i]._id}
+			
+			if(this.nodes[i].event_type == 'selector')
+				node.metrics = ['cps_state']
+			else
+				node.metrics = ['cps_pct_by_state_0']
+				
+			post_params.push(node)
+		}
+		
+		//-------------------------send request--------------------
+		Ext.Ajax.request({
+			url: '/perfstore/values/' + from +'/'+ to ,
+			params: {'nodes':Ext.JSON.encode(post_params)},
+			scope: this,
+			success: function(response) {
+				var data = Ext.JSON.decode(response.responseText);
+				data = data.data;
+				this.report(data)
+			},
+			failure: function(result, request) {
+				log.error('Impossible to get sla informations on the given time period', this.logAuthor);
 			}
 		});
 	},
@@ -114,59 +149,32 @@ Ext.define('widgets.weather.weather' , {
 			}
 			
 			if((i % 2) == 0)
-				config.bg_color = {'background-color': this.bg_pair_color}
+				config.bg_color = this.bg_pair_color
 			else
-				config.bg_color = {'background-color': this.bg_impair_color}
+				config.bg_color = this.bg_impair_color
 
 			var meteo = Ext.create('widgets.weather.brick',Ext.Object.merge(base_config, config) )
 			this.wcontainer.insert(0, meteo);		
 		}
+
+	},
 	
+	report : function(data){
+		log.debug(' + Enter report function', this.logAuthor)
+		bricks = this.wcontainer.items.items
 		
-	
+		Ext.Array.each(bricks,function(brick){
+			var new_values = undefined
+			
+			for(var i in data)
+				if(data[i].node == brick.nodeId)
+					new_values = data[i]
+			
+			if(new_values)
+				brick.buildReport(new_values)
+			else
+				brick.buildEmpty()
+		},this)
 	},
-	/*
-	populate: function(datas){
-		log.debug('Populate widget', this.logAuthor)
-		this.wcontainer.removeAll()
 
-		if(!Ext.isArray(datas))
-			datas = [datas]
-
-		for (var i in datas){
-			var data = datas[i]
-			var sla_id = 'sla.engine.sla.resource.' + data.component + '.sla'
-
-			var config = {
-				brick_number: i,
-				sla_id: sla_id,
-				iconSet: this.iconSet,
-				use_sla: this.use_sla,
-				selector: data,
-				state_as_icon_value: this.state_as_icon_value,
-				bg_impair_color: this.bg_impair_color,
-				bg_pair_color: this.bg_pair_color,
-				component_name: data.component
-			}
-			
-			if(datas.length == 1){
-				config.anchor = '100% 100%'
-			} else {
-				if(this.defaultHeight)
-					config.height = parseInt(this.defaultHeight,10)
-				config.anchor = '100%'
-			}
-			
-			if(this.defaultPadding)
-				config.padding = this.defaultPadding
-			
-			if(this.defaultMargin)
-				config.margin = this.defaultMargin
-			
-			var meteo = Ext.create('widgets.weather.brick', config)
-			this.wcontainer.insert(0, meteo);
-		}
-	},
-	*/
-	
 });
