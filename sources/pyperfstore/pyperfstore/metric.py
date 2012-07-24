@@ -26,7 +26,7 @@ from pyperfstore.dca import dca
 from pyperfstore.pmath import get_timestamp_interval, in_range, timesplit, parse_dst, fill_interval
 
 class metric(object):
-	def __init__(self, _id, storage, node, dn=None, bunit=None, dtype=None, retention=None, point_per_dca=None, rotate_plan=None):
+	def __init__(self, _id, storage, node, dn=None, bunit=None, dtype=None, retention=None, point_per_dca=None, rotate_plan=None, data=None):
 		
 		self.logger = logging.getLogger('metric')
 		#self.logger.setLevel(logging.DEBUG)
@@ -78,7 +78,8 @@ class metric(object):
 			}
 
 		if not dn:
-			data = self.storage.get(self._id)
+			if not data:
+				data = self.storage.get(self._id)
 			if data:
 				self.load(data)
 			else:
