@@ -51,51 +51,59 @@ Ext.define('widgets.weather.weather' , {
 	},
 	
 	afterContainerRender: function() {
-		if (this.nodeId) {
-			Ext.Ajax.request({
-				url: this.uri,
-				scope: this,
-				method: 'GET',
-				params: {ids:Ext.encode(this.nodeId)},
-				success: function(response) {
-					this.nodes = Ext.JSON.decode(response.responseText).data;
-					this.populate()
-				},
-				failure: function(result, request) {
-					log.error('Impossible to get Node', this.logAuthor);
-					global.notify.notify(_('Issue'), _("The selected selector can't be found"),'info');
-				}
-			});
-		}
+		if (this.nodeId) 
+			this.getNodes()
+		this.callParent(arguments);
 	},
 	
 	doRefresh: function(from, to) {
 		log.debug('Do refresh',this.logAuthor)
-		/*
-		for (var i = 0; i < this.wcontainer.items.length; i++)
-			if(this.reportMode)
-				this.wcontainer.getComponent(i).update_brick(from,to);
-			else
-				this.wcontainer.getComponent(i).update_brick();
-				* */
+		if (this.nodeId) 
+			this.getNodes()
+	},
+	
+	getNodes : function(){
+		Ext.Ajax.request({
+			url: this.uri,
+			scope: this,
+			method: 'GET',
+			params: {ids:Ext.encode(this.nodeId)},
+			success: function(response) {
+				this.nodes = Ext.JSON.decode(response.responseText).data;
+				this.populate()
+			},
+			failure: function(result, request) {
+				log.error('Impossible to get Node', this.logAuthor);
+				global.notify.notify(_('Issue'), _("The selected selector can't be found"),'info');
+			}
+		});
 	},
 	
 	populate: function(){
 		log.debug('Populate widget', this.logAuthor)
 		this.wcontainer.removeAll()
+		
+		//-------------------define base config-------------------
 		var base_config = {
 				iconSet: this.iconSet,
 				state_as_icon_value: this.state_as_icon_value,
 			}
+			
+		if(this.defaultPadding)
+			base_config.padding = this.defaultPadding
+			
+		if(this.defaultMargin)
+			base_config.margin = this.defaultMargin
 		
 		if(this.nodes.length == 1){
-				base_config.anchor = '100% 100%'
+			base_config.anchor = '100% 100%'
 		} else {
 			if(this.defaultHeight)
 				base_config.height = parseInt(this.defaultHeight,10)
 			base_config.anchor = '100%'
 		}
 
+		//------------------brick creation---------------------
 		for(var i in this.nodes){
 			var node = this.nodes[i]
 			
