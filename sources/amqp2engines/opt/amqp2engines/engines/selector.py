@@ -110,6 +110,9 @@ class engine(cengine):
 			## Publish state	
 			(rk, event) = self.selectors[_id].event()
 			if event:
+				# Set State
+				self.storage.update(_id, {'state': event['state']})
+				# Publish
 				self.amqp.publish(event, rk, self.amqp.exchange_name_events)
 		
 
@@ -135,7 +138,9 @@ class engine(cengine):
 					(rk, event) = selector.event()
 					if event:
 						self.logger.debug("Publish event for '%s' (%s events)" % (selector.name, self.selectors_events[_id]))
+						self.storage.update(_id, {'state': event['state']})
 						self.amqp.publish(event, rk, self.amqp.exchange_name_events)
+						
 					self.selectors_events[_id] = 0
 						
 		self.nb_beat +=1
