@@ -47,6 +47,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 		log.debug('Bind events "' + id + '" ...', this.logAuthor);
 
+		grid.on('select', this._select,	this);
+		
 		//Bind Dblclick
 		grid.on('selectionchange',	this._selectionchange,	this);
 		if (grid.opt_view_element) {
@@ -207,10 +209,25 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		this.grid.store.load();
 	},
 
+	_select: function(){
+		log.debug('select', this.logAuthor);
+		
+		// Filter on tags
+		selected_tags = Ext.query('#'+this.grid.id+" ul[class=tags] > li:hover > a")
+		if (selected_tags.length > 0){
+			var tag = Ext.get(selected_tags[0]).getHTML()
+			var search = this.grid.down('textfield[name=searchField]');
+			if (search && tag){
+				search.setValue('#'+tag)
+				this._searchRecord()
+			}
+		}
+	},
+	
 	_selectionchange: function(view, records) {
 		log.debug('selectionchange', this.logAuthor);
 		var grid = this.grid;
-
+		
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]');
 		for (i in btns) {
@@ -226,8 +243,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.selectionchange) {
 			this.selectionchange(view, records);
 		}
+		
 	},
-
 
 	_viewElement: function(view, item, index) {
 		log.debug('Clicked on element, function viewElement', this.logAuthor);
