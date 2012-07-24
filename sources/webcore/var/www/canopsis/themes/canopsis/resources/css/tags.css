@@ -8,10 +8,12 @@
 
 .tags li, .tags a{
 	float:left;
-	height:16px;
-	line-height:15px;
+	height:14px;
+	line-height:14px;
 	position:relative;
 	font-size:10px;
+	margin-top:1px;
+	margin-bottom:1px;
 }
 	
 .tags a{
@@ -32,18 +34,18 @@
 	float:left;
 	position:absolute;
 	top:0;
-	left:-8px;
+	left:-7px;
 	width:0;
 	height:0;
 	border-color:transparent #d4d4d4 transparent transparent;
 	border-style:solid;
-	border-width:8px 8px 8px 0;		
+	border-width:7px 7px 7px 0;		
 }
 	
 .tags a:after{
 	content:"";
 	position:absolute;
-	top:6px;
+	top:5px;
 	left:0;
 	float:left;
 	width:4px;
