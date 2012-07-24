@@ -27,14 +27,14 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 						'<p class="title">{title}</p>',
 						'<p id="{brick_Component_id}-output" class="comment">{output}</p>',
 					'</div>',
-				/*	'<div class="second_sub_section">',
+					'<div class="second_sub_section">',
 						'<tpl if="button_text != undefined">',
 							//'<div class="alert_button"><button type="button">{button_text}</button></div>',
 							'<button class="alert_button" type="button">{button_text}</button>',
 						'</tpl>',
-						'<div class="alert_img"></div>',
 						'<div class="alert_information"><span>{alert_comment}</span></div>',
-					'</div>',*/
+						'<div class="alert_img"></div>',
+					'</div>',
 				'</td>',
 				'<td class="right_panel">',
 					'<div class="logo {class_icon}">',
@@ -64,13 +64,16 @@ Ext.define('widgets.weather.brick' , {
 	nodeId : undefined,
 	component_name : undefined,
 	
+	//active_downtime : true,
+	
 	initComponent: function() {
-		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
-		
-		if(this.bg_color.indexOf('#') == -1)
-			this.bg_color = '#' + this.bg_color
-		
-		this.style = {'background-color': this.bg_color}
+		log.debug('Initialize',this.logAuthor)
+		if(this.bg_color){
+			if(this.bg_color.indexOf('#') == -1)
+				this.bg_color = '#' + this.bg_color
+			
+			this.style = {'background-color': this.bg_color}
+		}
 		
 		this.callParent(arguments);
 	},
@@ -91,8 +94,7 @@ Ext.define('widgets.weather.brick' , {
 		
 		widget_data.title = this.component_name
 		widget_data.legend = rdr_elapsed_time(data.last_state_change,true)
-		//widget_data.alert_comment = '0:00am to 9:00am'
-
+		
 		if(data.output && data.output != "")
 			widget_data.output = data.output
 
@@ -105,12 +107,16 @@ Ext.define('widgets.weather.brick' , {
 				widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
 			}
 		}
-	
 		/*
-		if(this.option_button == true)
-			widget_data.button_text = _('Report issue')
-			* */
-		
+		//--------------downtime feature------------
+		if(this.active_downtime){	
+			log.debug('  +  Enable downtime feature',this.logAuthor)
+			//if(this.option_button == true)
+				widget_data.button_text = _('Report issue')
+				
+			widget_data.alert_comment = '0:00am to 9:00am'
+		}*/
+
 		var _html = widget_weather_template.applyTemplate(widget_data);
 		this.getEl().update(_html)
 	},
