@@ -144,6 +144,13 @@ Ext.define('canopsis.lib.view.cgrid' , {
 				if (this.opt_bar_search) {
 					bar_child.push({xtype: 'tbfill'});
 					bar_child.push({
+						xtype: 'button',
+						action: 'clean_search',
+						//text: _('Search'),
+						iconCls: 'icon-clean',
+						pack: 'end'
+					});
+					bar_child.push({
 						xtype: 'textfield',
 						name: 'searchField',
 						hideLabel: true,
