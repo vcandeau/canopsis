@@ -58,15 +58,17 @@ Ext.define('widgets.weather.brick' , {
 	brick_number: undefined,
 	iconSet: 1,
 	state_as_icon_value: false,
-	bg_impair_color: '#FFFFF',
-	bg_pair_color:  '#FFFFF',
-	
+	bg_color: "#FFFFFF",
+		
 	data : undefined,
 	nodeId : undefined,
 	component_name : undefined,
 	
 	initComponent: function() {
 		log.debug('Initialize with sla: ' + this.sla_id,this.logAuthor)
+		
+		if(this.bg_color.indexOf('#') == -1)
+			this.bg_color = '#' + this.bg_color
 		
 		this.style = {'background-color': this.bg_color}
 		
@@ -84,7 +86,7 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	build: function(data){
-		log.debug('Build html for ' + data._id,this.logAuthor)
+		log.debug(' + Build html for ' + data._id,this.logAuthor)
 		var widget_data = {}
 		
 		widget_data.title = this.component_name
