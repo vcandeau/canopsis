@@ -121,6 +121,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				btns[i].on('click', this._searchRecord, this);
 			}
 		}
+		
+		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=clean_search]');
+		for (i in btns) {
+			btns[i].on('click', function(){
+				this.grid.down('textfield[name=searchField]').setValue('')
+			},this);
+		}
 
 		//bind keynav
 		var textfields = Ext.ComponentQuery.query('#' + id + ' textfield[name=searchField]');
