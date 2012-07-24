@@ -6,10 +6,11 @@
 }
 
 /*left panel*/
-
 .widget-weather .left_panel{
+	display:table;
 	height: 100%;
-	/*width:75%;*/
+	/*float : left;*/
+	width:75%;
 	vertical-align:top;
 	/*padding: 2px;*/
 }
@@ -36,7 +37,6 @@
 	width: 100%;
 }
 
-/*.widget-weather .left_panel .alert_panel .alert_information{*/
 .widget-weather .left_panel .alert_information{
 	display: table;
 	float: right;
@@ -45,13 +45,11 @@
 	/*text-align:center;*/
 }
 
-/*.widget-weather .left_panel .alert_panel .alert_information span{*/
 .widget-weather .left_panel .alert_information span{
 	display: table-cell;
 	vertical-align: middle;
 }
 
-/*.widget-weather .left_panel .alert_panel .alert_img{*/
 .widget-weather .left_panel .alert_img{
 	background-image: url(./icons/warning-icon.png) !important;
 	background-position:center center;
@@ -63,7 +61,6 @@
 	max-height: 30px;
 }
 
-/*.widget-weather .left_panel .alert_panel .alert_button{*/
 .widget-weather .left_panel .alert_button{
 	/*display: table;*/
 	float:left;
@@ -73,16 +70,8 @@
 	max-height:20px;
 }
 
-/*.widget-weather .left_panel .alert_panel .alert_button button{
-.widget-weather .left_panel .alert_button{
-	/*display:table-cell;
-	vertical-align: bottom;
-	font-size:11px;
-	max-height:20px;
-}*/
 
 /*right panel*/
-
 .widget-weather .right_panel{
 	/*float:left;*/
 	width:25%;
