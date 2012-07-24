@@ -36,6 +36,7 @@ Ext.define('widgets.weather.weather' , {
 	
 	//brick options
 	iconSet : '01',
+	icon_on_left: false,
 	defaultHeight : undefined,
 	defaultPadding : undefined,
 	defaultMargin : undefined,
@@ -122,6 +123,7 @@ Ext.define('widgets.weather.weather' , {
 		var base_config = {
 				iconSet: this.iconSet,
 				state_as_icon_value: this.state_as_icon_value,
+				icon_on_left: this.icon_on_left,
 			}
 			
 		if(this.defaultPadding)

@@ -50,8 +50,14 @@
 						"value": "#FFFFFF"
 					},{
 						"xtype": "checkbox",
+						"fieldLabel": "Display icon on the left",
+						"inputValue": true,
+						"uncheckedValue": false,
+						"checked": false,
+						"name": "icon_on_left"
+					},{
+						"xtype": "checkbox",
 						"fieldLabel": "Use SLA state as icon value",
-						"labelWidth":200,
 						"inputValue": true,
 						"uncheckedValue": false,
 						"checked": false,
