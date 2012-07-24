@@ -76,7 +76,7 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	afterRender : function(){
-		log.debug(' + Build html..',this.logAuthor)
+		log.debug(' + Brick created',this.logAuthor)
 		if(this.data){
 			this.component_name = this.data.component
 			this.build(this.data)
@@ -117,7 +117,7 @@ Ext.define('widgets.weather.brick' , {
 	
 	
 	buildReport : function(data){
-		log.debug('Build html for ' + this.source_id,this.logAuthor)
+		log.debug('Build html for report ' + this.source_id,this.logAuthor)
 		
 		var widget_data = {}
 		widget_data.title = this.component_name
@@ -146,9 +146,10 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	buildEmpty: function(){
+		log.debug('Build empty brick ' + this.source_id,this.logAuthor)
 		var widget_data = {
 			title : this.component_name,
-			output : _("This selector doesn't have an SLA"),
+			output : _("No data for the selected information"),
 			class_icon : 'widget-weather-icon-info'
 		}
 
