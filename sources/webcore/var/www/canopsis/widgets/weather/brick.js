@@ -59,7 +59,7 @@ Ext.define('widgets.weather.brick' , {
 	state_as_icon_value: false,
 	bg_color: "#FFFFFF",
 		
-	data : undefined,
+
 	nodeId : undefined,
 	component_name : undefined,
 	
@@ -73,6 +73,9 @@ Ext.define('widgets.weather.brick' , {
 			
 			this.style = {'background-color': this.bg_color}
 		}
+		
+		this.event_type = this.data.event_type
+		this.component = this.data.component
 		
 		this.callParent(arguments);
 	},
@@ -151,9 +154,13 @@ Ext.define('widgets.weather.brick' , {
 		
 		if(data){
 			var timestamp = data.values[0][0]
-			if(this.data.event_type == "selector"){
+			
+			log.dump('--------------------')
+			log.dump(this.event_type)
+			
+			if(this.event_type == "selector"){
 				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
-				log.debug('State of ' + this.source_id + ' is: ' + state,this.logAuthor)
+				log.debug('State of ' + this.component + ' is: ' + state,this.logAuthor)
 				var icon_value = 100 - ( state / 4 * 100)
 				widget_data.class_icon = this.getIcon(icon_value)
 				widget_data.output = _('State on ' + rdr_tstodate(timestamp/1000))
