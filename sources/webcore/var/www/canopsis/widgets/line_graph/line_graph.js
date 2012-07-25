@@ -52,6 +52,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	zoom: true,
 	legend: true,
 	tooltip: true,
+	tooltip_crosshairs: true,
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
@@ -231,6 +232,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			},
 			tooltip: {
+				//shared: true,
+				crosshairs: this.tooltip_crosshairs,
 				enabled: this.tooltip,
 				formatter: function() {
 					var y = this.y;
@@ -336,6 +339,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.options.chart.zoomType = 'x';
 			}
 		}
+		
+		console.log(this.options)
 	},
 
 	createChart: function() {
