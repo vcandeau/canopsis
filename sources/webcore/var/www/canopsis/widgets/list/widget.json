@@ -4,7 +4,8 @@
 	"author": "capensis",
 	"website": "http://www.canopsis.org",
 	"xtype": "list",
-	"description": "Display list of inventory items find by the provided filter.",
+	"description": "Display list of inventory items selected by the provided filter.",
+	"description-fr":"Affiche une liste d'éléments d'inventaire selectionnés par le filtre saisit.",
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{

@@ -205,8 +205,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			this.set_default_values(record);
 
 			var options = record.get('options');
-			//log.debug('the selected widget have the following options',this.logAuthor)
-			//log.dump(options)
+
 			if (options) {
 				for (var i in options) {
 					for (var j in options[i].items)
@@ -216,7 +215,13 @@ Ext.define('canopsis.lib.view.cwizard' , {
 					output.push(this.add_new_step(options[i]));
 				}
 			}
-			var description = record.get('description')
+			
+			var description = undefined
+			if (global.locale != 'en') 
+				var description = record.get('description' + '-' + global.locale)
+			if(!description)
+				var description = record.get('description')
+			
 			if(description_field && description)
 				description_field.setValue(description)
 

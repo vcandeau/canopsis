@@ -5,6 +5,7 @@
 	"website": "http://www.canopsis.org",
 	"xtype": "stream",
 	"description": "Display the live stream of events.",
+	"description-fr":"Affiche un flux d'évènements en temps réel.",
 	"refreshInterval": 60,
 	"border" : true,
 	"locales": ["fr"],
