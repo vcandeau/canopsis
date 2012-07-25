@@ -23,7 +23,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 		'<div class="table">',
 			'<div class="left_panel" style="float:{first_panel_float}">',
 				'<div class="first_sub_section">',
-					'<p class="title">{title}</p>',
+					'<p class="title">{title} <span>{event_ts}</span></p>',
 					'<p id="{brick_Component_id}-output" class="comment">{output}</p>',
 				'</div>',
 				'<div class="second_sub_section">',
@@ -114,9 +114,10 @@ Ext.define('widgets.weather.brick' , {
 	
 	build: function(data){
 		log.debug(' + Build html for ' + data._id,this.logAuthor)
-		log.dump(data)
+		
 		var widget_data = {
-			legend: rdr_elapsed_time(data.last_state_change,true)
+			legend: rdr_elapsed_time(data.last_state_change,true),
+			event_ts: rdr_tstodate(data.timestamp,true),
 		}
 
 		if(data.output && data.output != "")
