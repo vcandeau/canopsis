@@ -126,6 +126,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		for (i in btns) {
 			btns[i].on('click', function(){
 				this.grid.down('textfield[name=searchField]').setValue('')
+				this._searchRecord()
 			},this);
 		}
 
