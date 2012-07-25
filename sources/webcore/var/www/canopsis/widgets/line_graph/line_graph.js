@@ -486,16 +486,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	dblclick: function() {
-		if (this.chart && ! this.isDisabled()) {
-			if (this.chart.xAxis) {
-				this.chart.xAxis[0].setExtremes(null, null, true, false);
-				try {
-					this.chart.toolbar.remove('zoom');
-				}catch (err) {
-					log.debug("Toolbar zoom doesn't exist", this.logAuthor);
-				}
-			}
-		}
+		if (this.chart && ! this.isDisabled())
+			this.chart.zoomOut();
 	},
 
 	getSerie: function(node_id, metric_name, bunit, min, max, yAxis) {		
