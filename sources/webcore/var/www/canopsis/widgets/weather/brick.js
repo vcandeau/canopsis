@@ -165,7 +165,7 @@ Ext.define('widgets.weather.brick' , {
 			var last_timestamp = data.values[nb_points-1][0]
 			
 			if(this.event_type == "selector"){
-				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
+				var state = demultiplex_cps_state(data.values[0][1]).state
 				log.debug(' + State of ' + this.component + ' is: ' + state,this.logAuthor)
 				log.debug(' + ' + nb_points +' points returned by server', this.logAuthor)
 				log.debug('  +  First value ts: ' + timestamp,this.logAuthor)
