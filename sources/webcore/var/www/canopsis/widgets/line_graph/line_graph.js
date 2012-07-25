@@ -611,36 +611,25 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		if (metric_name == 'cps_state'){
-						
-			ok_values = []
-			warn_values = []
-			crit_values = []
+			
+			var states = [ 0, 1, 2, 3]
+			var states_data = [ [], [], [], [] ]
 			for (var index in data['values']){
 				state = parseInt(data['values'][index][1]/100)
-				if       (state == 0){
-					ok_values.push([data['values'][index][0], 100])
-					warn_values.push([data['values'][index][0], 0])
-					crit_values.push([data['values'][index][0], 0])
-				}else if (state == 1){
-					ok_values.push([data['values'][index][0], 0])
-					warn_values.push([data['values'][index][0], 100])
-					crit_values.push([data['values'][index][0], 0])
-				}else if (state == 2){
-					ok_values.push([data['values'][index][0], 0])
-					warn_values.push([data['values'][index][0], 0])
-					crit_values.push([data['values'][index][0], 100])
+				for (var i in states){
+					var value = 0
+					if (state == i)
+						value = 100
+					states_data[i].push([data['values'][index][0], value])
 				}
 			}
 			
-			data['metric'] = 'cps_state_ok'
-			data['values'] = ok_values
-			this.addDataOnChart(data)
-			data['metric'] = 'cps_state_warn'
-			data['values'] = warn_values
-			this.addDataOnChart(data)
-			data['metric'] = 'cps_state_crit'
-			data['values'] = crit_values
-			this.addDataOnChart(data)
+			for (var i in states){
+				data['metric'] = 'cps_state_' + i
+				data['values'] = states_data[i]
+				data['bunit'] = '%'
+				this.addDataOnChart(data)
+			}
 			
 			return
 			
