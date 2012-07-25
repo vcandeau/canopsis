@@ -39,7 +39,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
-		this.textFor = this.add({xtype: 'tbtext', text: _('from: ')})
+		this.textFor = this.add({xtype: 'tbtext', text: _('from')+':'})
 
 		this.previousButton = this.add({
 			xtype: 'button', 
@@ -95,7 +95,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		});
 		
 		//---------------------period bar item---------------------
-		this.textFor = this.add({xtype: 'tbtext', text: _('for:')})
+		this.textFor = this.add({xtype: 'tbtext', text: _('for')+':'})
 		
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
