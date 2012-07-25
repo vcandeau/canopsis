@@ -19,5 +19,10 @@
 # ---------------------------------
 */
 
-//i18n['weather.on'] = 'sur';
+i18n['weather.Impair brick background color'] = "Couleur de fond des briques impaires",
+i18n['weather.Pair brick background color'] = 'Couleur de fond des briques paires';
+i18n['Display icon on the left'] = "Afficher l'icône sur la gauche";
+i18n['Use SLA state as icon value'] = "Utiliser l'état de la SLA comme valeur de l'icône";
+
+
 
