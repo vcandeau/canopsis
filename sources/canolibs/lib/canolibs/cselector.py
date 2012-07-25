@@ -67,7 +67,7 @@ class cselector(crecord):
 
 		self.sel_metric_name = "cps_sel_state_%s"
 
-		self._ids = []
+		self._ids = None
 		
 		self.logger = logging.getLogger('cselector')
 		if logging_level:
@@ -227,7 +227,7 @@ class cselector(crecord):
 		
 		elif self.cache:
 			# get ids from memory
-			if self.last_resolv and (time.time() - self.last_resolv) < 3 and self._ids:
+			if self.last_resolv and (time.time() - self.last_resolv) < 3 and self._ids != None:
 				return self._ids
 			else:
 				self._ids = do_resolv_cache(self)
