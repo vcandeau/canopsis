@@ -39,13 +39,49 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		var tommorow = new Date(today.getTime() + (global.commonTs.day * 1000));
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
-		this.textFor = this.add({xtype: 'tbtext', text: _('From') + ': '})
-
 		this.previousButton = this.add({
 			xtype: 'button', 
 			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
 		})
+		
+		this.textFor = this.add({xtype: 'tbtext', text: _('For')+':'})
+		
+		var comboStore = Ext.create('Ext.data.Store', {
+			fields: ['name', 'value'],
+			data : [
+				{"name":_("Day"), "value":global.commonTs.day},
+				{"name":_("Week"), "value":global.commonTs.week},
+				{"name":_("Month"), "value":global.commonTs.month},
+				{"name":_("Year"), "value":global.commonTs.year}
+			]
+		});
+
+		comboStore.load();
+
+		this.periodNumber = this.add({
+			xtype:'numberfield',
+			width:55,
+			value: 1,
+			//allowBlank: false,
+		});
+
+		this.combo = this.add({
+			xtype: 'combobox',
+			store: comboStore,
+			queryMode: 'local',
+			editable:false,
+			displayField: 'name',
+			width:85,
+			valueField: 'value',
+			forceSelection : true,
+			value : _('Day')
+		});
+
+		this.combo.setValue(86400)
+	
+		this.textFrom = this.add({xtype: 'tbtext', text: _('From') + ': ',hidden:true})
+		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '})
 
 		this.fromDate = this.add({
 			xtype: 'datefield',
@@ -71,7 +107,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'next'
 		})
 		
-		this.add('-')
+		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ',hidden:true})
 		
 		this.toDate = this.add({
 			xtype: 'datefield',
@@ -93,43 +129,6 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/,
 			hidden : true
 		});
-		
-		//---------------------period bar item---------------------
-		this.textFor = this.add({xtype: 'tbtext', text: _('For')+':'})
-		
-		var comboStore = Ext.create('Ext.data.Store', {
-			fields: ['name', 'value'],
-			data : [
-				{"name":_("Day"), "value":global.commonTs.day},
-				{"name":_("Week"), "value":global.commonTs.week},
-				{"name":_("Month"), "value":global.commonTs.month},
-				{"name":_("Year"), "value":global.commonTs.year}
-			]
-		});
-
-		comboStore.load();
-		
-		
-		this.periodNumber = this.add({
-			xtype:'numberfield',
-			width:55,
-			value: 1,
-			//allowBlank: false,
-		});
-
-		this.combo = this.add({
-			xtype: 'combobox',
-			store: comboStore,
-			queryMode: 'local',
-			editable:false,
-			displayField: 'name',
-			width:85,
-			valueField: 'value',
-			forceSelection : true,
-			value : _('Day')
-		});
-
-		this.combo.setValue(86400)
 		
 		this.add('->')
 
