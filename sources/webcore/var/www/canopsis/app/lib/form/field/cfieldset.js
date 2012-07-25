@@ -21,6 +21,7 @@
 
 Ext.define('canopsis.lib.form.field.cfieldset' , {
 	extend: 'Ext.form.FieldSet',
+	mixins: ['canopsis.lib.form.cfield'],
 	
 	alias: 'widget.cfieldset',
 	
@@ -28,26 +29,14 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 	inputValue: true,
 	collapsible: true,
 	collapsed : true,
-	
-	isFormField: true,
-	
+
 	getName: function() {
 		return this.checkboxName;
-	},
-	isValid: function() {
-		return true;
-	},
-	validate: function() {
-		return this.isValid();
 	},
 	getSubmitData: function() {
 		var data = {};
 		data[this.checkboxName] = this.getValue();
 		return data;
-	},
-	
-	isDirty : function(){
-		return false
 	},
 	
 	initComponent: function() {
