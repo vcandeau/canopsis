@@ -55,6 +55,7 @@ class engine(cengine):
 		except:
 			event['tags'] = []
 
+		event = self.add_tag(event, 'connector_name')
 		event = self.add_tag(event, 'event_type')
 		event = self.add_tag(event, 'source_type')
 		event = self.add_tag(event, 'component')

@@ -55,7 +55,9 @@ var rdr_boolean = function(val, metadata, record, rowIndex, colIndex, store) {
 };
 
 var rdr_status = function(val, metadata, record, rowIndex, colIndex, store) {
-	return "<span class='icon icon-state-" + val + "' />";
+	if (typeof(val)=='number')
+		return "<span class='icon icon-state-" + val + "' />";
+	return val
 };
 
 var rdr_color = function(val, metadata, record, rowIndex, colIndex, store) {
