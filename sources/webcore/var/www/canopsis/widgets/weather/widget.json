@@ -38,13 +38,13 @@
 						"allowBlank": true
 					},{
 						"xtype": "colorfield",
-						"fieldLabel": "impair brick background color",
+						"fieldLabel": "Impair brick background color",
 						"name": "bg_impair_color",
 						"allowBlank": false,
 						"value": "#FAFAFA"
 					},{
 						"xtype": "colorfield",
-						"fieldLabel": "pair brick background color",
+						"fieldLabel": "Pair brick background color",
 						"name": "bg_pair_color",
 						"allowBlank": false,
 						"value": "#FFFFFF"
@@ -60,7 +60,7 @@
 						"fieldLabel": "Use SLA state as icon value",
 						"inputValue": true,
 						"uncheckedValue": false,
-						"checked": false,
+						"checked": true,
 						"name": "state_as_icon_value"
 					},{
 						"xtype": "numberfield",
