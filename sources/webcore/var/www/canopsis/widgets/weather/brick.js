@@ -149,15 +149,21 @@ Ext.define('widgets.weather.brick' , {
 	
 	
 	buildReport : function(data){
-		log.debug('Build html for report ' + this.source_id,this.logAuthor)
+		log.debug('Build html report for ' + this.event_type +' '+ this.component,this.logAuthor)
 		var widget_data = {}
 		
 		if(data){
 			var timestamp = data.values[0][0]
+			var nb_points = data.values.length
+			var last_timestamp = data.values[nb_points-1][0]
 			
 			if(this.event_type == "selector"){
 				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
-				log.debug('State of ' + this.component + ' is: ' + state,this.logAuthor)
+				log.debug(' + State of ' + this.component + ' is: ' + state,this.logAuthor)
+				log.debug(' + ' + nb_points +' points returned by server', this.logAuthor)
+				log.debug('  +  First value ts: ' + timestamp,this.logAuthor)
+				log.debug('  +  Last value ts: ' + last_timestamp,this.logAuthor)
+				
 				var icon_value = 100 - ( state / 4 * 100)
 				widget_data.class_icon = this.getIcon(icon_value)
 				widget_data.output = _('State on ' + rdr_tstodate(timestamp/1000))
