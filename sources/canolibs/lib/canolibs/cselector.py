@@ -190,6 +190,7 @@ class cselector(crecord):
 	
 	## Get all ids
 	def resolv(self):
+				
 		def do_resolv(self):
 			self.logger.debug("do_resolv:")
 			ids = []
@@ -205,13 +206,17 @@ class cselector(crecord):
 					ids.append(record._id)
 		
 			self.last_resolv = time.time()
-			self.last_nb_records = len(self._ids)
+			self.last_nb_records = len(ids)
 			
 			self.storage.update(self._id, {'ids': ids})
 			
 			self.changed = False
 			
 			return ids
+		
+		@self.cache.deco(self._id, self.cache_time)
+		def do_resolv_cache(self):
+			return do_resolv(self)
 		
 		if self.changed:
 			self.logger.debug("Selector has change, get new ids")
@@ -221,13 +226,11 @@ class cselector(crecord):
 				self.cache.put(self._id, self._ids)
 		
 		elif self.cache:
-			@self.cache.deco(self._id, self.cache_time)
-			def do_resolv_cache(self):
-				return do_resolv(self)
-				
-			self.logger.debug("Get ids from cache")
-			self._ids = do_resolv_cache(self)
-			
+			# get ids from memory
+			if self.last_resolv and (time.time() - self.last_resolv) < 3 and self._ids:
+				return self._ids
+			else:
+				self._ids = do_resolv_cache(self)
 		else:
 			self._ids = do_resolv(self)
 		
