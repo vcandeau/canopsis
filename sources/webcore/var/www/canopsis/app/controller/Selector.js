@@ -50,6 +50,10 @@ Ext.define('canopsis.controller.Selector', {
 		record.set('loaded', false);
 		record.set('sla_timewindow', record.get('sla_timewindow_value') * record.get('sla_timewindow_unit'));
 		
+		record.set('state', undefined);
+		record.set('sla_state', undefined);
+		record.set('sla_timewindow_perfdata', undefined);
+		
 		return record;
 	}
 });
