@@ -183,16 +183,13 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Exit reporting mode', this.logAuthor);
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
 		tab.report_window.destroy();
+		tab.report_window = undefined;
 		this.getController('Tabs').reload_active_view();
 	},
 
 	enable_reporting_mode: function() {
 		log.debug('Enable reporting mode', this.logAuthor);
 		Ext.getCmp('main-tabs').getActiveTab().addReportingBar();
-	},
-
-	disable_reporting_mode: function() {
-		log.debug('Disable reporting mode', this.logAuthor).removeReportingBar();
 	},
 	
 	toggle_mode : function(){
