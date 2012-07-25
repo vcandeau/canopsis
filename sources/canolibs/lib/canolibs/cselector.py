@@ -46,6 +46,7 @@ class cselector(crecord):
 		self.namespace = namespace
 		
 		self.dostate = True
+		self.state_algorithm = 0
 		
 		self.mfilter = {}
 		self.include_ids = []
@@ -99,6 +100,7 @@ class cselector(crecord):
 		self.data['rk']				= self.rk
 		self.data['output_tpl']		= self.output_tpl
 		self.data['dostate']		= self.dostate
+		self.data['state_algorithm']= self.state_algorithm
 
 		return crecord.dump(self)
 
@@ -114,6 +116,7 @@ class cselector(crecord):
 		self.include_ids	= self.data.get('include_ids', self.include_ids)
 		self.exclude_ids	= self.data.get('exclude_ids',self.exclude_ids)
 		self.dostate		= self.data.get('dostate', self.dostate)
+		self.state_algorithm= self.data.get('state_algorithm ', self.state_algorithm )
 		output_tpl			= self.data.get('output_tpl', None)
 		
 		if output_tpl and output_tpl != "":
@@ -281,7 +284,11 @@ class cselector(crecord):
 		self.logger.debug(" + states: %s" % states)
 		
 		# Define state
-		(state, state_type) = self.stateRule_morebadstate(states)
+		self.logger.debug(" + state algorithm: %s" % self.state_algorithm)
+		if self.state_algorithm == 0:
+			(state, state_type) = self.stateRule_morebadstate(states)
+		else:
+			raise Exception('Invalid state algorithm')
 		
 		return (states, state, state_type)
 		
