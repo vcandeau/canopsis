@@ -155,9 +155,6 @@ Ext.define('widgets.weather.brick' , {
 		if(data){
 			var timestamp = data.values[0][0]
 			
-			log.dump('--------------------')
-			log.dump(this.event_type)
-			
 			if(this.event_type == "selector"){
 				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
 				log.debug('State of ' + this.component + ' is: ' + state,this.logAuthor)
@@ -184,7 +181,9 @@ Ext.define('widgets.weather.brick' , {
 		log.debug('Build empty brick ' + this.source_id,this.logAuthor)
 		var widget_data = {
 			output : _("No data for the selected information"),
-			class_icon : 'widget-weather-icon-info'
+			class_icon : 'widget-weather-icon-info',
+			percent : undefined,
+			legend:undefined
 		}
 		
 		var config = Ext.Object.merge(this.widget_base_config,widget_data)
