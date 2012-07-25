@@ -402,6 +402,7 @@ var i18n={
 	'More bad state': "Plus mauvais état",
 	'For': "Pour",
 	'Toggle to advanced/simple mode': "Mode avancé/Mode simple",
-	'Display data of the selected time': "Afficher les données dans le temps sélectionné"
+	'Display data of the selected time': "Afficher les données dans le temps sélectionné",
+	'Crosshairs': "Réticule"
 
 }
