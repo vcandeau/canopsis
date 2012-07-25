@@ -395,4 +395,13 @@ var i18n={
 	'Selector': "Selecteur",
 	'Successfully': "Avec succès",
 	'Widget Wizard': "Assistant de création de widget",
+	'Calcul state': "Calculer l'état",
+	'Calcul SLA': "Calculer la SLA",
+	'SLA Value': "SLA",
+	'Algorithm': "Algorithme",
+	'More bad state': "Plus mauvais état",
+	'For': "Pour",
+	'Toggle to advanced/simple mode': "Mode avancé/Mode simple",
+	'Display data of the selected time': "Afficher les données dans le temps sélectionné"
+
 }
