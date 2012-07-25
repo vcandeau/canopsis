@@ -179,7 +179,10 @@ Ext.define('canopsis.controller.ReportingBar', {
 		if(this.bar.advancedMode){
 			this.bar.toDate.hide()
 			this.bar.toHour.hide()
+			this.bar.textFrom.hide()
+			this.bar.textTo.hide()
 			this.bar.textFor.show()
+			this.bar.textBefore.show()
 			this.bar.previousButton.show()
 			this.bar.nextButton.show()
 			this.bar.periodNumber.show()
@@ -188,7 +191,10 @@ Ext.define('canopsis.controller.ReportingBar', {
 		}else{
 			this.bar.toDate.show()
 			this.bar.toHour.show()
+			this.bar.textFrom.show()
+			this.bar.textTo.show()
 			this.bar.textFor.hide()
+			this.bar.textBefore.hide()
 			this.bar.previousButton.hide()
 			this.bar.nextButton.hide()
 			this.bar.periodNumber.hide()
