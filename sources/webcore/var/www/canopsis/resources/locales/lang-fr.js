@@ -133,6 +133,7 @@ var i18n={
 	'aaa owner':			'',
 	'From':				'De',
 	'For':				'Pour',
+	'Before':			'Avant',
 	'Nb column':			'Nb colonne',
 	'Columns' :			'Colonnes',
 	'Password':			'Mot de passe',
