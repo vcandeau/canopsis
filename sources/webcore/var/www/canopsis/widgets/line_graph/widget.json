@@ -145,6 +145,28 @@
                            }]
 					},{
 						"xtype": "fieldset",
+						"title": "Tooltype",
+						"collapsible": false,
+						"items": [
+							{
+								"xtype": "checkbox",
+								"fieldLabel": "Enable Tooltip",
+								"checked": true,
+								"name": "tooltip"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Crosshairs",
+								"checked": true,
+								"name": "tooltip_crosshairs"
+							},{
+								"xtype": "checkbox",
+								"fieldLabel": "Shared",
+								"checked": false,
+								"name": "tooltip_shared"
+							}
+						]
+					},{
+						"xtype": "fieldset",
 						"title": "Extra",
 						"collapsible": false,
 						"items": [
@@ -196,16 +218,6 @@
 						"collapsible": false,
 						"items": [
 							{
-								"xtype": "checkbox",
-								"fieldLabel": "Tooltip",
-								"checked": true,
-								"name": "tooltip"
-							},{
-								"xtype": "checkbox",
-								"fieldLabel": "Crosshairs",
-								"checked": true,
-								"name": "tooltip_crosshairs"
-							},{
 								"xtype": "checkbox",
 								"fieldLabel": "Zoom",
 								"checked": true,
