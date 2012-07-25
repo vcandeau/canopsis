@@ -113,19 +113,22 @@ Ext.define('widgets.weather.brick' , {
 		if(data.output && data.output != "")
 			widget_data.output = data.output
 
-		if(this.state_as_icon_value || data.event_type == "selector"){
+		if(data.event_type == "selector"){
 			var icon_value = 100 - ( data.state / 4 * 100)
 			widget_data.class_icon = this.getIcon(icon_value)
 		}else{
-			if(data.perf_data_array){
-				if(data.perf_data_array[0]){
-					widget_data.percent = data.perf_data_array[0].value
-					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
-				}
+			if(this.state_as_icon_value){
+				var icon_value = 100 - ( data.state / 4 * 100)
+				widget_data.class_icon = this.getIcon(icon_value)
 			}else{
-				widget_data.class_icon ='widget-weather-icon-info'
+				if(data.perf_data_array[0])
+					widget_data.class_icon = this.getIcon(data.perf_data_array[0].value)
+				else
+					widget_data.class_icon ='widget-weather-icon-info'
 			}
+			widget_data.percent = data.perf_data_array[0].value
 		}
+		
 		/*
 		//--------------downtime feature------------
 		if(this.active_downtime){	
