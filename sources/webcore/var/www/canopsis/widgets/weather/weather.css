@@ -27,7 +27,7 @@
 
 .widget-weather .left_panel .first_sub_section .title{
 	width: 100%;
-	font-size: medium;
+	font-size: 14px;
 	white-space:nowrap;
 	font-weight: bold;
 }
