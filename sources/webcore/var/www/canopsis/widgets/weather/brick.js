@@ -142,7 +142,7 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.alert_comment = '0:00am to 9:00am'
 		}*/
 		
-		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var config = Ext.Object.merge(widget_data,this.widget_base_config)
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
@@ -172,7 +172,7 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.output = _('No data available')
 		}
 		
-		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var config = Ext.Object.merge(widget_data,this.widget_base_config)
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
@@ -182,11 +182,9 @@ Ext.define('widgets.weather.brick' , {
 		var widget_data = {
 			output : _("No data for the selected information"),
 			class_icon : 'widget-weather-icon-info',
-			percent : undefined,
-			legend:undefined
 		}
 		
-		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var config = Ext.Object.merge(widget_data,this.widget_base_config)
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
