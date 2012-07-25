@@ -31,8 +31,10 @@ def make_metric_id(node_id, metric_dn):
 	return node_id.replace('.','-') + "-" + hashlib.md5(metric_dn).hexdigest()
 
 class node(object):
-	def __init__(self, _id, storage, dn=None, point_per_dca=None, retention=None, rotate_plan=None):
+	def __init__(self, _id, storage, dn=None, point_per_dca=None, retention=None, rotate_plan=None, logging_level=None):
 		self.logger = logging.getLogger('node')
+		if logging_level:
+			self.logger.setLevel(logging_level)
 			
 		self.logger.debug("Init node '%s'" % dn)
 	
@@ -71,6 +73,7 @@ class node(object):
 				changed = True
 			
 			if changed:
+				self.logger.debug(" + Save Node with new options" % dn)
 				self.save()
 				
 			if not self.dn and not dn:

@@ -41,6 +41,12 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			renderer: rdr_crecord_type,
 			dataIndex: 'crecord_type'
         },{
+			header: _('State'),
+			align: 'center',
+			width: 50,
+			dataIndex: 'state',
+			renderer: rdr_status
+		},{
 			header: _('Enabled'),
 			align: 'center',
 			width: 55,
@@ -53,23 +59,40 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'loaded',
 			renderer: rdr_boolean
 		},{
-			header: _('State'),
+			header: _('Calcul state'),
 			align: 'center',
-			width: 35,
+			width: 80,
 			dataIndex: 'dostate',
+			renderer: rdr_boolean
+		},{
+			header: _('Calcul SLA'),
+			align: 'center',
+			width: 80,
+			dataIndex: 'dosla',
 			renderer: rdr_boolean
 		},{
 			header: _('SLA'),
 			align: 'center',
-			width: 35,
-			dataIndex: 'dosla',
-			renderer: rdr_boolean
+			width: 50,
+			dataIndex: 'sla_state',
+			renderer: rdr_status
 		},{
 			header: _('SLA') + ": " + _('time window'),
 			align: 'center',
 			dataIndex: 'sla_timewindow',
 			width: 150,
 			renderer: rdr_time_interval
+		},{
+			header: _('SLA Value'),
+			align: 'center',
+			width: 60,
+			dataIndex: 'sla_timewindow_perfdata',
+			renderer: function(val){
+				if (val){
+					perf = val[0]
+					return perf.value + perf.unit
+				}
+			}
 		},{
 			header: _('Name'),
 			flex: 2,
@@ -89,7 +112,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'aaa_group',
 			renderer: rdr_clean_id,
 			text: _('Group')
-		},{
+		}/*,{
 			width: 80,
 			align: 'center',
 			text: _('Owner'),
@@ -104,7 +127,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			align: 'center',
 			text: _('Others'),
 			dataIndex: 'aaa_access_other'
-		}
+		}*/
 	],
 
 	initComponent: function() {

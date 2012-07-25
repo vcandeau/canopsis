@@ -38,7 +38,7 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)s %(levelname)s %(message)s',
                     )
 
-event = cevent.forger(connector='canopsis', connector_name='unittest', event_type='check', source_type = "component", component="test1", state=0, output="Output_1", perf_data="mymetric=1s;10;20;0;30", tags = ['check', 'component', 'test1'])
+event = cevent.forger(connector='canopsis', connector_name='unittest', event_type='check', source_type = "component", component="test1", state=0, output="Output_1", perf_data="mymetric=1s;10;20;0;30", tags = ['check', 'component', 'test1', 'unittest'])
 rk = cevent.get_routingkey(event)
 
 myamqp = None
@@ -113,7 +113,7 @@ class KnownValues(unittest.TestCase):
 			pass
 			
 		del event_alert['last_state_change']
-			
+
 		if event_alert != event:
 			print "event_alert: %s" % event_alert
 			print "event: %s" % event
