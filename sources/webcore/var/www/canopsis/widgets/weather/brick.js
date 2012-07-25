@@ -39,6 +39,8 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 				'<div class="logo {class_icon}">',
 					'<tpl if="percent != undefined ">',
 						'<p>{percent}%</p>',
+					 '<tpl else>',
+						'<p></p>',
 					'</tpl>',
 				'</div>',
 				'<div class="legend">{legend}</div>',
@@ -77,6 +79,7 @@ Ext.define('widgets.weather.brick' , {
 		this.event_type = this.data.event_type
 		this.component = this.data.component
 		
+		
 		this.callParent(arguments);
 	},
 	
@@ -84,9 +87,12 @@ Ext.define('widgets.weather.brick' , {
 		log.debug(' + Brick created',this.logAuthor)
 		
 		//------------------build widget base config--------------
-		this.widget_base_config = {
-			title : "Unknown"
-		}
+		this.widget_base_config = {	}
+		
+		if(this.component)
+			this.widget_base_config.title = this.component
+		else
+			this.widget_base_config.title = 'Unknown'
 
 		if(this.icon_on_left){
 			this.widget_base_config.first_panel_float = "right"
@@ -99,8 +105,8 @@ Ext.define('widgets.weather.brick' , {
 		//----------------------build html------------------------
 		
 		if(this.data){
-			this.widget_base_config.title = this.data.component
-			this.build(this.data)
+			if(!this.exportMode)
+				this.build(this.data)
 		}else{
 			this.buildEmpty()
 		}

@@ -44,6 +44,8 @@ Ext.define('widgets.weather.weather' , {
 	bg_impair_color: undefined,
 	bg_pair_color: "#FFFFFF",
 	
+	base_config : undefined,
+	
 	initComponent: function() {
 		if(this.exportMode)
 			this.wcontainer_autoScroll = false
@@ -51,8 +53,13 @@ Ext.define('widgets.weather.weather' , {
 	},
 	
 	afterContainerRender: function() {
+		this.configure()
+		//if(this.exportingMode){
+			
 		if (this.nodeId) 
 			this.getNodes()
+
+		
 		this.callParent(arguments);
 	},
 	
@@ -115,32 +122,35 @@ Ext.define('widgets.weather.weather' , {
 		});
 	},
 	
-	populate: function(){
-		log.debug('Populate widget', this.logAuthor)
-		this.wcontainer.removeAll()
-		
+	configure: function(){
 		//-------------------define base config-------------------
-		var base_config = {
+		this.base_config = {
 				iconSet: this.iconSet,
 				state_as_icon_value: this.state_as_icon_value,
 				icon_on_left: this.icon_on_left,
+				exportMode : this.exportMode
 			}
 			
 		if(this.defaultPadding)
-			base_config.padding = this.defaultPadding
+			this.base_config.padding = this.defaultPadding
 			
 		if(this.defaultMargin)
-			base_config.margin = this.defaultMargin
+			this.base_config.margin = this.defaultMargin
 		
 		if(this.nodes.length == 1){
-			base_config.anchor = '100% 100%'
+			this.base_config.anchor = '100% 100%'
 		} else {
 			if(this.defaultHeight)
-				base_config.height = parseInt(this.defaultHeight,10)
-			base_config.anchor = '100%'
+				this.base_config.height = parseInt(this.defaultHeight,10)
+			this.base_config.anchor = '100%'
 		}
+		
+	},
+	
+	populate: function(){
+		log.debug('Populate widget', this.logAuthor)
+		this.wcontainer.removeAll()
 
-		//------------------brick creation---------------------
 		for(var i in this.nodes){
 			var node = this.nodes[i]
 			
@@ -155,10 +165,14 @@ Ext.define('widgets.weather.weather' , {
 			else
 				config.bg_color = this.bg_impair_color
 
-			var meteo = Ext.create('widgets.weather.brick',Ext.Object.merge(base_config, config) )
+			var meteo = Ext.create('widgets.weather.brick',Ext.Object.merge(config,this.base_config) )
 			this.wcontainer.insert(0, meteo);		
 		}
-
+		
+		if(this.exportMode){
+			log.debug(' + Exporting mode enable, fetch data',this.logAuthor)
+			this.getPastNodes(export_from,export_to)
+		}
 	},
 	
 	report : function(data){
