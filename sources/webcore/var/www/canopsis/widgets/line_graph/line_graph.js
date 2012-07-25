@@ -304,8 +304,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		// Configure line type
-		if (this.SeriesType == 'area') {
-			this.options.plotOptions['area'] = {
+		this.options.plotOptions[this.SeriesType] = {
 				lineWidth: this.lineWidth,
 				shadow: false,
 				cursor: 'pointer',
@@ -315,20 +314,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 					symbol: this.marker_symbol,
 					radius: this.marker_radius
 				}
-			};
-
-		}else if (this.SeriesType == 'line') {
-			this.options.plotOptions['line'] = {
-				lineWidth: this.lineWidth,
-				shadow: false,
-				cursor: 'pointer',
-				turboThreshold: 10,
-				marker: {
-					enabled: marker_enable,
-					symbol: this.marker_symbol,
-					radius: this.marker_radius
-				}
-			};
 		}
 
 		//specifique options to add
@@ -339,8 +324,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 				this.options.chart.zoomType = 'x';
 			}
 		}
-		
-		console.log(this.options)
 	},
 
 	createChart: function() {
