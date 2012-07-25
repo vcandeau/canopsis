@@ -52,6 +52,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	zoom: true,
 	legend: true,
 	tooltip: true,
+	tooltip_crosshairs: true,
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
@@ -231,6 +232,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			},
 			tooltip: {
+				//shared: true,
+				crosshairs: this.tooltip_crosshairs,
 				enabled: this.tooltip,
 				formatter: function() {
 					var y = this.y;
@@ -301,8 +304,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 
 		// Configure line type
-		if (this.SeriesType == 'area') {
-			this.options.plotOptions['area'] = {
+		this.options.plotOptions[this.SeriesType] = {
 				lineWidth: this.lineWidth,
 				shadow: false,
 				cursor: 'pointer',
@@ -312,20 +314,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 					symbol: this.marker_symbol,
 					radius: this.marker_radius
 				}
-			};
-
-		}else if (this.SeriesType == 'line') {
-			this.options.plotOptions['line'] = {
-				lineWidth: this.lineWidth,
-				shadow: false,
-				cursor: 'pointer',
-				turboThreshold: 10,
-				marker: {
-					enabled: marker_enable,
-					symbol: this.marker_symbol,
-					radius: this.marker_radius
-				}
-			};
 		}
 
 		//specifique options to add
@@ -486,16 +474,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	},
 
 	dblclick: function() {
-		if (this.chart && ! this.isDisabled()) {
-			if (this.chart.xAxis) {
-				this.chart.xAxis[0].setExtremes(null, null, true, false);
-				try {
-					this.chart.toolbar.remove('zoom');
-				}catch (err) {
-					log.debug("Toolbar zoom doesn't exist", this.logAuthor);
-				}
-			}
-		}
+		if (this.chart && ! this.isDisabled())
+			this.chart.zoomOut();
 	},
 
 	getSerie: function(node_id, metric_name, bunit, min, max, yAxis) {		
