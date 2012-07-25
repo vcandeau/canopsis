@@ -152,6 +152,10 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			combo[0].setDisabled(true);
 		}
 		
+		//hack for delete description
+		if(this.data.description)
+			delete this.data.description
+		
 		var child_items = this.tabPanel.items.items
 		for(var i in child_items){
 			var form = child_items[i].getForm()
