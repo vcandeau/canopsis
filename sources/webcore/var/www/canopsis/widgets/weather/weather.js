@@ -172,10 +172,13 @@ Ext.define('widgets.weather.weather' , {
 				if(data[i].node == brick.nodeId)
 					new_values = data[i]
 			
-			if(new_values)
+			if(new_values){
+				log.debug(' + New values for '+ brick.event_type + ' ' + brick.component,this.logAuthor)
 				brick.buildReport(new_values)
-			else
+			}else{
+				log.debug(' + No data recieved for '+ brick.event_type + ' ' + brick.component,this.logAuthor)
 				brick.buildEmpty()
+			}
 		},this)
 	},
 
