@@ -132,6 +132,7 @@ var i18n={
 	'aaa access owner':		'',
 	'aaa owner':			'',
 	'From':				'De',
+	'For':				'Pour',
 	'Nb column':			'Nb colonne',
 	'Columns' :			'Colonnes',
 	'Password':			'Mot de passe',
@@ -242,7 +243,8 @@ var i18n={
 	'Export this view to pdf' : 'Exporter cette vue au format pdf',
 	'View page in html' : 'Visionner cette page en html',
 	'Leave reporting mode' : 'Quitter le mode reporting',
-	
+	'Toggle to advanced/simple mode' : 'Permuter sur le mode simple/avancé',
+	'Display data of the selected time' : 'Afficher les données de la période saisie',
 	
 	//--------------------------Curves---------------------
 	'Curve' : 'Courbe',
@@ -303,11 +305,9 @@ var i18n={
 	'Connected to websocket': "Connecté au websocket",
 	'Page Size': "Taille de la page",
 	'Timestamp': "Temps",
-	//'Default padding': "",
+	'Default padding': "Padding par défaut",
 	'Default margin': "Marge par défaut",
 	'Default height': "Hauteur par défaut",
-	'impair brick background color': "Couleur de fond des briques impaires",
-	'pair brick background color': "Couleur de fond des briques paires",
 	'Display options': "Options d'affichage",
 	'Values': "Valeurs",
 	'Icon type': "Type d'icône",
@@ -393,5 +393,6 @@ var i18n={
 	'Remove this from list of value': "Supprimer l'élément de la liste",
 	'Add new value to this list': "Ajouter une nouvelle élément dans la liste",
 	'Selector': "Selecteur",
-	'Successfully': "Avec succès"
+	'Successfully': "Avec succès",
+	'Widget Wizard': "Assistant de création de widget",
 }
