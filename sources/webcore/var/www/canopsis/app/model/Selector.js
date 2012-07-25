@@ -38,6 +38,7 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'dostate'},
 		{name: 'dosla'},
 		{name: 'state'},
+		{name: 'state_algorithm'},
 		{name: 'sla_state'},
 		{name: 'sla_timewindow_perfdata'},
 		{name: 'sla_timewindow', defaultValue: 0},
