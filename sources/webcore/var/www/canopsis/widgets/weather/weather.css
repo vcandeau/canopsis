@@ -35,6 +35,8 @@
 .widget-weather .left_panel .first_sub_section .title span{
 	font-size:xx-small;
 	font-weight: normal;
+	vertical-align: middle;
+	margin-left : 8px;
  }
 
 .widget-weather .left_panel .first_sub_section .comment{
