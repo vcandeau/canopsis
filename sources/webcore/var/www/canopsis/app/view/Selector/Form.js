@@ -82,6 +82,22 @@ Ext.define('canopsis.view.Selector.Form', {
 								value: true,
 								defaults: { labelWidth: labelWidth },
 								items: [{
+										xtype: "combobox",
+										name: "state_algorithm",
+										fieldLabel: _("Algorithm"),
+										queryMode: "local",
+										displayField: "text",
+										valueField: "value",
+										forceSelection: true,
+										value: 0,
+										store: {
+											xtype: "store",
+											fields: ["value", "text"],
+											data : [
+												{value: 0, text: _('More bad state')}
+											]
+										}
+									},{
 										fieldLabel: _('Output Template'),
 										xtype: 'textareafield',
 										name: 'output_tpl',
