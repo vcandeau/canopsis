@@ -202,6 +202,11 @@
 								"name": "tooltip"
 							},{
 								"xtype": "checkbox",
+								"fieldLabel": "Crosshairs",
+								"checked": true,
+								"name": "tooltip_crosshairs"
+							},{
+								"xtype": "checkbox",
 								"fieldLabel": "Zoom",
 								"checked": true,
 								"name": "zoom"
