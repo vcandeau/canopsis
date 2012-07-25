@@ -21,7 +21,6 @@
 from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
-from ccache import get_cache
 
 NAME="tag"
 
@@ -32,9 +31,7 @@ class engine(cengine):
 		self.tags_ids = []
 		
 	def pre_run(self):
-		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
-		self.cache = get_cache(storage=self.storage)
-		
+		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))		
 		self.beat()
 				
 	def add_tag(self, event, field=None, value=None):
