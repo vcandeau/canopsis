@@ -59,7 +59,7 @@ Ext.define('widgets.weather.brick' , {
 	state_as_icon_value: false,
 	bg_color: "#FFFFFF",
 		
-	data : undefined,
+
 	nodeId : undefined,
 	component_name : undefined,
 	
@@ -73,6 +73,9 @@ Ext.define('widgets.weather.brick' , {
 			
 			this.style = {'background-color': this.bg_color}
 		}
+		
+		this.event_type = this.data.event_type
+		this.component = this.data.component
 		
 		this.callParent(arguments);
 	},
@@ -139,7 +142,7 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.alert_comment = '0:00am to 9:00am'
 		}*/
 		
-		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var config = Ext.Object.merge(widget_data,this.widget_base_config)
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
@@ -151,9 +154,10 @@ Ext.define('widgets.weather.brick' , {
 		
 		if(data){
 			var timestamp = data.values[0][0]
-			if(this.data.event_type == "selector"){
+			
+			if(this.event_type == "selector"){
 				var state = parseInt(data.values[0][1].toString()[0]) //first digit of cps_state
-				log.debug('State of ' + this.source_id + ' is: ' + state,this.logAuthor)
+				log.debug('State of ' + this.component + ' is: ' + state,this.logAuthor)
 				var icon_value = 100 - ( state / 4 * 100)
 				widget_data.class_icon = this.getIcon(icon_value)
 				widget_data.output = _('State on ' + rdr_tstodate(timestamp/1000))
@@ -168,7 +172,7 @@ Ext.define('widgets.weather.brick' , {
 			widget_data.output = _('No data available')
 		}
 		
-		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var config = Ext.Object.merge(widget_data,this.widget_base_config)
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
@@ -177,10 +181,10 @@ Ext.define('widgets.weather.brick' , {
 		log.debug('Build empty brick ' + this.source_id,this.logAuthor)
 		var widget_data = {
 			output : _("No data for the selected information"),
-			class_icon : 'widget-weather-icon-info'
+			class_icon : 'widget-weather-icon-info',
 		}
 		
-		var config = Ext.Object.merge(this.widget_base_config,widget_data)
+		var config = Ext.Object.merge(widget_data,this.widget_base_config)
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html)
 	},
