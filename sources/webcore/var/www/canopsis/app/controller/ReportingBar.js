@@ -64,6 +64,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			log.debug('----------------------------------------------------------------');
 			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
+			log.debug('Timestamps are, start: ' + startTimestamp +' stop: ' +stopTimestamp ,this.logAuthor)
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
 		}
 	},
@@ -111,6 +112,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 			ctrl.launchReport(view_id, startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
+			log.debug('Timestamps are, start: ' + startTimestamp +' stop: ' +stopTimestamp ,this.logAuthor)
 			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
 		}
 	},
@@ -131,51 +133,32 @@ Ext.define('canopsis.controller.ReportingBar', {
 	
 	getReportTime : function(){
 		if(this.bar.advancedMode){
-			var startTimestamp = this.getStartTimestamp()
-			var stopTimestamp =  this.getStopTimestamp()
+			var startTimestamp = this.getTimestamp(this.bar.fromDate,this.bar.fromHour)
+			var stopTimestamp =  this.getTimestamp(this.bar.toDate,this.bar.toHour)
 		} else {
 			var timeUnit = this.bar.combo.getValue()
 			var periodLength = this.bar.periodNumber.getValue()
-			var stopTimestamp = this.getStartTimestamp()
+			var stopTimestamp = this.getTimestamp(this.bar.fromDate,this.bar.fromHour)
 			var startTimestamp = stopTimestamp - (timeUnit * periodLength)
 		}
-		
 		return {start:startTimestamp,stop:stopTimestamp}
-		
 	},
 	
-	getStartTimestamp : function(){
-		var fromDate = this.bar.fromDate
-		var fromHour = this.bar.fromHour
+	getTimestamp : function(date_element,hour_element){
+		var date = date_element
+		var hour = hour_element
 		
-		if(fromDate.isValid() && fromHour.isValid()){
-			var date = parseInt(Ext.Date.format(fromDate.getValue(), 'U'));
-			var hour = stringTo24h(fromHour.getValue())
+		if(date.isValid() && hour.isValid()){
+			var tsDate = parseInt(Ext.Date.format(date.getValue(), 'U'));
+			var hourObject = stringTo24h(hour.getValue())
 			
 			//date + hour in seconds + minute in second
-			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60)
-			timestamp = timestamp + (new Date().getTimezoneOffset() * 60)
+			var timestamp = tsDate + (hourObject.hour * 60 * 60) + (hourObject.minute * 60)
 		}else{
-			var timestamp = undefined
+			log.debug('getTimestamp Invalid',this.logAuthor)
+			return undefined
 		}
 		
-		return parseInt(timestamp, 10)
-	},
-
-	getStopTimestamp : function(){
-		var toDate = this.bar.toDate
-		var toHour = this.bar.toHour
-		
-		if(toDate.isValid() && toHour.isValid()){
-			var date = parseInt(Ext.Date.format(toDate.getValue(), 'U'));
-			var hour = stringTo24h(toHour.getValue())
-			
-			//date + hour in seconds + minute in second
-			var timestamp = date + (hour.hour * 60 * 60) + (hour.minute * 60)
-			timestamp = timestamp + (new Date().getTimezoneOffset() * 60)
-		}else{
-			var timestamp = undefined
-		}
 		return parseInt(timestamp, 10)
 	},
 
