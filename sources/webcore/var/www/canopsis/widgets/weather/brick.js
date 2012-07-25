@@ -136,7 +136,8 @@ Ext.define('widgets.weather.brick' , {
 				else
 					widget_data.class_icon ='widget-weather-icon-info'
 			}
-			widget_data.percent = data.perf_data_array[0].value
+			if(data.perf_data_array)
+				widget_data.percent = data.perf_data_array[0].value
 		}
 		
 		/*
