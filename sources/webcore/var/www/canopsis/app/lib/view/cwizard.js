@@ -184,7 +184,6 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		var child_items = this.tabPanel.items.items
 		for(var i in child_items){
 			var form = child_items[i].getForm()
-			console.log(form)
 			var values = form.getValues(false, false, false, true)
 			for(var j in values)
 				output[j] = values[j]
