@@ -5,6 +5,7 @@
 	"website": "http://www.canopsis.org",
 	"xtype":"line_graph",
 	"description": "Display perfdata on customizable graphs.",
+	"description-fr":"Affiche les données de performances sur des graphiques personalisables.",
 	"refreshInterval": 300,
 	"locales": ["en", "fr"],
 	"options": [{
