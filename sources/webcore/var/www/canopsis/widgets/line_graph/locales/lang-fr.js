@@ -30,10 +30,12 @@ i18n['line_graph.Legend vertical alignement'] = 'Alignement vertical de la lége
 i18n['line_graph.Legend horizontal alignement'] = 'Alignement horizontal de la légende';
 i18n['line_graph.Legend layout'] = 'Disposition de la légende';
 
-i18n['Marker'] = 'Repère';
-i18n['Marker radius'] = 'Rayon du repère';
-i18n['Max zoom (seconds)'] = 'Zoom max (secondes)';
-i18n['Warn/Crit threshold lines'] = 'Warn/Crit lignes de seuils';
+i18n['line_graph.Enable Tooltip'] = "Activer l'infobulle";
+i18n['line_graph.Shared'] = 'Partagé';
+i18n['line_graph.Marker'] = 'Repère';
+i18n['line_graph.Marker radius'] = 'Rayon du repère';
+i18n['line_graph.Max zoom (seconds)'] = 'Zoom max (secondes)';
+i18n['line_graph.Warn/Crit threshold lines'] = 'Warn/Crit lignes de seuils';
 
 i18n['line_graph.1 hour'] = '1 heure';
 i18n['line_graph.1 day'] = '1 jour';
@@ -44,9 +46,9 @@ i18n['line_graph.1 year'] = '1 année';
 i18n['line_graph.Area'] = 'Zone';
 i18n['line_graph.Line'] = 'Ligne';
 
-i18n['None'] = 'Aucun';
-i18n['Circle'] = 'Cercle';
-i18n['Square'] = 'Carré';
-i18n['Diamond'] = 'Diamant';
-i18n['Triangle'] = 'Triangle';
-i18n['Triangle Down'] = 'Triangle inversé';
+i18n['line_graph.None'] = 'Aucun';
+i18n['line_graph.Circle'] = 'Cercle';
+i18n['line_graph.Square'] = 'Carré';
+i18n['line_graph.Diamond'] = 'Diamant';
+i18n['line_graph.Triangle'] = 'Triangle';
+i18n['line_graph.Triangle Down'] = 'Triangle inversé';
