@@ -303,7 +303,6 @@ var i18n={
 	'Connected to websocket': "Connecté au websocket",
 	'Page Size': "Taille de la page",
 	'Timestamp': "Temps",
-	//'Default padding': "",
 	'Default margin': "Marge par défaut",
 	'Default height': "Hauteur par défaut",
 	'impair brick background color': "Couleur de fond des briques impaires",
@@ -393,5 +392,13 @@ var i18n={
 	'Remove this from list of value': "Supprimer l'élément de la liste",
 	'Add new value to this list': "Ajouter une nouvelle élément dans la liste",
 	'Selector': "Selecteur",
-	'Successfully': "Avec succès"
+	'Successfully': "Avec succès",
+	'Calcul state': "Calculer l'état",
+	'Calcul SLA': "Calculer la SLA",
+	'SLA Value': "SLA",
+	'Algorithm': "Algorithme",
+	'More bad state': "Plus mauvais état",
+	'for': "pour",
+	'toggle to advanced/simple mode': "Mode avancé/Mode simple",
+	'Display data of the selected time': "Afficher les données dans le temps sélectionné"
 }
