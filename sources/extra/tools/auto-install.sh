@@ -46,8 +46,8 @@ if [ $? -ne 0 ]; then exit 1; fi
 
 echo "---> Clean"
 pkill -u canopsis &> /dev/null || true
-rm -Rf /opt/canopsis
-userdel canopsis || true
+#rm -Rf /opt/canopsis
+#userdel canopsis || true
 
 ## End
 echo "---> Install Ok"
