@@ -21,29 +21,13 @@
 
 Ext.define('canopsis.lib.form.field.ctag' , {
 	extend: 'Ext.panel.Panel',
+	mixins: ['canopsis.lib.form.cfield'],
 
 	alias: 'widget.ctag',
 
 	border: false,	
 	
 	layout : 'hbox',
-	
-	isFormField: true,
-
-	getName: function() {
-		return this.name;
-	},
-	isValid: function() {
-		return true;
-	},
-	validate: function() {
-		return this.isValid();
-	},
-	getSubmitData: function() {
-		var data = {};
-		data[this.name] = this.getValue();
-		return data;
-	},
 	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
