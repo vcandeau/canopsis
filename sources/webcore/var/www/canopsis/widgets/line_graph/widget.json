@@ -207,6 +207,11 @@
 								"name": "tooltip_crosshairs"
 							},{
 								"xtype": "checkbox",
+								"fieldLabel": "Shared",
+								"checked": false,
+								"name": "tooltip_shared"
+							},{
+								"xtype": "checkbox",
 								"fieldLabel": "Zoom",
 								"checked": true,
 								"name": "zoom"

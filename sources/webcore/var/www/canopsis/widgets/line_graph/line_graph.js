@@ -53,6 +53,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 	legend: true,
 	tooltip: true,
 	tooltip_crosshairs: true,
+	tooltip_shared: false,
+	
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
@@ -232,14 +234,26 @@ Ext.define('widgets.line_graph.line_graph' , {
 				}
 			},
 			tooltip: {
-				//shared: true,
+				shared: this.tooltip_shared,
 				crosshairs: this.tooltip_crosshairs,
 				enabled: this.tooltip,
-				formatter: function() {
-					var y = this.y;
-					if (this.series.options.invert)
-						y = - y;
-					return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + y;
+				formatter: function() {					
+					if (this['points']){
+						// Shared
+						var s = '<b>'+ rdr_tstodate(this.x / 1000) +'</b>';
+						$.each(this.points, function(i, point) {
+							var y = point.y
+							if (point.series.options.invert)
+								y = -y
+							s += '<br/>'+ point.series.name +': '+ y;
+						});
+						return s;
+					}else{
+						var y = this.y;
+						if (this.series.options.invert)
+							y = - y;
+						return '<b>' + rdr_tstodate(this.x / 1000) + '<br/>' + this.series.name + ':</b> ' + y;
+					}
 				}
 			},
 			xAxis: {
