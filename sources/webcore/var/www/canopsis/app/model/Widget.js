@@ -23,6 +23,7 @@ Ext.define('canopsis.model.Widget', {
     fields: [
 		{name: 'name'},
 		{name: 'description',	defaultValue: undefined},
+		{name: 'description-fr',	defaultValue: undefined},
 		{name: 'version',	defaultValue: undefined},
 		{name: 'author',	defaultValue: undefined},
 		{name: 'website',	defaultValue: undefined},

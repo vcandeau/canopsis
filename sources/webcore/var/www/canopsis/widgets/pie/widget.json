@@ -5,6 +5,7 @@
 	"website": "http://www.canopsis.org",
 	"xtype":"pie",
 	"description": "Display perfdata as a pie chart.",
+	"description-fr": "Affiche les données de performances sous forme de camembert.",
 	"refreshInterval": 300,
 	"locales": ["fr"],
 	"options": [{
