@@ -218,6 +218,7 @@ Ext.define('widgets.stream.event' , {
 						me.comments_container.insert(0, records);
 					}
 				});
+
 			}, this);
 
 			this.comments_container.render(this.id + '-comments');
@@ -238,14 +239,22 @@ Ext.define('widgets.stream.event' , {
 	},
 
 	comment: function(event) {
-		if (! this.comments_container) {
+		if (! this.comments_container && ! this.stream.active) {
+			// pass
+		}else if (! this.comments_container) {
 			this.show_comments();
 		}else {
-			log.debug('Insert comment', this.logAuthor);
+
+			if (this.stream.visible)
+				this.show_comments();
+			else
+				this.hide_comments();
+
+			log.debug(' + Insert comment', this.logAuthor);
 			var nb = this.comments_container.items.length;
+			log.debug(' + ' + nb + ' comments', this.logAuthor);
+
 			this.comments_container.insert(nb - 1, event);
-			this.nbcomment += 1;
-			this.update_comment_counter();
 
 			//Clean before
 			if (this.comments_container.items.length > (this.stream.max_comment + 1)) {
@@ -254,7 +263,10 @@ Ext.define('widgets.stream.event' , {
 				this.comments_container.remove(item.id, true);
 			}
 
+			this.nbcomment += 1;
+			this.update_comment_counter();
 		}
+
 	},
 
 	update_time: function() {
@@ -299,8 +311,10 @@ Ext.define('widgets.stream.event' , {
 
 		this.create_comments_container();
 
-		if (this.comment_form)
+		if (this.comment_form) {
+			this.comment_form.doLayout();
 			this.comment_form.getForm().findField('message').focus();
+		}
 	},
 
 	hide_comments: function() {
