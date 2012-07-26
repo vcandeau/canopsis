@@ -32,7 +32,8 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
+	echo " + Clean old unittests"
+	rm -Rf $PREFIX/lib/canolibs/unittest/*
 }
 
 function post_update(){
