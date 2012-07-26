@@ -256,12 +256,9 @@ rdr_tags = function(tags) {
 rdr_display_groups = function(groups){
 	output = ''
 	for(var i in groups){
-		prefix_index = groups[i].search('group.')
+		var group = rdr_clean_id(groups[i])
 		
-		if(groups[i].indexOf('group.') != -1)
-			output += groups[i].slice(prefix_index+6,groups[i].length)
-		else
-			output += groups[i]
+		output += group
 			
 		if(i != (groups.length - 1))
 			output += ','
