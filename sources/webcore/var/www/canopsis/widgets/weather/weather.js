@@ -47,10 +47,10 @@ Ext.define('widgets.weather.weather' , {
 	base_config: undefined,
 
 	initComponent: function() {
-		log.debug('Initialize weather widget', this.logAuthor);
 		if (this.exportMode)
 			this.wcontainer_autoScroll = false;
 		this.callParent(arguments);
+		log.debug('Initialize weather widget', this.logAuthor);
 	},
 
 	afterContainerRender: function() {
