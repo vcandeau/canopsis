@@ -294,6 +294,12 @@ function pkgondemand(){
     exit 0
 }
 
+function easy_install_pylib(){
+        echo "Easy install Python Library: $1 ..."
+        $PREFIX/bin/easy_install -Z --prefix=$PREFIX -H None -f $SRC_PATH/externals/python-libs $1 1>> $LOG 2>> $LOG
+        check_code $? "Easy install failed ..."
+}
+
 function show_help(){
 	echo "Usage : ./build-install.sh [OPTION]"
 	echo
