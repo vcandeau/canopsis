@@ -55,12 +55,6 @@ Ext.define('widgets.weather.weather' , {
 
 	afterContainerRender: function() {
 		this.configure();
-		//if(this.exportingMode){
-
-		if (this.nodeId)
-			this.getNodes();
-
-
 		this.callParent(arguments);
 	},
 
