@@ -253,3 +253,19 @@ rdr_tags = function(tags) {
 	return html
 }
 
+rdr_display_groups = function(groups){
+	output = ''
+	for(var i in groups){
+		prefix_index = groups[i].search('group.')
+		
+		if(groups[i].indexOf('group.') != -1)
+			output += groups[i].slice(prefix_index+6,groups[i].length)
+		else
+			output += groups[i]
+			
+		if(i != (groups.length - 1))
+			output += ','
+	}
+	return output
+}
+
