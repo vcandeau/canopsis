@@ -31,7 +31,7 @@ root = caccount(user="root", group="root")
 #need this in two functions, key:group_name , value : group_description
 groups =  {
 	'CPS_root':'Have all rights.',
-	'CPS_canopsis':'Base canopsis group.',
+	'Canopsis':'Base canopsis group.',
 	'CPS_curve_admin':'Create and modify curves parameters for UI.',
 	'CPS_view_admin':'Manage all view in canopsis, add, remove or edit.',
 	'CPS_view':'Create and manage his own view.',
@@ -45,10 +45,10 @@ groups =  {
 def init():
 	storage = get_storage(account=root, namespace='object')
 	
-	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
+	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
 	accounts = [
-		('root','root', 'root', 'Lastname', 'Firstname', ''),
-		('canopsis','canopsis', 'canopsis', 'Psis', 'Cano', '')
+		('root','root', 'CPS_root', 'Lastname', 'Firstname', [] ,''),
+		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', ['group.CPS_view'],'')
 	]
 
 	for name in groups:
@@ -74,6 +74,7 @@ def init():
 			record = caccount(user=user, group=account[2])
 			record.firstname = account[4]
 			record.lastname = account[3]
+			record.groups = account[5]
 			record.chown(record._id)
 			record.chgrp(record.group)
 			record.admin_group = 'group.CPS_account_admin'
@@ -118,9 +119,24 @@ def init():
 
 def update():
 	init()
+	check_user_canopsis_groups()
 	check_and_create_authkey()
 	update_for_new_rights()
 	add_description_to_group()
+
+#add CPS_view to canopsis if needed
+def check_user_canopsis_groups() :
+	try:
+		storage = get_storage(account=root, namespace='object')
+		record = storage.get('account.canopsis')
+		account = caccount(record)
+		if not 'group.CPS_view' in account.groups:
+			account.groups.append('group.CPS_view')
+			storage.put(account)
+	except:
+		pass
+
+	
 	
 def add_description_to_group():
 	storage = get_storage(account=root, namespace='object')
@@ -209,7 +225,7 @@ def update_for_new_rights():
 			new_groups_array = []
 			for group in record.data['groups']:
 				if group == 'group.canopsis' or group == 'canopsis':
-					group = 'CPS_canopsis'
+					group = 'Canopsis'
 				if group == 'group.root' or group == 'root':
 					group = 'CPS_root'
 				if group == 'group.curves_admin' or group == 'curves_admin':
