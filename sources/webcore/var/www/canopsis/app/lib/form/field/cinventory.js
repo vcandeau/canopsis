@@ -22,7 +22,7 @@
 Ext.define('canopsis.lib.form.field.cinventory' , {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
-	
+
 	alias: 'widget.cinventory',
 
 	border: false,
@@ -31,9 +31,9 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	multiSelect: true,
 	vertical_multiselect: false,
 	padding: 5,
-	
+
 	base_filter: undefined,
-	
+
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
@@ -194,10 +194,10 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 				autoLoad: false
 		});
-		
+
 		//set base filter if given
-		if(this.base_filter != undefined)
-			this.search_store.setFilter(this.base_filter)
+		if (this.base_filter != undefined)
+			this.search_store.setFilter(this.base_filter);
 
 		this.search_store.load();
 
@@ -226,7 +226,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				}
 			}
 		});
-		
+
 		this.contextMenu = Ext.create('canopsis.lib.menu.cclear', { grid: this.selection_grid});
 
 		//////// Bind cgrid controller on search grid
@@ -302,19 +302,19 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 		return dump;
 	},
 
-	setValue_record: function(records){
-		for (var i in records){
+	setValue_record: function(records) {
+		for (var i in records) {
 			this.addRecord({data: records[i]});
 		}
 	},
-	
+
 	setValue: function(ids) {
 		log.debug('setValue Data:', this.logAuthor);
 		log.dump(ids);
-		
+
 		if (ids.length > 0)
 			Ext.Ajax.request({
-				url: "/rest/events/event",
+				url: '/rest/events/event',
 				scope: this,
 				params: {'ids': Ext.JSON.encode(ids)},
 				method: 'GET',
@@ -324,7 +324,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 						this.setValue_record(data);
 					},
 					failure: function(result, request) {
-						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 					}
 			});
 	},

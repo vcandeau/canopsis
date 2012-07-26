@@ -37,7 +37,7 @@ Ext.define('widgets.pie.pie' , {
 	backgroundColor: '#FFFFFF',
 	borderColor: '#FFFFFF',
 	borderWidth: 0,
-	
+
 	exporting_enabled: false,
 
 	title_fontSize: 15,
@@ -52,34 +52,34 @@ Ext.define('widgets.pie.pie' , {
 	legend_fontSize: 12,
 	legend_fontColor: '#3E576F',
 	//
-	
+
 	nb_node: 0,
 
 	initComponent: function() {
-		this.backgroundColor		= check_color(this.backgroundColor)
-		this.borderColor			= check_color(this.borderColor)
-		this.legend_fontColor		= check_color(this.legend_fontColor)
-		this.legend_borderColor 	= check_color(this.legend_borderColor)
-		this.legend_backgroundColor	= check_color(this.legend_backgroundColor)
+		this.backgroundColor	= check_color(this.backgroundColor);
+		this.borderColor	= check_color(this.borderColor);
+		this.legend_fontColor	= check_color(this.legend_fontColor);
+		this.legend_borderColor = check_color(this.legend_borderColor);
+		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
 
-		this.nodesByID = {}
+		this.nodesByID = {};
 		//Store nodes in object
-		for(var i in this.nodes){
-			var node = this.nodes[i]
-			
+		for (var i in this.nodes) {
+			var node = this.nodes[i];
+
 			//hack for retro compatibility
-			if(!node.dn)
-				node.dn = [node.component,node.resource]
-			
-			if (this.nodesByID[node.id]){
-				this.nodesByID[node.id].metrics.push(node.metrics[0])
-			}else{
-				this.nodesByID[node.id] = Ext.clone(node)
+			if (!node.dn)
+				node.dn = [node.component, node.resource];
+
+			if (this.nodesByID[node.id]) {
+				this.nodesByID[node.id].metrics.push(node.metrics[0]);
+			}else {
+				this.nodesByID[node.id] = Ext.clone(node);
 				this.nb_node += 1;
 			}
 		}
 		log.debug('nodesByID:', this.logAuthor);
-		log.dump(this.nodesByID)
+		log.dump(this.nodesByID);
 
 		//Set title
 		if (this.autoTitle) {
@@ -94,17 +94,17 @@ Ext.define('widgets.pie.pie' , {
 
 		this.callParent(arguments);
 	},
-	
+
 	afterContainerRender: function() {
 		log.debug('Initialize Pie', this.logAuthor);
 
 		// Clean this.nodes
-		if (this.nodes) 
+		if (this.nodes)
 			this.processNodes();
 
 		this.setOptions();
 		this.createChart();
-		
+
 		this.ready();
 	},
 
@@ -114,11 +114,11 @@ Ext.define('widgets.pie.pie' , {
 			if (this.nb_node == 1) {
 				var component = this.nodes[0].dn[0];
 				var source_type = this.nodes[0].source_type;
-				
-				if (source_type == 'resource'){
+
+				if (source_type == 'resource') {
 					var resource = this.nodes[0].dn[1];
 					title = resource + ' ' + _('line_graph.on') + ' ' + component;
-				}else{
+				}else {
 					title = component;
 				}
 			}
@@ -156,7 +156,7 @@ Ext.define('widgets.pie.pie' , {
 			},
 			tooltip: {
 				formatter: function() {
-					return this.point.name + ': ' + Math.round(this.percentage*1000)/1000 + ' %';
+					return this.point.name + ': ' + Math.round(this.percentage * 1000) / 1000 + ' %';
 					}
 			},
 			title: {
@@ -169,13 +169,13 @@ Ext.define('widgets.pie.pie' , {
 			exporting: {
 				enabled: this.exporting_enabled,
 				filename: this.chartTitle,
-				type: "image/svg+xml",
-				url: "/export_svg",
+				type: 'image/svg+xml',
+				url: '/export_svg',
 				buttons: {
 					exportButton: {
 						enabled: true,
 						menuItems: null,
-						onclick: function(){
+						onclick: function() {
 							this.exportChart();
 						}
 					},
@@ -248,7 +248,7 @@ Ext.define('widgets.pie.pie' , {
 						this.onRefresh(data);
 					},
 					failure: function(result, request) {
-						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 					}
 				});
 			} else {
@@ -301,8 +301,8 @@ Ext.define('widgets.pie.pie' , {
 				var metric_long_name = '<b>' + label + '</b>';
 
 				if (unit) {
-					metric_long_name += ' ('+ unit + ')';
-					other_unit += ' ('+ unit + ')';
+					metric_long_name += ' (' + unit + ')';
+					other_unit += ' (' + unit + ')';
 				}
 
 				serie.data.push({ id: metric, name: metric_long_name, y: value, color: colors[0] });

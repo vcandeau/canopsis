@@ -39,7 +39,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 	proxy: {
 		//TODO : use that to make difference between update/create
 		actionMethods: {
-			read:'GET',
+			read: 'GET',
 			create: 'POST',
 			destroy: 'DELETE',
 			update: 'POST'

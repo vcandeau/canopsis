@@ -26,7 +26,7 @@ Ext.define('canopsis.store.Views', {
 
 	autoLoad: true,
 	autoSync: true,
-	
+
 	listeners: {
 		remove: function() {
 			if (this.storeId !== 'Tabs')
@@ -37,7 +37,7 @@ Ext.define('canopsis.store.Views', {
 			if (this.storeId !== 'Tabs')
 				if (global.websocketCtrl)
 					global.websocketCtrl.publish_event('store', this.storeId, 'update');
-		},
+		}
 	},
 
 	proxy: {

@@ -32,7 +32,7 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'aaa_access_owner', defaultValue: ['r', 'w']},
 		{name: 'aaa_access_group', defaultValue: ['r']},
 		{name: 'aaa_access_other'},
-		{name: 'aaa_group', defaultValue: "group.CPS_selector_admin"},
+		{name: 'aaa_group', defaultValue: 'group.CPS_selector_admin'},
 		{name: 'aaa_owner'},
 		{name: 'loaded', defaultValue: false},
 		{name: 'dostate'},
@@ -46,9 +46,9 @@ Ext.define('canopsis.model.Selector', {
 		{name: 'sla_timewindow_unit', defaultValue: global.commonTs.month},
 		{name: 'thd_warn_sla_timewindow'},
 		{name: 'thd_crit_sla_timewindow'},
-		{name: 'sla_timewindow_doUnknown',  defaultValue: true},
-		{name: 'enable',  defaultValue: true},
-		{name: 'sla_output_tpl',  defaultValue: ""},
-		{name: 'output_tpl',  defaultValue: ""}
+		{name: 'sla_timewindow_doUnknown', defaultValue: true},
+		{name: 'enable', defaultValue: true},
+		{name: 'sla_output_tpl', defaultValue: ''},
+		{name: 'output_tpl', defaultValue: ''}
 	]
 });

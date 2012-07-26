@@ -22,7 +22,7 @@ Ext.define('canopsis.controller.Events', {
 	extend: 'Ext.app.Controller',
 
 	logAuthor: '[controller][Events]',
-	
+
 	models: ['Event'],
 
 	init: function() {

@@ -29,11 +29,11 @@ Ext.define('widgets.stream.stream' , {
 
 	max: 10,
 	max_comment: 5,
-	
+
 	enable_userinputs: true,
 	enable_comments: true,
 
-	tags: "",
+	tags: '',
 
 	last_push: 0,
 	burst_counter: 0,
@@ -50,22 +50,22 @@ Ext.define('widgets.stream.stream' , {
 	hard_state_only: true,
 
 	initComponent: function() {
-		this.queue = []
+		this.queue = [];
 		this.nodeId = false;
 		this.refreshInterval = 5;
-		
-		if (this.tags != ""){
+
+		if (this.tags != '') {
 			this.tags = this.tags.split(' ');
 		}
 
 		if (! this.showToolbar)
-			this.enable_userinputs = false
+			this.enable_userinputs = false;
 
 		if (this.showToolbar && ! this.exportMode) {
-			
-			var items = []
-			
-			if (this.enable_userinputs){
+
+			var items = [];
+
+			if (this.enable_userinputs) {
 				items = items.concat([
 					{
 						xtype: 'tbtext',
@@ -101,11 +101,11 @@ Ext.define('widgets.stream.stream' , {
 								scope: this
 							}
 						}
-					}			
+					}
 				]);
 			}
-			
-			
+
+
 			items = items.concat([
 				'->', {
 						iconCls: 'icon-control-repeat',
@@ -128,9 +128,9 @@ Ext.define('widgets.stream.stream' , {
 								this.subscribe();
 							}
 						}
-					}			
+					}
 			]);
-			
+
 			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
 				//baseCls: 'x-panel-header',
 				//height: 27,
@@ -158,9 +158,9 @@ Ext.define('widgets.stream.stream' , {
 		// Load history
 		var me = this;
 		if (now) {
-			if (global.websocketCtrl.connected){
+			if (global.websocketCtrl.connected) {
 				now.stream_getHistory(this.max, this.tags, function(records) {
-					log.debug('Load '+ records.length + ' events', me.logAuthor);
+					log.debug('Load ' + records.length + ' events', me.logAuthor);
 					if (records.length > 0) {
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {id: me.get_event_id(records[i]), raw: records[i], stream: me});
@@ -191,12 +191,12 @@ Ext.define('widgets.stream.stream' , {
 	},
 
 	publish_event: function() {
-		if (! global.websocketCtrl.connected){
+		if (! global.websocketCtrl.connected) {
 			log.error('Impossible to publish, not connected.', this.logAuthor);
-			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall')+" (port: "+global.nowjs.port+")", 'error');
-			return
+			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: '+ global.nowjs.port + ')', 'error');
+			return;
 		}
-		
+
 		var toolbar = 0;
 
 		if (this.title)
@@ -224,13 +224,13 @@ Ext.define('widgets.stream.stream' , {
 	},
 
 	publish_comment: function(event_id, raw, message, orievent) {
-		if (! global.websocketCtrl.connected){
+		if (! global.websocketCtrl.connected) {
 			log.error('Impossible to publish, not connected.', this.logAuthor);
-			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall')+" (port: "+global.nowjs.port+")", 'error');
-			return
+			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: '+ global.nowjs.port + ')', 'error');
+			return;
 		}
-		
-		log.debug(event_id + ' -> '+ message, this.logAuthor);
+
+		log.debug(event_id + ' -> ' + message, this.logAuthor);
 
 		var event_raw = {
 				'connector_name': 'widget-stream',
@@ -285,7 +285,7 @@ Ext.define('widgets.stream.stream' , {
 		if ((this.last_push + this.burst_interval) > new Date().getTime()) {
 			if (this.burst_counter < this.burst_threshold) {
 				this.burst_counter += 1;
-				log.debug('Burst counter: '+ this.burst_counter, this.logAuthor);
+				log.debug('Burst counter: ' + this.burst_counter, this.logAuthor);
 				return false;
 			}else {
 				return true;
@@ -313,7 +313,7 @@ Ext.define('widgets.stream.stream' , {
 		//Only hard state
 		if (raw.state_type == 0 && this.hard_state_only)
 			return;
-			
+
 		// Check tags
 		if (this.tags && raw.tags)
 			for (var i in this.tags)
@@ -327,7 +327,7 @@ Ext.define('widgets.stream.stream' , {
 		if (event.raw.event_type == 'comment') {
 			var to_event = this.wcontainer.getComponent(this.id + '.' + event.raw.referer);
 			if (to_event) {
-				log.debug('Add comment for '+ event.raw.referer, this.logAuthor);
+				log.debug('Add comment for ' + event.raw.referer, this.logAuthor);
 				to_event.comment(event);
 				if (this.isVisible())
 					to_event.show_comments();

@@ -127,7 +127,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		this.tabPanel.on('tabchange', this.update_button, this);
 	},
 
-	add_new_step: function(step) {			
+	add_new_step: function(step) {
 		step.autoScroll = true;
 		step.xtype = 'form';
 
@@ -136,8 +136,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		if (step.items.length == 1)
 			if (! step.layout)
 				step.layout = 'fit';
-		
-		step.padding = 5
+
+		step.padding = 5;
 
 		return this.tabPanel.add(step);
 	},
@@ -151,15 +151,15 @@ Ext.define('canopsis.lib.view.cwizard' , {
 			var list_tab = this.add_option_panel();
 			combo[0].setDisabled(true);
 		}
-		
+
 		//hack for delete description
-		if(this.data.description)
-			delete this.data.description
-		
-		var child_items = this.tabPanel.items.items
-		for(var i in child_items){
-			var form = child_items[i].getForm()
-			form.setValues(this.data)
+		if (this.data.description)
+			delete this.data.description;
+
+		var child_items = this.tabPanel.items.items;
+		for (var i in child_items) {
+			var form = child_items[i].getForm();
+			form.setValues(this.data);
 		}
 
 	},
@@ -184,15 +184,15 @@ Ext.define('canopsis.lib.view.cwizard' , {
 
 	get_variables: function() {
 		var output = {};
-		
-		var child_items = this.tabPanel.items.items
-		for(var i in child_items){
-			var form = child_items[i].getForm()
-			var values = form.getValues(false, false, false, true)
-			for(var j in values)
-				output[j] = values[j]
+
+		var child_items = this.tabPanel.items.items;
+		for (var i in child_items) {
+			var form = child_items[i].getForm();
+			var values = form.getValues(false, false, false, true);
+			for (var j in values)
+				output[j] = values[j];
 		}
-		
+
 		return output;
 	},
 
@@ -201,7 +201,7 @@ Ext.define('canopsis.lib.view.cwizard' , {
 		this.reset_steps();
 		var combo = Ext.ComponentQuery.query('#' + this.id + ' [name=xtype]');
 		var description_field = Ext.ComponentQuery.query('#' + this.id + ' [name=description]')[0];
-		
+
 		if (combo[0].isValid()) {
 			var store = combo[0].getStore();
 			var record = store.findRecord('xtype', combo[0].getValue());
@@ -219,15 +219,15 @@ Ext.define('canopsis.lib.view.cwizard' , {
 					output.push(this.add_new_step(options[i]));
 				}
 			}
-			
-			var description = undefined
-			if (global.locale != 'en') 
-				var description = record.get('description' + '-' + global.locale)
-			if(!description)
-				var description = record.get('description')
-			
-			if(description_field && description)
-				description_field.setValue(description)
+
+			var description = undefined;
+			if (global.locale != 'en')
+				var description = record.get('description' + '-' + global.locale);
+			if (!description)
+				var description = record.get('description');
+
+			if (description_field && description)
+				description_field.setValue(description);
 
 			this.update_button();
 		}
@@ -302,8 +302,8 @@ Ext.define('canopsis.lib.view.cwizard' , {
 	finish_button: function() {
 		log.debug('save button', this.logAuthor);
 		var variables = this.get_variables();
-		log.debug('Saved values are:',this.logAuthor)
-		log.debug(variables,this.logAuthor);
+		log.debug('Saved values are:', this.logAuthor);
+		log.debug(variables, this.logAuthor);
 		this.fireEvent('save', variables);
 		this.close();
 	}

@@ -41,20 +41,20 @@ Ext.define('canopsis.controller.ReportingBar', {
 		bar.saveButton.on('click', this.saveButton, this);
 		bar.htmlButton.on('click', this.htmlReport, this);
 		bar.exitButton.on('click', this.exitButton, this);
-		bar.searchButton.on('click',this.launchReport,this)
-		bar.toggleButton.on('click',this.toggle_mode,this)
-		
-		bar.nextButton.on('click',this.nextButton,this)
-		bar.previousButton.on('click',this.previousButton,this)
-		
+		bar.searchButton.on('click', this.launchReport, this);
+		bar.toggleButton.on('click', this.toggle_mode, this);
+
+		bar.nextButton.on('click', this.nextButton, this);
+		bar.previousButton.on('click', this.previousButton, this);
+
 	},
 
 	launchReport: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		
-		var timestamps = this.getReportTime()
-		var startTimestamp = timestamps.start
-		var stopTimestamp =  timestamps.stop
+
+		var timestamps = this.getReportTime();
+		var startTimestamp = timestamps.start;
+		var stopTimestamp = timestamps.stop;
 
 		if (startTimestamp && stopTimestamp) {
 			log.debug('------------------------Asked Report date-----------------------');
@@ -64,65 +64,65 @@ Ext.define('canopsis.controller.ReportingBar', {
 			log.debug('----------------------------------------------------------------');
 			tab.setReportDate(startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
-			log.debug('Timestamps are, start: ' + startTimestamp +' stop: ' +stopTimestamp ,this.logAuthor)
+			log.debug('Timestamps are, start: ' + startTimestamp + ' stop: ' + stopTimestamp, this.logAuthor);
 			global.notify.notify(_('Invalid date'), _('The selected date is invalid'));
 		}
 	},
-	
-	nextButton: function(){
+
+	nextButton: function() {
 		log.debug('Next button pressed', this.logAuthor);
-		var dateField = this.bar.fromDate
-		
-		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), "U"))
-		var timeUnit = this.bar.combo.getValue()
-		
-		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue())
-		var newDate = new Date(timestamp * 1000)
-		dateField.setValue(newDate)
-		this.launchReport()
+		var dateField = this.bar.fromDate;
+
+		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), 'U'));
+		var timeUnit = this.bar.combo.getValue();
+
+		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
+		var newDate = new Date(timestamp * 1000);
+		dateField.setValue(newDate);
+		this.launchReport();
 	},
 
-	previousButton: function(){
+	previousButton: function() {
 		log.debug('Previous button pressed', this.logAuthor);
-		var dateField = this.bar.fromDate
-		
-		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), "U"))
-		var timeUnit = this.bar.combo.getValue()
-		
-		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue())
-		var newDate = new Date(timestamp * 1000)
-		dateField.setValue(newDate)
-		this.launchReport()
+		var dateField = this.bar.fromDate;
+
+		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), 'U'));
+		var timeUnit = this.bar.combo.getValue();
+
+		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
+		var newDate = new Date(timestamp * 1000);
+		dateField.setValue(newDate);
+		this.launchReport();
 	},
 
 	saveButton: function() {
 		log.debug('launching pdf reporting', this.logAuthor);
 
-		var timestamps = this.getReportTime()
-		var startTimestamp = timestamps.start
-		var stopTimestamp =  timestamps.stop
+		var timestamps = this.getReportTime();
+		var startTimestamp = timestamps.start;
+		var stopTimestamp = timestamps.stop;
 
 		if (startTimestamp && stopTimestamp) {
 			var view_id = Ext.getCmp('main-tabs').getActiveTab().view_id;
 			var ctrl = this.getController('Reporting');
 
-			log.debug('view_id : ' + view_id,this.logAuthor);
-			log.debug('startReport : ' + startTimestamp * 1000,this.logAuthor);
-			log.debug('stopReport : ' + stopTimestamp * 1000,this.logAuthor);
+			log.debug('view_id : ' + view_id, this.logAuthor);
+			log.debug('startReport : ' + startTimestamp * 1000, this.logAuthor);
+			log.debug('stopReport : ' + stopTimestamp * 1000, this.logAuthor);
 
 			ctrl.launchReport(view_id, startTimestamp * 1000, stopTimestamp * 1000);
 		} else {
-			log.debug('Timestamps are, start: ' + startTimestamp +' stop: ' +stopTimestamp ,this.logAuthor)
+			log.debug('Timestamps are, start: ' + startTimestamp + ' stop: ' + stopTimestamp, this.logAuthor);
 			global.notify.notify(_('Invalid date'), _('The selected date is in futur'));
 		}
 	},
-	
+
 	htmlReport: function() {
 		log.debug('launching html window reporting', this.logAuthor);
-		
-		var timestamps = this.getReportTime()
-		var startTimestamp = timestamps.start
-		var stopTimestamp =  timestamps.stop
+
+		var timestamps = this.getReportTime();
+		var startTimestamp = timestamps.start;
+		var stopTimestamp = timestamps.stop;
 
 		if (startTimestamp && stopTimestamp) {
 			var ctrl = this.getController('Reporting');
@@ -130,36 +130,36 @@ Ext.define('canopsis.controller.ReportingBar', {
 			ctrl.openHtmlReport(view, startTimestamp * 1000, stopTimestamp * 1000);
 		}
 	},
-	
-	getReportTime : function(){
-		if(this.bar.advancedMode){
-			var startTimestamp = this.getTimestamp(this.bar.fromDate,this.bar.fromHour)
-			var stopTimestamp =  this.getTimestamp(this.bar.toDate,this.bar.toHour)
+
+	getReportTime: function() {
+		if (this.bar.advancedMode) {
+			var startTimestamp = this.getTimestamp(this.bar.fromDate, this.bar.fromHour);
+			var stopTimestamp = this.getTimestamp(this.bar.toDate, this.bar.toHour);
 		} else {
-			var timeUnit = this.bar.combo.getValue()
-			var periodLength = this.bar.periodNumber.getValue()
-			var stopTimestamp = this.getTimestamp(this.bar.fromDate,this.bar.fromHour)
-			var startTimestamp = stopTimestamp - (timeUnit * periodLength)
+			var timeUnit = this.bar.combo.getValue();
+			var periodLength = this.bar.periodNumber.getValue();
+			var stopTimestamp = this.getTimestamp(this.bar.fromDate, this.bar.fromHour);
+			var startTimestamp = stopTimestamp - (timeUnit * periodLength);
 		}
-		return {start:startTimestamp,stop:stopTimestamp}
+		return {start: startTimestamp, stop: stopTimestamp};
 	},
-	
-	getTimestamp : function(date_element,hour_element){
-		var date = date_element
-		var hour = hour_element
-		
-		if(date.isValid() && hour.isValid()){
+
+	getTimestamp: function(date_element,hour_element) {
+		var date = date_element;
+		var hour = hour_element;
+
+		if (date.isValid() && hour.isValid()) {
 			var tsDate = parseInt(Ext.Date.format(date.getValue(), 'U'));
-			var hourObject = stringTo24h(hour.getValue())
-			
+			var hourObject = stringTo24h(hour.getValue());
+
 			//date + hour in seconds + minute in second
-			var timestamp = tsDate + (hourObject.hour * 60 * 60) + (hourObject.minute * 60)
-		}else{
-			log.debug('getTimestamp Invalid',this.logAuthor)
-			return undefined
+			var timestamp = tsDate + (hourObject.hour * 60 * 60) + (hourObject.minute * 60);
+		}else {
+			log.debug('getTimestamp Invalid', this.logAuthor);
+			return undefined;
 		}
-		
-		return parseInt(timestamp, 10)
+
+		return parseInt(timestamp, 10);
 	},
 
 	exitButton: function() {
@@ -174,34 +174,34 @@ Ext.define('canopsis.controller.ReportingBar', {
 		log.debug('Enable reporting mode', this.logAuthor);
 		Ext.getCmp('main-tabs').getActiveTab().addReportingBar();
 	},
-	
-	toggle_mode : function(){
-		if(this.bar.advancedMode){
-			this.bar.toDate.hide()
-			this.bar.toHour.hide()
-			this.bar.textFrom.hide()
-			this.bar.textTo.hide()
-			this.bar.textFor.show()
-			this.bar.textBefore.show()
-			this.bar.previousButton.show()
-			this.bar.nextButton.show()
-			this.bar.periodNumber.show()
-			this.bar.combo.show()
-			this.bar.advancedMode = false
-		}else{
-			this.bar.toDate.show()
-			this.bar.toHour.show()
-			this.bar.textFrom.show()
-			this.bar.textTo.show()
-			this.bar.textFor.hide()
-			this.bar.textBefore.hide()
-			this.bar.previousButton.hide()
-			this.bar.nextButton.hide()
-			this.bar.periodNumber.hide()
-			this.bar.combo.hide()
-			this.bar.advancedMode = true
+
+	toggle_mode: function() {
+		if (this.bar.advancedMode) {
+			this.bar.toDate.hide();
+			this.bar.toHour.hide();
+			this.bar.textFrom.hide();
+			this.bar.textTo.hide();
+			this.bar.textFor.show();
+			this.bar.textBefore.show();
+			this.bar.previousButton.show();
+			this.bar.nextButton.show();
+			this.bar.periodNumber.show();
+			this.bar.combo.show();
+			this.bar.advancedMode = false;
+		}else {
+			this.bar.toDate.show();
+			this.bar.toHour.show();
+			this.bar.textFrom.show();
+			this.bar.textTo.show();
+			this.bar.textFor.hide();
+			this.bar.textBefore.hide();
+			this.bar.previousButton.hide();
+			this.bar.nextButton.hide();
+			this.bar.periodNumber.hide();
+			this.bar.combo.hide();
+			this.bar.advancedMode = true;
 		}
 
 	}
-	
+
 });

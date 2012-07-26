@@ -45,7 +45,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	reportMode: false,
 	exportMode: false,
-	
+
 	autoTitle: false,
 
 	barHeight: 27,
@@ -58,7 +58,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	initComponent: function() {
 
-		this.logAuthor = '['+ this.id + ']';
+		this.logAuthor = '[' + this.id + ']';
 
 		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
 
@@ -227,9 +227,9 @@ Ext.define('canopsis.lib.view.cwidget' , {
 				scope: this,
 				success: function(response) {
 					var data = Ext.JSON.decode(response.responseText);
-					if ( this.nodeId.length > 1 )
+					if (this.nodeId.length > 1)
 					{
-						data = data.data ;
+						data = data.data;
 					}
 					else
 					{
@@ -238,7 +238,7 @@ Ext.define('canopsis.lib.view.cwidget' , {
 					this._onRefresh(data);
 				},
 				failure: function(result, request) {
-					log.error('Impossible to get Node informations, Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+					log.error('Impossible to get Node informations, Ajax request failed ... (' + request.url + ')', this.logAuthor);
 				}
 			});
 		}

@@ -58,7 +58,7 @@ Ext.define('canopsis.controller.Websocket', {
 			var me = global.websocketCtrl;
 
 			now.core.socketio.on('disconnect', function() {
-				if (me.connected){
+				if (me.connected) {
 					me.connected = false;
 					me.transport_down();
 					me.fireEvent('transport_down', this);
@@ -70,7 +70,7 @@ Ext.define('canopsis.controller.Websocket', {
 
 			now.auth(function() {
 				log.debug(' + Authed', me.logAuthor);
-				if (! me.connected){
+				if (! me.connected) {
 					me.connected = true;
 					me.transport_up();
 					me.fireEvent('transport_up', this);
@@ -112,7 +112,7 @@ Ext.define('canopsis.controller.Websocket', {
 			if (! scope)
 				scope = this;
 
-			log.info(' + Subscribe to '+ type + '.'+ channel + ' ('+ scope.id + ')', this.logAuthor);
+			log.info(' + Subscribe to ' + type + '.' + channel + ' (' + scope.id + ')', this.logAuthor);
 
 			id = type + '-' + channel;
 
@@ -148,7 +148,7 @@ Ext.define('canopsis.controller.Websocket', {
 			if (! scope)
 				scope = this;
 
-			log.info(' + Unsubscribe to '+ type + '.'+ channel + ' ('+ scope.id + ')', this.logAuthor);
+			log.info(' + Unsubscribe to ' + type + '.' + channel + ' (' + scope.id + ')', this.logAuthor);
 
 			id = type + '-' + channel;
 			if (this.subscribe_cache[id]) {

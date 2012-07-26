@@ -66,7 +66,7 @@ Ext.define('canopsis.view.Account.Grid' , {
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'aaa_group',
-	                renderer : rdr_clean_id
+	                renderer: rdr_clean_id
         },{
                 	header: _('groups'),
 	                flex: 2,

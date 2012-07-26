@@ -79,8 +79,8 @@ Ext.define('canopsis.controller.Schedule', {
 
 		}
 		//----------------------formating crontab-----------------------
-		var time = stringTo24h(data.hours)
-		
+		var time = stringTo24h(data.hours);
+
 		//apply offset to get utc
 		var d = new Date();
 		d.setHours(time.hour);
