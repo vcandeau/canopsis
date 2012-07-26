@@ -7,7 +7,7 @@ LOG="$LOG_PATH/$NAME.log"
 rm -f $LOG &> /dev/null
 
 function install_pylib(){
-	cd $SRC_PATH/externals/
+	cd $SRC_PATH/externals/python-libs/
 	BASE=$1-$2
 	VERS=$2
 	echo "Install Python Library: $BASE ..."
