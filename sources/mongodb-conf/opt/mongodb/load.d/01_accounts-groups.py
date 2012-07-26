@@ -45,10 +45,10 @@ groups =  {
 def init():
 	storage = get_storage(account=root, namespace='object')
 	
-	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
+	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
 	accounts = [
-		('root','root', 'CPS_root', 'Lastname', 'Firstname', ''),
-		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', '')
+		('root','root', 'CPS_root', 'Lastname', 'Firstname', [] ,''),
+		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', ['CPS_view'],'')
 	]
 
 	for name in groups:
@@ -68,12 +68,19 @@ def init():
 		try:
 			# Check if exist
 			record = storage.get('account.%s' % user)
+			#add CPS_view to canopsis
+			if(user == 'canopsis'):
+				new_record = caccount(record)
+				if not 'CPS_view' in new_record.groups:
+					new_record.groups.append('CPS_view')
+					storage.put(new_record)
 		except:
 			logger.info(" + Create account '%s'" % user)
 			
 			record = caccount(user=user, group=account[2])
 			record.firstname = account[4]
 			record.lastname = account[3]
+			record.groups = account[5]
 			record.chown(record._id)
 			record.chgrp(record.group)
 			record.admin_group = 'group.CPS_account_admin'
