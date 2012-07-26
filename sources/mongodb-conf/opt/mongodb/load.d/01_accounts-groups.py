@@ -140,11 +140,9 @@ def check_and_create_authkey():
 	records = storage.find({'crecord_type': 'account'}, namespace='object', account=root)
 	accounts = []
 	for record in records:
-		account = caccount(record)
-		if 'authkey' in record.data:
-			if record.data['authkey'] == None:
-				record.generate_new_authkey()
-				account.append(account)
+		if not 'authkey' in record.data:
+			#caccount auto create authkey if not provided
+			accounts.append(caccount(record))
 	storage.put(accounts)
 
 def update_for_new_rights():
