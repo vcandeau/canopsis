@@ -47,9 +47,9 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					allowBlank: false
 				},{
 					xtype: 'displayfield',
-					name:'description',
-					isFormField:false,
-					fieldLabel: _('Description'),
+					name: 'description',
+					isFormField: false,
+					fieldLabel: _('Description')
 				},{
 					xtype: 'checkbox',
 					fieldLabel: _('Show border'),
@@ -57,15 +57,15 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					name: 'border',
 					uncheckedValue: false
 				},{
-					xtype: "checkbox",
-					fieldLabel: _("Auto title") + " " + _("if available"),
+					xtype: 'checkbox',
+					fieldLabel: _('Auto title') + ' ' + _('if available'),
 					checked: true,
 					inputValue: true,
 					uncheckedValue: false,
-					name: "autoTitle"
+					name: 'autoTitle'
 				},{
 					xtype: 'textfield',
-					fieldLabel: _('Title') + ' ('+ _('optional') + ')',
+					fieldLabel: _('Title') + ' (' + _('optional') + ')',
 					name: 'title'
 				},{
 					xtype: 'numberfield',
@@ -95,12 +95,12 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 			var variables = this.get_variables();
 
 			//hack: if no xtype set it (the field is disable in editmode)
-			if(variables.xtype == undefined)
-				variables.xtype = combo[0].getValue()
-				
+			if (variables.xtype == undefined)
+				variables.xtype = combo[0].getValue();
+
 			//log.dump('---------------------')
 			//log.dump(variables)
-			
+
 			this.fireEvent('save', this.widgetId, variables);
 			this.close();
 		}

@@ -25,14 +25,14 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 
 	alias: 'widget.ctag',
 
-	border: false,	
-	
-	layout : 'hbox',
-	
+	border: false,
+
+	layout: 'hbox',
+
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
-		
+
 		//--------------------------store------------------------
 		this.operator_store = Ext.create('Ext.data.Store', {
 			fields: ['operator', 'text', 'type'],
@@ -41,10 +41,10 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 				{'operator': '$all', 'text': _('Match all')}
 			]
 		});
-		
+
 		//------------------create operator combo----------------
 		this.operator_combo = Ext.widget('combobox', {
-								flex:1,
+								flex: 1,
 								queryMode: 'local',
 								displayField: 'text',
 								editable: false,
@@ -52,69 +52,69 @@ Ext.define('canopsis.lib.form.field.ctag' , {
 								valueField: 'operator',
 								store: this.operator_store
 							});
-							
+
 		//----------------------textArea-------------------------
 		this.textArea = Ext.widget('textfield', {
 			margin: '0 0 0 5',
 			flex: 3,
 			emptyText: _('Type your tags here')
 		});
-		
-		this.items = [this.operator_combo,this.textArea]
-		
+
+		this.items = [this.operator_combo, this.textArea];
+
 		this.callParent(arguments);
 	},
-	
-	getValue : function(){
-		log.debug('Get value',this.logAuthor)
-		var rawString = this.textArea.getValue()
-		var separator = undefined
-		
-		if(rawString.indexOf(',') != -1){
-			var separator = ','
-		}else if(rawString.indexOf(';') != -1){
-			var separator = ';'
-		}else if(rawString.indexOf(',') != -1){
-			var separator = ','
-		}else if(rawString.indexOf(' ') != -1){
-			var separator = ' '
-			rawString = rawString.replace(/  +/g, ' ')
+
+	getValue: function() {
+		log.debug('Get value', this.logAuthor);
+		var rawString = this.textArea.getValue();
+		var separator = undefined;
+
+		if (rawString.indexOf(',') != -1) {
+			var separator = ',';
+		}else if (rawString.indexOf(';') != -1) {
+			var separator = ';';
+		}else if (rawString.indexOf(',') != -1) {
+			var separator = ',';
+		}else if (rawString.indexOf(' ') != -1) {
+			var separator = ' ';
+			rawString = rawString.replace(/  +/g, ' ');
 		}
-		
-		if(!separator)
-			return undefined
-			
-		log.debug('String separator is: "'+ separator +'"',this.logAuthor)
-			
-		if(separator != ' ')
-			rawString = strip_blanks(rawString)
-			
-		var tag_array = rawString.split(separator)
-		
-		var filter = {'tags': {}}
-		filter['tags'][this.operator_combo.getValue()] = tag_array
-		
-		
-		var output = Ext.encode(filter)
-		log.debug('Generated filter is: ' + output,this.logAuthor)
-		
-		return Ext.encode(filter)
+
+		if (!separator)
+			return undefined;
+
+		log.debug('String separator is: "' + separator + '"', this.logAuthor);
+
+		if (separator != ' ')
+			rawString = strip_blanks(rawString);
+
+		var tag_array = rawString.split(separator);
+
+		var filter = {'tags': {}};
+		filter['tags'][this.operator_combo.getValue()] = tag_array;
+
+
+		var output = Ext.encode(filter);
+		log.debug('Generated filter is: ' + output, this.logAuthor);
+
+		return Ext.encode(filter);
 	},
-	
-	setValue: function(value){
-		value = Ext.decode(value)
-		if(value['tags']){
-			value = value['tags']
-			var operator = Ext.Object.getKeys(value)[0]
-			var value_array = value[operator]
-			var tags_string = ''
-			
-			for(var i in value_array)
-				tags_string = tags_string + ' ' + value_array[i]
-			
-			this.operator_combo.setValue(operator)
-			this.textArea.setValue(tags_string)
+
+	setValue: function(value) {
+		value = Ext.decode(value);
+		if (value['tags']) {
+			value = value['tags'];
+			var operator = Ext.Object.getKeys(value)[0];
+			var value_array = value[operator];
+			var tags_string = '';
+
+			for (var i in value_array)
+				tags_string = tags_string + ' ' + value_array[i];
+
+			this.operator_combo.setValue(operator);
+			this.textArea.setValue(tags_string);
 		}
-	},
-	
+	}
+
 });

@@ -39,7 +39,7 @@ Ext.define('canopsis.view.Account.Form', {
 				name: 'user',
 				allowBlank: false,
 				regex: /^[A-Za-z0-9_]+$/,
-				regexText: _('Invalid login') + ', '+ _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
+				regexText: _('Invalid login') + ', ' + _('use alphanumeric characters only') + '<br/>([A-Za-z0-9_])'
 			},{
 				fieldLabel: _('First Name'),
 				name: 'firstname',
@@ -60,7 +60,7 @@ Ext.define('canopsis.view.Account.Form', {
 				displayField: 'crecord_name',
 				valueField: '_id',
 				xtype: 'combobox',
-				
+
 				allowBlank: false
 			},{
 				fieldLabel: _('password'),

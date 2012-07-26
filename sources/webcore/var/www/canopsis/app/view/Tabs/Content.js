@@ -48,7 +48,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 	exportMode: false,
 	export_from: undefined,
 	export_to: undefined,
-	
+
 	record: undefined,
 
 	//Locales
@@ -99,7 +99,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 				},
 				failure: function(result, request) {
-						log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 						log.error('Close tab, maybe not exist ...', this.logAuthor);
 						this.close();
 				}
@@ -149,7 +149,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 
 	saveView: function(dump) {
 		//ajax request with dump sending
-		log.debug('Saving view '+this.view_id, this.logAuthor);
+		log.debug('Saving view ' + this.view_id, this.logAuthor);
 
 		if (dump == undefined) {
 			dump = this.dumpJqGridable();
@@ -160,15 +160,15 @@ Ext.define('canopsis.view.Tabs.Content' , {
 			var view_options = this.getViewOptions();
 
 		// Update view
-		if (this.view_id){
+		if (this.view_id) {
 			var data = {
 				'crecord_name': this.view.crecord_name,
 				'items': dump,
 				'view_options': view_options
-			}
-			updateRecord('object', 'view', 'canopsis.model.View', this.view_id, data)
+			};
+			updateRecord('object', 'view', 'canopsis.model.View', this.view_id, data);
 		}
-		
+
 		this.dump = dump;
 
 		this.startAllTasks();
@@ -291,7 +291,7 @@ Ext.define('canopsis.view.Tabs.Content' , {
 		if (this.localstore_record) {
 			//remove from store
 			log.debug('Remove this tab from localstore ...', this.logAuthor);
-			
+
 			var store = Ext.data.StoreManager.lookup('Tabs');
 			store.remove(this.localstore_record);
 			store.save();

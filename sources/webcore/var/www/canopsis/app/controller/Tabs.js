@@ -45,14 +45,14 @@ Ext.define('canopsis.controller.Tabs', {
 		});
 
 		this.store = Ext.data.StoreManager.lookup('Tabs');
-		
-		if (!Ext.isIE){
+
+		if (!Ext.isIE) {
 			this.store.proxy.id = this.store.proxy.id + '.' + global.account.user;
 			this.store.load();
 		}
 	},
-	
-	clearTabsCache: function(){
+
+	clearTabsCache: function() {
 		this.store.proxy.clear();
 	},
 
@@ -180,7 +180,7 @@ Ext.define('canopsis.controller.Tabs', {
 
 	save_active_view: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		if (tab.edit){
+		if (tab.edit) {
 			var right = this.getController('Account').check_right(tab.view, 'w');
 			if (right == true) {
 				tab.saveJqGridable();
@@ -196,16 +196,16 @@ Ext.define('canopsis.controller.Tabs', {
 
 	edit_active_view: function() {
 		var tab = Ext.getCmp('main-tabs').getActiveTab();
-		if (! tab.edit){
-			if(!tab.report_window){
+		if (! tab.edit) {
+			if (!tab.report_window) {
 				var right = this.getController('Account').check_right(tab.view, 'w');
 				if (right == true) {
 					tab.editMode();
 				}else {
 					global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
 				}
-			}else{
-				global.notify.notify(_('Information'), _("Please close reporting before editing the view"), 'info');
+			}else {
+				global.notify.notify(_('Information'), _('Please close reporting before editing the view'), 'info');
 			}
 		}
 	}

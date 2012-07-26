@@ -49,7 +49,7 @@ var ajaxAction = function(url, params, cb, scope, method) {
 		success: cb,
 		params: params,
 		failure: function(result, request) {
-			log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
+			log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
 		}
 	};
 	Ext.Ajax.request(options);
@@ -145,20 +145,20 @@ function getMidnight(timestamp) {
 	return new_time;
 }
 
-function check_color(color){
+function check_color(color) {
 	if (! color)
-		return color
+		return color;
 	if (color[0] != '#')
-		return '#' + color
+		return '#' + color;
 	else
-		return color
+		return color;
 }
 
-function strip_blanks(val){
-	return val.replace(/\n/g, '').replace(/ /g,'')
+function strip_blanks(val) {
+	return val.replace(/\n/g, '').replace(/ /g, '');
 }
 
-function stringTo24h(src_time){
+function stringTo24h(src_time) {
 	var time = src_time.split(' ');
 
 	if (time.length > 1) {
@@ -170,7 +170,7 @@ function stringTo24h(src_time){
 		var minute = parseInt(clock[1], 10);
 		var hour = parseInt(clock[0], 10);
 
-		if (hour_type == 'pm') 
+		if (hour_type == 'pm')
 			hour = hour + 12;
 
 	} else {
@@ -180,47 +180,47 @@ function stringTo24h(src_time){
 		var minute = time[1];
 		var hour = time[0];
 	}
-	
-	return {minute: parseInt(minute, 10), hour: parseInt(hour, 10)}
+
+	return {minute: parseInt(minute, 10), hour: parseInt(hour, 10)};
 }
 
-var updateRecord = function(namespace, crecord_type, model, _id, data, on_success, on_error){
+var updateRecord = function(namespace, crecord_type, model, _id, data, on_success, on_error) {
 	var logAuthor = '[tools][updateRecord]';
-		
-	if (! data){
+
+	if (! data) {
 		log.error('You must specify data to write', logAuthor);
-		return
+		return;
 	}
 
-	var base_url = '/rest/'+namespace+'/'+crecord_type+'/'+_id;
-	
-	log.debug("Update "+_id, logAuthor);
+	var base_url = '/rest/' + namespace + '/' + crecord_type + '/' + _id;
+
+	log.debug('Update '+ _id, logAuthor);
 	Ext.Ajax.request({
 		url: base_url,
 		jsonData: data,
 		method: 'PUT',
-		success: function(){
-			log.debug(" + Success", logAuthor);
-			global.notify.notify(_('Saved'), _("Successfully"));
+		success: function() {
+			log.debug(' + Success', logAuthor);
+			global.notify.notify(_('Saved'), _('Successfully'));
 			if (on_success)
-				on_success(operation)
+				on_success(operation);
 		},
-		failure: function(response){
+		failure: function(response) {
 			log.error(' + Impossible to deal with webservice', logAuthor);
 			global.notify.notify(_('Error'), _('Imposible to deal with webservice, record not saved.'), 'error');
 			if (on_error)
-				on_error()	
-		}	
-		
-	});
-}
+				on_error();
+		}
 
-var demultiplex_cps_state = function(cps_state){
-	var state = cps_state.toString()
-	if(state.length == 2)
-		return {state:0,state_type:state[0],state_extra:state[1]}
-	else if(state.length == 3)
-		return {state:state[0],state_type:state[1],state_extra:state[2]}
+	});
+};
+
+var demultiplex_cps_state = function(cps_state) {
+	var state = cps_state.toString();
+	if (state.length == 2)
+		return {state: 0, state_type: state[0], state_extra: state[1]};
+	else if (state.length == 3)
+		return {state: state[0], state_type: state[1], state_extra: state[2]};
 	else
-		return undefined
-}
+		return undefined;
+};

@@ -31,7 +31,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 	initComponent: function() {
 		this.callParent(arguments);
 
-		this.advancedMode = false
+		this.advancedMode = false;
 
 		//---------------------- Create items --------------------------------
 
@@ -40,29 +40,29 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		var yesterday = new Date(today.getTime() - (global.commonTs.day * 1000));
 
 		this.previousButton = this.add({
-			xtype: 'button', 
+			xtype: 'button',
 			cls: 'x-btn-icon x-tbar-page-prev',
 			action: 'previous'
-		})
-		
-		this.textFor = this.add({xtype: 'tbtext', text: _('For')+':'})
-		
+		});
+
+		this.textFor = this.add({xtype: 'tbtext', text: _('For') + ':'});
+
 		var comboStore = Ext.create('Ext.data.Store', {
 			fields: ['name', 'value'],
-			data : [
-				{"name":_("Day"), "value":global.commonTs.day},
-				{"name":_("Week"), "value":global.commonTs.week},
-				{"name":_("Month"), "value":global.commonTs.month},
-				{"name":_("Year"), "value":global.commonTs.year}
+			data: [
+				{'name': _('Day'), 'value': global.commonTs.day},
+				{'name': _('Week'), 'value': global.commonTs.week},
+				{'name': _('Month'), 'value': global.commonTs.month},
+				{'name': _('Year'), 'value': global.commonTs.year}
 			]
 		});
 
 		comboStore.load();
 
 		this.periodNumber = this.add({
-			xtype:'numberfield',
-			width:55,
-			value: 1,
+			xtype: 'numberfield',
+			width: 55,
+			value: 1
 			//allowBlank: false,
 		});
 
@@ -70,18 +70,18 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			xtype: 'combobox',
 			store: comboStore,
 			queryMode: 'local',
-			editable:false,
+			editable: false,
 			displayField: 'name',
-			width:85,
+			width: 85,
 			valueField: 'value',
-			forceSelection : true,
-			value : _('Day')
+			forceSelection: true,
+			value: _('Day')
 		});
 
-		this.combo.setValue(86400)
-	
-		this.textFrom = this.add({xtype: 'tbtext', text: _('From') + ': ',hidden:true})
-		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '})
+		this.combo.setValue(86400);
+
+		this.textFrom = this.add({xtype: 'tbtext', text: _('From') + ': ', hidden: true});
+		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
 
 		this.fromDate = this.add({
 			xtype: 'datefield',
@@ -92,50 +92,50 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			value: yesterday,
 			maxValue: tommorow
 		});
-		
+
 		this.fromHour = this.add({
-			xtype:'textfield',
+			xtype: 'textfield',
 			value: '00:00 am',
-			width:70,
+			width: 70,
 			allowBlank: false,
 			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 		});
-		
+
 		this.nextButton = this.add({
-			xtype: 'button', 
+			xtype: 'button',
 			cls: 'x-btn-icon x-tbar-page-next',
 			action: 'next'
-		})
-		
-		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ',hidden:true})
-		
+		});
+
+		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ', hidden: true});
+
 		this.toDate = this.add({
 			xtype: 'datefield',
-			labelWidth:20,
+			labelWidth: 20,
 			//fieldLabel: _('To'),
 			editable: false,
 			width: 130,
 			value: today,
 			maxValue: tommorow,
-			hidden : true
+			hidden: true
 		});
-		
+
 		this.toHour = this.add({
-			xtype:'textfield',
+			xtype: 'textfield',
 			//fieldLabel: _('Hours (local time)'),
 			value: '00:00 am',
-			width:70,
+			width: 70,
 			allowBlank: false,
 			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/,
-			hidden : true
+			hidden: true
 		});
-		
-		this.add('->')
+
+		this.add('->');
 
 		//--------------------Buttons--------------------
-		
-		this.add('-')
-		
+
+		this.add('-');
+
 		this.toggleButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-calendar',
@@ -148,7 +148,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'search',
 			tooltip: _('Display data of the selected time')
 		});
-		
+
 		this.saveButton = this.add({
 			xtype: 'button',
 			iconCls: 'icon-save',
@@ -169,8 +169,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			action: 'exit',
 			tooltip: _('Leave reporting mode')
 		});
-		
-		
+
+
 	}
 
 });

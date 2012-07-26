@@ -22,13 +22,13 @@
 Ext.define('canopsis.lib.form.field.cfieldset' , {
 	extend: 'Ext.form.FieldSet',
 	mixins: ['canopsis.lib.form.cfield'],
-	
+
 	alias: 'widget.cfieldset',
-	
-	checkboxToggle:true,
+
+	checkboxToggle: true,
 	inputValue: true,
 	collapsible: true,
-	collapsed : true,
+	collapsed: true,
 
 	getName: function() {
 		return this.checkboxName;
@@ -38,47 +38,47 @@ Ext.define('canopsis.lib.form.field.cfieldset' , {
 		data[this.checkboxName] = this.getValue();
 		return data;
 	},
-	
+
 	initComponent: function() {
-		if(this.value == true)
-			this.collapsed = false
-			
-		if(!this.name)
-			this.name = this.checkboxName
-		
+		if (this.value == true)
+			this.collapsed = false;
+
+		if (!this.name)
+			this.name = this.checkboxName;
+
         this.callParent(arguments);
     },
-	
-	getValue : function(){
-		if(this.checkboxCmp){
+
+	getValue: function() {
+		if (this.checkboxCmp) {
 			var value = this.checkboxCmp.getValue();
-			if(value == "on" || value == 1)
-				return true
+			if (value == 'on' || value == 1)
+				return true;
 			else
-				return false
+				return false;
 		}
 	},
-	
-	setValue : function(value){
-		if(value == undefined)
-			value = false
-			
-		if(this.checkboxCmp){
+
+	setValue: function(value) {
+		if (value == undefined)
+			value = false;
+
+		if (this.checkboxCmp) {
 			this.checkboxCmp.setValue(value);
-		}else{
-			this.collapsed = !value
-			if(!value)
-				this.collapse()
+		}else {
+			this.collapsed = !value;
+			if (!value)
+				this.collapse();
 			else
-				this.expand()
+				this.expand();
 		}
 	},
-	
+
 	createCheckboxCmp: function() {
 		var checkbox = this.callParent(arguments);
-		checkbox.isFormField = false
-		checkbox.uncheckedValue = false
-		return checkbox
-    },
-	
-})
+		checkbox.isFormField = false;
+		checkbox.uncheckedValue = false;
+		return checkbox;
+    }
+
+});

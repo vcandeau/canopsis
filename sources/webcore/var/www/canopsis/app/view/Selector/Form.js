@@ -24,14 +24,14 @@ Ext.define('canopsis.view.Selector.Form', {
 	alias: 'widget.SelectorForm',
 
 	defaultType: undefined,
-	
+
 	fieldDefaults: {
 		labelWidth: 150
-	},	
+	},
 
     initComponent: function() {
 		var labelWidth = 200;
-		
+
 		this.items = [
 			{
 				xtype: 'tabpanel',
@@ -58,7 +58,7 @@ Ext.define('canopsis.view.Selector.Form', {
 								hidden: true
 							},
 							{
-								xtype:'fieldset',
+								xtype: 'fieldset',
 								title: _('General'),
 								defaultType: 'textfield',
 								defaults: { labelWidth: labelWidth },
@@ -82,18 +82,18 @@ Ext.define('canopsis.view.Selector.Form', {
 								value: true,
 								defaults: { labelWidth: labelWidth },
 								items: [{
-										xtype: "combobox",
-										name: "state_algorithm",
-										fieldLabel: _("Algorithm"),
-										queryMode: "local",
-										displayField: "text",
-										valueField: "value",
+										xtype: 'combobox',
+										name: 'state_algorithm',
+										fieldLabel: _('Algorithm'),
+										queryMode: 'local',
+										displayField: 'text',
+										valueField: 'value',
 										forceSelection: true,
 										value: 0,
 										store: {
-											xtype: "store",
-											fields: ["value", "text"],
-											data : [
+											xtype: 'store',
+											fields: ['value', 'text'],
+											data: [
 												{value: 0, text: _('More bad state')}
 											]
 										}
@@ -106,7 +106,7 @@ Ext.define('canopsis.view.Selector.Form', {
 									}
 								]
 							},{
-								xtype:'cfieldset',
+								xtype: 'cfieldset',
 								checkboxToggle: true,
 								title: _('Calcul SLA (if state is calculated)'),
 								checkboxName: 'dosla',
@@ -119,7 +119,7 @@ Ext.define('canopsis.view.Selector.Form', {
 										fieldLabel: _('Time window'),
 										layout: 'hbox',
 										width: 500,
-										items:[
+										items: [
 											{
 												xtype: 'numberfield',
 												name: 'sla_timewindow_value',
@@ -127,7 +127,7 @@ Ext.define('canopsis.view.Selector.Form', {
 												value: 1,
 												width: 60,
 												allowBlank: false,
-												padding: "0 5 0 0"
+												padding: '0 5 0 0'
 											},{
 												xtype: 'combobox',
 												name: 'sla_timewindow_unit',

@@ -23,33 +23,33 @@ Ext.define('widgets.text.text' , {
 	alias: 'widget.text',
 	initComponent: function() {
 		//Initialisation of ext JS template
-		this.myTemplate = new Ext.XTemplate ( "<div>" + this.text +"</div>" ) ;
+		this.myTemplate = new Ext.XTemplate('<div>' + this.text + '</div>');
 		//Compilation of template ( to accelerate the render )
 		this.myTemplate.compile();
-		this.HTML = ""; // contains the html
+		this.HTML = ''; // contains the html
 		this.callParent(arguments); // Initialization globale of the template
 	},
 	onRefresh: function(data) {
-		if ( data )
+		if (data)
 		{
-			if ( this.nodes.length > 1 )
+			if (this.nodes.length > 1)
 			{
 				var htmlArray = new Array();
-				for ( i in data ) 
+				for (i in data)
 				{
-					var obj = data[i] ;
-					obj.timestamp = rdr_tstodate(obj.timestamp) ;
-					htmlArray.push( this.myTemplate.apply(obj) ) ;
+					var obj = data[i];
+					obj.timestamp = rdr_tstodate(obj.timestamp);
+					htmlArray.push(this.myTemplate.apply(obj));
 				}
-				this.HTML = htmlArray.join('');	
-			}	
+				this.HTML = htmlArray.join('');
+			}
 			else
-			{	
-				if (this.nodes.length > 1 )
-					for ( i in data )
-						data[i].timestamp = rdr_tstodate(data[i].timestamp) ;
+			{
+				if (this.nodes.length > 1)
+					for (i in data)
+						data[i].timestamp = rdr_tstodate(data[i].timestamp);
 				//If data exist we apply the template on the node
-				data.timestamp = rdr_tstodate(data.timestamp) ;
+				data.timestamp = rdr_tstodate(data.timestamp);
 				this.HTML = this.myTemplate.apply(data);
 
 			}
@@ -57,13 +57,13 @@ Ext.define('widgets.text.text' , {
 		else
 		{
 			//otherwise we put the text contained in the field
-			this.HTML = this.text ;
+			this.HTML = this.text;
 		}
-		this.setHtml( this.HTML ) ;
+		this.setHtml(this.HTML);
 	},
 	getNodeInfo: function() {
 		//we override the function : if there is'nt any nodeId specified we call the onRefresh function
-		if ( ! this.nodeId )
+		if (! this.nodeId)
 		{
 			this.onRefresh(false);
 		}
