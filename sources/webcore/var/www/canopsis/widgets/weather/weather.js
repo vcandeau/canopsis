@@ -61,7 +61,7 @@ Ext.define('widgets.weather.weather' , {
 	doRefresh: function(from, to) {
 		log.debug('Do refresh', this.logAuthor);
 		if (this.nodeId) {
-			if (!this.reportMode)
+			if (!this.reportMode || this.exportMode)
 				this.getNodes();
 			else
 				this.getPastNodes(from, to);
