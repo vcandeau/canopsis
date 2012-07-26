@@ -48,7 +48,7 @@ def init():
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'groups' ,6'email')
 	accounts = [
 		('root','root', 'CPS_root', 'Lastname', 'Firstname', [] ,''),
-		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', ['CPS_view'],'')
+		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', ['group.CPS_view'],'')
 	]
 
 	for name in groups:
@@ -130,8 +130,8 @@ def check_user_canopsis_groups() :
 		storage = get_storage(account=root, namespace='object')
 		record = storage.get('account.canopsis')
 		account = caccount(record)
-		if not 'CPS_view' in account.groups:
-			account.groups.append('CPS_view')
+		if not 'group.CPS_view' in account.groups:
+			account.groups.append('group.CPS_view')
 			storage.put(account)
 	except:
 		pass
