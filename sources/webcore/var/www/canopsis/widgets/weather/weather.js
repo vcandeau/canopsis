@@ -47,6 +47,7 @@ Ext.define('widgets.weather.weather' , {
 	base_config: undefined,
 
 	initComponent: function() {
+		log.debug('Initialize weather widget', this.logAuthor);
 		if (this.exportMode)
 			this.wcontainer_autoScroll = false;
 		this.callParent(arguments);
@@ -74,14 +75,16 @@ Ext.define('widgets.weather.weather' , {
 	},
 
 	getNodes: function() {
+		log.debug('+ Get nodes', this.logAuthor)
 		Ext.Ajax.request({
 			url: this.uri,
 			scope: this,
 			method: 'GET',
 			params: {ids: Ext.encode(this.nodeId)},
 			success: function(response) {
-				this.nodes = Ext.JSON.decode(response.responseText).data;
-				this.populate();
+				var nodes = Ext.JSON.decode(response.responseText).data;
+				this.nodes = nodes
+				this.populate(nodes);
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get Node', this.logAuthor);
@@ -147,12 +150,14 @@ Ext.define('widgets.weather.weather' , {
 
 	},
 
-	populate: function() {
-		log.debug('Populate widget', this.logAuthor);
+	populate: function(data) {
+		log.debug('  +  Populate widget with '+ data.length + ' elements.', this.logAuthor);
 		this.wcontainer.removeAll();
+		var debug_loop_count = 0
 
-		for (var i in this.nodes) {
-			var node = this.nodes[i];
+		for (var i in data) {
+			var node = data[i];
+			log.debug('   +    Build brick for node ' + node._id,this.logAuthor)
 
 			var config = {
 				nodeId: node._id,
@@ -167,7 +172,10 @@ Ext.define('widgets.weather.weather' , {
 
 			var meteo = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
 			this.wcontainer.insert(0, meteo);
+			debug_loop_count += 1;
 		}
+		
+		log.debug('  +  Finished to populate weather widget with ' + debug_loop_count + ' elements', this.logAuthor);
 
 		if (this.exportMode) {
 			log.debug(' + Exporting mode enable, fetch data', this.logAuthor);

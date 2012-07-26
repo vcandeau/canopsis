@@ -68,7 +68,7 @@ Ext.define('widgets.weather.brick' , {
 	//active_downtime : true,
 
 	initComponent: function() {
-		log.debug('Initialize', this.logAuthor);
+		log.debug('Initialize brick', this.logAuthor);
 		if (this.bg_color) {
 			if (this.bg_color.indexOf('#') == -1)
 				this.bg_color = '#' + this.bg_color;
