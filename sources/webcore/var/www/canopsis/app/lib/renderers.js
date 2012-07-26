@@ -253,3 +253,16 @@ rdr_tags = function(tags) {
 	return html;
 };
 
+rdr_display_groups = function(groups){
+	output = ''
+	for(var i in groups){
+		var group = rdr_clean_id(groups[i])
+		
+		output += group
+			
+		if(i != (groups.length - 1))
+			output += ','
+	}
+	return output
+}
+
