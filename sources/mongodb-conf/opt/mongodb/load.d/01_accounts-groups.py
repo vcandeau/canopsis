@@ -31,7 +31,7 @@ root = caccount(user="root", group="root")
 #need this in two functions, key:group_name , value : group_description
 groups =  {
 	'CPS_root':'Have all rights.',
-	'CPS_canopsis':'Base canopsis group.',
+	'Canopsis':'Base canopsis group.',
 	'CPS_curve_admin':'Create and modify curves parameters for UI.',
 	'CPS_view_admin':'Manage all view in canopsis, add, remove or edit.',
 	'CPS_view':'Create and manage his own view.',
@@ -47,8 +47,8 @@ def init():
 	
 	# (0'login', 1'pass', 2'group', 3'lastname', 4'firstname', 5'email')
 	accounts = [
-		('root','root', 'root', 'Lastname', 'Firstname', ''),
-		('canopsis','canopsis', 'canopsis', 'Psis', 'Cano', '')
+		('root','root', 'CPS_root', 'Lastname', 'Firstname', ''),
+		('canopsis','canopsis', 'Canopsis', 'Psis', 'Cano', '')
 	]
 
 	for name in groups:
@@ -209,7 +209,7 @@ def update_for_new_rights():
 			new_groups_array = []
 			for group in record.data['groups']:
 				if group == 'group.canopsis' or group == 'canopsis':
-					group = 'CPS_canopsis'
+					group = 'Canopsis'
 				if group == 'group.root' or group == 'root':
 					group = 'CPS_root'
 				if group == 'group.curves_admin' or group == 'curves_admin':
