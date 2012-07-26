@@ -250,7 +250,7 @@ install_local_package () {
 		log_info "Copy archive packages folder"
 		_VER="Command: cp $FULLPATH $PACKAGES_PATH"
 		trap 'error ${LINENO} "Try to copy archive to packages folder"' ERR
-		cp $FULLPATH $PACKAGES_PATH
+		cp "$FULLPATH" "$PACKAGES_PATH"
 		PPATH=$(get_ppath "$PNAME")
 		load_control_tpl
 		log_info "Source $PNAME control file"
