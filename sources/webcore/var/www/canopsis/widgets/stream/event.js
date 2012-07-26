@@ -245,7 +245,7 @@ Ext.define('widgets.stream.event' , {
 			this.show_comments();
 		}else {
 
-			if (this.stream.visible)
+			if (this.stream.active)
 				this.show_comments();
 			else
 				this.hide_comments();
