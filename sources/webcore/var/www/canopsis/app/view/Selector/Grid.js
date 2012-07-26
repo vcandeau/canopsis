@@ -77,7 +77,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			dataIndex: 'sla_state',
 			renderer: rdr_status
 		},{
-			header: _('SLA') + ": " + _('time window'),
+			header: _('SLA') + ': ' + _('time window'),
 			align: 'center',
 			dataIndex: 'sla_timewindow',
 			width: 150,
@@ -87,10 +87,10 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			align: 'center',
 			width: 60,
 			dataIndex: 'sla_timewindow_perfdata',
-			renderer: function(val){
-				if (val){
-					perf = val[0]
-					return perf.value + perf.unit
+			renderer: function(val) {
+				if (val) {
+					perf = val[0];
+					return perf.value + perf.unit;
 				}
 			}
 		},{

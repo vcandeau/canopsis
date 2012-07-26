@@ -25,175 +25,175 @@ Ext.define('widgets.weather.weather' , {
 	alias: 'widget.weather',
 	logAuthor: '[widget][weather]',
 	border: false,
-	
+
 	cls: 'widget-weather',
 
 	wcontainer_autoScroll: true,
 	wcontainer_layout: 'anchor',
 
-	selector_record : undefined,
+	selector_record: undefined,
 	sla_id: undefined,
-	
-	//brick options
-	iconSet : '01',
-	icon_on_left: false,
-	defaultHeight : undefined,
-	defaultPadding : undefined,
-	defaultMargin : undefined,
-	state_as_icon_value : false,
-	bg_impair_color: undefined,
-	bg_pair_color: "#FFFFFF",
-	
-	base_config : undefined,
-	
-	initComponent: function() {
-		if(this.exportMode)
-			this.wcontainer_autoScroll = false
-		this.callParent(arguments);
-	},
-	
-	afterContainerRender: function() {
-		this.configure()
-		//if(this.exportingMode){
-			
-		if (this.nodeId) 
-			this.getNodes()
 
-		
+	//brick options
+	iconSet: '01',
+	icon_on_left: false,
+	defaultHeight: undefined,
+	defaultPadding: undefined,
+	defaultMargin: undefined,
+	state_as_icon_value: false,
+	bg_impair_color: undefined,
+	bg_pair_color: '#FFFFFF',
+
+	base_config: undefined,
+
+	initComponent: function() {
+		if (this.exportMode)
+			this.wcontainer_autoScroll = false;
 		this.callParent(arguments);
 	},
-	
+
+	afterContainerRender: function() {
+		this.configure();
+		//if(this.exportingMode){
+
+		if (this.nodeId)
+			this.getNodes();
+
+
+		this.callParent(arguments);
+	},
+
 	doRefresh: function(from, to) {
-		log.debug('Do refresh',this.logAuthor)
-		if (this.nodeId){
-			if(!this.reportMode)
-				this.getNodes()
+		log.debug('Do refresh', this.logAuthor);
+		if (this.nodeId) {
+			if (!this.reportMode)
+				this.getNodes();
 			else
-				this.getPastNodes(from,to)
+				this.getPastNodes(from, to);
 		}
 	},
-	
-	getNodes : function(){
+
+	getNodes: function() {
 		Ext.Ajax.request({
 			url: this.uri,
 			scope: this,
 			method: 'GET',
-			params: {ids:Ext.encode(this.nodeId)},
+			params: {ids: Ext.encode(this.nodeId)},
 			success: function(response) {
 				this.nodes = Ext.JSON.decode(response.responseText).data;
-				this.populate()
+				this.populate();
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get Node', this.logAuthor);
-				global.notify.notify(_('Issue'), _("The selected selector can't be found"),'info');
+				global.notify.notify(_('Issue'), _("The selected selector can't be found"), 'info');
 			}
 		});
 	},
-	
-	getPastNodes : function(from,to){
-		log.debug(' + Request data from: ' + from + ' to: ' + to,this.logAuthor)
-		
+
+	getPastNodes: function(from,to) {
+		log.debug(' + Request data from: ' + from + ' to: ' + to, this.logAuthor);
+
 		//--------------------Prepare post params-----------------
-		var post_params = []
-		for(var i in this.nodes){
-			var node = {id:this.nodes[i]._id}
-			
-			if(this.nodes[i].event_type == 'selector')
-				node.metrics = ['cps_state']
+		var post_params = [];
+		for (var i in this.nodes) {
+			var node = {id: this.nodes[i]._id};
+
+			if (this.nodes[i].event_type == 'selector')
+				node.metrics = ['cps_state'];
 			else
-				node.metrics = ['cps_pct_by_state_0']
-				
-			post_params.push(node)
+				node.metrics = ['cps_pct_by_state_0'];
+
+			post_params.push(node);
 		}
-		
+
 		//-------------------------send request--------------------
 		Ext.Ajax.request({
-			url: '/perfstore/values/' + from +'/'+ to ,
-			params: {'nodes':Ext.JSON.encode(post_params)},
+			url: '/perfstore/values/' + from + '/' + to,
+			params: {'nodes': Ext.JSON.encode(post_params)},
 			scope: this,
 			success: function(response) {
 				var data = Ext.JSON.decode(response.responseText);
 				data = data.data;
-				this.report(data)
+				this.report(data);
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get sla informations on the given time period', this.logAuthor);
 			}
 		});
 	},
-	
-	configure: function(){
+
+	configure: function() {
 		//-------------------define base config-------------------
 		this.base_config = {
 				iconSet: this.iconSet,
 				state_as_icon_value: this.state_as_icon_value,
 				icon_on_left: this.icon_on_left,
-				exportMode : this.exportMode
-			}
-			
-		if(this.defaultPadding)
-			this.base_config.padding = this.defaultPadding
-			
-		if(this.defaultMargin)
-			this.base_config.margin = this.defaultMargin
-		
-		if(this.nodes.length == 1){
-			this.base_config.anchor = '100% 100%'
-		} else {
-			if(this.defaultHeight)
-				this.base_config.height = parseInt(this.defaultHeight,10)
-			this.base_config.anchor = '100%'
-		}
-		
-	},
-	
-	populate: function(){
-		log.debug('Populate widget', this.logAuthor)
-		this.wcontainer.removeAll()
+				exportMode: this.exportMode
+			};
 
-		for(var i in this.nodes){
-			var node = this.nodes[i]
-			
+		if (this.defaultPadding)
+			this.base_config.padding = this.defaultPadding;
+
+		if (this.defaultMargin)
+			this.base_config.margin = this.defaultMargin;
+
+		if (this.nodes.length == 1) {
+			this.base_config.anchor = '100% 100%';
+		} else {
+			if (this.defaultHeight)
+				this.base_config.height = parseInt(this.defaultHeight, 10);
+			this.base_config.anchor = '100%';
+		}
+
+	},
+
+	populate: function() {
+		log.debug('Populate widget', this.logAuthor);
+		this.wcontainer.removeAll();
+
+		for (var i in this.nodes) {
+			var node = this.nodes[i];
+
 			var config = {
 				nodeId: node._id,
-				data : node,
-				brick_number: i,
-			}
-			
-			if((i % 2) == 0)
-				config.bg_color = this.bg_pair_color
-			else
-				config.bg_color = this.bg_impair_color
+				data: node,
+				brick_number: i
+			};
 
-			var meteo = Ext.create('widgets.weather.brick',Ext.Object.merge(config,this.base_config) )
-			this.wcontainer.insert(0, meteo);		
+			if ((i % 2) == 0)
+				config.bg_color = this.bg_pair_color;
+			else
+				config.bg_color = this.bg_impair_color;
+
+			var meteo = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
+			this.wcontainer.insert(0, meteo);
 		}
-		
-		if(this.exportMode){
-			log.debug(' + Exporting mode enable, fetch data',this.logAuthor)
-			this.getPastNodes(export_from,export_to)
+
+		if (this.exportMode) {
+			log.debug(' + Exporting mode enable, fetch data', this.logAuthor);
+			this.getPastNodes(export_from, export_to);
 		}
 	},
-	
-	report : function(data){
-		log.debug(' + Enter report function', this.logAuthor)
-		bricks = this.wcontainer.items.items
-		
-		Ext.Array.each(bricks,function(brick){
-			var new_values = undefined
-			
-			for(var i in data)
-				if(data[i].node == brick.nodeId)
-					new_values = data[i]
-			
-			if(new_values){
-				log.debug(' + New values for '+ brick.event_type + ' ' + brick.component,this.logAuthor)
-				brick.buildReport(new_values)
-			}else{
-				log.debug(' + No data recieved for '+ brick.event_type + ' ' + brick.component,this.logAuthor)
-				brick.buildEmpty()
+
+	report: function(data) {
+		log.debug(' + Enter report function', this.logAuthor);
+		bricks = this.wcontainer.items.items;
+
+		Ext.Array.each(bricks, function(brick) {
+			var new_values = undefined;
+
+			for (var i in data)
+				if (data[i].node == brick.nodeId)
+					new_values = data[i];
+
+			if (new_values) {
+				log.debug(' + New values for ' + brick.event_type + ' ' + brick.component, this.logAuthor);
+				brick.buildReport(new_values);
+			}else {
+				log.debug(' + No data recieved for ' + brick.event_type + ' ' + brick.component, this.logAuthor);
+				brick.buildEmpty();
 			}
-		},this)
-	},
+		},this);
+	}
 
 });

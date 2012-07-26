@@ -24,12 +24,12 @@ Ext.define('canopsis.store.Tabs.model', {
 
 });
 
-if (Ext.isIE){
+if (Ext.isIE) {
 		Ext.define('canopsis.store.Tabs', {
 		extend: 'canopsis.lib.store.cstore',
 		model: 'canopsis.store.Tabs.model',
 		id: 'Tabs',
-		
+
 		proxy: {
 			type: 'memory',
 			reader: {
@@ -43,8 +43,8 @@ if (Ext.isIE){
 		autoLoad: false,
 		autoSync: false
 	});
-	
-}else{
+
+}else {
 	Ext.define('canopsis.store.Tabs', {
 		extend: 'canopsis.lib.store.cstore',
 		model: 'canopsis.store.Tabs.model',
@@ -54,7 +54,7 @@ if (Ext.isIE){
 			type: 'localstorage',
 			id: 'canopsis.store.tabs'
 		},
-		
+
 		//HACK :we don't want this store to talk everytime
 		listeners: {},
 

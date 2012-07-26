@@ -28,7 +28,7 @@ Ext.define('canopsis.view.Group.Grid' , {
 
 	opt_menu_delete: true,
 	opt_menu_rights: false,
-	opt_allow_edit : true,
+	opt_allow_edit: true,
 
 	columns: [
 		{

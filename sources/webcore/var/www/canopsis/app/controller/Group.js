@@ -46,7 +46,7 @@ Ext.define('canopsis.controller.Group', {
 		record.data.id = 'group.' + record.data.crecord_name;
 		return record;
 	},
-	
+
 	beforeload_EditForm: function(form) {
 		var field = Ext.ComponentQuery.query('#' + form.id + ' textfield[name=crecord_name]')[0];
 		if (field)

@@ -48,7 +48,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		log.debug('Bind events "' + id + '" ...', this.logAuthor);
 
 		grid.on('select', this._select,	this);
-		
+
 		//Bind Dblclick
 		grid.on('selectionchange',	this._selectionchange,	this);
 		if (grid.opt_view_element) {
@@ -104,7 +104,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 			for (i in btns) {
 				btns[i].on('click', this._runItem, this);
 			}
-			
+
 			//enable / disable button
 			var btns = Ext.ComponentQuery.query('#' + grid.contextMenu.id + ' [action=enable-disable]');
 			for (i in btns) {
@@ -115,18 +115,18 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		//search buttons
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=search]');
 		for (i in btns) {
-			if(this.grid.opt_simple_search == true){
+			if (this.grid.opt_simple_search == true) {
 				btns[i].on('click', this._searchRecordSimple, this);
-			}else{
+			}else {
 				btns[i].on('click', this._searchRecord, this);
 			}
 		}
-		
+
 		var btns = Ext.ComponentQuery.query('#' + id + ' button[action=clean_search]');
 		for (i in btns) {
-			btns[i].on('click', function(){
-				this.grid.down('textfield[name=searchField]').setValue('')
-				this._searchRecord()
+			btns[i].on('click', function() {
+				this.grid.down('textfield[name=searchField]').setValue('');
+				this._searchRecord();
 			},this);
 		}
 
@@ -135,17 +135,17 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var keynav_config = {
 				scope: this,
 				enter: (this.grid.opt_simple_search == true) ? this._searchRecordSimple : this._searchRecord
-			}
-			
+			};
+
 		for (i in textfields) {
 				var textfield = textfields[i];
-				
+
 				//HACK : because sometimes this field is really long to render
-				if(!textfield.el){
-					textfield.on('afterrender',function(){
-						new Ext.util.KeyNav(textfield.id,keynav_config );
-					},this)
-				}else{
+				if (!textfield.el) {
+					textfield.on('afterrender', function() {
+						new Ext.util.KeyNav(textfield.id, keynav_config);
+					},this);
+				}else {
 					new Ext.util.KeyNav(textfield.id, keynav_config);
 				}
 		}
@@ -217,37 +217,37 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		this.grid.store.load();
 	},
 
-	_select: function(){
+	_select: function() {
 		log.debug('select', this.logAuthor);
-		
+
 		// Filter on tags
-		var selected_tags = []
+		var selected_tags = [];
 		try {
-			selected_tags = Ext.query('#'+this.grid.id+" ul[class=tags] > li:hover > a")
-		} catch(err) {
+			selected_tags = Ext.query('#' + this.grid.id + ' ul[class=tags] > li:hover > a');
+		} catch (err) {
 			log.debug('No tags in grid', this.logAuthor);
 		}
-		
-		if (selected_tags.length > 0){
-			var tag = Ext.get(selected_tags[0]).getHTML()
+
+		if (selected_tags.length > 0) {
+			var tag = Ext.get(selected_tags[0]).getHTML();
 			var search = this.grid.down('textfield[name=searchField]');
-			if (search && tag){
-				search.setValue('#'+tag)
-				this._searchRecord()
+			if (search && tag) {
+				search.setValue('#' + tag);
+				this._searchRecord();
 			}
 		}
 	},
-	
+
 	_selectionchange: function(view, records) {
 		log.debug('selectionchange', this.logAuthor);
 		var grid = this.grid;
-		
+
 		//Enable delete Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=delete]');
 		for (i in btns) {
 			btns[i].setDisabled(records.length === 0);
 		}
-		
+
 		//Enable duplicate Button
 		btns = Ext.ComponentQuery.query('#' + grid.id + ' button[action=duplicate]');
 		for (i in btns) {
@@ -257,7 +257,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		if (this.selectionchange) {
 			this.selectionchange(view, records);
 		}
-		
+
 	},
 
 	_viewElement: function(view, item, index) {
@@ -305,17 +305,17 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	},
 
-	_enabledisable: function(){
+	_enabledisable: function() {
 		log.debug('Clicked enabledisable Button', this.logAuthor);
 		var grid = this.grid;
 
 		var selection = grid.getSelectionModel().getSelection();
 		if (selection) {
-			var record = selection[0]
+			var record = selection[0];
 			if (record.get('enable'))
-				record.set('enable', false)
+				record.set('enable', false);
 			else
-				record.set('enable', true)
+				record.set('enable', true);
 		}
 	},
 
@@ -367,7 +367,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 				store.add(record);
 				this._postSave(record, data);
 				log.debug('Reload store', this.logAuthor);
-				
+
 				//-------------load and resume events-------------
 				store.load({
 					scope: this,
@@ -571,10 +571,10 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 	_editRecord: function(view, item, index) {
 		log.debug('Clicked editRecord', this.logAuthor);
-		
+
 		//hack create a copy to not mess with old record
-		item = item.copy(); 
-		Ext.data.Model.id(item)
+		item = item.copy();
+		Ext.data.Model.id(item);
 
 		//check rights
 		var ctrl = this.getController('Account');
@@ -616,7 +616,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		var item = grid.getSelectionModel().getSelection()[0];
 		if (item) {
 			var editing = false;
-			
+
 			if (this.formXtype) {
 				if (this.EditMethod == 'tab') {
 					var main_tabs = Ext.getCmp('main-tabs');
@@ -681,7 +681,7 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 				this._bindFormEvents(form);
 			}
-		}else{
+		}else {
 			global.notify.notify(_('Error'), _('You must select record'), 'error');
 		}
 	},
@@ -699,48 +699,48 @@ Ext.define('canopsis.lib.controller.cgrid', {
 		}else {
 			//create an array and give it to store.search
 			var search_filters = [];
-			
+
 			// Split search string by space
-			var search_value_array = search.split(' ')
-			
+			var search_value_array = search.split(' ');
+
 			log.debug(' + Search:', this.logAuthor);
 			log.dump(search_value_array);
-			
+
 			// for each opt_bar_search_field
 			for (var i in grid.opt_bar_search_field) {
-				var field = grid.opt_bar_search_field[i]
-				
-				if (search_value_array.length == 1){
+				var field = grid.opt_bar_search_field[i];
+
+				if (search_value_array.length == 1) {
 					var filter = {};
-					
+
 					// Process tags
 					if (search[0] == '#')
 						filter = {'tags': search.slice(1)};
 					else
-						filter[field] = { '$regex' : search, "$options": 'i'};
-				
+						filter[field] = { '$regex' : search, '$options': 'i'};
+
 					search_filters.push(filter);
-				
+
 				} else {
-					var filter = []
-					
+					var filter = [];
+
 					// for each word in search string
-					for (var j in search_value_array){
-						var sub_filter = {}
-						var word = search_value_array[j]
-						
+					for (var j in search_value_array) {
+						var sub_filter = {};
+						var word = search_value_array[j];
+
 						// Process tags
 						if (word[0] == '#')
 							sub_filter = {'tags': word.slice(1)};
 						else
-							sub_filter[field] = { '$regex' : word, "$options": 'i'}
-							
-						filter.push(sub_filter)
+							sub_filter[field] = { '$regex' : word, '$options': 'i'};
+
+						filter.push(sub_filter);
 					}
-					search_filters.push({ "$and": filter})
-				}		
+					search_filters.push({ '$and': filter});
+				}
 			}
-			
+
 			if (search_filters.length == 1)
 				store.search(search_filters[0], false);
 			else
@@ -755,13 +755,13 @@ Ext.define('canopsis.lib.controller.cgrid', {
 	},
 
 	//temporary function, will be merge with the previous as soon as possible
-	_searchRecordSimple : function(){
+	_searchRecordSimple: function() {
 		log.debug('Clicked on searchButton (new func)', this.logAuthor);
 		var grid = this.grid;
 		var store = grid.getStore();
 		var search = grid.down('textfield[name=searchField]').getValue();
-		
-		store.proxy.extraParams.search = search
+
+		store.proxy.extraParams.search = search;
 
 		if (grid.pagingbar) {
 			grid.pagingbar.moveFirst();

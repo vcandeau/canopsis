@@ -329,19 +329,19 @@ Ext.define('canopsis.controller.Account', {
 			}
 		});
 	},
-	
-	checkGroup : function(group){
+
+	checkGroup: function(group) {
 		if (global.account.aaa_group == group || (global.account.groups.indexOf(group) != -1))
-			return true
+			return true;
 		else
-			return false
+			return false;
 	},
-	
-	checkRoot : function(){
+
+	checkRoot: function() {
 		if (global.account.user == 'root' || global.account.aaa_group == 'group.root' || (global.account.groups.indexOf('group.root') != -1))
-			return true
+			return true;
 		else
-			return false
+			return false;
 	}
 
 });

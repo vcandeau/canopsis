@@ -20,14 +20,14 @@
 */
 Ext.define('canopsis.lib.menu.cclear' , {
 	extend: 'Ext.menu.Menu',
-	
+
 	grid: undefined,
 
 	initComponent: function() {
-		if (this.grid){
-			
+		if (this.grid) {
+
 			this.grid_store = this.grid.getStore();
-		
+
 			this.clearAllButton = Ext.create('Ext.Action', {
 								iconCls: 'icon-delete',
 								text: _('Clear all'),
@@ -39,21 +39,21 @@ Ext.define('canopsis.lib.menu.cclear' , {
 								iconCls: 'icon-delete',
 								text: _('Delete selected'),
 								scope: this,
-								handler: this.action_delete	
+								handler: this.action_delete
 							});
-			
-			this.items = [this.deleteButton, this.clearAllButton]
-			
+
+			this.items = [this.deleteButton, this.clearAllButton];
+
 			// Bind Context Menu
 			this.grid.on('itemcontextmenu', this.action_open, this);
-		}		
-		
+		}
+
 		this.callParent(arguments);
 	},
-	
-	action_open: function(view, rec, node, index, e){
+
+	action_open: function(view, rec, node, index, e) {
 		e.preventDefault();
-		
+
 		//don't auto select if multi selecting
 		var selection = this.grid.getSelectionModel().getSelection();
 		if (selection.length < 2)
@@ -62,14 +62,14 @@ Ext.define('canopsis.lib.menu.cclear' , {
 		this.showAt(e.getXY());
 		return false;
 	},
-	
-	action_delete: function(){
+
+	action_delete: function() {
 		var selection = this.grid.getSelectionModel().getSelection();
 		for (var i in selection)
 			this.grid_store.remove(selection[i]);
 	},
-	
-	action_clearall: function(){
+
+	action_clearall: function() {
 		this.grid_store.removeAll();
 	}
 

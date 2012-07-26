@@ -22,7 +22,7 @@
 Ext.define('canopsis.lib.form.field.cmetric' , {
 	extend: 'Ext.panel.Panel',
 	mixins: ['canopsis.lib.form.cfield'],
-	
+
 	alias: 'widget.cmetric',
 
 	border: false,
@@ -181,16 +181,16 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 
 		return metric_array.sort(this.sort_by_metric);
 	},
-	
-	sort_by_metric: function(a,b){
+
+	sort_by_metric: function(a,b) {
 		a = a.metric;
 		b = b.metric;
-		if(a == b)
-			return 0
-		if(a > b)
-			return 1
+		if (a == b)
+			return 0;
+		if (a > b)
+			return 1;
 		else
-			return -1
+			return -1;
 	},
 
 	select_metrics: function(metric_array) {
@@ -350,7 +350,7 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 				}
 			}
 		});
-		
+
 		this.contextMenu = Ext.create('canopsis.lib.menu.cclear', { grid: this.selected_grid});
 
 	},

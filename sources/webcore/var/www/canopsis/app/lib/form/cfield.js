@@ -22,9 +22,9 @@
 Ext.define('canopsis.lib.form.cfield' , {
 
 	isFormField: true,
-	
+
 	name: undefined,
-	
+
 	getName: function() {
 		return this.name;
 	},
@@ -39,14 +39,14 @@ Ext.define('canopsis.lib.form.cfield' , {
 		data[this.name] = this.getValue();
 		return data;
 	},
-	isDirty: function(){
+	isDirty: function() {
 		return false;
 	},
-	getModelData: function(){
+	getModelData: function() {
 		return this.getSubmitData();
 	},
-	
-	getValue: function(){
+
+	getValue: function() {
 		return undefined;
 	}
 

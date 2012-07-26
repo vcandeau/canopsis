@@ -85,7 +85,7 @@ Ext.define('widgets.pie.pie' , {
 
 			var metric_max = metric.max;
 			if (this.metric_max) {
-				log.debug(' + Set max to: '+ this.metric_max, this.logAuthor);
+				log.debug(' + Set max to: ' + this.metric_max, this.logAuthor);
 				metric_max = this.metric_max;
 			}
 
@@ -100,7 +100,7 @@ Ext.define('widgets.pie.pie' , {
 				total += metric.value;
 			}
 			if (total == 0) { total = 1 }
-			log.debug('   + Total: '+ total, this.logAuthor);
+			log.debug('   + Total: ' + total, this.logAuthor);
 
 			var i = 0;
 			for (index in perf_data) {

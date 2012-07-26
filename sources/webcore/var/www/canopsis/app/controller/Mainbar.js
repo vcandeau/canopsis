@@ -193,11 +193,11 @@ Ext.define('canopsis.controller.Mainbar', {
 		//close view selected if open
 		var tab = Ext.getCmp(view_id + '.tab');
 		if (tab)
-			maintabs.remove(tab.id)
+			maintabs.remove(tab.id);
 
 		//close current dashboard
-		maintabs.remove(maintabs.getComponent(0).id)
-		
+		maintabs.remove(maintabs.getComponent(0).id);
+
 		var tab = this.getController('Tabs').open_dashboard();
 	},
 

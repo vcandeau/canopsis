@@ -55,9 +55,9 @@ var rdr_boolean = function(val, metadata, record, rowIndex, colIndex, store) {
 };
 
 var rdr_status = function(val, metadata, record, rowIndex, colIndex, store) {
-	if (typeof(val)=='number')
+	if (typeof(val) == 'number')
 		return "<span class='icon icon-state-" + val + "' />";
-	return val
+	return val;
 };
 
 var rdr_color = function(val, metadata, record, rowIndex, colIndex, store) {
@@ -194,31 +194,31 @@ var rdr_clean_id = function(val) {
 var rdr_time_interval = function(val) {
 	if (val == 0)
 		return '';
-		
+
 	var tmp;
-	
+
 	tmp = val / global.commonTs.year;
 	if (tmp >= 1)
-		return tmp + " " + _('Year') + "(s)";
+		return tmp + ' ' + _('Year') + '(s)';
 
 	tmp = val / global.commonTs.month;
 	if (tmp >= 1)
-		return tmp + " " + _('Month') + "(s)";
-		
+		return tmp + ' ' + _('Month') + '(s)';
+
 	tmp = val / global.commonTs.week;
 	if (tmp >= 1)
-		return tmp + " " + _('Week') + "(s)";
-		
+		return tmp + ' ' + _('Week') + '(s)';
+
 	tmp = val / global.commonTs.day;
 	if (tmp >= 1)
-		return tmp + " " + _('Day') + "(s)";
-		
-	return val + " " + _("Second") + "(s)";
-}
+		return tmp + ' ' + _('Day') + '(s)';
+
+	return val + ' ' + _('Second') + '(s)';
+};
 
 rdr_elapsed_time = function(timestamp, full_length) {
 	timestamp = parseInt(timestamp);
-	
+
 	var elapsed = parseInt(new Date().getTime() / 1000) - timestamp;
 
 	var elapsed_text = elapsed + ' seconds ago';
@@ -227,29 +227,29 @@ rdr_elapsed_time = function(timestamp, full_length) {
 		elapsed_text = 'just now';
 	if (elapsed > 60)
 		elapsed_text = parseInt(elapsed / 60) + ' mins ago';
-	if(!full_length){
+	if (!full_length) {
 		if (elapsed > 3600)
 			elapsed_text = rdr_tstodate(timestamp);
-	}else{
+	}else {
 		if (elapsed > 3600)
-			elapsed_text = parseInt(elapsed/3600) +" hours ago"
+			elapsed_text = parseInt(elapsed / 3600) + ' hours ago';
 		if (elapsed > 86400)
-			elapsed_text = parseInt(elapsed/86400) +" days ago"
+			elapsed_text = parseInt(elapsed / 86400) + ' days ago';
 	}
 
 	return elapsed_text;
-}
+};
 
 rdr_tags = function(tags) {
-	var html = ""
-	if (tags){
-		if (tags.length > 0){
-			html += "<ul class='tags'>"
+	var html = '';
+	if (tags) {
+		if (tags.length > 0) {
+			html += "<ul class='tags'>";
 			for (var i in tags)
-				html += "<li><a href='#'>"+tags[i]+"</a></li>"
-			html += "</ul>"
+				html += "<li><a href='#'>" + tags[i] + '</a></li>';
+			html += '</ul>';
 		}
 	}
-	return html
-}
+	return html;
+};
 

@@ -106,7 +106,7 @@ Ext.define('widgets.stream.event' , {
 			this.id = this.stream.id + '.' + this.id;
 		}
 
-		log.debug('Create event: '+ this.id, this.logAuthor);
+		log.debug('Create event: ' + this.id, this.logAuthor);
 
 		this.timestamp = parseInt(this.raw.timestamp);
 
@@ -127,16 +127,16 @@ Ext.define('widgets.stream.event' , {
 
 		if (! raw['author'])
 			raw['author'] = undefined;
-			
+
 		if (! raw['output'])
 			raw['output'] = '';
-			
+
 		if (! raw['long_output'])
 			raw['long_output'] = '';
-			
+
 		if (raw['output'])
 			raw['output'] = raw['output'].replace('\n', '</br>');
-		
+
 		if (raw['long_output'])
 			raw['output'] = raw['output'].replace('\n', '</br>');
 
@@ -155,7 +155,7 @@ Ext.define('widgets.stream.event' , {
 		this.el_comments = el.getById(this.id + '-comments-td');
 		this.el_btn_exp_comments = el.getById(this.id + '-expend-comments');
 		this.el_nbcomment = el.getById(this.id + '-nbcomment');
-		
+
 		this.el_time = el.getById(this.id + '-time');
 
 		this.init_comment_counter();
@@ -172,9 +172,9 @@ Ext.define('widgets.stream.event' , {
 
 	create_comments_container: function() {
 		if (! this.comments_container) {
-			var items = []
+			var items = [];
 
-			if (this.stream.enable_comments){
+			if (this.stream.enable_comments) {
 				log.debug("Create comment's container", this.logAuthor);
 				this.comment_form = Ext.create('Ext.form.Panel', {
 						layout: 'fit',
@@ -196,8 +196,8 @@ Ext.define('widgets.stream.event' , {
 							}
 						}]
 				});
-				
-				items.push(this.comment_form)
+
+				items.push(this.comment_form);
 			}
 
 			this.comments_container = Ext.create('Ext.container.Container', {
@@ -211,7 +211,7 @@ Ext.define('widgets.stream.event' , {
 					log.debug(records.length + " comments for '" + me.event_id + "'", me.logAuthor);
 					if (records.length > 0) {
 						me.init_comment_counter();
-						records.reverse()
+						records.reverse();
 						for (var i in records)
 								records[i] = Ext.create('widgets.stream.event', {raw: records[i], stream: me});
 

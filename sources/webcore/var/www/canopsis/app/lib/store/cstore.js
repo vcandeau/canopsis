@@ -84,10 +84,10 @@ Ext.define('canopsis.lib.store.cstore', {
 
 		log.debug('Building filter request', this.logAuthor);
 		log.debug('baseFilter:', this.logAuthor);
-		log.dump(this.baseFilter)
+		log.dump(this.baseFilter);
 		log.debug('filter:', this.logAuthor);
-		log.dump(filter)		
-		
+		log.dump(filter);
+
 		if (this.baseFilter) {
 			var newObject = this.baseFilter;
 			newObject = this.getAndFilter([newObject, filter]);
@@ -96,8 +96,8 @@ Ext.define('canopsis.lib.store.cstore', {
 		}
 
 		log.debug('Final Filter:', this.logAuthor);
-		log.dump(newObject)
-		
+		log.dump(newObject);
+
 		this.proxy.extraParams.filter = Ext.JSON.encode(newObject);
 
 		if (autoLoad) {

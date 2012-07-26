@@ -29,7 +29,7 @@ Ext.define('canopsis.controller.Notify', {
 		global.notify = this;
 		log.debug('[controller][cnotify] - Initialize ...');
 		this.callParent(arguments);
-		$.pnotify.defaults.styling = "jqueryui";
+		$.pnotify.defaults.styling = 'jqueryui';
     },
 
     notify: function(title, text, type, icon,hide,closer,sticker) {

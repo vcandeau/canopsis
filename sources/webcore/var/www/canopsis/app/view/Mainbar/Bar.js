@@ -104,7 +104,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 
 
 		//Root build menu
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_account_admin')){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_account_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-edit-account',
@@ -119,7 +119,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 		//Build menu Curves Admin
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_curve_admin')){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_curve_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-colors',
@@ -129,9 +129,9 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				}
 			]);
 		}
-		
+
 		//Root selector menu
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_selector_admin')){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_selector_admin')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-selector',
@@ -140,9 +140,9 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				}
 			]);
 		}
-		
+
 		//Build menu
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin')||global.accountCtrl.checkGroup('group.CPS_view')){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
 			menu_build = menu_build.concat([
 				{
 					iconCls: 'icon-mainbar-edit-view',
@@ -157,7 +157,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 		}
 
 		//Reporting menu
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_reporting_admin')){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_reporting_admin')) {
 			menu_reporting = menu_reporting.concat([
 				{
 					iconCls: 'icon-mimetype-pdf',
@@ -216,7 +216,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 			}
 		]);
 
-		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin')||global.accountCtrl.checkGroup('group.CPS_view')){
+		if (global.accountCtrl.checkRoot() || global.accountCtrl.checkGroup('group.CPS_view_admin') || global.accountCtrl.checkGroup('group.CPS_view')) {
 			menu_run = menu_run.concat(
 				[
 					{
@@ -302,7 +302,7 @@ Ext.define('canopsis.view.Mainbar.Bar' , {
 				flex: 4
 			},'->', {
 				xtype: 'container',
-				html: "<div class='cps-account' >" + global.account.firstname + ' '+ global.account.lastname + '</div>',
+				html: "<div class='cps-account' >" + global.account.firstname + ' ' + global.account.lastname + '</div>',
 				flex: 2.3
 			},{
 				iconCls: 'icon-user',
