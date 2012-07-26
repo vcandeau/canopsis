@@ -68,12 +68,6 @@ def init():
 		try:
 			# Check if exist
 			record = storage.get('account.%s' % user)
-			#add CPS_view to canopsis
-			if(user == 'canopsis'):
-				new_record = caccount(record)
-				if not 'CPS_view' in new_record.groups:
-					new_record.groups.append('CPS_view')
-					storage.put(new_record)
 		except:
 			logger.info(" + Create account '%s'" % user)
 			
@@ -125,9 +119,24 @@ def init():
 
 def update():
 	init()
+	check_user_canopsis_groups()
 	check_and_create_authkey()
 	update_for_new_rights()
 	add_description_to_group()
+
+#add CPS_view to canopsis if needed
+def check_user_canopsis_groups() :
+	try:
+		storage = get_storage(account=root, namespace='object')
+		record = storage.get('account.canopsis')
+		account = caccount(record)
+		if not 'CPS_view' in account.groups:
+			account.groups.append('CPS_view')
+			storage.put(account)
+	except:
+		pass
+
+	
 	
 def add_description_to_group():
 	storage = get_storage(account=root, namespace='object')
