@@ -21,7 +21,6 @@
 #import logging
 from crecord import crecord
 
-from ccache import get_cache
 from ctools import calcul_pct
 import cevent
 
@@ -87,10 +86,6 @@ class cselector(crecord):
 		else:
 			self.logger.debug("Init new record.")
 			crecord.__init__(self, name=name, _id=self._id, account=storage.account, type=self.type, storage=storage)
-			
-		if self.use_cache:
-			self.logger.debug("Create cache object")
-			self.cache = get_cache(storage=self.storage)
 		
 	def dump(self):
 		self.data['include_ids']	= self.include_ids
@@ -214,26 +209,16 @@ class cselector(crecord):
 			
 			return ids
 		
-		@self.cache.deco(self._id, self.cache_time)
-		def do_resolv_cache(self):
-			return do_resolv(self)
-		
-		if self.changed:
+		if self.changed or self._ids == None:
 			self.logger.debug("Selector has change, get new ids")
 			self._ids = do_resolv(self)
-			if self.cache:
-				self.logger.debug(" + Put to cache")
-				self.cache.put(self._id, self._ids)
 		
-		elif self.cache:
-			# get ids from memory
-			if self.last_resolv and (time.time() - self.last_resolv) < 3 and self._ids != None:
+		elif self.use_cache and self.last_resolv:
+			if (time.time() - self.last_resolv) < self.cache_time:
+				self.logger.debug(" + Use cache")
 				return self._ids
-			else:
-				self._ids = do_resolv_cache(self)
-		else:
-			self._ids = do_resolv(self)
-		
+			
+		self._ids = do_resolv(self)
 		return self._ids
 	
 	def match(self, _id):
