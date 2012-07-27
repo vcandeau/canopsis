@@ -32,6 +32,14 @@ Ext.define('canopsis.controller.Notify', {
 		$.pnotify.defaults.history = false;
 		//$.pnotify.defaults.styling = 'jqueryui';
     },
+    
+    test: function(){
+		this.notify(_('Title'), _('Description'));
+		this.notify(_('Title'), _('Description'), 'info');
+		this.notify(_('Title'), _('Description'), 'success');
+		this.notify(_('Title'), _('Description'), 'warning');
+		this.notify(_('Title'), _('Description'), 'error');
+	},
 
     notify: function(title, text, type, icon, hide, closer, sticker) {
 		if (type == undefined) {var type = "info"}
