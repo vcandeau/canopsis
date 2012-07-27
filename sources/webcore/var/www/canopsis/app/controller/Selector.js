@@ -48,7 +48,11 @@ Ext.define('canopsis.controller.Selector', {
 		var _id = record.get('_id');
 		record.set('id', _id);
 		record.set('loaded', false);
-		record.set('sla_timewindow', record.get('sla_timewindow_value') * record.get('sla_timewindow_unit'));
+		
+		if (record.get('dosla'))
+			record.set('sla_timewindow', record.get('sla_timewindow_value') * record.get('sla_timewindow_unit'));
+		else
+			record.set('sla_timewindow', undefined);
 
 		record.set('state', undefined);
 		record.set('sla_state', undefined);
