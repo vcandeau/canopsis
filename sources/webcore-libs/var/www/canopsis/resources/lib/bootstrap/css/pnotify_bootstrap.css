@@ -48,9 +48,9 @@
 }
 
 .alert-info {
-  color: #3a87ad;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
+  color: #969697;
+  background-color: #EEEEEE;
+  border-color: #CCCCCC;
 }
 
 .alert-block {
@@ -89,22 +89,6 @@
   background-position: 0 -120px;
 }
 
-.icon-ok {
-  background-position: -288px 0;
-}
-
-.icon-remove {
-  background-position: -312px 0;
-}
-
-.icon-play {
-  background-position: -264px -72px;
-}
-
-.icon-pause {
-  background-position: -288px -72px;
-}
-
 .icon-ok-sign {
   background-position: -72px -96px;
 }
@@ -117,4 +101,7 @@
   background-position: -144px -120px;
 }
 
+.icon-info-sign {
+  background-position: -120px -96px;
+}
 
