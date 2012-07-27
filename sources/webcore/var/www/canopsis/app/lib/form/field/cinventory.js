@@ -139,7 +139,8 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 			viewConfig: {
 				plugins: {
 					ptype: 'gridviewdragdrop',
-					enableDrag: false,
+					//enableDrag: false,
+					dragGroup: 'search_grid_DNDGroup',
 					dropGroup: 'search_grid_DNDGroup'
 				}
 			},
@@ -250,16 +251,17 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 
 		this.selection_grid.getView().on('beforedrop', function(event, data, dropRec, dropPosition) {
 			var records = data.records;
-			for (var i in records) {
-				var record = records[i];
-				this.addRecord(record);
+			if (data.view.id != this.selection_grid.getView().id) {
+				for (var i in records) {
+					var record = records[i];
+					this.addRecord(record);
+				}
+			
+			
+				event.cancel = true;
+				event.dropStatus = true;
+				return false;
 			}
-
-			event.cancel = true;
-			event.dropStatus = true;
-
-
-			return false;
 		}, this);
 
 		//////// Push items
