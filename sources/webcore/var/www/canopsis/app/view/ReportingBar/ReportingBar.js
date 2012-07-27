@@ -62,7 +62,8 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 		this.periodNumber = this.add({
 			xtype: 'numberfield',
 			width: 55,
-			value: 1
+			value: 1,
+			minValue: 1
 			//allowBlank: false,
 		});
 
