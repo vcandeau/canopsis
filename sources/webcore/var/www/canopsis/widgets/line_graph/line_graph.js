@@ -761,6 +761,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 				trend_line.setData(line, false);
 			} else {
 				log.debug('  +  not enough data to draw trend line');
+				trend_line.setData([], false);
 			}
 		}else {
 			log.debug('  +  Trend line not found : ' + trend_id, this.logAuthor);
