@@ -15,9 +15,7 @@
 				{
 					"xtype": "cinventory",
 					"name": "nodes",
-					"multiSelect": false,
-					"onlyComponent": true,
-					"filter" : {   "$and": [ { "event_type" : "eue" } ]  }
+					"filter" : {   "$and": [ { "event_type" : "eue" }, {"type_message": "feature"}  ]  }
 				}
 				]
 		}
