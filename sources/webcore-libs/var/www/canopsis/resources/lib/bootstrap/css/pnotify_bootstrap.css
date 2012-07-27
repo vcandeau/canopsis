@@ -11,9 +11,9 @@
  * 
  */
 
-.alert {
-  padding: 8px 35px 8px 14px;
-  margin-bottom: 18px;
+.ui-pnotify .alert {
+  padding: 8px 8px 8px 14px;
+  margin-bottom: 0px;
   color: #c09853;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   background-color: #fcf8e3;
@@ -23,52 +23,41 @@
           border-radius: 4px;
 }
 
-.alert-heading {
-  color: inherit;
-}
-
-.alert .close {
-  position: relative;
-  top: -2px;
-  right: -21px;
-  line-height: 18px;
-}
-
-.alert-success {
+.ui-pnotify .alert-success {
   color: #468847;
   background-color: #dff0d8;
   border-color: #d6e9c6;
 }
 
-.alert-danger,
-.alert-error {
+.ui-pnotify .alert-danger,
+.ui-pnotify .alert-error {
   color: #b94a48;
   background-color: #f2dede;
   border-color: #eed3d7;
 }
 
-.alert-info {
+.ui-pnotify .alert-info {
   color: #969697;
   background-color: #EEEEEE;
   border-color: #CCCCCC;
 }
 
-.alert-block {
+.ui-pnotify .alert-block {
   padding-top: 14px;
   padding-bottom: 14px;
 }
 
-.alert-block > p,
-.alert-block > ul {
+.ui-pnotify .alert-block p,
+.ui-pnotify .alert-block > ul {
   margin-bottom: 0;
 }
 
-.alert-block p + p {
+.ui-pnotify .alert-block p + p {
   margin-top: 5px;
 }
 
-[class^="icon-"],
-[class*=" icon-"] {
+.ui-pnotify [class^="icon-"],
+.ui-pnotify [class*=" icon-"] {
   display: inline-block;
   width: 14px;
   height: 14px;
@@ -80,28 +69,32 @@
   background-repeat: no-repeat;
 }
 
-[class^="icon-"]:last-child,
-[class*=" icon-"]:last-child {
+.ui-pnotify [class^="icon-"]:last-child,
+.ui-pnotify [class*=" icon-"]:last-child {
   *margin-left: 0;
 }
 
-.icon-exclamation-sign {
+.ui-pnotify .icon-exclamation-sign {
   background-position: 0 -120px;
 }
 
-.icon-ok-sign {
+.ui-pnotify .icon-ok-sign {
   background-position: -72px -96px;
 }
 
-.icon-question-sign {
+.ui-pnotify .icon-question-sign {
   background-position: -96px -96px;
 }
 
-.icon-warning-sign {
+.ui-pnotify .icon-warning-sign {
   background-position: -144px -120px;
 }
 
-.icon-info-sign {
+.ui-pnotify .icon-info-sign {
   background-position: -120px -96px;
+}
+
+.ui-pnotify .icon-remove {
+	background-position: -312px 0;
 }
 
