@@ -323,7 +323,16 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 				success: function(response) {
 						var data = Ext.JSON.decode(response.responseText);
 						data = data.data;
-						this.setValue_record(data);
+						output =[]
+						//reorder ids
+						for(var i in ids){
+							var id = ids[i]
+							for(var j in data)
+								if(id == data[j]._id)
+									output.push(data[j])
+						}
+						
+						this.setValue_record(output);
 					},
 					failure: function(result, request) {
 						log.error('Ajax request failed ... (' + request.url + ')', this.logAuthor);
