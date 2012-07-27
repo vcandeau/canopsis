@@ -738,6 +738,10 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (trend_line) {
 			log.debug('  +  Trend line found : ' + trend_id, this.logAuthor);
 
+			//if reporting, clear old data
+			if(this.reportMode)
+				this.data_trends[trend_id] = []
+
 			//add data
 			for (var i in data.values)
 				this.data_trends[trend_id].push(data.values[i]);
