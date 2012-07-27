@@ -192,7 +192,7 @@ var rdr_clean_id = function(val) {
 };
 
 var rdr_time_interval = function(val) {
-	if (val == 0)
+	if (val == 0 || val == null || val == undefined)
 		return '';
 
 	var tmp;
