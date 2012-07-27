@@ -77,8 +77,13 @@ Ext.define('widgets.weather.weather' , {
 			params: {ids: Ext.encode(this.nodeId)},
 			success: function(response) {
 				var nodes = Ext.JSON.decode(response.responseText).data;
-				this.nodes = nodes
-				this.populate(nodes);
+				var nodes_obj = {}
+				
+				for(var i in nodes)
+					nodes_obj[nodes[i]._id] = nodes[i]
+				
+				this.nodes = nodes_obj
+				this.populate(nodes_obj);
 			},
 			failure: function(result, request) {
 				log.error('Impossible to get Node', this.logAuthor);
@@ -149,24 +154,29 @@ Ext.define('widgets.weather.weather' , {
 		this.wcontainer.removeAll();
 		var debug_loop_count = 0
 
-		for (var i in data) {
-			var node = data[i];
-			log.debug('   +    Build brick for node ' + node._id,this.logAuthor)
+		for (var i in this.nodeId) {
+			var node_id = this.nodeId[i]
+			
+			if(data[node_id]){
+				var node = data[node_id];
+				
+				log.debug('   +    Build brick for node ' + node._id,this.logAuthor)
 
-			var config = {
-				nodeId: node._id,
-				data: node,
-				brick_number: i
-			};
+				var config = {
+					nodeId: node._id,
+					data: node,
+					brick_number: i
+				};
 
-			if ((i % 2) == 0)
-				config.bg_color = this.bg_pair_color;
-			else
-				config.bg_color = this.bg_impair_color;
+				if ((i % 2) == 0)
+					config.bg_color = this.bg_pair_color;
+				else
+					config.bg_color = this.bg_impair_color;
 
-			var meteo = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
-			this.wcontainer.insert(0, meteo);
-			debug_loop_count += 1;
+				var meteo = Ext.create('widgets.weather.brick', Ext.Object.merge(config, this.base_config));
+				this.wcontainer.add(meteo);
+				debug_loop_count += 1;
+			}
 		}
 		
 		log.debug('  +  Finished to populate weather widget with ' + debug_loop_count + ' elements', this.logAuthor);
