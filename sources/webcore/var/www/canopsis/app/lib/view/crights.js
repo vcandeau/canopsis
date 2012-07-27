@@ -209,7 +209,7 @@ Ext.define('canopsis.lib.view.crights' , {
 			scope: this,
 			success: function(response) {
 				var text = response.responseText;
-				global.notify.notify(_('Success'), _('Rights updated'));
+				global.notify.notify(_('Success'), _('Rights updated'),'success');
 				//close the window
 				this.fireEvent('save');
 				this.close();

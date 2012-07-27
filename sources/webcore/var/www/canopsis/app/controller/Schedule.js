@@ -317,7 +317,7 @@ Ext.define('canopsis.controller.Schedule', {
 					store.add(record);
 					store.resumeEvents();
 					store.load();
-					global.notify.notify(_('Save'), _('Schedule saved'));
+					global.notify.notify(_('Save'), _('Schedule saved'),'success');
 					window_wizard.destroy();
 				}else {
 					log.error('Form is not valid !', this.logAuthor);

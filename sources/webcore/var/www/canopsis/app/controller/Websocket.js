@@ -91,7 +91,7 @@ Ext.define('canopsis.controller.Websocket', {
     transport_up: function() {
 		log.info('Transport Up', this.logAuthor);
 		if (global.notify)
-			global.notify.notify(_('Success'), _('Connected to websocket'));
+			global.notify.notify(_('Success'), _('Connected to websocket'),'success');
 
 		//Re-open channel
 		if (this.subscribe_cache && this.auto_resubscribe) {
