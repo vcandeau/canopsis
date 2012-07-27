@@ -151,38 +151,18 @@ Ext.define('canopsis.controller.View', {
 
 	create_new_view: function() {
 		Ext.Msg.prompt(_('View name'), _('Please enter view name:'), function(btn, viewName) {
-			if (btn == 'ok') {
+			if (btn == 'ok') {	
+				// Create view
+				var view_id = 'view.' + global.account.user + '.' + global.gen_id();
 
-				Ext.Ajax.request({
-					url: '/ui/view/exist/' + viewName,
-					method: 'GET',
-					scope: this,
-					success: function(response) {
-						var text = Ext.decode(response.responseText);
-						if (text.data.exist == true) {
-							Ext.Msg.alert(_('this view already exist'), _("you can't add the same view twice"));
-						} else {
-							// Create view
-							var view_id = 'view.' + global.account.user + '.' + global.gen_id();
+				//building record
+				var record = Ext.create('canopsis.model.View');
+				record.set('_id', view_id);
+				record.set('id', view_id);
+				record.set('crecord_name', viewName);
+				record.set('leaf', true);
 
-							//building record
-							var record = Ext.create('canopsis.model.View');
-							record.set('_id', view_id);
-							record.set('id', view_id);
-							record.set('crecord_name', viewName);
-							record.set('leaf', true);
-
-							this.add_to_home(record, true);
-						}
-					},
-					failure: function(response) {
-						if (response.status == 403) {
-							global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
-							log.error(_('Access denied'));
-						}
-					}
-				});
-
+				this.add_to_home(record, true);
 			} else {
 				log.debug('cancel new view', this.logAuthor);
 			}
@@ -207,7 +187,7 @@ Ext.define('canopsis.controller.View', {
 			rootNode.dirty = false;
 
 			this.treeStore.sync();
-
+						
 			//open view for edition
 			if (open_after_put == true) {
 				var tab = this.getController('Tabs').open_view({ view_id: record.get('_id'), title: record.get('crecord_name') });
