@@ -186,6 +186,7 @@ def update_for_new_rights():
 
 	
 	#---------------rename canopsis group, root group and curve admin-------------
+	
 	try:
 		storage.remove('group.root')
 		records = storage.find({'aaa_group':'group.root'})
@@ -205,6 +206,15 @@ def update_for_new_rights():
 		pass
 		
 	try:
+		storage.remove('group.CPS_canopsis')
+		records = storage.find({'aaa_group':'group.CPS_canopsis'})
+		for record in records:
+			record.chgrp('Canopsis')
+		storage.put(records)
+	except:
+		pass
+		
+	try:
 		storage.remove('group.curves_admin')
 		records = storage.find({'aaa_group':'group.curves_admin'})
 		for record in records:
@@ -212,6 +222,8 @@ def update_for_new_rights():
 		storage.put(records)
 	except:
 		pass
+
+
 	
 		
 	#clean all groups in account.groups
@@ -224,7 +236,7 @@ def update_for_new_rights():
 		for record in records:
 			new_groups_array = []
 			for group in record.data['groups']:
-				if group == 'group.canopsis' or group == 'canopsis':
+				if group == 'group.canopsis' or group == 'canopsis' or group == 'CPS_canopsis' or group = 'group.CPS_canopsis':
 					group = 'Canopsis'
 				if group == 'group.root' or group == 'root':
 					group = 'CPS_root'
