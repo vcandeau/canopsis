@@ -244,13 +244,12 @@ class engine(cengine):
 				
 				self.logger.debug(" + %s seconds" % states_sum[state])
 		
-		if first_timestamp:
-			if first_timestamp > start and sla_timewindow_doUnknown:
-				# Set unknown time
-				states_sum[3] += first_timestamp - start
-				self.logger.debug("Set Unknown time's:")
-				self.logger.debug(" + %s seconds" % states_sum[3])
-				total += states_sum[3]
+		if sla_timewindow_doUnknown and first_timestamp and (first_timestamp - start) > self.beat_interval:
+			# Set unknown time
+			states_sum[3] += first_timestamp - start
+			self.logger.debug("Set Unknown time's:")
+			self.logger.debug(" + %s seconds" % states_sum[3])
+			total += states_sum[3]
 		
 		self.logger.debug("Total: %s seconds" % total)
 		
