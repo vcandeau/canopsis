@@ -32,5 +32,5 @@ i18n['list.Plugin\'s output'] = 'Sortie du plugin';
 i18n['list.Column sortable'] = 'Colonne triable';
 i18n['list.Default sorting'] = 'Tri par défaut';
 i18n['list.Default column'] = 'Colonne par défaut';
-i18n['list.Default direction'] = 'sens par défaut';
+i18n['list.Default direction'] = 'Ordre par défaut';
 
