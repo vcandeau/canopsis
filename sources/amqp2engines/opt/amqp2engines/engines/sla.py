@@ -229,7 +229,7 @@ class engine(cengine):
 			
 			points = slanode.metric_get_values(
 						dn='cps_time_by_state_%s' % state,
-						tstart=start,
+						tstart=start - self.beat_interval,
 						tstop=stop,
 						aggregate=False
 			)
@@ -237,19 +237,26 @@ class engine(cengine):
 			if points:
 				first_timestamp = points[0][0]
 				
-				mysum = sum([point[1] for point in points])
+				if first_timestamp < start:
+					del points[0]
+				
+				mysum = sum([point[1] for point in points])				
 				states_sum[state] += mysum
 
 				total += states_sum[state]
 				
 				self.logger.debug(" + %s seconds" % states_sum[state])
 		
-		if sla_timewindow_doUnknown and first_timestamp and (first_timestamp - start) > self.beat_interval:
-			# Set unknown time
-			states_sum[3] += first_timestamp - start
-			self.logger.debug("Set Unknown time's:")
-			self.logger.debug(" + %s seconds" % states_sum[3])
-			total += states_sum[3]
+		if first_timestamp:
+			self.logger.debug("Check Unknown time's:")
+			self.logger.debug(" + Start:           %s" % start)
+			self.logger.debug(" + First timestamp: %s" % first_timestamp)
+			delta = start - first_timestamp
+			self.logger.debug(" + Delta: %s seconds" % delta)
+			if sla_timewindow_doUnknown and delta < 0:
+				self.logger.debug("   + Set Unknown time")
+				states_sum[3] += delta
+				total += states_sum[3]
 		
 		self.logger.debug("Total: %s seconds" % total)
 		
