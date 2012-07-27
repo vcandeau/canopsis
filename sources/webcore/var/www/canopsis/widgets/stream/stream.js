@@ -193,7 +193,7 @@ Ext.define('widgets.stream.stream' , {
 	publish_event: function() {
 		if (! global.websocketCtrl.connected) {
 			log.error('Impossible to publish, not connected.', this.logAuthor);
-			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: '+ global.nowjs.port + ')', 'error');
+			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: ' + global.nowjs.port + ')', 'error');
 			return;
 		}
 
@@ -226,7 +226,7 @@ Ext.define('widgets.stream.stream' , {
 	publish_comment: function(event_id, raw, message, orievent) {
 		if (! global.websocketCtrl.connected) {
 			log.error('Impossible to publish, not connected.', this.logAuthor);
-			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: '+ global.nowjs.port + ')', 'error');
+			global.notify.notify(_('Error'), _('Impossible to publish, your are not connected to websocket. Check service or firewall') + ' (port: ' + global.nowjs.port + ')', 'error');
 			return;
 		}
 
@@ -329,8 +329,6 @@ Ext.define('widgets.stream.stream' , {
 			if (to_event) {
 				log.debug('Add comment for ' + event.raw.referer, this.logAuthor);
 				to_event.comment(event);
-				if (this.isVisible())
-					to_event.show_comments();
 			}else {
 				log.debug("Impossible to find event '" + event.raw.referer + "' from container, maybe not displayed ?", this.logAuthor);
 			}
