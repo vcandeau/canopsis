@@ -29,11 +29,12 @@ Ext.define('canopsis.controller.Notify', {
 		global.notify = this;
 		log.debug('[controller][cnotify] - Initialize ...');
 		this.callParent(arguments);
-		$.pnotify.defaults.styling = 'jqueryui';
+		$.pnotify.defaults.history = false;
+		//$.pnotify.defaults.styling = 'jqueryui';
     },
 
-    notify: function(title, text, type, icon,hide,closer,sticker) {
-		if (type == undefined) {var type = undefined}
+    notify: function(title, text, type, icon, hide, closer, sticker) {
+		if (type == undefined) {var type = "info"}
 		if (icon == undefined) {var icon = undefined}
 		if (hide == undefined) {var hide = true}
 		if (closer == undefined) {var closer = true}

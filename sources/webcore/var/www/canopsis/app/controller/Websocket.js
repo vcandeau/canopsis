@@ -85,7 +85,7 @@ Ext.define('canopsis.controller.Websocket', {
     transport_down: function() {
 		log.info('Transport Down', this.logAuthor);
 		if (global.notify)
-			global.notify.notify(_('Error'), _('Disconnected from websocket.'), 'error');
+			global.notify.notify(_('Info'), _('Disconnected from websocket.'), 'info');
 	},
 
     transport_up: function() {
