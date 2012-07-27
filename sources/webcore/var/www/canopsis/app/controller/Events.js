@@ -43,7 +43,7 @@ Ext.define('canopsis.controller.Events', {
 			scope: this,
 			success: function(response) {
 				var text = response.responseText;
-				global.notify.notify(_('Success'), _('Event successfuly sent'));
+				global.notify.notify(_('Success'), _('Event successfuly sent'), 'success');
 				//close the window
 			},
 			failure: function(response) {

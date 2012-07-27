@@ -243,7 +243,7 @@ Ext.define('canopsis.controller.Account', {
 				success: function(response) {
 					var object_response = Ext.decode(response.responseText);
 					if (object_response.success == true) {
-						global.notify.notify(_('Success'), _('Your authentification key is updated'));
+						global.notify.notify(_('Success'), _('Your authentification key is updated'),'success');
 						var authkey = object_response.data.authkey;
 						global.account.authkey = authkey;
 						if (callback_func)
@@ -298,7 +298,7 @@ Ext.define('canopsis.controller.Account', {
 			success: function(response) {
 				var object_response = Ext.decode(response.responseText);
 				if (object_response.success == true) {
-					global.notify.notify(_('Group added'), _('Group successfuly added to secondary groups'));
+					global.notify.notify(_('Group added'), _('Group successfuly added to secondary groups'),'success');
 				}else {
 					log.error('Ajax output incorrect', this.logAuthor);
 				}
@@ -318,7 +318,7 @@ Ext.define('canopsis.controller.Account', {
 			success: function(response) {
 				var object_response = Ext.decode(response.responseText);
 				if (object_response.success == true) {
-					global.notify.notify(_('Group removed'), _('Group successfuly removed from secondary groups'));
+					global.notify.notify(_('Group removed'), _('Group successfuly removed from secondary groups'),'success');
 				}else {
 					log.error('Ajax output incorrect', this.logAuthor);
 				}
