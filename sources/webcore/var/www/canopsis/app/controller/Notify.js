@@ -21,7 +21,7 @@
 Ext.define('canopsis.controller.Notify', {
     extend: 'Ext.app.Controller',
 
-    opacity: 0.8,
+    opacity: 0.9,
     history: false,
     logAuthor: '[controller][cnotify]',
 
