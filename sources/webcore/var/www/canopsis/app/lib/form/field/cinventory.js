@@ -273,7 +273,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
 	},
 
 	addRecord: function(record, index) {
-		if (this.selection_store.find('id', record.data.id) == -1) {
+		if (this.selection_store.findExact('id', record.data.id) == -1) {
 
 			if (! this.multiSelect) {
 				this.selection_store.removeAll();
