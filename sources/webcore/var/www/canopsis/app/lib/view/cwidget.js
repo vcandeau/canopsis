@@ -53,11 +53,14 @@ Ext.define('canopsis.lib.view.cwidget' , {
 	time_window: global.commonTs.day, //24 hours
 
 	lastRefresh: undefined,
+	
+	active: false,
 
 	//PollNodeInfo: true,
 
 	initComponent: function() {
-
+		this.active = true;
+		
 		this.logAuthor = '[' + this.id + ']';
 
 		log.debug('InitComponent ' + this.id + ' (reportMode: ' + this.reportMode + ', exportMode: ' + this.exportMode + ')', this.logAuthor);
@@ -175,12 +178,16 @@ Ext.define('canopsis.lib.view.cwidget' , {
 
 	TabOnShow: function() {
 		log.debug('Show', this.logAuthor);
+		this.active = true;
+		
 		if (! this.isDisabled())
 			this.startTask();
 	},
 
 	TabOnHide: function() {
 		log.debug('Hide', this.logAuthor);
+		this.active = false;
+		
 		this.stopTask();
 	},
 
