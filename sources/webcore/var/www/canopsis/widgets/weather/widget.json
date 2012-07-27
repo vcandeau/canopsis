@@ -7,7 +7,7 @@
 	"description": "Display selector state SLA as weather icons.",
 	"description-fr": "Affiche l'état des sélecteurs et des SLA avec des icônes météo.",
 	"refreshInterval": 60,
-	"border" : true,
+	"border" : false,
 	"locales": ["fr"],
 	"options": [
 			{
