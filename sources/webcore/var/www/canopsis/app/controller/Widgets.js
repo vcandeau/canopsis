@@ -76,13 +76,11 @@ Ext.define('canopsis.controller.Widgets', {
 
 		// for every item
 		for (var key in data) {
-			if (key == 'items' || key == 'store' || key == 'data' || key >= 0) {
+			if (key == 'items' || key == 'store' || key == 'data' || key >= 0)
 				this.translate(xtype, data[key]);
-			}
 
-			if (this.item_to_translate.indexOf(key) > -1) {
+			if (Ext.Array.contains(this.item_to_translate, key))
 				data[key] = _(data[key], xtype);
-			}
 		}
 	}
 
