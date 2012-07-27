@@ -236,7 +236,7 @@ def update_for_new_rights():
 		for record in records:
 			new_groups_array = []
 			for group in record.data['groups']:
-				if group == 'group.canopsis' or group == 'canopsis' or group == 'CPS_canopsis' or group = 'group.CPS_canopsis':
+				if group == 'group.canopsis' or group == 'canopsis' or group == 'CPS_canopsis' or group == 'group.CPS_canopsis':
 					group = 'Canopsis'
 				if group == 'group.root' or group == 'root':
 					group = 'CPS_root'
