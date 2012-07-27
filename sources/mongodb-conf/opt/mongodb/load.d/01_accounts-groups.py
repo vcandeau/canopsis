@@ -130,7 +130,7 @@ def check_user_canopsis_groups() :
 		storage = get_storage(account=root, namespace='object')
 		record = storage.get('account.canopsis')
 		account = caccount(record)
-		if not 'group.CPS_view' in account.groups:
+		if not 'group.CPS_view' in account.groups and not 'authkey' in record.data:
 			account.groups.append('group.CPS_view')
 			storage.put(account)
 	except:
