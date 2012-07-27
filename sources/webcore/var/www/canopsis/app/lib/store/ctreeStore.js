@@ -53,7 +53,7 @@ Ext.define('canopsis.lib.store.ctreeStore', {
 		},
 		write: function(store, operation,option) {
 			if (operation.action == 'create')
-				global.notify.notify(_('Success'), _('Record saved'));
+				global.notify.notify(_('Success'), _('Record saved'),'success');
 		}
    },
 
