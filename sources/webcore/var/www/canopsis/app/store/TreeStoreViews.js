@@ -61,6 +61,10 @@ Ext.define('canopsis.store.TreeStoreViews', {
 	listeners: {
 		move: function(node, oldParent, newParent, index, options ) {
 				this.sync();
+		},
+		write: function(store, operation,option) {
+			if(operation.action == 'destroy')
+				global.notify.notify(_('Success'), _('Record deleted'),'success');
 		}
 	}
 });
