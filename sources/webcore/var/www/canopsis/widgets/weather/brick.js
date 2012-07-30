@@ -29,7 +29,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 				'<div class="second_sub_section">',
 					'<tpl if="button_text != undefined">',
 						//'<div class="alert_button"><button type="button">{button_text}</button></div>',
-						'<button class="alert_button" type="button">{button_text}</button>',
+						'<button class="alert_button" type="button" id="{id}-button">{button_text}</button>',
 					'</tpl>',
 					'<div class="alert_information"><span>{alert_comment}</span></div>',
 					//'<div class="alert_img"></div>',
@@ -87,7 +87,11 @@ Ext.define('widgets.weather.brick' , {
 		log.debug(' + Brick created', this.logAuthor);
 
 		//------------------build widget base config--------------
-		this.widget_base_config = {	};
+		this.widget_base_config = {
+			id : this.id
+				};
+		
+		this.widget_base_config.button_text = 'report issue'
 
 		if (this.component)
 			this.widget_base_config.title = this.component;
@@ -110,6 +114,11 @@ Ext.define('widgets.weather.brick' , {
 		}else {
 			this.buildEmpty();
 		}
+		
+		//-----------------------bindings-------------------------
+		var button = this.getEl().getById(this.id + '-button');
+		log.dump(button)
+		button.on('click', this._report_issue,this)
 	},
 
 	build: function(data) {
@@ -202,6 +211,13 @@ Ext.define('widgets.weather.brick' , {
 		var _html = widget_weather_template.applyTemplate(config);
 		this.getEl().update(_html);
 	},
+	
+	_report_issue : function(){
+		var config = {}
+		var popup = Ext.create('canopsis.lib.view.cpopup',config)
+		
+	},
+	
 
 	getIcon: function(value) {
 		value = Math.floor(value / 10) * 10;
