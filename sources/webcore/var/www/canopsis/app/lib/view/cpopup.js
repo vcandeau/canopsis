@@ -23,29 +23,31 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	extend: 'Ext.window.Window',
 	alias: 'widget.cpopup',
 	
+	logAuthor: '[cpopup]',
+	
 	_component : undefined,
 	
 	cls: Ext.baseCSSPrefix + 'message-box',
+	constrain:true,
 	
 	width:300,
 	
 	initComponent: function() {
 		log.debug('Initialize cpopup', this.logAuthor);
-
-		this.amqp_event = {
-		  'connector':         'Canopsis',
-		  'connector_name':    'widget-weather',
-		  'event_type':        'log',
-		  'source_type':       'resource',
-		  'component':         this._component,
-		  'resource':          'user_problem',
-		  'state':             2,
-		  'state_type':        1,
-		  'output':            '',
-		}
-		
+        
+        var form = this.buildForm()
+        var bar = this.buildBar()
+        
+        this.dockedItems = [bar]
+        this.items = [form]
+        
+        this.callParent(arguments);
+	},
+	
+	buildForm : function(){
 		this._form = Ext.create('Ext.container.Container',{
 			flex: 1,
+			margin: '10 0 0 0',
 			layout: {
 				type: 'anchor'
 			},
@@ -54,21 +56,38 @@ Ext.define('canopsis.lib.view.cpopup' , {
 				xtype:'displayfield',
 				value: _('Type your message here:'),
 				//anchor:'100%'*
-			},{
-				xtype:'textarea',
-				anchor:'100% 100%',
 			}]
 		})
 		
+		this.input_textArea = this._form.add({
+			xtype:'textarea',
+			anchor:'100% 100%',
+		})
+		
+		if(this._buildForm)
+			this._buildForm
+			
+		return this._form
+	},
+	
+	buildBar : function(){
 		var button_ok = Ext.create('Ext.button.Button',{
 			xtype:'button',
-            handler: function(){console.log('frsgr')},
+            handler: this.ok_button_function,
             scope: this,
-            text: 'OK',
+            text: _('Ok'),
             minWidth: 75
         });
         
-       var tbar = new Ext.toolbar.Toolbar({
+		var button_cancel = Ext.create('Ext.button.Button',{
+			xtype:'button',
+            handler: function(){this.close},
+            scope: this,
+            text: _('Cancel'),
+            minWidth: 75
+        });
+        
+       var bar = new Ext.toolbar.Toolbar({
             ui: 'footer',
             dock: 'bottom',
             layout: {
@@ -77,12 +96,15 @@ Ext.define('canopsis.lib.view.cpopup' , {
             items: [button_ok]
         });
         
-        this.dockedItems = [tbar]
-        this.items = [this._form]
-        
-        this.callParent(arguments);
+        if(this._buildBar)
+			this.buildBar()
 		
-		this.show()
+		return bar
 	},
+	
+	ok_button_function : function(){
+		log.debug('clicked on ok button',this.logAuthor)
+	}
+
 
 });
