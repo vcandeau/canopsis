@@ -24,7 +24,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 			'<div class="left_panel" style="float:{first_panel_float}">',
 				'<div class="first_sub_section">',
 					'<p class="title">{title}<span>{event_ts}</span></p>',
-					'<p id="{brick_Component_id}-output" class="comment">{output}</p>',
+					'<p id="{id}-output" class="comment">{output}</p>',
 				'</div>',
 				'<div class="second_sub_section">',
 					'<tpl if="button_text != undefined">',
@@ -117,7 +117,9 @@ Ext.define('widgets.weather.brick' , {
 		
 		//-----------------------bindings-------------------------
 		var button = this.getEl().getById(this.id + '-button');
-		button.on('click', this._report_issue,this)
+		button.on('click', this.report_issue,this)
+		var output = this.getEl().getById(this.id + '-output');
+		output.on('click',this.change_output,this)
 	},
 
 	build: function(data) {
@@ -211,14 +213,26 @@ Ext.define('widgets.weather.brick' , {
 		this.getEl().update(_html);
 	},
 	
-	_report_issue : function(){
+	report_issue : function(){
 		var config = {
 			title: 'Report an issue',
 			_component : this.component,
-			type: this.event_type
+			referer: this.data.rk
 		}
+
 		var popup = Ext.create('widgets.weather.report_popup',config)
 		popup.show()
+	},
+	
+	change_output : function(){
+		var config = {
+			title: _('Change') + ' ' + this.component + ' '+ _('message'),
+			_component : this.component,
+			type: this.event_type
+		}
+		var popup = Ext.create('widgets.weather.edit_message_popup',config)
+		popup.show()
+		
 	},
 	
 

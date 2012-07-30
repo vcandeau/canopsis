@@ -24,23 +24,36 @@ Ext.define('widgets.weather.report_popup' , {
 	extend: 'canopsis.lib.view.cpopup',
 	alias: 'widget.weather.report_popup',
 	
+	_component : undefined,
+	referer: undefined,
+	width:300,
+	
 	base_event: {
-	  'connector':         'Canopsis',
-	  'connector_name':    'Interface',
-	  'event_type':        'log',
-	  'source_type':       'resource',
-	  //'component':         this._component,
-	  'resource':          'user_problem',
-	  'state':             2,
-	  'state_type':        1,
-	  //'output':            '',
+		'connector_name': 'widget-weather',
+		'connector': 'Canopsis',
+		'event_type': 'log',
+		'source_type': 'resource',
+		'component': undefined,
+		'resource': 'user_problem',
+		'referer': undefined,
+		'author': global.account.firstname + ' ' + global.account.lastname,
+		'state': 1,
+		'state_type':1,
+		'output':'',
 	},
 	
 	ok_button_function: function(){
 		log.debug('Send Event',this.logAuthor)
 		var event = Ext.clone(this.base_event)
 		event.output = this.input_textArea.getValue()
-		event.component = this._component
+		
+		if(this._component)
+			event.component = this._component
+		if(this.referer)
+			event.referer = this.referer
+			
+		log.dump(event)
+		
 		global.eventsCtrl.sendEvent(event)
 		this.close()
 	}
