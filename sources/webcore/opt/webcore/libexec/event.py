@@ -139,7 +139,7 @@ def send_event(	routing_key=None):
 		perf_data = request.params.get('perf_data', default=None)
 		
 	if not perf_data_array:
-		perf_data_array = request.params.get('perf_data_array', default=None)
+		perf_data_array = request.params.get('perf_data_array', default='[]')
 		#if type(perf_data_array) == 'str':
 			#perf_data_array = json.loads(perf_data_array)
 		
