@@ -99,7 +99,7 @@ Ext.define('canopsis.lib.form.field.cinventory' , {
                                         header: _('Resource'),
                                         flex: 2,
                                         dataIndex: 'resource'
-                        ] ;
+                        }] ;
 		
 
 		//////// Selection GRID
