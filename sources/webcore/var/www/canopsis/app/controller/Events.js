@@ -44,15 +44,15 @@ Ext.define('canopsis.controller.Events', {
 			success: function(response) {
 				var text = response.responseText;
 				global.notify.notify(_('Success'), _('Event successfuly sent'), 'success');
-				//close the window
+
 			},
 			failure: function(response) {
 
 				if (response.status == 403) {
-					global.notify.notify(_('Access denied'), _('You don\'t have the rights to modify this object'), 'error');
+					global.notify.notify(_('Access denied'), _('Sending event forbidden'), 'error');
 					log.error(_('Access denied'));
 				} else {
-					log.error(_('Updating rights have failed'), this.logAuthor);
+					log.error(_('Sending event have failed'), this.logAuthor);
 				}
 			}
 		});
