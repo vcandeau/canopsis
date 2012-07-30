@@ -25,13 +25,11 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	
 	logAuthor: '[cpopup]',
 	
-	_component : undefined,
-	
 	cls: Ext.baseCSSPrefix + 'message-box',
 	constrain:true,
 	
-	width:300,
-	
+	textAreaLabel : 'Type your message here:',
+		
 	initComponent: function() {
 		log.debug('Initialize cpopup', this.logAuthor);
         
@@ -54,7 +52,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 			border:false,
 			items:[{
 				xtype:'displayfield',
-				value: _('Type your message here:'),
+				value: _(this.textAreaLabel),
 				//anchor:'100%'*
 			}]
 		})
@@ -65,7 +63,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 		})
 		
 		if(this._buildForm)
-			this._buildForm
+			this._buildForm()
 			
 		return this._form
 	},
