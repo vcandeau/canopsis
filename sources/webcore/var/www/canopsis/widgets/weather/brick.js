@@ -117,7 +117,6 @@ Ext.define('widgets.weather.brick' , {
 		
 		//-----------------------bindings-------------------------
 		var button = this.getEl().getById(this.id + '-button');
-		log.dump(button)
 		button.on('click', this._report_issue,this)
 	},
 
@@ -201,7 +200,7 @@ Ext.define('widgets.weather.brick' , {
 	},
 
 	buildEmpty: function() {
-		log.debug('Build empty brick ' + this.source_id, this.logAuthor);
+		log.debug('Build empty brick for ' + this.event_type + ' ' + this.component, this.logAuthor);
 		var widget_data = {
 			output: _('No data for the selected information'),
 			class_icon: 'widget-weather-icon-info'
@@ -213,9 +212,13 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	_report_issue : function(){
-		var config = {}
-		var popup = Ext.create('canopsis.lib.view.cpopup',config)
-		
+		var config = {
+			title: 'Report an issue',
+			_component : this.component,
+			type: this.event_type
+		}
+		var popup = Ext.create('widgets.weather.report_popup',config)
+		popup.show()
 	},
 	
 
