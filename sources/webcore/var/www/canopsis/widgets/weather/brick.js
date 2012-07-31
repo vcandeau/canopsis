@@ -24,7 +24,12 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 			'<div class="left_panel" style="float:{first_panel_float}">',
 				'<div class="first_sub_section">',
 					'<p class="title">{title}<span>{event_ts}</span></p>',
-					'<p id="{id}-output" class="comment">{output}<span class="icon icon-edit" id="{id}-edit_button"></span></p>',
+					'<p id="{id}-output" class="comment">',
+						'{output}',
+						'<tpl if="admin == true">',
+							'<span class="icon icon-edit" id="{id}-edit_button"></span>',
+						'</tpl>',
+					'</p>',
 				'</div>',
 				'<div class="second_sub_section">',
 					'<tpl if="button_text != undefined">',
@@ -105,6 +110,10 @@ Ext.define('widgets.weather.brick' , {
 			this.widget_base_config.first_panel_float = 'left';
 			this.widget_base_config.second_panel_float = 'right';
 		}
+		
+		//check ressource admin
+		if(global.accountCtrl.check_right(this.data,'w'))
+			this.widget_base_config.admin = true
 
 		//----------------------build html------------------------
 
@@ -119,17 +128,19 @@ Ext.define('widgets.weather.brick' , {
 		this.edit_button = this.getEl().getById(this.id + '-edit_button');
 		
 		//-----------------------bindings-------------------------
-		var button = this.getEl().getById(this.id + '-button');
-		button.on('click', this.report_issue,this)
+		var report_button = this.getEl().getById(this.id + '-button');
+		if(report_button)
+			report_button.on('click', this.report_issue,this)
 		
-		var output = this.getEl().getById(this.id + '-output');
-		output.hover(
-			function(){this.edit_button.fadeIn()},
-			function(){this.edit_button.fadeOut()},
-		this)
-			
-		this.edit_button.on('click',this.change_output,this)
+		if(this.edit_button){
+			var output = this.getEl().getById(this.id + '-output');
+			output.hover(
+				function(){this.edit_button.fadeIn()},
+				function(){this.edit_button.fadeOut()},
+			this)
 
+			this.edit_button.on('click',this.change_output,this)
+		}
 	},
 	
 	
