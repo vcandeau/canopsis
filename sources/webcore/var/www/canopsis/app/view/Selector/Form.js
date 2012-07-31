@@ -94,7 +94,7 @@ Ext.define('canopsis.view.Selector.Form', {
 											xtype: 'store',
 											fields: ['value', 'text'],
 											data: [
-												{value: 0, text: _('More bad state')}
+												{value: 0, text: _('Worst state')}
 											]
 										}
 									},{
