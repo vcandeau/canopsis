@@ -199,7 +199,7 @@ var updateRecord = function(namespace, crecord_type, model, _id, data, on_succes
 		url: base_url,
 		jsonData: data,
 		method: 'PUT',
-		success: function() {
+		success: function(operation) {
 			log.debug(' + Success', logAuthor);
 			global.notify.notify(_('Saved'), _('Successfully'),'success');
 			if (on_success)
