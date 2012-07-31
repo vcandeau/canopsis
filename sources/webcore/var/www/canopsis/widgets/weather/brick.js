@@ -120,7 +120,7 @@ Ext.define('widgets.weather.brick' , {
 		
 		//-----------------------bindings-------------------------
 		var button = this.getEl().getById(this.id + '-button');
-		button.on('click', this.change_output,this)
+		button.on('click', this.report_issue,this)
 		
 		var output = this.getEl().getById(this.id + '-output');
 		output.hover(
@@ -238,7 +238,7 @@ Ext.define('widgets.weather.brick' , {
 	
 	change_output : function(){
 		var config = {
-			title: _('Change') + ' ' + this.component + ' '+ _('message'),
+			title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
 			_component : this.component,
 			event_type: this.event_type	,
 			referer: this.data.selector_id

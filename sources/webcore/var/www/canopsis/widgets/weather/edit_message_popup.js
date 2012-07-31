@@ -23,10 +23,12 @@ Ext.define('widgets.weather.edit_message_popup' , {
 	extend: 'canopsis.lib.view.cpopup',
 	alias: 'widget.weather.edit_message_popup',
 	
+	width: 400,
+	
 	textAreaLabel : 'Type the new displayed message ',
 	
 	initComponent: function() {
-		this.textAreaLabel += 'for ' + this.component
+		this.textAreaLabel += 'for "' + this._component + '" :'
 		this.callParent(arguments);
 	},
 	
