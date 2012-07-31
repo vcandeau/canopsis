@@ -21,7 +21,7 @@
 import sys, os, logging, json
 
 import bottle
-from bottle import route, get, put, delete, request, HTTPError, post
+from bottle import route, get, put, delete, request, HTTPError, post,response
 
 ## Canopsis
 from caccount import caccount
@@ -231,4 +231,29 @@ def check_exist(name=None):
 			return {"total": 0, "success": True, "data": {'exist' : False}}
 	except Exception,err:
 		logger.error('Error while fetching view : %s' % err)
+		return {"total": 0, "success": False, "data": {}}
+
+@get('/ui/view/export/:_id',apply=[check_auth])
+def exportView(_id=None):
+	logger.debug('Prepare to return view json file')
+	namespace = 'object'
+	account = get_account()
+	storage = get_storage(namespace=namespace, account=account)
+	
+	if not _id:
+		_id = request.params.get('_id', default=None)
+	
+	try:
+		logger.debug(' + Try to get view from database')
+		record = storage.get(_id, account=account)
+		
+		logger.debug(' + %s found' % record.name)
+		
+		response.headers['Content-Disposition'] = 'attachment; filename="%s.json"' % record.name
+		response.headers['Content-Type'] = 'application/json'
+		
+		return json.dumps(record.dump())
+		
+	except Exception,err:
+		logger.error(' + Error while fetching view : %s' % err)
 		return {"total": 0, "success": False, "data": {}}
