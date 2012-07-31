@@ -24,14 +24,14 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 			'<div class="left_panel" style="float:{first_panel_float}">',
 				'<div class="first_sub_section">',
 					'<p class="title">{title}<span>{event_ts}</span></p>',
-					'<p id="{id}-output" class="comment">{output}</p>',
+					'<p id="{id}-output" class="comment">{output}<span class="icon icon-edit" id="{id}-edit_button"></span></p>',
 				'</div>',
 				'<div class="second_sub_section">',
 					'<tpl if="button_text != undefined">',
 						//'<div class="alert_button"><button type="button">{button_text}</button></div>',
 						'<button class="alert_button" type="button" id="{id}-button">{button_text}</button>',
 					'</tpl>',
-					'<div class="alert_information"><span>{alert_comment}</span></div>',
+					'<div class="alert_information" id="{id}-alert_message"><span>{alert_comment}</span></div>',
 					//'<div class="alert_img"></div>',
 				'</div>',
 			'</div>',
@@ -115,12 +115,24 @@ Ext.define('widgets.weather.brick' , {
 			this.buildEmpty();
 		}
 		
+		//-----------------------get element----------------------
+		this.edit_button = this.getEl().getById(this.id + '-edit_button');
+		
 		//-----------------------bindings-------------------------
 		var button = this.getEl().getById(this.id + '-button');
-		button.on('click', this.report_issue,this)
+		button.on('click', this.change_output,this)
+		
 		var output = this.getEl().getById(this.id + '-output');
-		output.on('click',this.change_output,this)
+		output.hover(
+			function(){this.edit_button.fadeIn()},
+			function(){this.edit_button.fadeOut()},
+		this)
+			
+		this.edit_button.on('click',this.change_output,this)
+
 	},
+	
+	
 
 	build: function(data) {
 		log.debug(' + Build html for ' + data._id, this.logAuthor);
@@ -228,8 +240,10 @@ Ext.define('widgets.weather.brick' , {
 		var config = {
 			title: _('Change') + ' ' + this.component + ' '+ _('message'),
 			_component : this.component,
-			type: this.event_type
+			event_type: this.event_type	,
+			referer: this.data.selector_id
 		}
+
 		var popup = Ext.create('widgets.weather.edit_message_popup',config)
 		popup.show()
 		
