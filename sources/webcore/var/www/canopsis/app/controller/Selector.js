@@ -36,6 +36,9 @@ Ext.define('canopsis.controller.Selector', {
 		this.modelId = 'Selector';
 
 		this.callParent(arguments);
+		
+		//needed for weather widget
+		global.selectorCtrl = this;
 	},
 
 	beforeload_EditForm: function(form, item) {
@@ -59,5 +62,25 @@ Ext.define('canopsis.controller.Selector', {
 		record.set('sla_timewindow_perfdata', undefined);
 
 		return record;
+	},
+	
+	change_selector_output: function(_id,type,message){
+		log.debug('Change selector/sla output',this.logAuthor)
+		log.debug('_id: ' + _id,this.logAuthor)
+		log.debug('message: ' + message,this.logAuthor)
+		
+		var data = {
+			loaded:false
+		}
+		
+		if(type == 'selector')
+			data.output_tpl = message
+		else
+			data.sla_output_tpl = message
+		
+		updateRecord('object','selector','canopsis.model.selector',_id,data,
+			function(){
+				global.notify.notify(_('Message updated'),'The message will be display in few minutes','success')
+			})
 	}
 });
