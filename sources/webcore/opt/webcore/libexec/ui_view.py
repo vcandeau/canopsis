@@ -127,7 +127,7 @@ def tree_delete(name=None):
 
 	
 	
-	
+@post('/ui/view',apply=[check_auth])
 @post('/ui/view/:name',apply=[check_auth])
 def tree_update(name='None'):
 	namespace = 'object'
@@ -198,6 +198,9 @@ def tree_update(name='None'):
 				else:
 					logger.debug('record is a directory, add it')
 					record = crecord({'_id':data['id']},type='view_directory',name=data['crecord_name'],account=account)
+				
+				#must save before add children
+				storage.put(record,account=account)
 				
 				parentNode.add_children(record)
 				
