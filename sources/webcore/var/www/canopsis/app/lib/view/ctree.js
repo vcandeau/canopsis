@@ -98,13 +98,15 @@ Ext.define('canopsis.lib.view.ctree' , {
 			this.bbar = Ext.create('Ext.toolbar.Toolbar', {
 				items: bar_child
 			});
+			this.dockedToolbar = this.bbar
 		}else {
 			this.tbar = Ext.create('Ext.toolbar.Toolbar', {
 				items: bar_child
 			});
+			this.dockedToolbar = this.tbar
 		}
 
-
+		
 		//--------------------Context menu---------------------
 		if (this.opt_bar) {
 			var myArray = [];
