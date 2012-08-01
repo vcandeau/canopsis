@@ -242,18 +242,15 @@ Ext.define('canopsis.controller.View', {
 	importView : function(file){
 		log.debug('Import view file',this.logAuthor)
 		var reader = new FileReader();
+		reader.onload = function(e){
+			var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
+			
+			//-------if you wanna make modif , do it here-----
+			record.set('_id', 'view.' + global.account.user + '.' + global.gen_id())
 		
-		
-			reader.onload = function(e){
-				log.dump(e)
-				var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
-				//-------if you wanna make modif , do it here-----
-				record.set('_id', 'view.' + global.account.user + '.' + global.gen_id())
-				
-				//this.add_to_home(record,false)
-				}.bind(this)
-			reader.readAsText(file[0])
-
+			this.add_to_home(record,false)
+			}.bind(this)
+		reader.readAsText(file[0])
 	},
 	
 	getViewFile : function(view_id){
