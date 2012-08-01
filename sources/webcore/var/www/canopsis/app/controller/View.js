@@ -63,6 +63,11 @@ Ext.define('canopsis.controller.View', {
     },
 
     bindTreeEvent: function() {
+		var btns = Ext.ComponentQuery.query('#' + this.tree.id + ' [action=import]');
+		for (i in btns) {
+			btns[i].on('click', this.openFilepopup, this);
+		}
+		
 		this.tree.on('exportPdf', function(view) {
 				this.getController('Reporting').launchReport(view);
 			},this);
@@ -216,17 +221,31 @@ Ext.define('canopsis.controller.View', {
 		}
 	},
 	
+	openFilepopup : function(file){
+		log.debug('Open file popup',this.logAuthor)
+		var config = {_fieldLabel: _('View dump')}
+		var popup = Ext.create('canopsis.lib.view.cfile_window',config)
+		popup.show()
+		popup.on('save',function(file){this.importView(file);popup.close()},this)
+	},
+	
+	importView : function(file){
+		log.debug('Import view file',this.logAuthor)
+		var reader = new FileReader();
+		
+		//when the file is read
+		reader.onload = function(e){
+			var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
+			//-------if you wanna make modif , do it here-----
+			
+			this.add_to_home(record,false)
+			}.bind(this)
+		reader.readAsText(file[0])
+	},
+	
 	getViewFile : function(view_id){
 		log.debug('Get view file',this.logAuthor)
 		window.open('/ui/view/export/' + view_id)
-		/*
-		Ext.Ajax.request({
-			url: '/ui/view/export/' + view_id,
-			/*success: function(response){
-				var text = response.responseText;
-				// process server response here
-			}
-		});*/
 	}
 
 });

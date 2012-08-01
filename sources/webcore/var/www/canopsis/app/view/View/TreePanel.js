@@ -68,7 +68,7 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			xtype: 'actioncolumn',
 			width: 20,
 			text: _('Dump'),
-			icon: './themes/canopsis/resources/images/icons/disk.png',
+			icon: './themes/canopsis/resources/images/Tango-Blue-Materia/16x16/actions/gtk-indent.png',
 			handler:  function(tree, rowIndex, colindex) {
 				var rec = tree.getStore().getAt(rowIndex).raw;
                 if(rec.crecord_type == 'view'){
@@ -89,6 +89,15 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			});
 
 		this.callParent(arguments);
+		
+		var config = {
+				xtype: 'button',
+				iconCls: 'icon-import',
+				text: _('Import view'),
+				disabled: false,
+				action: 'import'
+			}
+		this.dockedToolbar.add(config)
 
 	},
 
