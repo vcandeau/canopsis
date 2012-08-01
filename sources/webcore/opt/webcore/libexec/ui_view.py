@@ -255,6 +255,9 @@ def exportView(_id=None):
 		response.headers['Content-Disposition'] = 'attachment; filename="%s.json"' % record.name
 		response.headers['Content-Type'] = 'application/json'
 		
+		record.parent = []
+		record._id = None
+		
 		return json.dumps(record.dump())
 		
 	except Exception,err:

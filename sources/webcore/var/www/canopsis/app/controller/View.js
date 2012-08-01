@@ -237,6 +237,7 @@ Ext.define('canopsis.controller.View', {
 		reader.onload = function(e){
 			var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
 			//-------if you wanna make modif , do it here-----
+			record.set('_id', 'view.' + global.account.user + '.' + global.gen_id())
 			
 			this.add_to_home(record,false)
 			}.bind(this)
