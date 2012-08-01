@@ -258,7 +258,7 @@ def exportView(_id=None):
 		record.parent = []
 		record._id = None
 		
-		return json.dumps(record.dump())
+		return json.dumps(record.dump(), sort_keys=True, indent=4)
 		
 	except Exception,err:
 		logger.error(' + Error while fetching view : %s' % err)
