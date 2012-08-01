@@ -66,6 +66,8 @@ Ext.define('canopsis.controller.View', {
 		this.tree.on('exportPdf', function(view) {
 				this.getController('Reporting').launchReport(view);
 			},this);
+			
+		this.tree.getView().on('getViewFile',this.getViewFile,this)
 	},
 
 	check_right_on_drop: function(node,data,overModel) {
@@ -212,6 +214,19 @@ Ext.define('canopsis.controller.View', {
 		}else {
 			return false;
 		}
+	},
+	
+	getViewFile : function(view_id){
+		log.debug('Get view file',this.logAuthor)
+		window.open('/ui/view/export/' + view_id)
+		/*
+		Ext.Ajax.request({
+			url: '/ui/view/export/' + view_id,
+			/*success: function(response){
+				var text = response.responseText;
+				// process server response here
+			}
+		});*/
 	}
 
 });
