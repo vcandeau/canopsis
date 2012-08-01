@@ -226,22 +226,34 @@ Ext.define('canopsis.controller.View', {
 		var config = {_fieldLabel: _('View dump')}
 		var popup = Ext.create('canopsis.lib.view.cfile_window',config)
 		popup.show()
-		popup.on('save',function(file){this.importView(file);popup.close()},this)
+		
+		popup.on('save',function(file){
+			var file_type = file[0].type
+			if(file_type == '' || file_type == 'application/json'){
+				this.importView(file)
+				popup.close()
+			}else{
+				log.debug('Wrong file type: ' + file_type, this.logAuthor)
+				global.notify.notify(_('Wrong file type'),_('Please choose a correct json file'),'info')
+			}
+		},this)
 	},
 	
 	importView : function(file){
 		log.debug('Import view file',this.logAuthor)
 		var reader = new FileReader();
 		
-		//when the file is read
-		reader.onload = function(e){
-			var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
-			//-------if you wanna make modif , do it here-----
-			record.set('_id', 'view.' + global.account.user + '.' + global.gen_id())
-			
-			this.add_to_home(record,false)
-			}.bind(this)
-		reader.readAsText(file[0])
+		
+			reader.onload = function(e){
+				log.dump(e)
+				var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
+				//-------if you wanna make modif , do it here-----
+				record.set('_id', 'view.' + global.account.user + '.' + global.gen_id())
+				
+				//this.add_to_home(record,false)
+				}.bind(this)
+			reader.readAsText(file[0])
+
 	},
 	
 	getViewFile : function(view_id){
