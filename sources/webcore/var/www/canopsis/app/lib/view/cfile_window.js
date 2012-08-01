@@ -64,8 +64,6 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 	
 	ok_button_function : function(){
 		log.debug('clicked on ok button',this.logAuthor)
-		log.dump(this._fileField.fileInputEl)
-		log.dump(this._fileField.fileInputEl.files)
 		this.fireEvent('save',this._fileField.fileInputEl.dom.files)
 	}
 })
