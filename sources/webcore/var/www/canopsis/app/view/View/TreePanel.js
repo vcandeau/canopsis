@@ -64,6 +64,17 @@ Ext.define('canopsis.view.View.TreePanel' , {
 			align: 'center',
 			text: _('Others'),
 			dataIndex: 'aaa_access_other'
+		},{
+			xtype: 'actioncolumn',
+			width: 20,
+			text: _('Dump'),
+			icon: './themes/canopsis/resources/images/icons/disk.png',
+			handler:  function(tree, rowIndex, colindex) {
+				var rec = tree.getStore().getAt(rowIndex).raw;
+                if(rec.crecord_type == 'view'){
+					tree.fireEvent('getViewFile',rec._id)
+				}
+			}
 		}];
 
 		if (global.reporting == true) {
