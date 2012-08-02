@@ -169,6 +169,10 @@
 	background-image: url(../images/icons/eye.png) !important;
 }
 
+.icon-import {
+	background-image: url(../images/Tango-Blue-Materia/16x16/actions/gtk-unindent.png) !important;
+}
+
 /* Mainbar */
 
 .icon-mainbar-run { 

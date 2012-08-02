@@ -19,28 +19,51 @@
 # ---------------------------------
 */
 
-Ext.define('widgets.weather.edit_message_popup' , {
+
+
+Ext.define('canopsis.lib.view.cfile_window' , {
 	extend: 'canopsis.lib.view.cpopup',
-	alias: 'widget.weather.edit_message_popup',
+	alias: 'widget.cfile_window',
+	
+	logAuthor: '[cfile_window]',
+	
+	title: _('Select a file'),
 	
 	width: 400,
 	
-	textAreaLabel : 'Type the new displayed message ',
+	_name : _('file'),
+	_fieldLabel : _('file'),
+	_buttonText : _('Select file'),
 	
-	initComponent: function() {
-		this.textAreaLabel += 'for "' + this._component + '" :'
-		this.callParent(arguments);
+	buildForm : function(){
+		this._form = Ext.create('Ext.container.Container',{
+			flex: 1,
+			margin: '10 0 0 0',
+			layout: {
+				type: 'anchor'
+			},
+			margin: 10,
+			border:false,
+			items:[]
+		})
+		
+		this._fileField = this._form.add(Ext.create('Ext.form.field.File',{
+			xtype: 'filefield',
+			name: this._name,
+			fieldLabel: this._fieldLabel,
+			labelWidth: 50,
+			msgTarget: 'side',
+			allowBlank: false,
+			anchor: '100%',
+			buttonText: this._buttonText
+		}));
+			
+		
+		return this._form
 	},
 	
 	ok_button_function : function(){
 		log.debug('clicked on ok button',this.logAuthor)
-		global.selectorCtrl.change_selector_output(
-			this.referer,
-			this.event_type,
-			this.input_textArea.getValue()
-		)
-		this.close()
+		this.fireEvent('save',this._fileField.fileInputEl.dom.files)
 	}
-	
-	
 })

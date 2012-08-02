@@ -44,6 +44,13 @@
 	width: 100%;
 }
 
+.widget-weather .left_panel .first_sub_section .comment span{
+	float:right;
+	opacity: 0;
+	background-size:contain;
+	cursor:pointer;
+}
+
 .widget-weather .left_panel .alert_information{
 	display: table;
 	float: right;
