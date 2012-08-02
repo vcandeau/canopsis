@@ -63,9 +63,16 @@ Ext.define('canopsis.controller.View', {
     },
 
     bindTreeEvent: function() {
+		var btns = Ext.ComponentQuery.query('#' + this.tree.id + ' [action=import]');
+		for (i in btns) {
+			btns[i].on('click', this.openFilepopup, this);
+		}
+		
 		this.tree.on('exportPdf', function(view) {
 				this.getController('Reporting').launchReport(view);
 			},this);
+			
+		this.tree.getView().on('getViewFile',this.getViewFile,this)
 	},
 
 	check_right_on_drop: function(node,data,overModel) {
@@ -212,6 +219,43 @@ Ext.define('canopsis.controller.View', {
 		}else {
 			return false;
 		}
+	},
+	
+	openFilepopup : function(file){
+		log.debug('Open file popup',this.logAuthor)
+		var config = {_fieldLabel: _('View dump')}
+		var popup = Ext.create('canopsis.lib.view.cfile_window',config)
+		popup.show()
+		
+		popup.on('save',function(file){
+			var file_type = file[0].type
+			if(file_type == '' || file_type == 'application/json'){
+				this.importView(file)
+				popup.close()
+			}else{
+				log.debug('Wrong file type: ' + file_type, this.logAuthor)
+				global.notify.notify(_('Wrong file type'),_('Please choose a correct json file'),'info')
+			}
+		},this)
+	},
+	
+	importView : function(file){
+		log.debug('Import view file',this.logAuthor)
+		var reader = new FileReader();
+		reader.onload = function(e){
+			var record = Ext.create('canopsis.model.View',Ext.decode(e.target.result))
+			
+			//-------if you wanna make modif , do it here-----
+			record.set('_id', 'view.' + global.account.user + '.' + global.gen_id())
+		
+			this.add_to_home(record,false)
+			}.bind(this)
+		reader.readAsText(file[0])
+	},
+	
+	getViewFile : function(view_id){
+		log.debug('Get view file',this.logAuthor)
+		window.open('/ui/view/export/' + view_id)
 	}
 
 });

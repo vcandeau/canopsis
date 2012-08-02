@@ -137,8 +137,12 @@ def start_engines():
 	import tag
 	import selector
 	import sla
+	import alertcounter
 	
-	engine_selector		= selector.engine(logging_level=logging.INFO)
+	engine_alertcounter	= alertcounter.engine(logging_level=logging.INFO)
+	engines.append(engine_alertcounter)
+	
+	engine_selector		= selector.engine(next_engines=[engine_alertcounter],logging_level=logging.INFO)
 	engines.append(engine_selector)
 	
 	engine_collectdgw	= collectdgw.engine()
