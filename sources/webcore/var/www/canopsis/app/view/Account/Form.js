@@ -54,7 +54,7 @@ Ext.define('canopsis.view.Account.Form', {
 				vtype: 'email',
 				allowBlank: true
 			},{
-				fieldLabel: _('group'),
+				fieldLabel: _('Group'),
 				name: 'aaa_group',
 				store: 'Groups',
 				displayField: 'crecord_name',
@@ -63,7 +63,7 @@ Ext.define('canopsis.view.Account.Form', {
 
 				allowBlank: false
 			},{
-				fieldLabel: _('password'),
+				fieldLabel: _('Password'),
 				inputType: 'password',
 				name: 'passwd'
 				//allowBlank : false
