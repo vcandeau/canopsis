@@ -21,16 +21,18 @@
 div.title-bar-scenario {
 	margin: 0;
 	height:100%;
-	width:30%;
+	width:20%;
 	margin:0;
 	float:left;
+	padding: auto;
 }
 
 div.other-info-title {
 	margin-top: auto;
 	margin-bottom:auto;
+	padding: auto;
 	height:100%;
-	width:30%;
+	width:40%;
 	text-align:center;
 	font-style: italic;
 	float:left ;
@@ -51,5 +53,27 @@ span.line-graph {
 	height:100%;
 	width:90%;
 	display:block;
+
+}
+
+.tooltip {
+	z-index:999;
+	position: absolute;
+	left: 0px;
+        top: 0px;
+        visibility: hidden;
+	background: rgb(0, 0, 0) transparent;
+        background-color: rgba(0,0,0,0.6);
+        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+        color: white;
+	font: 10px arial, san serif;
+	text-align: left; 
+        white-space: nowrap;
+	padding-left:5px;
+	padding-right:30px;
+	padding-top:5px;
+	padding-bottom:15px;
+        border: 1px solid white;
 
 }
