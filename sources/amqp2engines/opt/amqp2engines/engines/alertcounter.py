@@ -33,12 +33,13 @@ class engine(cengine):
 		self.account = caccount(user="root", group="root")
 		
 	def pre_run(self):
-		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))		
+		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
+		self.listened_event_type = ['check','selector','eue','sla']
 		self.beat()
 	
 		
 	def work(self, event, *args, **kargs):
-		if   event['event_type'] == 'check' or event['event_type'] == 'selector':
+		if event['event_type'] in self.listened_event_type:
 			event_id = event['rk']
 			
 			cleaned_event = cevent.forger(
@@ -69,8 +70,6 @@ class engine(cengine):
 
 			except Exception,err:
 				self.logger.error('Error while fectching source event: %s' % err)
-			
-			#self.logger.error(cleaned_event)
 			
 			self.amqp.publish(cleaned_event, event_id, self.amqp.exchange_name_events)
 						
