@@ -41,9 +41,6 @@ Ext.define('widgets.stepeue.stepeue' , {
 		} ) ;
 		pnl.on( 'afterrender', function ( ) {
 			pnl.setLoading(true, true);
-			setTimeout(function (target) {
-                            target.setLoading(false);
-                        }, 3000, pnl);	
 		} ) ;
 		this.wcontainer.add ( pnl ) ;
 		this.wcontainer.setLoading(true, true) ; //masked = { 
@@ -60,10 +57,15 @@ Ext.define('widgets.stepeue.stepeue' , {
 
                 return url;
         },
-        findPerfData: function (record, buildHtml) {
+        findPerfData: function (records ) {
 //              var gId = record.connector +"\."+record.connector_name+"\."+record.event_type+"\.resource\."+record.component+"\."+scenario+"*";
                 url = this.urlPerfStore
-                post_params_tmp = [ { id: record._id , metrics: ["duration"] }] ;
+		post_params_tmp = new Array() ;
+		for ( i in records ) {
+			var object = { id: records[i]._id, metrics: ["duration", "total", "succeed"] } ;
+			post_params_tmp.push( object ) ;
+		}
+		console.log ( post_params_tmp ) ;
                 post_params = { 'nodes':  Ext.JSON.encode(post_params_tmp)} ;
                 Ext.Ajax.request({
                         url: url,
@@ -72,17 +74,31 @@ Ext.define('widgets.stepeue.stepeue' , {
                         method: 'POST',
                         success: function(response) {
                                 var data = Ext.JSON.decode(response.responseText);
-                                console.log(data);
-                                data = data.data[0];
-                                myArrVal = new Array( );
-                                for( var i in data.values )
-                                        myArrVal.push( data.values[i][1] ) ;
-                                record.graphData = "<span class=\"line-graph\">" + myArrVal.join(', ') + "</span>" ;
-                                record.values = data.values;
-                                arrayResource = record.resource.split(".") ;
-				this.graphData[data.node] = record ;
-				if (buildHtml) 
-	                                this.buildHtml() ;
+				console.log(data) ;
+				arrayOfNodeAndValue =   {}  ;
+                  		for ( i in data.data ) {
+					if ( arrayOfNodeAndValue[data.data[i].node] == null )
+						arrayOfNodeAndValue[data.data[i].node]= { } ;
+					arrayOfNodeAndValue[data.data[i].node][data.data[i].metric] = data.data[i].values ;
+				}
+				for ( i in arrayOfNodeAndValue ) { 
+					var record = {  } ;
+					var values = arrayOfNodeAndValue[i].duration ;
+					var valuesTotal = arrayOfNodeAndValue[i].total ;
+					var valuesSucceed  = arrayOfNodeAndValue[i].succeed ;
+        	                        myArrVal = new Array( );
+                	                for( var j in values ) {
+						if ( valuesSucceed[j][1] != valuesTotal[j][1] ) 
+							myArrVal.push( ( values[j][1] - 2*values[j][1] )  ) ; 
+						else 
+		                                     myArrVal.push( values[j][1] ) ;
+
+					}
+                        	        record.graphData = "<span class=\"line-graph\">" + myArrVal.join(', ') + "</span>" ;
+                                	record.values = data.values;
+					this.graphData[i] = record ;
+				}
+	                       	this.buildHtml() ;
                         },
                         failure: function(result, request) {
                                 log.error('Ajax request failed ... ('+ request.url + ')', this.logAuthor);
@@ -123,6 +139,7 @@ Ext.define('widgets.stepeue.stepeue' , {
        	                        },
 	               	});
 			this.storeEvent.setFilter ( filter );
+			this.storeEvent.sort( { property: "timestamp", direction: "ASC" } ) ;
 			var me = this;
 			this.storeEvent.load( { callback: function ( records, operation, success) {  
 				if ( success ) { 
@@ -177,6 +194,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 			}
 		}
 		var indexToTest = 0 ;
+		var findPerfData = new Array() ;
                 for ( i in this.arboStructure ) {
 			for ( j in this.arboStructure[i] ) {
 				indexToTest++ ;
@@ -185,11 +203,12 @@ Ext.define('widgets.stepeue.stepeue' , {
 				console.log ( index ) ;
 				console.log ( indexToTest ) ;
                         	var current = this.arboStructure[i][j][this.lastContext[i]['localization'] ] [this.lastContext[i]['os']][this.lastContext[i]['browser'] ];
-                       	 	this.findPerfData( current.raw, buildHtml ) ;
+				findPerfData.push( current.raw ) ;
 			}
                 }
+               	this.findPerfData( findPerfData ) ;
 
-		this.buildHtml() ;
+//		this.buildHtml() ;
 	
 	},
 
@@ -202,7 +221,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 
 		currentRecord = this.arboStructure[id_child][i][this.lastContext[id_child]['localization'] ][this.lastContext[id_child]['os']][this.lastContext[id_child]['browser'] ]; // [i][this.cntxtFeature['localization']][this.cntxtFeature['os']][this.cntxtFeature['browser']] ;
 		console.log ( currentRecord ) ;
-		return "<div><div class=\"scenario-status\">"+ rdr_status( currentRecord.data.state )  +"</div><div class=\"title-bar-scenario\"> <span class=\"scenario-title\">"+i+"</span><span>"+ rdr_tstodate( currentRecord.data.timestamp ) + " | "+ currentRecord.data.perf_data_array[0].value + " "+currentRecord.data.perf_data_array[0].unit + "</span></div><div class=\"other-info-title\">"+this.buildOtherInfoTitle( currentRecord.raw ) +"</div><div class=\"graph-data\">"+ this.graphData[currentRecord.data._id].graphData  +"</div></div>";
+		return "<div><div class=\"scenario-status\">"+ rdr_status( currentRecord.data.state )  +"</div><div class=\"title-bar-scenario\"> <span class=\"scenario-title\">"+i+"</span><span>"+ rdr_tstodate( currentRecord.data.timestamp ) + " | "+ currentRecord.data.perf_data_array[0].value + " "+currentRecord.data.perf_data_array[0].unit + "</span></div><div class=\"other-info-title\"><div>"+this.buildOtherInfoTitle( currentRecord.raw ) +"</div></div><div class=\"graph-data\">"+ this.graphData[currentRecord.data._id].graphData  +"</div></div>";
 	
 //		console.log ( eventStore.find ( 'child', id_child )  ) ;
 //		console.log ( eventStore.data ) ;
@@ -284,9 +303,8 @@ Ext.define('widgets.stepeue.stepeue' , {
 			border: false,
     			layout:{ type: "table", columns: 6 },
 			defaults: {
-        // applied to each contained panel
-			        bodyStyle: 'padding:0.75em'
-    			},
+				padding: "5%"
+			},
 			items: listItem 
 		}  ;
 		return table ;
@@ -297,13 +315,12 @@ Ext.define('widgets.stepeue.stepeue' , {
 			var currentNode = this.arboStructure[id_child][i][context['localization']][context['os']][context['browser']] ;
 			if ( currentNode.raw.media_type == 'screenshot' ) {
 				if ( ! this.useStepScreenShot ) {
-			                var srcImg = currentNode.raw.media_server + "/"+currentNode.raw.media_name ;
-        			        console.log( "build screen shot");
+			                var srcImg = currentNode.raw.media_server_url + "/"+currentNode.raw.media_name ;
 					this.imgToBuildWindow.push ( "img-"+currentNode.raw.resource ) ;
                 			return Ext.create( 'Ext.Img', {
                         			id: "img-"+currentNode.raw.resource,
 		                        	src: srcImg,
-	        		                width: "100%",
+	        		                width: "100%"
         	        		} ) ;
 				} else {
 					this.findStepOfNode ( currentNode ) ;
@@ -354,7 +371,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 			width:"100%",
 			height: "100%",
 			layout :  { 
-				type: "hbox",
+			type: "hbox",
 				align: "stretch"
 			},				
 			items : [ {
@@ -373,7 +390,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 		}];
 		return array ;
 	},
-	buildFeaturePresentation : function ( id_child ) {
+	buildFeaturePresentation : function ( id_child, subtitle ) {
 		return {
 			xtype : 'panel',
 			border: false,
@@ -381,6 +398,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 				type: 'vbox',
 				align: 'stretch',
 			},
+			title: subtitle,
 			autoScroll: true,
 			width: "100%", 
 			items: this.findScenarioOfFeature( id_child ) 
@@ -391,11 +409,12 @@ Ext.define('widgets.stepeue.stepeue' , {
 		for ( i in  this.eventsLoaded ) {
 			var item = { } ;
 			item.title = this.eventsLoaded[i].resource
+			var subtitle =  this.eventsLoaded[i].description;
 			item.width = "100%" ;
 			item.height = "100%" ;
 			//item.border = false ;
 			item.layout = "fit";
-			item.items = this.buildFeaturePresentation( this.eventsLoaded[i]._id ) ;
+			item.items = this.buildFeaturePresentation( this.eventsLoaded[i]._id, subtitle ) ;
 			listItem.push( item ) ;
 		}
                 this.content = Ext.create('Ext.tab.Panel', {
@@ -406,7 +425,24 @@ Ext.define('widgets.stepeue.stepeue' , {
                 this.wcontainer.add(this.content);
                 var gWidth = $('.line-graph').width() ;
                 var gHeight = $('.line-graph').height() ;
-                $(".line-graph").peity("line", { height: gHeight, width:gWidth } ) ;
+                $(".line-graph").sparkline("html", { type: "bar",  height: gHeight, width:gWidth, tooltipClassname : "tooltip" } ) ;
+		
+		for ( i in this.imgToBuildWindow ) {
+			var el = Ext.get(this.imgToBuildWindow[i] ) ;
+			el.addListener( 'click', function(ev, element, o ) {
+				var attr = element.getAttribute('src' ) ;
+				var img = Ext.create( 'Ext.Img', {
+                                                src: attr,
+                                                width: "65%"
+                                        } ) ;
+				Ext.create('Ext.window.Window', {
+					xtype: "xpanel",
+					width:"75%",
+					items: [img ]
+				}).show();
+			} ) ;
+			
+		}
 
 	}
 });
