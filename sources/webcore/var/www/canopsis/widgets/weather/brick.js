@@ -96,7 +96,7 @@ Ext.define('widgets.weather.brick' , {
 			id : this.id
 				};
 		
-		//this.widget_base_config.button_text = 'report issue'
+		this.widget_base_config.button_text = 'report issue'
 
 		if (this.component)
 			this.widget_base_config.title = this.component;
@@ -237,7 +237,6 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	report_issue : function(){
-		/*
 		var config = {
 			title: 'Report an issue',
 			_component : this.component,
@@ -245,11 +244,10 @@ Ext.define('widgets.weather.brick' , {
 		}
 
 		var popup = Ext.create('widgets.weather.report_popup',config)
-		popup.show()*/
+		popup.show()
 	},
 	
 	change_output : function(){
-		/*
 		var config = {
 			title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
 			_component : this.component,
@@ -259,7 +257,6 @@ Ext.define('widgets.weather.brick' , {
 
 		var popup = Ext.create('widgets.weather.edit_message_popup',config)
 		popup.show()
-		*/
 	},
 	
 
