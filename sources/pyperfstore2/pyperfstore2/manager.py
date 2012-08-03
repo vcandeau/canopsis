@@ -216,6 +216,9 @@ class manager(object):
 				return (meta_data, points)
 			
 		#parse_dst
+		dtype = meta_data.get('type', None)
+		if dtype:
+			points = utils.parse_dst(points,dtype)
 		
 		if not return_meta:
 			return points
