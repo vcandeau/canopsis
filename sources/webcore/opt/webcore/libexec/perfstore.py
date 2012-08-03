@@ -27,18 +27,16 @@ from bottle import route, get, post, put, delete, request, HTTPError, response
 from libexec.auth import check_auth, get_account
 
 # Modules
-from pyperfstore import pmath
-from pyperfstore import node
-from pyperfstore import mongostore
 from ctools import parse_perfdata
+
+import pyperfstore2
+manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 
 import ConfigParser
 config = ConfigParser.RawConfigParser()
 config.read(os.path.expanduser('~/etc/cstorage.conf'))
 
 logger = logging.getLogger("perfstore")
-
-perfstore = mongostore(mongo_collection='perfdata', mongo_host=config.get("master", "host"), mongo_port=config.getint("master", "port"))
 
 config.read(os.path.expanduser('~/etc/webserver.conf'))
 pyperfstore_aggregate			= True
@@ -55,9 +53,11 @@ logger.debug(" + pyperfstore_aggregate: %s" % pyperfstore_aggregate)
 logger.debug(" + pyperfstore_aggregate_maxpoints: %s" % pyperfstore_aggregate_maxpoints)
 logger.debug(" + pyperfstore_aggregate_method: %s" % pyperfstore_aggregate_method)
 
+
 #########################################################################
 
 #### GET@
+"""
 @get('/perfstore/node/:_id',apply=[check_auth])
 def perfstore_node_get(_id):
 	mynode = node(_id, storage=perfstore)
@@ -65,27 +65,28 @@ def perfstore_node_get(_id):
 	output = [ mynode.dump() ]
 
 	return {'total': len(output), 'success': True, 'data': output}
-
+"""
 
 #### POST@
 @post('/perfstore/values',apply=[check_auth])
 @post('/perfstore/values/:start/:stop',apply=[check_auth])
 def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 
-	nodes = request.params.get('nodes', default=None)
+	metas = request.params.get('nodes', default=None)
+	
 	time_interval = request.params.get('interval', default=None)
 	aggregate_method = request.params.get('aggregate_method', default=None)
 	use_window_ts = request.params.get('use_window_ts', default=None)
 	output = []
 	
-	if not nodes:
+	if not metas:
 		logger.warning("Invalid arguments")
 		return HTTPError(404, "Invalid arguments")
 
-	nodes = json.loads(nodes)
+	metas = json.loads(metas)
 	
 	logger.debug("POST:")
-	logger.debug(" + nodes: %s" % nodes)
+	logger.debug(" + metas: %s" % metas)
 	logger.debug(" + aggregate_method: %s" % aggregate_method)
 	logger.debug(" + use_window_ts:    %s" % use_window_ts)
 	logger.debug(" + time_interval:    %s" % time_interval)
@@ -99,18 +100,17 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 
 	output = []
 	
-	for node in nodes:
-		if not start and not stop:
-			output += perfstore_get_last_value(node['id'], node['metrics'])
-		else:
-			output += perfstore_get_values(node['id'], node['metrics'], start, stop, time_interval,aggregate_method,use_window_ts)
+	for meta in metas:
+		output += perfstore_get_values(meta['id'], start, stop, time_interval, aggregate_method, use_window_ts)
 
 	
 	output = {'total': len(output), 'success': True, 'data': output}
  
 	return output
 
+
 #### GET@
+"""
 @get('/perfstore/values/:_id',apply=[check_auth])
 @get('/perfstore/values/:_id/:metrics',apply=[check_auth])
 @get('/perfstore/values/:_id/:metrics/:start',apply=[check_auth])
@@ -136,8 +136,8 @@ def perfstore_metric_get_values(_id, metrics="<all>", start=None, stop=None, int
 		output = {'total': 0, 'success': False, 'data': []}
  
 	return output
-
-	
+"""
+"""	
 @get('/perfstore/metrics/:_id',apply=[check_auth])
 def perfstore_getMetric(_id):
 
@@ -155,27 +155,54 @@ def perfstore_getMetric(_id):
 	output = {'total': len(output), 'success': True, 'data': output}
 	
 	return output
-
-@get('/perfstore/get_all_nodes',apply=[check_auth])
-def perstore_all_nodes():
-	limit		= request.params.get('limit', default=None)
-	start		= request.params.get('start', default=None)
-	search		= request.params.get('search', default=None)
-	
-	result = perfstore.get_all_nodes(limit=limit,offset=start,search=search)
-	
-	return {'success': True,'data' : result['data'],'total' : result['total']}
+"""
 
 @get('/perfstore/get_all_metrics',apply=[check_auth])
 def perstore_get_all_metrics():
-	limit		= request.params.get('limit', default=None)
-	start		= request.params.get('start', default=None)
+	logger.debug("perstore_get_all_metrics:")
+	
+	limit		= int(request.params.get('limit', default=20))
+	start		= int(request.params.get('start', default=0))
 	search		= request.params.get('search', default=None)
 	
-	result = perfstore.get_all_metrics(limit=limit,offset=start,search=search)
+	logger.debug(" + limit:   %s" % limit)
+	logger.debug(" + start:   %s" % start)
+	logger.debug(" + search:  %s" % search)
 	
-	return {'success': True,'data' : result['data'],'total' : result['total']}
+	mfilter = None
+	
+	if search:
+		# Todo: Tweak this ...
+		fields = ['co', 're', 'me']
+		mor = []
+		search = search.split(' ')
+		if len(search) == 1:
+			for field in fields:
+				mor.append({field: {'$regex': '.*%s.*' % search[0], '$options': 'i'}})
+				
+			mfilter = {'$or': mor}
+		else:
+			mfilter = {'$and': []}
+			for word in search:
+				mor = []
+				for field in fields:
+					mor.append({field: {'$regex': '.*%s.*' % word, '$options': 'i'}})	
+				mfilter['$and'].append({'$or': mor})
+		
+	logger.debug(" + mfilter:  %s" % mfilter)
+	
+	data  = manager.find_meta(limit=0, skip=0, mfilter=mfilter)
+	total = data.count()
+	data  = [meta for meta in data.skip(start).limit(limit).sort('co')]
+	
+	return {'success': True, 'data' : data, 'total' : total}
 
+
+########################################################################
+# Functions
+########################################################################
+
+"""
 def perfstore_get_last_value(_id, metrics):
 	output=[]
 	logger.debug(" + node:      %s" % _id)
@@ -196,8 +223,9 @@ def perfstore_get_last_value(_id, metrics):
 			output.append({'node': _id, 'metric': dn, 'values': [value], 'bunit': metric.bunit, 'min': metric.min_value, 'max': metric.max_value, 'thld_warn': metric.thld_warn_value, 'thld_crit': metric.thld_crit_value})
 	
 	return output
+"""
 
-def perfstore_get_values(_id, metrics, start=None, stop=None, time_interval=None, aggregate_method=None,use_window_ts=None):
+def perfstore_get_values(_id, start=None, stop=None, time_interval=None, aggregate_method=None,use_window_ts=None):
 	
 	if start and not stop:
 		stop = start
@@ -220,51 +248,35 @@ def perfstore_get_values(_id, metrics, start=None, stop=None, time_interval=None
 	if not aggregate_method:
 		aggregate_method = pyperfstore_aggregate_method
 	
-	logger.debug(" + node:      %s" % _id)
-	logger.debug(" + metrics:   %s" % metrics)
+	logger.debug("Perfstore get points:")
+	logger.debug(" + meta _id:  %s" % _id)
 	logger.debug(" + start:     %s" % start)
 	logger.debug(" + stop:      %s" % stop)
 	logger.debug('Aggregate:')
 	logger.debug(' + max_points : %s' % max_points)
-	logger.debug(' + interval : %s' % time_interval)
+	logger.debug(' + interval :   %s' % time_interval)
+	
+	output=[]
+	
+	if not _id:
+		logger.error("Invalid _id '%s'" % _id)
+		return output
 	
 	if (time_interval):
 		start -= start % time_interval
 		stop -= stop % time_interval
 		max_points = int( round((stop - start) / time_interval + 0.5) )
 	
-	mynode = node(_id=_id, storage=perfstore)
-	
-	output=[]
-	
-	if metrics:
-		if (metrics[0] == "<all>"):
-			metrics = mynode.metric_get_all_dn()
-			logger.debug(" + metrics:   %s" % metrics)
-
-
-
-		for dn in metrics:
-			try:
-				values = mynode.metric_get_values(
-					dn=dn,
-					tstart=start,
-					tstop=stop,
-					aggregate=pyperfstore_aggregate,
-					atype=aggregate_method,
-					max_points=max_points,
-					time_interval=time_interval
-					)
-					
-				values = [[x[0] * 1000, x[1]] for x in values]
-
-				if len(values) >= 1:
-					metric = mynode.metric_get(dn=dn)
-					bunit = metric.bunit
-					output.append({'node': _id, 'metric': dn, 'values': values, 'bunit': bunit, 'min': metric.min_value, 'max': metric.max_value, 'thld_warn': metric.thld_warn_value, 'thld_crit': metric.thld_crit_value})
-						
-			except Exception, err:
-				logger.error(err)
+	try:
+		(meta, points) = manager.get_points(_id=_id, tstart=start, tstop=stop, return_meta=True)
+		points = manager.aggregate(points, max_points=max_points,  mode='by_point')
+		
+		points = [[point[0] * 1000, point[1]] for point in points]
+		
+		output.append({'node': _id, 'metric': meta['me'], 'values': points, 'bunit': meta['unit'], 'min': meta['min'], 'max': meta['max'], 'thld_warn': meta['thd_warn'], 'thld_crit': meta['thd_crit']})
+		
+	except Exception, err:
+		logger.error(err)
 				
 	return output
 
