@@ -21,6 +21,7 @@
 
 Ext.define('canopsis.lib.form.field.cmetric' , {
 	extend: 'Ext.panel.Panel',
+	mixins: ['canopsis.lib.form.cfield'],
 
 	alias: 'widget.cmetric',
 
@@ -313,15 +314,21 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			else
 				output.push({'id': _id, 'metrics': [metric], 'component': component, 'source_type': source_type});
 		});
-
+		log.dump(output)
 		return output;
 	},
 
 	setValue: function(data) {
 		log.debug('Load values', this.logAuthor);
-		log.dump(data)
 		for (var i in data){
-			this.selected_store.add(data[i]);
+			config = {
+				id: data[i].id,
+				co: data[i].component,
+				re: data[i].resource,
+				me: data[i].metrics
+			}
+			var record = Ext.create('Meta',config)
+			this.selected_store.add(record);
 		}
 	}
 
