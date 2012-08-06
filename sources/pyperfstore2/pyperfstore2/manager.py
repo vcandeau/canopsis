@@ -232,7 +232,7 @@ class manager(object):
 	def rotateAll(self):
 		metas = self.find_meta(limit=0)
 		for meta in metas:
-			self.rotate(_id=metas['_id'])
+			self.rotate(_id=meta['_id'])
 		
 	def rotate(self, _id=None, name=None):
 		_id = self.get_id(_id, name)
