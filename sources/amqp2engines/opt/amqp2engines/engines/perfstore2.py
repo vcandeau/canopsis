@@ -84,7 +84,7 @@ class engine(cengine):
 					else:
 						name = "%s%s%s" % (component, resource, metric)
 						
-					self.manager.push(name=name, value=value, timestamp=timestamp, meta_data={'type': dtype, 'min': vmin, 'max': vmax, 'thd_warn': vwarn, 'thd_crit': vcrit, 'co': component, 're': resource, 'me': metric})
+					self.manager.push(name=name, value=value, timestamp=timestamp, meta_data={'type': dtype, 'min': vmin, 'max': vmax, 'thd_warn': vwarn, 'thd_crit': vcrit, 'co': component, 're': resource, 'me': metric ,'unit':unit})
 				except Exception, err:
 					self.logger.warning('Impossible to put value in perfstore (%s) (metric=%s, unit=%s, value=%s)', err, metric, unit, value)
 			

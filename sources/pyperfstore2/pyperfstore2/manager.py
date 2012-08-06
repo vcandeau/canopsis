@@ -71,10 +71,11 @@ class manager(object):
 			try:
 				exist = self.cache_ids[_id]
 			except:
-				self.logger.debug("Store '%s' in cache" % _id)
 				exist = self.store.count(_id)
-				self.cache_ids[_id] = True
-				self.cached += 1
+				if exist:
+					self.logger.debug("Store '%s' in cache" % _id)
+					self.cache_ids[_id] = True
+					self.cached += 1
 		else:
 			return self.store.count(_id)
 				
@@ -168,7 +169,7 @@ class manager(object):
 				meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
 			
 			self.logger.debug("Create meta record '%s'" % _id)
-			self.store.create(_id=_id, data=meta_data)		
+			self.store.create(_id=_id, data=meta_data)
 		
 	def get_points(self, _id=None, name=None, tstart=None, tstop=None, raw=False, return_meta=False):
 		_id = self.get_id(_id, name)
@@ -264,9 +265,14 @@ class manager(object):
 		
 		meta_data = self.get_meta(_id=_id, raw=True)
 		if meta_data:
-			# Remove compressed DCA
-			for dca_meta in meta_data['c']:
-				self.store.grid.delete(dca_meta[2])
+			# Remove compressed DCA (if there is compressed dca)
+			if 'c' in meta_data:
+				for dca_meta in meta_data['c']:
+					self.store.grid.delete(dca_meta[2])
 		
 		# Remove plain DCA and Meta
 		self.store.remove(mfilter={'$or': [{'_id': _id}, {'mid': _id}]})
+		
+		#remove from cache
+		if _id in self.cache_ids:
+			del self.cache_ids[_id]
