@@ -57,18 +57,18 @@ Ext.define('canopsis.view.Account.Grid' , {
 	                sortable: false,
 	                dataIndex: 'lastname'
 		},{
-                	header: _('email'),
+                	header: _('Email'),
 	                flex: 2,
 	                sortable: false,
                 	dataIndex: 'mail'
 		},{
-	                header: _('group'),
+	                header: _('Group'),
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'aaa_group',
 	                renderer: rdr_clean_id
         },{
-                	header: _('groups'),
+                	header: _('Groups'),
 	                flex: 2,
 	                sortable: false,
 	                dataIndex: 'groups',
