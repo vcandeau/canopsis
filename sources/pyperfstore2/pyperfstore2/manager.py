@@ -32,7 +32,7 @@ class manager(object):
 		
 		self.store = store(mongo_collection=mongo_collection, logging_level=logging.INFO)
 		self.auto_rotate = auto_rotate
-		self.dca_length = 300
+		self.dca_min_length = 300
 		self.midnight = None
 		self.get_midnight_timestamp()
 		
@@ -246,7 +246,7 @@ class manager(object):
 			self.logger.debug("   + DCA: %s" % dca_id)
 			
 			#check if must compress or not
-			if len(dca['d']) > self.dca_length:
+			if len(dca['d']) > self.dca_min_length:
 				self.logger.debug(" + Compress")
 				data = utils.compress(dca['d'])
 				
