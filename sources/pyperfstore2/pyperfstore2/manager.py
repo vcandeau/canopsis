@@ -32,6 +32,7 @@ class manager(object):
 		
 		self.store = store(mongo_collection=mongo_collection, logging_level=logging.INFO)
 		self.auto_rotate = auto_rotate
+		self.dca_length = 300
 		self.midnight = None
 		self.get_midnight_timestamp()
 		
@@ -238,24 +239,45 @@ class manager(object):
 		_id = self.get_id(_id, name)
 		
 		self.logger.debug("Rotate '%s'" % _id)
-		self.logger.debug(" + Compress")
+		
 		dca_ids = []
 		for dca in self.find_dca(_id=_id, mfilter={'c': False}):
 			dca_id = dca['_id']
 			self.logger.debug("   + DCA: %s" % dca_id)
-			# Compress data
-			data = utils.compress(dca['d'])
 			
-			# Remove plain record
-			self.store.remove(_id=dca_id)
-			
-			# Create bin record
-			self.store.create_bin(_id=dca_id, data=data)
-			
-			dca_ids.append((dca['fts'], dca['lts'], dca_id))
+			#check if must compress or not
+			if len(dca['d']) > self.dca_length:
+				self.logger.debug(" + Compress")
+				data = utils.compress(dca['d'])
+				
+				# Remove plain record
+				self.store.remove(_id=dca_id)
+				
+				# remove cache too
+				if dca_id in self.cache_ids:
+					del self.cache_ids[dca_id]
+				
+				try:
+					self.logger.debug("  +  Create Bin")
+					self.store.create_bin(_id=dca_id, data=data)
+					dca_ids.append((dca['fts'], dca['lts'], dca_id))
+				except Exception,err:
+					self.logger.info('Something wrong when rotate %s: %s' % (_id, err))
+					pass
+			else:
+				self.logger.debug(" + Don't compress, put in next dca")
+				new_dca_id = self.get_dca_id(_id)
+				if self.id_exist(new_dca_id):
+					data = self.store.get(new_dca_id)['d']
+					data = dca['d'] + data
+					self.store.update(_id=new_dca_id, mset={'d': data})
+					self.store.update(_id=new_dca_id, mset={'fts': dca['fts']})
+				else:
+					self.store.create(_id=new_dca_id, data = {'c': False, 'mid': _id, 'fts': dca['fts'], 'lts': dca['lts'], 'd': dca['d']})
 			
 		# Update meta record
-		self.store.update(_id=_id, mpush_all={'c': dca_ids})
+		if len(dca_ids) > 0:
+			self.store.update(_id=_id, mpush_all={'c': dca_ids})
 
 		# Todo: clean old dca (retention)
 		#self.logger.debug(" + Clean")
