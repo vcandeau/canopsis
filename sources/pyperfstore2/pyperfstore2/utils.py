@@ -121,6 +121,9 @@ def parse_dst(points, dtype, first_point=[]):
 			values = get_values(points)
 			i=0
 			last_value=0
+			counter = 0
+			
+			logger.debug('There is %s values' % len(values))
 			
 			for point in points:
 				
@@ -137,13 +140,15 @@ def parse_dst(points, dtype, first_point=[]):
 				elif i == 0 and first_point:
 					previous_value		= first_point[1]
 					previous_timestamp	= first_point[0]
-					
+				
+				
 				## Calcul Value
-				if previous_value:
-					if value > previous_value:
-						value -= previous_value
-					else:
-						value = 0
+				if dtype != "COUNTER":
+					if previous_value:
+						if value > previous_value:
+							value -= previous_value
+						else:
+							value = 0
 				
 				## Derive
 				if previous_timestamp and dtype == "DERIVE":	
@@ -154,7 +159,12 @@ def parse_dst(points, dtype, first_point=[]):
 				## Abs
 				if dtype == "ABSOLUTE":
 					value = abs(value)
-				
+					
+				## COUNTER
+				if dtype == "COUNTER":
+					value = value + counter
+					counter = value
+
 				## if new dca start, value = 0 and no first_point: wait second point ...
 				if dtype == "DERIVE" and i == 0 and not first_point:
 					## Drop this point

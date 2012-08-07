@@ -54,23 +54,9 @@ class engine(cengine):
 				perf_data_array = []
 			)
 		
-			try:
-				old_count = None
-				old_record = self.storage.get(event_id,account=self.account)
-				
-				if old_record.data['perf_data_array']:
-					for metric in old_record.data['perf_data_array']:
-						if metric['metric'] == 'cps_alert_nb':
-							old_count = metric['value']
-							
-				if old_count:
-					cleaned_event['perf_data_array'] = [{'metric': 'cps_alert_nb', 'value': old_count+1}]
-				else:
-					cleaned_event['perf_data_array'] = [{'metric': 'cps_alert_nb', 'value': 1}]
+			cleaned_event['perf_data_array'] = [{'metric': 'cps_alert_nb', 'value': 1,'type':'COUNTER'}]
 
-			except Exception,err:
-				self.logger.error('Error while fectching source event: %s' % err)
-			
+			self.logger.debug('publish alert event for %s' % event_id)
 			self.amqp.publish(cleaned_event, event_id, self.amqp.exchange_name_events)
 						
 		return event
