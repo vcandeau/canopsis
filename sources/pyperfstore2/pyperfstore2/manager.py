@@ -180,7 +180,7 @@ class manager(object):
 		meta_data = self.get_meta(_id=_id)
 		
 		if not meta_data:
-			raise Exception('Invalid _id, not found')
+			raise Exception('Invalid _id, not found %s' % name)
 		
 		## Compressed DCA
 		if tstart < self.get_midnight_timestamp():	
