@@ -23,8 +23,10 @@ from caccount import caccount
 from cstorage import get_storage
 from pyperfstore import node
 from pyperfstore import mongostore
+import pyperfstore2
 import cevent
 import time
+import logging
 
 NAME="sla"
 
@@ -51,6 +53,7 @@ class engine(cengine):
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 		self.beat()
 		
 	def split_state(self, value):
@@ -70,7 +73,10 @@ class engine(cengine):
 			
 		return (state, state_type, extra)
 	
-	def get_states(self, nodeId, metric, start, stop):
+	def get_states(self, name, metric, start, stop):
+		metric_name = '%s%s' % (name,metric)
+		points = self.manager.get_points(name=metric_name, tstart=start, tstop=stop)
+		'''
 		#Load perfstore Node
 		mynode = node(_id=nodeId, storage=self.perfstorage)
 		
@@ -81,13 +87,18 @@ class engine(cengine):
 			tstop=stop,
 			aggregate=False
 		)
+		'''
 		return points
 		
 	def get_rk(self, name):
 		return "sla.engine.sla.resource.%s.sla" % name
+		
+	def get_name(self,name):
+		return '%ssla' % name
 	
 	def calcul_time_by_state(self, _id, config):
 		rk = config['rk']
+		name = config['name']
 		
 		self.logger.debug("Calcul time by state")
 		self.logger.debug(" + Get States of %s (%s)" % (_id, rk))
@@ -104,7 +115,8 @@ class engine(cengine):
 		self.logger.debug(" + start:          %s" % start)
 		self.logger.debug(" + stop:           %s" % stop)
 			
-		points = self.get_states(rk, "cps_state", start, stop)
+		points = self.get_states(name, "cps_state", start, stop)
+		self.logger.debug("there is %i points lolololol" % len(points))
 			
 		if len(points) >= 2:
 				
@@ -157,6 +169,7 @@ class engine(cengine):
 			
 			# Store result in perfstore
 			# Don't submit Canopsis event because data it's just for next calcul
+			'''
 			rk  = self.get_rk(config['name'])
 			slanode = node( _id=rk,
 							 dn=[ config['name'], "sla" ],
@@ -164,7 +177,20 @@ class engine(cengine):
 							 point_per_dca=300,
 							 rotate_plan={'PLAIN': 0, 'TSC': 3,}
 			)
-			
+			'''
+			for state in states_sum:
+				metric_name = 'cps_time_by_state_%s' % state
+				self.manager.push(	name="%ssla%s" % (name,metric_name),
+									value=states_sum[state],
+									timestamp=last_timestamp,
+									meta_data={	 
+												'co': name, 
+												're': 'sla', 
+												'me': metric_name ,
+												'unit':'s'}
+								)
+				meta_id = self.manager.get_meta_id(name="%ssla%s" % (name,metric_name))
+			'''					
 			for state in states_sum:
 				#perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state], "unit": "s"})
 				slanode.metric_push_value(	dn = 'cps_time_by_state_%s' % state,
@@ -172,9 +198,9 @@ class engine(cengine):
 											value = states_sum[state],
 											timestamp = last_timestamp
 				)
-				
-			self.storage.update(_id, {'sla_lastcalcul': last_timestamp, 'sla_node_id': slanode._id})
-			return slanode
+			'''
+			self.storage.update(_id, {'sla_lastcalcul': last_timestamp, 'sla_node_id': meta_id})
+			return None
 		else:
 			self.logger.debug(" + You must have more points for calcul SLA")
 			return None
