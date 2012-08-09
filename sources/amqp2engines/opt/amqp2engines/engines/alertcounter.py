@@ -21,7 +21,9 @@
 from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
+import pyperfstore2
 import cevent
+import time
 
 import logging
 		
@@ -35,28 +37,20 @@ class engine(cengine):
 	def pre_run(self):
 		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
 		self.listened_event_type = ['check','selector','eue','sla']
+		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 		self.beat()
 	
 		
 	def work(self, event, *args, **kargs):
 		if event['event_type'] in self.listened_event_type:
-			event_id = event['rk']
+	
+			if not event['resource']:
+				self.logger.debug('Incrementing "%s" alert metric' % event['component'])
+				name = "%s%s" % (event['component'], 'cps_alert_nb')
+				self.manager.push(name=name, value=1, timestamp=time.time(), meta_data={'type': 'COUNTER', 'co': event['component'], 'me': 'cps_alert_nb'})	
+			else:
+				self.logger.debug('Incrementing "%s %s" alert metric' % (event['component'],event['resource']))
+				name = "%s%s%s" % (event['component'], event['resource'], 'cps_alert_nb')
+				self.manager.push(name=name, value=1, timestamp=time.time(), meta_data={'type': 'COUNTER', 'co': event['component'], 're': event['resource'], 'me': 'cps_alert_nb'})	
 			
-			cleaned_event = cevent.forger(
-				connector = event['connector'],
-				connector_name = event['connector_name'],
-				event_type = event['event_type'],
-				source_type= event['source_type'],
-				component= event['component'],
-				resource= event['resource'],
-				state= event['state'],
-				state_type= event['state_type'],
-				perf_data_array = []
-			)
-		
-			cleaned_event['perf_data_array'] = [{'metric': 'cps_alert_nb', 'value': 1,'type':'COUNTER'}]
-
-			self.logger.debug('publish alert event for %s' % event_id)
-			self.amqp.publish(cleaned_event, event_id, self.amqp.exchange_name_events)
-						
 		return event
