@@ -303,16 +303,19 @@ Ext.define('canopsis.lib.form.field.cmetric' , {
 			var _id = record.get('id')
 			var component = record.get('co')
 			var resource = record.get('re')
+			
 			var metric = record.get('me');
+			if(!Ext.isArray(metric))
+				metric = [metric]
 			
 			var source_type = 'component';
 			if (resource)
 				source_type = 'resource';
 
 			if (source_type == 'resource')
-				output.push({'id': _id, 'metrics': [metric], 'resource': resource, 'component': component, 'source_type': source_type});
+				output.push({'id': _id, 'metrics': metric, 'resource': resource, 'component': component, 'source_type': source_type});
 			else
-				output.push({'id': _id, 'metrics': [metric], 'component': component, 'source_type': source_type});
+				output.push({'id': _id, 'metrics': metric, 'component': component, 'source_type': source_type});
 		});
 		log.dump(output)
 		return output;
