@@ -38,37 +38,6 @@ logger = logging.getLogger("ui_view")
 group_managing_access = ['group.CPS_view_admin','group.CPS_view']
 
 #########################################################################
-'''
-@get('/ui/view',	apply=[check_auth])
-def tree_get():
-	namespace = 'object'
-	account = get_account()
-	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)
-	node = request.params.get('node', default= None)
-	
-	output = []
-	total = 0
-		
-	if node:
-		if node == 'root':
-			node = 'directory.root.dir1'
-			parentNode = storage.get(node, account=account)
-			output = parentNode.dump(json=True)
-			output['id'] = output['_id']
-			total += 1
-		else:	
-			parentNode = storage.get(node, account=account)
-			logger.debug(str(parentNode.dump()))
-			if parentNode:
-				records = storage.get_record_childs(parentNode,account=account)
-				for record in records:
-					data = record.dump(json=True)
-					data['id'] = data['_id']
-					output.append(data)
-					total += 1
-
-	return {"total": total, "success": True, "data": output}
-'''
 
 @get('/ui/view',apply=[check_auth])
 def tree_get():
@@ -87,8 +56,6 @@ def tree_get():
 		storage.recursive_get(parentNode,account=account)
 		output = parentNode.recursive_dump(json=True)
 			
-	#return {"success": True, "data": {"text":".","children":[output]}}
-	#return {"text":".","children":[output]}
 	return output
 
 
