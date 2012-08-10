@@ -50,8 +50,8 @@ class engine(cengine):
 								dn=dn,
 								storage=self.storage,
 								point_per_dca=self.point_per_dca,
-								rotate_plan=self.rotate_plan,
-								logging_level=self.logging_level)
+								rotate_plan=self.rotate_plan ) #,
+								#logging_level=self.logging_level)
 								
 			except Exception, err:
 				raise Exception("Imposible to init node: %s (%s)" % (_id, err))

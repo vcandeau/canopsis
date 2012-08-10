@@ -21,10 +21,10 @@
 
 import unittest
 import time, json, logging
+from bson import BSON
 
 from camqp import camqp
 from cinit import cinit
-
 ## Engines path
 import sys, os
 sys.path.append(os.path.expanduser('~/opt/amqp2engines/engines/'))
@@ -51,7 +51,7 @@ def clean_message(body, msg):
 		raise Exception("Invalid routing-key '%s' (%s)" % (rk, body))
 		
 	#logger.debug("Event: %s" % rk)
-	
+	#logger.info( body ) 	
 	## Try to decode event
 	if isinstance(body, dict):
 		event = body
@@ -61,19 +61,24 @@ def clean_message(body, msg):
 			if isinstance(body, str) or isinstance(body, unicode):
 				try:
 					event = json.loads(body)
-				except:
+				except Exception, err:
 					try:
 						logger.info(" + Try hack for windows string")
 						# Hack for windows FS -_-
 						event = json.loads(body.replace('\\', '\\\\'))
-					except Exception, err:
-						raise Exception(err)
+					except Exception, err :
+						try:
+							logger.info(" + Try decode BSON")
+							bson = BSON ( body ) 
+							event = bson.decode()
+						except Exception, err:
+							raise Exception(err)
 		except Exception, err:
 			logger.info("   + Failed")
 			logger.debug("Impossible to parse event '%s'" % rk)
-			logger.debug(body)
+			#logger.debug(body)
 			raise Exception("Impossible to parse event '%s'" % rk)
-	
+
 	event['rk'] = rk
 	return event
 	
@@ -91,6 +96,7 @@ def on_event(body, msg):
 	event = clean_message(body, msg)
 	
 	event['exchange'] = amqp.exchange_name_events
+		
 	
 	## Forward to engines
 	for engine in next_event_engines:
@@ -138,6 +144,7 @@ def start_engines():
 	import selector
 	import sla
 	import alertcounter
+	import media
 	
 	engine_alertcounter	= alertcounter.engine(logging_level=logging.INFO)
 	engines.append(engine_alertcounter)
@@ -148,21 +155,26 @@ def start_engines():
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
 	
-	engine_eventstore	= eventstore.engine(logging_level=logging.INFO)
-	engines.append(engine_eventstore)
 	
+	engine_eventstore	= eventstore.engine( logging_level=logging.INFO)
+	engines.append(engine_eventstore)
+
 	engine_perfstore	= perfstore.engine(	next_engines=[engine_eventstore])
 	engines.append(engine_perfstore)
 	
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
 	engines.append(engine_tag)
 	
+	engine_media 			= media.engine( next_engines=[engine_tag])
+	engines.append(engine_media)
+
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
 
+
 	# Set Next queue
 	## Events
-	next_event_engines.append(engine_tag)
+	next_event_engines.append(engine_media)
 	## Alerts
 	next_alert_engines.append(engine_selector)
 	
