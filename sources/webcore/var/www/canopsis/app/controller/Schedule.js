@@ -46,7 +46,8 @@ Ext.define('canopsis.controller.Schedule', {
 					account: global.account.user,
 					task: 'task_reporting',
 					method: 'render_pdf',
-					_scheduled: data.crecord_name
+					_scheduled: data.crecord_name,
+					owner: data.owner
 				};
 
 		//check if a mail must be send
@@ -60,7 +61,7 @@ Ext.define('canopsis.controller.Schedule', {
 					 recipients = stripped_recipients.split(';');
 				 }
 
-				 log.dump(recipients);
+				// log.dump(recipients);
 
 				var mail = {
 					'recipients': recipients,
@@ -118,6 +119,7 @@ Ext.define('canopsis.controller.Schedule', {
 		var kwargs = item.get('kwargs');
 		var viewName = kwargs['viewname'];
 		var timeLength = kwargs['starttime'];
+		var owner = kwargs['owner'];
 		//--------------get cron---------------
 		var cron = item.get('cron');
 
@@ -130,6 +132,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		//set view
 		item.set('view', viewName);
+		item.set('owner',owner)	;
 
 		//set right day if exist
 		if (cron.day_of_week != undefined) {
@@ -181,6 +184,7 @@ Ext.define('canopsis.controller.Schedule', {
 		var kwargs = item.get('kwargs');
 		var viewName = kwargs['viewname'];
 		var timeLength = kwargs['starttime'];
+		var owner = kwargs['owner'];
 		//--------------get cron---------------
 		var cron = item.get('cron');
 
@@ -193,6 +197,7 @@ Ext.define('canopsis.controller.Schedule', {
 
 		//set view
 		item.set('view', viewName);
+		item.set('owner',owner)	;
 
 		//set right day if exist
 		if (cron.day_of_week != undefined) {

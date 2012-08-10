@@ -21,7 +21,9 @@
 from cengine import cengine
 from cstorage import get_storage
 from caccount import caccount
+import pyperfstore2
 import cevent
+import time
 
 import logging
 		
@@ -33,45 +35,22 @@ class engine(cengine):
 		self.account = caccount(user="root", group="root")
 		
 	def pre_run(self):
-		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))		
+		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
+		self.listened_event_type = ['check','selector','eue','sla']
+		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 		self.beat()
 	
 		
 	def work(self, event, *args, **kargs):
-		if   event['event_type'] == 'check' or event['event_type'] == 'selector':
-			event_id = event['rk']
+		if event['event_type'] in self.listened_event_type:
+	
+			if not event['resource']:
+				self.logger.debug('Incrementing "%s" alert metric' % event['component'])
+				name = "%s%s" % (event['component'], 'cps_alert_nb')
+				self.manager.push(name=name, value=1, timestamp=time.time(), meta_data={'type': 'COUNTER', 'co': event['component'], 'me': 'cps_alert_nb'})	
+			else:
+				self.logger.debug('Incrementing "%s %s" alert metric' % (event['component'],event['resource']))
+				name = "%s%s%s" % (event['component'], event['resource'], 'cps_alert_nb')
+				self.manager.push(name=name, value=1, timestamp=time.time(), meta_data={'type': 'COUNTER', 'co': event['component'], 're': event['resource'], 'me': 'cps_alert_nb'})	
 			
-			cleaned_event = cevent.forger(
-				connector = event['connector'],
-				connector_name = event['connector_name'],
-				event_type = event['event_type'],
-				source_type= event['source_type'],
-				component= event['component'],
-				resource= event['resource'],
-				state= event['state'],
-				state_type= event['state_type'],
-				perf_data_array = []
-			)
-		
-			try:
-				old_count = None
-				old_record = self.storage.get(event_id,account=self.account)
-				
-				if old_record.data['perf_data_array']:
-					for metric in old_record.data['perf_data_array']:
-						if metric['metric'] == 'cps_alert_nb':
-							old_count = metric['value']
-							
-				if old_count:
-					cleaned_event['perf_data_array'] = [{'metric': 'cps_alert_nb', 'value': old_count+1}]
-				else:
-					cleaned_event['perf_data_array'] = [{'metric': 'cps_alert_nb', 'value': 1}]
-
-			except Exception,err:
-				self.logger.error('Error while fectching source event: %s' % err)
-			
-			#self.logger.error(cleaned_event)
-			
-			self.amqp.publish(cleaned_event, event_id, self.amqp.exchange_name_events)
-						
 		return event

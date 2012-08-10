@@ -87,8 +87,20 @@ Ext.define('canopsis.view.Schedule.Form', {
 			queryMode: 'remote',
 			emptyText: _('Select a view') + ' ...'
 		});
+		
+		var ownerCombo = Ext.widget('combobox', {
+			fieldLabel: _('Owner'),
+			name: 'owner',
+			store: Ext.create('canopsis.store.Accounts', {autoLoad: true}),
+			displayField: 'user',
+			valueField: 'user',
+			typeAhead: false,
+			allowBlank: false,
+			value: global.account.user,
+			queryMode: 'remote',
+		});
 
-		this.generalOptions.add([fonctionCombo, TaskName, viewCombo]);
+		this.generalOptions.add([fonctionCombo, TaskName, viewCombo,ownerCombo]);
 
 		//--------------------------time options--------------
 		var durationCombo = Ext.widget('combobox', {

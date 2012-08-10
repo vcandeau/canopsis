@@ -158,9 +158,9 @@ def account_get(_id=None):
 	#	return HTTPError(403, 'Insufficient rights')
 
 	limit = int(request.params.get('limit', default=20))
-	page =  int(request.params.get('page', default=0))
+	#page =  int(request.params.get('page', default=0))
 	start =  int(request.params.get('start', default=0))
-	groups = request.params.get('groups', default=None)
+	#groups = request.params.get('groups', default=None)
 	search = request.params.get('search', default=None)
 
 	logger.debug("GET:")
@@ -170,9 +170,9 @@ def account_get(_id=None):
 	logger.debug(" + Ctype: "+str(ctype))
 	logger.debug(" + _id: "+str(_id))
 	logger.debug(" + Limit: "+str(limit))
-	logger.debug(" + Page: "+str(page))
+	#logger.debug(" + Page: "+str(page))
 	logger.debug(" + Start: "+str(start))
-	logger.debug(" + Groups: "+str(groups))
+	#logger.debug(" + Groups: "+str(groups))
 	logger.debug(" + Search: "+str(search))
 
 	storage = get_storage(namespace=namespace)
