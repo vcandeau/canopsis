@@ -21,10 +21,12 @@
 from cengine import cengine
 from caccount import caccount
 from cstorage import get_storage
-from pyperfstore import node
-from pyperfstore import mongostore
+#from pyperfstore import node
+#from pyperfstore import mongostore
+import pyperfstore2
 import cevent
 import time
+import logging
 
 NAME="sla"
 
@@ -46,11 +48,10 @@ class engine(cengine):
 		self.default_sla_timewindow = 60*60*24 # 1 day
 		
 		self.default_sla_output_tpl="{cps_pct_by_state_0}% Ok, {cps_pct_by_state_1}% Warning, {cps_pct_by_state_2}% Critical, {cps_pct_by_state_3}% Unknown"
-		
-		self.perfstorage = mongostore(mongo_collection='perfdata')
 
 	def pre_run(self):
 		self.storage = get_storage(namespace='object', account=caccount(user="root", group="root"))
+		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
 		self.beat()
 		
 	def split_state(self, value):
@@ -70,24 +71,21 @@ class engine(cengine):
 			
 		return (state, state_type, extra)
 	
-	def get_states(self, nodeId, metric, start, stop):
-		#Load perfstore Node
-		mynode = node(_id=nodeId, storage=self.perfstorage)
-		
-		# Get Values
-		points = mynode.metric_get_values(
-			dn=metric,
-			tstart=start,
-			tstop=stop,
-			aggregate=False
-		)
+	def get_states(self, name, metric, start, stop):
+		metric_name = '%s%s' % (name,metric)
+		points = self.manager.get_points(name=metric_name, tstart=start, tstop=stop)
+
 		return points
 		
 	def get_rk(self, name):
 		return "sla.engine.sla.resource.%s.sla" % name
+		
+	def get_name(self,name):
+		return '%ssla' % name
 	
 	def calcul_time_by_state(self, _id, config):
 		rk = config['rk']
+		name = config['name']
 		
 		self.logger.debug("Calcul time by state")
 		self.logger.debug(" + Get States of %s (%s)" % (_id, rk))
@@ -104,8 +102,8 @@ class engine(cengine):
 		self.logger.debug(" + start:          %s" % start)
 		self.logger.debug(" + stop:           %s" % stop)
 			
-		points = self.get_states(rk, "cps_state", start, stop)
-			
+		points = self.get_states(name, "cps_state", start, stop)
+					
 		if len(points) >= 2:
 				
 			first_point = points[0]
@@ -157,30 +155,28 @@ class engine(cengine):
 			
 			# Store result in perfstore
 			# Don't submit Canopsis event because data it's just for next calcul
-			rk  = self.get_rk(config['name'])
-			slanode = node( _id=rk,
-							 dn=[ config['name'], "sla" ],
-							 storage=self.perfstorage,
-							 point_per_dca=300,
-							 rotate_plan={'PLAIN': 0, 'TSC': 3,}
-			)
-			
+
 			for state in states_sum:
-				#perf_data_array.append({"metric": 'cps_time_by_state_%s' % state, "value": states_sum[state], "unit": "s"})
-				slanode.metric_push_value(	dn = 'cps_time_by_state_%s' % state,
-											unit = "s",
-											value = states_sum[state],
-											timestamp = last_timestamp
-				)
-				
-			self.storage.update(_id, {'sla_lastcalcul': last_timestamp, 'sla_node_id': slanode._id})
-			return slanode
+				metric_name = 'cps_time_by_state_%s' % state
+				self.manager.push(	name="%ssla%s" % (name,metric_name),
+									value=states_sum[state],
+									timestamp=last_timestamp,
+									meta_data={	 
+												'co': name, 
+												're': 'sla', 
+												'me': metric_name ,
+												'unit':'s'}
+								)
+
+			meta_id = self.manager.get_meta_id(name="%ssla" % name)
+			self.storage.update(_id, {'sla_lastcalcul': last_timestamp, 'sla_node_id': meta_id})
+			return meta_id
 		else:
 			self.logger.debug(" + You must have more points for calcul SLA")
 			return None
 	
 	
-	def calcul_state_by_timewindow(self, _id, config, slanode):
+	def calcul_state_by_timewindow(self, _id, config, sla_id):
 		rk  = self.get_rk(config['name'])
 		
 		self.logger.debug("Calcul state by timewindow")
@@ -226,13 +222,13 @@ class engine(cengine):
 		
 		for state in states:
 			self.logger.debug("Get %s (%s) time's:" % (states_str[state], state))
-			
-			points = slanode.metric_get_values(
-						dn='cps_time_by_state_%s' % state,
-						tstart=start - self.beat_interval,
-						tstop=stop,
-						aggregate=False
-			)
+
+			metric_name = "%sslacps_time_by_state_%s" % (config['name'],state)
+			points = self.manager.get_points(	name=metric_name,
+												tstart=start - self.beat_interval,
+												tstop=stop,
+												raw=True
+											)
 			
 			if points:
 				first_timestamp = points[0][0]
@@ -324,12 +320,12 @@ class engine(cengine):
 			configs[record._id]['_id'] =record._id
 		
 		for _id in configs:
-			slanode = self.calcul_time_by_state(_id, configs[_id])
+			sla_id = self.calcul_time_by_state(_id, configs[_id])
 			self.counter_event += 1
 			
-			if slanode:
+			if sla_id:
 				########## calcul_state_by_timewindow
-				self.calcul_state_by_timewindow(_id, configs[_id], slanode)
+				self.calcul_state_by_timewindow(_id, configs[_id], sla_id)
 				self.counter_event += 1
 				
 		self.counter_worktime += time.time() - start

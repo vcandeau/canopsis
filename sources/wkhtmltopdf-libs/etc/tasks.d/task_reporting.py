@@ -38,7 +38,7 @@ logger 	= init.getLogger('Reporting Task')
 
 @task
 @decorators.log_task
-def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None):
+def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, account=None, wrapper_conf_file=None, mail=None, owner=None):
 
 	if viewname is None:
 		raise ValueError("task_render_pdf : you must at least provide a viewname")
@@ -104,7 +104,7 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		result = wkhtmltopdf.wrapper.run(settings)
 		result.wait()
 		logger.debug('Put it in grid fs')
-		id = put_in_grid_fs(file_path, filename, account)
+		id = put_in_grid_fs(file_path, filename, account,owner)
 		logger.debug('Remove tmp report file')
 		os.remove(file_path)
 		
@@ -139,11 +139,15 @@ def render_pdf(filename=None, viewname=None, starttime=None, stoptime=None, acco
 		
 
 @task
-def put_in_grid_fs(file_path, file_name, account):
+def put_in_grid_fs(file_path, file_name, account,owner=None):
 	storage = cstorage(account, namespace='files')
 	report = cfile(storage=storage)
 	report.put_file(file_path, file_name, content_type='application/pdf')
 	report.data['creationTs'] = int(time.time())
+	
+	if owner:
+		report.chown(owner)
+	
 	id = storage.put(report)
 	if not report.check(storage):
 		logger.error('Report not in grid fs')

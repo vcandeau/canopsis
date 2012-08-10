@@ -257,7 +257,6 @@ Ext.define('widgets.weather.brick' , {
 
 		var popup = Ext.create('widgets.weather.edit_message_popup',config)
 		popup.show()
-		
 	},
 	
 
