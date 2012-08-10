@@ -266,3 +266,23 @@ rdr_display_groups = function(groups){
 	return output
 }
 
+
+rdr_country = function ( val ) {
+	dicCountry = {
+		'france': 'fr',
+		'usa' : 'us',
+		'espagne': 'es'
+	} ;
+	
+	if ( dicCountry[ val.toLowerCase() ] )
+		return "<span class=\"icon icon-country-"+dicCountry[val.toLowerCase()]+"\" />" ;
+	else return val ;
+}
+
+rdr_os = function ( val ) {
+	return "<span class=\"icon icon-os-"+val.toLowerCase()+"\" />" ;
+}
+
+rdr_browser = function ( val ) {
+	return "<span class=\"icon icon-browser-"+val.toLowerCase()+"\" />" ;
+}

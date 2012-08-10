@@ -59,6 +59,7 @@ Ext.define('widgets.stepeue.stepeue' , {
         },
         findPerfData: function (records ) {
 //              var gId = record.connector +"\."+record.connector_name+"\."+record.event_type+"\.resource\."+record.component+"\."+scenario+"*";
+		console.log (records )  ;
                 url = this.urlPerfStore
 		post_params_tmp = new Array() ;
 		for ( i in records ) {
@@ -74,7 +75,6 @@ Ext.define('widgets.stepeue.stepeue' , {
                         method: 'POST',
                         success: function(response) {
                                 var data = Ext.JSON.decode(response.responseText);
-				console.log(data) ;
 				arrayOfNodeAndValue =   {}  ;
                   		for ( i in data.data ) {
 					if ( arrayOfNodeAndValue[data.data[i].node] == null )
@@ -94,6 +94,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 		                                     myArrVal.push( values[j][1] ) ;
 
 					}
+					
                         	        record.graphData = "<span class=\"line-graph\">" + myArrVal.join(', ') + "</span>" ;
                                 	record.values = data.values;
 					this.graphData[i] = record ;
@@ -193,19 +194,14 @@ Ext.define('widgets.stepeue.stepeue' , {
 				this.lastTimestamp[records[i].raw.child] = records[i].raw.timestamp ;
 			}
 		}
-		var indexToTest = 0 ;
 		var findPerfData = new Array() ;
                 for ( i in this.arboStructure ) {
 			for ( j in this.arboStructure[i] ) {
-				indexToTest++ ;
-				var buildHtml = false ;
-				if ( index == indexToTest )  buildHtml = true ;
-				console.log ( index ) ;
-				console.log ( indexToTest ) ;
                         	var current = this.arboStructure[i][j][this.lastContext[i]['localization'] ] [this.lastContext[i]['os']][this.lastContext[i]['browser'] ];
 				findPerfData.push( current.raw ) ;
 			}
                 }
+		console.log( findPerfData ) ;
                	this.findPerfData( findPerfData ) ;
 
 //		this.buildHtml() ;
@@ -214,13 +210,12 @@ Ext.define('widgets.stepeue.stepeue' , {
 
         buildOtherInfoTitle : function( current ) {
                 //return "<table><tr><td>localization</td><td>"+current.cntxt_localization+"</td></tr><tr><td>OS</td><td>"+current.cntxt_os+"</td></tr><tr><td>browser</td><td>"+current.cntxt_browser+"</td></tr></table>" ;
-		return "<span class=\"context-info\">"+current.cntxt_localization+" - "+current.cntxt_os+" - "+current.cntxt_browser+"</span>" ;
+		return "<div class=\"context-info\"><div class=\"country\">"+rdr_country( current.cntxt_localization ) +"</div><div class=\"os\"> "+rdr_os( current.cntxt_os ) +"</div><div class=\"browser\">"+rdr_browser( current.cntxt_browser ) +"</div></div>" ;
         },
 	writeTitleScenario: function ( i, id_child) {
 		
 
 		currentRecord = this.arboStructure[id_child][i][this.lastContext[id_child]['localization'] ][this.lastContext[id_child]['os']][this.lastContext[id_child]['browser'] ]; // [i][this.cntxtFeature['localization']][this.cntxtFeature['os']][this.cntxtFeature['browser']] ;
-		console.log ( currentRecord ) ;
 		return "<div><div class=\"scenario-status\">"+ rdr_status( currentRecord.data.state )  +"</div><div class=\"title-bar-scenario\"> <span class=\"scenario-title\">"+i+"</span><span>"+ rdr_tstodate( currentRecord.data.timestamp ) + " | "+ currentRecord.data.perf_data_array[0].value + " "+currentRecord.data.perf_data_array[0].unit + "</span></div><div class=\"other-info-title\"><div>"+this.buildOtherInfoTitle( currentRecord.raw ) +"</div></div><div class=\"graph-data\">"+ this.graphData[currentRecord.data._id].graphData  +"</div></div>";
 	
 //		console.log ( eventStore.find ( 'child', id_child )  ) ;
@@ -266,9 +261,9 @@ Ext.define('widgets.stepeue.stepeue' , {
 				lineToSpanOS = 0 ;
 				var firstOS = true;
 				for ( browser in this.arboStructure[id_child][i][loc][os] ) {
-					var cellLoc = { html: loc } ;
-					var cellOs = { html: os } ;
-					var cellBrowser = { html: browser }
+					var cellLoc = { html: rdr_country( loc ) } ;
+					var cellOs = { html: rdr_os( os ) } ;
+					var cellBrowser = { html: rdr_browser(browser) }
 					var cellDuration = { html: this.arboStructure[id_child][i][loc][os][browser].data.perf_data_array[0].value + " "+ this.arboStructure[id_child][i][loc][os][browser].data.perf_data_array[0].unit } ;
 					var cellTimestamp = { html: rdr_tstodate ( this.arboStructure[id_child][i][loc][os][browser].data.timestamp ) } ;
 					var cellStatus = { html: rdr_status ( this.arboStructure[id_child][i][loc][os][browser].data.state ) }
@@ -303,7 +298,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 			border: false,
     			layout:{ type: "table", columns: 6 },
 			defaults: {
-				padding: "5%"
+				padding: "3%"
 			},
 			items: listItem 
 		}  ;
@@ -315,7 +310,7 @@ Ext.define('widgets.stepeue.stepeue' , {
 			var currentNode = this.arboStructure[id_child][i][context['localization']][context['os']][context['browser']] ;
 			if ( currentNode.raw.media_type == 'screenshot' ) {
 				if ( ! this.useStepScreenShot ) {
-			                var srcImg = currentNode.raw.media_server_url + "/"+currentNode.raw.media_name ;
+			                var srcImg = "/files/" ; //+currentNode.raw.media_id ;
 					this.imgToBuildWindow.push ( "img-"+currentNode.raw.resource ) ;
                 			return Ext.create( 'Ext.Img', {
                         			id: "img-"+currentNode.raw.resource,
@@ -406,43 +401,102 @@ Ext.define('widgets.stepeue.stepeue' , {
 	},
 	buildHtml : function ( ) {
 		var listItem = [ ] ;
+		var j = 0 ;
+		var videoString ;
+		console.log (this.eventsLoaded )  ;
 		for ( i in  this.eventsLoaded ) {
 			var item = { } ;
-			item.title = this.eventsLoaded[i].resource
+			item.id = "tab-"+i
+			item.title = this.eventsLoaded[i].resource ;
+			console.log( this.eventsLoaded[i] ) ; 
 			var subtitle =  this.eventsLoaded[i].description;
 			item.width = "100%" ;
 			item.height = "100%" ;
-			//item.border = false ;
+			var media_id = this.eventsLoaded[i].media_id ;
+			console.log ( media_id );
+			var ts = this.eventsLoaded[i].timestamp ;
+			//item.border = falseu ;
 			item.layout = "fit";
 			item.items = this.buildFeaturePresentation( this.eventsLoaded[i]._id, subtitle ) ;
 			listItem.push( item ) ;
+ 			if ( j == 0 )
+				videoString = "<video controls=\"controls\" width=\"80%\" src=\"/files/"+media_id+"\">video of the last play Feature </video><br/>"+item.title+" - "+rdr_tstodate( ts ) ;
+			j++;
 		}
-                this.content = Ext.create('Ext.tab.Panel', {
-			items: listItem
+		var videoPanel =  {
+			xtype:"panel",
+			id : "panel-video-stepbystep",
+			html: videoString,
+			flex: 1 
+
+		} ; 
+                var tabsPanel = Ext.create('Ext.tab.Panel', {
+			xtype: "Panel",
+			items: listItem,
+			flex:1,
+			listeners : {
+				tabchange: function ( tabpanel, tab, old ) {
+					var el = Ext.getCmp("panel-video-stepbystep");
+					el =  el.getContentTarget() 
+					videoString = "<video controls=\"controls\" width=\"80%\" src=\"/files/"+this.eventsLoaded[tab.id].media_id+"\">video of the last play Feature </video><br/>"+this.eventsLoaded[tab.id].resource+" - "+rdr_tstodate( this.eventsLoaded[tab.id].timestamp ) ;
+					el.setHTML( videoString ) ;
+					this.buildGraph() ;
+				}
+			}
 
                 });
+		this.content = Ext.create('Ext.Panel', {
+			layout: {
+				type: "hbox",
+				align: "stretch"
+			},
+			items: [tabsPanel, videoPanel ] 
+		} ) ;
+/*			
+			                var gWidth = $('.line-graph').width() ;
+			                var gHeight = $('.line-graph').height() ;
+			                $(".line-graph").sparkline("html", { type: "bar",  height: gHeight, width:gWidth, tooltipClassname : "tooltip" } ) ;
+		
+					for ( i in this.imgToBuildWindow ) {
+						var el = Ext.get(this.imgToBuildWindow[i] ) ;
+						el.addListener( 'click', function(ev, element, o ) {
+							var attr = element.getAttribute('src' ) ;
+							var img = Ext.create( 'Ext.Img', {
+                                                	src: attr,
+		                                        width: "65%"
+                	                        	} ) ;
+							Ext.create('Ext.window.Window', {
+								xtype: "xpanel",
+								width:"75%",
+								items: [img ]
+							}).show();
+						} ) ;
+					}
+*/
                 this.wcontainer.removeAll();
                 this.wcontainer.add(this.content);
-                var gWidth = $('.line-graph').width() ;
-                var gHeight = $('.line-graph').height() ;
-                $(".line-graph").sparkline("html", { type: "bar",  height: gHeight, width:gWidth, tooltipClassname : "tooltip" } ) ;
+		this.buildGraph() ;
+	},
+	buildGraph : function () {
+			                var gWidth = $('.line-graph').width() ;
+			                var gHeight = $('.line-graph').height() ;
+			                $(".line-graph").sparkline("html", { type: "bar",  height: gHeight, width:gWidth, tooltipClassname : "tooltip" } ) ;
 		
-		for ( i in this.imgToBuildWindow ) {
-			var el = Ext.get(this.imgToBuildWindow[i] ) ;
-			el.addListener( 'click', function(ev, element, o ) {
-				var attr = element.getAttribute('src' ) ;
-				var img = Ext.create( 'Ext.Img', {
-                                                src: attr,
-                                                width: "65%"
-                                        } ) ;
-				Ext.create('Ext.window.Window', {
-					xtype: "xpanel",
-					width:"75%",
-					items: [img ]
-				}).show();
-			} ) ;
-			
-		}
+					for ( i in this.imgToBuildWindow ) {
+						var el = Ext.get(this.imgToBuildWindow[i] ) ;
+						el.addListener( 'click', function(ev, element, o ) {
+							var attr = element.getAttribute('src' ) ;
+							var img = Ext.create( 'Ext.Img', {
+                                                	src: attr,
+		                                        width: "65%"
+                	                        	} ) ;
+							Ext.create('Ext.window.Window', {
+								xtype: "xpanel",
+								width:"75%",
+								items: [img ]
+							}).show();
+						} ) ;
+					}
 
 	}
 });

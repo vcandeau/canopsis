@@ -48,9 +48,9 @@ class engine(cengine):
 			return event
 		
 		## Archive event
-		if event_type == 'perf':
+		if event_type == 'perf' :
 			pass
-		elif   event_type == 'check' or event_type == 'selector' or event_type == 'sla' or event_type == 'eue':
+		elif event_type == 'check' or event_type == 'selector' or event_type == 'sla' or event_type == 'eue':
 
 			_id = self.archiver.check_event(event_id, event)
 			if _id:

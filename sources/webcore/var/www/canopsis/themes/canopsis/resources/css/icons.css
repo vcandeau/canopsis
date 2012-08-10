@@ -27,6 +27,16 @@
 	background-position:center; 
 }
 
+.icon-big {
+	display: block;
+	width: 32px;
+	height:32px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
+	
+}
+
 .icon-loading { 
     background-image: url(../images/ajax-loader.gif) !important; 
 } 
@@ -65,14 +75,6 @@
 
 .icon-search { 
     background-image: url(../images/icons/magnifier.png) !important; 
-}
-
-.icon-calendar { 
-    background-image: url(../images/icons/calendar.png) !important; 
-}
-
-.icon-clean {
-	background-image: url(../images/Tango-Blue-Materia/16x16/actions/edit-clear.png) !important; 
 }
 
 /*
@@ -169,10 +171,6 @@
 	background-image: url(../images/icons/eye.png) !important;
 }
 
-.icon-import {
-	background-image: url(../images/Tango-Blue-Materia/16x16/actions/gtk-unindent.png) !important;
-}
-
 /* Mainbar */
 
 .icon-mainbar-run { 
@@ -251,10 +249,6 @@
     background-image: url(../images/icons/comment.png) !important;
 }
 
-.icon-enable-disable { 
-    background-image: url(../images/icons/true.png) !important;
-}
-
 /* state */
 
 /*.icon-state-0 { 
@@ -274,7 +268,7 @@
 }
 
 .icon-state-3 { 
-    background-image: url(../images/states/3.png) !important; 
+    background-image: url(../images/states/1.png) !important; 
 }
 
 /*  state_type  */
@@ -358,4 +352,45 @@
 
 .icon-control-repeat, .x-tool-repeat { 
     background-image: url(../images/icons/control_repeat.png) !important; 
+}
+
+.icon-country-fr {
+    background-image: url(../images/icons/countries/fr.png) !important ;
+}
+
+
+.icon-country-es {
+    background-image: url(../images/icons/countries/es.png) !important ;
+}
+
+.icon-country-us {
+    background-image: url(../images/icons/countries/us.png) !important ;
+}
+
+.icon-os-linux {
+    background-image: url(../images/icons/os/linux-32.png) !important ;
+}
+
+.icon-os-windows {
+    background-image: url(../images/icons/os/windows-32.png) !important ;
+}
+
+.icon-os-mac {
+    background-image: url(../images/icons/os/mac-32.png) !important ;
+}
+
+.icon-browser-firefox {
+    background-image: url(../images/icons/browser/firefox-32.png) !important ;
+}
+.icon-browser-safari {
+    background-image: url(../images/icons/browser/safari-32.png) !important ;
+}
+.icon-browser-chrome {
+    background-image: url(../images/icons/browser/chrome-32.png) !important ;
+}
+.icon-browser-opera {
+    background-image: url(../images/icons/browser/opera-32.png) !important ;
+}
+.icon-browser-firefox {
+    background-image: url(../images/icons/browser/firefox-32.png) !important ;
 }
