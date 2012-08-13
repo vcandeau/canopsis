@@ -84,7 +84,7 @@ Ext.define('widgets.weather.downtime_popup' , {
 			title: _('Downtime'),
 			layout: {
 				type: 'vbox',
-				align: 'left'
+				align: 'center'
 			},
 			items: [{
 					xtype: 'checkbox',
@@ -105,13 +105,13 @@ Ext.define('widgets.weather.downtime_popup' , {
 								name : 'fromDate',
 								value:new Date(),
 								editable: false,
-								width: 120
+								width: 150
 							},{
 								xtype: 'textfield',
 								name: 'fromHour',
 								value: '00:00 am',
 								margin : '0 0 0 5',
-								width: 60,
+								width: 75,
 								regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 							}]
 				},{
@@ -128,13 +128,13 @@ Ext.define('widgets.weather.downtime_popup' , {
 								value:new Date(),
 								labelWidth:40,
 								editable: false,
-								width: 120
+								width: 150
 							},{
 								xtype: 'textfield',
 								name: 'toHour',
 								value: '00:00 am',
 								margin : '0 0 0 5',
-								width: 60,
+								width: 75,
 								regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 							}]
 				}]
