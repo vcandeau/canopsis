@@ -56,49 +56,6 @@ logger.debug(" + pyperfstore_aggregate_method: %s" % pyperfstore_aggregate_metho
 
 #########################################################################
 
-#### GET@
-@get('/perfstore/:component/:resource/:metrics',apply=[check_auth])
-@get('/perfstore/:component/:metrics',apply=[check_auth])
-def get_values(component=None,resource=None,metrics=None):
-	if not component:
-		logger.warning("Invalid arguments: component is not defined")
-		return HTTPError(404, "Invalid arguments")
-		
-	if not isinstance(metrics,list):
-		metrics = [metrics]
-		
-	time_interval = request.params.get('interval', default=None)
-	aggregate_method = request.params.get('aggregate_method', default=None)
-	use_window_ts = request.params.get('use_window_ts', default=None)
-	
-	start = request.params.get('start', default=None)
-	stop = request.params.get('stop', default=None)
-	
-	logger.debug("Get:")
-	logger.debug(" + component: %s" % component)
-	if resource:
-		logger.debug(" + resource: %s" % resource)
-	logger.debug(" + metrics: %s" % metrics)
-	logger.debug(" + start: %s" % start)
-	logger.debug(" + stop: %s" % stop)
-	logger.debug(" + aggregate_method: %s" % aggregate_method)
-	logger.debug(" + use_window_ts:    %s" % use_window_ts)
-	logger.debug(" + time_interval:    %s" % time_interval)
-	
-	output = []
-	
-	for metric in metrics:
-		if resource:
-			_id = manager.get_meta_id('%s%s%s' % (component,resource,metric))
-		else:
-			_id = manager.get_meta_id('%s%s' % (component,metric))
-			
-		output += perfstore_get_values(_id, start, stop, time_interval, aggregate_method, use_window_ts)
-
-	output = {'total': len(output), 'success': True, 'data': output}
- 
-	return output
-
 #### POST@
 @post('/perfstore/values',apply=[check_auth])
 @post('/perfstore/values/:start/:stop',apply=[check_auth])
@@ -136,6 +93,49 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 		output += perfstore_get_values(meta['id'], start, stop, time_interval, aggregate_method, use_window_ts)
 
 	
+	output = {'total': len(output), 'success': True, 'data': output}
+ 
+	return output
+	
+#### GET@
+@get('/perfstore/values/:component/:resource/:metrics',apply=[check_auth])
+@get('/perfstore/values/:component/:metrics',apply=[check_auth])
+def get_values(component=None,resource=None,metrics=None):
+	if not component:
+		logger.warning("Invalid arguments: component is not defined")
+		return HTTPError(404, "Invalid arguments")
+		
+	if not isinstance(metrics,list):
+		metrics = [metrics]
+		
+	time_interval = request.params.get('interval', default=None)
+	aggregate_method = request.params.get('aggregate_method', default=None)
+	use_window_ts = request.params.get('use_window_ts', default=None)
+	
+	start = request.params.get('start', default=None)
+	stop = request.params.get('stop', default=None)
+	
+	logger.debug("Get:")
+	logger.debug(" + component: %s" % component)
+	if resource:
+		logger.debug(" + resource: %s" % resource)
+	logger.debug(" + metrics: %s" % metrics)
+	logger.debug(" + start: %s" % start)
+	logger.debug(" + stop: %s" % stop)
+	logger.debug(" + aggregate_method: %s" % aggregate_method)
+	logger.debug(" + use_window_ts:    %s" % use_window_ts)
+	logger.debug(" + time_interval:    %s" % time_interval)
+	
+	output = []
+	
+	for metric in metrics:
+		if resource:
+			_id = manager.get_meta_id('%s%s%s' % (component,resource,metric))
+		else:
+			_id = manager.get_meta_id('%s%s' % (component,metric))
+			
+		output += perfstore_get_values(_id, start, stop, time_interval, aggregate_method, use_window_ts)
+
 	output = {'total': len(output), 'success': True, 'data': output}
  
 	return output
