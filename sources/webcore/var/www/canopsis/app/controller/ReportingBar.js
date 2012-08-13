@@ -71,9 +71,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	nextButton: function() {
 		log.debug('Next button pressed', this.logAuthor);
-		var dateField = this.bar.fromDate;
+		var dateField = this.bar.fromTs;
 
-		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), 'U'));
+		var selectedTime = dateField.getValue();
 		var timeUnit = this.bar.combo.getValue();
 
 		var timestamp = selectedTime + (timeUnit * this.bar.periodNumber.getValue());
@@ -84,9 +84,9 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	previousButton: function() {
 		log.debug('Previous button pressed', this.logAuthor);
-		var dateField = this.bar.fromDate;
+		var dateField = this.bar.fromTs;
 
-		var selectedTime = parseInt(Ext.Date.format(dateField.getValue(), 'U'));
+		var selectedTime = dateField.getValue();
 		var timeUnit = this.bar.combo.getValue();
 
 		var timestamp = selectedTime - (timeUnit * this.bar.periodNumber.getValue());
@@ -133,12 +133,12 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	getReportTime: function() {
 		if (this.bar.advancedMode) {
-			var startTimestamp = this.getTimestamp(this.bar.fromDate, this.bar.fromHour);
-			var stopTimestamp = this.getTimestamp(this.bar.toDate, this.bar.toHour);
+			var startTimestamp = this.bar.fromTs.getValue();
+			var stopTimestamp = this.bar.toTs.getValue();
 		} else {
 			var timeUnit = this.bar.combo.getValue();
 			var periodLength = this.bar.periodNumber.getValue();
-			var stopTimestamp = this.getTimestamp(this.bar.fromDate, this.bar.fromHour);
+			var stopTimestamp = this.bar.fromTs.getValue();
 			var startTimestamp = stopTimestamp - (timeUnit * periodLength);
 		}
 		return {start: startTimestamp, stop: stopTimestamp};
@@ -177,8 +177,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 
 	toggle_mode: function() {
 		if (this.bar.advancedMode) {
-			this.bar.toDate.hide();
-			this.bar.toHour.hide();
+			this.bar.toTs.hide();
 			this.bar.textFrom.hide();
 			this.bar.textTo.hide();
 			this.bar.textFor.show();
@@ -189,8 +188,7 @@ Ext.define('canopsis.controller.ReportingBar', {
 			this.bar.combo.show();
 			this.bar.advancedMode = false;
 		}else {
-			this.bar.toDate.show();
-			this.bar.toHour.show();
+			this.bar.toTs.show();
 			this.bar.textFrom.show();
 			this.bar.textTo.show();
 			this.bar.textFor.hide();

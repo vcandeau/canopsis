@@ -83,24 +83,15 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 
 		this.textFrom = this.add({xtype: 'tbtext', text: _('From') + ': ', hidden: true});
 		this.textBefore = this.add({xtype: 'tbtext', text: _('Before') + ': '});
-
-		this.fromDate = this.add({
-			xtype: 'datefield',
-			//fieldLabel: _('From'),
-			//labelWidth:40,
-			editable: false,
-			width: 130,
-			value: yesterday,
-			maxValue: tommorow
-		});
-
-		this.fromHour = this.add({
-			xtype: 'textfield',
-			value: '00:00 am',
-			width: 70,
-			allowBlank: false,
-			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
-		});
+		
+		this.fromTs = this.add({
+			xtype:'cdate',
+			date_width: 130,
+			hour_width: 70,
+			date_value: yesterday,
+			max_value: tommorow,
+			display_labels: false
+		})
 
 		this.nextButton = this.add({
 			xtype: 'button',
@@ -110,26 +101,16 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 
 		this.textTo = this.add({xtype: 'tbtext', text: _('To') + ': ', hidden: true});
 
-		this.toDate = this.add({
-			xtype: 'datefield',
-			labelWidth: 20,
-			//fieldLabel: _('To'),
-			editable: false,
-			width: 130,
-			value: today,
-			maxValue: tommorow,
-			hidden: true
-		});
+		this.toTs = this.add({
+			xtype:'cdate',
+			date_width: 130,
+			hour_width: 70,
+			date_value: today,
+			max_value: tommorow,
+			hidden : true,
+			display_labels: false
+		})
 
-		this.toHour = this.add({
-			xtype: 'textfield',
-			//fieldLabel: _('Hours (local time)'),
-			value: '00:00 am',
-			width: 70,
-			allowBlank: false,
-			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/,
-			hidden: true
-		});
 
 		this.add('->');
 
