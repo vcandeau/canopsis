@@ -35,7 +35,7 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	hour_width : 75,
 	date_value: new Date(),
 	max_value : undefined,
-	display_labels: true,
+	label_text : undefined,
 	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
@@ -51,8 +51,8 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 			allowBlank: false
 		}
 		
-		if(this.display_labels)
-			config.fieldLabel =  _('From')
+		if(this.label_text)
+			config.fieldLabel =  this.label_text
 		
 		this.date = Ext.widget('datefield',config)
 		

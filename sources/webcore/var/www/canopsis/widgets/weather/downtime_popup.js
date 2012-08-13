@@ -93,10 +93,12 @@ Ext.define('widgets.weather.downtime_popup' , {
 					checked : true,
 				},{
 					xtype: 'cdate',
-					name: 'startTs'
+					name: 'startTs',
+					label_text : _('From')
 				},{
 					xtype: 'cdate',
-					name: 'stopTs'
+					name: 'stopTs',
+					label_text : _('To')
 				}]
 		})
 		
