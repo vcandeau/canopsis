@@ -37,13 +37,13 @@ class cfile(crecord):
 	
 	def get(self, storage):
 		self.storage = storage
-		return self.storage.get_data(self.data['data_id'])
+		return self.storage.get_binary(self.data['data_id'])
 
 	def remove(self, storage):
 		self.storage = storage
-		self.storage.remove_data(self.data['data_id'])
+		self.storage.remove_binary(self.data['data_id'])
 		self.storage.remove(self._id)
 
 	def check(self, storage):
 		self.storage = storage
-		return self.storage.check_data(self.data['data_id'])
+		return self.storage.check_binary(self.data['data_id'])
