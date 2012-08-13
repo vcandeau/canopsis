@@ -98,9 +98,11 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	return output
 	
 #### GET@
-@get('/perfstore/values/:component/:resource/:metrics',apply=[check_auth])
 @get('/perfstore/values/:component/:metrics',apply=[check_auth])
-def get_values(component=None,resource=None,metrics=None):
+@get('/perfstore/values/:component/:resource/:metrics',apply=[check_auth])
+@get('/perfstore/values/:component/:resource/:metrics/:start',apply=[check_auth])
+@get('/perfstore/values/:component/:resource/:metrics/:start/:stop',apply=[check_auth])
+def get_values(component=None,resource=None,metrics=None,start=None,stop=None):
 	if not component:
 		logger.warning("Invalid arguments: component is not defined")
 		return HTTPError(404, "Invalid arguments")
@@ -112,8 +114,10 @@ def get_values(component=None,resource=None,metrics=None):
 	aggregate_method = request.params.get('aggregate_method', default=None)
 	use_window_ts = request.params.get('use_window_ts', default=None)
 	
-	start = request.params.get('start', default=None)
-	stop = request.params.get('stop', default=None)
+	if not start:
+		start = request.params.get('start', default=None)
+	if not stop:
+		stop = request.params.get('stop', default=None)
 	
 	logger.debug("Get:")
 	logger.debug(" + component: %s" % component)
