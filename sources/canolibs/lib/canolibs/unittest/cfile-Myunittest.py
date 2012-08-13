@@ -20,80 +20,99 @@
 
 import unittest
 
+import logging
+logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s')
+
 from cfile import cfile
 from caccount import caccount
-from cstorage import cstorage
+from cstorage import get_storage
 
-class KnownValues(unittest.TestCase): 
-	def setUp(self):
-		self.anonymous_account = caccount()
-		self.root_account = caccount(user="root", group="root")
-		self.storage = cstorage(self.root_account, namespace='unittest')
-		self.data = {}
+anonymous_account = caccount()
+root_account = caccount(user="root", group="root")
 
-		self.my_file = '/opt/canopsis/bin/pydoc'
-		self.my_data = 'JAMBON123'
+storage = get_storage(account=root_account , namespace='unittest', logging_level=logging.DEBUG)
+
+sample_file_path = '/opt/canopsis/bin/pydoc'
+sample_binary = open(sample_file_path, 'r').read()
+
+sample_binary2 = open('/opt/canopsis/bin/python', 'r').read()
+
+myfile = None
+
+class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
-		file = cfile()
-		if file.data != self.data:
+		global myfile
+		myfile = cfile(storage=storage)
+		
+		if myfile.data != {}:
+			raise Exception('Data corruption ...')
+			
+	def test_02_put_data(self):
+		myfile.put_data(sample_binary2)
+
+		if myfile.binary != sample_binary2:
 			raise Exception('Data corruption ...')
 
-	def test_02_Givefile(self):
-		global file
-		file = cfile(storage=self.storage)
-		file.put_file(self.my_file)
+	def test_03_save_data(self):
+		global meta_id, bin_id
+		meta_id = myfile.save()
+		bin_id = myfile.data['binary_id']
+		
+		print "Meta Id: %s, Binary Id: %s" % (meta_id, bin_id)
+		
+		if not bin_id or not meta_id:
+			raise Exception('Impossible to save cfile')
+			
+	def test_04_put_file(self):
+		myfile.put_file(sample_file_path)
 
-		if file.data['bin_data'] != open(self.my_file,'r').read():
+		if myfile.binary != sample_binary:
 			raise Exception('Data corruption ...')
 
-	def test_03_Givedata(self):
-		global data
-		data = cfile(storage=self.storage)
-		data.put_data(self.my_data)
+	def test_05_save_file(self):
+		global meta_id, bin_id
+		meta_id = myfile.save()
+		
+		bin_id = myfile.data['binary_id']
+		if not bin_id or not meta_id:
+			raise Exception('Impossible to save cfile')
+		
+	def test_06_Rights(self):
+	
+		with self.assertRaises(ValueError):
+			storage.put(myfile, account=anonymous_account)
 
-		if data.data['bin_data'] != self.my_data:
+		with self.assertRaises(ValueError):
+			storage.remove(myfile, account=anonymous_account)		
+
+	def test_07_GetMeta(self):
+		meta = storage.get(meta_id)
+		if not meta:
+			raise Exception('Impossible to get meta data')
+			
+		print "Meta: %s" % meta
+			
+	def test_08_GetBinary(self):
+		binary = storage.get_binary(bin_id)
+		if not binary:
+			raise Exception('Impossible to get binary data')
+			
+		if binary != sample_binary:
 			raise Exception('Data corruption ...')
 
-	def test_04_Putfile(self):
-		global meta_file_id
-		meta_file_id = self.storage.put(file)
+	def test_09_RemoveFile(self):
+		myfile.remove()
 
-	def test_05_Putdata(self):
-		global meta_data_id
-		meta_data_id = self.storage.put(data)
-
-	def test_06_GetMetaFromFile(self):
-		global file_meta
-		file_meta = self.storage.get(meta_file_id)
-
-	def test_07_GetMetaFromData(self):
-		global data_meta
-		data_meta = self.storage.get(meta_data_id)
-
-	def test_08_GetDataFromFile(self):
-		global file_data
-		file_meta.__class__ = cfile
-		file_data = file_meta.get(self.storage)
-
-	def test_09_GetDataFromData(self):
-		global data_data
-		data_meta.__class__ = cfile
-		data_data = data_meta.get(self.storage)
-
-	def test_10_RemoveFile(self):
-		file_meta.remove(self.storage)		
-
-	def test_11_RemoveData(self):
-		data_meta.remove(self.storage)
-
-	def test_12_CheckFileRemove(self):
-		if file_meta.check(self.storage):
-			raise Exception('Data not deleted ...')
-
-	def test_13_CheckDataRemove(self):
-		if data_meta.check(self.storage):
-			raise Exception('Data not deleted ...')
+	def test_10_CheckFileRemove(self):
+		with self.assertRaises(KeyError):
+			binary = storage.get_binary(bin_id)
+			
+		with self.assertRaises(KeyError):
+			meta = storage.get(meta_id)
+		
+		if myfile.check():
+			raise Exception('cfile is not deleted ...')
 
 if __name__ == "__main__":
-	unittest.main(verbosity=1)
+	unittest.main(verbosity=2)

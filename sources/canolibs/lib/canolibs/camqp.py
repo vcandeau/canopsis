@@ -220,7 +220,7 @@ class camqp(threading.Thread):
 									'auto_delete': auto_delete
 							}
 
-	def publish(self, msg, routing_key, exchange_name=None):
+	def publish(self, msg, routing_key, exchange_name=None, serializer="json", compression=None, content_type=None, content_encoding=None):
 		self.wait_connection()
 		if self.connected:
 			if not exchange_name:
@@ -228,9 +228,11 @@ class camqp(threading.Thread):
 				
 			self.logger.debug("Send message to %s in %s" % (routing_key, exchange_name))
 			with producers[self.conn].acquire(block=True) as producer:
-				producer.publish(msg, serializer="json", compression=None, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
-			self.logger.debug(" + Sended")
-				
+				try:
+					producer.publish(msg, serializer=serializer, compression=compression, routing_key=routing_key, exchange=self.get_exchange(exchange_name))
+					self.logger.debug(" + Sended")
+				except Exception, err:
+					self.logger.error(" + Impossible to send (%s)" % err)
 		else:
 			self.logger.error("You are not connected ...")
 			

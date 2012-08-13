@@ -59,6 +59,7 @@ class cstorage(object):
 		self.mongo_safe=mongo_safe
 
 		self.account = account
+		self.root_account = caccount(user="root", group="root")
 
 		self.namespace=namespace
 		self.backend = None
@@ -113,6 +114,8 @@ class cstorage(object):
 	def backend_connect(self):
 		self.conn=Connection(self.mongo_host, self.mongo_port)
 		self.db=self.conn[self.mongo_db]
+		
+		self.fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
 
 		self.logger.debug("Connected.")
 
@@ -140,7 +143,7 @@ class cstorage(object):
 			backend = self.get_backend(namespace)
 			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
 		else:
-			raise Exception('%s not found ...' % _id)
+			raise KeyError("'%s' not found ..." % _id)
 		
 	def put(self, _record_or_records, account=None, namespace=None):
 		if not account:
@@ -161,11 +164,6 @@ class cstorage(object):
 		for record in records:
 			_id = record._id
 
-			if isinstance(record, cfile):
-				data_id = self.put_data(record.data['bin_data'], record.data['file_name'], record.data['content_type'])
-				del record.data['bin_data']
-				record.data['data_id'] = data_id
-
 			if not record.owner:
 				record.chown(account.user)
 	
@@ -173,14 +171,15 @@ class cstorage(object):
 				record.chgrp(account.group)
 
 			if _id:
-			## Update
+				## Update record
 				self.logger.debug("Try updating of %s" % _id)
+				
 				## Check rights
 				if account.user == 'root':
 					access = True
 				else:
 					try:
-						oldrecord = self.get(_id, namespace=namespace, account=account)
+						oldrecord = self.get(_id, namespace=namespace, account=self.root_account)
 						access = oldrecord.check_write(account)
 					except Exception, err:
 						## New record
@@ -190,6 +189,10 @@ class cstorage(object):
 
 				if access:
 					try:
+						## Check if record have binary and store in grid fs
+						if record.binary:
+							record.data['binary_id'] = self.put_binary(record.binary, record.data['file_name'], record.data['content_type'])
+						
 						record.write_time = int(time.time())
 						data = record.dump()
 						
@@ -214,9 +217,14 @@ class cstorage(object):
 					self.logger.error("Puts: Access denied ...")
 					raise ValueError("Access denied")
 			else:
-			## Insert
+				## Insert new record
 				self.logger.debug("Try inserting")
+				
 				try:
+					## Check if record have binary and store in grid fs
+					if record.binary:
+						record.data['binary_id'] = self.put_binary(record.binary, record.data['file_name'], record.data['content_type'])
+							
 					record.write_time = int(time.time())
 					data = record.dump()
 					## Del it if 'None'
@@ -338,7 +346,7 @@ class cstorage(object):
 
 		backend = self.get_backend(namespace)
 		
-		self.logger.debug(" + Get record '%s'" % _ids)
+		self.logger.debug(" + Get record(s) '%s'" % _ids)
 		if not len(_ids):
 			self.logger.debug("   + No ids")
 			return []
@@ -620,27 +628,27 @@ class cstorage(object):
 		else:
 			return False
 
-	def put_data(self, data, file_name, content_type):
+	def put_binary(self, data, file_name, content_type):
 		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
 		bin_id = fs.put(data, filename=file_name, content_type=content_type)
 		return bin_id
 
-	def get_data(self, data_id):
-		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
-		bin_data = fs.get(data_id).read()
-		bin_data = fs.get(data_id)
-		return bin_data
-
-	def remove_data(self, data_id):
-		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
+	def get_binary(self, _id):
 		try:
-			fs.delete(data_id)
+			cursor = self.fs.get(_id)
+		except:
+			raise KeyError("'%s' not found ..." % _id)
+			
+		return cursor.read()
+
+	def remove_binary(self, _id):
+		try:
+			self.fs.delete(_id)
 		except Exception, err:
 			self.logger.error('Error when remove binarie', err)
 	
-	def check_data(self, data_id):
-		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
-		return fs.exists(data_id)
+	def check_binary(self, _id):
+		return self.fs.exists(_id)
 	
 	def __del__(self):
 		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)

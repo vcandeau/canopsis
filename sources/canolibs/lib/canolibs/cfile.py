@@ -20,30 +20,34 @@
 from crecord import crecord
 
 class cfile(crecord):
-	def __init__(self, *args, **kargs):
-		crecord.__init__(self, *args, **kargs)
+	def __init__(self, storage, *args, **kargs):
+		crecord.__init__(self, storage=storage, *args, **kargs)
 		self.type = 'bin'
+		self.binary = None
 
 	def put_data(self, bin_data, file_name=None, content_type=None):
-		self.data['bin_data'] = bin_data
+		self.binary = bin_data
 		self.data['file_name'] = file_name
 		self.data['content_type'] = content_type 
 
 	def put_file(self, path, file_name=None, content_type=None):
-		self.data['bin_data'] = open(path,'r').read()
+		self.binary = open(path,'r').read()
 		self.data['file_name'] = file_name
 		self.name = file_name
 		self.data['content_type'] = content_type 
 	
-	def get(self, storage):
-		self.storage = storage
-		return self.storage.get_data(self.data['data_id'])
+	def get(self, storage=None):
+		if not storage:
+			storage = self.storage
+		return storage.get_binary(self.data['binary_id'])
 
-	def remove(self, storage):
-		self.storage = storage
-		self.storage.remove_data(self.data['data_id'])
-		self.storage.remove(self._id)
+	def remove(self, storage=None):
+		if not storage:
+			storage = self.storage
+		storage.remove_binary(self.data['binary_id'])
+		storage.remove(self._id)
 
-	def check(self, storage):
-		self.storage = storage
-		return self.storage.check_data(self.data['data_id'])
+	def check(self, storage=None):
+		if not storage:
+			storage = self.storage
+		return storage.check_binary(self.data['binary_id'])
