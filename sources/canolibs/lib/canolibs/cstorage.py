@@ -143,7 +143,7 @@ class cstorage(object):
 			backend = self.get_backend(namespace)
 			backend.update({ '_id': self.clean_id(_id) }, { "$set": data });
 		else:
-			raise Exception('%s not found ...' % _id)
+			raise KeyError("'%s' not found ..." % _id)
 		
 	def put(self, _record_or_records, account=None, namespace=None):
 		if not account:
@@ -634,7 +634,12 @@ class cstorage(object):
 		return bin_id
 
 	def get_binary(self, _id):
-		return self.fs.get(_id).read()
+		try:
+			cursor = self.fs.get(_id)
+		except:
+			raise KeyError("'%s' not found ..." % _id)
+			
+		return cursor.read()
 
 	def remove_binary(self, _id):
 		try:
