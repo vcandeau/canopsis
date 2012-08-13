@@ -113,6 +113,8 @@ class cstorage(object):
 	def backend_connect(self):
 		self.conn=Connection(self.mongo_host, self.mongo_port)
 		self.db=self.conn[self.mongo_db]
+		
+		self.fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
 
 		self.logger.debug("Connected.")
 
@@ -161,20 +163,22 @@ class cstorage(object):
 		for record in records:
 			_id = record._id
 
-			if isinstance(record, cfile):
-				data_id = self.put_data(record.data['bin_data'], record.data['file_name'], record.data['content_type'])
-				del record.data['bin_data']
-				record.data['data_id'] = data_id
-
 			if not record.owner:
 				record.chown(account.user)
 	
 			if not record.group:
 				record.chgrp(account.group)
 
+			## Check if record is cfile
+			if isinstance(record, cfile):
+				data_id = self.put_binary(record.data['bin_data'], record.data['file_name'], record.data['content_type'])
+				del record.data['bin_data']
+				record.data['data_id'] = data_id
+
 			if _id:
-			## Update
+				## Update record
 				self.logger.debug("Try updating of %s" % _id)
+				
 				## Check rights
 				if account.user == 'root':
 					access = True
@@ -214,8 +218,9 @@ class cstorage(object):
 					self.logger.error("Puts: Access denied ...")
 					raise ValueError("Access denied")
 			else:
-			## Insert
+				## Insert new record
 				self.logger.debug("Try inserting")
+				
 				try:
 					record.write_time = int(time.time())
 					data = record.dump()
@@ -620,27 +625,22 @@ class cstorage(object):
 		else:
 			return False
 
-	def put_data(self, data, file_name, content_type):
+	def put_binary(self, data, file_name, content_type):
 		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
 		bin_id = fs.put(data, filename=file_name, content_type=content_type)
 		return bin_id
 
-	def get_data(self, data_id):
-		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
-		bin_data = fs.get(data_id).read()
-		bin_data = fs.get(data_id)
-		return bin_data
+	def get_binary(self, _id):
+		return self.fs.get(_id).read()
 
-	def remove_data(self, data_id):
-		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
+	def remove_binary(self, _id):
 		try:
-			fs.delete(data_id)
+			self.fs.delete(_id)
 		except Exception, err:
 			self.logger.error('Error when remove binarie', err)
 	
-	def check_data(self, data_id):
-		fs = gridfs.GridFS(self.db, CONFIG.get("master", "gridfs_namespace"))
-		return fs.exists(data_id)
+	def check_binary(self, _id):
+		return self.fs.exists(_id)
 	
 	def __del__(self):
 		self.logger.debug("Object deleted. (namespace: %s)" % self.namespace)
