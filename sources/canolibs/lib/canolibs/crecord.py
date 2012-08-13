@@ -129,7 +129,7 @@ class crecord(object):
 			else:
 				storage = self.storage
 				
-		storage.put(self)
+		return storage.put(self)
 
 	def dump(self, json=False):
 		dump = self.data.copy()
