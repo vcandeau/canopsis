@@ -94,9 +94,9 @@ Ext.define('widgets.weather.brick' , {
 		//------------------build widget base config--------------
 		this.widget_base_config = {
 			id : this.id
-				};
+		};
 		
-		this.widget_base_config.button_text = 'report issue'
+		//this.widget_base_config.button_text = 'report issue'
 
 		if (this.component)
 			this.widget_base_config.title = this.component;
@@ -150,7 +150,8 @@ Ext.define('widgets.weather.brick' , {
 
 		var widget_data = {
 			legend: rdr_elapsed_time(data.last_state_change, true),
-			event_ts: rdr_tstodate(data.timestamp, true)
+			event_ts: rdr_tstodate(data.timestamp, true),
+			button_text: 'report issue'
 		};
 
 		if (data.output && data.output != '')
@@ -191,7 +192,7 @@ Ext.define('widgets.weather.brick' , {
 
 	buildReport: function(data) {
 		log.debug('Build html report for ' + this.event_type + ' ' + this.component, this.logAuthor);
-		var widget_data = {};
+		var widget_data = {	};
 
 		if (data) {
 			var timestamp = data.values[0][0];
@@ -228,7 +229,7 @@ Ext.define('widgets.weather.brick' , {
 		log.debug('Build empty brick for ' + this.event_type + ' ' + this.component, this.logAuthor);
 		var widget_data = {
 			output: _('No data for the selected information'),
-			class_icon: 'widget-weather-icon-info'
+			class_icon: 'widget-weather-icon-info',
 		};
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
