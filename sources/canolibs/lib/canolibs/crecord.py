@@ -129,9 +129,9 @@ class crecord(object):
 			mystorage=self.storage
 
 		if mystorage:
-			mystorage.put(self)
-		else:
-			pass
+			return mystorage.put(self)
+
+		return None
 
 	def dump(self, json=False):
 		dump = self.data.copy()
