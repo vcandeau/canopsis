@@ -93,12 +93,8 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Put_field failed ...')
 			
 		# Check right
-		try:
-			STORAGE.update(ID, {'mydata1': 'toto'}, account=self.user2_account)
-			raise Exception("Update don't check write rights ...")
-		except:
-			pass
-		
+		with self.assertRaises(KeyError):
+			STORAGE.update(ID, {'mydata1': 'toto'}, account=self.user2_account)		
 
 	def test_06_Get_field(self):
 		

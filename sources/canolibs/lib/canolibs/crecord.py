@@ -45,6 +45,7 @@ class crecord(object):
 		self.children_record = []
 		self._id = _id
 		self.enable = True
+		self.binary = None
 
 		if account:
 			self.owner=self.chown(account.user)
@@ -122,16 +123,13 @@ class crecord(object):
 		self.data = dump.copy()
 
 	def save(self, storage=None):
-		mystorage = None
-		if storage:
-			mystorage=storage
-		elif self.storage:
-			mystorage=self.storage
-
-		if mystorage:
-			mystorage.put(self)
-		else:
-			pass
+		if not storage:
+			if not self.storage:
+				raise Exception('For save you must specify storage')
+			else:
+				storage = self.storage
+				
+		return storage.put(self)
 
 	def dump(self, json=False):
 		dump = self.data.copy()
@@ -311,7 +309,7 @@ class crecord(object):
 		if str(_id) not in self.children:
 			self.children.append(str(_id))
 			record.parent.append(str(self._id))
-			if autosave:
+			if autosave and self.storage and record.storage:
 				self.save()
 				record.save()
 			
@@ -331,7 +329,7 @@ class crecord(object):
 		if str(_id) in self.children:
 			self.children.remove(str(_id))
 			record.parent.remove(str(self._id))
-			if autosave:
+			if autosave and self.storage and record.storage:
 				self.save()
 				record.save()
 		
@@ -348,12 +346,12 @@ class crecord(object):
 	
 	def set_enable(self, autosave=True):
 		self.enable = True
-		if autosave:
+		if autosave and self.storage:
 			self.save()
 
 	def set_disable(self, autosave=True):
 		self.enable = False
-		if autosave:
+		if autosave and self.storage:
 			self.save()
 
 def access_to_str(access):
