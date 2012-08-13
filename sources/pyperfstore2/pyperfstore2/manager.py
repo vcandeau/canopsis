@@ -74,7 +74,7 @@ class manager(object):
 			except:
 				exist = self.store.count(_id)
 				if exist:
-					self.logger.debug("Store '%s' in cache" % _id)
+					#self.logger.debug("Store '%s' in cache" % _id)
 					self.cache_ids[_id] = True
 					self.cached += 1
 		else:
