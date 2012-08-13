@@ -89,8 +89,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			date_width: 130,
 			hour_width: 70,
 			date_value: yesterday,
-			max_value: tommorow,
-			display_labels: false
+			max_value: tommorow
 		})
 
 		this.nextButton = this.add({
@@ -107,8 +106,7 @@ Ext.define('canopsis.view.ReportingBar.ReportingBar' , {
 			hour_width: 70,
 			date_value: today,
 			max_value: tommorow,
-			hidden : true,
-			display_labels: false
+			hidden : true
 		})
 
 
