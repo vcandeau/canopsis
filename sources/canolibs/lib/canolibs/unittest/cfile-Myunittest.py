@@ -32,10 +32,10 @@ root_account = caccount(user="root", group="root")
 
 storage = get_storage(account=root_account , namespace='unittest', logging_level=logging.DEBUG)
 
-sample_file_path = '/opt/canopsis/bin/pydoc'
-sample_binary = open(sample_file_path, 'r').read()
+sample_file_path = '/opt/canopsis/var/www/canopsis/themes/canopsis/resources/images/logo_small.png'
+sample_binary = open(sample_file_path, 'rb').read()
 
-sample_binary2 = open('/opt/canopsis/bin/python', 'r').read()
+sample_binary2 = bin(1234567890123456789)
 
 myfile = None
 
