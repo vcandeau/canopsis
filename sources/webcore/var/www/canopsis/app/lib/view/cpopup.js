@@ -43,13 +43,15 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	},
 	
 	buildForm : function(){
-		this._form = Ext.create('Ext.container.Container',{
+		this._form = Ext.create('Ext.form.Panel',{
 			flex: 1,
-			margin: '10 0 0 0',
+			margin: 10,
 			layout: {
 				type: 'anchor'
 			},
-			margin: 10,
+			bodyStyle:{
+				'background': '#E8E8E8'
+			},
 			border:false,
 			items:[{
 				xtype:'displayfield',
@@ -104,6 +106,8 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	
 	ok_button_function : function(){
 		log.debug('clicked on ok button',this.logAuthor)
+		if(this._ok_button_function)
+			this._ok_button_function()
 	}
 
 
