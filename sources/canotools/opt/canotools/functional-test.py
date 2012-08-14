@@ -27,10 +27,9 @@ from camqp import camqp
 from cstorage import cstorage
 from crecord import crecord
 from caccount import caccount
-from pyperfstore import node
-from pyperfstore import mongostore
 from cwebservices import cwebservices
 from ctools import parse_perfdata
+import pyperfstore2
 
 from subprocess import Popen
 
@@ -43,8 +42,8 @@ rk = cevent.get_routingkey(event)
 
 myamqp = None
 storage = None
-perfstore = None
 event_alert = None
+perfstore = None
 
 def on_alert(body, message):
 	print "Alert: %s" % body
@@ -57,7 +56,11 @@ def clean():
 		storage.remove(rk)
 		records = storage.find({'rk': rk}, namespace='events_log')
 		storage.remove(records, namespace='events_log')
-		node(rk, storage=perfstore).remove()
+		
+		try:
+			perfstore.remove(name='test1mymetric')
+		except:
+			pass
 
 class KnownValues(unittest.TestCase): 
 	def setUp(self):
@@ -77,7 +80,7 @@ class KnownValues(unittest.TestCase):
 		storage = cstorage(caccount(user="root", group="root"), namespace='events', logging_level=logging.DEBUG)
 		
 		global perfstore
-		perfstore = mongostore(mongo_collection='perfdata')
+		perfstore = pyperfstore2.manager(logging_level=logging.DEBUG)
 		
 		clean()
 		
@@ -120,7 +123,7 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Invalid alert data ...')
 			
 		
-	def test_4_Check_amqp2mongodb_archiver(self):
+	def test_4_Check_amqp2engines_archiver(self):
 		## change state
 		event['state'] = 1
 		event['timestamp'] = int(time.time())
@@ -137,11 +140,8 @@ class KnownValues(unittest.TestCase):
 		if revent['state'] != event['state']:
 			raise Exception('Invalid log state')
 			
-	def test_5_Check_amqp2mongodb_perfstore(self):
-		mynode = node(rk, storage=perfstore)
-		mynode.pretty_print()
-
-		values = mynode.metric_get_values(dn='mymetric', tstart=int(time.time() - 10), tstop=int(time.time()))
+	def test_5_Check_amqp2engines_perfstore(self):
+		values = perfstore.get_points(name='test1mymetric', tstart=int(time.time() - 10), tstop=int(time.time()))
 		
 		if len(values) != 2:
 			raise Exception("Perfsore don't work ...")
