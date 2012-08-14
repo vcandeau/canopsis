@@ -19,11 +19,7 @@
 # ---------------------------------
 
 from cengine import cengine
-from cstorage import get_storage
-from caccount import caccount
 import pyperfstore2
-import cevent
-import time
 
 import logging
 		
@@ -32,25 +28,20 @@ NAME="alertcounter"
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
-		self.account = caccount(user="root", group="root")
 		
 	def pre_run(self):
-		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
 		self.listened_event_type = ['check','selector','eue','sla']
-		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
-		self.beat()
-	
+		self.manager = pyperfstore2.manager(logging_level=self.logging_level)	
 		
 	def work(self, event, *args, **kargs):
 		if event['event_type'] in self.listened_event_type:
-	
 			if not event['resource']:
 				self.logger.debug('Incrementing "%s" alert metric' % event['component'])
 				name = "%s%s" % (event['component'], 'cps_alert_nb')
-				self.manager.push(name=name, value=1, timestamp=time.time(), meta_data={'type': 'COUNTER', 'co': event['component'], 'me': 'cps_alert_nb'})	
+				self.manager.push(name=name, value=1, meta_data={'type': 'COUNTER', 'co': event['component'], 'me': 'cps_alert_nb'})	
 			else:
 				self.logger.debug('Incrementing "%s %s" alert metric' % (event['component'],event['resource']))
 				name = "%s%s%s" % (event['component'], event['resource'], 'cps_alert_nb')
-				self.manager.push(name=name, value=1, timestamp=time.time(), meta_data={'type': 'COUNTER', 'co': event['component'], 're': event['resource'], 'me': 'cps_alert_nb'})	
+				self.manager.push(name=name, value=1, meta_data={'type': 'COUNTER', 'co': event['component'], 're': event['resource'], 'me': 'cps_alert_nb'})	
 			
 		return event
