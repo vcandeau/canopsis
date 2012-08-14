@@ -47,18 +47,22 @@ Ext.define('widgets.weather.downtime_popup' , {
 			xtype: 'fieldset',
 			defaultType: 'radio',
 			title: _('Manual state change'),
+			layout: 'anchor',
 			items: [
 				{
-					boxLabel  : _('Force state to sun'),
+					boxLabel  : '<img src="widgets/weather/icons/set1/01.png" class="widget-weather-form-icon"/>' + _('Force state to sun'),
 					name      : 'state',
 					checked   : true,
+					anchor : '100%',
 					inputValue: '0',
 				}, {
-					boxLabel  :  _('Force state to cloud'),
+					boxLabel  :  '<img src="widgets/weather/icons/set1/05.png" class="widget-weather-form-icon"/>' + _('Force state to cloud'),
+					anchor : '100%',
 					name      : 'state',
 					inputValue: '1',
 				}, {
-					boxLabel  :  _('Force state to rain'),
+					boxLabel  :  '<img src="widgets/weather/icons/set1/09.png" class="widget-weather-form-icon"/>' + _('Force state to storm'),
+					anchor : '100%',
 					name      : 'state',
 					inputValue: '2',
 				}
@@ -74,8 +78,7 @@ Ext.define('widgets.weather.downtime_popup' , {
 			xtype: 'textfield',
 			name: 'comment',
 			anchor : '100%',
-			//fieldLabel: 'comment',
-			emptyText : _('Type here new comment')
+			emptyText : _('Type here new comment...')
 		})
 		
 		
@@ -93,50 +96,13 @@ Ext.define('widgets.weather.downtime_popup' , {
 					inputValue : true,
 					checked : true,
 				},{
-					xtype: 'container',
-					layout : {
-						type: 'hbox',
-						align: 'stretch'
-					},
-					items : [{
-								xtype: 'datefield',
-								fieldLabel: _('From'),
-								labelWidth:40,
-								name : 'fromDate',
-								value:new Date(),
-								editable: false,
-								width: 150
-							},{
-								xtype: 'textfield',
-								name: 'fromHour',
-								value: '00:00 am',
-								margin : '0 0 0 5',
-								width: 75,
-								regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
-							}]
+					xtype: 'cdate',
+					name: 'startTs',
+					label_text : _('From')
 				},{
-					xtype: 'container',
-					margin: '5 0 0 0',
-					layout : {
-						type: 'hbox',
-						align: 'stretch'
-					},
-					items : [{
-								xtype: 'datefield',
-								fieldLabel: _('To'),
-								name : 'toDate',
-								value:new Date(),
-								labelWidth:40,
-								editable: false,
-								width: 150
-							},{
-								xtype: 'textfield',
-								name: 'toHour',
-								value: '00:00 am',
-								margin : '0 0 0 5',
-								width: 75,
-								regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
-							}]
+					xtype: 'cdate',
+					name: 'stopTs',
+					label_text : _('To')
 				}]
 		})
 		
