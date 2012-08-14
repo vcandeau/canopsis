@@ -27,6 +27,16 @@
 	background-position:center; 
 }
 
+.icon-clickable {
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
+	cursor: pointer;
+}
+
 .icon-big {
 	display: block;
 	width: 32px;

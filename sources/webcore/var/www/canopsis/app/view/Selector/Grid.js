@@ -132,7 +132,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			width: 70,
 			text: _('Derogation'),
 			icon: './themes/canopsis/resources/images/Tango-Blue-Materia/22x22/categories/applications-development.png',
-			iconCls: 'icon',
+			iconCls: 'icon-clickable',
 			handler:  function(grid, rowIndex, colindex) {
 				var rec = grid.getStore().getAt(rowIndex).raw;
 				log.dump(rec)
