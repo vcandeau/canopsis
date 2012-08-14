@@ -47,18 +47,22 @@ Ext.define('widgets.weather.downtime_popup' , {
 			xtype: 'fieldset',
 			defaultType: 'radio',
 			title: _('Manual state change'),
+			layout: 'anchor',
 			items: [
 				{
-					boxLabel  : _('Force state to sun'),
+					boxLabel  : '<img src="widgets/weather/icons/set1/01.png" class="widget-weather-form-icon"/>' + _('Force state to sun'),
 					name      : 'state',
 					checked   : true,
+					anchor : '100%',
 					inputValue: '0',
 				}, {
-					boxLabel  :  _('Force state to cloud'),
+					boxLabel  :  '<img src="widgets/weather/icons/set1/05.png" class="widget-weather-form-icon"/>' + _('Force state to cloud'),
+					anchor : '100%',
 					name      : 'state',
 					inputValue: '1',
 				}, {
-					boxLabel  :  _('Force state to rain'),
+					boxLabel  :  '<img src="widgets/weather/icons/set1/09.png" class="widget-weather-form-icon"/>' + _('Force state to rain'),
+					anchor : '100%',
 					name      : 'state',
 					inputValue: '2',
 				}
