@@ -127,7 +127,22 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			align: 'center',
 			text: _('Others'),
 			dataIndex: 'aaa_access_other'
-		}*/
+		}*/,{
+			xtype: 'actioncolumn',
+			width: 70,
+			text: _('Derogation'),
+			icon: './themes/canopsis/resources/images/Tango-Blue-Materia/22x22/categories/applications-development.png',
+			iconCls: 'icon',
+			handler:  function(grid, rowIndex, colindex) {
+				var rec = grid.getStore().getAt(rowIndex).raw;
+				log.dump(rec)
+				config = {
+					
+				}
+				var popup = Ext.create('canopsis.lib.view.cderogation_popup',config)
+				popup.show()
+			}
+		}
 	],
 
 	initComponent: function() {

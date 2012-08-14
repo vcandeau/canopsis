@@ -103,5 +103,6 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 	
 	_ok_button_function : function(){
 		log.dump(this._form.getValues())
+		//global.selectorCtrl.derogation_on_selector
 	}
 })
