@@ -35,17 +35,7 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 	_fieldLabel : _('file'),
 	_buttonText : _('Select file'),
 	
-	buildForm : function(){
-		this._form = Ext.create('Ext.container.Container',{
-			flex: 1,
-			margin: '10 0 0 0',
-			layout: {
-				type: 'anchor'
-			},
-			margin: 10,
-			border:false,
-			items:[]
-		})
+	_buildForm : function(){
 		
 		this._fileField = this._form.add(Ext.create('Ext.form.field.File',{
 			xtype: 'filefield',
@@ -58,7 +48,6 @@ Ext.define('canopsis.lib.view.cfile_window' , {
 			buttonText: this._buttonText
 		}));
 			
-		
 		return this._form
 	},
 	

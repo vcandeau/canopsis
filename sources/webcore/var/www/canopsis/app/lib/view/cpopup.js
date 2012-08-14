@@ -25,7 +25,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	
 	logAuthor: '[cpopup]',
 	
-	cls: Ext.baseCSSPrefix + 'message-box',
+	//cls: Ext.baseCSSPrefix + 'message-box',
 	constrain:true,
 	
 	textAreaLabel : 'Type your message here:',
@@ -45,24 +45,10 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	
 	buildForm : function(){
 		this._form = Ext.create('Ext.form.Panel',{
-			flex: 1,
-			margin: 10,
-			layout: {
-				type: 'anchor'
-			},
-			bodyStyle:{
-				'background': '#E8E8E8'
-			},
-			border:false,
-			items:[{
-				xtype:'displayfield',
-				value: _(this.textAreaLabel)
-			}]
-		})
-		
-		this.input_textArea = this._form.add({
-			xtype:'textarea',
-			width: '100%'
+			layout: 'anchor',
+			bodyStyle:{'background': '#ededed'},
+			bodyPadding : 10,
+			border:false
 		})
 		
 		if(this._buildForm)

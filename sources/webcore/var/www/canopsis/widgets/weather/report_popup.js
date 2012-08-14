@@ -42,6 +42,18 @@ Ext.define('widgets.weather.report_popup' , {
 		'output':'',
 	},
 	
+	_buildForm: function(){
+		this._form.add({
+			xtype:'displayfield',
+			value: _(this.textAreaLabel)
+		})
+		
+		this.input_textArea = this._form.add({
+			xtype:'textarea',
+			width: '100%'
+		})
+	},
+	
 	ok_button_function: function(){
 		log.debug('Send Event',this.logAuthor)
 		var event = Ext.clone(this.base_event)

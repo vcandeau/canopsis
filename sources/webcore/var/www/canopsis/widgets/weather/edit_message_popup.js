@@ -32,6 +32,18 @@ Ext.define('widgets.weather.edit_message_popup' , {
 		this.callParent(arguments);
 	},
 	
+	_buildForm: function(){
+		this._form.add({
+			xtype:'displayfield',
+			value: _(this.textAreaLabel)
+		})
+		
+		this.input_textArea = this._form.add({
+			xtype:'textarea',
+			width: '100%'
+		})
+	},
+	
 	ok_button_function : function(){
 		log.debug('clicked on ok button',this.logAuthor)
 		global.selectorCtrl.change_selector_output(
