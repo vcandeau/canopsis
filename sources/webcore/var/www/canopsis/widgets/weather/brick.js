@@ -22,12 +22,13 @@
 widget_weather_template = Ext.create('Ext.XTemplate',
 		'<div class="table">',
 			'<div class="left_panel" style="float:{first_panel_float}">',
-				'<div class="first_sub_section">',
+				'<div class="first_sub_section" id="{id}-output">',
 					'<p class="title">{title}<span>{event_ts}</span></p>',
-					'<p id="{id}-output" class="comment">',
+					'<p class="comment">',
 						'{output}',
 						'<tpl if="admin == true">',
 							'<span class="icon icon-edit" id="{id}-edit_button"></span>',
+							'<span class="icon icon-derogation" id="{id}-derogation_button"></span>',
 						'</tpl>',
 					'</p>',
 				'</div>',
@@ -126,20 +127,28 @@ Ext.define('widgets.weather.brick' , {
 		
 		//-----------------------get element----------------------
 		this.edit_button = this.getEl().getById(this.id + '-edit_button');
-		
+		this.derogation_button = this.getEl().getById(this.id + '-derogation_button');
 		//-----------------------bindings-------------------------
 		var report_button = this.getEl().getById(this.id + '-button');
+		
 		if(report_button)
 			report_button.on('click', this.report_issue,this)
 		
-		if(this.edit_button){
+		if(this.widget_base_config.admin){
 			var output = this.getEl().getById(this.id + '-output');
 			output.hover(
-				function(){this.edit_button.fadeIn()},
-				function(){this.edit_button.fadeOut()},
+				function(){
+					this.edit_button.fadeIn()
+					this.derogation_button.fadeIn()
+				},
+				function(){
+					this.edit_button.fadeOut()
+					this.derogation_button.fadeOut()
+				},
 			this)
 
 			this.edit_button.on('click',this.change_output,this)
+			this.derogation_button.on('click',this.derogation,this)
 		}
 	},
 	
@@ -239,12 +248,23 @@ Ext.define('widgets.weather.brick' , {
 	
 	report_issue : function(){
 		var config = {
-			title: 'Report an issue',
 			_component : this.component,
 			referer: this.data.rk
 		}
 
-		var popup = Ext.create('widgets.weather.report_popup',config)
+		var popup = Ext.create('widgets.weather.advertisement_popup',config)
+		popup.show()
+	},
+	
+	derogation : function(){
+		var config = {
+			title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
+			_component : this.component,
+			event_type: this.event_type	,
+			referer: this.data.selector_id
+		}
+
+		var popup = Ext.create('canopsis.lib.view.cderogation_popup',config)
 		popup.show()
 	},
 	
