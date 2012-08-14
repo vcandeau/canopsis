@@ -26,13 +26,13 @@ from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, logging_level=logging.INFO):
+	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, dca_min_length = 300, logging_level=logging.INFO):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		
 		self.store = store(mongo_collection=mongo_collection, logging_level=logging.INFO)
 		self.auto_rotate = auto_rotate
-		self.dca_min_length = 300
+		self.dca_min_length = dca_min_length
 		self.midnight = None
 		self.get_midnight_timestamp()
 		
@@ -101,16 +101,38 @@ class manager(object):
 		
 		# Uncompress fields name
 		if not raw:
-			for field in self.fields_map:
-				value = meta_data.get(self.fields_map[field][0], self.fields_map[field][1])
-				meta_data[field] = value
-				try:
-					del meta_data[self.fields_map[field][0]]
-				except:
-					pass
+			meta_data = self.uncompress_meta_fields(meta_data)
 		
 		return meta_data
+		
+	def uncompress_meta_fields(self, meta_data):
+		for field in self.fields_map:
+			value = meta_data.get(self.fields_map[field][0], self.fields_map[field][1])
+			meta_data[field] = value
+			try:
+				del meta_data[self.fields_map[field][0]]
+			except:
+				pass
+				
+		return meta_data
+	
+	def compress_meta_fields(self, meta_data):
+		# Compress fields name
+		def set_meta(meta, field, new_field, default):
+			data = meta.get(field, default)
+			if data != None:
+				meta[new_field] = data
+			try:
+				del meta[field]
+			except:
+				pass
+			return meta		
 
+		for field in self.fields_map:
+			meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
+			
+		return meta_data
+		
 	def find_dca(self, _id=None, name=None, mfilter=None):
 		_id = self.get_id(_id, name)
 		
@@ -155,19 +177,7 @@ class manager(object):
 		
 		# Check Meta
 		if not self.id_exist(_id):
-			def set_meta(meta, field, new_field, default):
-				data = meta.get(field, default)
-				if data != None:
-					meta[new_field] = data
-				try:
-					del meta[field]
-				except:
-					pass
-				return meta
-			
-			# Compress fields name
-			for field in self.fields_map:
-				meta_data = set_meta(meta_data, field, self.fields_map[field][0], self.fields_map[field][1])
+			meta_data = self.compress_meta_fields(meta_data)
 			
 			self.logger.debug("Create meta record '%s'" % _id)
 			self.store.create(_id=_id, data=meta_data)
@@ -329,3 +339,35 @@ class manager(object):
 		#remove from cache
 		if _id in self.cache_ids:
 			del self.cache_ids[_id]
+	
+	def showStats(self):
+		metas = self.find_meta(limit=0)
+		dcas = self.store.find(mfilter={'c': False, 'mid': { '$exists' : True }})
+		self.logger.info("Metas:       %s" % metas.count())
+		self.logger.info("Plain DCAs:  %s" % dcas.count())
+		#self.logger.info("DB Size:     %s" % self.store.size())
+		self.store.size()
+	
+	
+	def showAll(self):
+		metas = self.find_meta(limit=0)
+		for meta in metas:
+			self.show(meta=self.uncompress_meta_fields(meta))
+			
+	def show(self, _id=None, name=None, meta=None):
+		if not meta:
+			_id = self.get_id(_id, name)
+			meta = self.get_meta(_id=_id)
+		else:
+			_id = meta['_id']
+		
+		if meta and _id:
+			self.logger.info("Metadata:'%s'" % meta['_id'])
+			for key in meta:
+				if key != '_id' and key != 'c':
+					self.logger.info(" + %s: %s" % (key, meta[key]))
+			
+			self.logger.info(" + Plain DCA: %s" % self.find_dca(_id).count())
+			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
+			
+			

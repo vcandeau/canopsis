@@ -271,8 +271,8 @@ def compress(points):
 	logger.debug("Compress timeserie")
 	
 	# Create packer
+	global packer
 	if not packer:
-		global packer
 		packer = msgpack.Packer()
 	
 	# Remplace timestamp by interval
@@ -322,8 +322,8 @@ def uncompress(data):
 		raise ValueError("Invalid data type (%s)" % type(data))
 
 	# Create unpacker
+	global unpacker
 	if not unpacker:
-		global unpacker
 		unpacker = msgpack.Unpacker(use_list=True)
 	
 	unpacker.feed(str(zlib.decompress(data)))

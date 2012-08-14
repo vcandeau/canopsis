@@ -58,9 +58,9 @@ def read_callback(data=None):
 		put_value(namespace+"_size", storage.get_namespace_size(namespace))		
 		
 	## Pyperfstore
-	size = storage.get_namespace_size("perfdata.fs.chunks") 
-	size += storage.get_namespace_size("perfdata.fs.files")
-	size += storage.get_namespace_size("perfdata")
+	size = storage.get_namespace_size("perfdata2_bin.chunks") 
+	size += storage.get_namespace_size("perfdata2_bin.files")
+	size += storage.get_namespace_size("perfdata2")
 	put_value("perfdata_size", size)
 	
 	## Briefcase
