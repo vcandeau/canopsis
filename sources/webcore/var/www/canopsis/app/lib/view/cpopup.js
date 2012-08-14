@@ -56,14 +56,12 @@ Ext.define('canopsis.lib.view.cpopup' , {
 			border:false,
 			items:[{
 				xtype:'displayfield',
-				value: _(this.textAreaLabel),
-				//anchor:'100%'*
+				value: _(this.textAreaLabel)
 			}]
 		})
 		
 		this.input_textArea = this._form.add({
 			xtype:'textarea',
-			//anchor:'100% 100%',
 			width: '100%'
 		})
 		
