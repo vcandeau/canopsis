@@ -233,7 +233,6 @@ class manager(object):
 	def rotateAll(self):
 		metas = self.find_meta(limit=0)
 		for meta in metas:
-			self.logger.debug("%s %s %s:" % (meta['co'], meta['re'], meta['me']))
 			self.rotate(_id=meta['_id'])
 		
 	def rotate(self, _id=None, name=None):
