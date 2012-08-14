@@ -250,9 +250,6 @@ class manager(object):
 		else:
 			return (meta_data, points)
 
-	def aggregate(self, points, mode=None, atype='MEAN', time_interval=None, max_points=None):
-		return utils.aggregate(points, max_points=max_points, time_interval=time_interval, atype=atype, mode=mode)
-
 	def rotateAll(self, force=False):
 		self.rotate(force=force)
 		
