@@ -179,7 +179,7 @@ def parse_dst(points, dtype, first_point=[]):
 	return points
 
 
-def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None, mode=None):
+def aggregate(values, max_points=None, interval=None, atype=None, agfn=None, mode=None):
 	
 	if not mode:
 		mode = 'by_point'
@@ -189,13 +189,14 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 	if not max_points:
 		max_points=1450
 		
-	if time_interval:
-		time_interval = int(time_interval)
+	if interval:
+		interval = int(interval)
+		mode = 'by_interval'
 				
 	if not atype:
 		atype = 'MEAN'
 	
-	logger.debug("Aggregate %s points (max: %s, time interval: %s, method: %s, mode: %s)" % (len(values), max_points, time_interval, atype, mode))
+	logger.debug("Aggregate %s points (max: %s, interval: %s, method: %s, mode: %s)" % (len(values), max_points, interval, atype, mode))
 
 	if not agfn:
 		if   atype == 'MEAN':
@@ -215,7 +216,7 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 		else:
 			agfn = vmean
 
-	logger.debug(" + Interval: %s" % time_interval)
+	logger.debug(" + Interval: %s" % interval)
 
 	rvalues=[]
 	
@@ -239,9 +240,9 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 		
 		start = values[0][0]
 		# modulo interval
-		start -= start % time_interval
+		start -= start % interval
 		
-		stop = start + time_interval
+		stop = start + interval
 		for value in values:
 			#compute interval
 			if value[0] < stop:
@@ -258,7 +259,7 @@ def aggregate(values, max_points=None, time_interval=None, atype=None, agfn=None
 			
 				#Set next interval
 				start = stop
-				stop = start + time_interval
+				stop = start + interval
 				
 				# Push value
 				values_to_aggregate = [value]

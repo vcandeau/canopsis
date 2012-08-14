@@ -110,7 +110,7 @@ class KnownValues(unittest.TestCase):
 		if len(points) != nb:
 			raise Exception('Invalid points count')
 			
-		points = manager.aggregate(points, max_points=50, atype='MEAN', mode='by_point')
+		points = pyperfstore2.utils.aggregate(points, max_points=50, atype='MEAN', mode='by_point')
 		
 		print "Nb points: %s" % len(points)
 		
