@@ -261,6 +261,10 @@
     background-image: url(../images/icons/comment.png) !important;
 }
 
+.icon-derogation {
+	background-image: url(../images/Tango-Blue-Materia/22x22/categories/applications-development.png) !important;
+}
+
 /* state */
 
 /*.icon-state-0 { 

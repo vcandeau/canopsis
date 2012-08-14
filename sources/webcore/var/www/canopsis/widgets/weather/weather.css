@@ -126,7 +126,8 @@
 .widget-weather-form-icon{
 	vertical-align:middle;
 	height:22px;
-	width: 29px;
+	/*width: 29px;*/
+	margin-right: 5px;
 }
 
 /*-----------------------------iconset N°1---------------------------*/
