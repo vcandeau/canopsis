@@ -249,10 +249,11 @@ Ext.define('widgets.weather.brick' , {
 	report_issue : function(){
 		var config = {
 			_component : this.component,
-			referer: this.data.rk
+			referer: this.data.rk,
+			title: _('Report issue for ') + this.event_type + ' ' + this.component
 		}
 
-		var popup = Ext.create('widgets.weather.advertisement_popup',config)
+		var popup = Ext.create('widgets.weather.report_popup',config)
 		popup.show()
 	},
 	
