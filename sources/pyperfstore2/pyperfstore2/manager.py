@@ -26,7 +26,7 @@ from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, dca_min_length = 300, logging_level=logging.INFO):
+	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, retention=0, dca_min_length = 300, logging_level=logging.INFO):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		
@@ -35,6 +35,8 @@ class manager(object):
 		self.dca_min_length = dca_min_length
 		self.midnight = None
 		self.get_midnight_timestamp()
+		
+		self.retention = retention
 		
 		self.cache_max = 5000
 		self.cached = 0
@@ -336,8 +338,8 @@ class manager(object):
 					self.store.remove(_id=dca_id)
 					
 
-		# Todo: clean old dca (retention)
-		#self.logger.debug(" + Clean")
+		#if self.retention != 0:
+		#	self.logger.debug(" + Clean old DCA")
 
 	def remove(self, _id=None, name=None):
 		_id = self.get_id(_id, name)
