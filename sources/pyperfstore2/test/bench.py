@@ -64,11 +64,7 @@ def bench_store(interval=60, duration=60*60*24):
 		mod = (i * interval)%86400
 		if mod == 0:
 			manager.midnight = timestamp
-			manager.rotate(name="%s%s" % (name, 'state'))
-			manager.rotate(name="%s%s" % (name, 'state-downtime'))
-			manager.rotate(name="%s%s" % (name, 'load1'))
-			manager.rotate(name="%s%s" % (name, 'load5'))
-			manager.rotate(name="%s%s" % (name, 'load15'))
+			manager.rotateAll()
 
 	bench_stop = timestamp
 
@@ -86,10 +82,15 @@ def bench_store(interval=60, duration=60*60*24):
 	print "    + %s values per second" % (int(nb/elapsed))
 	print ""
 
+	nb = 0
 	start = time.time()
 	print "Get values between %s and %s" % (bench_start, bench_stop)
 	values = manager.get_points(name="%s%s" % (name, 'load1'), tstart=bench_start, tstop=bench_stop)
-	nb = len(values)
+	nb += len(values)
+	values = manager.get_points(name="%s%s" % (name, 'load5'), tstart=bench_start, tstop=bench_stop)
+	nb += len(values)
+	values = manager.get_points(name="%s%s" % (name, 'load15'), tstart=bench_start, tstop=bench_stop)
+	nb += len(values)	
 	elapsed = time.time() - start
 	print " + READ:"
 	print "    + %s values in %s seconds" % ( nb, elapsed)
