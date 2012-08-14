@@ -33,15 +33,7 @@ Ext.define('widgets.weather.advertisement_popup' , {
 	icon_alert: 'widgets/weather/icons/public_domain_icon/alert.png',
 	icon_class : 'widget-weather-form-icon',
 	
-	buildForm : function(){
-		this._form = Ext.create('Ext.form.Panel',{
-			flex: 1,
-			layout: 'anchor',
-			bodyStyle:{'background': '#E8E8E8'},
-			margin: 10,
-			border:false,
-		})
-		
+	_buildForm : function(){		
 		this._form.add({
 			xtype: 'fieldset',
 			defaultType: 'radio',

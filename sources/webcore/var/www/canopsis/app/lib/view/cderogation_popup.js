@@ -35,13 +35,7 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 	icon_rain: 'widgets/weather/icons/set1/09.png',
 	icon_class : 'widget-weather-form-icon',
 	
-	buildForm : function(){
-		this._form = Ext.create('Ext.form.Panel',{
-			layout: 'anchor',
-			bodyStyle:{'background': '#E8E8E8'},
-			margin: 10,
-			border:false,
-		})
+	_buildForm : function(){
 		
 		this._form.add({
 			xtype: 'fieldset',
