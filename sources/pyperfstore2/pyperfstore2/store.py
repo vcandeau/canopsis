@@ -90,24 +90,24 @@ class store(object):
 		lts = point[0]
 	
 		self.logger.debug("Push point '%s' in '%s'" % (point, _id))
-		self.update(_id=_id, mset={'lts': lts}, mpush={'d': point})
+		return self.update(_id=_id, mset={'lts': lts}, mpush={'d': point})
 
 	def create(self, _id, data):
 		self.check_connection()
 		data['_id'] = _id
 		self.logger.debug("Create record '%s'" % _id)
-		self.collection.insert(data, safe=self.mongo_safe)
+		return self.collection.insert(data, safe=self.mongo_safe)
 
 	def create_bin(self, _id, data):
 		self.check_connection()
 		self.logger.debug("Create bin record '%s'" % _id)
-		self.grid.put(data, _id=_id)
+		return self.grid.put(data, _id=_id)
 			
 	def remove(self, _id=None, mfilter=None):
 		if mfilter:
-			self.collection.remove(mfilter)
+			return self.collection.remove(mfilter)
 		elif _id:
-			self.collection.remove({'_id': _id})
+			return self.collection.remove({'_id': _id})
 		
 	def size(self):
 		self.logger.info("Size of dbs:")
