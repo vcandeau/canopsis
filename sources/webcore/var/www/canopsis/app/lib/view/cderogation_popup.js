@@ -81,7 +81,6 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			emptyText : _('Type here new comment...')
 		})
 		
-		
 		this._form.add({
 			xtype: 'fieldset',
 			title: _('Downtime'),
