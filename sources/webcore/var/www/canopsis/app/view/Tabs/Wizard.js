@@ -68,11 +68,26 @@ Ext.define('canopsis.view.Tabs.Wizard' , {
 					fieldLabel: _('Title') + ' (' + _('optional') + ')',
 					name: 'title'
 				},{
-					xtype: 'numberfield',
+					xtype: "combobox",
+					name: "refreshInterval",
 					fieldLabel: _('Refresh interval'),
-					name: 'refreshInterval',
-					value: 0,
-					minValue: 0
+					queryMode: "local",
+					displayField: "text",
+					valueField: "value",
+					value: 300,
+					store: {
+						xtype: "store",
+						fields: ["value", "text"],
+						data : [
+							{value: 0,			text: "None"},
+							{value: 60,			text: "1 minutes"},
+							{value: 300,		text: "5 minutes"},
+							{value: 600,		text: "10 minutes"},
+							{value: 900,		text: "15 minutes"},
+							{value: 1800,		text: "30 minutes"},
+							{value: 3600,		text: "1 hour"}
+						]
+					}
 				}]
 		};
 
