@@ -1,4 +1,3 @@
-
 /*
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
@@ -19,24 +18,22 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cderogation_popup' , {
+
+Ext.define('widgets.weather.advertisement_popup' , {
 	extend: 'canopsis.lib.view.cpopup',
-	alias: 'canopsis.lib.view.cderogation_popup',
-	
-	alias: 'widget.cderogation',
+	alias: 'widget.weather.advertisement_popup',
 	
 	_component : undefined,
 	referer: undefined,
-	title : _('Derogation'),
+	title : _('New advertisement'),
 	width:300,
 	
-	icon_sun: 'widgets/weather/icons/set1/01.png',
-	icon_cloud: 'widgets/weather/icons/set1/05.png',
-	icon_rain: 'widgets/weather/icons/set1/09.png',
+	icon_wip : 'widgets/weather/icons/public_domain_icon/workman.png',
+	icon_warning: 'widgets/weather/icons/public_domain_icon/slippery.png',
+	icon_alert: 'widgets/weather/icons/public_domain_icon/alert.png',
 	icon_class : 'widget-weather-form-icon',
 	
-	_buildForm : function(){
-		
+	_buildForm : function(){		
 		this._form.add({
 			xtype: 'fieldset',
 			defaultType: 'radio',
@@ -44,51 +41,57 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			layout: 'anchor',
 			items: [
 				{
-					boxLabel  : '<img src="'+this.icon_sun+'" class="'+this.icon_class+'"/>' + _('Force state to sun'),
+					boxLabel  : '<img src="'+this.icon_wip+'" class="'+this.icon_class+'"/>' + _('Planned shut down'),
 					name      : 'state',
 					checked   : true,
 					anchor : '100%',
-					inputValue: '0',
+					inputValue: 'icon-wip',
 				}, {
-					boxLabel  :  '<img src="'+this.icon_cloud+'" class="'+this.icon_class+'"/>' + _('Force state to cloud'),
+					boxLabel  :  '<img src="'+this.icon_warning+'" class="'+this.icon_class+'"/>' + _('Be cautious with application'),
 					anchor : '100%',
 					name      : 'state',
-					inputValue: '1',
+					inputValue: 'icon-warning',
 				}, {
-					boxLabel  :  '<img src="'+this.icon_rain+'" class="'+this.icon_class+'"/>' + _('Force state to storm'),
+					boxLabel  :  '<img src="'+this.icon_alert+'" class="'+this.icon_class+'"/>' + _('Standart alert'),
 					anchor : '100%',
 					name      : 'state',
-					inputValue: '2',
+					inputValue: 'icon-alert',
 				}
 			]
 		})
 		
 		this._form.add({
 			xtype:'displayfield',
-			value : _('Visible comment')  + ':'
+			value : _('Alert comment')  + ':'
 		})
 		
 		this._form.add({
 			xtype: 'textfield',
-			name: 'comment',
+			name: 'alert_comment',
 			anchor : '100%',
-			emptyText : _('Type here new comment...')
+			emptyText : _('Type here the alert comment')
+		})
+		
+		this._form.add({
+			xtype:'displayfield',
+			value : _('Visible standart comment')  + ':'
+		})
+		
+		this._form.add({
+			xtype: 'textfield',
+			name: 'standart_comment',
+			anchor : '100%',
+			emptyText : _('Type here the visible comment')
 		})
 		
 		this._form.add({
 			xtype: 'fieldset',
-			title: _('Downtime'),
+			title: _('Period'),
 			layout: {
 				type: 'vbox',
 				align: 'center'
 			},
 			items: [{
-					xtype: 'checkbox',
-					boxLabel  : _('Block state update from supervision tools'),
-					name: 'downtime',
-					inputValue : true,
-					checked : true,
-				},{
 					xtype: 'cdate',
 					name: 'startTs',
 					label_text : _('From')
@@ -103,6 +106,5 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 	
 	_ok_button_function : function(){
 		log.dump(this._form.getValues())
-		//global.selectorCtrl.derogation_on_selector
 	}
 })

@@ -1,4 +1,4 @@
-/*
+#!/usr/bin/env python
 #--------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
@@ -17,42 +17,33 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
-*/
+import logging
+from cengine import cengine
+from cstorage import get_storage
+from caccount import caccount
+
+NAME="derogation"
 
 
-
-Ext.define('canopsis.lib.view.cfile_window' , {
-	extend: 'canopsis.lib.view.cpopup',
-	alias: 'widget.cfile_window',
-	
-	logAuthor: '[cfile_window]',
-	
-	title: _('Select a file'),
-	
-	width: 400,
-	
-	_name : _('file'),
-	_fieldLabel : _('file'),
-	_buttonText : _('Select file'),
-	
-	_buildForm : function(){
+class engine(cengine):
+	def __init__(self, *args, **kargs):
+		cengine.__init__(self, name=NAME, *args, **kargs)
 		
-		this._fileField = this._form.add(Ext.create('Ext.form.field.File',{
-			xtype: 'filefield',
-			name: this._name,
-			fieldLabel: this._fieldLabel,
-			labelWidth: 50,
-			msgTarget: 'side',
-			allowBlank: false,
-			anchor: '100%',
-			buttonText: this._buttonText
-		}));
-			
-		return this._form
-	},
-	
-	ok_button_function : function(){
-		log.debug('clicked on ok button',this.logAuthor)
-		this.fireEvent('save',this._fileField.fileInputEl.dom.files)
-	}
-})
+		self.rules = {}
+		
+		#self.beat_interval =  900
+		
+	def load_rules(self):
+		
+		
+		
+		
+	def pre_run(self):
+		self.storage = get_storage(namespace='events', account=caccount(user="root", group="root"))
+		self.load_rules()
+		
+	def beat(self):
+		pass
+		
+	def work(self, event, *args, **kargs):
+		return event
