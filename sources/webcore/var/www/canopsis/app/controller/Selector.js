@@ -82,5 +82,10 @@ Ext.define('canopsis.controller.Selector', {
 			function(){
 				global.notify.notify(_('Message updated'),'The message will be display in few minutes','success')
 			})
+	},
+	
+	derogation_on_selector: function(){
+		
+		
 	}
 });

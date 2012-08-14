@@ -27,6 +27,16 @@
 	background-position:center; 
 }
 
+.icon-clickable {
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	background-position:center; 
+	cursor: pointer;
+}
+
 .icon-big {
 	display: block;
 	width: 32px;
@@ -259,6 +269,10 @@
 
 .icon-comment { 
     background-image: url(../images/icons/comment.png) !important;
+}
+
+.icon-derogation {
+	background-image: url(../images/Tango-Blue-Materia/22x22/categories/applications-development.png) !important;
 }
 
 /* state */
