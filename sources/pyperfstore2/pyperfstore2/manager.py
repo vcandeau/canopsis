@@ -53,7 +53,7 @@ class manager(object):
 		}
 
 	def get_midnight_timestamp(self):
-		if not self.midnight or time.time() > self.midnight + 86400:
+		if not self.midnight or time.time() > self.midnight + 86400 + 300:
 			
 			self.midnight = int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
 			
