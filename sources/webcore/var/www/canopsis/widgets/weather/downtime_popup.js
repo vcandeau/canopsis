@@ -61,7 +61,7 @@ Ext.define('widgets.weather.downtime_popup' , {
 					name      : 'state',
 					inputValue: '1',
 				}, {
-					boxLabel  :  '<img src="widgets/weather/icons/set1/09.png" class="widget-weather-form-icon"/>' + _('Force state to rain'),
+					boxLabel  :  '<img src="widgets/weather/icons/set1/09.png" class="widget-weather-form-icon"/>' + _('Force state to storm'),
 					anchor : '100%',
 					name      : 'state',
 					inputValue: '2',
