@@ -52,9 +52,15 @@ class manager(object):
 
 	def get_midnight_timestamp(self):
 		if not self.midnight or time.time() > self.midnight + 86400:
-			if self.auto_rotate and self.midnight:
-				self.rotateAll()
+			
 			self.midnight = int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
+			
+			if self.auto_rotate and self.midnight:
+				self.auto_rotate = False
+				self.logger.debug("Start auto-rotate")
+				self.rotateAll()
+				self.logger.debug("End of auto-rotate")
+				self.auto_rotate = True	
 			
 		return self.midnight
 		
@@ -166,7 +172,8 @@ class manager(object):
 			self.store.push(_id=dca_id, point=point)
 		else:
 			# Create Meta
-			self.create_meta(_id=_id, meta_data=meta_data)
+			if not self.id_exist(_id):
+				self.create_meta(_id=_id, meta_data=meta_data)
 				
 			# Create DCA
 			self.logger.debug("Create dca record '%s'" % dca_id)
@@ -240,20 +247,27 @@ class manager(object):
 	def aggregate(self, points, mode=None, atype='MEAN', time_interval=None, max_points=None):
 		return utils.aggregate(points, max_points=max_points, time_interval=time_interval, atype=atype, mode=mode)
 
-	def rotateAll(self):
-		metas = self.find_meta(limit=0)
-		for meta in metas:
-			self.rotate(_id=meta['_id'])
+	def rotateAll(self, force=False):
+		self.rotate(force=force)
 		
-	def rotate(self, _id=None, name=None):
-		_id = self.get_id(_id, name)
-		
-		self.logger.debug("Rotate '%s'" % _id)
-		
-		dca_ids = []
+	def rotate(self, _id=None, name=None, force=False):
+		try:
+			_id = self.get_id(_id, name)
+		except:
+			_id = None
+			
+		midnight = self.get_midnight_timestamp()
+		if force:
+			self.logger.info("Force DCA Rotation")
+			midnight += 86400
 		
 		# Find yesterday DCA
-		dcas = self.find_dca(_id=_id, mfilter={'c': False, 'fts': {'$lt': self.get_midnight_timestamp() }})
+		if _id:
+			self.logger.debug("Rotate DCA '%s'" % _id)
+			dcas = self.find_dca(_id=_id, mfilter={'c': False, 'fts': {'$lt': midnight }})
+		else:
+			self.logger.info("Rotate All DCA")
+			dcas = self.store.find(mfilter={'c': False, 'fts': {'$lt': midnight }})
 		
 		if not dcas.count():
 			self.logger.debug(" + Nothing to do")
@@ -264,7 +278,7 @@ class manager(object):
 			self.logger.debug(" + DCA: %s" % dca_id)
 			
 			#check if must compress or not
-			if len(dca['d']) >= self.dca_min_length:
+			if len(dca['d']) >= self.dca_min_length or force:
 				self.logger.debug("  + Compress")
 				
 				data = utils.compress(dca['d'])
@@ -274,23 +288,29 @@ class manager(object):
 					self.store.create_bin(_id=dca_id, data=data)	
 					
 					# Remove plain record
-					self.store.remove(_id=dca_id)
+					if not force:
+						self.store.remove(_id=dca_id)
+					else:
+						## for // process (push), in force mode dont remove dca
+						self.store.update(_id=dca_id, mset={'c': False, 'fts': None, 'lts': None, 'd': []})
 				
 					# remove cache too
 					if dca_id in self.cache_ids:
 						del self.cache_ids[dca_id]
+						self.cached -= 1
 						
 					# Put ID in compressed list
-					dca_ids.append((dca['fts'], dca['lts'], dca_id))
+					self.logger.debug("     + Add binary Id in meta (%s)" % dca['mid'])
+					self.store.update(_id=dca['mid'], mpush={'c': (dca['fts'], dca['lts'], dca_id)})
 					
 				except Exception,err:
-					self.logger.info('Something wrong when rotate %s: %s' % (_id, err))
+					self.logger.info('Impossible to rotate %s: %s' % (dca_id, err))
 					
 			else:
 				self.logger.debug("  + Not enough point in DCA")
 				
 				## Put point in begin of today DCA
-				today_dca_id = self.get_dca_id(_id)
+				today_dca_id = self.get_dca_id(dca['mid'])
 				today_dca = self.store.get(today_dca_id)
 				
 				if today_dca:
@@ -315,10 +335,6 @@ class manager(object):
 					# Remove old record
 					self.store.remove(_id=dca_id)
 					
-			
-		# Update meta record (comressed list)
-		if len(dca_ids) > 0:
-			self.store.update(_id=_id, mpush_all={'c': dca_ids})
 
 		# Todo: clean old dca (retention)
 		#self.logger.debug(" + Clean")
