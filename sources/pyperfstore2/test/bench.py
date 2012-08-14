@@ -115,4 +115,6 @@ def bench_store(interval=60, duration=60*60*24):
 
 bench_store(	interval=interval,
 				duration=60*60*24*day)
+				
+manager.store.drop()
 
