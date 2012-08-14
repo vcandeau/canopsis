@@ -31,6 +31,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	textAreaLabel : 'Type your message here:',
 		
 	initComponent: function() {
+		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize cpopup', this.logAuthor);
         
         var form = this.buildForm()
