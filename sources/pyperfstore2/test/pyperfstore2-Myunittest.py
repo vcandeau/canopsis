@@ -113,7 +113,6 @@ class KnownValues(unittest.TestCase):
 		
 		
 	def test_99_Remove(self):
-		"""
 		manager.remove(name=name)
 		meta = manager.get_meta(name=name)
 		
@@ -121,8 +120,6 @@ class KnownValues(unittest.TestCase):
 			raise Exception('Impossible to delete')
 		
 		#manager.store.drop()
-		"""
-		pass
 		
 	
 if __name__ == "__main__":
