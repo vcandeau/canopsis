@@ -19,28 +19,28 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-
-Ext.define('widgets.weather.downtime_popup' , {
+Ext.define('canopsis.lib.view.cderogation_popup' , {
 	extend: 'canopsis.lib.view.cpopup',
-	alias: 'widget.weather.downtime_popup',
+	alias: 'canopsis.lib.view.cderogation_popup',
+	
+	alias: 'widget.cderogation',
 	
 	_component : undefined,
 	referer: undefined,
-	title : _('Downtime'),
+	title : _('Derogation'),
 	width:300,
+	
+	icon_sun: 'widgets/weather/icons/set1/01.png',
+	icon_cloud: 'widgets/weather/icons/set1/05.png',
+	icon_rain: 'widgets/weather/icons/set1/09.png',
+	icon_class : 'widget-weather-form-icon',
 	
 	buildForm : function(){
 		this._form = Ext.create('Ext.form.Panel',{
-			flex: 1,
-			layout: {
-				type: 'anchor'
-			},
-			bodyStyle:{
-				'background': '#E8E8E8'
-			},
+			layout: 'anchor',
+			bodyStyle:{'background': '#E8E8E8'},
 			margin: 10,
 			border:false,
-			items:[]
 		})
 		
 		this._form.add({
@@ -50,18 +50,18 @@ Ext.define('widgets.weather.downtime_popup' , {
 			layout: 'anchor',
 			items: [
 				{
-					boxLabel  : '<img src="widgets/weather/icons/set1/01.png" class="widget-weather-form-icon"/>' + _('Force state to sun'),
+					boxLabel  : '<img src="'+this.icon_sun+'" class="'+this.icon_class+'"/>' + _('Force state to sun'),
 					name      : 'state',
 					checked   : true,
 					anchor : '100%',
 					inputValue: '0',
 				}, {
-					boxLabel  :  '<img src="widgets/weather/icons/set1/05.png" class="widget-weather-form-icon"/>' + _('Force state to cloud'),
+					boxLabel  :  '<img src="'+this.icon_cloud+'" class="'+this.icon_class+'"/>' + _('Force state to cloud'),
 					anchor : '100%',
 					name      : 'state',
 					inputValue: '1',
 				}, {
-					boxLabel  :  '<img src="widgets/weather/icons/set1/09.png" class="widget-weather-form-icon"/>' + _('Force state to storm'),
+					boxLabel  :  '<img src="'+this.icon_rain+'" class="'+this.icon_class+'"/>' + _('Force state to storm'),
 					anchor : '100%',
 					name      : 'state',
 					inputValue: '2',
@@ -80,7 +80,6 @@ Ext.define('widgets.weather.downtime_popup' , {
 			anchor : '100%',
 			emptyText : _('Type here new comment...')
 		})
-		
 		
 		this._form.add({
 			xtype: 'fieldset',
@@ -105,8 +104,6 @@ Ext.define('widgets.weather.downtime_popup' , {
 					label_text : _('To')
 				}]
 		})
-		
-
 		return this._form
 	},
 	
