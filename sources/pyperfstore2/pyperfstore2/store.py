@@ -117,13 +117,13 @@ class store(object):
 		except:
 			self.logger.warning("Impossible to read Collecion Size")
 		
-		self.logger.info(" + Collection:  %0.2f MB" % (size/1024.0/1024.0))
+		self.logger.info(" + Collection:    %0.2f MB" % (size/1024.0/1024.0))
 		try:			
 			bin_size = self.db.command("collstats", self.mongo_collection+"_bin.files")['size']
-			self.logger.info(" + Meta:        %0.2f MB" % (bin_size /1024.0/1024.0))
+			self.logger.info(" + Binaries Meta: %0.2f MB" % (bin_size /1024.0/1024.0))
 			
 			chunks_size = self.db.command("collstats", self.mongo_collection+"_bin.chunks")['size']
-			self.logger.info(" + Binaries:    %0.2f MB" % (chunks_size /1024.0/1024.0))
+			self.logger.info(" + Binaries:      %0.2f MB" % (chunks_size /1024.0/1024.0))
 			
 			size += chunks_size + bin_size
 		except:
