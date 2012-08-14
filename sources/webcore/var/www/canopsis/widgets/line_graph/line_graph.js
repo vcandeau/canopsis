@@ -82,6 +82,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	interval: global.commonTs.hours,
 	aggregate_method: 'MAX',
+	aggregate_interval: 0,
 
 	SeriesType: 'area',
 	SeriePercent: false,
@@ -91,7 +92,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	data_trends: [],
 	trend_lines: false,
 	trend_lines_type: 'ShortDot',
-	use_window_ts: false,
+	//use_window_ts: false,
 	//..
 
 	nb_node: 0,
@@ -102,8 +103,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.legend_fontColor	= check_color(this.legend_fontColor);
 		this.legend_borderColor = check_color(this.legend_borderColor);
 		this.legend_backgroundColor	= check_color(this.legend_backgroundColor);
-
-		this.aggregate_interval = this.refreshInterval;
 
 		this.nodesByID = {};
 		//Store nodes in object
@@ -840,14 +839,15 @@ Ext.define('widgets.line_graph.line_graph' , {
 		}
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
-			'aggregate_method' : this.aggregate_method
+			'aggregate_method' : this.aggregate_method,
+			'aggregate_interval': this.aggregate_interval
 			};
 
-		if (this.chart_type == 'column')
-			this.post_params.interval = this.aggregate_interval;
+		//if (this.chart_type == 'column')
+		//	this.post_params.interval = this.aggregate_interval;
 
-		if (this.use_window_ts)
-			this.post_params.use_window_ts = this.use_window_ts;
+		//if (this.use_window_ts)
+		//	this.post_params.use_window_ts = this.use_window_ts;
 	},
 
  	beforeDestroy: function() {
