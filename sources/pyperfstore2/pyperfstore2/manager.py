@@ -57,6 +57,10 @@ class manager(object):
 			
 			self.midnight = int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
 			
+			# Empty cache
+			self.cached = 0
+			self.cache_ids = {}
+			
 			if self.auto_rotate and self.midnight:
 				self.auto_rotate = False
 				self.logger.debug("Start auto-rotate")
@@ -259,6 +263,9 @@ class manager(object):
 			_id = None
 			
 		midnight = self.get_midnight_timestamp()
+		
+		##### Disable force feature !
+		force = False
 		if force:
 			self.logger.info("Force DCA Rotation")
 			midnight += 86400
