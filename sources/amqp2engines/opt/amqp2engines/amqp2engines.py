@@ -56,21 +56,24 @@ def clean_message(body, msg):
 	if isinstance(body, dict):
 		event = body
 	else:
-		logger.info(" + Try to decode event '%s'" % rk)
+		logger.info(" + Decode JSON")
 		try:
 			if isinstance(body, str) or isinstance(body, unicode):
 				try:
 					event = json.loads(body)
+					logger.info("   + Ok")
 				except Exception, err:
 					try:
 						logger.info(" + Try hack for windows string")
 						# Hack for windows FS -_-
 						event = json.loads(body.replace('\\', '\\\\'))
+						logger.info("   + Ok")
 					except Exception, err :
 						try:
-							logger.info(" + Try decode BSON")
+							logger.info(" + Decode BSON")
 							bson = BSON ( body ) 
 							event = bson.decode()
+							logger.info("   + Ok")
 						except Exception, err:
 							raise Exception(err)
 		except Exception, err:
@@ -146,11 +149,12 @@ def start_engines():
 	import alertcounter
 	import media
 	
-	engine_alertcounter	= alertcounter.engine(logging_level=logging.INFO)
-	engines.append(engine_alertcounter)
-	
-	engine_selector		= selector.engine(next_engines=[engine_alertcounter],logging_level=logging.INFO)
+
+	engine_selector		= selector.engine(logging_level=logging.INFO)
 	engines.append(engine_selector)
+
+	engine_alertcounter	= alertcounter.engine(next_engines=[engine_selector], logging_level=logging.INFO)
+	engines.append(engine_alertcounter)
 	
 	engine_collectdgw	= collectdgw.engine()
 	engines.append(engine_collectdgw)
@@ -165,7 +169,7 @@ def start_engines():
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
 	engines.append(engine_tag)
 	
-	engine_media 			= media.engine( next_engines=[engine_tag])
+	engine_media 			= media.engine( next_engines=[engine_tag], logging_level=logging.INFO)
 	engines.append(engine_media)
 
 	engine_sla			= sla.engine(logging_level=logging.INFO)
@@ -176,7 +180,7 @@ def start_engines():
 	## Events
 	next_event_engines.append(engine_media)
 	## Alerts
-	next_alert_engines.append(engine_selector)
+	next_alert_engines.append(engine_alertcounter)
 	
 	logger.info("Start engines")
 	for engine in engines:
