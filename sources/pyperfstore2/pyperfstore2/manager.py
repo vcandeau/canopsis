@@ -233,6 +233,7 @@ class manager(object):
 	def rotateAll(self):
 		metas = self.find_meta(limit=0)
 		for meta in metas:
+			self.logger.debug("%s %s %s:" % (meta['co'], meta['re'], meta['me']))
 			self.rotate(_id=meta['_id'])
 		
 	def rotate(self, _id=None, name=None):
@@ -241,41 +242,72 @@ class manager(object):
 		self.logger.debug("Rotate '%s'" % _id)
 		
 		dca_ids = []
-		for dca in self.find_dca(_id=_id, mfilter={'c': False}):
+		
+		# Find yesterday DCA
+		dcas = self.find_dca(_id=_id, mfilter={'c': False, 'fts': {'$lt': self.get_midnight_timestamp() }})
+		
+		if not dcas.count():
+			self.logger.debug(" + Nothing to do")
+			return
+		
+		for dca in dcas:
 			dca_id = dca['_id']
-			self.logger.debug("   + DCA: %s" % dca_id)
+			self.logger.debug(" + DCA: %s" % dca_id)
 			
 			#check if must compress or not
-			if len(dca['d']) > self.dca_min_length:
-				self.logger.debug(" + Compress")
+			if len(dca['d']) >= self.dca_min_length:
+				self.logger.debug("  + Compress")
+				
 				data = utils.compress(dca['d'])
-				
-				# Remove plain record
-				self.store.remove(_id=dca_id)
-				
-				# remove cache too
-				if dca_id in self.cache_ids:
-					del self.cache_ids[dca_id]
-				
+							
 				try:
-					self.logger.debug("  +  Create Bin")
-					self.store.create_bin(_id=dca_id, data=data)
+					self.logger.debug("   + Store in binary record")
+					self.store.create_bin(_id=dca_id, data=data)	
+					
+					# Remove plain record
+					self.store.remove(_id=dca_id)
+				
+					# remove cache too
+					if dca_id in self.cache_ids:
+						del self.cache_ids[dca_id]
+						
+					# Put ID in compressed list
 					dca_ids.append((dca['fts'], dca['lts'], dca_id))
+					
 				except Exception,err:
 					self.logger.info('Something wrong when rotate %s: %s' % (_id, err))
-					pass
+					
 			else:
-				self.logger.debug(" + Don't compress, put in next dca")
-				new_dca_id = self.get_dca_id(_id)
-				if self.id_exist(new_dca_id):
-					data = self.store.get(new_dca_id)['d']
-					data = dca['d'] + data
-					self.store.update(_id=new_dca_id, mset={'d': data})
-					self.store.update(_id=new_dca_id, mset={'fts': dca['fts']})
+				self.logger.debug("  + Not enough point in DCA")
+				
+				## Put point in begin of today DCA
+				today_dca_id = self.get_dca_id(_id)
+				today_dca = self.store.get(today_dca_id)
+				
+				if today_dca:
+					if dca['fts'] == today_dca['fts']:
+						self.logger.debug("    + Already merged, nothing to do")
+					else:		
+						self.logger.debug("    + Update current DCA with old values")
+				
+						data = dca['d'] + today_dca['d']
+						
+						# Add data to today
+						self.store.update(_id=today_dca_id, mset={'d': data, 'fts': dca['fts'] })
+						
+						# Remove plain record
+						self.store.remove(_id=dca_id)
+	
 				else:
-					self.store.create(_id=new_dca_id, data = {'c': False, 'mid': _id, 'fts': dca['fts'], 'lts': dca['lts'], 'd': dca['d']})
+					self.logger.debug("    + Move DCA")
+					# Create new record
+					self.store.create(_id=today_dca_id, data=dca)
+					
+					# Remove old record
+					self.store.remove(_id=dca_id)
+					
 			
-		# Update meta record
+		# Update meta record (comressed list)
 		if len(dca_ids) > 0:
 			self.store.update(_id=_id, mpush_all={'c': dca_ids})
 
