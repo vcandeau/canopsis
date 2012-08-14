@@ -46,7 +46,7 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global manager
-		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', logging_level=logging.DEBUG)
+		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', dca_min_length=50, logging_level=logging.DEBUG)
 		
 		manager.store.drop()
 
@@ -89,6 +89,9 @@ class KnownValues(unittest.TestCase):
 		if data.count() != 1:
 			raise Exception('Invalid meta count')
 			
+		if len(data[0]['c']) != 1:
+			raise Exception('Invalid rotation')
+			
 		data = manager.find_dca(name=name)
 		if data.count() != 1:
 			raise Exception('Invalid dca count')
@@ -110,6 +113,10 @@ class KnownValues(unittest.TestCase):
 		points = manager.aggregate(points, max_points=50, atype='MEAN', mode='by_point')
 		
 		print "Nb points: %s" % len(points)
+		
+	def test_08_ShowAll(self):
+		manager.showStats()
+		manager.showAll()
 		
 		
 	def test_99_Remove(self):
