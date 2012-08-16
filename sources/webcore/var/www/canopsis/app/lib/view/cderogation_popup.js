@@ -41,7 +41,8 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 		
 		this.addButton = this.variableField.add({
 			xtype:  'button',
-			text:'add'
+			iconCls : 'icon-add'
+			//text:'add'
 		})
 		
 		this.addButton.on('click',function(){
@@ -214,8 +215,9 @@ Ext.define('derogation.field',{
 		
 		this.destroyButton = this.add({
 			xtype : 'button',
-			text : 'X',
-			width : 35,
+			//text : 'X',
+			iconCls : 'icon-cancel',
+			//width : 30,
 			margin: '5 0 0 0'
 		})
 		
