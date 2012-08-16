@@ -33,7 +33,7 @@ class manager(object):
 		self.store = store(mongo_collection=mongo_collection, logging_level=logging.INFO)
 		self.auto_rotate = auto_rotate
 		self.dca_min_length = dca_min_length
-		self.midnight = None
+		self.timeperiod = None
 		self.get_midnight_timestamp()
 		
 		self.retention = retention
@@ -51,24 +51,27 @@ class manager(object):
 				'thd_warn':		('tw', None),
 				'thd_crit':		('tc', None)
 		}
+		
+	def gen_timeperiod(self):
+		return int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
 
 	def get_midnight_timestamp(self):
-		if not self.midnight or time.time() > self.midnight + 86400 + 300:
+		if not self.timeperiod or time.time() > self.timeperiod + 86400 + 300:
 			
-			self.midnight = int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
+			self.timeperiod = self.gen_timeperiod()
 			
 			# Empty cache
 			self.cached = 0
 			self.cache_ids = {}
 			
-			if self.auto_rotate and self.midnight:
+			if self.auto_rotate and self.timeperiod:
 				self.auto_rotate = False
 				self.logger.debug("Start auto-rotate")
 				self.rotateAll()
 				self.logger.debug("End of auto-rotate")
 				self.auto_rotate = True	
 			
-		return self.midnight
+		return self.timeperiod
 		
 	def get_meta_id(self, name):
 		return hashlib.md5(name).hexdigest()

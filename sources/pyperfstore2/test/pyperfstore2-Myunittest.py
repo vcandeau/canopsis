@@ -53,7 +53,7 @@ class KnownValues(unittest.TestCase):
 	def test_02_Push(self):
 		global start, nb
 		
-		manager.midnight = start
+		manager.timeperiod = start
 		
 		for i in range(start, start+(60*60*1), 60):
 			manager.push(name=name, value=33.6, timestamp=i, meta_data=meta_extra)
@@ -61,7 +61,7 @@ class KnownValues(unittest.TestCase):
 			
 		i+=60
 		
-		manager.midnight = i
+		manager.timeperiod = i
 		start = i
 			
 	def test_03_Rotate(self):
@@ -70,7 +70,7 @@ class KnownValues(unittest.TestCase):
 	def test_04_Push(self):
 		global start, nb
 		
-		manager.midnight = start
+		manager.timeperiod = start
 		
 		for i in range(start, start+(60*60*1), 60):
 			manager.push(name=name, value=33.6, timestamp=i)
@@ -78,7 +78,7 @@ class KnownValues(unittest.TestCase):
 		
 		i+=60
 		
-		manager.midnight = i
+		manager.timeperiod = i
 		start = i
 		
 		global stop
