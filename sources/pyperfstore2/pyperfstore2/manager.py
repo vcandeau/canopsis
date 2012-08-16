@@ -20,7 +20,6 @@
 
 import os, sys, json, logging, time
 import hashlib
-from datetime import datetime
 
 from pyperfstore2.store import store
 import pyperfstore2.utils as utils
