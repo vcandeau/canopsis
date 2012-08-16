@@ -37,6 +37,8 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	max_value : undefined,
 	label_text : undefined,
 	
+	now : false,
+	
 	initComponent: function() {
 		this.logAuthor = '[' + this.id + ']';
 		log.debug('Initialize ...', this.logAuthor);
@@ -59,11 +61,15 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 		var config = {
 			isFormField: false,
 			name: 'fromHour',
-			value: '00:00 am',
 			margin : '0 0 0 5',
 			width: this.hour_width,
 			allowBlank: false,
 		}
+		
+		if(this.now)
+			config.value = Ext.Date.format(new Date, 'g:i a')
+		else
+			config.value = '00:00 am'
 	
 		this.hour = Ext.widget('textfield',config)
 	
@@ -87,6 +93,12 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	
 	setValue:function(value){
 		this.date.setValue(value)
+	},
+	
+	setDisabled : function(bool){
+		this.callParent(arguments);
+		this.date.setDisabled(bool)
+		this.hour.setDisabled(bool)
 	}
 	
 })
