@@ -225,7 +225,7 @@ def aggregate(values, max_points=None, interval=None, atype=None, agfn=None, mod
 			logger.debug(" + Useless")
 			return values
 		
-		interval = int(round(len(values) / max_points))
+		interval = int(round(len(values) / float(max_points)))
 		logger.debug(" + point interval: %s" % interval)
 		
 		for x in range(0, len(values), interval):
