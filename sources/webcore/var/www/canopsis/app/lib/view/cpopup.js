@@ -27,6 +27,7 @@ Ext.define('canopsis.lib.view.cpopup' , {
 	
 	//cls: Ext.baseCSSPrefix + 'message-box',
 	constrain:true,
+	resizable: false,
 	
 	textAreaLabel : 'Type your message here:',
 		
