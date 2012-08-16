@@ -37,7 +37,7 @@ class manager(object):
 		self.dca_min_length = dca_min_length
 		
 		self.timestamp = 0
-		self.timeperiod = 300
+		self.timeperiod = 86400
 		
 		self.need_rotate = False
 		
