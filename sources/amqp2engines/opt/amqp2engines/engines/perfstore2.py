@@ -35,10 +35,9 @@ class engine(cengine):
 		
 	def pre_run(self):
 		import logging
-		self.manager = pyperfstore2.manager(logging_level=logging.DEBUG)
+		self.manager = pyperfstore2.manager(auto_rotate=True, logging_level=logging.DEBUG)
 		
 	def beat(self):
-		#self.manager.rotateAll()
 		pass
 		
 	def to_perfstore(self, rk, perf_data, timestamp, component, resource=None):
@@ -98,6 +97,9 @@ class engine(cengine):
 		## Get perfdata
 		perf_data = event.get('perf_data', None)
 		perf_data_array = event.get('perf_data_array', [])
+		
+		if perf_data_array == None:
+			perf_data_array = []
 		
 		### Parse perfdata
 		if perf_data:

@@ -33,12 +33,13 @@ name = 'nagios.Central.check.service.localhost9.ping'
 component = 'localhost9'
 resource = 'ping'
 
-meta_extra = {'dn': (component, resource) }
-
 start = int(time.time())
 stop = None
 ut_start = int(time.time())
 nb = 0
+n=1
+
+meta_extra = {'dn': (component, resource), 'retention': 2 }
 
 class KnownValues(unittest.TestCase):
 	def setUp(self):
@@ -46,22 +47,22 @@ class KnownValues(unittest.TestCase):
 
 	def test_01_Init(self):
 		global manager
-		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', dca_min_length=50, logging_level=logging.DEBUG)
+		manager = pyperfstore2.manager(mongo_collection='unittest_perfdata2', dca_min_length=50, logging_level=logging.DEBUG, auto_rotate=True)
 		
 		manager.store.drop()
 
 	def test_02_Push(self):
 		global start, nb
 		
-		manager.timeperiod = start
+		manager.timestamp = start
 		
-		for i in range(start, start+(60*60*1), 60):
+		for i in range(start, start+(60*60*n), 60):
 			manager.push(name=name, value=33.6, timestamp=i, meta_data=meta_extra)
 			nb+=1
 			
-		i+=60
+		i+=n*60
 		
-		manager.timeperiod = i
+		manager.timestamp = i
 		start = i
 			
 	def test_03_Rotate(self):
@@ -70,15 +71,15 @@ class KnownValues(unittest.TestCase):
 	def test_04_Push(self):
 		global start, nb
 		
-		manager.timeperiod = start
+		manager.timestamp = start
 		
-		for i in range(start, start+(60*60*1), 60):
+		for i in range(start, start+(60*60*n), 60):
 			manager.push(name=name, value=33.6, timestamp=i)
 			nb+=1
 		
-		i+=60
+		i+=n*60
 		
-		manager.timeperiod = i
+		manager.timestamp = i
 		start = i
 		
 		global stop
@@ -118,6 +119,36 @@ class KnownValues(unittest.TestCase):
 		manager.showStats()
 		manager.showAll()
 		
+	def test_09_clean(self):
+		## Rotate	
+		manager.rotate(name=name)
+		
+		## Push 60 point
+		global start, nb
+		
+		manager.timestamp = start
+		
+		for i in range(start, start+(60*60*n), 60):
+			manager.push(name=name, value=33.6, timestamp=i)
+			#nb+=1
+
+		i+=n*60
+				
+		manager.timestamp = i
+		start = i
+		
+		global stop
+		stop = start
+		
+		## Clean old dca
+		manager.clean(name=name, timestamp=ut_start+60*70)
+	
+		## Show stats
+		manager.showAll()
+		
+		## Check purge
+		self.test_05_Functions()
+		self.test_07_Get_point()
 		
 	def test_99_Remove(self):
 		manager.remove(name=name)
