@@ -50,30 +50,125 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			this.variableField.insert(last_child_index - 1, Ext.create('derogation.field'))
 		},this)
 		
-		this._form.add({
+		//--------------------Time Field------------------------
+		
+		this.timeFieldSet = this._form.add({
 			xtype: 'fieldset',
-			title: _('Downtime'),
-			layout: {
-				type: 'vbox',
-				align: 'center'
-			},
-			items: [{
-					xtype: 'checkbox',
-					boxLabel  : _('Block update from supervision tools'),
-					name: 'downtime',
-					inputValue : true,
-					checked : true,
-				},{
-					xtype: 'cdate',
-					name: 'startTs',
-					label_text : _('From')
-				},{
-					xtype: 'cdate',
-					name: 'stopTs',
-					label_text : _('To')
-				}]
+			title: _('Time Perdiod'),
 		})
+		
+		this.timeFieldSet.add({
+			xtype: 'checkbox',
+			boxLabel  : _('Block update from supervision tools'),
+			name: 'downtime',
+			inputValue : true,
+			checked : true,
+		})
+		
+		//------------------Beginning-----------------
+		
+		this.timeFieldSet.add({
+			xtype:'displayfield',
+			value : _('Begging') + ' :',
+		})
+		
+		this.timeFieldSet.add({
+			xtype: 'cdate',
+			name: 'startTs',
+			date_width: 110,
+			now:true
+		})
+		
+		this.timeFieldSet.add({
+			xtype:'displayfield',
+			value : _('Ending') + ' :',
+		})
+		
+		//------------------Ending-----------------
+		
+		this.periodTypeCombo =  Ext.widget('combobox',{
+			isFormField:false,
+			editable:false,
+			width: 60,
+			queryMode: 'local',
+			displayField : 'text',
+			valueField : 'value',
+			value : 'for',
+			store: {
+				xtype: 'store',
+				fields: ['value','text'],
+				data: [
+					{value: 'for',text:_('For')},
+					{value: 'to',text:_('To')},
+				]				
+			}
+		})
+		
+		this.forNumber = Ext.widget('numberfield',{
+			name : 'for_number',
+			width:40,
+			value:1,
+			minValue: 1,
+		})
+		
+		this.forPeriodCombo = Ext.widget('combobox',{
+			editable:false,
+			width:80,
+			name: 'for_period',
+			queryMode: 'local',
+			displayField : 'name',
+			valueField : 'value',
+			value: global.commonTs.day,
+			store: {
+				xtype: 'store',
+				fields: ['value','name'],
+				data: [
+					{'name': _('Day'), 'value': global.commonTs.day},
+					{'name': _('Week'), 'value': global.commonTs.week},
+					{'name': _('Month'), 'value': global.commonTs.month},
+					{'name': _('Year'), 'value': global.commonTs.year}
+				]			
+			}
+		})
+		
+		this.stopDate = Ext.widget('cdate',{
+					name: 'stopTs',
+					hidden: true,
+					disabled:true
+		})
+		
+		this.timeFieldSet.add({
+			xtype:'container',
+			date_width : 110,
+			layout:'hbox',
+			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
+		})
+
+		//--------------bindings--------------
+		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
+
 		return this._form
+	},
+	
+	toggleTimePeriod : function(combo,value){
+		if(value == 'for'){
+			this.forNumber.show()
+			this.forNumber.setDisabled(false)
+			this.forPeriodCombo.show()
+			this.forPeriodCombo.setDisabled(false)
+			this.stopDate.hide()
+			this.stopDate.setDisabled(true)
+		}
+		
+		if(value == 'to'){
+			this.forNumber.hide()
+			this.forNumber.setDisabled(true)
+			this.forPeriodCombo.hide()
+			this.forPeriodCombo.setDisabled(true)
+			this.stopDate.show()
+			this.stopDate.setDisabled(false)
+		}
+		
 	},
 	
 	_ok_button_function : function(){
@@ -83,6 +178,13 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 		for(var i in output)
 			if(Ext.isArray(output[i]))
 				output[i] = output[i][0]
+				
+		//fix for period ending time
+		if(output.for_number && output.for_period){
+			output.stopTs = output.startTs + (output.for_number * output.for_period)
+			delete output.for_number
+			delete output.for_period
+		}
 		
 		log.dump(output)
 		//global.selectorCtrl.derogation_on_selector
@@ -215,9 +317,7 @@ Ext.define('derogation.field',{
 		
 		this.destroyButton = this.add({
 			xtype : 'button',
-			//text : 'X',
 			iconCls : 'icon-cancel',
-			//width : 30,
 			margin: '5 0 0 0'
 		})
 		
