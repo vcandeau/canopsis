@@ -26,24 +26,31 @@ from pyperfstore2.store import store
 import pyperfstore2.utils as utils
 
 class manager(object):
-	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, retention=0, dca_min_length = 300, logging_level=logging.INFO):
+	def __init__(self, mongo_collection='perfdata2', auto_rotate=False, auto_clean=False, retention=0, dca_min_length = 300, logging_level=logging.INFO):
 		self.logger = logging.getLogger('manager')
 		self.logger.setLevel(logging_level)
 		
 		self.store = store(mongo_collection=mongo_collection, logging_level=logging.INFO)
 		self.auto_rotate = auto_rotate
-		self.dca_min_length = dca_min_length
-		self.timeperiod = None
-		self.get_midnight_timestamp()
+		self.auto_clean = auto_clean
 		
-		self.retention = retention
+		self.dca_min_length = dca_min_length
+		
+		self.timestamp = 0
+		self.timeperiod = 300
+		
+		self.need_rotate = False
+		
+		self.get_timestamp()
+		
+		self.retention = retention * 3600
 		
 		self.cache_max = 5000
 		self.cached = 0
 		self.cache_ids = {}
 		
 		self.fields_map = {
-				'rentention':	('r', 0),
+				'retention':	('r', self.retention),
 				'type':			('t', 'GAUGE'),
 				'unit':			('u', None),
 				'min':			('mi', None),
@@ -52,33 +59,43 @@ class manager(object):
 				'thd_crit':		('tc', None)
 		}
 		
-	def gen_timeperiod(self):
-		return int(time.mktime(datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).timetuple()))
+	def gen_timestamp(self):
+		now = int(time.time()) 
+		return now - (now % self.timeperiod)
 
-	def get_midnight_timestamp(self):
-		if not self.timeperiod or time.time() > self.timeperiod + 86400 + 300:
-			
-			self.timeperiod = self.gen_timeperiod()
-			
+	def get_timestamp(self):
+		now = int(time.time())
+		
+		## Init
+		if not self.timestamp:
+			self.timestamp = self.gen_timestamp()
+		
+		if now > (self.timestamp + self.timeperiod):
+			if self.timestamp:
+				self.need_rotate = True
+				
 			# Empty cache
 			self.cached = 0
 			self.cache_ids = {}
-			
-			if self.auto_rotate and self.timeperiod:
-				self.auto_rotate = False
-				self.logger.debug("Start auto-rotate")
-				self.rotateAll()
-				self.logger.debug("End of auto-rotate")
-				self.auto_rotate = True	
-			
-		return self.timeperiod
+			self.timestamp = self.gen_timestamp()
+
+		## Auto rotate
+		if self.need_rotate and self.auto_rotate:
+			self.auto_rotate = False
+			self.logger.debug("Start auto-rotate")
+			self.rotateAll()
+			self.logger.debug("End of auto-rotate")
+			self.auto_rotate = True
+			self.need_rotate = False
+
+		return self.timestamp
 		
 	def get_meta_id(self, name):
 		return hashlib.md5(name).hexdigest()
 		
 	def get_dca_id(self, _id):
 		# get midnight timestamp
-		dca_hash = "%s%s"  % (_id, self.get_midnight_timestamp())
+		dca_hash = "%s%s"  % (_id, self.get_timestamp())
 		return hashlib.md5(dca_hash).hexdigest()
 		
 	def id_exist(self, _id):
@@ -195,6 +212,10 @@ class manager(object):
 		if not self.id_exist(_id):
 			meta_data = self.compress_meta_fields(meta_data)
 			
+			# Next Clean
+			if meta_data['r']:
+				meta_data['nc'] = int(time.time()) + meta_data['r']
+			
 			self.logger.debug("Create meta record '%s'" % _id)
 			self.store.create(_id=_id, data=meta_data)
 		
@@ -209,7 +230,7 @@ class manager(object):
 			raise Exception('Invalid _id, not found %s' % name)
 		
 		## Compressed DCA
-		if tstart < self.get_midnight_timestamp():	
+		if tstart < self.get_timestamp():	
 			dca_ids = []
 			
 			for dca in meta_data.get('c', []):
@@ -229,7 +250,7 @@ class manager(object):
 				points += utils.uncompress(data)
 		
 		## Plain DCA
-		if tstop >= self.get_midnight_timestamp():
+		if tstop >= self.get_timestamp():
 			for dca in self.find_dca(_id=_id, mfilter={'c': False}):
 				points += dca['d']
 		
@@ -254,6 +275,7 @@ class manager(object):
 			return (meta_data, points)
 
 	def rotateAll(self, force=False):
+		self.need_rotate = False
 		self.rotate(force=force)
 		
 	def rotate(self, _id=None, name=None, force=False):
@@ -262,21 +284,21 @@ class manager(object):
 		except:
 			_id = None
 			
-		midnight = self.get_midnight_timestamp()
+		now_timeperiod = self.get_timestamp()
 		
 		##### Disable force feature !
 		force = False
 		if force:
 			self.logger.info("Force DCA Rotation")
-			midnight += 86400
+			now_timeperiod += self.timeperiod
 		
 		# Find yesterday DCA
 		if _id:
 			self.logger.debug("Rotate DCA '%s'" % _id)
-			dcas = self.find_dca(_id=_id, mfilter={'c': False, 'fts': {'$lt': midnight }})
+			dcas = self.find_dca(_id=_id, mfilter={'c': False, 'fts': {'$lt': now_timeperiod }})
 		else:
 			self.logger.info("Rotate All DCA")
-			dcas = self.store.find(mfilter={'c': False, 'fts': {'$lt': midnight }})
+			dcas = self.store.find(mfilter={'c': False, 'fts': {'$lt': now_timeperiod }})
 		
 		if not dcas.count():
 			self.logger.debug(" + Nothing to do")
@@ -343,10 +365,52 @@ class manager(object):
 					
 					# Remove old record
 					self.store.remove(_id=dca_id)
-					
+			
+			if self.auto_clean:
+				self.clean()
+	
+	def cleanAll(self, timestamp=None):
+		self.clean(timestamp=timestamp)
+		
+	def clean(self, _id=None, name=None, timestamp=None):
+		try:
+			_id = self.get_id(_id, name)
+		except:
+			_id = None
+		
+		if not timestamp:
+			timestamp = int(time.time())
+		
+		self.logger.debug("Remove DCA when 'nc' is older than %s:" % timestamp)
+		
+		if _id:
+			metas = self.find_meta(limit=1, mfilter={'_id': _id, 'nc': {'$lte': timestamp}})
+		else:
+			self.logger.debug(" + Clean all old Metas")
+			metas = self.find_meta(limit=0, mfilter={'nc': {'$lte': timestamp}})
+		
+		nb_metas = metas.count()
 
-		#if self.retention != 0:
-		#	self.logger.debug(" + Clean old DCA")
+		if not nb_metas:
+			self.logger.debug("   + Nothing to clean")
+			return
+		else:
+			self.logger.debug("   + Start cleanning of %s metas" % nb_metas)
+					
+		for meta in metas:
+			self.logger.debug("   + Clean meta '%s'" % meta['_id'])
+			for dca_meta in meta['c']:
+				# check lts
+				if  dca_meta[1] < timestamp:
+					self.logger.debug("     + Remove binarie DCA '%s'" %  dca_meta[2])
+					self.store.grid.delete(dca_meta[2])
+					
+					# Remove dca meta
+					self.store.update(_id=meta['_id'], mpop={ 'c' : -1  })
+				else:
+					#self.logger.debug("     + No points to clean")
+					break
+				
 
 	def remove(self, _id=None, name=None):
 		_id = self.get_id(_id, name)
@@ -368,10 +432,14 @@ class manager(object):
 	def showStats(self):
 		metas = self.find_meta(limit=0)
 		dcas = self.store.find(mfilter={'c': False, 'mid': { '$exists' : True }})
-		self.logger.info("Metas:       %s" % metas.count())
+		mcount = metas.count()
+		size = self.store.size()
+		
+		self.logger.info("Metas:       %s" % mcount)
 		self.logger.info("Plain DCAs:  %s" % dcas.count())
-		#self.logger.info("DB Size:     %s" % self.store.size())
-		self.store.size()
+		if mcount:
+			self.logger.info("Size/metric: %.3f KB" % ((float(size)/mcount)/1024.0))
+		self.logger.info("Total size:  %.3f MB" % (size/1024.0/1024.0))
 	
 	
 	def showAll(self):
@@ -394,5 +462,6 @@ class manager(object):
 			
 			self.logger.info(" + Plain DCA: %s" % self.find_dca(_id).count())
 			self.logger.info(" + Compressed DCA: %s" % len(meta.get('c', [])))
+			self.logger.info(" + Next Clean: %s" % meta.get('nc', None) )
 			
 			

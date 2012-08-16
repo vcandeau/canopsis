@@ -69,7 +69,7 @@ class store(object):
 	def count(self, _id):
 		return self.collection.find({'_id': _id}).count()
 		
-	def update(self, _id, mset=None, munset=None, mpush=None, mpush_all=None):
+	def update(self, _id, mset=None, munset=None, mpush=None, mpush_all=None, mpop=None):
 		self.check_connection()
 		data = {}
 		if mset:
@@ -80,6 +80,8 @@ class store(object):
 			data['$push'] = mpush
 		if mpush_all:
 			data['$pushAll'] = mpush_all
+		if mpop:
+			data['$pop'] = mpop
 		
 		if data:
 			return self.collection.update({'_id': _id}, data, upsert=False, safe=self.mongo_safe)
