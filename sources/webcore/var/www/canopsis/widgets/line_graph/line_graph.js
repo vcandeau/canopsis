@@ -83,6 +83,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	interval: global.commonTs.hours,
 	aggregate_method: 'MAX',
 	aggregate_interval: 0,
+	aggregate_max_points: 500,
 
 	SeriesType: 'area',
 	SeriePercent: false,
@@ -840,7 +841,8 @@ Ext.define('widgets.line_graph.line_graph' , {
 		this.post_params = {
 			'nodes': Ext.JSON.encode(post_params),
 			'aggregate_method' : this.aggregate_method,
-			'aggregate_interval': this.aggregate_interval
+			'aggregate_interval': this.aggregate_interval,
+			'aggregate_max_points': this.aggregate_max_points
 			};
 
 		//if (this.chart_type == 'column')
