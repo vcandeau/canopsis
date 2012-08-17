@@ -25,7 +25,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	alias: 'widget.DerogationForm',
 	
 	width:500,
-	
 	layout: 'anchor',
 	//bodyStyle:{'background': '#ededed'},
 	bodyPadding : 10,
@@ -179,7 +178,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 
 Ext.define('derogation.field',{
 	extend: 'Ext.form.Panel',
-	//mixins: ['canopsis.lib.form.cfield'],
 	
 	border: false,
 	layout:'hbox',
