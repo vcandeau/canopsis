@@ -100,7 +100,8 @@ function createApplication(){
 			'Curves',
 			'MetricNavigation',
 			'Events',
-			'Selector'
+			'Selector',
+			'Derogation'
 		],
 	
 		//autoCreateViewport: true,

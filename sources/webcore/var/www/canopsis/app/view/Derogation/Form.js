@@ -19,21 +19,23 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
-Ext.define('canopsis.lib.view.cderogation_popup' , {
-	extend: 'canopsis.lib.view.cpopup',
-	alias: 'canopsis.lib.view.cderogation_popup',
+Ext.define('canopsis.view.Derogation.Form' , {
+	extend: 'canopsis.lib.view.cform',
 	
-	alias: 'widget.cderogation',
+	alias: 'widget.DerogationForm',
 	
-	_component : undefined,
-	referer: undefined,
-	title : _('Derogation'),
 	width:500,
 	
-	_buildForm : function(){
+	layout: 'anchor',
+	//bodyStyle:{'background': '#ededed'},
+	bodyPadding : 10,
+	border:false,
+	
+	initComponent: function() {
+		this.callParent();
 		
 		//--------------------Variable field-----------------------
-		this.variableField = this._form.add({
+		this.variableField = this.add({
 			xtype: 'fieldset',
 			title: _('Manual set'),
 			items: [Ext.create('derogation.field')]
@@ -49,7 +51,7 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 
 		this.addButton = container.add({
 			xtype: 'button',
-			x: 424,
+			x: 436,
 			iconCls : 'icon-add',
 		})
 		
@@ -60,22 +62,14 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 		
 		//--------------------Time Field------------------------
 		
-		this.timeFieldSet = this._form.add({
+		this.timeFieldSet = this.add({
 			xtype: 'cfieldset',
 			title: _('Block update from supervision tools'),
 			checkboxName: 'downtime',
 			inputValue : true,
 			checked : true
 		})
-		/*
-		this.timeFieldSet.add({
-			xtype: 'checkbox',
-			boxLabel  : _('Block update from supervision tools'),
-			name: 'downtime',
-			inputValue : true,
-			checked : true,
-		})
-		*/
+		
 		//------------------Beginning-----------------
 		
 		this.timeFieldSet.add({
@@ -159,9 +153,7 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 
 		//--------------bindings--------------
 		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
-
-		return this._form
-	},
+    },
 	
 	toggleTimePeriod : function(combo,value){
 		if(value == 'for'){
@@ -183,31 +175,6 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 		}
 		
 	},
-	
-	_ok_button_function : function(){
-		var output = this._form.getValues()
-		
-		//get rid of arrays (when user put x times the same field)
-		for(var i in output)
-			if(Ext.isArray(output[i]))
-				output[i] = output[i][0]
-				
-		//fix for period ending time
-		if(output.for_number && output.for_period){
-			output.stopTs = output.startTs + (output.for_number * output.for_period)
-			delete output.for_number
-			delete output.for_period
-		}
-		
-		//clean info (checkboxfield inner panel cleaning)
-		if(!output.downtime){
-			delete output.startTs
-			delete output.stopTs
-		}
-		
-		log.dump(output)
-		//global.selectorCtrl.derogation_on_selector
-	}
 })
 
 Ext.define('derogation.field',{
@@ -216,7 +183,7 @@ Ext.define('derogation.field',{
 	
 	border: false,
 	layout:'hbox',
-	bodyStyle:{'background': '#ededed'},
+	//bodyStyle:{'background': '#ededed'},
 	
 	icon_sun: 'widgets/weather/icons/set1/01.png',
 	icon_cloud: 'widgets/weather/icons/set1/05.png',
