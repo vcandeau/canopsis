@@ -97,6 +97,7 @@ Ext.define('widgets.line_graph.line_graph' , {
 	//..
 
 	nb_node: 0,
+	same_node: false,
 
 	initComponent: function() {
 		this.backgroundColor	= check_color(this.backgroundColor);
@@ -109,10 +110,6 @@ Ext.define('widgets.line_graph.line_graph' , {
 		//Store nodes in object
 		for (var i in this.nodes) {
 			var node = this.nodes[i];
-
-			//hack for retro compatibility
-			if (!node.dn)
-				node.dn = [node.component, node.resource];
 
 			if (this.nodesByID[node.id]) {
 				this.nodesByID[node.id].metrics.push(node.metrics[0]);
@@ -157,13 +154,14 @@ Ext.define('widgets.line_graph.line_graph' , {
 
 	setchartTitle: function() {
 		var title = '';
+				
 		if (this.nb_node) {
-			if (this.nb_node == 1) {
-				var component = this.nodes[0].dn[0];
+			if (this.nb_node == 1 || this.same_node) {
+				var component = this.nodes[0].component;
 				var source_type = this.nodes[0].source_type;
 
 				if (source_type == 'resource') {
-					var resource = this.nodes[0].dn[1];
+					var resource = this.nodes[0].resource;
 					title = resource + ' ' + _('line_graph.on') + ' ' + component;
 				}else {
 					title = component;
@@ -517,9 +515,9 @@ Ext.define('widgets.line_graph.line_graph' , {
 		if (this.nb_node != 1) {
 			var node = this.nodesByID[node_id];
 			if (node) {
-				metric_long_name = node.dn[0];
+				metric_long_name = node.component;
 				if (node.source_type == 'resource')
-					metric_long_name += ' - ' + node.dn[1];
+					metric_long_name += ' - ' + node.resource;
 
 				metric_long_name = '(' + metric_long_name + ') ';
 			}

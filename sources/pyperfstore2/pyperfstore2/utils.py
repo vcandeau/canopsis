@@ -265,7 +265,7 @@ def aggregate(values, max_points=None, interval=None, atype=None, agfn=None, mod
 					rvalues.append(point)
 				else:
 					logger.debug("     + No values")
-					rvalues.append([timestamp, agvalue])
+					rvalues.append([timestamp, 0])
 			
 				#Set next interval
 				start = stop

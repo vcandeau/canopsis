@@ -185,13 +185,15 @@ Ext.define('derogation.field',{
 	layout:'hbox',
 	//bodyStyle:{'background': '#ededed'},
 	
-	icon_sun: 'widgets/weather/icons/set1/01.png',
-	icon_cloud: 'widgets/weather/icons/set1/05.png',
-	icon_rain: 'widgets/weather/icons/set1/09.png',
+	state_icon_path : 'widgets/weather/icons/set1/',
+	icon_weather1: '01.png',
+	icon_weather2: '05.png',
+	icon_weather3: '09.png',
 	
-	icon_wip : 'widgets/weather/icons/public_domain_icon/workman.png',
-	icon_warning: 'widgets/weather/icons/public_domain_icon/slippery.png',
-	icon_alert: 'widgets/weather/icons/public_domain_icon/alert.png',
+	alert_icon_path: 'widgets/weather/icons/public_domain_icon/',
+	icon_alert1 : 'workman.png',
+	icon_alert2: 'slippery.png',
+	icon_alert3: 'alert.png',
 	
 	icon_class : 'widget-weather-form-icon',
 	
@@ -236,18 +238,18 @@ Ext.define('derogation.field',{
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>'+
-							  '<img src="widgets/weather/icons/set1/{icon}" class="widget-weather-form-icon"/>'+
+							  '<img src="'+this.state_icon_path+'{icon}" class="'+this.icon_class+'"/>'+
 							  '{text}</div>';
 					return tpl;
-				}
+				}.bind(this)
 			},
 			store: {
 				xtype: 'store',
 				fields: ['value','text','icon'],
 				data: [
-					{value: 0,text:_('Ok'),icon: '01.png' },
-					{value: 1,text:_('Warning'),icon: '05.png' },
-					{value: 2, text:_('Critical'),icon: '09.png' },
+					{value: 0,text:_('Ok'),icon: this.icon_weather1 },
+					{value: 1,text:_('Warning'),icon: this.icon_weather2 },
+					{value: 2, text:_('Critical'),icon: this.icon_weather3 },
 				]				
 			}
 		})
@@ -264,21 +266,22 @@ Ext.define('derogation.field',{
 			displayField : 'text',
 			valueField   : 'value',
 			queryMode    : 'local',
+			value: 0,
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>'+
-							  '<img src="widgets/weather/icons/public_domain_icon/{icon}" class="widget-weather-form-icon"/>'+
+							  '<img src="'+this.alert_icon_path+'{icon}" class="'+this.icon_class+'"/>'+
 							  '{text}</div>';
 					return tpl;
-				}
+				}.bind(this)
 			},
 			store: {
 				xtype: 'store',
 				fields: ['value','text','icon'],
 				data: [
-					{value: 0,text:_('Indisponible'),icon: 'workman.png' },
-					{value: 1,text:_('Be carefull'),icon: 'slippery.png' },
-					{value: 2, text:_('Simple alert'),icon: 'alert.png' }
+					{value: 0,text:_('Indisponible'),icon: this.icon_alert1 },
+					{value: 1,text:_('Be carefull'),icon: this.icon_alert2 },
+					{value: 2, text:_('Simple alert'),icon: this.icon_alert3 }
 				]
 			}
 		})

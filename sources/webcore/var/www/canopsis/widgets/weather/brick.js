@@ -28,7 +28,7 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 						'{output}',
 						'<tpl if="admin == true">',
 							'<span class="icon icon-edit" id="{id}-edit_button"></span>',
-							'<span class="icon icon-derogation" id="{id}-derogation_button"></span>',
+							//'<span class="icon icon-derogation" id="{id}-derogation_button"></span>',
 						'</tpl>',
 					'</p>',
 				'</div>',
@@ -127,7 +127,7 @@ Ext.define('widgets.weather.brick' , {
 		
 		//-----------------------get element----------------------
 		this.edit_button = this.getEl().getById(this.id + '-edit_button');
-		this.derogation_button = this.getEl().getById(this.id + '-derogation_button');
+		//this.derogation_button = this.getEl().getById(this.id + '-derogation_button');
 		//-----------------------bindings-------------------------
 		var report_button = this.getEl().getById(this.id + '-button');
 		
@@ -137,18 +137,16 @@ Ext.define('widgets.weather.brick' , {
 		if(this.widget_base_config.admin){
 			var output = this.getEl().getById(this.id + '-output');
 			output.hover(
-				function(){
-					this.edit_button.fadeIn()
-					this.derogation_button.fadeIn()
-				},
-				function(){
-					this.edit_button.fadeOut()
-					this.derogation_button.fadeOut()
-				},
-			this)
+				function(){this.edit_button.fadeIn()},
+				function(){this.edit_button.fadeOut()},
+				this
+			)
 
-			this.edit_button.on('click',this.change_output,this)
-			this.derogation_button.on('click',this.derogation,this)
+			this.edit_button.on('click',function(){
+				
+				global.derogationCtrl.derogate()
+			},this)
+			//this.derogation_button.on('click',this.derogation,this)
 		}
 	},
 	
@@ -271,7 +269,7 @@ Ext.define('widgets.weather.brick' , {
 		* */
 		global.derogationCtrl.derogate()
 	},
-	
+	/*
 	change_output : function(){
 		var config = {
 			title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
@@ -283,7 +281,7 @@ Ext.define('widgets.weather.brick' , {
 		var popup = Ext.create('widgets.weather.edit_message_popup',config)
 		popup.show()
 	},
-	
+	*/
 
 	getIcon: function(value) {
 		value = Math.floor(value / 10) * 10;

@@ -69,10 +69,10 @@ Ext.define('canopsis.controller.Derogation', {
 	
 	derogate: function(){
 		var form = Ext.create('widget.' + this.formXtype ,{EditMethod:'window'});
-		var win = Ext.create('widget.window', {
+		form.win = Ext.create('widget.window', {
 			title: 'Derogation',
 			items: form,
-			closable: true,
+			closable: false,
 			resizable: false,
 			constrain: true,
 			//renderTo: this.grid.id,
