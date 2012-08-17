@@ -184,7 +184,7 @@ Ext.define('derogation.field',{
 	border: false,
 	layout:'hbox',
 	//bodyStyle:{'background': '#ededed'},
-	
+	/*
 	icon_sun: 'widgets/weather/icons/set1/01.png',
 	icon_cloud: 'widgets/weather/icons/set1/05.png',
 	icon_rain: 'widgets/weather/icons/set1/09.png',
@@ -193,7 +193,7 @@ Ext.define('derogation.field',{
 	icon_warning: 'widgets/weather/icons/public_domain_icon/slippery.png',
 	icon_alert: 'widgets/weather/icons/public_domain_icon/alert.png',
 	
-	icon_class : 'widget-weather-form-icon',
+	icon_class : 'widget-weather-form-icon',*/
 	
 	initComponent: function() {
 		this.callParent(arguments);
@@ -270,7 +270,7 @@ Ext.define('derogation.field',{
 							  '<img src="widgets/weather/icons/public_domain_icon/{icon}" class="widget-weather-form-icon"/>'+
 							  '{text}</div>';
 					return tpl;
-				}
+				},
 			},
 			store: {
 				xtype: 'store',
