@@ -53,10 +53,13 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 		//--------------------Time Field------------------------
 		
 		this.timeFieldSet = this._form.add({
-			xtype: 'fieldset',
-			title: _('Time Perdiod'),
+			xtype: 'cfieldset',
+			title: _('Block update from supervision tools'),
+			checkboxName: 'downtime',
+			inputValue : true,
+			checked : true
 		})
-		
+		/*
 		this.timeFieldSet.add({
 			xtype: 'checkbox',
 			boxLabel  : _('Block update from supervision tools'),
@@ -64,12 +67,13 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			inputValue : true,
 			checked : true,
 		})
-		
+		*/
 		//------------------Beginning-----------------
 		
 		this.timeFieldSet.add({
 			xtype:'displayfield',
 			value : _('Begging') + ' :',
+			margin: '10 0 10 0'
 		})
 		
 		this.timeFieldSet.add({
@@ -79,12 +83,13 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			now:true
 		})
 		
+		//------------------Ending-----------------
+		
 		this.timeFieldSet.add({
 			xtype:'displayfield',
 			value : _('Ending') + ' :',
+			margin: '10 0 10 0'
 		})
-		
-		//------------------Ending-----------------
 		
 		this.periodTypeCombo =  Ext.widget('combobox',{
 			isFormField:false,
@@ -184,6 +189,12 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			output.stopTs = output.startTs + (output.for_number * output.for_period)
 			delete output.for_number
 			delete output.for_period
+		}
+		
+		//clean info (checkboxfield inner panel cleaning)
+		if(!output.downtime){
+			delete output.startTs
+			delete output.stopTs
 		}
 		
 		log.dump(output)
