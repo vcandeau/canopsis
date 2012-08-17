@@ -259,7 +259,7 @@ Ext.define('widgets.weather.brick' , {
 	
 	derogation : function(){
 		var config = {
-			title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
+			//title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
 			_component : this.component,
 			event_type: this.event_type	,
 			referer: this.data.selector_id
