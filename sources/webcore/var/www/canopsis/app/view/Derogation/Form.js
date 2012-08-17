@@ -235,6 +235,7 @@ Ext.define('derogation.field',{
 			displayField : 'text',
 			valueField   : 'value',
 			queryMode    : 'local',
+			value: 0,
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>'+
