@@ -169,8 +169,8 @@ def start_engines():
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
 	engines.append(engine_tag)
 	
-	engine_media 			= media.engine( next_engines=[engine_tag], logging_level=logging.INFO)
-	engines.append(engine_media)
+	#engine_media 			= media.engine( next_engines=[engine_tag], logging_level=logging.INFO)
+	#engines.append(engine_media)
 
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
@@ -178,7 +178,8 @@ def start_engines():
 
 	# Set Next queue
 	## Events
-	next_event_engines.append(engine_media)
+	#next_event_engines.append(engine_media)
+	next_event_engines.append(engine_tag)
 	## Alerts
 	next_alert_engines.append(engine_alertcounter)
 	

@@ -21,39 +21,52 @@
 from cengine import cengine
 from caccount import caccount
 from cstorage import get_storage
-from pyperfstore import node
-from pyperfstore import mongostore
 from cfile import cfile
-import cevent
-import time
 import base64
 
-
 NAME="media"
-
-states_str = ("Ok", "Warning", "Critical", "Unknown")
-states = {0: 0, 1:0, 2:0, 3:0}
 
 class engine(cengine):
 	def __init__(self, *args, **kargs):
 		cengine.__init__(self, name=NAME, *args, **kargs)
         
 	def pre_run(self):
-                self.storage = get_storage(namespace='files', account=caccount(user="root", group="root"))
+		self.storage = get_storage(namespace='files', account=caccount(user="root", group="root"))
        
 	def work(self, event, *args, **kargs):
-		if ( event.has_key('media_bin') ):
-			saveFile = cfile(storage=self.storage)
-			binData = event['media_bin'] 
-			mediaName = event['media_name']
-			mediaType = event['media_type']
-			saveFile.put_data(binData, mediaName, "image/png")
-			id = self.storage.put(saveFile)
-			if ( not saveFile.check(self.storage) ) :
-				logger.error('Report not in grid fs')
+		
+		binData = event.get('media_bin', None)
+		if binData:
+			del event['media_bin']
+			
+			mediaName = event.get('media_name', None)
+			
+			# Todo
+			#mediaType = event.get('media_type', "image/png")
+			mediaType = "image/png"
+			
+			event['media_id'] = None
+
+			if mediaName:
+				self.logger.debug("mediaName: %s" % mediaName)
+				self.logger.debug("mediaType: %s" % mediaType)
+				self.logger.debug("binData type: %s" % type(binData))
+				try:
+					saveFile = cfile(storage=self.storage)
+					saveFile.put_data(binData, mediaName, mediaType )
+					
+					_id = saveFile.save()
+						
+					if not _id:
+						self.logger.error('No id, error in save process')
+					else:
+						event['media_id'] = str(_id)
+							
+				except Exception, err:
+					self.logger.error('Impossible to save media (%s)' % err)
 			else:
-				event['media_id'] = str(id)
-			event.pop('media_bin')
+				self.logger.error("Impossible to find 'media_name' field")
+			
 		return event
 					
 	
