@@ -37,7 +37,7 @@ def get_widgets():
 	return os.listdir(base_path + "widgets/")
 
 #### GET
-@get('/ui/widgets', apply=[check_auth])
+@get('/ui/widgets')
 def get_all_widgets():
 	#account = get_account()
 	#storage = get_storage(namespace='object')
@@ -67,7 +67,7 @@ def get_all_widgets():
 	return output
 
 #### Widgets CSS
-@get('/ui/widgets.css', apply=[check_auth])
+@get('/ui/widgets.css')
 def get_widgets_css():
 	widgets = get_widgets()
 	output = ""

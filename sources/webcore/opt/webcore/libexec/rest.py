@@ -44,9 +44,9 @@ ctype_to_group_access = {
 #########################################################################
 
 #### GET
-@get('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
-@get('/rest/:namespace/:ctype',		apply=[check_auth])
-@get('/rest/:namespace',		apply=[check_auth])
+@get('/rest/:namespace/:ctype/:_id')
+@get('/rest/:namespace/:ctype')
+@get('/rest/:namespace')
 def rest_get(namespace, ctype=None, _id=None):
 	
 	#get the session (security)
@@ -190,8 +190,8 @@ def rest_get(namespace, ctype=None, _id=None):
 	return output
 	
 #### POST
-@post('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
-@post('/rest/:namespace/:ctype',	apply=[check_auth])
+@post('/rest/:namespace/:ctype/:_id')
+@post('/rest/:namespace/:ctype')
 def rest_post(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
@@ -288,8 +288,8 @@ def rest_post(namespace, ctype, _id=None):
 		return HTTPError(403, "Access denied")
 		
 #### PUT
-@put('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
-@put('/rest/:namespace/:ctype',	apply=[check_auth])
+@put('/rest/:namespace/:ctype/:_id')
+@put('/rest/:namespace/:ctype')
 def rest_put(namespace, ctype, _id=None):
 	#get the session (security)
 	account = get_account()
@@ -351,8 +351,8 @@ def rest_put(namespace, ctype, _id=None):
 
 
 #### DELETE
-@delete('/rest/:namespace/:ctype/:_id',	apply=[check_auth])
-@delete('/rest/:namespace/:ctype',	apply=[check_auth])
+@delete('/rest/:namespace/:ctype/:_id')
+@delete('/rest/:namespace/:ctype')
 def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace)

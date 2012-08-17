@@ -57,8 +57,8 @@ logger.debug(" + pyperfstore_aggregate_method: %s" % pyperfstore_aggregate_metho
 #########################################################################
 
 #### POST@
-@post('/perfstore/values',apply=[check_auth])
-@post('/perfstore/values/:start/:stop',apply=[check_auth])
+@post('/perfstore/values')
+@post('/perfstore/values/:start/:stop')
 def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 
 	metas = request.params.get('nodes', default=None)
@@ -103,10 +103,10 @@ def perfstore_nodes_get_values(start=None, stop=None, interval=None):
 	return output
 	
 #### GET@
-@get('/perfstore/values/:component/:metrics',apply=[check_auth])
-@get('/perfstore/values/:component/:resource/:metrics',apply=[check_auth])
-@get('/perfstore/values/:component/:resource/:metrics/:start',apply=[check_auth])
-@get('/perfstore/values/:component/:resource/:metrics/:start/:stop',apply=[check_auth])
+@get('/perfstore/values/:component/:metrics')
+@get('/perfstore/values/:component/:resource/:metrics')
+@get('/perfstore/values/:component/:resource/:metrics/:start')
+@get('/perfstore/values/:component/:resource/:metrics/:start/:stop')
 def get_values(component=None,resource=None,metrics=None,start=None,stop=None):
 	if not component:
 		logger.warning("Invalid arguments: component is not defined")
@@ -155,7 +155,7 @@ def get_values(component=None,resource=None,metrics=None,start=None,stop=None):
 
 
 #### GET@
-@get('/perfstore/get_all_metrics',apply=[check_auth])
+@get('/perfstore/get_all_metrics')
 def perstore_get_all_metrics():
 	logger.debug("perstore_get_all_metrics:")
 	

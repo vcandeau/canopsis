@@ -36,7 +36,7 @@ logger = logging.getLogger("rights")
 
 #########################################################################
 
-@put('/rights/:namespace/:crecord_id', apply=[check_auth])
+@put('/rights/:namespace/:crecord_id')
 def change_rights(namespace,crecord_id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace, account=account, logging_level=logging.DEBUG)

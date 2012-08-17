@@ -36,10 +36,46 @@ logger = logging.getLogger("auth")
 session_accounts = {}
 
 #########################################################################
+class checkAuthPlugin(object):
+	name='checkAuthPlugin'
+	def __init__(self,authorized_grp=[],unauthorized_grp=[]):
+		self.authorized_grp = authorized_grp
+		self.unauthorized_grp = unauthorized_grp
+		self.keyword = None
+		
+	def setup(self, app):
+		for other in app.plugins:
+			if not isinstance(other, checkAuthPlugin): continue
+			if other.keyword == self.keyword:
+				raise PluginError("Found another auth plugin with "\
+				"conflicting settings (non-unique keyword).")
+	
+	def apply(self, callback, context):
+		def do_auth(*args, **kawrgs):
+			try:
+				path = bottle.request.path
+			except:
+				path = None
+				
+			url = bottle.request.url
+			s = bottle.request.environ.get('beaker.session')
 
-@get('/auth/:login/:password')
-@get('/auth/:login')
-@get('/auth')
+			if s.get('auth_on',False) or path == "/canopsis/auth.html":
+				logger.debug(" + Authentified, Session is Ok.")
+				return callback(*args, **kawrgs)
+
+			logger.error(" + Invalid auth")
+			return {'total': 0, 'success': False, 'data': []}
+			#return redirect('/static/canopsis/auth.html' + '?url=' + url)
+
+		return do_auth
+#########################################################################
+
+
+
+@get('/auth/:login/:password',skip=['checkAuthPlugin'])
+@get('/auth/:login',skip=['checkAuthPlugin'])
+@get('/auth',skip=['checkAuthPlugin'])
 def auth(login=None, password=None):
 	if not login:
 		login = request.params.get('login', default=None)
@@ -126,9 +162,9 @@ def autoLogin(key=None):
 		logger.debug('Autologin failed, no key match the provided one')
 		return {'total':0,'data':{},'success':False}
 
-@get('/keyAuth/:login/:key')
-@get('/keyAuth/:login')
-@get('/keyAuth')
+@get('/keyAuth/:login/:key',skip=['checkAuthPlugin'])
+@get('/keyAuth/:login',skip=['checkAuthPlugin'])
+@get('/keyAuth',skip=['checkAuthPlugin'])
 def keyAuth(login=None, key=None):
 	#-----------------------Get info------------------------
 	if not login:
@@ -204,7 +240,7 @@ def check_auth(callback):
 		#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 
 	return do_auth
-
+	
 #find the account in memory, or try to find it from database, if not in db log anon
 def get_account(_id=None):
 	logger.debug("Get Account:")
