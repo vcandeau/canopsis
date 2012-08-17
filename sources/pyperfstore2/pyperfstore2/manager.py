@@ -77,6 +77,7 @@ class manager(object):
 			self.cached = 0
 			self.cache_ids = {}
 			self.timestamp = self.gen_timestamp()
+			self.logger.info("Generate new timestamp: %s" % self.timestamp)
 
 		## Auto rotate
 		if self.need_rotate and self.auto_rotate:
