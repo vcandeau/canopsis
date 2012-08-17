@@ -53,8 +53,8 @@ group_managing_access = 'group.CPS_reporting_admin'
 
 #########################################################################
 
-@get('/reporting/:startTime/:stopTime/:view_name/:mail',apply=[check_auth])
-@get('/reporting/:startTime/:stopTime/:view_name',apply=[check_auth])
+@get('/reporting/:startTime/:stopTime/:view_name/:mail')
+@get('/reporting/:startTime/:stopTime/:view_name')
 def generate_report(startTime, stopTime,view_name,mail=None):
 	account = get_account()
 	if not check_group_rights(account,group_managing_access):
@@ -112,7 +112,7 @@ def generate_report(startTime, stopTime,view_name,mail=None):
 		logger.debug('file not found, error while generating pdf')
 		return {'total': 0, 'success': False, 'data': {}}
 	
-@post('/sendreport',apply=[check_auth])
+@post('/sendreport')
 def send_report():
 	account = get_account()
 	reportStorage = cstorage(account=account, namespace='files')
@@ -143,7 +143,7 @@ def send_report():
 
 
 # For highcharts
-@post('/export_svg', apply=[check_auth])
+@post('/export_svg')
 def export_svg():
 	filename = request.params.get('filename', default=None)
 	svg = request.params.get('svg', default=None)

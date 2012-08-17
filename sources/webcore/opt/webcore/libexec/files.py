@@ -43,8 +43,8 @@ namespace = "files"
 
 #########################################################################
 
-@get('/files/:metaId',apply=[check_auth])
-@get('/files',apply=[check_auth])
+@get('/files/:metaId')
+@get('/files')
 def files(metaId=None):
 	
 	if metaId:
@@ -76,7 +76,7 @@ def files(metaId=None):
 	else:
 		return list_files()
 
-@post('/files',apply=[check_auth])
+@post('/files')
 def update_file():
 	
 	data = json.loads(request.body.readline())
@@ -116,7 +116,7 @@ def update_file():
 			return HTTPError(500, "Failed to update report")
 
 
-@delete('/files/:metaId',apply=[check_auth])
+@delete('/files/:metaId')
 def delete_file(metaId):
 	account = get_account()
 	storage = cstorage(account=account, namespace=namespace)

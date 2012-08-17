@@ -25,7 +25,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	alias: 'widget.DerogationForm',
 	
 	width:500,
-	
 	layout: 'anchor',
 	//bodyStyle:{'background': '#ededed'},
 	bodyPadding : 10,
@@ -179,7 +178,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 
 Ext.define('derogation.field',{
 	extend: 'Ext.form.Panel',
-	//mixins: ['canopsis.lib.form.cfield'],
 	
 	border: false,
 	layout:'hbox',
@@ -235,6 +233,7 @@ Ext.define('derogation.field',{
 			displayField : 'text',
 			valueField   : 'value',
 			queryMode    : 'local',
+			value: 0,
 			listConfig: {
 				getInnerTpl: function() {
 					var tpl = '<div>'+

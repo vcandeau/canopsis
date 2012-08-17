@@ -44,7 +44,7 @@ group_managing_access = 'group.CPS_account_admin'
 #########################################################################
 
 #### GET Me
-@get('/account/me',apply=[check_auth])
+@get('/account/me')
 def account_get_me():
 	namespace = 'object'
 	ctype= 'account'
@@ -77,7 +77,7 @@ def account_get_me():
 	return output
 
 #### POST setConfig
-@post('/account/setConfig/:_id',apply=[check_auth])
+@post('/account/setConfig/:_id')
 def account_setConfig(_id):
 	account = get_account()
 	storage = get_storage(namespace='object')
@@ -95,7 +95,7 @@ def account_setConfig(_id):
 	
 	return output
 
-@get('/account/getAuthKey/:dest_account',apply=[check_auth])
+@get('/account/getAuthKey/:dest_account')
 def account_getAuthKey(dest_account):
 	if not dest_account:
 		return HTTPError(404, 'No account specified')
@@ -116,7 +116,7 @@ def account_getAuthKey(dest_account):
 		
 	
 
-@get('/account/getNewAuthKey/:dest_account',apply=[check_auth])
+@get('/account/getNewAuthKey/:dest_account')
 def account_newAuthKey(dest_account):
 	if not dest_account:
 		return HTTPError(404, 'No account specified')
@@ -146,8 +146,8 @@ def account_newAuthKey(dest_account):
 		return {'total': 0, 'success': False, 'data': {}}
 	
 #### GET
-@get('/account/:_id',apply=[check_auth])
-@get('/account/',apply=[check_auth])
+@get('/account/:_id')
+@get('/account/')
 def account_get(_id=None):
 	namespace = 'object'
 	ctype= 'account'
@@ -208,7 +208,7 @@ def account_get(_id=None):
 
 	
 #### POST
-@post('/account/', apply=[check_auth])
+@post('/account/')
 def account_post():
 	#get the session (security)
 	account = get_account()
@@ -362,7 +362,7 @@ def account_post():
 
 
 #### DELETE
-@delete('/account/:_id',apply=[check_auth])
+@delete('/account/:_id')
 def account_delete(_id):
 	account = get_account()
 	storage = get_storage(namespace='object')
@@ -377,7 +377,7 @@ def account_delete(_id):
 		return HTTPError(404, _id+" Not Found")
 
 ### GROUP
-@post('/account/addToGroup/:group_id/:account_id',apply=[check_auth])
+@post('/account/addToGroup/:group_id/:account_id')
 def add_account_to_group(group_id=None,account_id=None):
 	session_account = get_account()
 	if not check_group_rights(session_account,group_managing_access):
@@ -417,7 +417,7 @@ def add_account_to_group(group_id=None,account_id=None):
 	
 	return {'total' :1, 'success' : True, 'data':[]}
 		
-@post('/account/removeFromGroup/:group_id/:account_id',apply=[check_auth])
+@post('/account/removeFromGroup/:group_id/:account_id')
 def remove_account_from_group(group_id=None,account_id=None):
 	session_account = get_account()
 	if not check_group_rights(session_account,group_managing_access):

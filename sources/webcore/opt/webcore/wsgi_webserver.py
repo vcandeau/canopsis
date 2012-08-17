@@ -28,6 +28,7 @@ import ConfigParser, os
 import bottle
 from bottle import route, run, static_file, redirect
 from libexec.auth import autoLogin
+from libexec.auth import checkAuthPlugin
 
 ## Hack: Prevent "ExtractionError: Can't extract file(s) to egg cache" when 2 process extract egg at the same time ...
 try:
@@ -89,6 +90,10 @@ dynmodloads("~/opt/webcore/libexec/")
 
 bottle.debug(debug)
 
+## plugins
+auth_plugin = checkAuthPlugin()
+bottle.install(auth_plugin)
+
 ##Session system with beaker
 
 session_opts = {
@@ -102,17 +107,17 @@ session_opts = {
 }
 
 ## Basic Handler
-@bottle.route('/static/:path#.+#')
+@bottle.route('/static/:path#.+#',skip=[auth_plugin])
 def server_static(path):
 	return static_file(path, root=root_directory)
 
-@bottle.route('/favicon.ico')
+@bottle.route('/favicon.ico',skip=[auth_plugin])
 def favicon():
 	return
 
-@bottle.route('/')
-@bottle.route('/:key')
-@bottle.route('/index.html')
+@bottle.route('/',skip=[auth_plugin])
+@bottle.route('/:key',skip=[auth_plugin])
+@bottle.route('/index.html',skip=[auth_plugin])
 def index(key=None):
 	#autologin
 	if key:

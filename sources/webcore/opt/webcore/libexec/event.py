@@ -43,8 +43,8 @@ logger = logging.getLogger('Event')
 group_managing_access = 'group.CPS_event_admin'
 ##################################################################################
 
-@post('/event/',apply=[check_auth])
-@post('/event/:routing_key',apply=[check_auth])
+@post('/event/')
+@post('/event/:routing_key')
 def send_event(	routing_key=None):
 	
 	account = get_account()

@@ -39,7 +39,7 @@ group_managing_access = ['group.CPS_view_admin','group.CPS_view']
 
 #########################################################################
 
-@get('/ui/view',apply=[check_auth])
+@get('/ui/view')
 def tree_get():
 	namespace = 'object'
 	account = get_account()
@@ -59,7 +59,7 @@ def tree_get():
 	return output
 
 
-@delete('/ui/view/:name',apply=[check_auth])
+@delete('/ui/view/:name')
 def tree_delete(name=None):
 	namespace='object'
 	account = get_account()
@@ -94,8 +94,8 @@ def tree_delete(name=None):
 
 	
 	
-@post('/ui/view',apply=[check_auth])
-@post('/ui/view/:name',apply=[check_auth])
+@post('/ui/view')
+@post('/ui/view/:name')
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
@@ -184,7 +184,7 @@ def tree_update(name='None'):
 		else :
 			logger.error('ParentNode doesn\'t exist')
 
-@get('/ui/view/exist/:name',apply=[check_auth])
+@get('/ui/view/exist/:name')
 def check_exist(name=None):
 	namespace = 'object'
 	account = get_account()
@@ -203,7 +203,7 @@ def check_exist(name=None):
 		logger.error('Error while fetching view : %s' % err)
 		return {"total": 0, "success": False, "data": {}}
 
-@get('/ui/view/export/:_id',apply=[check_auth])
+@get('/ui/view/export/:_id')
 def exportView(_id=None):
 	logger.debug('Prepare to return view json file')
 	namespace = 'object'
