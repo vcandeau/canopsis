@@ -258,6 +258,7 @@ Ext.define('widgets.weather.brick' , {
 	},
 	
 	derogation : function(){
+		/*
 		var config = {
 			//title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
 			_component : this.component,
@@ -267,6 +268,8 @@ Ext.define('widgets.weather.brick' , {
 
 		var popup = Ext.create('canopsis.lib.view.cderogation_popup',config)
 		popup.show()
+		* */
+		global.derogationCtrl.derogate()
 	},
 	
 	change_output : function(){
