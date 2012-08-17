@@ -73,7 +73,10 @@ class engine(cengine):
 	
 	def get_states(self, name, metric, start, stop):
 		metric_name = '%s%s' % (name,metric)
-		points = self.manager.get_points(name=metric_name, tstart=start, tstop=stop)
+		try:
+			points = self.manager.get_points(name=metric_name, tstart=start, tstop=stop)
+		except:
+			return []
 
 		return points
 		
@@ -207,52 +210,71 @@ class engine(cengine):
 		stop = int(time.time())
 		start = stop - sla_timewindow
 		
-		self.logger.debug(" + output TPL:     %s" % sla_output_tpl)
-		self.logger.debug(" + Thd Warning:    %s" % thd_warn_sla_timewindow)
-		self.logger.debug(" + Thd Critical:   %s" % thd_crit_sla_timewindow)
-		self.logger.debug(" + do Unknown:     %s" % sla_timewindow_doUnknown)
-		self.logger.debug(" + sla_timewindow: %s" % sla_timewindow)
-		self.logger.debug(" + start:          %s" % start)
-		self.logger.debug(" + stop:           %s" % stop)
+		self.logger.debug(" + output TPL:      %s" % sla_output_tpl)
+		self.logger.debug(" + Thd Warning:     %s" % thd_warn_sla_timewindow)
+		self.logger.debug(" + Thd Critical:    %s" % thd_crit_sla_timewindow)
+		self.logger.debug(" + do Unknown:      %s" % sla_timewindow_doUnknown)
+		self.logger.debug(" + sla_timewindow:  %s" % sla_timewindow)
+		self.logger.debug(" + start:           %s" % start)
+		self.logger.debug(" + stop:            %s" % stop)
 		
 		## TODO: Tweaks
 		total = 0
 		states_sum = states.copy()
 		first_timestamp = None
+		first_interval = 0
 		
 		for state in states:
 			self.logger.debug("Get %s (%s) time's:" % (states_str[state], state))
 
 			metric_name = "%sslacps_time_by_state_%s" % (config['name'],state)
-			points = self.manager.get_points(	name=metric_name,
-												tstart=start - self.beat_interval,
+			try:
+				points = self.manager.get_points(	name=metric_name,
+												tstart=start,
 												tstop=stop,
 												raw=True
 											)
-			
-			if points:
-				first_timestamp = points[0][0]
+			except:
+				self.logger.debug(" + Wait points ...")
+				return
 				
-				if first_timestamp < start:
-					del points[0]
+			nb_points = len(points)
+			self.logger.debug(" + %s points" % nb_points)
+			
+			if nb_points:
+				first_timestamp = points[0][0]
+				first_interval += points[0][1]
+				if nb_points > 1:
+					last_timestamp = points[nb_points-1][0]
+				else:
+					last_timestamp = first_timestamp
+				
+				self.logger.debug(" + First timestamp: %s" % first_timestamp)
+				self.logger.debug(" + Last timestamp:  %s" % last_timestamp)
+				
+				#if (first_timestamp - points[0][1]) < start:
+				#	del points[0]
+					
+				#if last_timestamp > stop:
+				#	del points[nb_points-1]
 				
 				mysum = sum([point[1] for point in points])				
-				states_sum[state] += mysum
-
-				total += states_sum[state]
+				states_sum[state] = mysum
+				total += mysum
 				
 				self.logger.debug(" + %s seconds" % states_sum[state])
 		
-		if first_timestamp:
+		if first_timestamp and sla_timewindow_doUnknown:
 			self.logger.debug("Check Unknown time's:")
-			self.logger.debug(" + Start:           %s" % start)
-			self.logger.debug(" + First timestamp: %s" % first_timestamp)
-			delta = start - first_timestamp
-			self.logger.debug(" + Delta: %s seconds" % delta)
-			if sla_timewindow_doUnknown and delta < 0:
+			first_interval
+			self.logger.debug(" + First interval: %s" % first_interval)
+			self.logger.debug(" + Start: %s" % start)
+			delta = first_timestamp - start
+			self.logger.debug(" + Delta between first_timestamp and start: %s seconds" % delta)
+			if delta > 0:
 				self.logger.debug("   + Set Unknown time")
-				states_sum[3] += delta
-				total += states_sum[3]
+				states_sum[3] += delta - first_interval
+				total += delta
 		
 		self.logger.debug("Total: %s seconds" % total)
 		
