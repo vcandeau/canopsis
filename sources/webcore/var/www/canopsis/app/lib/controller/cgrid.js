@@ -430,7 +430,8 @@ Ext.define('canopsis.lib.controller.cgrid', {
 
 			if (form.win) {
 				form.win.close();
-				this._keynav.enable();
+				if(this._keynav)
+					this._keynav.enable();
 			}else {
 				form.close();
 			}
