@@ -241,21 +241,31 @@ def aggregate(values, max_points=None, interval=None, atype=None, agfn=None, mod
 		start = values[0][0]
 		# modulo interval
 		start -= start % interval
-		
 		stop = start + interval
+		
+		i=0
 		for value in values:
+			i+=1
+			
 			#compute interval
 			if value[0] < stop:
 				values_to_aggregate.append(value)
-			else:
+				
+			# Check if last value
+			if value[0] >= stop or i == len(values):
 				#aggregate
 				#timestamp = values_to_aggregate[0][0]
 				logger.debug("   + %s -> %s (%s points)" % (start, stop, len(values_to_aggregate)))
 				timestamp = stop
-				agvalue = round(agfn(values_to_aggregate),2)
-				point = [timestamp, agvalue]
-				logger.debug("     + Point: %s" % point)
-				rvalues.append(point)
+				
+				if len(values_to_aggregate):
+					agvalue = round(agfn(values_to_aggregate),2)
+					point = [timestamp, agvalue]
+					logger.debug("     + Point: %s" % point)
+					rvalues.append(point)
+				else:
+					logger.debug("     + No values")
+					rvalues.append([timestamp, agvalue])
 			
 				#Set next interval
 				start = stop
