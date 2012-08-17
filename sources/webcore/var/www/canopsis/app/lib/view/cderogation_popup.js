@@ -39,10 +39,18 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 			items: [Ext.create('derogation.field')]
 		})
 		
-		this.addButton = this.variableField.add({
-			xtype:  'button',
-			iconCls : 'icon-add'
-			//text:'add'
+		//align button with other button
+		var container = this.variableField.add({
+			xtype:  'container',
+			margin : '5 0 0 0',
+			height: 25,
+			layout: 'absolute'
+		})
+
+		this.addButton = container.add({
+			xtype: 'button',
+			x: 424,
+			iconCls : 'icon-add',
 		})
 		
 		this.addButton.on('click',function(){
@@ -73,7 +81,7 @@ Ext.define('canopsis.lib.view.cderogation_popup' , {
 		this.timeFieldSet.add({
 			xtype:'displayfield',
 			value : _('Begging') + ' :',
-			margin: '10 0 10 0'
+			margin: '0 0 10 0'
 		})
 		
 		this.timeFieldSet.add({
