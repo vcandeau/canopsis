@@ -35,7 +35,7 @@ class engine(cengine):
 		
 	def pre_run(self):
 		import logging
-		self.manager = pyperfstore2.manager(auto_rotate=True, logging_level=logging.DEBUG)
+		self.manager = pyperfstore2.manager(auto_rotate=True, logging_level=logging.INFO)
 		
 	def beat(self):
 		pass
