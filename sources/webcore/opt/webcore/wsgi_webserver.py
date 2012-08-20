@@ -18,12 +18,9 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, time, logging
+import os, sys, time, logging
 
-from cinit import cinit
-from ctools import dynmodloads
-
-import ConfigParser, os
+import ConfigParser
 
 import bottle
 from bottle import route, run, static_file, redirect
@@ -36,12 +33,12 @@ try:
 except:
 	time.sleep(2)
 	from beaker.middleware import SessionMiddleware
-
-from gevent import monkey; monkey.patch_all()
-
-init = cinit()
+	
+#from gevent import monkey; monkey.patch_all()
 
 ## Configurations
+webservices = ['account',  'auth', 'event', 'files', 'perfstore', 'reporting', 'rest', 'rights', 'ui_view', 'ui_widgets']
+webservices_mods = {}
 
 config_filename	= os.path.expanduser('~/etc/webserver.conf')
 config		= ConfigParser.RawConfigParser()
@@ -78,24 +75,69 @@ except Exception, err:
 	print "Error when reading '%s' (%s)" % (config_filename, err)
 
 ## Logger
+logging_level=logging.INFO
 if debug:
-	logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s', level=logging.DEBUG)
-	logger 	= init.getLogger("%s-webserver" % os.getpid(), "DEBUG")
-else:
-	logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s', level=logging.INFO)
-	logger 	= init.getLogger("%s-webserver" % os.getpid(), "INFO")
-
-## Load webservices
-dynmodloads("~/opt/webcore/libexec/")
-
+	logging_level=logging.DEBUG
+	
+logging.basicConfig(format=r"%(asctime)s [%(process)d] [%(levelname)s] %(message)s", datefmt=r"%Y-%m-%d %H:%M:%S", level=logging_level)
+logger 	= logging.getLogger("%s-webserver" % os.getpid())
+	
 bottle.debug(debug)
 
-## plugins
+## load and unload webservices
+def load_webservices():
+	logger.info("Load webservices.")
+	sys.path.append(os.path.expanduser("~/opt/webcore/libexec/"))
+	for webservice in webservices:
+		try:
+			module = __import__(webservice)
+			webservices_mods[webservice] = module
+			logger.info(" + '%s' imported." % webservice)
+			
+			try:
+				module.load()
+			except AttributeError:
+				pass
+			except Exception, err:
+				logger.error("Impossible to load '%s'. (%s)" % (webservice, err))
+				
+		except Exception, err:
+			logger.error("Impossible to import '%s'. (%s)" % (webservice, err))
+
+def unload_webservices():
+	logger.info("Unload webservices.")
+	for webservice in webservices_mods:
+		module = webservices_mods[webservice]
+		try:
+			module.unload()
+			logger.info(" + '%s' unloaded." % webservice)
+		except AttributeError:
+			pass
+		#except Exception, err:
+		#	logger.error("Impossible to unload '%s'. (%s)" % (webservice, err))
+
+## Bind signals
+import gevent, signal, sys
+def signal_handler():
+	logger.info("Receive signal to stop worker ...")
+	unload_webservices()
+	logger.info("Ready to stop.")
+	sys.exit(0)
+
+gevent.signal(signal.SIGTERM, signal_handler)
+gevent.signal(signal.SIGINT, signal_handler)
+
+## Bottle App
+app = bottle.default_app()
+
+load_webservices()
+
+## Install plugins
 auth_plugin = checkAuthPlugin()
+
 bottle.install(auth_plugin)
 
-##Session system with beaker
-
+## Session system with beaker
 session_opts = {
     'session.type': 'mongodb',
     'session.cookie_expires': session_cookie_expires,
@@ -107,17 +149,17 @@ session_opts = {
 }
 
 ## Basic Handler
-@bottle.route('/static/:path#.+#',skip=[auth_plugin])
+@route('/static/:path#.+#',skip=[auth_plugin])
 def server_static(path):
 	return static_file(path, root=root_directory)
 
-@bottle.route('/favicon.ico',skip=[auth_plugin])
+@route('/favicon.ico',skip=[auth_plugin])
 def favicon():
 	return
 
-@bottle.route('/',skip=[auth_plugin])
-@bottle.route('/:key',skip=[auth_plugin])
-@bottle.route('/index.html',skip=[auth_plugin])
+@route('/',skip=[auth_plugin])
+@route('/:key',skip=[auth_plugin])
+@route('/index.html',skip=[auth_plugin])
 def index(key=None):
 	#autologin
 	if key:
@@ -132,9 +174,14 @@ def index(key=None):
 
 	redirect("/static/canopsis/auth.html?url=/static/canopsis/index.html")
 
-## App
+
+## Install session Middleware
+app = SessionMiddleware(app, session_opts)
+
+"""
+from gevent import wsgi
 try:
-	app = SessionMiddleware(bottle.app(), session_opts)
-	
-except Exception, err:
-	logger.info("Stop dameon (%s)" % err)
+	wsgi.WSGIServer(('', 8088), app, spawn=None).serve_forever()
+except:
+	unload_webservices()
+"""

@@ -18,7 +18,7 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-import sys, os, logging, json
+import logging, json
 
 import bottle
 from bottle import route, get, put, delete, request, HTTPError, post, response
@@ -28,24 +28,35 @@ from caccount import caccount
 from cstorage import cstorage
 from cstorage import get_storage
 from crecord import crecord
-
 from camqp import camqp
 import cevent
 
 #import protection function
 from libexec.auth import check_auth, get_account, check_group_rights
 
-amqp = camqp(logging_name="Event-amqp")
-amqp.start()
-
 logger = logging.getLogger('Event')
 
+amqp = None
 group_managing_access = 'group.CPS_event_admin'
+
 ##################################################################################
+
+## load functions
+def load():
+	global amqp
+	amqp = camqp(logging_name="Event-amqp")
+	amqp.start()	
+	
+def unload():
+	if amqp:
+		amqp.stop()
+		amqp.join()
+	
+## Handlers
 
 @post('/event/')
 @post('/event/:routing_key')
-def send_event(	routing_key=None):
+def send_event(routing_key=None):
 	
 	account = get_account()
 	
