@@ -177,7 +177,7 @@ def auth(login=None, password=None):
 		
 	return HTTPError(403, "Forbidden")
 
-@get('/autoLogin/:key')
+@get('/autoLogin/:key',skip=['checkAuthPlugin'])
 def autoLogin(key=None):
 	if not key:
 		return HTTPError(404, "No key provided")
