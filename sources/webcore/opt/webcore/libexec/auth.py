@@ -51,8 +51,16 @@ class checkAuthPlugin(object):
 				"conflicting settings (non-unique keyword).")
 	
 	def apply(self, callback, context):
-		logger.debug(context['config'])
+		authorized_grp = None
+		unauthorized_grp = None
 		
+		if 'config' in context:
+			conf = context['config'].get('checkAuthPlugin',{})
+		if 'authorized_grp' in conf:
+			authorized_grp = conf.get('authorized_grp',None)
+		if 'unauthorized_grp' in conf:
+			unauthorized_grp = conf.get('unauthorized_grp',None)
+
 		def do_auth(*args, **kawrgs):
 			try:
 				path = bottle.request.path
@@ -61,16 +69,47 @@ class checkAuthPlugin(object):
 				
 			url = bottle.request.url
 			s = bottle.request.environ.get('beaker.session')
-			#logger.debug(s)
 
-			if s.get('auth_on',False) or path == "/canopsis/auth.html":
+			if s.get('auth_on',False):
+				logger.debug(' + Session already open')
+				
+				account_id = s['account_id']
+				account_group = s['account_group']
+				account_groups = s['account_groups']
+				access = True
+			
+				if not (account_id == 'account.root' or  account_group == 'group.root'):
+					if unauthorized_grp:
+						if account_group in unauthorized_grp:
+							access = False
+						for group in account_groups:
+							if group in unauthorized_grp:
+								access = False
+								
+					if authorized_grp:
+						access = False
+						if account_group in authorized_grp:
+							access = True
+						for group in account_groups:
+							if group in authorized_grp:
+								access = True
+						
 				logger.debug(" + Authentified, Session is Ok.")
+			else:
+				logger.debug(' + Session not open for this user')
+				if path == "/canopsis/auth.html":
+					access = True
+				else:
+					access = False
+
+			if access:
+				logger.debug(" + Valid auth")
 				return callback(*args, **kawrgs)
-
-			logger.error(" + Invalid auth")
-			return {'total': 0, 'success': False, 'data': []}
-			#return redirect('/static/canopsis/auth.html' + '?url=' + url)
-
+			else:
+				logger.error(" + Invalid auth")
+				return HTTPError(403, 'Insufficient rights')
+				#return {'total': 0, 'success': False, 'data': []}
+				#return redirect('/static/canopsis/auth.html' + '?url=' + url)
 		return do_auth
 #########################################################################
 
@@ -297,6 +336,10 @@ def reload_account(_id=None):
 			account_to_update = caccount(record)
 			
 		session_accounts[account_to_update._id] = account_to_update
+		s = bottle.request.environ.get('beaker.session')
+		s['account_group'] = account_to_update.group
+		s['account_groups'] = account_to_update.groups
+		s.save()
 		return True
 	except Exception,err:
 		logger.error('Account reloading failed : %s' % err)
