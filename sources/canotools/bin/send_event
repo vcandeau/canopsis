@@ -20,12 +20,6 @@
 
 import sys, os, getopt, json, urllib2, urllib, cookielib
 
-from cstorage import cstorage
-from caccount import caccount
-from crecord import crecord
-from camqp import camqp
-import cevent
-
 def usage():
 	print(" Usage: send_event ")
 	print
