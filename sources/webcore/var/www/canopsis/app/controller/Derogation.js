@@ -68,7 +68,7 @@ Ext.define('canopsis.controller.Derogation', {
 			closable: false,
 			resizable: false,
 			constrain: true,
-			//renderTo: this.grid.id,
+			renderTo: Ext.getCmp('main-tabs').getActiveTab().id,
 			closeAction: 'destroy'
 		}).show();
 		this._bindFormEvents(form)

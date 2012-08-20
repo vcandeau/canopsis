@@ -135,7 +135,7 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			iconCls: 'icon-clickable',
 			handler:  function(grid, rowIndex, colindex) {
 				var rec = grid.getStore().getAt(rowIndex).raw;
-				global.derogationCtrl.derogate()
+				global.derogationCtrl.derogate(rec._id)
 			}
 		}
 	],
