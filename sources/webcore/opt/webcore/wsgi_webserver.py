@@ -118,11 +118,15 @@ def unload_webservices():
 
 ## Bind signals
 import gevent, signal, sys
+stop_in_progress=False
 def signal_handler():
-	logger.info("Receive signal to stop worker ...")
-	unload_webservices()
-	logger.info("Ready to stop.")
-	sys.exit(0)
+	global stop_in_progress
+	if not stop_in_progress:
+		stop_in_progress=True
+		logger.info("Receive signal to stop worker ...")
+		unload_webservices()
+		logger.info("Ready to stop.")
+		sys.exit(0)
 
 gevent.signal(signal.SIGTERM, signal_handler)
 gevent.signal(signal.SIGINT, signal_handler)
@@ -177,11 +181,3 @@ def index(key=None):
 
 ## Install session Middleware
 app = SessionMiddleware(app, session_opts)
-
-"""
-from gevent import wsgi
-try:
-	wsgi.WSGIServer(('', 8088), app, spawn=None).serve_forever()
-except:
-	unload_webservices()
-"""
