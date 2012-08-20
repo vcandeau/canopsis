@@ -51,6 +51,8 @@ class checkAuthPlugin(object):
 				"conflicting settings (non-unique keyword).")
 	
 	def apply(self, callback, context):
+		logger.debug(context['config'])
+		
 		def do_auth(*args, **kawrgs):
 			try:
 				path = bottle.request.path
@@ -59,6 +61,7 @@ class checkAuthPlugin(object):
 				
 			url = bottle.request.url
 			s = bottle.request.environ.get('beaker.session')
+			#logger.debug(s)
 
 			if s.get('auth_on',False) or path == "/canopsis/auth.html":
 				logger.debug(" + Authentified, Session is Ok.")
@@ -118,8 +121,10 @@ def auth(login=None, password=None):
 
 		if access:
 			s = bottle.request.environ.get('beaker.session')
-			s['account_id'] = _id
-			s['account_user'] = login
+			s['account_id'] = account._id
+			s['account_user'] = account.user
+			s['account_group'] = account.group
+			s['account_groups'] = account.groups
 			s['auth_on'] = True
 			s.save()
 
@@ -152,6 +157,8 @@ def autoLogin(key=None):
 		s = bottle.request.environ.get('beaker.session')
 		s['account_id'] = account._id
 		s['account_user'] = account.user
+		s['account_group'] = account.group
+		s['account_groups'] = account.groups
 		s['auth_on'] = True
 		s.save()
 		#logger.debug('Autologin success, redirecting browser')
@@ -193,8 +200,10 @@ def keyAuth(login=None, key=None):
 	#---------------------Check key-------------------------
 	if account.check_authkey(key):
 		s = bottle.request.environ.get('beaker.session')
-		s['account_id'] = _id
-		s['account_user'] = login
+		s['account_id'] = account._id
+		s['account_user'] = account.user
+		s['account_group'] = account.group
+		s['account_groups'] = account.groups
 		s['auth_on'] = True
 		s.save()
 		
