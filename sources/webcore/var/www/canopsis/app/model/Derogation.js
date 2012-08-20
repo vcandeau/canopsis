@@ -27,6 +27,10 @@ Ext.define('canopsis.model.Derogation', {
 		{name: 'alert_icon',defaultValue: undefined},
 		{name: 'state',defaultValue: undefined},
 		{name: 'alert_msg',defaultValue: undefined},
+		
+		{name: 'scope',defaultValue: undefined},
+		{name: 'scope_name',defaultValue: undefined},
+		{name: 'name',defaultValue: undefined},
 
 		{name: 'aaa_access_group', defaultValue: ['r', 'w'] },
 		{name: 'aaa_access_owner', defaultValue: ['r', 'w'] },

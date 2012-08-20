@@ -54,14 +54,63 @@ Ext.define('canopsis.controller.Derogation', {
 			record.set('stopTs',output.startTs + (output.for_number * output.for_period))
 			
 		record.set('name','one derogation')
-		record.set('_id', $.encoding.digests.hexSha1Str(output.output_tpl))
+
+		record.set('scope',form._id)
+		record.set('scope_name',form.name)
 		
 		record.set('_id',global.gen_id())
 		return record
 	},
 	
-	derogate: function(_id){
-		var form = Ext.create('widget.' + this.formXtype ,{EditMethod:'window'});
+	_saveForm : function(form){
+		var store = Ext.getStore('Derogations')
+		if (form.form.isValid()) {
+			var output = form.getValues();
+			var record = Ext.create('canopsis.model.' + this.modelId, data);
+			
+			//-------------- process record -----------------
+			log.debug('Process record', this.logAuthor);
+			if(output.for_number && output.for_period)
+				record.set('stopTs',output.startTs + (output.for_number * output.for_period))
+			
+			record.set('startTs',output.startTs)
+			record.set('crecord_name',output.crecord_name)
+			record.set('scope',form._id)
+			record.set('scope_name',form.item_name)
+			record.set('_id',global.gen_id())
+			
+			//-------------- save-----------------
+			store.suspendEvents();
+			store.add(record);
+			
+			//-------------------reload--------------
+			log.debug('Reload store', this.logAuthor);
+			if(this.grid){
+				store.load({
+					scope: this,
+					callback: function(records, operation, success) {
+						this.grid.store.resumeEvents();
+					}
+				});
+			}else{
+				store.load()
+			}
+			this._cancelForm(form);
+		}else{
+			log.error('Form is not valid !', this.logAuthor);
+			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error');
+			return;
+		}
+
+	},
+	
+	
+	derogate: function(_id,name){
+		var form = Ext.create('widget.' + this.formXtype ,{
+													EditMethod:'window',
+													_id: _id,
+													item_name: name
+													});
 		form.win = Ext.create('widget.window', {
 			title: 'Derogation',
 			items: form,

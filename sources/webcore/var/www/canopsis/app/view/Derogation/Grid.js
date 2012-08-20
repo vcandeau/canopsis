@@ -73,6 +73,10 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				flex: 1,
 				dataIndex: 'state',
 			},{
+				header: _('Scope name'),
+				flex: 1,
+				dataIndex: 'scope_name',
+			},{
 				header: _('Start Timestamp'),
 				flex: 1,
 				dataIndex: 'startTs',
