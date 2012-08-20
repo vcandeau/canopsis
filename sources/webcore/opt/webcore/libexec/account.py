@@ -40,7 +40,7 @@ from libexec.auth import check_auth, get_account, reload_account,check_group_rig
 logger = logging.getLogger('Account')
 
 #group who have right to access 
-group_managing_access = 'group.CPS_account_admin'
+group_managing_access = ['group.CPS_account_admin']
 #########################################################################
 
 #### GET Me
@@ -208,12 +208,10 @@ def account_get(_id=None):
 
 	
 #### POST
-@post('/account/')
+@post('/account/',checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_post():
 	#get the session (security)
 	account = get_account()
-	if not check_group_rights(account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
 	root_account = caccount(user="root", group="root")
 	
 	storage = get_storage(namespace='object',account=account)
@@ -332,7 +330,7 @@ def account_post():
 							logger.error('Error while searching secondary group: %s',err)
 			
 			new_account.add_in_groups(secondary_groups)
-			storage.put(secondary_groups)
+			storage.put(secondary_groups,account=account)
 			
 			#put record
 			logger.debug(' + Save new account')
@@ -349,11 +347,9 @@ def account_post():
 				userdir.chgrp(new_account.group)
 				userdir.chmod('g-w')
 				userdir.chmod('g-r')
-				storage.put(userdir, account=account)
-				rootdir.add_children(userdir)
 
-				storage.put(rootdir, account=root_account)
-				storage.put(userdir, account=account)
+				rootdir.add_children(userdir)
+				storage.put([rootdir,userdir], account=root_account)
 			else:
 				logger.error('Impossible to get rootdir')
 
@@ -362,7 +358,7 @@ def account_post():
 
 
 #### DELETE
-@delete('/account/:_id')
+@delete('/account/:_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def account_delete(_id):
 	account = get_account()
 	storage = get_storage(namespace='object')
@@ -377,11 +373,9 @@ def account_delete(_id):
 		return HTTPError(404, _id+" Not Found")
 
 ### GROUP
-@post('/account/addToGroup/:group_id/:account_id')
+@post('/account/addToGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def add_account_to_group(group_id=None,account_id=None):
 	session_account = get_account()
-	if not check_group_rights(session_account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object',account=session_account)
 	
 	if not group_id or not account_id:
@@ -417,11 +411,9 @@ def add_account_to_group(group_id=None,account_id=None):
 	
 	return {'total' :1, 'success' : True, 'data':[]}
 		
-@post('/account/removeFromGroup/:group_id/:account_id')
+@post('/account/removeFromGroup/:group_id/:account_id',checkAuthPlugin={'authorized_grp':group_managing_access})
 def remove_account_from_group(group_id=None,account_id=None):
 	session_account = get_account()
-	if not check_group_rights(session_account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
 	storage = get_storage(namespace='object',account=session_account)
 	
 	if not group_id or not account_id:
