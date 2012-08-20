@@ -41,32 +41,16 @@ Ext.define('canopsis.controller.Derogation', {
 		global.derogationCtrl = this;
 	},
 	
-	preSave: function(record,data,form){
-		output = data
-		
-		//get rid of arrays (when user put x times the same field)
-		for(var i in output)
-			if(Ext.isArray(output[i]))
-				output[i] = output[i][0]
-				
-		//fix for period ending time
-		if(output.for_number && output.for_period)
-			record.set('stopTs',output.startTs + (output.for_number * output.for_period))
-			
-		record.set('name','one derogation')
-
-		record.set('scope',form._id)
-		record.set('scope_name',form.name)
-		
-		record.set('_id',global.gen_id())
-		return record
-	},
-	
 	_saveForm : function(form){
 		var store = Ext.getStore('Derogations')
 		if (form.form.isValid()) {
 			var output = form.getValues();
 			var record = Ext.create('canopsis.model.' + this.modelId, data);
+			
+			/*
+			 * for(var i in output)
+			if(Ext.isArray(output[i]))
+				output[i] = output[i][0]*/
 			
 			//-------------- process record -----------------
 			log.debug('Process record', this.logAuthor);
@@ -122,8 +106,5 @@ Ext.define('canopsis.controller.Derogation', {
 		}).show();
 		this._bindFormEvents(form)
 	}
-	
-	
-	
 	
 })
