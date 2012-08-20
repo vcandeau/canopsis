@@ -40,6 +40,17 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				flex: 1,
 				dataIndex: '_id',
 			},{
+				header: _('Loaded'),
+				flex: 1,
+				dataIndex: 'loaded',
+				renderer: rdr_boolean
+			},{
+				header: _('Enabled'),
+				flex: 1,
+				dataIndex: 'enabled',
+				renderer: rdr_boolean
+			},
+			{
 				header: _('Name'),
 				flex: 1,
 				dataIndex: 'crecord_name',
