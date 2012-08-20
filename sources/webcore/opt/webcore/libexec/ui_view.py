@@ -94,16 +94,12 @@ def tree_delete(name=None):
 
 	
 	
-@post('/ui/view')
-@post('/ui/view/:name')
+@post('/ui/view',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/ui/view/:name',checkAuthPlugin={'authorized_grp':group_managing_access})
 def tree_update(name='None'):
 	namespace = 'object'
 	account = get_account()
-		
-	if not check_group_rights(account,group_managing_access[0]) and not check_group_rights(account,group_managing_access[1]):
-		return HTTPError(403, "Access Denied : Your groups have not right to create/update view")
-		
-		
+
 	storage = get_storage(namespace=namespace, account=account)
 	
 	data = json.loads(request.body.readline())

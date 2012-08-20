@@ -40,18 +40,14 @@ amqp.start()
 
 logger = logging.getLogger('Event')
 
-group_managing_access = 'group.CPS_event_admin'
+group_managing_access = ['group.CPS_event_admin']
 ##################################################################################
 
-@post('/event/')
-@post('/event/:routing_key')
+@post('/event/',checkAuthPlugin={'authorized_grp':group_managing_access})
+@post('/event/:routing_key',checkAuthPlugin={'authorized_grp':group_managing_access})
 def send_event(	routing_key=None):
-	
 	account = get_account()
 	
-	if not check_group_rights(account,group_managing_access):
-		return HTTPError(403, 'Insufficient rights')
-				
 	connector = None
 	connector_name = None
 	event_type = None
