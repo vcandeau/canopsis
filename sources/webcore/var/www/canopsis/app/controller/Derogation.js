@@ -21,8 +21,10 @@
 Ext.define('canopsis.controller.Derogation', {
 	extend: 'canopsis.lib.controller.cgrid',
 
-	views: ['Derogation.Form'],
-	//stores: ['Inventory'],
+	views: ['Derogation.Form','Derogation.Grid'],
+	
+	model:['Derogation'],
+	stores: ['Derogations'],
 
 	logAuthor: '[controller][Derogation]',
 	
@@ -30,7 +32,7 @@ Ext.define('canopsis.controller.Derogation', {
 		log.debug('[' + this.id + '] - Initialize ...');
 
 		this.formXtype = 'DerogationForm';
-		//this.listXtype = 'AccountGrid';
+		this.listXtype = 'DerogationGrid';
 
 		this.modelId = 'Account';
 
