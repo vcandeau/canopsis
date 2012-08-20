@@ -20,7 +20,7 @@
 */
 Ext.define('canopsis.store.Derogations', {
     extend: 'canopsis.lib.store.cstore',
-	model: 'canopsis.model.Curve',
+	model: 'canopsis.model.Derogation',
 
 	storeId: 'store.Derogations',
 

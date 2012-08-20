@@ -32,6 +32,12 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	
 	initComponent: function() {
 		this.callParent();
+		//--------------------standart options--------------------
+		this.add({
+			xtype: 'textfield',
+			name: 'crecord_name',
+			fieldLabel: _('Name'),
+		})
 		
 		//--------------------Variable field-----------------------
 		this.variableField = this.add({

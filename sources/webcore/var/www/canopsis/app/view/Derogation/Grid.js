@@ -27,7 +27,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 	
 	model: 'Derogation',
 	store: 'Derogations',
-	
+
 	opt_paging: true,
 	opt_menu_delete: true,
 	opt_bar_duplicate: true,
@@ -35,53 +35,39 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 	opt_bar_search: true,
 
 	columns: [
-	/*		{
-				header: _('Line Color'),
+			{
+				header: _('id'),
+				flex: 1,
+				dataIndex: '_id',
+			},{
+				header: _('Name'),
+				flex: 1,
+				dataIndex: 'crecord_name',
+			},{
+				header: _('comment'),
 				sortable: false,
-				align: 'center',
-				//width: 25,
-				dataIndex: 'line_color',
-				renderer: rdr_color
+				flex: 1,
+				dataIndex: 'output_tpl',
 			},{
-				header: _('Area color'),
+				header: _('Alert message'),
 				sortable: false,
-				align: 'center',
-				//width: 25,
-				dataIndex: 'area_color',
-				renderer: rdr_color
+				flex: 1,
+				dataIndex: 'alert_msg',
 			},{
-				header: _('Line style'),
-				sortable: false,
-				align: 'center',
-				dataIndex: 'dashStyle'
+				header: _('Alert icon'),
+				flex: 1,
+				dataIndex: 'alert_icon',
 			},{
-				header: _('Area opacity'),
-				sortable: false,
-				align: 'center',
-				dataIndex: 'area_opacity'
+				header: _('Start Timestamp'),
+				flex: 1,
+				dataIndex: 'startTs',
+				renderer : rdr_tstodate
 			},{
-				header: _('zIndex'),
-				sortable: false,
-				align: 'center',
-				dataIndex: 'zIndex'
-			},{
-				header: _('Invert'),
-				sortable: false,
-				align: 'center',
-				dataIndex: 'invert',
-				renderer: rdr_boolean
-			},{
-				header: _('Metric name'),
-				flex: 7,
-				sortable: true,
-				dataIndex: 'metric'
-			},{
-				header: _('Label'),
-				flex: 7,
-				sortable: true,
-				dataIndex: 'label'
+				header: _('Stop Timestamp'),
+				flex: 1,
+				dataIndex: 'stopTs',
+				renderer : rdr_tstodate
 			}
-*/
 		]
 
 });

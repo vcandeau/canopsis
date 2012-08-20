@@ -34,39 +34,30 @@ Ext.define('canopsis.controller.Derogation', {
 		this.formXtype = 'DerogationForm';
 		this.listXtype = 'DerogationGrid';
 
-		this.modelId = 'Account';
+		this.modelId = 'Derogation';
 
 		this.callParent(arguments);
 
 		global.derogationCtrl = this;
 	},
 	
-	_preSave: function(output){
+	preSave: function(record,data,form){
+		output = data
+		
 		//get rid of arrays (when user put x times the same field)
 		for(var i in output)
 			if(Ext.isArray(output[i]))
 				output[i] = output[i][0]
 				
 		//fix for period ending time
-		if(output.for_number && output.for_period){
-			output.stopTs = output.startTs + (output.for_number * output.for_period)
-			delete output.for_number
-			delete output.for_period
-		}
+		if(output.for_number && output.for_period)
+			record.set('stopTs',output.startTs + (output.for_number * output.for_period))
+			
+		record.set('name','one derogation')
+		record.set('_id', $.encoding.digests.hexSha1Str(output.output_tpl))
 		
-		//clean info (checkboxfield inner panel cleaning)
-		if(!output.downtime){
-			delete output.startTs
-			delete output.stopTs
-		}
-		
-		log.dump(output)
-		return output
-	},
-	
-	//Temporary, will fallback on real function later, wip purpose
-	_saveForm: function(form,store) {
-		this._preSave(form.getValues())
+		record.set('_id',global.gen_id())
+		return record
 	},
 	
 	derogate: function(){
