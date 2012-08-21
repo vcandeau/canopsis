@@ -1,0 +1,13 @@
+NAME="ubik"
+
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function build(){
+	true
+}
+
+function install(){
+	easy_install_pylib $SRC_PATH/ubik
+	ln -s $PREFIX/bin/ubik $PREFIX/bin/pkgmgr
+}

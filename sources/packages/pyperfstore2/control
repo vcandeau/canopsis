@@ -4,7 +4,7 @@ NAME="pyperfstore2"
 VERSION=2
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python"
+REQUIRES="canohome ubik python"
 
 NO_ARCH=true
 NO_DIST=true

@@ -4,7 +4,7 @@ NAME="amqp2engines"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python canolibs supervisord-conf pyperfstore2"
+REQUIRES="canohome ubik python canolibs supervisord-conf pyperfstore2"
 
 NO_ARCH=true
 NO_DIST=true

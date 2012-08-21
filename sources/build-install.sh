@@ -525,6 +525,9 @@ if [ $OPT_BUILD -eq 1 ]; then
 	fi
 fi
 
+# Dont build bootstrap for now
+exit 0
+
 if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "################################"
 	echo "# Make installer"

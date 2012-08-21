@@ -4,7 +4,7 @@ NAME="python-libs"
 VERSION=0.3
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python"
+REQUIRES="canohome ubik python"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
