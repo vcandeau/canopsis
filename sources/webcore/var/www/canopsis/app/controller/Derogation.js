@@ -45,7 +45,7 @@ Ext.define('canopsis.controller.Derogation', {
 		var store = Ext.getStore('Derogations')
 		if (form.form.isValid()) {
 			var output = form.getValues();
-			
+			log.dump(output)
 			//cleaning double entries in field set (if someone put many comment/state)
 			for(var i in output)
 				if(Ext.isArray(output[i]))
@@ -56,10 +56,12 @@ Ext.define('canopsis.controller.Derogation', {
 			//-------------- process record -----------------
 			log.debug('Process record', this.logAuthor);
 			
-			if(output.for_number && output.for_period){
-				var for_ts = output.for_number * output.for_period
-				record.set('stopTs',output.startTs + for_ts)
-				record.set('forTs', for_ts)
+			if(output.ts_unit && output.ts_unit){
+				var forTs = output.ts_unit * output.ts_window
+				record.set('stopTs',output.startTs + forTs)
+				record.set('forTs', forTs)
+				record.set('ts_unit',output.ts_unit)
+				record.set('ts_window',output.ts_window)
 			}else{
 				record.set('stopTs',output.stopTs)
 			}
@@ -68,7 +70,11 @@ Ext.define('canopsis.controller.Derogation', {
 			record.set('crecord_name',output.crecord_name)
 			record.set('scope',form.scope)
 			record.set('scope_name',form.scope_name)
-			record.set('_id',global.gen_id())
+			
+			if(Ext.isDefined(output._id))
+				record.set('_id',output._id)
+			else
+				record.set('_id',global.gen_id())
 			
 			if(Ext.isDefined(output.state))
 				record.set('state',output.state)
@@ -100,13 +106,10 @@ Ext.define('canopsis.controller.Derogation', {
 		}
 
 	},
-	/*
+	
 	beforeload_EditForm : function(form, item){
-		item.set('for_number')
-		item.set('output.for_period')
-		
-		
-	}*/
+		log.dump(item)
+	},
 	
 	derogate: function(scope,scope_name){
 		var form = Ext.create('widget.' + this.formXtype ,{
