@@ -4,7 +4,7 @@ NAME="rabbitmq-server-conf"
 VERSION=0.2
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr rabbitmq-server"
+REQUIRES="canohome canotools pkgmgr supervisord-conf rabbitmq-server"
 
 NO_ARCH=true
 NO_DIST=true
@@ -36,6 +36,7 @@ function post_install(){
 	done
 	echo
 	check_code $STATE "Failed to join API ..."
+	sleep 1
 
 	CODE=0
 	echo " + Declare Admin user ..."
@@ -72,6 +73,8 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+
+	rm $PREFIX/etc/init.d/rabbitmq-server &> /dev/null || true
 	check_code $?
 }
 
