@@ -82,8 +82,10 @@ Ext.define('widgets.weather.brick' , {
 			this.style = {'background-color': this.bg_color};
 		}
 
+		log.dump(this.data)
 		this.event_type = this.data.event_type;
 		this.component = this.data.component;
+		this.resource = this.data.resource;
 
 
 		this.callParent(arguments);
@@ -143,7 +145,10 @@ Ext.define('widgets.weather.brick' , {
 			)
 
 			this.edit_button.on('click',function(){
-				global.derogationCtrl.derogate(this.data.selector_id,this.component)
+				global.derogationCtrl.derogate(
+					this.data.selector_id,
+					this.component +' - '+ this.resource
+				)
 			},this)
 		}
 	},

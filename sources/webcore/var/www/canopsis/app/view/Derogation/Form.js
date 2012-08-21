@@ -66,54 +66,36 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		},this)
 		
 		//--------------------Time Field------------------------
-		
+		/*
 		this.timeFieldSet = this.add({
 			xtype: 'cfieldset',
 			title: _('Block update from supervision tools'),
 			checkboxName: 'downtime',
 			inputValue : true,
 			checked : true
-		})
+		})*/
 		
-		//------------------Beginning-----------------
+		//----------------Beginning-----------------
 		
-		this.timeFieldSet.add({
+		this.add({
 			xtype:'displayfield',
 			value : _('Begging') + ' :',
 			margin: '0 0 10 0'
 		})
 		
-		this.timeFieldSet.add({
+		this.add({
 			xtype: 'cdate',
 			name: 'startTs',
 			date_width: 110,
 			now:true
 		})
 		
-		//------------------Ending-----------------
+		//------------------for--------------------
 		
-		this.timeFieldSet.add({
+		this.add({
 			xtype:'displayfield',
-			value : _('Ending') + ' :',
+			value : _('For') + ' :',
 			margin: '10 0 10 0'
-		})
-		
-		this.periodTypeCombo =  Ext.widget('combobox',{
-			isFormField:false,
-			editable:false,
-			width: 60,
-			queryMode: 'local',
-			displayField : 'text',
-			valueField : 'value',
-			value : 'for',
-			store: {
-				xtype: 'store',
-				fields: ['value','text'],
-				data: [
-					{value: 'for',text:_('For')},
-					{value: 'to',text:_('To')},
-				]				
-			}
 		})
 		
 		this.forNumber = Ext.widget('numberfield',{
@@ -143,21 +125,54 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			}
 		})
 		
-		this.stopDate = Ext.widget('cdate',{
-					name: 'stopTs',
-					hidden: true,
-					disabled:true
+		this.add({
+			xtype:'container',
+			layout:'hbox',
+			items : [this.forNumber,this.forPeriodCombo]
 		})
 		
-		this.timeFieldSet.add({
+		//------------------Ending-----------------
+		
+		this.add({
+			xtype:'displayfield',
+			value : _('Ending') + ' :',
+			margin: '10 0 10 0'
+		})
+		/*
+		this.periodTypeCombo =  Ext.widget('combobox',{
+			isFormField:false,
+			editable:false,
+			width: 60,
+			queryMode: 'local',
+			displayField : 'text',
+			valueField : 'value',
+			value : 'for',
+			store: {
+				xtype: 'store',
+				fields: ['value','text'],
+				data: [
+					{value: 'for',text:_('For')},
+					{value: 'to',text:_('To')},
+				]				
+			}
+		})
+		*/
+		
+		
+		this.add({
+			xtype:'cdate',
+			name: 'stopTs',
+		})
+		/*
+		this.add({
 			xtype:'container',
 			date_width : 110,
 			layout:'hbox',
 			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
-		})
+		})*/
 
 		//--------------bindings--------------
-		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
+		//this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
     },
 	
 	toggleTimePeriod : function(combo,value){
