@@ -37,6 +37,11 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			title: _('General options')
 		})
 		
+		this.add({
+			xtype: 'hiddenfield',
+			name: '_id',
+			value: undefined
+		})
 		
 		//--------------------standart options--------------------
 		general_options.add({
@@ -82,19 +87,19 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			}
 		})
 
-		this.forNumber = Ext.widget('numberfield',{
-			name : 'for_number',
+		this.ts_window = Ext.widget('numberfield',{
+			name : 'ts_window',
 			margin: '0 0 0 5',
 			width:40,
 			value:1,
 			minValue: 1,
 		})
 
-		this.forPeriodCombo = Ext.widget('combobox',{
+		this.ts_unit = Ext.widget('combobox',{
 			editable:false,
 			width:80,
 			margin: '0 0 0 5',
-			name: 'for_period',
+			name: 'ts_unit',
 			queryMode: 'local',
 			displayField : 'name',
 			valueField : 'value',
@@ -122,7 +127,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			xtype:'fieldcontainer',
 			fieldLabel : _('Ending'),
 			layout:'hbox',
-			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
+			items : [this.periodTypeCombo,this.ts_window,this.ts_unit,this.stopDate]
 		})
 		
 		//--------------------Variable field-----------------------
@@ -157,19 +162,19 @@ Ext.define('canopsis.view.Derogation.Form' , {
 
 	toggleTimePeriod : function(combo,value){
 		if(value == 'for'){
-			this.forNumber.show()
-			this.forNumber.setDisabled(false)
-			this.forPeriodCombo.show()
-			this.forPeriodCombo.setDisabled(false)
+			this.ts_window.show()
+			this.ts_window.setDisabled(false)
+			this.ts_unit.show()
+			this.ts_unit.setDisabled(false)
 			this.stopDate.hide()
 			this.stopDate.setDisabled(true)
 		}
 
 		if(value == 'to'){
-			this.forNumber.hide()
-			this.forNumber.setDisabled(true)
-			this.forPeriodCombo.hide()
-			this.forPeriodCombo.setDisabled(true)
+			this.ts_window.hide()
+			this.ts_window.setDisabled(true)
+			this.ts_unit.hide()
+			this.ts_unit.setDisabled(true)
 			this.stopDate.show()
 			this.stopDate.setDisabled(false)
 		}
@@ -224,7 +229,6 @@ Ext.define('derogation.field',{
 		
 		this.list_state = this.add({
 			xtype: 'combobox',
-			border: false,
 			editable:false,
 			margin: '5 5 0 5',
 			disabled : true,

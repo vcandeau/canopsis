@@ -23,7 +23,10 @@ Ext.define('canopsis.model.Derogation', {
 		{name: 'output_tpl'},
 		{name: 'startTs',defaultValue: undefined},
 		{name: 'stopTs',defaultValue: undefined},
+		
 		{name: 'forTs',defaultValue: undefined},
+		{name: 'ts_unit',defaultValue: undefined},
+		{name: 'ts_window',defaultValue: undefined},
 		
 		{name: 'crecord_name',defaultValue: undefined},
 		{name: 'alert_icon',defaultValue: undefined},
