@@ -47,6 +47,8 @@ function pre_update(){
 	rabbitmqadmin  -V canopsis  delete queue name=amqp2mongodb &> /dev/null
 	echo " + Delete collectd2event queue"
 	rabbitmqadmin  -V canopsis  delete queue name=collectd2event &> /dev/null
+
+	rm $PREFIX/etc/init.d/amqp2engines &> /dev/null || true
 }
 
 function post_update(){

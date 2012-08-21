@@ -71,13 +71,13 @@ def clean_message(body, msg):
 					except Exception, err :
 						try:
 							logger.info(" + Decode BSON")
-							bson = BSON ( body ) 
+							bson = BSON (body)
 							event = bson.decode()
 							logger.info("   + Ok")
 						except Exception, err:
 							raise Exception(err)
 		except Exception, err:
-			logger.info("   + Failed")
+			logger.info("   + Failed (%s)" % err)
 			logger.debug("Impossible to parse event '%s'" % rk)
 			#logger.debug(body)
 			raise Exception("Impossible to parse event '%s'" % rk)
@@ -169,8 +169,8 @@ def start_engines():
 	engine_tag			= tag.engine(		next_engines=[engine_perfstore])
 	engines.append(engine_tag)
 	
-	#engine_media 			= media.engine( next_engines=[engine_tag], logging_level=logging.INFO)
-	#engines.append(engine_media)
+	engine_media 			= media.engine( next_engines=[engine_tag], logging_level=logging.INFO)
+	engines.append(engine_media)
 
 	engine_sla			= sla.engine(logging_level=logging.INFO)
 	engines.append(engine_sla)
