@@ -26,7 +26,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	
 	width:500,
 	layout: 'anchor',
-	//bodyStyle:{'background': '#ededed'},
 	bodyPadding : 10,
 	border:false,
 	
@@ -51,29 +50,19 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		//----------------Beginning-----------------
 		
 		var beginning = general_options.add({
-			xtype:'container',
+			xtype:'fieldcontainer',
+			fieldLabel: _('Begging'),
 			layout:'hbox'
 		})
-		
-		beginning.add({
-			xtype:'displayfield',
-			value : _('Begging') + ' :',
-			margin: '0 10 10 0'
-		})
-		
+
 		beginning.add({
 			xtype: 'cdate',
 			name: 'startTs',
-			margin: '0 0 0 43',
 			date_width: 110,
 			now:true
 		})
 		
 		//------------------Ending----------------
-		var endingDisplayField = Ext.widget('displayfield',{
-			value : _('Ending') + ' :',
-			margin: '0 10 10 0'
-		})
 		
 		this.periodTypeCombo =  Ext.widget('combobox',{
 			isFormField:false,
@@ -83,7 +72,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			displayField : 'text',
 			valueField : 'value',
 			value : 'for',
-			margin : '0 0 0 50',
 			store: {
 				xtype: 'store',
 				fields: ['value','text'],
@@ -131,9 +119,10 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		})
 
 		general_options.add({
-			xtype:'container',
+			xtype:'fieldcontainer',
+			fieldLabel : _('Ending'),
 			layout:'hbox',
-			items : [endingDisplayField,this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
+			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
 		})
 		
 		//--------------------Variable field-----------------------

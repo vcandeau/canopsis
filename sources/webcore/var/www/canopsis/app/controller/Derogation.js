@@ -45,12 +45,14 @@ Ext.define('canopsis.controller.Derogation', {
 		var store = Ext.getStore('Derogations')
 		if (form.form.isValid()) {
 			var output = form.getValues();
-			var record = Ext.create('canopsis.model.' + this.modelId, data);
-			/*
-			 * for(var i in output)
-			if(Ext.isArray(output[i]))
-				output[i] = output[i][0]*/
 			
+			//cleaning double entries in field set (if someone put many comment/state)
+			for(var i in output)
+				if(Ext.isArray(output[i]))
+					output[i] = output[i][0]
+			
+			var record = Ext.create('canopsis.model.' + this.modelId, data);
+
 			//-------------- process record -----------------
 			log.debug('Process record', this.logAuthor);
 			
@@ -98,7 +100,13 @@ Ext.define('canopsis.controller.Derogation', {
 		}
 
 	},
-	
+	/*
+	beforeload_EditForm : function(form, item){
+		item.set('for_number')
+		item.set('output.for_period')
+		
+		
+	}*/
 	
 	derogate: function(scope,scope_name){
 		var form = Ext.create('widget.' + this.formXtype ,{
