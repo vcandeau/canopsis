@@ -32,6 +32,8 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+	rm $PREFIX/etc/init.d/apsd &> /dev/null || true
+
 	check_code $?
 }
 
