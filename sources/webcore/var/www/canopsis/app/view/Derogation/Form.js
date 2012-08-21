@@ -32,43 +32,47 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	
 	initComponent: function() {
 		this.callParent();
+		
+		var general_options = this.add({
+			xtype: 'fieldset',
+			title: _('General options')
+		})
+		
+		
 		//--------------------standart options--------------------
-		this.add({
+		general_options.add({
 			xtype: 'textfield',
 			name: 'crecord_name',
 			fieldLabel: _('Name'),
+			width: 295
 		})
-		
-		//--------------------Time Field------------------------
-		/*
-		this.timeFieldSet = this.add({
-			xtype: 'cfieldset',
-			title: _('Block update from supervision tools'),
-			checkboxName: 'downtime',
-			inputValue : true,
-			checked : true
-		})*/
+
 		
 		//----------------Beginning-----------------
 		
-		this.add({
-			xtype:'displayfield',
-			value : _('Begging') + ' :',
-			margin: '0 0 10 0'
+		var beginning = general_options.add({
+			xtype:'container',
+			layout:'hbox'
 		})
 		
-		this.add({
+		beginning.add({
+			xtype:'displayfield',
+			value : _('Begging') + ' :',
+			margin: '0 10 10 0'
+		})
+		
+		beginning.add({
 			xtype: 'cdate',
 			name: 'startTs',
+			margin: '0 0 0 43',
 			date_width: 110,
 			now:true
 		})
 		
 		//------------------Ending----------------
-		this.add({
-			xtype:'displayfield',
+		var endingDisplayField = Ext.widget('displayfield',{
 			value : _('Ending') + ' :',
-			margin: '10 0 10 0'
+			margin: '0 10 10 0'
 		})
 		
 		this.periodTypeCombo =  Ext.widget('combobox',{
@@ -79,6 +83,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			displayField : 'text',
 			valueField : 'value',
 			value : 'for',
+			margin : '0 0 0 50',
 			store: {
 				xtype: 'store',
 				fields: ['value','text'],
@@ -91,6 +96,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 
 		this.forNumber = Ext.widget('numberfield',{
 			name : 'for_number',
+			margin: '0 0 0 5',
 			width:40,
 			value:1,
 			minValue: 1,
@@ -99,6 +105,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		this.forPeriodCombo = Ext.widget('combobox',{
 			editable:false,
 			width:80,
+			margin: '0 0 0 5',
 			name: 'for_period',
 			queryMode: 'local',
 			displayField : 'name',
@@ -117,16 +124,16 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		})
 
 		this.stopDate = Ext.widget('cdate',{
-					name: 'stopTs',
-					hidden: true,
-					disabled:true
+			name: 'stopTs',
+			margin: '0 0 0 5',
+			hidden: true,
+			disabled:true
 		})
 
-		this.add({
+		general_options.add({
 			xtype:'container',
-			date_width : 110,
 			layout:'hbox',
-			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
+			items : [endingDisplayField,this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
 		})
 		
 		//--------------------Variable field-----------------------
@@ -230,7 +237,7 @@ Ext.define('derogation.field',{
 			xtype: 'combobox',
 			border: false,
 			editable:false,
-			margin: '5 5 0 15',
+			margin: '5 5 0 5',
 			disabled : true,
 			hidden:true,
 			flex: 1,
@@ -262,7 +269,7 @@ Ext.define('derogation.field',{
 			xtype: 'combobox',
 			border: false,
 			editable:false,
-			margin: '5 5 0 15',
+			margin: '5 5 0 5',
 			disabled : true,
 			hidden:true,
 			flex: 1,
@@ -295,7 +302,7 @@ Ext.define('derogation.field',{
 			flex:1,
 			name : 'output_tpl',
 			emptyText : _('Type here new comment...'),
-			margin: '5 5 0 15',
+			margin: '5 5 0 5',
 		})
 		
 		this.alert_textfield = this.add({
@@ -305,7 +312,7 @@ Ext.define('derogation.field',{
 			hidden:true,
 			name : 'alert_msg',
 			emptyText : _('Type here alert message...'),
-			margin: '5 5 0 15',
+			margin: '5 5 0 5',
 		})
 		
 		this.destroyButton = this.add({
