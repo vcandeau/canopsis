@@ -174,27 +174,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		//--------------bindings--------------
 		//this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
     },
-	
-	toggleTimePeriod : function(combo,value){
-		if(value == 'for'){
-			this.forNumber.show()
-			this.forNumber.setDisabled(false)
-			this.forPeriodCombo.show()
-			this.forPeriodCombo.setDisabled(false)
-			this.stopDate.hide()
-			this.stopDate.setDisabled(true)
-		}
-		
-		if(value == 'to'){
-			this.forNumber.hide()
-			this.forNumber.setDisabled(true)
-			this.forPeriodCombo.hide()
-			this.forPeriodCombo.setDisabled(true)
-			this.stopDate.show()
-			this.stopDate.setDisabled(false)
-		}
-		
-	},
 })
 
 Ext.define('derogation.field',{
