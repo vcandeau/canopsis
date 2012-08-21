@@ -36,6 +36,7 @@ function post_install(){
 	done
 	echo
 	check_code $STATE "Failed to join API ..."
+	sleep 1
 
 	CODE=0
 	echo " + Declare Admin user ..."
