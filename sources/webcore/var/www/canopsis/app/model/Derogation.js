@@ -39,6 +39,6 @@ Ext.define('canopsis.model.Derogation', {
 		{name: 'aaa_owner'},
 		
 		{name: 'loaded'},
-		{name: 'enabled'}
+		{name: 'enabled',defaultValue:true}
 	]
 });

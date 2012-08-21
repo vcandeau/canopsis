@@ -58,8 +58,8 @@ Ext.define('canopsis.controller.Derogation', {
 			
 			record.set('startTs',output.startTs)
 			record.set('crecord_name',output.crecord_name)
-			record.set('scope',form._id)
-			record.set('scope_name',form.item_name)
+			record.set('scope',form.scope)
+			record.set('scope_name',form.scope_name)
 			record.set('_id',global.gen_id())
 			
 			if(Ext.isDefined(output.state))
@@ -77,16 +77,13 @@ Ext.define('canopsis.controller.Derogation', {
 			
 			//-------------------reload--------------
 			log.debug('Reload store', this.logAuthor);
-			if(this.grid){
-				store.load({
-					scope: this,
+			store.load({
+					//scope: this,
 					callback: function(records, operation, success) {
-						this.grid.store.resumeEvents();
+						this.resumeEvents();
 					}
 				});
-			}else{
-				store.load()
-			}
+				
 			this._cancelForm(form);
 		}else{
 			log.error('Form is not valid !', this.logAuthor);
@@ -97,11 +94,11 @@ Ext.define('canopsis.controller.Derogation', {
 	},
 	
 	
-	derogate: function(_id,name){
+	derogate: function(scope,scope_name){
 		var form = Ext.create('widget.' + this.formXtype ,{
 													EditMethod:'window',
-													_id: _id,
-													item_name: name
+													scope: scope,
+													scope_name: scope_name
 													});
 		form.win = Ext.create('widget.window', {
 			title: 'Derogation',

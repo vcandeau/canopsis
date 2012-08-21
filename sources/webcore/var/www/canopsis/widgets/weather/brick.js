@@ -143,14 +143,10 @@ Ext.define('widgets.weather.brick' , {
 			)
 
 			this.edit_button.on('click',function(){
-				
-				global.derogationCtrl.derogate()
+				global.derogationCtrl.derogate(this.data.selector_id,this.component)
 			},this)
-			//this.derogation_button.on('click',this.derogation,this)
 		}
 	},
-	
-	
 
 	build: function(data) {
 		log.debug(' + Build html for ' + data._id, this.logAuthor);
@@ -254,34 +250,6 @@ Ext.define('widgets.weather.brick' , {
 		var popup = Ext.create('widgets.weather.report_popup',config)
 		popup.show()
 	},
-	
-	derogation : function(){
-		/*
-		var config = {
-			//title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
-			_component : this.component,
-			event_type: this.event_type	,
-			referer: this.data.selector_id
-		}
-
-		var popup = Ext.create('canopsis.lib.view.cderogation_popup',config)
-		popup.show()
-		* */
-		global.derogationCtrl.derogate()
-	},
-	/*
-	change_output : function(){
-		var config = {
-			title: _('Change') + ' ' + this.event_type + ' '+ _('message'),
-			_component : this.component,
-			event_type: this.event_type	,
-			referer: this.data.selector_id
-		}
-
-		var popup = Ext.create('widgets.weather.edit_message_popup',config)
-		popup.show()
-	},
-	*/
 
 	getIcon: function(value) {
 		value = Math.floor(value / 10) * 10;
