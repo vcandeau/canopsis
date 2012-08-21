@@ -12,6 +12,8 @@ if [ -z $2 ]; then show_help; fi
 if [ -e $HOME/bin/supervisord ]; then
 	if [ ! -e $HOME/var/run/supervisord.pid ]; then
 		supervisord
+	else
+		supervisorctl update &> /dev/null
 	fi
 fi
 
