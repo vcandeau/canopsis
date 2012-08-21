@@ -30,6 +30,7 @@ Ext.define('canopsis.store.Schedules', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/schedule',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

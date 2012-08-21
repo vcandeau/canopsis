@@ -43,6 +43,7 @@ Ext.define('canopsis.store.Derogations', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/derogation',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',
