@@ -46,7 +46,6 @@ Ext.define('canopsis.controller.Derogation', {
 		if (form.form.isValid()) {
 			var output = form.getValues();
 			var record = Ext.create('canopsis.model.' + this.modelId, data);
-			log.dump(output)
 			/*
 			 * for(var i in output)
 			if(Ext.isArray(output[i]))
@@ -71,9 +70,7 @@ Ext.define('canopsis.controller.Derogation', {
 				record.set('alert_icon',output.alert_icon)
 			if(Ext.isDefined(output.alert_msg))
 				record.set('alert_msg',output.alert_msg)
-				
-			log.dump(record)
-			
+
 			//-------------- save-----------------
 			store.suspendEvents();
 			store.add(record);
