@@ -43,6 +43,7 @@ Ext.define('canopsis.store.Curves', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/curve',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

@@ -31,6 +31,7 @@ Ext.define('canopsis.store.Accounts', {
 	proxy: {
 		type: 'rest',
 		url: '/account/',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

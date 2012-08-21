@@ -68,6 +68,10 @@ def init():
 	###curves
 	data = { 'xtype': 'CurvesGrid'}
 	create_view('curves', 'Curves', data)
+	
+	###derogation
+	data = {'xtype':'DerogationGrid'}
+	create_view('derogation_manager','Derogations',data)
 
 	###metric_navigator
 	#data = {'xtype': 'MetricNavigation'}

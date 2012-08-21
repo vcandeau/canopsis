@@ -36,6 +36,7 @@ Ext.define('canopsis.store.Files', {
 	proxy: {
 		type: 'rest',
 		url: '/files',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

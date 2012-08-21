@@ -30,6 +30,7 @@ Ext.define('canopsis.store.Groups', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/group',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

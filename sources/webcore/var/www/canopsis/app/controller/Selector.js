@@ -84,8 +84,4 @@ Ext.define('canopsis.controller.Selector', {
 			})
 	},
 	
-	derogation_on_selector: function(){
-		
-		
-	}
 });

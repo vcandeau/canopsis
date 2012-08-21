@@ -37,6 +37,7 @@ Ext.define('canopsis.store.TreeStoreViews', {
 	//defaultRootId : 'directory.root',
 
 	proxy: {
+		batchActions: true,
 		//TODO : use that to make difference between update/create
 		actionMethods: {
 			read: 'GET',

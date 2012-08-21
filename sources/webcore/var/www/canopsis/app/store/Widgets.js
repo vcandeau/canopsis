@@ -45,6 +45,7 @@ Ext.define('canopsis.store.Widgets', {
 	proxy: {
 		type: 'rest',
 		url: '/ui/widgets',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

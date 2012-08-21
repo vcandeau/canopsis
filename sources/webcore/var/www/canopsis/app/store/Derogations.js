@@ -18,41 +18,41 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 */
+Ext.define('canopsis.store.Derogations', {
+    extend: 'canopsis.lib.store.cstore',
+	model: 'canopsis.model.Derogation',
 
-Ext.define('widgets.weather.edit_message_popup' , {
-	extend: 'canopsis.lib.view.cpopup',
-	alias: 'widget.weather.edit_message_popup',
-	
-	width: 400,
-	
-	textAreaLabel : 'Type the new displayed message ',
-	
-	initComponent: function() {
-		this.textAreaLabel += 'for "' + this._component + '" :'
-		this.callParent(arguments);
-	},
-	
-	_buildForm: function(){
-		this._form.add({
-			xtype:'displayfield',
-			value: _(this.textAreaLabel)
-		})
-		
-		this.input_textArea = this._form.add({
-			xtype:'textarea',
-			width: '100%'
-		})
-	},
-	
-	ok_button_function : function(){
-		log.debug('clicked on ok button',this.logAuthor)
-		global.selectorCtrl.change_selector_output(
-			this.referer,
-			this.event_type,
-			this.input_textArea.getValue()
-		)
-		this.close()
+	storeId: 'store.Derogations',
+
+	logAuthor: '[store][curve]',
+
+	autoLoad: true,
+	autoSync: true,
+
+	sortOnLoad: true,
+
+	pageSize: 1000,
+/*
+	sorters: [
+        {
+            property: 'metric',
+            direction: 'ASC'
+        }
+    ],
+*/
+	proxy: {
+		type: 'rest',
+		url: '/rest/object/derogation',
+		batchActions: true,
+		reader: {
+			type: 'json',
+			root: 'data',
+			totalProperty: 'total',
+			successProperty: 'success'
+		},
+		writer: {
+			type: 'json'
+		}
 	}
-	
-	
-})
+
+});

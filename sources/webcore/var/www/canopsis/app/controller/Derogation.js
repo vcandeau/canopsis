@@ -21,8 +21,10 @@
 Ext.define('canopsis.controller.Derogation', {
 	extend: 'canopsis.lib.controller.cgrid',
 
-	views: ['Derogation.Form'],
-	//stores: ['Inventory'],
+	views: ['Derogation.Form','Derogation.Grid'],
+	
+	model:['Derogation'],
+	stores: ['Derogations'],
 
 	logAuthor: '[controller][Derogation]',
 	
@@ -30,58 +32,84 @@ Ext.define('canopsis.controller.Derogation', {
 		log.debug('[' + this.id + '] - Initialize ...');
 
 		this.formXtype = 'DerogationForm';
-		//this.listXtype = 'AccountGrid';
+		this.listXtype = 'DerogationGrid';
 
-		this.modelId = 'Account';
+		this.modelId = 'Derogation';
 
 		this.callParent(arguments);
 
 		global.derogationCtrl = this;
 	},
 	
-	_preSave: function(output){
-		//get rid of arrays (when user put x times the same field)
-		for(var i in output)
+	_saveForm : function(form){
+		var store = Ext.getStore('Derogations')
+		if (form.form.isValid()) {
+			var output = form.getValues();
+			var record = Ext.create('canopsis.model.' + this.modelId, data);
+			/*
+			 * for(var i in output)
 			if(Ext.isArray(output[i]))
-				output[i] = output[i][0]
+				output[i] = output[i][0]*/
+			
+			//-------------- process record -----------------
+			log.debug('Process record', this.logAuthor);
+			if(output.for_number && output.for_period)
+				record.set('stopTs',output.startTs + (output.for_number * output.for_period))
+			
+			record.set('startTs',output.startTs)
+			record.set('crecord_name',output.crecord_name)
+			record.set('scope',form.scope)
+			record.set('scope_name',form.scope_name)
+			record.set('_id',global.gen_id())
+			
+			if(Ext.isDefined(output.state))
+				record.set('state',output.state)
+			if(Ext.isDefined(output.output_tpl))
+				record.set('output_tpl',output.output_tpl)
+			if(Ext.isDefined(output.alert_icon))
+				record.set('alert_icon',output.alert_icon)
+			if(Ext.isDefined(output.alert_msg))
+				record.set('alert_msg',output.alert_msg)
+
+			//-------------- save-----------------
+			store.suspendEvents();
+			store.add(record);
+			
+			//-------------------reload--------------
+			log.debug('Reload store', this.logAuthor);
+			store.load({
+					//scope: this,
+					callback: function(records, operation, success) {
+						this.resumeEvents();
+					}
+				});
 				
-		//fix for period ending time
-		if(output.for_number && output.for_period){
-			output.stopTs = output.startTs + (output.for_number * output.for_period)
-			delete output.for_number
-			delete output.for_period
+			this._cancelForm(form);
+		}else{
+			log.error('Form is not valid !', this.logAuthor);
+			global.notify.notify(_('Invalid form'), _('Please check your form'), 'error');
+			return;
 		}
-		
-		//clean info (checkboxfield inner panel cleaning)
-		if(!output.downtime){
-			delete output.startTs
-			delete output.stopTs
-		}
-		
-		log.dump(output)
-		return output
+
 	},
 	
-	//Temporary, will fallback on real function later, wip purpose
-	_saveForm: function(form,store) {
-		this._preSave(form.getValues())
-	},
 	
-	derogate: function(){
-		var form = Ext.create('widget.' + this.formXtype ,{EditMethod:'window'});
+	derogate: function(scope,scope_name){
+		var form = Ext.create('widget.' + this.formXtype ,{
+													EditMethod:'window',
+													scope: scope,
+													scope_name: scope_name
+													});
 		form.win = Ext.create('widget.window', {
 			title: 'Derogation',
 			items: form,
 			closable: false,
 			resizable: false,
 			constrain: true,
-			//renderTo: this.grid.id,
+			renderTo: Ext.getCmp('main-tabs').getActiveTab().id,
 			closeAction: 'destroy'
 		}).show();
 		this._bindFormEvents(form)
 	}
-	
-	
-	
 	
 })

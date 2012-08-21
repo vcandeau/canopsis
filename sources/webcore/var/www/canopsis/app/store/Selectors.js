@@ -31,6 +31,7 @@ Ext.define('canopsis.store.Selectors', {
 	proxy: {
 		type: 'rest',
 		url: '/rest/object/selector',
+		batchActions: true,
 		reader: {
 			type: 'json',
 			root: 'data',

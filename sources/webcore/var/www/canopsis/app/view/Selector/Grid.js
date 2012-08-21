@@ -131,16 +131,12 @@ Ext.define('canopsis.view.Selector.Grid' , {
 			xtype: 'actioncolumn',
 			width: 70,
 			text: _('Derogation'),
-			icon: './themes/canopsis/resources/images/Tango-Blue-Materia/22x22/categories/applications-development.png',
+			icon: './themes/canopsis/resources/images/icons/edit.png',
 			iconCls: 'icon-clickable',
 			handler:  function(grid, rowIndex, colindex) {
 				var rec = grid.getStore().getAt(rowIndex).raw;
 				log.dump(rec)
-				config = {
-					
-				}
-				var popup = Ext.create('canopsis.lib.view.cderogation_popup',config)
-				popup.show()
+				global.derogationCtrl.derogate(rec._id,rec.crecord_name)
 			}
 		}
 	],
