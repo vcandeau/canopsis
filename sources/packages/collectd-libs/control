@@ -4,7 +4,7 @@ NAME="collectd-libs"
 VERSION=0.1
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr collectd"
+REQUIRES="canohome pkgmgr collectd supervisord-conf"
 
 NO_ARCH=true
 NO_DIST=true
@@ -32,6 +32,8 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+
+	rm $PREFIX/etc/init.d/collectd &> /dev/null || true
 	check_code $?
 }
 

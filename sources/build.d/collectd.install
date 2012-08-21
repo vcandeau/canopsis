@@ -36,6 +36,4 @@ function install(){
 	
 	# Clean
 	rm $PREFIX/etc/collectd.conf
-
-	install_init "collectd"
 }
