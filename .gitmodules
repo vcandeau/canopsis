@@ -1,3 +1,6 @@
 [submodule "sources/webcore-libs/var/www/canopsis/resources/lib/jqGridable"]
 	path = sources/webcore-libs/var/www/canopsis/resources/lib/jqGridable
 	url = http://forge.canopsis.org/git/jqGridable.git
+[submodule "sources/ubik"]
+	path = sources/ubik
+	url = https://github.com/Socketubs/Ubik.git
