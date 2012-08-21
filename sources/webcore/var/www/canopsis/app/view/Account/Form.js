@@ -57,10 +57,11 @@ Ext.define('canopsis.view.Account.Form', {
 				fieldLabel: _('Group'),
 				name: 'aaa_group',
 				store: 'Groups',
+				value : 'Canopsis',
 				displayField: 'crecord_name',
 				valueField: '_id',
+				editable:false,
 				xtype: 'combobox',
-
 				allowBlank: false
 			},{
 				fieldLabel: _('Password'),
