@@ -4,7 +4,7 @@ NAME="celery"
 VERSION=2.4.6
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python rabbitmq-server"
+REQUIRES="canohome pkgmgr python supervisord-conf rabbitmq-server"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
