@@ -10,5 +10,4 @@ function build(){
 function install(){
 	cd $PREFIX
 	easy_install_pylib "celery"
-	install_python_daemon "$PREFIX/bin/celeryd"
 }
