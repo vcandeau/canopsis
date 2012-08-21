@@ -145,9 +145,12 @@ Ext.define('widgets.weather.brick' , {
 			)
 
 			this.edit_button.on('click',function(){
+				var name = this.component
+				if(this.resource)
+					name += ' - '+ this.resource
 				global.derogationCtrl.derogate(
 					this.data.selector_id,
-					this.component +' - '+ this.resource
+					name
 				)
 			},this)
 		}
