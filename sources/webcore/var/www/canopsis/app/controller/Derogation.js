@@ -53,8 +53,14 @@ Ext.define('canopsis.controller.Derogation', {
 			
 			//-------------- process record -----------------
 			log.debug('Process record', this.logAuthor);
-			if(output.for_number && output.for_period)
-				record.set('stopTs',output.startTs + (output.for_number * output.for_period))
+			
+			if(output.for_number && output.for_period){
+				var for_ts = output.for_number * output.for_period
+				record.set('stopTs',output.startTs + for_ts)
+				record.set('forTs', for_ts)
+			}else{
+				record.set('stopTs',output.stopTs)
+			}
 			
 			record.set('startTs',output.startTs)
 			record.set('crecord_name',output.crecord_name)

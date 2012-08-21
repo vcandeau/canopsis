@@ -90,21 +90,38 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			now:true
 		})
 		
-		//------------------for--------------------
-		
+		//------------------Ending----------------
 		this.add({
 			xtype:'displayfield',
-			value : _('For') + ' :',
+			value : _('Ending') + ' :',
 			margin: '10 0 10 0'
 		})
 		
+		this.periodTypeCombo =  Ext.widget('combobox',{
+			isFormField:false,
+			editable:false,
+			width: 60,
+			queryMode: 'local',
+			displayField : 'text',
+			valueField : 'value',
+			value : 'for',
+			store: {
+				xtype: 'store',
+				fields: ['value','text'],
+				data: [
+					{value: 'for',text:_('For')},
+					{value: 'to',text:_('To')},
+				]				
+			}
+		})
+
 		this.forNumber = Ext.widget('numberfield',{
 			name : 'for_number',
 			width:40,
 			value:1,
 			minValue: 1,
 		})
-		
+
 		this.forPeriodCombo = Ext.widget('combobox',{
 			editable:false,
 			width:80,
@@ -124,56 +141,44 @@ Ext.define('canopsis.view.Derogation.Form' , {
 				]			
 			}
 		})
-		
-		this.add({
-			xtype:'container',
-			layout:'hbox',
-			items : [this.forNumber,this.forPeriodCombo]
+
+		this.stopDate = Ext.widget('cdate',{
+					name: 'stopTs',
+					hidden: true,
+					disabled:true
 		})
-		
-		//------------------Ending-----------------
-		
-		this.add({
-			xtype:'displayfield',
-			value : _('Ending') + ' :',
-			margin: '10 0 10 0'
-		})
-		/*
-		this.periodTypeCombo =  Ext.widget('combobox',{
-			isFormField:false,
-			editable:false,
-			width: 60,
-			queryMode: 'local',
-			displayField : 'text',
-			valueField : 'value',
-			value : 'for',
-			store: {
-				xtype: 'store',
-				fields: ['value','text'],
-				data: [
-					{value: 'for',text:_('For')},
-					{value: 'to',text:_('To')},
-				]				
-			}
-		})
-		*/
-		
-		
-		this.add({
-			xtype:'cdate',
-			name: 'stopTs',
-		})
-		/*
+
 		this.add({
 			xtype:'container',
 			date_width : 110,
 			layout:'hbox',
 			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
-		})*/
+		})
 
 		//--------------bindings--------------
-		//this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
+		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
     },
+
+	toggleTimePeriod : function(combo,value){
+		if(value == 'for'){
+			this.forNumber.show()
+			this.forNumber.setDisabled(false)
+			this.forPeriodCombo.show()
+			this.forPeriodCombo.setDisabled(false)
+			this.stopDate.hide()
+			this.stopDate.setDisabled(true)
+		}
+
+		if(value == 'to'){
+			this.forNumber.hide()
+			this.forNumber.setDisabled(true)
+			this.forPeriodCombo.hide()
+			this.forPeriodCombo.setDisabled(true)
+			this.stopDate.show()
+			this.stopDate.setDisabled(false)
+		}
+
+	},
 })
 
 Ext.define('derogation.field',{
