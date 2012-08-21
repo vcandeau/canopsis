@@ -1,10 +1,10 @@
 #!/bin/bash
 
-NAME="apscheduler-libs"
+NAME="supervisord-conf"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr canolibs python-libs supervisord-conf celery-libs"
+REQUIRES="canohome pkgmgr python python-libs"
 
 NO_ARCH=true
 NO_DIST=true
@@ -17,32 +17,24 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
 }
-
+	
 function pre_remove(){
 	echo "Pre-remove $NAME $VERSION-$RELEASE ..."
-	check_code $?
 }
 
 function post_remove(){
 	echo "Post-remove $NAME $VERSION-$RELEASE ..."
-	check_code $?
 }
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
-	rm $PREFIX/etc/init.d/apsd &> /dev/null || true
-
-	check_code $?
 }
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	check_code $?
 }
 
 function purge(){
 	echo "Purge $NAME $VERSION-$RELEASE ..."
-	check_code $?
 }

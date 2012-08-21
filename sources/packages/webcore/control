@@ -4,7 +4,7 @@ NAME="webcore"
 VERSION=0.3
 RELEASE=2
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python canolibs wkhtmltopdf-libs nodejs-libs"
+REQUIRES="canohome pkgmgr python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
 
 NO_ARCH=true
 NO_DIST=true
@@ -38,6 +38,9 @@ function pre_update(){
 	# Delete old init script
 	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
 	rm $PREFIX/etc/daemon.d/webserver.conf &> /dev/null || true
+
+	rm $PREFIX/etc/init.d/webserver &> /dev/null || true
+	rm $PREFIX/etc/init.d/websocket &> /dev/null || true
 }
 
 function post_update(){

@@ -4,7 +4,7 @@ NAME="gelf2amqp"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python canolibs"
+REQUIRES="canohome pkgmgr python canolibs supervisord-conf"
 
 NO_ARCH=true
 NO_DIST=true
@@ -32,6 +32,8 @@ function post_remove(){
 
 function pre_update(){
 	echo "Pre-update $NAME $VERSION-$RELEASE ..."
+
+	rm $PREFIX/etc/init.d/gelf2amqp &> /dev/null || true
 	check_code $?
 }
 

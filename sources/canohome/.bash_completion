@@ -8,7 +8,7 @@ _service()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts=`ls -1 ~/etc/init.d/`
+    opts=`ls -1 ~/etc/init.d/ && ls -1 ~/etc/supervisord.d/ | cut -d "." -f1`
     opts_action="start stop restart status"
 
     #echo "cur: ${cur}"

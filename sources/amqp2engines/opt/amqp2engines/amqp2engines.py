@@ -71,13 +71,13 @@ def clean_message(body, msg):
 					except Exception, err :
 						try:
 							logger.info(" + Decode BSON")
-							bson = BSON ( body ) 
+							bson = BSON (body)
 							event = bson.decode()
 							logger.info("   + Ok")
 						except Exception, err:
 							raise Exception(err)
 		except Exception, err:
-			logger.info("   + Failed")
+			logger.info("   + Failed (%s)" % err)
 			logger.debug("Impossible to parse event '%s'" % rk)
 			#logger.debug(body)
 			raise Exception("Impossible to parse event '%s'" % rk)

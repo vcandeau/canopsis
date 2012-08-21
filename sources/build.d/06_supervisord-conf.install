@@ -1,4 +1,4 @@
-NAME="gelf2amqp"
+NAME="supervisord-conf"
 
 function build(){
 	true
