@@ -92,7 +92,10 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 	},
 	
 	setValue:function(value){
-		this.date.setValue(value)
+		var moduloDate = value % global.commonTs.day
+		var date = value - moduloDate
+		this.date.setValue(new Date(date*1000))
+		this.hour.setValue(Ext.Date.format(new Date(value*1000), 'g:i a'))
 	},
 	
 	setDisabled : function(bool){

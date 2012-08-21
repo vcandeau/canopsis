@@ -39,32 +39,6 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			fieldLabel: _('Name'),
 		})
 		
-		//--------------------Variable field-----------------------
-		this.variableField = this.add({
-			xtype: 'fieldset',
-			title: _('Manual set'),
-			items: [Ext.create('derogation.field')]
-		})
-		
-		//align button with other button
-		var container = this.variableField.add({
-			xtype:  'container',
-			margin : '5 0 0 0',
-			height: 25,
-			layout: 'absolute'
-		})
-
-		this.addButton = container.add({
-			xtype: 'button',
-			x: 436,
-			iconCls : 'icon-add',
-		})
-		
-		this.addButton.on('click',function(){
-			var last_child_index = this.variableField.items.length
-			this.variableField.insert(last_child_index - 1, Ext.create('derogation.field'))
-		},this)
-		
 		//--------------------Time Field------------------------
 		/*
 		this.timeFieldSet = this.add({
@@ -154,6 +128,32 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			layout:'hbox',
 			items : [this.periodTypeCombo,this.forNumber,this.forPeriodCombo,this.stopDate]
 		})
+		
+		//--------------------Variable field-----------------------
+		this.variableField = this.add({
+			xtype: 'fieldset',
+			title: _('Manual set'),
+			items: [Ext.create('derogation.field')]
+		})
+		
+		//align button with other button
+		var container = this.variableField.add({
+			xtype:  'container',
+			margin : '5 0 0 0',
+			height: 25,
+			layout: 'absolute'
+		})
+
+		this.addButton = container.add({
+			xtype: 'button',
+			x: 436,
+			iconCls : 'icon-add',
+		})
+		
+		this.addButton.on('click',function(){
+			var last_child_index = this.variableField.items.length
+			this.variableField.insert(last_child_index - 1, Ext.create('derogation.field'))
+		},this)
 
 		//--------------bindings--------------
 		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
