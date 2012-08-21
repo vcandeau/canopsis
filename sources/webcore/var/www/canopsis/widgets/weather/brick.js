@@ -244,7 +244,8 @@ Ext.define('widgets.weather.brick' , {
 		var config = {
 			_component : this.component,
 			referer: this.data.rk,
-			title: _('Report issue for ') + this.event_type + ' ' + this.component
+			title: _('Report issue for ') + this.event_type + ' ' + this.component,
+			renderTo: Ext.getCmp('main-tabs').getActiveTab().id
 		}
 
 		var popup = Ext.create('widgets.weather.report_popup',config)
