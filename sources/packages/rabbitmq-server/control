@@ -4,7 +4,7 @@ NAME="rabbitmq-server"
 VERSION=2.7.0
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome ubik erlang"
+REQUIRES="canohome erlang"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."

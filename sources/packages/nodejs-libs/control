@@ -4,7 +4,7 @@ NAME="nodejs-libs"
 VERSION=0.1
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome ubik nodejs"
+REQUIRES="canohome nodejs"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."

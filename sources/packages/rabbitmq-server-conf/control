@@ -4,7 +4,7 @@ NAME="rabbitmq-server-conf"
 VERSION=0.2
 RELEASE=0
 DESCRIPTION=""
-REQUIRES="canohome canotools ubik supervisord-conf rabbitmq-server"
+REQUIRES="canohome canotools supervisord-conf rabbitmq-server"
 
 NO_ARCH=true
 NO_DIST=true

@@ -4,7 +4,7 @@ NAME="collectd-libs"
 VERSION=0.1
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome ubik collectd supervisord-conf"
+REQUIRES="canohome collectd supervisord-conf"
 
 NO_ARCH=true
 NO_DIST=true

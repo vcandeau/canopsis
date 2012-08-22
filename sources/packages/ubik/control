@@ -4,7 +4,7 @@ NAME="ubik"
 VERSION=0.1
 RELEASE=0
 DESCRIPTION="Ubik is a minimal package manager, see https://github.com/Socketubs/Ubik"
-REQUIRES="canohome python"
+REQUIRES="canohome python python-libs"
 
 NO_ARCH=true
 NO_DIST=true

@@ -4,7 +4,7 @@ NAME="webcore"
 VERSION=0.3
 RELEASE=2
 DESCRIPTION=""
-REQUIRES="canohome ubik python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
+REQUIRES="canohome python canolibs supervisord-conf wkhtmltopdf-libs nodejs-libs"
 
 NO_ARCH=true
 NO_DIST=true

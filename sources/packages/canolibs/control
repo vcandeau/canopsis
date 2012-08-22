@@ -4,7 +4,7 @@ NAME="canolibs"
 VERSION=0.2
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome ubik python python-libs"
+REQUIRES="canohome python python-libs"
 
 NO_ARCH=true
 NO_DIST=true
