@@ -71,6 +71,11 @@ ubik install --force-yes ubik
 check_code $? "Impossible to install packages"
 echo "   - Ok"
 
+echo " + Clean old Ubik"
+rm -Rf .local &>> $LOG
+check_code $? "Impossible to clean ubik"
+echo "   - Ok"
+
 echo
 echo " :: Canopsis installed"
 echo
