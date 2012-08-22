@@ -525,43 +525,34 @@ if [ $OPT_BUILD -eq 1 ]; then
 	fi
 fi
 
-# Dont build bootstrap for now
-exit 0
-
 if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "################################"
 	echo "# Make installer"
 	echo "################################"
-	INSTALLER_PATH="$SRC_PATH/../binaries/canopsis_installer"
-	BSTRAP_PATH="$INSTALLER_PATH/bootstrap"
+	cd $SRC_PATH
 
-	INSTALLER_PKGS="canohome canotools pkgmgr"
-	
-	cp $SRC_PATH/canohome/lib/common.sh $SRC_PATH/../binaries
+	echo "Copy files ..."	
+	cp ubik/etc/ubik.conf.canopsis bootstrap/ubik.conf
+	check_code $?
+	cp canohome/lib/common.sh bootstrap/
+	check_code $?
+	tar cfz bootstrap/ubik.tgz ubik
+	check_code $?
 
 	echo "Create tarball installer ..."
-	echo "  + Create bootstrap env"
-	mkdir -p $BSTRAP_PATH
-	echo "  + Copy install script"
-	cp $SRC_PATH/../binaries/{install.sh,common.sh,INSTALL} $INSTALLER_PATH
-	check_code $? "Impossible to copy"
-
-	echo "  + Copy packages ..."
-	for PKG in $INSTALLER_PKGS; do
-		if [ -e $SRC_PATH/packages/$PKG/control ]; then
-			. $SRC_PATH/packages/$PKG/control
-			pkg_options
-			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
-			check_code $? "Impossible to copy"
-		else
-			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
-			check_code $? "Impossible to copy"
-		fi	
-	done
 	echo "  + Make archive"
-	cd $SRC_PATH/../binaries
-	tar cfz canopsis_installer.tgz canopsis_installer
-	echo "  + Clean tmp files"
-	rm -Rf $INSTALLER_PATH $BSTRAP_PATH
+	cp -R bootstrap canopsis_installer
+	check_code $?
+	tar cfz $SRC_PATH/../binaries/canopsis_installer.tgz canopsis_installer
+	check_code $?
+
+	echo " + Clean"
+	rm -Rf canopsis_installer
+	check_code $?
+	rm bootstrap/ubik.*
+	check_code $?
+	rm bootstrap/common.sh
+	check_code $?
+
 	echo "  + Done"
 fi

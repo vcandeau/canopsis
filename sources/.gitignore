@@ -9,3 +9,6 @@ externals/*/
 *neb2socket.o
 !externals/rabbitmq-plugins
 packages/files.lst
+bootstrap/*.tgz
+bootstrap/*.conf
+bootstrap/common.sh
