@@ -134,8 +134,10 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		this.variableField = this.add({
 			xtype: 'fieldset',
 			title: _('Manual set'),
-			items: [Ext.create('derogation.field')]
 		})
+		
+		if(!this.editing)
+			this.variableField.add(Ext.create('derogation.field'))
 		
 		//align button with other button
 		var container = this.variableField.add({
@@ -151,10 +153,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			iconCls : 'icon-add',
 		})
 		
-		this.addButton.on('click',function(){
-			var last_child_index = this.variableField.items.length
-			this.variableField.insert(last_child_index - 1, Ext.create('derogation.field'))
-		},this)
+		this.addButton.on('click',this.addButtonFunc,this)
 
 		//--------------bindings--------------
 		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
@@ -180,6 +179,20 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		}
 
 	},
+	
+	addButtonFunc: function(){
+		this.addNewField()
+	},
+	
+	addNewField : function(variable,value){
+		log.debug(' + Adding a new field',this.logAuthor)
+		var last_child_index = this.variableField.items.length
+		var config = {
+			_variable : variable,
+			_value : value
+		}
+		this.variableField.insert(last_child_index - 1, Ext.create('derogation.field',config))
+	}
 })
 
 Ext.define('derogation.field',{
@@ -290,13 +303,21 @@ Ext.define('derogation.field',{
 			}
 		})
 		
-		this.output_textfield = this.add({
+		var config = {
 			xtype: 'textfield',
 			flex:1,
 			name : 'output_tpl',
 			emptyText : _('Type here new comment...'),
 			margin: '5 5 0 5',
-		})
+		}
+		
+		//if value, not display comment by default
+		if(this._variable && this._value){
+			config.disabled = true
+			config.hidden = true
+		}
+		
+		this.output_textfield = this.add(config)
 		
 		this.alert_textfield = this.add({
 			xtype: 'textfield',
@@ -315,8 +336,23 @@ Ext.define('derogation.field',{
 		})
 		
 		//----------------------bind events--------------------
-		this.key_field.on('select',this.change,this)
+		this.key_field.on('select',this._onChange,this)
 		this.destroyButton.on('click',this.selfDestruction,this)
+	},
+	
+	afterRender : function(){
+		this.callParent(arguments);
+		if(this._variable){
+			log.dump(this._variable + '   ' +  this._value)
+			this.key_field.setValue(this._variable)
+			
+			this.change(this._variable)
+			
+			var field = Ext.ComponentQuery.query('#' + this.id + ' [name='+this._variable+']');
+			if(field)
+				field[0].setValue(this._value)
+			
+		}
 	},
 	
 	selfDestruction:function(){
@@ -326,9 +362,12 @@ Ext.define('derogation.field',{
 		Ext.destroy(this)
 	},
 	
-	change : function(combo,records,options){
+	_onChange : function(combo,records,options){
 		var value = records[0].get('value')	
-		
+		this.change(value)
+	},
+	
+	change : function(value){
 		if(value == 'output_tpl'){
 			this.list_state.hide()
 			this.list_state.setDisabled(true)

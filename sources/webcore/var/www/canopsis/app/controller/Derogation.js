@@ -45,7 +45,6 @@ Ext.define('canopsis.controller.Derogation', {
 		var store = Ext.getStore('Derogations')
 		if (form.form.isValid()) {
 			var output = form.getValues();
-			log.dump(output)
 			//cleaning double entries in field set (if someone put many comment/state)
 			for(var i in output)
 				if(Ext.isArray(output[i]))
@@ -71,7 +70,7 @@ Ext.define('canopsis.controller.Derogation', {
 			record.set('scope',form.scope)
 			record.set('scope_name',form.scope_name)
 			
-			if(Ext.isDefined(output._id))
+			if(output._id != '' && output._id)
 				record.set('_id',output._id)
 			else
 				record.set('_id',global.gen_id())
@@ -86,16 +85,15 @@ Ext.define('canopsis.controller.Derogation', {
 				record.set('alert_msg',output.alert_msg)
 
 			//-------------- save-----------------
+			log.dump(record)
+
 			store.suspendEvents();
 			store.add(record);
 			
 			//-------------------reload--------------
 			log.debug('Reload store', this.logAuthor);
 			store.load({
-					//scope: this,
-					callback: function(records, operation, success) {
-						this.resumeEvents();
-					}
+					callback: function(){this.resumeEvents();}
 				});
 				
 			this._cancelForm(form);
@@ -107,8 +105,17 @@ Ext.define('canopsis.controller.Derogation', {
 
 	},
 	
-	beforeload_EditForm : function(form, item){
-		log.dump(item)
+	afterload_EditForm : function(form, item){
+		data = item.data
+		log.dump(data)
+		if(data.state != undefined)
+			form.addNewField('state',data.state)
+		if(data.alert_icon != undefined)
+			form.addNewField('alert_icon',data.alert_icon)
+		if(data.alert_msg != undefined)
+			form.addNewField('alert_msg',data.alert_msg)
+		if(data.output_tpl != undefined)
+			form.addNewField('output_tpl',data.output_tpl)
 	},
 	
 	derogate: function(scope,scope_name){
