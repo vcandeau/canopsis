@@ -473,18 +473,9 @@ if [ $OPT_BUILD -eq 1 ]; then
 				install
 				check_code $? "Install failure"
 	
-				echo " + Update local pkgmgr database"
-				PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
-				sed "/^$NAME/d" -i $PKGLIST
-				echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
-				check_code $? "Package entrie insertion in local pkgmgr database failure"
-	
 				echo " + Post-install ..."
 				post_install
 				
-				echo " + Clean python-eggs  ..."
-				rm -Rf $PREFIX/.python-eggs &> /dev/null || true
-	
 				if [ $OPT_MPKG -eq 1 ]; then
 					make_package $NAME
 					check_code $? "Make package failure"
