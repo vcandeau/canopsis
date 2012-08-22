@@ -57,6 +57,33 @@ Ext.define('canopsis.controller.Events', {
 			}
 		});
 
+	},
+	
+	deleteEvent: function(event_ids){
+		log.debug('Prepare to send events', this.logAuthor);
+
+		Ext.Ajax.request({
+			url: '/rest/events/event',
+			method: 'DELETE',
+			params: event_ids,
+			scope: this,
+			success: function(response) {
+				var text = response.responseText;
+				global.notify.notify(_('Success'), _('Event successfuly delete'), 'success');
+			},
+			failure: function(response) {
+
+				if (response.status == 403) {
+					global.notify.notify(_('Access denied'), _('Deleting event forbidden'), 'error');
+					log.error(_('Access denied'));
+				} else {
+					log.error(_('Deleting event have failed'), this.logAuthor);
+				}
+			}
+		});
+		
+		
+		
 	}
 
 });
