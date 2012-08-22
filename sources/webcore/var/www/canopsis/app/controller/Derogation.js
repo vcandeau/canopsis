@@ -77,7 +77,7 @@ Ext.define('canopsis.controller.Derogation', {
 				record.set('scope_name',form.scope_name)
 			}
 			
-			if(output._id != '' && output._id)
+			if(output._id)
 				record.set('_id',output._id)
 			else
 				record.set('_id',global.gen_id())
@@ -92,7 +92,7 @@ Ext.define('canopsis.controller.Derogation', {
 				record.set('alert_msg',output.alert_msg)
 
 			//-------------- save-----------------
-			log.dump(record.data)
+			//log.dump(record.data)
 			store.suspendEvents();
 			store.add(record);
 			
