@@ -92,7 +92,7 @@ Ext.define('canopsis.controller.Derogation', {
 				record.set('alert_msg',output.alert_msg)
 
 			//-------------- save-----------------
-			//log.dump(record.data)
+
 			store.suspendEvents();
 			store.add(record);
 			
