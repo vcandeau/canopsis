@@ -343,15 +343,12 @@ Ext.define('derogation.field',{
 	afterRender : function(){
 		this.callParent(arguments);
 		if(this._variable){
-			log.dump(this._variable + '   ' +  this._value)
+			log.debug(' + Populate form with edit values', this.logAuthor)
 			this.key_field.setValue(this._variable)
-			
 			this.change(this._variable)
-			
 			var field = Ext.ComponentQuery.query('#' + this.id + ' [name='+this._variable+']');
 			if(field)
 				field[0].setValue(this._value)
-			
 		}
 	},
 	
