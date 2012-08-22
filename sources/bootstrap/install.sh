@@ -69,6 +69,10 @@ echo "   - Ok"
 echo " + Install Ubik from canopsis package ..."
 ubik install --force-yes ubik
 check_code $? "Impossible to install packages"
+if [ ! -e bin/ubik ]; then
+    echo "Installation failed"
+    exit 1
+fi
 echo "   - Ok"
 
 echo " + Clean old Ubik"
