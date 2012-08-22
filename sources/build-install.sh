@@ -539,6 +539,12 @@ if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	tar cfz bootstrap/ubik.tgz ubik
 	check_code $?
 
+	#echo "Configure"
+	#BRANCH=$(git branch | grep "*" | cut -d ' ' -f2)
+	#if [ "$BRANCH" == "develop" ]; then
+	#	sed "s#stable#daily#" bootstrap/ubik.conf
+	#fi
+
 	echo "Create tarball installer ..."
 	echo "  + Make archive"
 	cp -R bootstrap canopsis_installer
