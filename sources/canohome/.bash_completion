@@ -1,6 +1,8 @@
 #!/bin/bash
 
-. $HOME/lib/pkgmgr/completion
+if [ -e $HOME/lib/pkgmgr/completion ]; then
+	. $HOME/lib/pkgmgr/completion
+fi
 
 _service()
 {
