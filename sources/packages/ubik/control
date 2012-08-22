@@ -12,7 +12,11 @@ NO_DISTVERS=true
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
-	check_code $? 
+	if [ -e $PREFIX/bin/pkgmgr ]; then
+		echo " + Remove old pkgmgr bin"
+		rm $PREFIX/bin/pkgmgr
+		check_code $? 
+	fi
 }
 
 function post_install(){
