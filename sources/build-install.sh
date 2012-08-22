@@ -522,6 +522,8 @@ if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "################################"
 	cd $SRC_PATH
 
+	rm $SRC_PATH/../binaries/canopsis_installer.tgz &> /dev/null || true
+
 	echo "Copy files ..."	
 	cp ubik/etc/ubik.conf.canopsis bootstrap/ubik.conf
 	check_code $?
