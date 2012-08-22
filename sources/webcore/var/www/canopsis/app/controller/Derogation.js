@@ -107,7 +107,7 @@ Ext.define('canopsis.controller.Derogation', {
 	
 	afterload_EditForm : function(form, item){
 		data = item.data
-		log.dump(data)
+
 		if(data.state != undefined)
 			form.addNewField('state',data.state)
 		if(data.alert_icon != undefined)
