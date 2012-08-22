@@ -68,25 +68,31 @@ Ext.define('canopsis.controller.Derogation', {
 			
 			record.set('startTs',output.startTs)
 			record.set('crecord_name',output.crecord_name)
-			record.set('scope',form.scope)
-			record.set('scope_name',form.scope_name)
+			
+			if(form.editing){
+				record.set('scope',form.record.scope)
+				record.set('scope_name',form.record.scope_name)
+			}else{
+				record.set('scope',form.scope)
+				record.set('scope_name',form.scope_name)
+			}
 			
 			if(output._id != '' && output._id)
 				record.set('_id',output._id)
 			else
 				record.set('_id',global.gen_id())
 			
-			if(output.state != undefined)
+			if(Ext.isNumber(output.state))
 				record.set('state',output.state)
 			if(output.output_tpl)
 				record.set('output_tpl',output.output_tpl)
-			if(output.alert_icon != undefined)
+			if(Ext.isNumber(output.alert_icon))
 				record.set('alert_icon',output.alert_icon)
 			if(output.alert_msg)
 				record.set('alert_msg',output.alert_msg)
 
 			//-------------- save-----------------
-
+			log.dump(record.data)
 			store.suspendEvents();
 			store.add(record);
 			
