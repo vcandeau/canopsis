@@ -30,8 +30,6 @@ Ext.define('canopsis.store.Derogations', {
 	autoSync: true,
 
 	sortOnLoad: true,
-
-	pageSize: 1000,
 /*
 	sorters: [
         {
