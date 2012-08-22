@@ -13,7 +13,8 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	check_code $? "easy_install failed"
+	update_pylibs
+	check_code $?
 }
 
 function pre_remove(){

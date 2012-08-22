@@ -15,6 +15,7 @@ function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	mkdir -p $PREFIX/var/lib/rabbitmq
 	mkdir -p $PREFIX/var/log/rabbitmq
+	update_pylibs
 }
 
 function pre_remove(){
