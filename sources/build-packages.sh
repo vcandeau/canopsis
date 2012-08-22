@@ -2,7 +2,7 @@
 
 SRC="/usr/local/src/canopsis"
 REPO_GIT="https://github.com/capensis/canopsis.git"
-CMD_INSTALL="pkgmgr install --force-yes cmaster"
+CMD_INSTALL="ubik install --force-yes cmaster"
 BRANCH="freeze"
 
 if [ "x$1" != "x" ]; then
@@ -78,16 +78,13 @@ if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 su - canopsis -c "cd tmp && tar xvf canopsis_installer.tgz"
 if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
-su - canopsis -c "cd tmp && cd canopsis_installer && ./install.sh"
-if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
-
-echo "---> Clean bootstrap"
-su - canopsis -c "rm -Rf tmp/canopsis_installer*"
-
 ## Configure pkgmgr
 echo "---> Configure pkgmgr"
-sed -i 's#="stable"#=""#g' /opt/canopsis/etc/pkgmgr.conf
-sed -i 's#repo.canopsis.org:80#localhost:8081#g' /opt/canopsis/etc/pkgmgr.conf
+sed -i 's#"stable"#""#g' /opt/canopsis/tmp/canopsis_installer/ubik.conf
+sed -i 's#repo.canopsis.org:80#localhost:8081#g' /opt/canopsis/tmp/canopsis_installer/ubik.conf
+
+su - canopsis -c "cd tmp && cd canopsis_installer && ./install.sh"
+if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
 ## Start install
 echo "---> Start install ($CMD_INSTALL)"
