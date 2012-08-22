@@ -54,14 +54,9 @@
 .widget-weather .left_panel .alert_information{
 	display: table;
 	float: right;
-	height:100%;
 	width: 40%;
-	/*text-align:center;*/
-}
-
-.widget-weather .left_panel .alert_information span{
-	display: table-cell;
-	vertical-align: middle;
+	margin-top: 2%;
+	margin-left: 4%
 }
 
 .widget-weather .left_panel .alert_img{
@@ -76,10 +71,8 @@
 }
 
 .widget-weather .left_panel .alert_button{
-	/*display: table;*/
 	float:left;
 	height:100%;
-	/*width: 40%;*/
 	font-size:10px;
 	max-height:22px;
 }
