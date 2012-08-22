@@ -49,7 +49,8 @@ Ext.define('canopsis.store.Derogations', {
 			successProperty: 'success'
 		},
 		writer: {
-			type: 'json'
+			type: 'json',
+			writeAllFields: false
 		}
 	}
 

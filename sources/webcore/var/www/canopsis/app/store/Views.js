@@ -51,7 +51,8 @@ Ext.define('canopsis.store.Views', {
 			successProperty: 'success'
 		},
 		writer: {
-			type: 'json'
+			type: 'json',
+			writeAllFields: false
 		}
 	},
 
