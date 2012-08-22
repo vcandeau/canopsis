@@ -375,17 +375,23 @@ def rest_delete(namespace, ctype, _id=None):
 			_id = []
 			
 		for item in data:
-			if '_id' in item:
-				_id.append(item['_id'])
-			if 'id' in item:
-				_id.append(item['id'])
-	
+			if isinstance(item,str):
+				_id = item
+			if isinstance(item,dict):
+				if '_id' in item:
+					_id.append(item['_id'])
+				if 'id' in item:
+					_id.append(item['id'])
+		
 	
 	if not _id:
-		if '_id' in data:
-			_id = str(data['_id'])
-		if 'id' in data:
-			_id = str(data['id'])
+		if isinstance(data,str):
+			_id = data
+		if isinstance(data,dict):
+			if '_id' in data:
+				_id = str(data['_id'])
+			if 'id' in data:
+				_id = str(data['id'])
 
 	if not _id:
 		logger.error("DELETE: No '_id' field in header ...")
