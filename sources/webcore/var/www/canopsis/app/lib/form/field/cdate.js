@@ -60,10 +60,10 @@ Ext.define('canopsis.lib.form.field.cdate' , {
 		
 		var config = {
 			isFormField: false,
-			name: 'fromHour',
 			margin : '0 0 0 2',
 			width: this.hour_width,
 			allowBlank: false,
+			regex: /^([01]?\d|2[0-3]):([0-5]\d)(\s)?(am|pm)?$/
 		}
 		
 		if(this.now)
