@@ -37,8 +37,13 @@ widget_weather_template = Ext.create('Ext.XTemplate',
 						//'<div class="alert_button"><button type="button">{button_text}</button></div>',
 						'<button class="alert_button" type="button" id="{id}-button">{button_text}</button>',
 					'</tpl>',
-					'<div class="alert_information" id="{id}-alert_message"><span>{alert_comment}</span></div>',
-					//'<div class="alert_img"></div>',
+					'<tpl if="alert_msg" != undefined">',
+						'<div class="alert_information" id="{id}-alert_message"><span>{alert_msg}</span></div>',
+					'</tpl>',
+					'<tpl if="alert_icon" != undefined">',
+						//'<div class="{alert_icon}"></div>',
+						'<div class="alert_img"></div>',
+					'</tpl>',
 				'</div>',
 			'</div>',
 			'<div class="right_panel" style="float:{second_panel_float}">',
@@ -66,6 +71,7 @@ Ext.define('widgets.weather.brick' , {
 	icon_on_left: false,
 	state_as_icon_value: false,
 	bg_color: '#FFFFFF',
+	report_button : true,
 
 
 	nodeId: undefined,
@@ -185,15 +191,13 @@ Ext.define('widgets.weather.brick' , {
 				widget_data.percent = data.perf_data_array[0].value;
 		}
 
-		/*
-		//--------------downtime feature------------
-		if(this.active_downtime){
-			log.debug('  +  Enable downtime feature',this.logAuthor)
-			//if(this.option_button == true)
-				widget_data.button_text = _('Report issue')
+		//----------------alert && derog-------------
+		if(this.report_button)
+			widget_data.button_text = _('Report issue')
 
-			widget_data.alert_comment = '0:00am to 9:00am'
-		}*/
+		//widget_data.alert_msg = '0:00am to 9:00am'
+		//widget_data.alert_icon = 'r'
+
 
 		var config = Ext.Object.merge(widget_data, this.widget_base_config);
 		var _html = widget_weather_template.applyTemplate(config);

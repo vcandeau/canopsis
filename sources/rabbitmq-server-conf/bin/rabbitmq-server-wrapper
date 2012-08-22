@@ -1,5 +1,5 @@
-#!/bin/bash
-#--------------------------------
+#!/usr/bin/env python
+# --------------------------------
 # Copyright (c) 2011 "Capensis" [http://www.capensis.com]
 #
 # This file is part of Canopsis.
@@ -18,39 +18,26 @@
 # along with Canopsis.  If not, see <http://www.gnu.org/licenses/>.
 # ---------------------------------
 
-#on_die () {
-#	log_info "Exit pending..."
-#	exit_pending=true
-#	if ! [ -e "$LOCK_FILE" ]; then 
-#		echo
-#		echo "Abort."
-#		exit 1
-#	else
-#		echo "Wait..."
-#	fi
-#}
+import subprocess, sys, signal, time
 
-on_lock () {
-	log_info "Create lock file"
-	stty intr undef 2>/dev/null
-	trap 'error ${LINENO} "Try to create lock file ($LOCK_FILE)"' ERR
-	touch $LOCK_FILE
-}
+def signal_handler(signum, frame):
+	global RUN
+	print "Receive signal %s ..." % signum
+	print "Stop RabbitMQ Server ..."
+	subprocess.Popen(["rabbitmqctl", "stop"])
 
-off_lock () {
-	stty intr "^C" 2>/dev/null
-	log_info "Remove lock file"
-	trap 'error ${LINENO} "Try to remove lock file ($LOCK_FILE)"' ERR
-	rm -Rf $LOCK_FILE
-	#check_lock
-}
+signal.signal(signal.SIGTERM, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
 
-check_lock () {
-	if [[ ! -e "$LOCK_FILE" ]]; then
-		if $exit_pending ; then
-			echo
-			echo "Abort."
-			exit 1
-		fi
-	fi
-}
+print "Start RabbitMQ Server ..."
+process = subprocess.Popen(["rabbitmq-server"])
+
+exitcode=0
+while True:
+	state = process.poll()
+	if state != None:
+		exitcode = state
+		break
+	time.sleep(1)
+
+sys.exit(exitcode)

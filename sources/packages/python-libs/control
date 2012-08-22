@@ -4,7 +4,7 @@ NAME="python-libs"
 VERSION=0.3
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python"
+REQUIRES="canohome python"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -13,8 +13,9 @@ function pre_install(){
 
 function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
-	update_pylibs
-	check_code $?
+
+        update_pylibs &> /dev/null
+        check_code $? "Error when update pylibs listing ..."
 }
 
 function pre_remove(){
@@ -34,8 +35,9 @@ function pre_update(){
 
 function post_update(){
 	echo "Post-update $NAME $VERSION-$RELEASE ..."
-	update_pylibs
-	check_code $?
+
+        update_pylibs &> /dev/null
+        check_code $? "Error when update pylibs listing ..."
 }
 
 function purge(){

@@ -32,20 +32,13 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	initComponent: function() {
 		this.callParent();
 		
-		var general_options = this.add({
-			xtype: 'fieldset',
-			title: _('General options')
-		})
-		
 		this.add({
 			xtype: 'hiddenfield',
 			name: '_id',
 			value: undefined
 		})
 		
-		//--------------------standart options--------------------
-		general_options.add({
-			xtype: 'textfield',
+		var crecord_name = Ext.widget('textfield',{
 			name: 'crecord_name',
 			fieldLabel: _('Name'),
 			width: 295
@@ -54,19 +47,17 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		
 		//----------------Beginning-----------------
 		
-		var beginning = general_options.add({
-			xtype:'fieldcontainer',
+		var beginning = Ext.widget('fieldcontainer',{
 			fieldLabel: _('Begging'),
-			layout:'hbox'
+			layout:'hbox',
+			items : [{
+				xtype: 'cdate',
+				name: 'startTs',
+				date_width: 110,
+				now:true
+			}]
 		})
 
-		beginning.add({
-			xtype: 'cdate',
-			name: 'startTs',
-			date_width: 110,
-			now:true
-		})
-		
 		//------------------Ending----------------
 		
 		this.periodTypeCombo =  Ext.widget('combobox',{
@@ -123,11 +114,19 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			disabled:true
 		})
 
-		general_options.add({
-			xtype:'fieldcontainer',
+		var ending = Ext.widget('fieldcontainer',{
 			fieldLabel : _('Ending'),
 			layout:'hbox',
 			items : [this.periodTypeCombo,this.ts_window,this.ts_unit,this.stopDate]
+		})
+		
+		
+		//----------------build general options field------------
+		
+		this.add({
+			xtype: 'fieldset',
+			title: _('General options'),
+			items:[crecord_name,beginning,ending]
 		})
 		
 		//--------------------Variable field-----------------------
@@ -215,9 +214,8 @@ Ext.define('derogation.field',{
 	icon_class : 'widget-weather-form-icon',
 	
 	initComponent: function() {
-		this.callParent(arguments);
-		this.key_field = this.add({
-			xtype: 'combobox',
+		
+		this.key_field = Ext.widget('combobox',{
 			isFormField:false,
 			editable:false,
 			flex: 1,
@@ -240,7 +238,7 @@ Ext.define('derogation.field',{
 			}
 		})
 		
-		this.list_state = this.add({
+		this.list_state = Ext.widget('combobox',{
 			xtype: 'combobox',
 			editable:false,
 			margin: '5 5 0 5',
@@ -271,8 +269,7 @@ Ext.define('derogation.field',{
 			}
 		})
 		
-		this.alertIcon_radio = this.add({
-			xtype: 'combobox',
+		this.alertIcon_radio = Ext.widget('combobox',{
 			border: false,
 			editable:false,
 			margin: '5 5 0 5',
@@ -304,7 +301,6 @@ Ext.define('derogation.field',{
 		})
 		
 		var config = {
-			xtype: 'textfield',
 			flex:1,
 			name : 'output_tpl',
 			emptyText : _('Type here new comment...'),
@@ -317,10 +313,9 @@ Ext.define('derogation.field',{
 			config.hidden = true
 		}
 		
-		this.output_textfield = this.add(config)
+		this.output_textfield = Ext.widget('textfield',config)
 		
-		this.alert_textfield = this.add({
-			xtype: 'textfield',
+		this.alert_textfield = Ext.widget('textfield',{
 			flex:1,
 			disabled : true,
 			hidden:true,
@@ -329,11 +324,19 @@ Ext.define('derogation.field',{
 			margin: '5 5 0 5',
 		})
 		
-		this.destroyButton = this.add({
-			xtype : 'button',
+		this.destroyButton = Ext.widget('button',{
 			iconCls : 'icon-cancel',
 			margin: '5 0 0 0'
 		})
+		
+		this.items = [this.key_field,
+						this.list_state,
+						this.alertIcon_radio,
+						this.output_textfield,
+						this.alert_textfield,
+						this.destroyButton]
+		
+		this.callParent(arguments);
 		
 		//----------------------bind events--------------------
 		this.key_field.on('select',this._onChange,this)
@@ -343,13 +346,13 @@ Ext.define('derogation.field',{
 	afterRender : function(){
 		this.callParent(arguments);
 		if(this._variable){
-			log.debug(' + Populate form with edit values', this.logAuthor)
 			this.key_field.setValue(this._variable)
 			this.change(this._variable)
-			var field = Ext.ComponentQuery.query('#' + this.id + ' [name='+this._variable+']');
+			var field = this.down('[name='+this._variable+']');
 			if(field)
-				field[0].setValue(this._value)
+				field.setValue(this._value)
 		}
+		
 	},
 	
 	selfDestruction:function(){

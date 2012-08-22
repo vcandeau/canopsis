@@ -4,7 +4,7 @@ NAME="rabbitmq-server"
 VERSION=2.7.0
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr erlang"
+REQUIRES="canohome erlang"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."
@@ -15,6 +15,9 @@ function post_install(){
 	echo "Post-install $NAME $VERSION-$RELEASE ..."
 	mkdir -p $PREFIX/var/lib/rabbitmq
 	mkdir -p $PREFIX/var/log/rabbitmq
+
+        update_pylibs &> /dev/null
+        check_code $? "Error when update pylibs listing ..."
 }
 
 function pre_remove(){

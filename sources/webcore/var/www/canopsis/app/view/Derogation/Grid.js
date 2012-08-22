@@ -30,9 +30,10 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 
 	opt_paging: true,
 	opt_menu_delete: true,
-	opt_bar_duplicate: true,
+	opt_bar_add : false,
 	opt_menu_rights: true,
 	opt_bar_search: true,
+	opt_bar_enable: true,
 
 	columns: [
 			{
@@ -47,7 +48,7 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 			},{
 				header: _('Enabled'),
 				flex: 1,
-				dataIndex: 'enabled',
+				dataIndex: 'enable',
 				renderer: rdr_boolean
 			},
 			{

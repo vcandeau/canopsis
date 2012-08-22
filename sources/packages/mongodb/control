@@ -4,7 +4,7 @@ NAME="mongodb"
 VERSION=2.0.2
 RELEASE=1
 DESCRIPTION=""
-REQUIRES="canohome pkgmgr python canolibs"
+REQUIRES="canohome python canolibs"
 
 function pre_install(){
 	echo "Pre-install $NAME $VERSION-$RELEASE ..."

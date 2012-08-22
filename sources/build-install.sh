@@ -473,18 +473,9 @@ if [ $OPT_BUILD -eq 1 ]; then
 				install
 				check_code $? "Install failure"
 	
-				echo " + Update local pkgmgr database"
-				PKGLIST=$PREFIX/var/lib/pkgmgr/local_db
-				sed "/^$NAME/d" -i $PKGLIST
-				echo "$NAME|$VERSION-$RELEASE|installed||$REQUIRES|$P_ARCH|$P_DIST|$P_DISTVERS" >> $PKGLIST
-				check_code $? "Package entrie insertion in local pkgmgr database failure"
-	
 				echo " + Post-install ..."
 				post_install
 				
-				echo " + Clean python-eggs  ..."
-				rm -Rf $PREFIX/.python-eggs &> /dev/null || true
-	
 				if [ $OPT_MPKG -eq 1 ]; then
 					make_package $NAME
 					check_code $? "Make package failure"
@@ -529,36 +520,38 @@ if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	echo "################################"
 	echo "# Make installer"
 	echo "################################"
-	INSTALLER_PATH="$SRC_PATH/../binaries/canopsis_installer"
-	BSTRAP_PATH="$INSTALLER_PATH/bootstrap"
+	cd $SRC_PATH
 
-	INSTALLER_PKGS="canohome canotools pkgmgr"
-	
-	cp $SRC_PATH/canohome/lib/common.sh $SRC_PATH/../binaries
+	rm $SRC_PATH/../binaries/canopsis_installer.tgz &> /dev/null || true
+
+	echo "Copy files ..."	
+	cp ubik/etc/ubik.conf.canopsis bootstrap/ubik.conf
+	check_code $?
+	cp canohome/lib/common.sh bootstrap/
+	check_code $?
+	tar cfz bootstrap/ubik.tgz ubik
+	check_code $?
+
+	#echo "Configure"
+	#BRANCH=$(git branch | grep "*" | cut -d ' ' -f2)
+	#if [ "$BRANCH" == "develop" ]; then
+	#	sed "s#stable#daily#" bootstrap/ubik.conf
+	#fi
 
 	echo "Create tarball installer ..."
-	echo "  + Create bootstrap env"
-	mkdir -p $BSTRAP_PATH
-	echo "  + Copy install script"
-	cp $SRC_PATH/../binaries/{install.sh,common.sh,INSTALL} $INSTALLER_PATH
-	check_code $? "Impossible to copy"
-
-	echo "  + Copy packages ..."
-	for PKG in $INSTALLER_PKGS; do
-		if [ -e $SRC_PATH/packages/$PKG/control ]; then
-			. $SRC_PATH/packages/$PKG/control
-			pkg_options
-			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
-			check_code $? "Impossible to copy"
-		else
-			cp $SRC_PATH/../binaries/$P_ARCH/$P_DIST/$P_DISTVERS/$PKG.tar $BSTRAP_PATH
-			check_code $? "Impossible to copy"
-		fi	
-	done
 	echo "  + Make archive"
-	cd $SRC_PATH/../binaries
-	tar cfz canopsis_installer.tgz canopsis_installer
-	echo "  + Clean tmp files"
-	rm -Rf $INSTALLER_PATH $BSTRAP_PATH
+	cp -R bootstrap canopsis_installer
+	check_code $?
+	tar cfz $SRC_PATH/../binaries/canopsis_installer.tgz canopsis_installer
+	check_code $?
+
+	echo "  + Clean"
+	rm -Rf canopsis_installer
+	check_code $?
+	rm bootstrap/ubik.*
+	check_code $?
+	rm bootstrap/common.sh
+	check_code $?
+
 	echo "  + Done"
 fi

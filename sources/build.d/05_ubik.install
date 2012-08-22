@@ -1,0 +1,17 @@
+NAME="ubik"
+
+LOG="$LOG_PATH/$NAME.log"
+rm -f $LOG &> /dev/null
+
+function build(){
+	true
+}
+
+function install(){
+	easy_install_pylib $SRC_PATH/ubik
+	mkdir -p $PREFIX/etc
+	cp $SRC_PATH/ubik/etc/ubik.conf.canopsis $PREFIX/etc/ubik.conf
+	check_code $?
+	ln -s $PREFIX/bin/ubik $PREFIX/bin/pkgmgr
+	check_code $?
+}
