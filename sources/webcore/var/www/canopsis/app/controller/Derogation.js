@@ -107,7 +107,10 @@ Ext.define('canopsis.controller.Derogation', {
 	
 	afterload_EditForm : function(form, item){
 		data = item.data
-
+		
+		if(!data.forTs)
+			form.periodTypeCombo.setValue('to')
+		
 		if(data.state != undefined)
 			form.addNewField('state',data.state)
 		if(data.alert_icon != undefined)
