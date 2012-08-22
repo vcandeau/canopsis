@@ -42,6 +42,10 @@ Ext.define('canopsis.store.Files', {
 			root: 'data',
 			totalProperty: 'total',
 			successProperty: 'success'
+		},
+		writer: {
+			type: 'json',
+			writeAllFields: false
 		}
 	}
 
