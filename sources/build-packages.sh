@@ -80,7 +80,7 @@ if [ $? -ne 0 ]; then kill -9 $WWWPID; exit 1; fi
 
 ## Configure pkgmgr
 echo "---> Configure pkgmgr"
-sed -i 's#"stable"#""#g' /opt/canopsis/tmp/canopsis_installer/ubik.conf
+sed -i 's#stable##g' /opt/canopsis/tmp/canopsis_installer/ubik.conf
 sed -i 's#repo.canopsis.org:80#localhost:8081#g' /opt/canopsis/tmp/canopsis_installer/ubik.conf
 
 su - canopsis -c "cd tmp && cd canopsis_installer && ./install.sh"
