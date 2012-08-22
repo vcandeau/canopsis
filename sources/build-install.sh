@@ -546,7 +546,7 @@ if [ $OPT_MPKG -eq 1 ] || [ $OPT_MINSTALLER -eq 1 ]; then
 	tar cfz $SRC_PATH/../binaries/canopsis_installer.tgz canopsis_installer
 	check_code $?
 
-	echo " + Clean"
+	echo "  + Clean"
 	rm -Rf canopsis_installer
 	check_code $?
 	rm bootstrap/ubik.*
