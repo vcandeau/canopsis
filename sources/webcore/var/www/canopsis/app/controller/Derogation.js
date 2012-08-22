@@ -45,13 +45,13 @@ Ext.define('canopsis.controller.Derogation', {
 		var store = Ext.getStore('Derogations')
 		if (form.form.isValid()) {
 			var output = form.getValues();
-			log.dump(output)
+			
 			//cleaning double entries in field set (if someone put many comment/state)
 			for(var i in output)
 				if(Ext.isArray(output[i]))
 					output[i] = output[i][0]
 			
-			var record = Ext.create('canopsis.model.' + this.modelId, data);
+			var record = Ext.create('canopsis.model.' + this.modelId);
 
 			//-------------- process record -----------------
 			log.debug('Process record', this.logAuthor);
@@ -68,34 +68,38 @@ Ext.define('canopsis.controller.Derogation', {
 			
 			record.set('startTs',output.startTs)
 			record.set('crecord_name',output.crecord_name)
-			record.set('scope',form.scope)
-			record.set('scope_name',form.scope_name)
 			
-			if(Ext.isDefined(output._id))
+			if(form.editing){
+				record.set('scope',form.record.scope)
+				record.set('scope_name',form.record.scope_name)
+			}else{
+				record.set('scope',form.scope)
+				record.set('scope_name',form.scope_name)
+			}
+			
+			if(output._id)
 				record.set('_id',output._id)
 			else
 				record.set('_id',global.gen_id())
 			
-			if(Ext.isDefined(output.state))
+			if(Ext.isNumber(output.state))
 				record.set('state',output.state)
-			if(Ext.isDefined(output.output_tpl))
+			if(output.output_tpl)
 				record.set('output_tpl',output.output_tpl)
-			if(Ext.isDefined(output.alert_icon))
+			if(Ext.isNumber(output.alert_icon))
 				record.set('alert_icon',output.alert_icon)
-			if(Ext.isDefined(output.alert_msg))
+			if(output.alert_msg)
 				record.set('alert_msg',output.alert_msg)
 
 			//-------------- save-----------------
+			//log.dump(record.data)
 			store.suspendEvents();
 			store.add(record);
 			
 			//-------------------reload--------------
 			log.debug('Reload store', this.logAuthor);
 			store.load({
-					//scope: this,
-					callback: function(records, operation, success) {
-						this.resumeEvents();
-					}
+					callback: function(){this.resumeEvents();}
 				});
 				
 			this._cancelForm(form);
@@ -107,8 +111,20 @@ Ext.define('canopsis.controller.Derogation', {
 
 	},
 	
-	beforeload_EditForm : function(form, item){
-		log.dump(item)
+	afterload_EditForm : function(form, item){
+		data = item.data
+		
+		if(!data.forTs)
+			form.periodTypeCombo.setValue('to')
+		
+		if(data.state != undefined)
+			form.addNewField('state',data.state)
+		if(data.alert_icon != undefined)
+			form.addNewField('alert_icon',data.alert_icon)
+		if(data.alert_msg)
+			form.addNewField('alert_msg',data.alert_msg)
+		if(data.output_tpl)
+			form.addNewField('output_tpl',data.output_tpl)
 	},
 	
 	derogate: function(scope,scope_name){

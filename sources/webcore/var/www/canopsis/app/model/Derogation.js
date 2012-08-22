@@ -43,7 +43,7 @@ Ext.define('canopsis.model.Derogation', {
 		{name: 'aaa_group', defaultValue: 'CPS_derogation_admin' },
 		{name: 'aaa_owner'},
 		
-		{name: 'loaded'},
+		{name: 'loaded',defaultValue:false},
 		{name: 'enabled',defaultValue:true}
 	]
 });

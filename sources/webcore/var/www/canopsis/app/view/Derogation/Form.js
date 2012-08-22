@@ -32,20 +32,13 @@ Ext.define('canopsis.view.Derogation.Form' , {
 	initComponent: function() {
 		this.callParent();
 		
-		var general_options = this.add({
-			xtype: 'fieldset',
-			title: _('General options')
-		})
-		
 		this.add({
 			xtype: 'hiddenfield',
 			name: '_id',
 			value: undefined
 		})
 		
-		//--------------------standart options--------------------
-		general_options.add({
-			xtype: 'textfield',
+		var crecord_name = Ext.widget('textfield',{
 			name: 'crecord_name',
 			fieldLabel: _('Name'),
 			width: 295
@@ -54,19 +47,17 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		
 		//----------------Beginning-----------------
 		
-		var beginning = general_options.add({
-			xtype:'fieldcontainer',
+		var beginning = Ext.widget('fieldcontainer',{
 			fieldLabel: _('Begging'),
-			layout:'hbox'
+			layout:'hbox',
+			items : [{
+				xtype: 'cdate',
+				name: 'startTs',
+				date_width: 110,
+				now:true
+			}]
 		})
 
-		beginning.add({
-			xtype: 'cdate',
-			name: 'startTs',
-			date_width: 110,
-			now:true
-		})
-		
 		//------------------Ending----------------
 		
 		this.periodTypeCombo =  Ext.widget('combobox',{
@@ -123,19 +114,29 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			disabled:true
 		})
 
-		general_options.add({
-			xtype:'fieldcontainer',
+		var ending = Ext.widget('fieldcontainer',{
 			fieldLabel : _('Ending'),
 			layout:'hbox',
 			items : [this.periodTypeCombo,this.ts_window,this.ts_unit,this.stopDate]
+		})
+		
+		
+		//----------------build general options field------------
+		
+		this.add({
+			xtype: 'fieldset',
+			title: _('General options'),
+			items:[crecord_name,beginning,ending]
 		})
 		
 		//--------------------Variable field-----------------------
 		this.variableField = this.add({
 			xtype: 'fieldset',
 			title: _('Manual set'),
-			items: [Ext.create('derogation.field')]
 		})
+		
+		if(!this.editing)
+			this.variableField.add(Ext.create('derogation.field'))
 		
 		//align button with other button
 		var container = this.variableField.add({
@@ -151,10 +152,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			iconCls : 'icon-add',
 		})
 		
-		this.addButton.on('click',function(){
-			var last_child_index = this.variableField.items.length
-			this.variableField.insert(last_child_index - 1, Ext.create('derogation.field'))
-		},this)
+		this.addButton.on('click',this.addButtonFunc,this)
 
 		//--------------bindings--------------
 		this.periodTypeCombo.on('change',this.toggleTimePeriod,this)
@@ -180,6 +178,20 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		}
 
 	},
+	
+	addButtonFunc: function(){
+		this.addNewField()
+	},
+	
+	addNewField : function(variable,value){
+		log.debug(' + Adding a new field',this.logAuthor)
+		var last_child_index = this.variableField.items.length
+		var config = {
+			_variable : variable,
+			_value : value
+		}
+		this.variableField.insert(last_child_index - 1, Ext.create('derogation.field',config))
+	}
 })
 
 Ext.define('derogation.field',{
@@ -202,9 +214,8 @@ Ext.define('derogation.field',{
 	icon_class : 'widget-weather-form-icon',
 	
 	initComponent: function() {
-		this.callParent(arguments);
-		this.key_field = this.add({
-			xtype: 'combobox',
+		
+		this.key_field = Ext.widget('combobox',{
 			isFormField:false,
 			editable:false,
 			flex: 1,
@@ -227,7 +238,7 @@ Ext.define('derogation.field',{
 			}
 		})
 		
-		this.list_state = this.add({
+		this.list_state = Ext.widget('combobox',{
 			xtype: 'combobox',
 			editable:false,
 			margin: '5 5 0 5',
@@ -258,8 +269,7 @@ Ext.define('derogation.field',{
 			}
 		})
 		
-		this.alertIcon_radio = this.add({
-			xtype: 'combobox',
+		this.alertIcon_radio = Ext.widget('combobox',{
 			border: false,
 			editable:false,
 			margin: '5 5 0 5',
@@ -290,16 +300,22 @@ Ext.define('derogation.field',{
 			}
 		})
 		
-		this.output_textfield = this.add({
-			xtype: 'textfield',
+		var config = {
 			flex:1,
 			name : 'output_tpl',
 			emptyText : _('Type here new comment...'),
 			margin: '5 5 0 5',
-		})
+		}
 		
-		this.alert_textfield = this.add({
-			xtype: 'textfield',
+		//if value, not display comment by default
+		if(this._variable && this._value){
+			config.disabled = true
+			config.hidden = true
+		}
+		
+		this.output_textfield = Ext.widget('textfield',config)
+		
+		this.alert_textfield = Ext.widget('textfield',{
 			flex:1,
 			disabled : true,
 			hidden:true,
@@ -308,15 +324,35 @@ Ext.define('derogation.field',{
 			margin: '5 5 0 5',
 		})
 		
-		this.destroyButton = this.add({
-			xtype : 'button',
+		this.destroyButton = Ext.widget('button',{
 			iconCls : 'icon-cancel',
 			margin: '5 0 0 0'
 		})
 		
+		this.items = [this.key_field,
+						this.list_state,
+						this.alertIcon_radio,
+						this.output_textfield,
+						this.alert_textfield,
+						this.destroyButton]
+		
+		this.callParent(arguments);
+		
 		//----------------------bind events--------------------
-		this.key_field.on('select',this.change,this)
+		this.key_field.on('select',this._onChange,this)
 		this.destroyButton.on('click',this.selfDestruction,this)
+	},
+	
+	afterRender : function(){
+		this.callParent(arguments);
+		if(this._variable){
+			this.key_field.setValue(this._variable)
+			this.change(this._variable)
+			var field = this.down('[name='+this._variable+']');
+			if(field)
+				field.setValue(this._value)
+		}
+		
 	},
 	
 	selfDestruction:function(){
@@ -326,9 +362,12 @@ Ext.define('derogation.field',{
 		Ext.destroy(this)
 	},
 	
-	change : function(combo,records,options){
+	_onChange : function(combo,records,options){
 		var value = records[0].get('value')	
-		
+		this.change(value)
+	},
+	
+	change : function(value){
 		if(value == 'output_tpl'){
 			this.list_state.hide()
 			this.list_state.setDisabled(true)
