@@ -275,6 +275,10 @@
 	background-image: url(../images/Tango-Blue-Materia/22x22/categories/applications-development.png) !important;
 }
 
+.icon-enable-disable { 
+	background-image: url(../images/icons/true.png) !important;
+}
+
 /* state */
 
 /*.icon-state-0 { 
