@@ -356,33 +356,36 @@ def rest_put(namespace, ctype, _id=None):
 def rest_delete(namespace, ctype, _id=None):
 	account = get_account()
 	storage = get_storage(namespace=namespace)
-
-	logger.debug("DELETE:")
-	if not _id:
-		data = request.body.readline()
-		if not data:
-			return HTTPError(400, "No data received")
-			
-		logger.debug(" + data: %s" % data)
-		logger.debug(" + data-type: %s" % type(data))
-		
-		if isinstance(data, str):
-			try:
-				data = json.loads(data)
-			except Exception, err:
-				logger.error("DELETE: Impossible to parse data (%s)" % err)
-				return HTTPError(404, "Impossible to parse data")
-
-		_id = None
-		try:
-			_id = str(data['_id'])
-		except:
-			pass
 	
+	logger.debug("DELETE:")
+	
+	data = request.body.readline()
+	if data:
 		try:
-			_id = str(data['id'])
+			data = json.loads(data)
 		except:
-			pass
+			logger.warning('Invalid data in request payload')
+
+	
+	if isinstance(data,list):
+		logger.debug(" + Attempt to remove %i item from db" % len(data))
+		if _id:
+			_id = [_id]
+		else:
+			_id = []
+			
+		for item in data:
+			if '_id' in item:
+				_id.append(item['_id'])
+			if 'id' in item:
+				_id.append(item['id'])
+	
+	
+	if not _id:
+		if '_id' in data:
+			_id = str(data['_id'])
+		if 'id' in data:
+			_id = str(data['id'])
 
 	if not _id:
 		logger.error("DELETE: No '_id' field in header ...")
