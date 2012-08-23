@@ -69,6 +69,8 @@ Ext.define('canopsis.controller.Derogation', {
 			record.set('startTs',output.startTs)
 			record.set('crecord_name',output.crecord_name)
 			
+			record.set('description',output.description)
+			
 			if(form.editing){
 				record.set('scope',form.record.scope)
 				record.set('scope_name',form.record.scope_name)
@@ -84,8 +86,8 @@ Ext.define('canopsis.controller.Derogation', {
 			
 			if(Ext.isNumber(output.state))
 				record.set('state',output.state)
-			if(output.output_tpl)
-				record.set('output_tpl',output.output_tpl)
+			if(output.output)
+				record.set('output',output.output)
 			if(Ext.isNumber(output.alert_icon))
 				record.set('alert_icon',output.alert_icon)
 			if(output.alert_msg)
@@ -123,8 +125,8 @@ Ext.define('canopsis.controller.Derogation', {
 			form.addNewField('alert_icon',data.alert_icon)
 		if(data.alert_msg)
 			form.addNewField('alert_msg',data.alert_msg)
-		if(data.output_tpl)
-			form.addNewField('output_tpl',data.output_tpl)
+		if(data.output)
+			form.addNewField('output',data.output)
 	},
 	
 	derogate: function(scope,scope_name){
