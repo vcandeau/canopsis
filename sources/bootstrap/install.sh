@@ -57,6 +57,11 @@ echo " + Configure Ubik ..."
 export UBIK_CONF=$HOME/etc/ubik.conf
 export PATH=$PATH:$HOME/bin:$HOME/.local/bin
 cp $BPATH/ubik.conf etc/ &>> $LOG
+
+if [ "x$1" == "xdaily" ]; then
+	sed -i 's#stable#daily#g' $HOME/etc/ubik.conf
+fi
+
 check_code $? "Impossible to configure Ubik (check log: $LOG)"
 echo "   - Ok"
 
