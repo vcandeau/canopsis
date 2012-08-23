@@ -148,9 +148,12 @@ def send_event(	routing_key=None):
 		perf_data = request.params.get('perf_data', default=None)
 		
 	if not perf_data_array:
-		perf_data_array = request.params.get('perf_data_array', default='[]')
-		#if type(perf_data_array) == 'str':
-			#perf_data_array = json.loads(perf_data_array)
+		perf_data_array = request.params.get('perf_data_array', default=None)
+		if perf_data_array:
+			try:
+				perf_data_array = json.loads(perf_data_array)
+			except Exception, err:
+				logger.error("Impossible to parse 'perf_data_array': %s (%s)" % (perf_data_array, err))
 		
 	#------------------------------forging event----------------------------------
 
@@ -166,7 +169,7 @@ def send_event(	routing_key=None):
 				output = output,
 				long_output = long_output,
 				perf_data = perf_data,
-				perf_data_array = json.loads(perf_data_array),
+				perf_data_array = perf_data_array,
 			)
 	
 	logger.debug(type(perf_data_array))
