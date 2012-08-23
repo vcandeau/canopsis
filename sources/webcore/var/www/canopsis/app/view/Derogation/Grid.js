@@ -52,14 +52,14 @@ Ext.define('canopsis.view.Derogation.Grid' , {
 				renderer: rdr_boolean
 			},
 			{
-				header: _('Name'),
+				header: _('Description'),
 				flex: 1,
-				dataIndex: 'crecord_name',
+				dataIndex: 'description',
 			},{
 				header: _('comment'),
 				sortable: false,
 				flex: 1,
-				dataIndex: 'output_tpl',
+				dataIndex: 'output',
 			},{
 				header: _('Alert message'),
 				sortable: false,

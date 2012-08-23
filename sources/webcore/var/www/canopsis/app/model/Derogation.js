@@ -20,7 +20,7 @@ Ext.define('canopsis.model.Derogation', {
     idProperty: '_id',
     fields: [
 		{name: '_id'},
-		{name: 'output_tpl'},
+		{name: 'output'},
 		{name: 'startTs',defaultValue: undefined},
 		{name: 'stopTs',defaultValue: undefined},
 		
@@ -28,7 +28,7 @@ Ext.define('canopsis.model.Derogation', {
 		{name: 'ts_unit',defaultValue: undefined},
 		{name: 'ts_window',defaultValue: undefined},
 		
-		{name: 'crecord_name',defaultValue: undefined},
+		{name: 'description',defaultValue: undefined},
 		{name: 'alert_icon',defaultValue: undefined},
 		{name: 'state',defaultValue: undefined},
 		{name: 'alert_msg',defaultValue: undefined},

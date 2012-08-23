@@ -37,13 +37,20 @@ Ext.define('canopsis.view.Derogation.Form' , {
 			name: '_id',
 			value: undefined
 		})
-		
+		/*
 		var crecord_name = Ext.widget('textfield',{
 			name: 'crecord_name',
 			fieldLabel: _('Name'),
 			width: 295
 		})
-
+		*/
+		
+		var description = Ext.widget('textarea',{
+			name: 'description',
+			fieldLabel : _('Description'),
+			allowBlank:false,
+			width : 295
+		})
 		
 		//----------------Beginning-----------------
 		
@@ -126,7 +133,7 @@ Ext.define('canopsis.view.Derogation.Form' , {
 		this.add({
 			xtype: 'fieldset',
 			title: _('General options'),
-			items:[crecord_name,beginning,ending]
+			items:[description,beginning,ending]
 		})
 		
 		//--------------------Variable field-----------------------
@@ -225,13 +232,13 @@ Ext.define('derogation.field',{
 			queryMode: 'local',
 			displayField : 'text',
 			valueField : 'value',
-			value : 'output_tpl',
+			value : 'output',
 			store: {
 				xtype: 'store',
 				fields: ['value','text'],
 				data: [
 					{value: 'state',text:_('State')},
-					{value: 'output_tpl',text:_('Comment')},
+					{value: 'output',text:_('Comment')},
 					{value: 'alert_msg', text:_('Alert message')},
 					{value: 'alert_icon', text:_('Alert icon')}
 				]				
@@ -302,7 +309,7 @@ Ext.define('derogation.field',{
 		
 		var config = {
 			flex:1,
-			name : 'output_tpl',
+			name : 'output',
 			emptyText : _('Type here new comment...'),
 			margin: '5 5 0 5',
 		}
@@ -368,7 +375,7 @@ Ext.define('derogation.field',{
 	},
 	
 	change : function(value){
-		if(value == 'output_tpl'){
+		if(value == 'output'){
 			this.list_state.hide()
 			this.list_state.setDisabled(true)
 			this.alert_textfield.hide()
